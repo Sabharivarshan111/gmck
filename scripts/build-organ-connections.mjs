@@ -107,6 +107,16 @@ const aliases={
 const escape=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 const find=(names,system)=>atlas.parts.filter(p=>(!system||p.system===system)&&names.some(t=>new RegExp('\\b'+escape(t)+'\\b','i').test(p.name))).map(p=>p.id);
 const byId=new Map(atlas.parts.map(p=>[p.id,p]));
+// Name partial/region views for what the registered mesh actually shows.
+const displayLabels={
+ 'Intercostal Neurovascular Bundles':'Intercostal vessels (nerve mesh unavailable)',
+ 'Heart & Pericardium':'Heart walls (pericardium mesh unavailable)',
+ 'Pericardium / Heart':'Heart walls (pericardium mesh unavailable)',
+ 'Subcutaneous Tissue & Skin':'Skin surface (subcutaneous mesh unavailable)',
+ 'Deltopectoral Groove (Cephalic Vein)':'Cephalic vein in deltopectoral groove',
+ 'Aortic Root':'Aortic root region (ascending aorta)',
+ 'Bifurcation of Left Main Coronary Artery':'Left coronary artery (bifurcation region)',
+};
 const output={};let serial=0;
 for(const [owner,o] of Object.entries(db)){
  const links=[];
@@ -116,7 +126,7 @@ for(const [owner,o] of Object.entries(db)){
   const names=aliases[label]||[label.replace(/\([^)]*\)/g,'').trim()];
   let ids=find(names);
   if(!/arter|vein|vessel|nerve|duct|ligament|cavity/i.test(label))ids=ids.filter(id=>!/artery|vein|nerve|duct|branch|ligament|cavity/i.test(byId.get(id).name));
-  add('relation',direction,label,ids,ids.length?'Structures share the BodyParts3D reference frame.':'This exact relation has no mesh in the registered atlas; the diagram is a teaching schematic.');
+  add('relation',direction,displayLabels[label]||label,ids,ids.length?'Structures share the BodyParts3D reference frame.':'This exact relation has no mesh in the registered atlas; the diagram is a teaching schematic.');
  }
  for(const [index,kind,system,field,nodes] of [[0,'arterial','arterial','arterialSupply','arterialNodes'],[1,'venous','venous','venousDrainage','venousNodes']]){
   const names=supply[owner]?.[index]||[];

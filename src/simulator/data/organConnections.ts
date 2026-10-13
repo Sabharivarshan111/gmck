@@ -566,7 +566,7 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "owner": "lad_artery",
       "kind": "relation",
       "direction": "superior",
-      "label": "Bifurcation of Left Main Coronary Artery",
+      "label": "Left coronary artery (bifurcation region)",
       "targetId": "atlas:FJ2631,FJ2632,FJ2633,FJ2634,FJ2635,FJ2636,FJ2637,FJ2638,FJ2639,FJ2640,FJ2641,FJ2642,FJ2643,FJ2644,FJ2645,FJ2646,FJ2647,FJ2648,FJ2649,FJ2650,FJ2651,FJ2652,FJ2653,FJ2654,FJ2737",
       "partIds": [
         "FJ2631",
@@ -853,7 +853,7 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "owner": "pectoralis_major",
       "kind": "relation",
       "direction": "superior",
-      "label": "Deltopectoral Groove (Cephalic Vein)",
+      "label": "Cephalic vein in deltopectoral groove",
       "targetId": "atlas:FJ2220,FJ2272",
       "partIds": [
         "FJ2220",
@@ -1186,7 +1186,7 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "owner": "deltoid",
       "kind": "relation",
       "direction": "lateral",
-      "label": "Subcutaneous Tissue & Skin",
+      "label": "Skin surface (subcutaneous mesh unavailable)",
       "targetId": "atlas:FJ2810",
       "partIds": [
         "FJ2810"
@@ -1357,7 +1357,7 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "owner": "liver",
       "kind": "relation",
       "direction": "superior",
-      "label": "Pericardium / Heart",
+      "label": "Heart walls (pericardium mesh unavailable)",
       "targetId": "atlas:FJ2438,FJ2439",
       "partIds": [
         "FJ2438",
@@ -1750,7 +1750,7 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "owner": "lungs",
       "kind": "relation",
       "direction": "medial",
-      "label": "Heart & Pericardium",
+      "label": "Heart walls (pericardium mesh unavailable)",
       "targetId": "atlas:FJ2438,FJ2439",
       "partIds": [
         "FJ2438",
@@ -1868,7 +1868,7 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "owner": "lungs",
       "kind": "relation",
       "direction": "lateral",
-      "label": "Intercostal Neurovascular Bundles",
+      "label": "Intercostal vessels (nerve mesh unavailable)",
       "targetId": null,
       "partIds": [],
       "note": "This exact relation has no mesh in the registered atlas; the diagram is a teaching schematic."
@@ -2041,7 +2041,7 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "owner": "rca_artery",
       "kind": "relation",
       "direction": "superior",
-      "label": "Aortic Root",
+      "label": "Aortic root region (ascending aorta)",
       "targetId": "atlas:FJ3413",
       "partIds": [
         "FJ3413"
