@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import zlib from 'node:zlib';
+import {createHash} from 'node:crypto';
 import {MRI_ANNOTATION_VOLUME_SHA} from '../mobile/src/simulator/radiologyAnnotations.ts';
 import {ORGAN_CONNECTIONS} from '../src/simulator/data/organConnections.ts';
 const root='mobile/android/app/src/main/assets/simulator';
@@ -34,7 +35,7 @@ for(const connections of Object.values(ORGAN_CONNECTIONS))for(const c of connect
  const target=record[c.id];assert.ok(target?.ids.length,'Registered view missing '+c.id);registered++;
 }
 const mri=JSON.parse(fs.readFileSync(root+'/radiology/brain-t1.json'));assert.equal(mri.volumeSha256,MRI_ANNOTATION_VOLUME_SHA,'MRI labels require the reviewed source volume');
-assert.equal(zlib.gunzipSync(fs.readFileSync(root+'/radiology/brain-t1.pack')).length,mri.dimensions.reduce((a,b)=>a*b,1));
+const mriBytes=zlib.gunzipSync(fs.readFileSync(root+'/radiology/brain-t1.pack'));assert.equal(mriBytes.length,mri.dimensions.reduce((a,b)=>a*b,1));assert.equal(createHash('sha256').update(mriBytes).digest('hex'),MRI_ANNOTATION_VOLUME_SHA,'Actual MRI pixels must match the reviewed volume');
 const anatomy=fs.readFileSync('mobile/src/screens/SimulatorScreen.android.tsx','utf8');
 assert.ok(!/react-native-webview|https:\/\/orbitmbbs/.test(anatomy),'Native screen cannot navigate to hosted simulator');
 assert.ok(fs.existsSync('mobile/android/app/src/main/assets/pg/manifest.json'),'Offline PG manifest');
