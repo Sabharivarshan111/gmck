@@ -1,6 +1,6 @@
 {
   "medmcqa-practice-s00-4": {
-    "question": "Which of the following statements about Total Infra\u2013Venous Anaesthesia (TIVA) is true \u2013",
+    "question": "Which of the following statements about Total Infra–Venous Anaesthesia (TIVA) is true –",
     "options": [
       "Causes More Renal Toxicity",
       "Reduces Cerebral Metabolic Rate",
@@ -74,7 +74,7 @@
     "source_urls": []
   },
   "medmcqa-practice-s00-9": {
-    "question": "Which of the following nerves are affected after spinal anaesthetic block \u2013",
+    "question": "Which of the following nerves are affected after spinal anaesthetic block –",
     "options": [
       "Motor and sensory only",
       "Sensory and autonomic nerve only",
@@ -91,5 +91,151 @@
       "e937186fcfe068254f42d47e"
     ],
     "source_urls": []
+  },
+  "medmcqa-practice-s00-0": {
+    "question": "Characteristics of Remifentanyl – a) Metabolised by plasma esteraseb) Short half lifec) More potent than Alfentanyld) Dose reduced in hepatic and renal diseasee) Duration of action more than Alfentanyl",
+    "options": [
+      "ab",
+      "bc",
+      "abc",
+      "bcd"
+    ],
+    "answer": "C",
+    "explanation": "C: Statements a, b and c describe remifentanil (misspelled in this stem). Nonspecific esterases in blood and tissues rapidly break it down; this is not metabolism by plasma pseudocholinesterase. It has a brief clinical offset and greater potency than alfentanil. Its parent-drug pharmacokinetics are largely preserved in renal or hepatic impairment, so d is not a routine dose-reduction rule based on those impairments alone. Dosing still requires individual titration. Statement e reverses the usual comparison: remifentanil wears off more rapidly after an infusion, rather than lasting longer than alfentanil.",
+    "status": "source_checked_provisional",
+    "clinically_reviewed": false,
+    "source_urls": [
+      "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5b8025d2-3424-477b-9cff-3990a98c2a65",
+      "https://pubmed.ncbi.nlm.nih.gov/8638836/"
+    ]
+  },
+  "medmcqa-practice-s00-1": {
+    "question": "Risk factors associated with post-operative nausea and vomiting following strabismus surgery are all except -",
+    "options": [
+      "Age < 3years",
+      "Duration of anesthesia > 30 mins",
+      "Personal or family history of post - op nausea and vomiting",
+      "Personal or family history of motion sickness"
+    ],
+    "answer": "A",
+    "explanation": "A is the expected exception: the validated paediatric postoperative-vomiting risk score uses age at least 3 years, not age below 3 years. Its other factors are strabismus surgery, surgery lasting at least 30 minutes and previous postoperative vomiting in the child or postoperative nausea/vomiting in close relatives. The stem loosely says duration of anaesthesia. Motion-sickness history can also inform risk assessment, but the exact wording of option D is not one of the four original score variables. This question should not be read as saying that younger children never vomit postoperatively.",
+    "status": "source_checked_provisional",
+    "clinically_reviewed": false,
+    "source_urls": [
+      "https://pubmed.ncbi.nlm.nih.gov/15562045/"
+    ]
+  },
+  "medmcqa-practice-s00-3": {
+    "question": "Role of egg lecithin in propofol formulation is?",
+    "options": [
+      "Acts as emulsifying agent",
+      "Acts as preservative",
+      "Acts as carrier vehicle",
+      "Acts as antibacterial"
+    ],
+    "answer": "A",
+    "explanation": "A: Egg lecithin provides phospholipids that stabilise the oil-in-water emulsion containing propofol. Propofol has poor water solubility; the formulation disperses an oil phase in water, and the phospholipid emulsifier helps keep those droplets dispersed. Soybean oil supplies the lipid phase. Egg lecithin is not the antimicrobial preservative. Preservative or microbial-growth-inhibiting additives differ between products, so check the particular formulation rather than assuming every propofol vial contains the same additive.",
+    "status": "source_checked_provisional",
+    "clinically_reviewed": false,
+    "source_urls": [
+      "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e3105799-a4b6-f3f4-e6e2-b2b29bbdb538"
+    ]
+  },
+  "medmcqa-practice-s00-7": {
+    "question": "Which anaesthetic agent increases intracranial tension among the following",
+    "options": [
+      "Thiopentone",
+      "Propofol",
+      "Lignocaine",
+      "Sevoflurane"
+    ],
+    "answer": "D",
+    "explanation": "D is the expected choice: sevoflurane can increase cerebral blood flow through vasodilatation and may raise intracranial pressure, particularly when intracranial compliance is impaired. The prescribing information advises caution in patients at risk of raised intracranial pressure. This is a potential effect, not an inevitable rise in every patient: concentration, carbon dioxide, ventilation and other anaesthetic drugs affect the response. The usual teaching contrast is with intravenous agents such as propofol and thiopentone, which reduce cerebral metabolic demand. A blanket claim that every inhalational anaesthetic always increases intracranial pressure is too broad.",
+    "status": "source_checked_provisional",
+    "clinically_reviewed": false,
+    "source_urls": [
+      "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c9aa6489-5a36-44ed-9512-b996833d82f7",
+      "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e3105799-a4b6-f3f4-e6e2-b2b29bbdb538"
+    ]
+  },
+  "medmcqa-practice-s00-11": {
+    "question": "Muscle relaxant used in renal failure -",
+    "options": [
+      "Ketamine",
+      "Atracurium",
+      "Pancuronium",
+      "Fentanyl"
+    ],
+    "answer": "B",
+    "explanation": "B: Atracurium is the neuromuscular blocker among these options whose recovery is relatively independent of kidney function. It breaks down through Hofmann elimination and nonspecific ester hydrolysis. This reduces dependence on renal clearance of the active parent drug. Ketamine is an anaesthetic and fentanyl an opioid, rather than neuromuscular blockers. Pancuronium is less suitable when prolonged blockade from impaired clearance is a concern. Organ-independent parent-drug breakdown does not mean that every metabolite or prolonged-infusion risk is independent of organ function.",
+    "status": "source_checked_provisional",
+    "clinically_reviewed": false,
+    "source_urls": [
+      "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=efe90ee2-fe9e-421f-9e54-2961085d3b12"
+    ]
+  },
+  "medmcqa-practice-s00-13": {
+    "question": "Muscle relaxant used in renal failure :",
+    "options": [
+      "Ketamine",
+      "Atracurium",
+      "Pancuronium",
+      "Fentanyl"
+    ],
+    "answer": "B",
+    "explanation": "B: Atracurium is the neuromuscular blocker among these options whose recovery is relatively independent of kidney function. It breaks down through Hofmann elimination and nonspecific ester hydrolysis. This reduces dependence on renal clearance of the active parent drug. Ketamine is an anaesthetic and fentanyl an opioid, rather than neuromuscular blockers. Pancuronium is less suitable when prolonged blockade from impaired clearance is a concern. Organ-independent parent-drug breakdown does not mean that every metabolite or prolonged-infusion risk is independent of organ function.",
+    "status": "source_checked_provisional",
+    "clinically_reviewed": false,
+    "source_urls": [
+      "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=efe90ee2-fe9e-421f-9e54-2961085d3b12"
+    ]
+  },
+  "medmcqa-practice-s00-15": {
+    "question": "All of the following statements about neuromuscular blockage produced by succinylcholine are true, except:",
+    "options": [
+      "No fade on Train of four stimulation",
+      "Fade on tetanic stimulation",
+      "No post tetanic facilitation",
+      "Train of four ratio > 0.4"
+    ],
+    "answer": "B",
+    "explanation": "B is the exception for a conventional phase I succinylcholine block. The response is reduced, but repeated stimulation does not show the characteristic fade of a nondepolarising block; post-tetanic facilitation is also absent. The train-of-four responses therefore remain relatively similar to one another. With prolonged exposure or repeated large doses, succinylcholine can produce a phase II block, where fade may appear. The answer depends on interpreting this stem as phase I; it is not a rule for every succinylcholine exposure.",
+    "status": "source_checked_provisional",
+    "clinically_reviewed": false,
+    "source_urls": [
+      "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0b990f84-9515-44bd-a97d-a97bbead065c"
+    ]
+  },
+  "medmcqa-practice-s00-16": {
+    "question": "Which of the following induction agent produce cardiac stability-",
+    "options": [
+      "Ketamine",
+      "Etomidate",
+      "Propofol",
+      "Midazolam"
+    ],
+    "answer": "B",
+    "explanation": "B: Etomidate is classically chosen for induction when relative cardiovascular stability is important. Its usual induction effect causes comparatively little disturbance of cardiac output and circulation. This is relative stability, not a guarantee against hypotension or cardiac depression; responses vary, including in older patients. Adrenal steroid suppression and transient muscle movements are important disadvantages. The haemodynamic advantage alone does not establish that etomidate is the best induction drug for every clinical situation.",
+    "status": "source_checked_provisional",
+    "clinically_reviewed": false,
+    "source_urls": [
+      "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=b7ed5bf8-ba75-44dc-8f81-96b4ad5766be"
+    ]
+  },
+  "medmcqa-practice-s00-19": {
+    "question": "A 70 kg athlete is taken for surgery, due to unavailability of vecuronium, succinylcholine is given repeatedly (>640mg). He now is unable to take breath and his lower limbs are paralyzed. What will be cause?",
+    "options": [
+      "Phase II block",
+      "Succinylcholine causes muscle paralysis due to fasciculation",
+      "Hidden muscle dystrophy",
+      "Pseudo cholinesterase deficiency"
+    ],
+    "answer": "A",
+    "explanation": "A is the expected answer. Repeated administration of a large cumulative amount of succinylcholine can change a phase I depolarising block into a phase II block with prolonged paralysis. For this vignette, 640 mg in a 70 kg person exceeds 9 mg/kg; that exposure supports the intended mechanism but is not a universal diagnostic threshold. Phase II blockade can show train-of-four fade. Pseudocholinesterase deficiency is another cause of prolonged paralysis, so a real diagnosis requires neuromuscular monitoring and assessment rather than the dose alone. Respiratory support must continue until adequate recovery.",
+    "status": "source_checked_provisional",
+    "clinically_reviewed": false,
+    "source_urls": [
+      "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0b990f84-9515-44bd-a97d-a97bbead065c"
+    ]
   }
 }

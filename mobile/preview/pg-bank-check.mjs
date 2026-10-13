@@ -26,7 +26,7 @@ try{
  await page.goto('http://127.0.0.1:5207',{waitUntil:'domcontentloaded'});
  await label('Vault').click();
  await label('NEET-PG practice questions').click();
- await waitText('185,637 matching dataset practice questions');
+ await waitText('185,636 matching dataset practice questions');
  assert.ok(!(await page.locator('body').innerText()).includes('MedMCQA'));
  assert.ok(await page.getByLabel('Show answer and explanation',{exact:true}).count()>=40);
  await label('NEET-PG').click();await waitText('NEET-PG practice questions');
@@ -38,7 +38,7 @@ try{
  assert.equal(await page.getByLabel('Show answer and explanation',{exact:true}).count(),40);
  await shot('04-chapter-filter');
  await label('All PG subjects').click();
- await waitText('185,637 matching dataset practice questions');
+ await waitText('185,636 matching dataset practice questions');
  await label('Show answer and explanation').click();
  assert.equal(await page.getByLabel('Check an answer against textbooks',{exact:true}).count(),0);
  assert.ok(!(await page.locator('body').innerText()).includes('MedMCQA'));
@@ -58,7 +58,7 @@ try{
  await label('Third-party licences').click();await waitText('Copyright (c) 2022 MedMCQA');
  await waitText('Copyright (c) 2020 Arjun Barrett');await shot('05-about-licences');
  assert.deepEqual(errors,[]);
- const result={passed:true,third_party_questions_released:185637,original_practice_questions:10,official_information_links:3,unsigned_edge_calls:calls,device_tested:false,legal_immunity_guaranteed:false,data_limit_bytes:10000000,page_errors:errors};
+ const result={passed:true,third_party_questions_released:185636,original_practice_questions:10,official_information_links:3,unsigned_edge_calls:calls,device_tested:false,legal_immunity_guaranteed:false,data_limit_bytes:10000000,page_errors:errors};
  fs.writeFileSync(path.join(evidence,'results.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));
 }catch(error){
  fs.writeFileSync(path.join(evidence,'results.json'),JSON.stringify({passed:false,error:String(error)},null,2)+'\n');

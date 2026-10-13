@@ -12,7 +12,7 @@ function load(file){
 }
 const {PG_SOURCES,PG_ORIGINAL_PRACTICE}=load('mobile/src/lib/pgEntranceBank.ts');
 const {PG_COMPACT,PG_COMPACT_BYTES}=load('mobile/src/lib/pgCompact/manifest.ts');
-assert.equal(PG_COMPACT.total,185637);assert.equal(PG_COMPACT.quarantined,1293);
+assert.equal(PG_COMPACT.total,185636);assert.equal(PG_COMPACT.quarantined,1293);
 assert.ok(PG_COMPACT_BYTES<10000000);
 assert.equal(PG_COMPACT.packs.length,21);
 for(const pack of PG_COMPACT.packs){assert.equal(pack.chapters.reduce((n,c)=>n+c.count,0),pack.count);assert.ok(pack.rawBytes<=20000000);}

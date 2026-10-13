@@ -1,0 +1,18 @@
+{
+  "medmcqa-practice-s00-6": {
+    "question": "Ketamine can be given by all of following routes except-",
+    "options": [
+      "IV",
+      "IM",
+      "SC",
+      "Nasally"
+    ],
+    "answer": "C",
+    "status": "held_for_medical_review",
+    "reason": "The stem excludes subcutaneous ketamine without specifying licensed anaesthetic routes or indication. Published trials administered ketamine subcutaneously, contradicting the supplied explanation. No replacement key is inferred.",
+    "source_urls": [
+      "https://pubmed.ncbi.nlm.nih.gov/22965960/",
+      "https://pubmed.ncbi.nlm.nih.gov/27028832/"
+    ]
+  }
+}

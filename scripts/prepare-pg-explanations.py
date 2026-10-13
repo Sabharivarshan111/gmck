@@ -102,6 +102,7 @@ def download_textbooks(db, directory, url, key):
 
 def questions():
     excluded = {r['id'] for r in json.loads((ROOT/'docs/PG_CORPUS_QUARANTINE_20261011.json').read_text())['rows']}
+    holds = json.loads((ROOT/'docs/PG_MEDICAL_REVIEW_HOLDS.json').read_text())
     groups = {}
     for file in sorted((ROOT/'mobile/src/lib/pgPacks').glob('*_undated_*.ts')):
         if not re.match(r'^(general_medical|neet_pg)_undated_\d+\.ts$',file.name):
@@ -117,7 +118,22 @@ def questions():
     # Match JS locale ordering for these English source subject names.
     for pack, subject in enumerate(sorted(groups, key=str.casefold)):
         for offset, r in enumerate(groups[subject]):
-            yield {'id':f'medmcqa-practice-s{pack:02d}-{offset}', 'subject':subject, 'question':r[1], 'options':r[2:6], 'supplied_answer':'ABCD'[r[6]], 'existing_explanation':r[7]}
+            record_id = f'medmcqa-practice-s{pack:02d}-{offset}'
+            if record_id in holds:
+                continue
+            yield {'id':record_id, 'subject':subject, 'question':r[1], 'options':r[2:6], 'supplied_answer':'ABCD'[r[6]], 'existing_explanation':r[7]}
+
+def select_questions(items, offset=0, only_ids=(), missing_only=False, prepared_ids=()):
+    """Offset counts eligible records; IDs remain tied to their original ordinals."""
+    eligible = 0
+    for q in items:
+        if only_ids and q['id'] not in only_ids:
+            continue
+        if missing_only and (q['existing_explanation'].strip() or q['id'] in prepared_ids):
+            continue
+        if eligible >= offset:
+            yield q
+        eligible += 1
 
 def image_required(q):
     return bool(re.search(r'\b(image|photograph|radiograph|diagram|waveform|micrograph|figure|picture)\b.{0,55}\b(shown|below|above|given|following|seen)\b|\b(shown|below|above)\b.{0,55}\b(image|figure|ecg|x.ray)\b', q['question'], re.I)) or set(q['options']) == set('ABCD')
@@ -164,8 +180,10 @@ def main():
     parser.add_argument('--web-fallback', action='store_true')
     parser.add_argument('--limit', type=int, default=10)
     parser.add_argument('--only-id', action='append', default=[])
+    parser.add_argument('--offset', type=int, default=0)
+    parser.add_argument('--missing-only', action='store_true')
     args = parser.parse_args()
-    if not 1 <= args.limit <= 185637:
+    if not 1 <= args.limit <= 186930 or not 0 <= args.offset < 186930:
         parser.error('Invalid run limits')
     args.work_dir.mkdir(parents=True,exist_ok=True)
     os.chmod(args.work_dir,0o700)
@@ -180,9 +198,8 @@ def main():
         print(json.dumps({'private_txt_sources_downloaded':count}))
     processed = 0
     batch = []
-    for q in questions():
-        if args.only_id and q['id'] not in args.only_id:
-            continue
+    prepared = json.loads((ROOT/'docs/PG_PREPARED_EXPLANATIONS.json').read_text())
+    for q in select_questions(questions(),args.offset,args.only_id,args.missing_only,prepared):
         old = db.execute('select input_hash,status from results where id=?',(q['id'],)).fetchone()
         if old and old[0] == digest(json.dumps(q,sort_keys=True)) and old[1] != 'error':
             continue
