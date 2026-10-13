@@ -31,7 +31,7 @@ for group in range(0,len(files),6):
  print(f"REVIEW_IMAGE_BEGIN {filename.name}",flush=True);print(base64.b64encode(filename.read_bytes()).decode(),flush=True);print("REVIEW_IMAGE_END",flush=True)
 
 # Review callout endpoints on exact pixels. This is a source figure, not an Android screenshot.
-labels=json.loads(re.search(r"export const MRI_REFERENCE_LABELS[^=]*= ([^\\n]+);",Path("mobile/src/simulator/radiologyAnnotations.ts").read_text()).group(1))
+labels=json.loads(re.search(r"export const MRI_REFERENCE_LABELS[^=]*= ([^\n]+);",Path("mobile/src/simulator/radiologyAnnotations.ts").read_text()).group(1))
 for plane,slice in frames:
  original=Image.open(out/f"mri-{plane}-{slice}.png").convert("RGB")
  image=original.crop((14,42,526,original.height-14))
@@ -52,6 +52,6 @@ for plane,slice in frames:
     if len(line+" "+word)>21 and line:lines.append(line);line=word
     else:line=(line+" "+word).strip()
    if line:lines.append(line)
-   draw.multiline_text((tx,ly-7), "\\n".join(lines),fill="#e1e6ed",spacing=2)
+   draw.multiline_text((tx,ly-7), "\n".join(lines),fill="#e1e6ed",spacing=2)
  filename=out/f"annotated-{plane}-{slice}.png";canvas.save(filename)
  print(f"REVIEW_IMAGE_BEGIN {filename.name}",flush=True);print(base64.b64encode(filename.read_bytes()).decode(),flush=True);print("REVIEW_IMAGE_END",flush=True)
