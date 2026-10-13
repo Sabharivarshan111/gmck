@@ -1,0 +1,10 @@
+import '@fontsource-variable/roboto';
+import React from 'react';
+import {createRoot} from 'react-dom/client';
+import {View} from 'react-native';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {ThemeProvider} from '@/theme';
+import {ErrorBoundary} from '@/components/ErrorBoundary';
+import {NativeRadiology} from '@/simulator/NativeRadiology';
+const metrics={frame:{x:0,y:0,width:window.innerWidth,height:window.innerHeight},insets:{top:0,bottom:0,left:0,right:0}};
+createRoot(document.getElementById('root')!).render(<ErrorBoundary><SafeAreaProvider initialMetrics={metrics}><ThemeProvider initialPreference="dark"><View style={{flex:1,backgroundColor:'#050a12'}}><NativeRadiology/></View></ThemeProvider></SafeAreaProvider></ErrorBoundary>);
