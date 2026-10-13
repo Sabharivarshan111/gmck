@@ -2205,3 +2205,15 @@ PR77 merged as 7526d8f46893d30dfabd7e16bf146cd4ef978eb6. Production deployment d
 Exact head085c81d2898cc9597b721518143439a8dc7ffa33: web build, Vercel-style build, simulator integrity, Vault layout and focused production-mobile-ux all SUCCESS. The older exhaustive mobile-browser-e2e failed: old anatomy/monitor/case/pupil/auscultation/bedside/drawer expectations and a horizontal-scroll ECG assertion against the unchanged captured-sheet implementation. Do not claim every legacy test passed. No physical Android testing, APK build or Play upload for this patch. Android's existing online simulator WebView uses the same URL.
 
 Preview image preserved as ORBIT_ECG_Redesign_Preview.png, Library ID libfile_8ea562d33860819191dc1c73e960b779. The SVG is an original schematic teaching cutaway, not a rotatable3D scan or clinically validated activation map. No further ECG publishing step remains. Preserve unrelated app, PG, security, billing and release changes.
+
+
+## 2026-10-13 — Codex — chest X-ray gallery live, 23 real films
+- **DONE** — PR #79 merged cce8aa68eabe380b29edaa87315e7cc882af8fb2; production dpl_7EjoBQTdxmUKw2sTFMQGAMuCVHdo READY. Live gallery/pleural effusion/pneumothorax and MRI checked.
+- **DONE** — 22 licensed bundled pathology films plus existing normal; matching captions, notes, comparisons, credits, searchable categories and case navigation. Actual image dimensions used for pixel calipers; reset on case changes; MRI retained.
+- **DONE** — All source images visually audited; 2.56 MiB total new images, loaded one at a time. Original licences/metadata in public/clinical-reference/radiology/cases/sources.json; no synthetic radiographs.
+- **DONE** — Radiology CI passed all 23 films at 390px, interaction/caliper and real MRI-plane checks at 360/390/430px; assembled production/native build and simulator/source integrity passed. Local TypeScript/build passed too.
+- **DONE** — Screenshot ORBIT_Xray_Gallery_Preview.png saved as libfile_bc1a8b50a1d88191a21ddd89a742aa0d and delivered. No physical-device or newly installed APK claim.
+- **HALF-DONE** — None in this gallery scope. Wider legacy simulator tests remain distinct from focused verified flows.
+- **NEXT** — No remaining gallery action. Preserve this implementation when continuing other tasks.
+- **DO NOT** — Apply normal PA labels or orientation assumptions to other views. Early miliary TB film is interstitial; emphysema is lateral. A film alone does not confirm TB, malignancy, effusion aetiology or tension physiology.
+- **DO NOT** — Use plain Vite SPA fallback to check /simulator after build:vercel; use radiology-gallery-preview.mjs to mirror the production legacy.html rewrite. Do not redo ECG redesign or touch PG/native/security work.
