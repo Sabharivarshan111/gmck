@@ -22,3 +22,7 @@ for(const [owner,label] of [['heart','Thoracic Duct'],['vagus_nerve','Accessory 
 for(const c of catalog.heart)for(const id of c.partIds)assert(!/colon/i.test(byId.get(id).name),'coronary branches must not resolve to colonic marginal arteries');
 for(const kind of ['arterial','venous'])assert(catalog.kidney.some(c=>c.kind===kind&&c.partIds.length));
 console.log(`${Object.keys(catalog).length} dossiers / ${ids.size} connections: ${registered} registered atlas views, ${schematic} labelled schematics. Source ids and wrong-organ regression checks passed.`);
+
+const view=fs.readFileSync('src/simulator/view/AnatomicalBody3D.tsx','utf8');
+assert(view.includes('mat.customProgramCacheKey = () => `orbit-atlas-v2-${sys.id}`'),'system-specific GLSL must have distinct shader cache keys');
+assert(view.includes('partSurfaceAnchorsRef.current.set(p.id'),'leaders must anchor to source surface vertices');

@@ -1250,6 +1250,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const connectionLayerRef = useRef<HTMLDivElement>(null);
+  const partSurfaceAnchorsRef = useRef<Map<string, THREE.Vector3>>(new Map());
   const connectionAnchorsRef = useRef<THREE.Vector3[]>([]);
   const labelLayerRef = useRef<HTMLDivElement>(null);
   const [cameraViewsOpen, setCameraViewsOpen] = useState(false);
@@ -1679,7 +1680,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
       if (root.dataset.connection !== connection.id || !svg) {
         root.replaceChildren(); root.dataset.connection = connection.id;
         const caption = document.createElement('div');
-        caption.style.cssText = 'position:absolute;left:16px;top:76px;max-width:210px;padding:9px 12px;border:1px solid #779cb5;border-radius:12px;background:#101e2b;color:#e5edf6;font:600 12px/1.5 system-ui';
+        caption.style.cssText = 'position:absolute;left:16px;top:76px;max-width:210px;padding:9px 12px;border:1px solid #779cb5;border-radius:12px;background:#101e2b;color:#e5edf6;font:600 12px/1.5 system-ui;overflow-wrap:anywhere';
         caption.textContent = connection.label;
         const subtitle = document.createElement('small');
         subtitle.style.cssText='display:block;font:400 10px/1.5 system-ui;color:#a9bacb';
@@ -1689,11 +1690,12 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
         svg.setAttribute('aria-hidden','true');svg.style.cssText='position:absolute;inset:0;width:100%;height:100%;overflow:visible';root.appendChild(svg);
       }
       svg.replaceChildren();
+      const startY=76+(root.querySelector('div')?.offsetHeight || 56)+4;
       const colour=connection.kind==='arterial'?'#f0878d':connection.kind==='venous'?'#7db6ed':'#aac5dc';
       points.forEach(p=>{
-        const bend=Math.max(150,p.y-24);
+        const bend=Math.max(startY+18,p.y-24);
         const path=document.createElementNS(ns,'path');
-        path.setAttribute('d',`M34 132 V${bend-6} Q34 ${bend} 40 ${bend} H${p.x-6} Q${p.x} ${bend} ${p.x} ${bend+6} V${p.y}`);
+        path.setAttribute('d',`M34 ${startY} V${bend-6} Q34 ${bend} 40 ${bend} H${p.x-6} Q${p.x} ${bend} ${p.x} ${bend+6} V${p.y}`);
         path.setAttribute('fill','none');path.setAttribute('stroke',colour);path.setAttribute('stroke-width','1.6');path.setAttribute('stroke-linecap','round');
         const tip=document.createElementNS(ns,'path');const dir=p.y>=bend+6?1:-1;
         tip.setAttribute('d',`M${p.x-4} ${p.y-7*dir} L${p.x} ${p.y} L${p.x+4} ${p.y-7*dir}`);
@@ -2014,6 +2016,10 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
             depthWrite: sys.id !== 'integumentary',
           });
 
+          // onBeforeCompile captures system-specific GLSL. Three's default key
+          // only hashes the function text, so otherwise the first system's
+          // translucent context shader gets reused for myocardium and vessels.
+          mat.customProgramCacheKey = () => `orbit-atlas-v2-${sys.id}`;
           mat.onBeforeCompile = (shader) => {
             shader.uniforms.partState = { value: partTexture };
             shader.uniforms.selectionState = { value: selectionTexture };
@@ -2059,14 +2065,14 @@ varying float partSelected;
 
             if (isArterialSys) {
               // SOLID, 100% OPAQUE, DEEP ARTERIAL SCARLET RED (NO ACES ORANGE SHIFT)
-              selectedColorGlsl = 'diffuseColor.rgb = vec3(0.96, 0.02, 0.02);\n' +
+              selectedColorGlsl = 'diffuseColor.rgb = vec3(0.70, 0.018, 0.024);\n' +
                                   'diffuseColor.a = 1.0;\n';
-              selectedEmissiveGlsl = 'totalEmissiveRadiance = vec3(0.18, 0.005, 0.005);\n';
+              selectedEmissiveGlsl = 'totalEmissiveRadiance = vec3(0.06, 0.002, 0.002);\n';
             } else if (isVenousSys) {
               // VIVID DEEP ROYAL COBALT BLUE (SLASHED GREEN TO PREVENT CYAN BLEED)
-              selectedColorGlsl = 'diffuseColor.rgb = vec3(0.04, 0.18, 0.88);\n' +
+              selectedColorGlsl = 'diffuseColor.rgb = vec3(0.035, 0.16, 0.52);\n' +
                                   'diffuseColor.a = 1.0;\n';
-              selectedEmissiveGlsl = 'totalEmissiveRadiance = vec3(0.01, 0.03, 0.20);\n';
+              selectedEmissiveGlsl = 'totalEmissiveRadiance = vec3(0.008, 0.018, 0.06);\n';
             } else if (isNervousSys) {
               // BRILLIANT SATURATED GOLDEN AMBER (HIGH VISIBILITY OVER MYOCARDIUM)
               selectedColorGlsl = 'diffuseColor.rgb = vec3(1.0, 0.72, 0.02);\n' +
@@ -2082,7 +2088,7 @@ varying float partSelected;
             let contextColorGlsl = '';
             if (isCardiacSys) {
               // Opaque myocardium provides clean context for surface coronary vessels.
-              contextColorGlsl = 'diffuseColor.rgb = vec3(0.42, 0.10, 0.12);\n' +
+              contextColorGlsl = 'diffuseColor.rgb = vec3(0.14, 0.022, 0.028);\n' +
                                  'diffuseColor.a = 1.0;\n';
             } else {
               contextColorGlsl = 'diffuseColor.rgb = diffuseColor.rgb * 0.75;\n' +
@@ -2167,6 +2173,18 @@ varying float partSelected;
             new THREE.BufferAttribute(new Int16Array(buffer, p.normals, p.vertexCount * 3), 3, true)
           );
           geom.setIndex(new THREE.BufferAttribute(new Uint32Array(buffer, p.indices, p.indexCount), 1));
+          // Keep one real surface vertex per source part for callouts. A box
+          // centre can sit in empty space between branches of a vessel.
+          const positions = geom.getAttribute('position');
+          const center = bounds[partIdx].getCenter(new THREE.Vector3());
+          let nearest = 0, distance = Infinity;
+          for (let v = 0; v < positions.count; v++) {
+            const x=positions.getX(v), y=positions.getY(v), z=positions.getZ(v);
+            if (z < center.z) continue;
+            const d=(x-center.x)**2+(y-center.y)**2+(z-center.z)**2;
+            if (d < distance) { nearest=v;distance=d; }
+          }
+          partSurfaceAnchorsRef.current.set(p.id,new THREE.Vector3().fromBufferAttribute(positions,nearest));
           geom.boundingBox = bounds[partIdx].clone();
           geom.computeBoundingSphere();
 
@@ -2566,6 +2584,7 @@ varying float partSelected;
       controls.dispose();
       if (labelLayerRef.current) labelLayerRef.current.replaceChildren();
       connectionLayerRef.current?.replaceChildren();
+      partSurfaceAnchorsRef.current.clear();
       floatingLabelTargets = [];
       prepareLabelsRef.current = null;
 
@@ -2588,6 +2607,7 @@ varying float partSelected;
       scene.traverse((obj) => {
         if (obj instanceof THREE.Mesh) {
           if (obj.geometry) obj.geometry.dispose();
+          if (obj.userData.overviewMaterial && obj.userData.overviewMaterial !== obj.material) obj.userData.overviewMaterial.dispose();
           if (Array.isArray(obj.material)) {
             obj.material.forEach((m) => m.dispose());
           } else if (obj.material) {
@@ -3857,7 +3877,7 @@ varying float partSelected;
       .sort((a,b) => {
         const volume = (p:Part) => (p.bounds[1][0]-p.bounds[0][0])*(p.bounds[1][1]-p.bounds[0][1])*(p.bounds[1][2]-p.bounds[0][2]);
         return volume(b)-volume(a);
-      }).slice(0,3).map(p => new THREE.Vector3().addVectors(new THREE.Vector3(...p.bounds[0]),new THREE.Vector3(...p.bounds[1])).multiplyScalar(.5)) : [];
+      }).slice(0,3).map(p => partSurfaceAnchorsRef.current.get(p.id)?.clone() || new THREE.Vector3().addVectors(new THREE.Vector3(...p.bounds[0]),new THREE.Vector3(...p.bounds[1])).multiplyScalar(.5)) : [];
 
     // Keep 3D scene clean without cartoon pointer rings or cones
     if (selectionPointerRef.current) {

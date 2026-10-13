@@ -13,10 +13,10 @@ export function OrganConnections({organKey,organName,mode,onInspect,light}:Props
   const title=mode==='supply'?'Vessels & blood flow':'Anatomical neighbours';
   const colour=diagram?.kind==='arterial'?'#ee8d91':diagram?.kind==='venous'?'#87b8ef':'#aac5dc';
   return <section className={`organ-connections ${light?'oc-light':''}`} data-testid={`organ-connections-${organKey}-${mode}`}>
-    <header><small>CONNECTED ANATOMY</small><h3>{title} <span>{links.length}</span></h3><p>Choose a structure to inspect it with the organ. Red marks arteries; blue marks veins.</p></header>
+    <header><small>CONNECTED ANATOMY</small><h3>{title} <span>{links.length}</span></h3><p>Inspect vessels and nearby structures. Red marks arteries; blue marks veins.</p></header>
     {groups.map(group=><div className="oc-group" key={group}><h4>{group}</h4><div className="oc-grid">{links.filter(c=>c.direction===group).map(c=><div key={c.id}>
       <button type="button" className={`oc-card oc-${c.kind}`} data-testid={`inspect-${c.id}`} aria-label={`Show ${c.label} ${c.targetId?'in 3D':'diagram'}`} onClick={()=>c.targetId?onInspect(c.id,c.owner):setDiagram(c)}>
-        <i aria-hidden="true"/><span><strong>{c.label}</strong><small>{c.targetId?'3D · with organ context':'Teaching diagram'}</small></span><ArrowUpRight size={17} aria-hidden="true"/>
+        <i aria-hidden="true"/><span><strong>{c.label}</strong><small>{c.targetId?'3D anatomy':'Teaching diagram'}</small></span><ArrowUpRight size={17} aria-hidden="true"/>
       </button>
       {mode==='supply'&&<details className="oc-note"><summary>Course & drainage</summary><p>{c.note}</p></details>}
     </div>)}</div></div>)}
