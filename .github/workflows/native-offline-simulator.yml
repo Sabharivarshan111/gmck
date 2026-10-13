@@ -1,0 +1,88 @@
+name: Native offline simulator verification
+on:
+  push:
+    branches: [codex/native-offline-simulator]
+    paths:
+      - 'mobile/**'
+      - 'src/simulator/**'
+      - 'scripts/build-native-simulator*'
+      - '.github/workflows/native-offline-simulator.yml'
+  workflow_dispatch:
+concurrency:
+  group: native-offline-simulator-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            mobile/package-lock.json
+      - name: Install source asset build dependencies
+        run: npm ci --legacy-peer-deps
+      - name: Install native dependencies
+        working-directory: mobile
+        run: npm ci --legacy-peer-deps
+      - name: Build complete offline source assets
+        run: |
+          node scripts/build-pg-compact.mjs
+          node scripts/check-pg-release-content.mjs
+          node --experimental-strip-types scripts/build-native-simulator-assets.mjs
+      - name: Typecheck native screens
+        working-directory: mobile
+        run: npx tsc --noEmit
+      - name: Check Kotlin module contracts
+        working-directory: mobile
+        run: npm run check:kotlin
+      - name: Disable ads in verification build
+        working-directory: mobile
+        run: printf 'export const ADS_ENABLED = false;\n' > src/lib/adsMode.ts
+      - name: Install the SDK components the build pins
+        run: |
+          set -euo pipefail
+          SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          SDKM="$SDK/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKM" --licenses > /dev/null 2>&1 || true
+          install_one() {
+            for candidate in "$@"; do
+              if "$SDKM" "$candidate"; then
+                echo "installed $candidate"
+                return 0
+              fi
+            done
+            echo "::error::none of these could be installed: $*"
+            return 1
+          }
+          [ -d "$SDK/platforms/android-37" ] || [ -d "$SDK/platforms/android-37.0" ] \
+            || install_one "platforms;android-37.0" "platforms;android-37"
+          [ -d "$SDK/build-tools/37.0.0" ] || install_one "build-tools;37.0.0"
+          [ -d "$SDK/ndk/27.1.12297006" ] || install_one "ndk;27.1.12297006"
+
+
+      - name: Compile actual Android Kotlin
+        working-directory: mobile/android
+        run: ./gradlew :app:compileDebugKotlin --no-daemon --stacktrace
+      - name: Bundle native JavaScript
+        working-directory: mobile
+        run: npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output /tmp/native-simulator.js --assets-dest /tmp/native-simulator-assets
+      - name: Lint native code
+        working-directory: mobile
+        run: npx eslint src/screens/SimulatorScreen.tsx src/simulator src/native/OrbitAnatomy.tsx src/native/OrbitMRI.tsx src/native/OrbitPOCUS.tsx --quiet
+      - name: Save asset size audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-offline-asset-audit
+          path: docs/native-simulator/asset-size.json
