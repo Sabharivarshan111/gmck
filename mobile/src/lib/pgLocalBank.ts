@@ -4,7 +4,7 @@ import {PG_COMPACT, PG_COMPACT_BYTES} from './pgCompact/manifest';
 export {PG_COMPACT, PG_COMPACT_BYTES};
 export type PgOfflinePack={id:string;exam:string;year:number|null;subject?:string;count:number;load?:()=>Promise<{default:PgQuestion[]}>};
 export type PgOfflineSearch={exam:string;year:number|null;search:string;subject?:string|null;chapter?:string|null;limit?:number;offset?:number};
-type PackData={subject:string;chapters:string[];rows:[string,string,string,string,string,number,string,number][]};
+type PackData={subject:string;chapters:string[];rows:[string,string,string,string,string,number,string,number,number?][]};
 const cache=new Map<string,Promise<PackData>>();
 let generation=0;
 export function getPgOfflinePacks(): readonly PgOfflinePack[]{
@@ -45,7 +45,7 @@ export async function searchOfflinePgQuestions(input:PgOfflineSearch):Promise<{q
       const r=data.rows[index];const chapter=data.chapters[r[7]];
       if(input.chapter&&chapter!==input.chapter)continue;
       if(search&&![r[0],r[1],r[2],r[3],r[4],r[6],meta.subject,chapter].join(' ').toLocaleLowerCase().includes(search))continue;
-      if(total>=offset&&questions.length<limit)questions.push({id:'medmcqa-practice-'+meta.id+'-'+index,exam:'GENERAL_MEDICAL',year:null,subject:meta.subject,chapter,question:r[0],options:r.slice(1,5) as string[],answer:'ABCD'[r[5]],explanation:r[6],record_type:'licensed_practice_dataset',source_url:'https://github.com/medmcqa/medmcqa',answer_reference:'MedMCQA supplied answer key; not independently medically reviewed.'});
+      if(total>=offset&&questions.length<limit)questions.push({id:'medmcqa-practice-'+meta.id+'-'+(r[8]??index),exam:'GENERAL_MEDICAL',year:null,subject:meta.subject,chapter,question:r[0],options:r.slice(1,5) as string[],answer:'ABCD'[r[5]],explanation:r[6],record_type:'licensed_practice_dataset',source_url:'https://github.com/medmcqa/medmcqa',answer_reference:'MedMCQA supplied answer key; not independently medically reviewed.'});
       total++;
       if(!search&&questions.length>=limit)return{questions,total:fastTotal!,packsScanned:scanned};
     }

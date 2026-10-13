@@ -2180,3 +2180,17 @@ Owner requested a separate NEET-PG practice card in Vault and publisher attribut
 User rejected Gemini generation. No new model endpoint was deployed, and the temporary model endpoint source was removed before commit. Added stdlib Python private TXT download/SQLite retrieval and a ten-question runner. Private evidence staging migration private_pg_evidence_preparation applied; RLS enabled, all client roles denied. 42 TXT files total 41,441,912 bytes. Authoring is done by assistant from retrieved evidence, not by script/model APIs. Four failure/index/identity tests passed; no full-bank medical verification or completed explanation coverage is claimed. Source name/source link in expanded licensed practice cards hidden; attribution stays About. See docs/PG_EXPLANATION_PREPARATION_20261013.md.
 
 Pilot run 38296147380 succeeded: downloaded all 42 TXT, processed ten question/evidence sets, zero model calls. Evidence batch 6d923b147f8da31e9ee5660a648d43e44b375b34 is private. Assistant read it; TIVA retrieval exposed unrelated generic matches, so primary-concept anchoring was added and regression tested. Five authored provisional explanations now in docs/PG_PREPARED_EXPLANATIONS.json; build validates exact question/options/key before applying them. Four previously missing explanations filled and one existing explanation replaced. Counts: 51,136 with explanation; 134,501 missing. Data 8,734,881 bytes. PG live Textbook AI tab/button removed by owner instruction; no provider call on reveal. Full-bank work remains unfinished. Five Python tests plus 185,637-record codec/filter/runtime checks passed.
+
+## 2026-10-13 — PG explanation continuation and medical hold
+
+### DONE
+Nine more source-checked provisional authored explanations (s00-0,1,3,7,11,13,15,16,19), fourteen authored total. Six missing filled, three existing replaced. Ketamine-route s00-6 held from practice because trials contradict absolute SC exclusion. Holds validate exact identity; optional original ordinal preserves later question IDs. Batch offset/missing-only selection and unique run-attempt private evidence IDs added; no model calls. Current 185,636 practice records, 51,141 explanations, 134,495 missing; 8,744,604 bytes. Python six tests and full codec/search/filter/pagination runtime verification passed. Publication/CI outcomes should be checked against final commit.
+
+### HALF-DONE
+Full-bank explanation coverage and independent clinical review remain incomplete. Script retrieves evidence; assistant must reason and author supported explanations. Existing supplied answers/explanations are not all verified. Next pilot eligible offset 9 includes the post-MI abdominal pain vignette, which needs modern imaging context, not blind endorsement of an older key.
+
+### NEXT
+Read new private evidence batch after successful CI pilot; continue supported authoring. Check remaining ambiguous/outdated questions before publishing. Verify exact production deployment and Android build separately.
+
+### DO NOT
+Use Gemini/model APIs for this job; claim perfect medical answers or legal immunity; publish private TXT/passages; reset remaining IDs when holding a row; claim all historic NEET-PG/FMGE/INI-CET years are verified. Attribution remains About. Frozen root src is unchanged.

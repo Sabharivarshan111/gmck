@@ -9,6 +9,10 @@ p=importlib.util.module_from_spec(spec)
 spec.loader.exec_module(p)
 
 class PipelineTests(unittest.TestCase):
+    def test_batch_selection_skips_prepared_and_keeps_original_ids(self):
+        items=[{'id':str(i),'existing_explanation':'existing' if i==1 else ''} for i in range(5)]
+        self.assertEqual([q['id'] for q in p.select_questions(items,1,missing_only=True,prepared_ids={'2'})],['3','4'])
+        self.assertEqual([q['id'] for q in p.select_questions(items,only_ids={'4'})],['4'])
     def test_rejects_disagreement_fabricated_evidence_and_copying(self):
         q={'supplied_answer':'B'}
         passage={'id':'known','text':' '.join('word'+str(i) for i in range(60))}
@@ -44,8 +48,11 @@ class PipelineTests(unittest.TestCase):
             db.close()
     def test_ids_cover_published_bank_and_tiva_example(self):
         questions=list(p.questions())
-        self.assertEqual(len(questions),185637)
-        self.assertEqual(len({q['id'] for q in questions}),185637)
+        self.assertEqual(len(questions),185636)
+        self.assertEqual(len({q['id'] for q in questions}),185636)
+        self.assertNotIn('medmcqa-practice-s00-6',{q['id'] for q in questions})
+        following=next(q for q in questions if q['id']=='medmcqa-practice-s00-7')
+        self.assertIn('intracranial',following['question'])
         tiva=next(q for q in questions if 'Total Infra' in q['question'] and 'TIVA' in q['question'])
         self.assertEqual(tiva['supplied_answer'],'B')
 

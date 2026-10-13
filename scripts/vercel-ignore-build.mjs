@@ -19,7 +19,7 @@ if (files.length === 0) process.exit(0);
 
 const nonRuntime = files.every((file) => {
   // Prepared explanations are build input, even though their audit file lives in docs.
-  if (file === 'docs/PG_PREPARED_EXPLANATIONS.json') return false;
+  if (['docs/PG_PREPARED_EXPLANATIONS.json', 'docs/PG_MEDICAL_REVIEW_HOLDS.json'].includes(file)) return false;
   return (
     file === 'HANDOFF.md' ||
     file === 'README.md' ||

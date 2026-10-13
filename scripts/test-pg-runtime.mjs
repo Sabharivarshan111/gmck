@@ -18,20 +18,24 @@ function load(file){
  },m,m.exports);return m.exports;
 }
 const reader=load('mobile/src/lib/pgLocalBank.ts'),manifest=reader.PG_COMPACT;
-assert.equal(manifest.total,185637);assert.equal(reader.getPgOfflinePacks().length,21);assert.ok(reader.PG_COMPACT_BYTES<10000000);
+assert.equal(manifest.total,185636);assert.equal(reader.getPgOfflinePacks().length,21);assert.ok(reader.PG_COMPACT_BYTES<10000000);
 let count=0;
 for(const p of manifest.packs){
  const packed=fs.readFileSync('public/pg/'+p.id+'-'+p.sha256.slice(0,12)+'.zst');assert.ok(Buffer.from(decompress(packed)).equals(zlib.zstdDecompressSync(packed)),'Browser/native codecs differ');
  const d=JSON.parse(zlib.zstdDecompressSync(packed));assert.equal(d.rows.length,p.count);
- for(const r of d.rows){assert.equal(r.length,8);assert.ok(r[5]>=0&&r[5]<=3);assert.equal(new Set(r.slice(1,5).map(o=>o.trim().toLocaleLowerCase())).size,4);assert.ok(d.chapters[r[7]]);count++;}
+ for(const r of d.rows){assert.ok(r.length===8||r.length===9);assert.ok(r[8]===undefined||(Number.isInteger(r[8])&&r[8]>=0));assert.ok(r[5]>=0&&r[5]<=3);assert.equal(new Set(r.slice(1,5).map(o=>o.trim().toLocaleLowerCase())).size,4);assert.ok(d.chapters[r[7]]);count++;}
  const first=await reader.searchOfflinePgQuestions({exam:'NEET_PG',year:null,search:'',subject:p.subject,limit:40});assert.equal(first.total,p.count);assert.ok(first.questions.length>0);
  const chapter=p.chapters.find(c=>c.count>0);const filtered=await reader.searchOfflinePgQuestions({exam:'FMGE',year:null,search:'',subject:p.subject,chapter:chapter.name});assert.equal(filtered.total,chapter.count);assert.ok(filtered.questions.every(q=>q.chapter===chapter.name));
 }
-assert.equal(count,185637);
+assert.equal(count,185636);
+assert.equal(manifest.medicalHolds,1);
+const held=await reader.searchOfflinePgQuestions({exam:'NEET_PG',year:null,subject:'Anaesthesia',search:'Ketamine can be given by all'});assert.equal(held.total,0);
+const following=await reader.searchOfflinePgQuestions({exam:'NEET_PG',year:null,subject:'Anaesthesia',search:'Which anaesthetic agent increases intracranial'});assert.equal(following.questions[0].id,'medmcqa-practice-s00-7');assert.ok(following.questions[0].explanation.includes('potential effect'));
+
 const tiva=await reader.searchOfflinePgQuestions({exam:'NEET_PG',year:null,subject:'Anaesthesia',search:'Total Infra'});
 assert.ok(tiva.questions.some(q=>q.id==='medmcqa-practice-s00-4'&&q.answer==='B'&&q.explanation.includes('conventional propofol-based')));
 const first=await reader.searchOfflinePgQuestions({exam:'ALL',year:null,search:'',offset:0});
-const second=await reader.searchOfflinePgQuestions({exam:'ALL',year:null,search:'',offset:40});assert.ok(second.questions.every(q=>!first.questions.some(p=>p.id===q.id)));assert.equal(first.total,185637);
+const second=await reader.searchOfflinePgQuestions({exam:'ALL',year:null,search:'',offset:40});assert.ok(second.questions.every(q=>!first.questions.some(p=>p.id===q.id)));assert.equal(first.total,185636);
 assert.deepEqual(await reader.searchOfflinePgQuestions({exam:'NEET_PG',year:2026,search:''}),{questions:[],total:0,packsScanned:0});
 const exact=first.questions[0];const found=await reader.searchOfflinePgQuestions({exam:'INI_CET',year:null,subject:exact.subject,search:exact.question});assert.ok(found.questions.some(q=>q.id===exact.id));
 assert.ok(first.questions.every(q=>q.year===null&&q.record_type==='licensed_practice_dataset'));
