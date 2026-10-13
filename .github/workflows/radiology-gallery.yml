@@ -29,7 +29,7 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: Exercise all films and real MRI planes at phone widths
         run: |
-          npm run preview -- --host 127.0.0.1 --port 4180 > /tmp/radio-preview.log 2>&1 &
+          node scripts/radiology-gallery-preview.mjs > /tmp/radio-preview.log 2>&1 &
           for attempt in $(seq 1 30); do
             if curl -fsS http://127.0.0.1:4180/simulator >/dev/null; then break; fi
             sleep 1
