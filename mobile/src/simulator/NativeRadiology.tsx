@@ -29,6 +29,9 @@ export function NativeRadiology(){
  const aspect=mode==='mri'?dimensions[u]*spacing[u]/(dimensions[v]*spacing[v]):imageAspect;
  const rect=fittedImage(size.width,size.height,aspect,margin,zoom,pan.x,pan.y);
  const refs=mode==='mri'?(MRI_REFERENCE_LABELS[plane+':'+slice]||[]):current.id==='normal'?normal:(XRAY_REFERENCE_LABELS[current.id]||[]);
+ const allLabels=[...refs,...personal];
+ const sideCount=Math.max(allLabels.filter(p=>p.x<.5).length,allLabels.filter(p=>p.x>=.5).length);
+ const stageHeight=Math.max(260,Math.min(720,(size.width-2*margin)/aspect*(mode==='mri'?1.3:1)+32),Math.min(720,(sideCount+1)*54));
  const state=useRef({rect,mark,pan,key});
  state.current={rect,mark,pan,key};
  const gestureStart=useRef({x:0,y:0});
@@ -40,21 +43,21 @@ export function NativeRadiology(){
   onPanResponderRelease:(e,g)=>{if(state.current.mark&&Math.hypot(g.dx,g.dy)<8){const p=sourcePoint(state.current.rect,e.nativeEvent.locationX,e.nativeEvent.locationY);if(p.x>=0&&p.x<=1&&p.y>=0&&p.y<=1){setDraft(p);setName('');}}},
  }),[]);
  useEffect(()=>{let live=true;setPersonal([]);void AsyncStorage.getItem(storageKey).then(raw=>{if(!live||!raw)return;try{const items=JSON.parse(raw);if(Array.isArray(items))setPersonal(items.filter(p=>p.provenance==='personal'&&typeof p.name==='string'&&Number.isFinite(p.x)&&Number.isFinite(p.y)&&p.x>=0&&p.x<=1&&p.y>=0&&p.y<=1).slice(0,16));}catch{/* Bad local data does not affect reference images. */}});return()=>{live=false;};},[storageKey]);
- const reset=()=>{setZoom(1);setPan({x:0,y:0});setContrast(1);setDraft(null);setSelected(null);};
+ const reset=(nextMode:typeof mode=mode)=>{setZoom(nextMode==='mri'?1.3:1);setPan({x:0,y:0});setContrast(1);setDraft(null);setSelected(null);};
  const saveLabel=()=>{if(!draft||!name.trim())return;const items=[...personal,{...draft,id:String(Date.now()),name:name.trim().slice(0,80),note:'Personal study label. Not an expert-verified anatomical annotation.',provenance:'personal' as const}].slice(-16);setPersonal(items);void AsyncStorage.setItem(storageKey,JSON.stringify(items));setDraft(null);setMark(false);};
  const uri=Platform.OS==='android'?'asset:/simulator/'+current.image.replace('/clinical-reference/',''):'/native-simulator/'+current.image.replace('/clinical-reference/','');
  useEffect(()=>{let live=true;Image.getSize(uri,(width,height)=>{if(live&&width>0&&height>0)setImageAspect(width/height);},()=>undefined);return()=>{live=false;};},[uri]);
  return <ScrollView contentContainerStyle={ui.page}>
-  <View style={ui.row}><Action label="Chest X-ray" selected={mode==='xray'} onPress={()=>{setMode('xray');reset();}}/><Action label="Brain MRI" selected={mode==='mri'} onPress={()=>{setMode('mri');reset();}}/></View>
+  <View style={ui.row}><Action label="Chest X-ray" selected={mode==='xray'} onPress={()=>{setMode('xray');reset('xray');}}/><Action label="Brain MRI" selected={mode==='mri'} onPress={()=>{setMode('mri');reset('mri');}}/></View>
   <Copy muted>Acquired teaching reference · independent of the simulated patient.</Copy>
   {mode==='xray'?<><Card title={current.title}><Copy>{current.context}</Copy><Action label="Choose X-ray case" onPress={()=>setChoose(true)}/></Card><View style={ui.row}><Action label="Previous film" disabled={index===0} onPress={()=>{setIndex(index-1);reset();}}/><Copy>{index+1} / {chestXrayCases.length}</Copy><Action label="Next film" disabled={index===chestXrayCases.length-1} onPress={()=>{setIndex(index+1);reset();}}/></View></>:<><View style={ui.row}>{Object.keys(axes).map(p=><Action key={p} label={p} selected={plane===p} onPress={()=>{setPlane(p as keyof typeof axes);setSlice(Math.floor(dimensions[axes[p as keyof typeof axes][2]]/2));reset();}}/>)}</View><Slider label="MRI slice" min={0} max={dimensions[s]-1} step={1} value={slice} onChange={setSlice} format={n=>`${n+1} / ${dimensions[s]}`}/><View style={ui.row}><Action label="Reviewed axial landmarks" onPress={()=>{setPlane('axial');setSlice(64);reset();}}/><Action label="Reviewed coronal landmarks" onPress={()=>{setPlane('coronal');setSlice(64);reset();}}/><Action label="Reviewed sagittal landmarks" onPress={()=>{setPlane('sagittal');setSlice(56);reset();}}/></View><Slider label="MRI contrast" min={.4} max={2.5} step={.1} value={contrast} format={n=>n.toFixed(1)+'×'} onChange={setContrast}/></>}
   <View style={ui.row}><Action label={labels?'Hide labels':'Show labels'} onPress={()=>setLabels(!labels)}/><Action label={mark?'Tap image to mark':'Add study label'} selected={mark} onPress={()=>{setLabels(true);setMark(!mark);}}/><Action label="Reset view" onPress={reset}/></View>
-  <View testID="radiology-image-stage" style={styles.stage} onLayout={e=>setSize({width:e.nativeEvent.layout.width,height:e.nativeEvent.layout.height})}>
+  <View testID="radiology-image-stage" style={[styles.stage,{height:stageHeight}]} onLayout={e=>setSize({width:e.nativeEvent.layout.width,height:e.nativeEvent.layout.height})}>
    <View {...responder.panHandlers} style={StyleSheet.absoluteFill}><View pointerEvents="none" style={{position:'absolute',left:margin,right:margin,top:0,bottom:0,overflow:'hidden'}}>
     {mode==='xray'?<Image accessibilityLabel={current.alt} source={{uri}} resizeMode="stretch" style={{position:'absolute',left:rect.x-margin,top:rect.y,width:rect.width,height:rect.height}} onLoad={e=>{const img=e.nativeEvent.source;if(img?.width&&img?.height)setImageAspect(img.width/img.height);}}/>:<OrbitMRI accessibilityLabel={`T1 ${plane}, slice ${slice+1}; radiological orientation`} plane={plane} slice={slice} contrast={contrast} zoom={zoom} style={{position:'absolute',left:pan.x,right:-pan.x,top:pan.y,bottom:-pan.y}}/>}
    </View></View>
-   {labels&&<ImageCallouts items={[...refs,...personal]} rect={rect} width={size.width} height={size.height} margin={margin} onSelect={setSelected}/>}
-   {(mode==='mri'&&plane!=='sagittal')||(mode==='xray'&&current.orientation)?<View pointerEvents="none" style={styles.orientation}><Text style={{color:'#ced4da'}}>R</Text><Text style={{color:'#ced4da'}}>L</Text></View>:null}
+   {labels&&<ImageCallouts items={allLabels} rect={rect} width={size.width} height={size.height} margin={margin} onSelect={setSelected}/>}
+   {(mode==='mri'&&plane!=='sagittal')||(mode==='xray'&&current.orientation)?<View pointerEvents="none" style={[styles.orientation,{left:margin+4,right:margin+4}]}><Text style={{color:'#ced4da'}}>R</Text><Text style={{color:'#ced4da'}}>L</Text></View>:null}
   </View>
   <Slider label="Image zoom" min={1} max={3} step={.1} value={zoom} format={n=>n.toFixed(1)+'×'} onChange={setZoom}/>
   {selected&&<Card title={selected.name}><Copy>{selected.note}</Copy>{selected.provenance==='personal'&&<Action label="Delete this study label" onPress={()=>{const next=personal.filter(p=>p.id!==selected.id);setPersonal(next);void AsyncStorage.setItem(storageKey,JSON.stringify(next));setSelected(null);}}/>}</Card>}
@@ -66,4 +69,4 @@ export function NativeRadiology(){
   </Sheet>
  </ScrollView>;
 }
-const styles=StyleSheet.create({stage:{height:520,backgroundColor:'#050a12',overflow:'hidden',borderRadius:16,marginHorizontal:-12},orientation:{position:'absolute',left:90,right:90,top:12,flexDirection:'row',justifyContent:'space-between'},input:{minHeight:44,borderWidth:1,borderRadius:12,padding:12,marginVertical:12},case:{minHeight:60,paddingVertical:12,gap:4}});
+const styles=StyleSheet.create({stage:{backgroundColor:'#050a12',overflow:'hidden',borderRadius:16,marginHorizontal:-12},orientation:{position:'absolute',left:90,right:90,top:12,flexDirection:'row',justifyContent:'space-between'},input:{minHeight:44,borderWidth:1,borderRadius:12,padding:12,marginVertical:12},case:{minHeight:60,paddingVertical:12,gap:4}});
