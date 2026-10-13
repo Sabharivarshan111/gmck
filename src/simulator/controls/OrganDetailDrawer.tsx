@@ -270,7 +270,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
           isLight
             ? 'bg-white/95 text-slate-900 border-l border-slate-200 shadow-2xl'
             : 'bg-slate-900/95 text-slate-100 border-l border-slate-800 shadow-2xl'
-        } backdrop-blur-2xl flex flex-col anatomy-detail-sheet rounded-t-3xl md:rounded-none overflow-hidden transition-all duration-300 ease-out z-10`}
+        } flex flex-col anatomy-detail-sheet rounded-t-3xl md:rounded-none overflow-hidden transition-all duration-300 ease-out z-10`}
       >
         {/* Mobile Drag Pill */}
         <button type="button" aria-label={isMobileExpanded ? "Collapse anatomy details" : "Expand anatomy details"}
@@ -454,7 +454,10 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                 data-testid={`organ-drawer-tab-${tab.id}`}
                 role="tab"
                 aria-selected={isCurrent}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => {
+                  setActiveTab(tab.id as typeof activeTab);
+                  if (window.innerWidth < 768 && (tab.id === 'vascular' || tab.id === 'relations')) setIsMobileExpanded(true);
+                }}
                 className={`px-1 py-2 rounded-xl text-[10px] sm:text-xs font-bold flex flex-col sm:flex-row items-center justify-center gap-1 min-w-0 min-h-[44px] transition-all ${
                   isCurrent
                     ? isLight

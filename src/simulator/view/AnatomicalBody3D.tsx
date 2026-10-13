@@ -1681,7 +1681,9 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
         root.replaceChildren(); root.dataset.connection = connection.id;
         const caption = document.createElement('div');
         caption.style.cssText = 'position:absolute;left:16px;top:76px;max-width:210px;padding:9px 12px;border:1px solid #779cb5;border-radius:12px;background:#101e2b;color:#e5edf6;font:600 12px/1.5 system-ui;overflow-wrap:anywhere';
-        caption.textContent = connection.label;
+        const title = document.createElement('strong');
+        title.textContent = connection.label;
+        caption.appendChild(title);
         const subtitle = document.createElement('small');
         subtitle.style.cssText='display:block;font:400 10px/1.5 system-ui;color:#a9bacb';
         subtitle.textContent=connection.kind==='relation'?connection.direction+' relation':connection.kind==='arterial'?'Arterial supply · registered atlas':'Venous drainage · registered atlas';
