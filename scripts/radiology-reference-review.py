@@ -5,14 +5,15 @@ titles=["Pneumothorax_CXR.jpg","Effusionhalf.PNG","Pulmonary_oedema.jpg","X-ray_
 rows=[]
 def get(url):
  req=urllib.request.Request(url,headers={"User-Agent":"ORBITTeachingGallery/1.0 (educational; Wikimedia attribution)"})
- for attempt in range(5):
+ for attempt in range(2):
   try: return urllib.request.urlopen(req,timeout=60)
   except Exception as e:
-   if attempt==4: raise
-   print("Retry",str(e),flush=True);time.sleep(15*(attempt+1))
-time.sleep(30)
-query="https://commons.wikimedia.org/w/api.php?"+urllib.parse.urlencode({"action":"query","format":"json","titles":"|".join("File:"+t for t in titles),"prop":"imageinfo","iiprop":"url|extmetadata"})
+   if attempt==1: raise
+   print("Retry",str(e),flush=True);time.sleep(10)
+time.sleep(5)
+query="https://commons.wikimedia.org/w/api.php?"+urllib.parse.urlencode({"action":"query","format":"json","titles":"|".join("File:"+t for t in titles),"prop":"imageinfo","iiprop":"url|extmetadata","iiurlwidth":"960"})
 pages=json.load(get(query))["query"]["pages"]
+(out/"all-source-metadata.json").write_text(json.dumps(pages,indent=2))
 lookup={p["title"].replace(" ","_"):p for p in pages.values()}
 for i,title in enumerate(titles):
  try:
@@ -22,13 +23,16 @@ for i,title in enumerate(titles):
   license=row["metadata"].get("LicenseShortName","")
   if not any(s in license.lower() for s in ["cc0","cc by","public domain"]): raise Exception("Unaccepted licence: "+license)
   if "nc" in license.lower() or "nd" in license.lower(): raise Exception("Restricted licence")
-  b=get(info["url"]).read(); (out/(str(i)+".original")).write_bytes(b)
+  download=info.get("thumburl",info["url"])
+  download=download.replace("upload.wikimedia.org/wikipedia/commons/thumb/","thumb.wikimedia.org/wikipedia/commons/thumb/")
+  b=get(download).read(); (out/(str(i)+".original")).write_bytes(b)
   im=Image.open(out/(str(i)+".original")).convert("RGB"); im.thumbnail((1400,1400))
   im.save(out/(str(i)+".jpg"),quality=90)
   row["width"],row["height"]=im.size;rows.append(row)
+  (out/"metadata.json").write_text(json.dumps(rows,indent=2))
   print("OK",i,title,license,flush=True)
  except Exception as e: print("SKIP",i,title,str(e),flush=True)
- time.sleep(8)
+ time.sleep(2)
 (out/"metadata.json").write_text(json.dumps(rows,indent=2))
 thumbs=Image.new("RGB",(1000,((len(rows)+3)//4)*300),"#111111");draw=ImageDraw.Draw(thumbs)
 for n,row in enumerate(rows):
