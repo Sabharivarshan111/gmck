@@ -1,0 +1,41 @@
+name: ORBIT Connected Anatomy
+on:
+  push:
+    paths: ['src/simulator/data/organConnections.ts', 'src/simulator/controls/OrganConnections*', 'src/simulator/controls/OrganDetailDrawer.tsx', 'src/simulator/view/AnatomicalBody3D.tsx', 'scripts/organ-connections*', 'scripts/build-organ-connections.mjs', '.github/workflows/organ-connections.yml']
+  pull_request:
+    paths: ['src/simulator/data/organConnections.ts', 'src/simulator/controls/OrganConnections*', 'src/simulator/controls/OrganDetailDrawer.tsx', 'src/simulator/view/AnatomicalBody3D.tsx', 'scripts/organ-connections*', 'scripts/build-organ-connections.mjs', '.github/workflows/organ-connections.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --legacy-peer-deps --ignore-scripts --no-audit --no-fund
+      - run: node --experimental-strip-types scripts/organ-connections-check.mjs
+      - run: npm run check:simulator
+      - run: npm run check:simulator-mobile
+      - run: npm run check:simulator-assets
+      - run: npx tsc -p tsconfig.app.json --noEmit
+      - run: npm run build
+      - run: npm install --no-save --package-lock=false --legacy-peer-deps playwright@1.55.0
+      - run: npx playwright install --with-deps chromium
+      - name: Exercise source-backed views and all dossier controls
+        run: |
+          npx vite preview --host 127.0.0.1 --port 4180 > /tmp/anatomy-preview.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4180/simulator >/dev/null; then break; fi
+            sleep 1
+          done
+          node --experimental-strip-types scripts/organ-connections-e2e.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: organ-connections-${{ github.sha }}
+          path: artifacts/organ-connections
+          retention-days: 14

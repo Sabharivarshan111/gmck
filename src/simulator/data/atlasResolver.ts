@@ -929,6 +929,12 @@ export function describeAtlasTarget(targetId: string, atlas: Atlas): AtlasTarget
   const ids = new Set<string>();
   if (!targetId || !atlas) return { ids, status: 'unmatched', rule: 'none' };
 
+  if (targetId.startsWith('atlas:')) {
+    const requested = new Set(targetId.slice(6).split(','));
+    atlas.parts.forEach(p => { if (requested.has(p.id)) ids.add(p.id); });
+    return { ids, status: ids.size ? 'resolved' : 'unmatched', rule: 'audited-connection' };
+  }
+
   const key = normaliseKey(targetId);
   const lowered = targetId.toLowerCase().trim();
 

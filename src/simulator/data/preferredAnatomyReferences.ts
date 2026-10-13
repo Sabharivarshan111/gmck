@@ -12,8 +12,10 @@ import { getZAnatomyReferenceTarget } from './zanatomyReferences.ts';
  * (for example Z-Anatomy's major-joints reference) without being a suitable
  * replacement for the entire organ/system button (for example "Skeleton").
  */
+// Heart/kidney external views use the registered atlas so vessels and neighbours
+// stay in the same reference body. Explicit HRA cutaways remain available.
 export const PREFERRED_ANATOMY_OVERVIEW_TARGETS: Readonly<Record<string, string>> = {
-  heart: 'hra_heart_overview',
+  heart: 'heart',
   lungs: 'hra_lung_overview',
   brain: 'za_brain_overview',
   liver: 'hra_liver_overview',
@@ -23,7 +25,7 @@ export const PREFERRED_ANATOMY_OVERVIEW_TARGETS: Readonly<Record<string, string>
   small_intestine: 'hra_small_intestine_overview',
   urinary_bladder: 'hra_bladder_overview',
   thymus: 'hra_thymus_overview',
-  kidney: 'hra_kidney_overview',
+  kidney: 'kidney',
   eye: 'hra_eye_overview',
   ureter: 'hra_ureter_overview',
   spinal_cord: 'hra_spinal_cord_overview',
