@@ -5,11 +5,18 @@ titles=["Pneumothorax_CXR.jpg","Effusionhalf.PNG","Pulmonary_oedema.jpg","X-ray_
 rows=[]
 def get(url):
  req=urllib.request.Request(url,headers={"User-Agent":"ORBITTeachingGallery/1.0 (educational; Wikimedia attribution)"})
- return urllib.request.urlopen(req,timeout=60)
+ for attempt in range(5):
+  try: return urllib.request.urlopen(req,timeout=60)
+  except Exception as e:
+   if attempt==4: raise
+   print("Retry",str(e),flush=True);time.sleep(15*(attempt+1))
+time.sleep(30)
+query="https://commons.wikimedia.org/w/api.php?"+urllib.parse.urlencode({"action":"query","format":"json","titles":"|".join("File:"+t for t in titles),"prop":"imageinfo","iiprop":"url|extmetadata"})
+pages=json.load(get(query))["query"]["pages"]
+lookup={p["title"].replace(" ","_"):p for p in pages.values()}
 for i,title in enumerate(titles):
  try:
-  url="https://commons.wikimedia.org/w/api.php?"+urllib.parse.urlencode({"action":"query","format":"json","titles":"File:"+title,"prop":"imageinfo","iiprop":"url|extmetadata"})
-  p=next(iter(json.load(get(url))["query"]["pages"].values()))
+  p=lookup["File:"+title]
   info=p["imageinfo"][0]; m=info["extmetadata"]
   row={"id":str(i),"title":title,"url":info["url"],"page":info["descriptionurl"],"metadata":{k:v["value"] for k,v in m.items()}}
   license=row["metadata"].get("LicenseShortName","")
@@ -21,7 +28,7 @@ for i,title in enumerate(titles):
   row["width"],row["height"]=im.size;rows.append(row)
   print("OK",i,title,license,flush=True)
  except Exception as e: print("SKIP",i,title,str(e),flush=True)
- time.sleep(1)
+ time.sleep(8)
 (out/"metadata.json").write_text(json.dumps(rows,indent=2))
 thumbs=Image.new("RGB",(1000,((len(rows)+3)//4)*300),"#111111");draw=ImageDraw.Draw(thumbs)
 for n,row in enumerate(rows):
