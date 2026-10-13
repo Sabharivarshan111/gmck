@@ -43,7 +43,7 @@ try{
  if(group===null||group===0) for(const [owner,kind] of [['kidney','venous'],['heart','venous'],['liver','relation'],['pancreas','relation'],['knee','arterial']]){
   const d=await drawer(owner);await d.getByRole('tab',{name:kind==='relation'?'Relations':'Supply',exact:true}).click();const c=catalog[owner].find(c=>c.kind===kind&&c.targetId);assert(c);await inspect(c);
   const before=await page.getByTestId('connection-leaders').locator('path').first().getAttribute('d');
-  await page.getByRole('button',{name:'Show camera views',exact:true}).click();await page.getByRole('button',{name:/^side$/i}).click();await page.waitForTimeout(300);const after=await page.getByTestId('connection-leaders').locator('path').first().getAttribute('d');assert.notEqual(before,after,'leader must follow camera rotation');
+  await page.getByRole('button',{name:'Show camera views',exact:true}).click();await page.getByRole('button',{name:/^side$/i}).click();await page.waitForFunction(old=>document.querySelector('[data-testid="connection-leaders"] path')?.getAttribute('d')!==old,before,{timeout:15000});const after=await page.getByTestId('connection-leaders').locator('path').first().getAttribute('d');assert.notEqual(before,after,'leader must follow camera rotation');
   await page.getByRole('button',{name:'Open selected structure anatomy details',exact:true}).click();await page.getByTestId('organ-detail-drawer').waitFor();assert.equal(await page.getByTestId('organ-detail-drawer').getByRole('tab',{name:'Overview',exact:true}).getAttribute('aria-selected'),'true'); // opens overview, not a stale Supply panel
   report.push({owner,kind,rotation:true,reopenedParent:true,pass:true});
  }
