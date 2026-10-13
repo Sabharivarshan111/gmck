@@ -23,7 +23,7 @@ try {
   await explorer.getByRole('button',{name:'P',exact:true}).click();assert.equal(await heart.getAttribute('data-activation'),'atria');
   await explorer.getByRole('button',{name:'PR',exact:true}).click();assert.equal(await heart.getAttribute('data-activation'),'delay');
   await explorer.getByRole('button',{name:'QRS',exact:true}).click();assert.equal(await heart.getAttribute('data-activation'),'ventricles');
-  await explorer.getByRole('button',{name:'Play beat',exact:true}).click();const before=await teachingCursor.getAttribute('x1');await page.waitForTimeout(180);assert.notEqual(await teachingCursor.getAttribute('x1'),before);
+  await explorer.getByRole('button',{name:'Play beat',exact:true}).click();const before=await teachingCursor.getAttribute('x1');await page.waitForFunction(([el,x])=>el.getAttribute('x1')!==x,[await teachingCursor.elementHandle(),before],{timeout:5000,polling:100});
   await explorer.getByRole('button',{name:'Pause beat',exact:true}).click();
   await modal.locator('.ecg-model-panel').scrollIntoViewIfNeeded();await page.waitForTimeout(350);
   await page.screenshot({path:`${out}/new-heart-${width}.png`});
@@ -32,7 +32,7 @@ try {
   await modal.getByTestId('ecg-learning-path').getByRole('button',{name:'PR',exact:true}).click();
   const svg=modal.getByRole('img',{name:'Illustrative ECG beat highlighting PR'});
   const cursor=svg.locator('line');const frozenX=await cursor.getAttribute('x1');await page.waitForTimeout(150);assert.equal(await cursor.getAttribute('x1'),frozenX,'paused teaching cursor moved');
-  await modal.getByTestId('ecg-learning-path').getByRole('button',{name:'Play beat'}).click();await page.waitForTimeout(180);assert.notEqual(await cursor.getAttribute('x1'),frozenX,'beat playback did not move');
+  await modal.getByTestId('ecg-learning-path').getByRole('button',{name:'Play beat'}).click();await page.waitForFunction(([el,x])=>el.getAttribute('x1')!==x,[await cursor.elementHandle(),frozenX],{timeout:5000,polling:100});
   await modal.getByTestId('ecg-learning-path').getByRole('button',{name:'Pause beat'}).click();
   await page.screenshot({path:`${out}/lesson-${width}-beat.png`});
   await modal.getByRole('button',{name:'Lesson 3: Find the rate'}).click();assert.ok((await modal.textContent()).includes('75 bpm'));
