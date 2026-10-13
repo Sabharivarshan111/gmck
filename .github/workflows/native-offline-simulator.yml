@@ -41,6 +41,7 @@ jobs:
           node scripts/check-pg-release-content.mjs
           node --experimental-strip-types scripts/build-native-simulator-assets.mjs
           node scripts/build-native-simulator-lessons.mjs
+          node --experimental-strip-types scripts/check-native-offline-assets.mjs
       - name: Typecheck native screens
         working-directory: mobile
         run: npx tsc --noEmit
