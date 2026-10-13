@@ -102,6 +102,17 @@ jobs:
         working-directory: mobile
         run: npm ci --legacy-peer-deps
 
+      - name: Install offline content build dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Build packaged native simulator and PG content
+        run: |
+          node scripts/build-pg-compact.mjs
+          node scripts/check-pg-release-content.mjs
+          node --experimental-strip-types scripts/build-native-simulator-assets.mjs
+          node scripts/build-native-simulator-lessons.mjs
+          node --experimental-strip-types scripts/check-native-offline-assets.mjs
+
       - name: Typecheck
         working-directory: mobile
         run: npx tsc --noEmit
