@@ -1,0 +1,22 @@
+name: Correct native preview source tag
+on:
+  push:
+    branches: [codex/native-offline-simulator]
+    paths: ['.github/workflows/native-preview-tag-source.yml']
+permissions:
+  contents: write
+jobs:
+  source-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const owner=context.repo.owner, repo=context.repo.repo;
+            const source='f23c9ccf19b11813a3802737f9dcccf60625a0ea';
+            const old='9a1a39dddf362e8a186690d6c1f2da3d20273fc4';
+            const ref=await github.rest.git.getRef({owner,repo,ref:'tags/native-offline-preview-2'});
+            if(ref.data.object.sha!==old && ref.data.object.sha!==source) throw Error('Preview source tag changed unexpectedly');
+            if(ref.data.object.sha===old) await github.rest.git.updateRef({owner,repo,ref:'tags/native-offline-preview-2',sha:source,force:false});
+            await github.rest.repos.updateRelease({owner,repo,release_id:412094585,target_commitish:source});
+            core.info('Preview source tag matches its actual binary commit.');

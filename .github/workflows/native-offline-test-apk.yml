@@ -95,6 +95,7 @@ jobs:
       - name: Publish clearly labelled native test APK
         uses: softprops/action-gh-release@v2
         with:
+          target_commitish: ${{ github.sha }}
           tag_name: native-offline-preview-${{ github.run_number }}
           name: ORBIT Native Preview · offline simulator test
           prerelease: true
