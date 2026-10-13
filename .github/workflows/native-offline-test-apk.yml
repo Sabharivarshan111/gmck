@@ -85,7 +85,8 @@ jobs:
           apk=next(Path('mobile/android/app/build/outputs/apk/preview').glob('*.apk'))
           with zipfile.ZipFile(apk) as z:
            names=set(z.namelist())
-           for item in ['assets/simulator/models/atlas.bin.gz','assets/simulator/radiology/brain-t1.pack','assets/pg/manifest.json','assets/index.android.bundle']:
+           print('Packaged model files: '+str(sorted(n for n in names if n.startswith('assets/simulator/models/'))[:8]))
+           for item in ['assets/simulator/models/atlas.mesh.pack','assets/simulator/radiology/brain-t1.pack','assets/pg/manifest.json','assets/index.android.bundle']:
             assert item in names,item
            report={'apkBytes':apk.stat().st_size,'apkMB':apk.stat().st_size/1000000,'offlineAssetBytes':sum(i.file_size for i in z.infolist() if i.filename.startswith(('assets/simulator/','assets/pg/'))),'abi':'arm64-v8a','package':'com.aistudio.mbbsqbank.aycxvd.debug','productionRelease':False}
           Path('native-preview-size.json').write_text(json.dumps(report,indent=2))

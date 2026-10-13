@@ -8,10 +8,10 @@ const root='mobile/android/app/src/main/assets/simulator';
 const catalog=fs.readFileSync('mobile/src/simulator/anatomyCatalog.ts','utf8');
 const record=JSON.parse(catalog.match(/export const ANATOMY_TARGETS[^=]*= ([^\n]+);/)[1]);
 const all=new Map();let partCount=0;
-for(const file of fs.readdirSync(root+'/models').filter(f=>f.endsWith('.json.gz'))){
- const model=file.slice(0,-8);
+for(const file of fs.readdirSync(root+'/models').filter(f=>f.endsWith('.meta.pack'))){
+ const model=file.slice(0,-10);
  const meta=JSON.parse(zlib.gunzipSync(fs.readFileSync(root+'/models/'+file)));
- const bytes=zlib.gunzipSync(fs.readFileSync(root+'/models/'+model+'.bin.gz'));
+ const bytes=zlib.gunzipSync(fs.readFileSync(root+'/models/'+model+'.mesh.pack'));
  assert.equal(bytes.readUInt32BE(0),0x4f524231);
  assert.equal(bytes.readUInt32BE(4),meta.length);
  let offset=8;const ids=new Set();

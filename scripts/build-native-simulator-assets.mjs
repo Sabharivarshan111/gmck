@@ -9,7 +9,7 @@ import {ZANATOMY_REFERENCE_MODELS,ZANATOMY_REFERENCE_TARGETS,zAnatomyMeshMatches
 import {HRA_HEART_MODEL_URL,HRA_HEART_TARGETS,hraHeartMeshMatchesTarget} from '../src/simulator/data/hraHeart.ts';
 import {peripheralNerveKeyForMeshName,peripheralNerveRegistrationIssue} from '../src/simulator/data/peripheralNerves.ts';
 await MeshoptSimplifier.ready;
-const out='mobile/android/app/src/main/assets/simulator';fs.mkdirSync(out+'/models',{recursive:true});
+const out='mobile/android/app/src/main/assets/simulator';fs.rmSync(out+'/models',{recursive:true,force:true});fs.mkdirSync(out+'/models',{recursive:true});
 const maxError=Number(process.env.NATIVE_ANATOMY_ERROR||.0008),allParts=[],models={},targets={},references=[];
 function writeModel(key,parts){
  const buffers=[];let sourceTriangles=0,triangles=0;
@@ -35,8 +35,8 @@ function writeModel(key,parts){
  });
  const magic=Buffer.alloc(8);magic.write('ORB1');magic.writeUInt32BE(metadata.length,4);
  const bytes=zlib.gzipSync(Buffer.concat([magic,...buffers]),{level:9});
- fs.writeFileSync(out+'/models/'+key+'.bin.gz',bytes);
- fs.writeFileSync(out+'/models/'+key+'.json.gz',zlib.gzipSync(JSON.stringify(metadata),{level:9}));
+ fs.writeFileSync(out+'/models/'+key+'.mesh.pack',bytes);
+ fs.writeFileSync(out+'/models/'+key+'.meta.pack',zlib.gzipSync(JSON.stringify(metadata),{level:9}));
  allParts.push(...metadata);models[key]={parts:metadata.length,sourceTriangles,triangles,bytes:bytes.length,sha256:crypto.createHash('sha256').update(bytes).digest('hex')};
  console.log(key+': '+metadata.length+' parts / '+triangles+' triangles / '+bytes.length+' bytes');return metadata;
 }

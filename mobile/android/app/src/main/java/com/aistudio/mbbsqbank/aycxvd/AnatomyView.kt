@@ -111,9 +111,9 @@ class AnatomyView(private val reactContext: ThemedReactContext) : GLSurfaceView(
     }
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) { w=max(1,width);h=max(1,height);GLES20.glViewport(0,0,w,h);refit=true }
     private fun load() {
-      val meta=GZIPInputStream(reactContext.assets.open("simulator/models/$model.json.gz")).use { JSONArray(it.bufferedReader().readText()) }
+      val meta=GZIPInputStream(reactContext.assets.open("simulator/models/$model.meta.pack")).use { JSONArray(it.bufferedReader().readText()) }
       val result=ArrayList<Part>()
-      DataInputStream(GZIPInputStream(reactContext.assets.open("simulator/models/$model.bin.gz"))).use { data ->
+      DataInputStream(GZIPInputStream(reactContext.assets.open("simulator/models/$model.mesh.pack"))).use { data ->
         check(data.readInt()==0x4f524231){"Anatomy asset header"};check(data.readInt()==meta.length()){"Anatomy part count"}
         for(i in 0 until meta.length()) {
           val p=meta.getJSONObject(i);val b=p.getJSONArray("bounds");val bounds=FloatArray(6){j->b.getJSONArray(if(j<3)0 else 1).getDouble(j%3).toFloat()}
