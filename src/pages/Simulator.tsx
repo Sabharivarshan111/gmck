@@ -1,3 +1,4 @@
+import { getOrganConnection } from '@/simulator/data/organConnections';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import {
@@ -586,7 +587,7 @@ export const Simulator: React.FC = () => {
                 <div className="absolute top-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 sim-dark:bg-slate-900/95 backdrop-blur-md border border-amber-300 sim-dark:border-amber-700 shadow-md">
                   <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                   <span className="text-xs font-bold text-slate-800 sim-dark:text-slate-200">
-                    {atlasCatalog?.parts.find(p => p.id === isolatedPartId)?.name || getHraHeartTarget(isolatedPartId)?.label || getHraOrganTarget(isolatedPartId)?.label || getZAnatomyReferenceTarget(isolatedPartId)?.label || isolatedPartId.replace(/_/g, ' ')}
+                    {getOrganConnection(isolatedPartId)?.label || atlasCatalog?.parts.find(p => p.id === isolatedPartId)?.name || getHraHeartTarget(isolatedPartId)?.label || getHraOrganTarget(isolatedPartId)?.label || getZAnatomyReferenceTarget(isolatedPartId)?.label || isolatedPartId.replace(/_/g, ' ')}
                   </span>
                   {contextOrganId && contextOrganId !== isolatedPartId && (
                     <span className="text-[11px] font-semibold text-slate-500 sim-dark:text-slate-400 border-l border-slate-300 sim-dark:border-slate-700 pl-2">
@@ -605,7 +606,7 @@ export const Simulator: React.FC = () => {
                         return;
                       }
                       const zTarget = getZAnatomyReferenceTarget(isolatedPartId);
-                      setSelectedOrganId(zTarget?.organKey || isolatedPartId);
+                      setSelectedOrganId(getOrganConnection(isolatedPartId)?.owner || zTarget?.organKey || isolatedPartId);
                     }}
                     className="ml-1 text-[11px] font-bold px-2 py-0.5 rounded-md bg-sky-100 hover:bg-sky-200 text-sky-900 sim-dark:bg-sky-950 sim-dark:hover:bg-sky-900 sim-dark:text-sky-200 transition-colors cursor-pointer"
                     title="Open anatomy details"
@@ -1125,11 +1126,11 @@ export const Simulator: React.FC = () => {
                 <div data-testid="mobile-isolation-banner" className="mobile-selection-card pointer-events-auto">
                   <button
                     aria-label="Open selected structure anatomy details"
-                    onClick={() => setSelectedOrganId(isolatedPartId)}
+                    onClick={() => setSelectedOrganId(getOrganConnection(isolatedPartId)?.owner || isolatedPartId)}
                     className="mobile-selection-details"
                   >
                     <span className="mobile-selection-name">
-                      {atlasCatalog?.parts.find(p => p.id === isolatedPartId)?.name || getHraHeartTarget(isolatedPartId)?.label || getHraOrganTarget(isolatedPartId)?.label || getZAnatomyReferenceTarget(isolatedPartId)?.label || isolatedPartId.replace(/_/g, ' ')}
+                      {getOrganConnection(isolatedPartId)?.label || atlasCatalog?.parts.find(p => p.id === isolatedPartId)?.name || getHraHeartTarget(isolatedPartId)?.label || getHraOrganTarget(isolatedPartId)?.label || getZAnatomyReferenceTarget(isolatedPartId)?.label || isolatedPartId.replace(/_/g, ' ')}
                     </span>
                     <span className="mobile-selection-hint">Selection details</span>
                     <Info aria-hidden="true" className="w-5 h-5 shrink-0" />

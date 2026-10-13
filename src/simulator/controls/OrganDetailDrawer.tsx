@@ -1,3 +1,5 @@
+import { OrganConnections } from './OrganConnections';
+import { getOrganConnection, getNodeConnection } from '../data/organConnections';
 import { BoneAttachments } from './BoneAttachments';
 import React, { useState, useEffect } from 'react';
 import {
@@ -151,6 +153,8 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
   });
 
   const organKey =
+    getOrganConnection(currentNavId)?.owner ||
+    (ORGAN_ANATOMY_DATABASE[currentNavId] ? currentNavId : null) ||
     (sourcePart ? sourcePart.source === 'Z-Anatomy' ? 'peripheral_nerves' : resolvePartToOrganKey(sourcePart) : isPeripheralNerveTarget(currentNavId)
       ? 'peripheral_nerves'
       : hraHeartTarget
@@ -266,7 +270,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
           isLight
             ? 'bg-white/95 text-slate-900 border-l border-slate-200 shadow-2xl'
             : 'bg-slate-900/95 text-slate-100 border-l border-slate-800 shadow-2xl'
-        } backdrop-blur-2xl flex flex-col anatomy-detail-sheet rounded-t-3xl md:rounded-none overflow-hidden transition-all duration-300 ease-out z-10`}
+        } flex flex-col anatomy-detail-sheet rounded-t-3xl md:rounded-none overflow-hidden transition-all duration-300 ease-out z-10`}
       >
         {/* Mobile Drag Pill */}
         <button type="button" aria-label={isMobileExpanded ? "Collapse anatomy details" : "Expand anatomy details"}
@@ -450,7 +454,10 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                 data-testid={`organ-drawer-tab-${tab.id}`}
                 role="tab"
                 aria-selected={isCurrent}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => {
+                  setActiveTab(tab.id as typeof activeTab);
+                  if (window.innerWidth < 768 && (tab.id === 'vascular' || tab.id === 'relations')) setIsMobileExpanded(true);
+                }}
                 className={`px-1 py-2 rounded-xl text-[10px] sm:text-xs font-bold flex flex-col sm:flex-row items-center justify-center gap-1 min-w-0 min-h-[44px] transition-all ${
                   isCurrent
                     ? isLight
@@ -642,7 +649,9 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
           )}
 
           {/* TAB 2: VESSELS & NERVES (INTERACTIVE CLICKABLE GRAPH) */}
-          {activeTab === 'vascular' && (
+          {activeTab === 'vascular' && (<>
+            <OrganConnections key={organKey} organKey={organKey} organName={organ.name} light={isLight} mode="supply" onInspect={(id, owner) => onIsolateStructure?.(id, owner)} />
+            <details className="oc-legacy-notes"><summary>Detailed vascular and nerve notes</summary>
             <div className="space-y-4 animate-in fade-in duration-200">
               {/* Arterial Supply Cards */}
               <div
@@ -655,7 +664,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                     <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
                     Arterial Blood Supply & Branches
                   </h4>
-                  <span className="text-[10px] font-semibold text-rose-500 uppercase">Clickable Nodes</span>
+                  <span className="text-[10px] font-semibold text-rose-500 uppercase">Anatomy notes</span>
                 </div>
 
                 {/* Rich interactive arterial cards */}
@@ -685,11 +694,12 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                             )}
                           </div>
                           <button
+                            disabled={!getNodeConnection(organKey, art.id)?.targetId}
                             aria-label={`Inspect ${art.name} in 3D`}
                             data-testid={`arterial-node-${art.id}-3d`}
                             onClick={() => {
                               navigateToStructure(art.id, art.cameraPreset);
-                              if (onIsolateStructure) onIsolateStructure(art.id, organKey);
+                              if (onIsolateStructure) onIsolateStructure(getNodeConnection(organKey, art.id)?.id || art.id, organKey);
                             }}
                             className="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-500 hover:bg-rose-600 text-white flex items-center gap-1 min-h-[44px] shadow-xs transition-all flex-shrink-0 cursor-pointer"
                           >
@@ -737,7 +747,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                     <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
                     Venous Drainage & Return
                   </h4>
-                  <span className="text-[10px] font-semibold text-blue-500 uppercase">Clickable Nodes</span>
+                  <span className="text-[10px] font-semibold text-blue-500 uppercase">Anatomy notes</span>
                 </div>
 
                 {organ.venousNodes && organ.venousNodes.length > 0 ? (
@@ -766,10 +776,11 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                             )}
                           </div>
                           <button
+                            disabled={!getNodeConnection(organKey, vein.id)?.targetId}
                             aria-label={`Inspect ${vein.name} in 3D`}
                             onClick={() => {
                               navigateToStructure(vein.id, vein.cameraPreset);
-                              if (onIsolateStructure) onIsolateStructure(vein.id, organKey);
+                              if (onIsolateStructure) onIsolateStructure(getNodeConnection(organKey, vein.id)?.id || vein.id, organKey);
                             }}
                             className="px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-1 min-h-[44px] shadow-xs transition-all flex-shrink-0 cursor-pointer"
                           >
@@ -950,220 +961,13 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                 </div>
               </div>
             </div>
+            </details></>
           )}
 
           {/* TAB 3: 6-DIRECTION ORTHOGONAL RELATIONS COMPASS */}
-          {activeTab === 'relations' && (
-            <div className="space-y-4 animate-in fade-in duration-200">
-              <div
-                className={`p-4 rounded-2xl border ${
-                  isLight ? 'bg-indigo-50/50 border-indigo-100' : 'bg-indigo-950/20 border-indigo-900/40'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-700 sim-dark:text-indigo-400 flex items-center gap-1.5">
-                    <Compass className="w-4 h-4 text-indigo-500" />
-                    6-Vector Orthogonal Anatomical Relations
-                  </h4>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 sim-dark:bg-indigo-900/50 text-indigo-800 sim-dark:text-indigo-200">
-                    Spatial Matrix
-                  </span>
-                </div>
-                <p className="text-xs text-slate-500 sim-dark:text-slate-400 mb-3">
-                  Click any adjacent anatomical structure to navigate, focus the 3D camera, and isolate that anatomical plane.
-                </p>
+          {activeTab === 'relations' && <OrganConnections key={organKey} organKey={organKey} organName={organ.name} light={isLight} mode="relations" onInspect={(id, owner) => onIsolateStructure?.(id, owner)} />}
 
-                {organ.relationsStructured ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                    {/* Superior */}
-                    <div className={`p-3 rounded-xl border ${isLight ? 'bg-white border-indigo-100 shadow-2xs' : 'bg-slate-900/60 border-indigo-950'}`}>
-                      <div className="font-bold text-indigo-600 sim-dark:text-indigo-400 mb-2 flex items-center gap-1">
-                        <span>↑ Superior (Cranial)</span>
-                      </div>
-                      <div className="space-y-1.5">
-                        {organ.relationsStructured.superior.map((item, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => {
-                              navigateToStructure(item.toLowerCase());
-                              if (onIsolateStructure) onIsolateStructure(item.toLowerCase(), organKey);
-                            }}
-                            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-50 sim-dark:bg-slate-800/80 hover:bg-indigo-100 sim-dark:hover:bg-indigo-900/60 border border-slate-200/80 sim-dark:border-slate-700/80 text-slate-800 sim-dark:text-slate-200 transition-all flex items-center justify-between gap-1.5 min-h-[34px] w-full text-left cursor-pointer group"
-                            title={`Inspect and isolate ${item} in 3D`}
-                          >
-                            <div className="flex items-center gap-1.5 min-w-0">
-                              <span className="text-indigo-500 font-bold shrink-0">📍</span>
-                              <span className="truncate">{item}</span>
-                            </div>
-                            <div className="flex items-center gap-0.5 text-[10px] text-indigo-600 sim-dark:text-indigo-400 font-bold shrink-0 opacity-75 group-hover:opacity-100">
-                              <span>3D</span>
-                              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Inferior */}
-                    <div className={`p-3 rounded-xl border ${isLight ? 'bg-white border-indigo-100 shadow-2xs' : 'bg-slate-900/60 border-indigo-950'}`}>
-                      <div className="font-bold text-indigo-600 sim-dark:text-indigo-400 mb-2 flex items-center gap-1">
-                        <span>↓ Inferior (Caudal)</span>
-                      </div>
-                      <div className="space-y-1.5">
-                        {organ.relationsStructured.inferior.map((item, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => {
-                              navigateToStructure(item.toLowerCase());
-                              if (onIsolateStructure) onIsolateStructure(item.toLowerCase(), organKey);
-                            }}
-                            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-50 sim-dark:bg-slate-800/80 hover:bg-indigo-100 sim-dark:hover:bg-indigo-900/60 border border-slate-200/80 sim-dark:border-slate-700/80 text-slate-800 sim-dark:text-slate-200 transition-all flex items-center justify-between gap-1.5 min-h-[34px] w-full text-left cursor-pointer group"
-                            title={`Inspect and isolate ${item} in 3D`}
-                          >
-                            <div className="flex items-center gap-1.5 min-w-0">
-                              <span className="text-indigo-500 font-bold shrink-0">📍</span>
-                              <span className="truncate">{item}</span>
-                            </div>
-                            <div className="flex items-center gap-0.5 text-[10px] text-indigo-600 sim-dark:text-indigo-400 font-bold shrink-0 opacity-75 group-hover:opacity-100">
-                              <span>3D</span>
-                              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Anterior */}
-                    <div className={`p-3 rounded-xl border ${isLight ? 'bg-white border-indigo-100 shadow-2xs' : 'bg-slate-900/60 border-indigo-950'}`}>
-                      <div className="font-bold text-indigo-600 sim-dark:text-indigo-400 mb-2 flex items-center gap-1">
-                        <span>⊙ Anterior (Ventral)</span>
-                      </div>
-                      <div className="space-y-1.5">
-                        {organ.relationsStructured.anterior.map((item, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => {
-                              navigateToStructure(item.toLowerCase());
-                              if (onIsolateStructure) onIsolateStructure(item.toLowerCase(), organKey);
-                            }}
-                            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-50 sim-dark:bg-slate-800/80 hover:bg-indigo-100 sim-dark:hover:bg-indigo-900/60 border border-slate-200/80 sim-dark:border-slate-700/80 text-slate-800 sim-dark:text-slate-200 transition-all flex items-center justify-between gap-1.5 min-h-[34px] w-full text-left cursor-pointer group"
-                            title={`Inspect and isolate ${item} in 3D`}
-                          >
-                            <div className="flex items-center gap-1.5 min-w-0">
-                              <span className="text-indigo-500 font-bold shrink-0">📍</span>
-                              <span className="truncate">{item}</span>
-                            </div>
-                            <div className="flex items-center gap-0.5 text-[10px] text-indigo-600 sim-dark:text-indigo-400 font-bold shrink-0 opacity-75 group-hover:opacity-100">
-                              <span>3D</span>
-                              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Posterior */}
-                    <div className={`p-3 rounded-xl border ${isLight ? 'bg-white border-indigo-100 shadow-2xs' : 'bg-slate-900/60 border-indigo-950'}`}>
-                      <div className="font-bold text-indigo-600 sim-dark:text-indigo-400 mb-2 flex items-center gap-1">
-                        <span>⊗ Posterior (Dorsal)</span>
-                      </div>
-                      <div className="space-y-1.5">
-                        {organ.relationsStructured.posterior.map((item, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => {
-                              navigateToStructure(item.toLowerCase());
-                              if (onIsolateStructure) onIsolateStructure(item.toLowerCase(), organKey);
-                            }}
-                            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-50 sim-dark:bg-slate-800/80 hover:bg-indigo-100 sim-dark:hover:bg-indigo-900/60 border border-slate-200/80 sim-dark:border-slate-700/80 text-slate-800 sim-dark:text-slate-200 transition-all flex items-center justify-between gap-1.5 min-h-[34px] w-full text-left cursor-pointer group"
-                            title={`Inspect and isolate ${item} in 3D`}
-                          >
-                            <div className="flex items-center gap-1.5 min-w-0">
-                              <span className="text-indigo-500 font-bold shrink-0">📍</span>
-                              <span className="truncate">{item}</span>
-                            </div>
-                            <div className="flex items-center gap-0.5 text-[10px] text-indigo-600 sim-dark:text-indigo-400 font-bold shrink-0 opacity-75 group-hover:opacity-100">
-                              <span>3D</span>
-                              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Medial */}
-                    <div className={`p-3 rounded-xl border ${isLight ? 'bg-white border-indigo-100 shadow-2xs' : 'bg-slate-900/60 border-indigo-950'}`}>
-                      <div className="font-bold text-indigo-600 sim-dark:text-indigo-400 mb-2 flex items-center gap-1">
-                        <span>→ Medial</span>
-                      </div>
-                      <div className="space-y-1.5">
-                        {organ.relationsStructured.medial.map((item, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => {
-                              navigateToStructure(item.toLowerCase());
-                              if (onIsolateStructure) onIsolateStructure(item.toLowerCase(), organKey);
-                            }}
-                            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-50 sim-dark:bg-slate-800/80 hover:bg-indigo-100 sim-dark:hover:bg-indigo-900/60 border border-slate-200/80 sim-dark:border-slate-700/80 text-slate-800 sim-dark:text-slate-200 transition-all flex items-center justify-between gap-1.5 min-h-[34px] w-full text-left cursor-pointer group"
-                            title={`Inspect and isolate ${item} in 3D`}
-                          >
-                            <div className="flex items-center gap-1.5 min-w-0">
-                              <span className="text-indigo-500 font-bold shrink-0">📍</span>
-                              <span className="truncate">{item}</span>
-                            </div>
-                            <div className="flex items-center gap-0.5 text-[10px] text-indigo-600 sim-dark:text-indigo-400 font-bold shrink-0 opacity-75 group-hover:opacity-100">
-                              <span>3D</span>
-                              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Lateral */}
-                    <div className={`p-3 rounded-xl border ${isLight ? 'bg-white border-indigo-100 shadow-2xs' : 'bg-slate-900/60 border-indigo-950'}`}>
-                      <div className="font-bold text-indigo-600 sim-dark:text-indigo-400 mb-2 flex items-center gap-1">
-                        <span>← Lateral</span>
-                      </div>
-                      <div className="space-y-1.5">
-                        {organ.relationsStructured.lateral.map((item, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => {
-                              navigateToStructure(item.toLowerCase());
-                              if (onIsolateStructure) onIsolateStructure(item.toLowerCase(), organKey);
-                            }}
-                            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-50 sim-dark:bg-slate-800/80 hover:bg-indigo-100 sim-dark:hover:bg-indigo-900/60 border border-slate-200/80 sim-dark:border-slate-700/80 text-slate-800 sim-dark:text-slate-200 transition-all flex items-center justify-between gap-1.5 min-h-[34px] w-full text-left cursor-pointer group"
-                            title={`Inspect and isolate ${item} in 3D`}
-                          >
-                            <div className="flex items-center gap-1.5 min-w-0">
-                              <span className="text-indigo-500 font-bold shrink-0">📍</span>
-                              <span className="truncate">{item}</span>
-                            </div>
-                            <div className="flex items-center gap-0.5 text-[10px] text-indigo-600 sim-dark:text-indigo-400 font-bold shrink-0 opacity-75 group-hover:opacity-100">
-                              <span>3D</span>
-                              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <ul className="space-y-2 text-xs leading-relaxed">
-                    {organ.musculoskeletalRelations.map((rel, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 flex-shrink-0" />
-                        <span className={isLight ? 'text-slate-700' : 'text-slate-300'}>{rel}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* TAB 4: CLINICAL & NMC VIVA PEARLS */}
+          {/* TAB 4: CLINICAL */}
           {activeTab === 'clinical' && (
             <div className="space-y-4 animate-in fade-in duration-200">
               {/* Bedside Examination Signs */}

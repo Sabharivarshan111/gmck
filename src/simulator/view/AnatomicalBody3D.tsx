@@ -1,3 +1,4 @@
+import { getOrganConnection } from '../data/organConnections';
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -1248,6 +1249,9 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   onAtlasLoaded,
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
+  const connectionLayerRef = useRef<HTMLDivElement>(null);
+  const partSurfaceAnchorsRef = useRef<Map<string, THREE.Vector3>>(new Map());
+  const connectionAnchorsRef = useRef<THREE.Vector3[]>([]);
   const labelLayerRef = useRef<HTMLDivElement>(null);
   const [cameraViewsOpen, setCameraViewsOpen] = useState(false);
   const prepareLabelsRef = useRef<((atlas: Atlas) => void) | null>(null);
@@ -1537,7 +1541,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
       leader: SVGGElement;
       line: SVGLineElement;
       outline: SVGLineElement;
-      arrow: SVGPolygonElement;
+      arrow: SVGPolylineElement;
     };
     let floatingLabelTargets: FloatingLabelTarget[] = [];
 
@@ -1595,7 +1599,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
         button.setAttribute('aria-label', `Open ${spec.label} anatomy details`);
         button.title = `Open ${spec.label} anatomy details`;
         button.className =
-          'absolute left-0 top-0 hidden min-h-[44px] max-w-[150px] -translate-x-1/2 -translate-y-1/2 rounded-xl border bg-slate-950/90 px-2.5 py-1 text-[10px] sm:text-[11px] font-bold text-white shadow-lg backdrop-blur-md pointer-events-auto whitespace-nowrap overflow-hidden text-ellipsis transition-[opacity,transform,box-shadow] duration-100 flex items-center gap-1.5';
+          'absolute left-0 top-0 hidden min-h-[44px] max-w-[150px] -translate-x-1/2 -translate-y-1/2 rounded-xl border bg-slate-950/90 px-2.5 py-1 text-[10px] sm:text-[11px] font-bold text-white shadow-lg pointer-events-auto whitespace-nowrap overflow-hidden text-ellipsis transition-[opacity,transform,box-shadow] duration-100 flex items-center gap-1.5';
 
         const sourcePart = atlas.parts[bestIndex];
         const systemColor =
@@ -1605,15 +1609,17 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
         leader.setAttribute('data-anatomy-arrow', spec.key);
         const outline = document.createElementNS(svgNS, 'line');
         outline.setAttribute('stroke', '#000');
-        outline.setAttribute('stroke-width', '4');
-        outline.setAttribute('stroke-opacity', '.7');
+        outline.setAttribute('stroke-width', '3');
+        outline.setAttribute('stroke-opacity', '.35');
         const line = document.createElementNS(svgNS, 'line');
         line.setAttribute('stroke', systemColor);
         line.setAttribute('stroke-width', '1.8');
-        const arrow = document.createElementNS(svgNS, 'polygon');
-        arrow.setAttribute('fill', systemColor);
-        arrow.setAttribute('stroke', '#000');
-        arrow.setAttribute('stroke-width', '.6');
+        const arrow = document.createElementNS(svgNS, 'polyline');
+        arrow.setAttribute('fill', 'none');
+        arrow.setAttribute('stroke', systemColor);
+        arrow.setAttribute('stroke-width', '1.7');
+        arrow.setAttribute('stroke-linecap', 'round');
+        arrow.setAttribute('stroke-linejoin', 'round');
         leader.append(outline, line, arrow);
         leader.style.display = 'none';
         leaders.appendChild(leader);
@@ -1656,6 +1662,50 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     };
 
     prepareLabelsRef.current = prepareFloatingLabels;
+
+    const updateConnectionCallout = () => {
+      const root = connectionLayerRef.current;
+      const connection = getOrganConnection(isolatedPartIdRef.current);
+      if (!root) return;
+      if (!connection || !connectionAnchorsRef.current.length) { root.replaceChildren(); return; }
+      const w = container.clientWidth, h = container.clientHeight;
+      const points = connectionAnchorsRef.current.map(anchor => {
+        const p = anchor.clone().project(camera);
+        return { x:(p.x*.5+.5)*w, y:(-p.y*.5+.5)*h, z:p.z };
+      }).filter(p => p.z>=-1 && p.z<=1 && p.x>=8 && p.x<=w-8 && p.y>=72 && p.y<=h-80);
+      root.style.display = points.length ? 'block' : 'none';
+      if (!points.length) return;
+      const ns = 'http://www.w3.org/2000/svg';
+      let svg = root.querySelector('svg');
+      if (root.dataset.connection !== connection.id || !svg) {
+        root.replaceChildren(); root.dataset.connection = connection.id;
+        const caption = document.createElement('div');
+        caption.style.cssText = 'position:absolute;left:16px;top:76px;max-width:210px;padding:9px 12px;border:1px solid #779cb5;border-radius:12px;background:#101e2b;color:#e5edf6;font:600 12px/1.5 system-ui;overflow-wrap:anywhere';
+        const title = document.createElement('strong');
+        title.textContent = connection.label;
+        caption.appendChild(title);
+        const subtitle = document.createElement('small');
+        subtitle.style.cssText='display:block;font:400 10px/1.5 system-ui;color:#a9bacb';
+        subtitle.textContent=connection.kind==='relation'?connection.direction+' relation':connection.kind==='arterial'?'Arterial supply · registered atlas':'Venous drainage · registered atlas';
+        caption.appendChild(subtitle);root.appendChild(caption);
+        svg=document.createElementNS(ns,'svg');svg.setAttribute('data-testid','connection-leaders');
+        svg.setAttribute('aria-hidden','true');svg.style.cssText='position:absolute;inset:0;width:100%;height:100%;overflow:visible';root.appendChild(svg);
+      }
+      svg.replaceChildren();
+      const startY=76+(root.querySelector('div')?.offsetHeight || 56)+4;
+      const colour=connection.kind==='arterial'?'#f0878d':connection.kind==='venous'?'#7db6ed':'#aac5dc';
+      points.forEach(p=>{
+        const bend=Math.max(startY+18,p.y-24);
+        const path=document.createElementNS(ns,'path');
+        path.setAttribute('d',`M34 ${startY} V${bend-6} Q34 ${bend} 40 ${bend} H${p.x-6} Q${p.x} ${bend} ${p.x} ${bend+6} V${p.y}`);
+        path.setAttribute('fill','none');path.setAttribute('stroke',colour);path.setAttribute('stroke-width','1.6');path.setAttribute('stroke-linecap','round');
+        const tip=document.createElementNS(ns,'path');const dir=p.y>=bend+6?1:-1;
+        tip.setAttribute('d',`M${p.x-4} ${p.y-7*dir} L${p.x} ${p.y} L${p.x+4} ${p.y-7*dir}`);
+        tip.setAttribute('fill','none');tip.setAttribute('stroke',colour);tip.setAttribute('stroke-width','1.6');tip.setAttribute('stroke-linecap','round');tip.setAttribute('stroke-linejoin','round');
+        const dot=document.createElementNS(ns,'circle');dot.setAttribute('cx',String(p.x));dot.setAttribute('cy',String(p.y));dot.setAttribute('r','2');dot.setAttribute('fill',colour);
+        svg!.append(path,tip,dot);
+      });
+    };
 
     const projectedLabelPoint = new THREE.Vector3();
     const updateFloatingLabels = () => {
@@ -1747,7 +1797,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
         }
         const backX = candidate.x - Math.cos(angle) * 8;
         const backY = candidate.y - Math.sin(angle) * 8;
-        target.arrow.setAttribute('points', `${candidate.x},${candidate.y} ${backX - Math.sin(angle) * 4},${backY + Math.cos(angle) * 4} ${backX + Math.sin(angle) * 4},${backY - Math.cos(angle) * 4}`);
+        target.arrow.setAttribute('points', `${backX - Math.sin(angle) * 4},${backY + Math.cos(angle) * 4} ${candidate.x},${candidate.y} ${backX + Math.sin(angle) * 4},${backY - Math.cos(angle) * 4}`);
         target.leader.style.display = Math.hypot(candidate.x - startX, candidate.y - startY) > 8 ? 'block' : 'none';
 
         candidate.target.button.style.display = 'block';
@@ -1960,7 +2010,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
         SYSTEMS.forEach((sys) => {
           const mat = new THREE.MeshStandardMaterial({
             color: new THREE.Color(sys.color),
-            roughness: 0.22, // Crisp biological sheen, eliminates flat clay appearance
+            roughness: 0.58, // Restrained tissue sheen preserves surface detail
             metalness: 0.04,
             side: THREE.FrontSide, // FrontSide only! Eliminates double-image blur and internal murkiness
             transparent: true,
@@ -1968,6 +2018,10 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
             depthWrite: sys.id !== 'integumentary',
           });
 
+          // onBeforeCompile captures system-specific GLSL. Three's default key
+          // only hashes the function text, so otherwise the first system's
+          // translucent context shader gets reused for myocardium and vessels.
+          mat.customProgramCacheKey = () => `orbit-atlas-v2-${sys.id}`;
           mat.onBeforeCompile = (shader) => {
             shader.uniforms.partState = { value: partTexture };
             shader.uniforms.selectionState = { value: selectionTexture };
@@ -2008,19 +2062,19 @@ varying float partSelected;
             const isNervousSys = sys.id === 'nervous';
             const isCardiacSys = sys.id === 'cardiac';
 
-            let selectedColorGlsl = 'diffuseColor.rgb = diffuseColor.rgb * 1.35;\n';
-            let selectedEmissiveGlsl = 'totalEmissiveRadiance += diffuseColor.rgb * 0.4;\n';
+            let selectedColorGlsl = ''; 
+            let selectedEmissiveGlsl = 'totalEmissiveRadiance += diffuseColor.rgb * 0.04;\n';
 
             if (isArterialSys) {
               // SOLID, 100% OPAQUE, DEEP ARTERIAL SCARLET RED (NO ACES ORANGE SHIFT)
-              selectedColorGlsl = 'diffuseColor.rgb = vec3(0.96, 0.02, 0.02);\n' +
+              selectedColorGlsl = 'diffuseColor.rgb = vec3(0.70, 0.018, 0.024);\n' +
                                   'diffuseColor.a = 1.0;\n';
-              selectedEmissiveGlsl = 'totalEmissiveRadiance = vec3(0.18, 0.005, 0.005);\n';
+              selectedEmissiveGlsl = 'totalEmissiveRadiance = vec3(0.06, 0.002, 0.002);\n';
             } else if (isVenousSys) {
               // VIVID DEEP ROYAL COBALT BLUE (SLASHED GREEN TO PREVENT CYAN BLEED)
-              selectedColorGlsl = 'diffuseColor.rgb = vec3(0.04, 0.18, 0.88);\n' +
+              selectedColorGlsl = 'diffuseColor.rgb = vec3(0.035, 0.16, 0.52);\n' +
                                   'diffuseColor.a = 1.0;\n';
-              selectedEmissiveGlsl = 'totalEmissiveRadiance = vec3(0.01, 0.03, 0.20);\n';
+              selectedEmissiveGlsl = 'totalEmissiveRadiance = vec3(0.008, 0.018, 0.06);\n';
             } else if (isNervousSys) {
               // BRILLIANT SATURATED GOLDEN AMBER (HIGH VISIBILITY OVER MYOCARDIUM)
               selectedColorGlsl = 'diffuseColor.rgb = vec3(1.0, 0.72, 0.02);\n' +
@@ -2035,9 +2089,9 @@ varying float partSelected;
 
             let contextColorGlsl = '';
             if (isCardiacSys) {
-              // ANATOMICAL TRANSLUCENT MYOCARDIUM: Rich deep crimson (#991b1b), 44% alpha, deep chamber visibility!
-              contextColorGlsl = 'diffuseColor.rgb = vec3(0.68, 0.12, 0.16);\n' +
-                                 'diffuseColor.a = 0.44;\n';
+              // Opaque myocardium provides clean context for surface coronary vessels.
+              contextColorGlsl = 'diffuseColor.rgb = vec3(0.14, 0.022, 0.028);\n' +
+                                 'diffuseColor.a = 1.0;\n';
             } else {
               contextColorGlsl = 'diffuseColor.rgb = diffuseColor.rgb * 0.75;\n' +
                                  'diffuseColor.a = 0.40;\n';
@@ -2121,6 +2175,18 @@ varying float partSelected;
             new THREE.BufferAttribute(new Int16Array(buffer, p.normals, p.vertexCount * 3), 3, true)
           );
           geom.setIndex(new THREE.BufferAttribute(new Uint32Array(buffer, p.indices, p.indexCount), 1));
+          // Keep one real surface vertex per source part for callouts. A box
+          // centre can sit in empty space between branches of a vessel.
+          const positions = geom.getAttribute('position');
+          const center = bounds[partIdx].getCenter(new THREE.Vector3());
+          let nearest = 0, distance = Infinity;
+          for (let v = 0; v < positions.count; v++) {
+            const x=positions.getX(v), y=positions.getY(v), z=positions.getZ(v);
+            if (z < center.z) continue;
+            const d=(x-center.x)**2+(y-center.y)**2+(z-center.z)**2;
+            if (d < distance) { nearest=v;distance=d; }
+          }
+          partSurfaceAnchorsRef.current.set(p.id,new THREE.Vector3().fromBufferAttribute(positions,nearest));
           geom.boundingBox = bounds[partIdx].clone();
           geom.computeBoundingSphere();
 
@@ -2490,6 +2556,7 @@ varying float partSelected;
       controls.update();
       if (now - lastLabelUpdate > (isMobileDevice ? 90 : 65)) {
         updateFloatingLabels();
+        updateConnectionCallout();
         lastLabelUpdate = now;
       }
       renderer.render(scene, camera);
@@ -2518,6 +2585,8 @@ varying float partSelected;
 
       controls.dispose();
       if (labelLayerRef.current) labelLayerRef.current.replaceChildren();
+      connectionLayerRef.current?.replaceChildren();
+      partSurfaceAnchorsRef.current.clear();
       floatingLabelTargets = [];
       prepareLabelsRef.current = null;
 
@@ -2540,6 +2609,7 @@ varying float partSelected;
       scene.traverse((obj) => {
         if (obj instanceof THREE.Mesh) {
           if (obj.geometry) obj.geometry.dispose();
+          if (obj.userData.overviewMaterial && obj.userData.overviewMaterial !== obj.material) obj.userData.overviewMaterial.dispose();
           if (Array.isArray(obj.material)) {
             obj.material.forEach((m) => m.dispose());
           } else if (obj.material) {
@@ -2880,11 +2950,11 @@ varying float partSelected;
         const overviewMaterial = new THREE.MeshStandardMaterial({
           color: 0xbe123c,
           emissive: 0x4c0519,
-          emissiveIntensity: 0.16,
+          emissiveIntensity: 0.02,
           roughness: 0.36,
           metalness: 0.0,
           transparent: true,
-          opacity: 0.74,
+          opacity: 1.0,
           depthWrite: true,
           side: THREE.DoubleSide,
         });
@@ -2904,6 +2974,10 @@ varying float partSelected;
           mesh.visible = true;
           mesh.frustumCulled = true;
           mesh.renderOrder = 16;
+          mesh.userData.overviewMaterial = new THREE.MeshStandardMaterial({
+            color: /arter|aorta/i.test(mesh.name) ? 0xc34749 : /vein|vena/i.test(mesh.name) ? 0x497daa : /valve|septum/i.test(mesh.name) ? 0xe4c4a0 : 0x973d40,
+            roughness:.68,metalness:0,side:THREE.DoubleSide
+          });
           mesh.userData.isHraHeartReference = true;
           meshes.push(mesh);
         });
@@ -2991,13 +3065,13 @@ varying float partSelected;
           side: THREE.DoubleSide,
         }),
         overview: new THREE.MeshStandardMaterial({
-          color: 0xa855f7,
-          emissive: 0x3b0764,
-          emissiveIntensity: 0.16,
+          color: 0xad6b55,
+          emissive: 0x000000,
+          emissiveIntensity: 0.02,
           roughness: 0.36,
           metalness: 0,
           transparent: true,
-          opacity: 0.76,
+          opacity: 1.0,
           depthWrite: true,
           side: THREE.DoubleSide,
         }),
@@ -3049,6 +3123,8 @@ varying float partSelected;
             mesh.visible = true;
             mesh.frustumCulled = true;
             mesh.renderOrder = 15;
+            const tissues:Record<string,number> = {kidney:0xa95b43,liver:0x81433f,lungs:0xc68e85,pancreas:0xc6a878,spleen:0x77445c,small_intestine:0xbf8a73,urinary_bladder:0xc3a077,thymus:0xcbb692,eye:0xe6ddd1,ureter:0xceb889,spinal_cord:0xd2c6a6,prostate:0xb99079,uterus:0xae676c,ovary:0xbc9b85,fallopian_tube:0xc58684,placenta:0x935450};
+            mesh.userData.overviewMaterial = new THREE.MeshStandardMaterial({color:tissues[target.organKey]||0xc8ad94,roughness:.65,metalness:0,side:THREE.DoubleSide});
             mesh.userData.isHraOrganReference = true;
             mesh.userData.hraModelKey = modelKey;
             meshes.push(mesh);
@@ -3218,7 +3294,8 @@ varying float partSelected;
     const hiddenSet = new Set(hiddenPartIds);
     // CRITICAL FIX: Only isolatedPartId triggers isolation geometry peeling!
     // selectedOrganId is for clinical inspection and selection highlight, without hiding the rest of the body!
-    const targetKey = isolatedPartId || null;
+    const connection = getOrganConnection(isolatedPartId);
+    const targetKey = connection?.targetId || isolatedPartId || null;
     const isHraHeartReferenceTarget = isHraHeartTarget(targetKey);
     const hraHeartTarget = getHraHeartTarget(targetKey);
     const hraHeartBox = new THREE.Box3();
@@ -3237,6 +3314,10 @@ varying float partSelected;
     const isolatedElements = isolatedTarget ? isolatedTarget.ids : null;
     const contextKey = contextOrganId || resolveContextOrganId(targetKey, selectedOrganId);
     const contextElements = (contextKey && contextKey !== targetKey) ? resolveAtlasElementIds(contextKey, atlas) : null;
+    if (connection?.owner === 'heart' && contextElements) {
+      const shell = new Set(['FJ2428','FJ2438','FJ2439','FJ3413','FJ3411','FJ3417','FJ2966','FJ2924','FJ3019','FJ3645']);
+      for (const id of contextElements) if (!shell.has(id)) contextElements.delete(id);
+    }
 
     // HRA reference heart visibility. All meshes remain in their original HRA
     // coordinate frame; the requested septum is highlighted while the rest of
@@ -3252,7 +3333,7 @@ varying float partSelected;
           const isSelected = hraHeartMeshMatchesTarget(mesh.name, targetKey);
           mesh.visible = true;
           mesh.material = isOverview
-            ? hraHeartMaterialsRef.current!.overview
+            ? mesh.userData.overviewMaterial || hraHeartMaterialsRef.current!.overview
             : isSchematic
             ? hraHeartMaterialsRef.current!.context
             : isSelected
@@ -3295,7 +3376,7 @@ varying float partSelected;
           const selected = hraOrganMeshMatchesTarget(mesh.name, targetKey);
           mesh.visible = true;
           mesh.material = hraGenericTarget?.matchAll
-            ? hraOrganMaterialsRef.current.overview
+            ? mesh.userData.overviewMaterial || hraOrganMaterialsRef.current.overview
             : selected
             ? hraOrganMaterialsRef.current.selected
             : hraOrganMaterialsRef.current.context;
@@ -3529,6 +3610,7 @@ varying float partSelected;
     if (layerPeel > 0.88) peelOrder[4].forEach((s) => peeledSystems.add(s));
 
       const isolationBox = new THREE.Box3();
+      const visibleSystems = new Set<SystemId>();
 
     atlas.parts.forEach((p, i) => {
       let visible = 1.0;
@@ -3582,7 +3664,11 @@ varying float partSelected;
             }
           }
         } else if (contextElements && contextElements.has(p.id)) {
-          visible = 0.35; // Context Organ in contrasting translucent color!
+          visible = 0.35;
+          if (connection) {
+            isolationBox.expandByPoint(new THREE.Vector3(...p.bounds[0]));
+            isolationBox.expandByPoint(new THREE.Vector3(...p.bounds[1]));
+          }
         } else if (isCardiacTarget && (p.system === 'nervous' || p.system === 'digestive') && p.bounds && p.bounds[1][1] < 1.35) {
           // Hide celiac/splanchnic ganglia (digestive system) that hang below the heart in cardiac isolation
           visible = 0.0;
@@ -3608,23 +3694,21 @@ varying float partSelected;
 
       if (!isolatedPartId && !partBelongsToRegion(p, cameraPreset)) visible = 0;
       partData[i * 4 + 3] = visible;
+      if (visible >= 0.1) visibleSystems.add(p.system);
     });
+    // Fragment discard still runs every hidden system's vertex shader. Skip
+    // entire draw calls when isolation/dissection hides a whole system.
+    systemMeshesRef.current.forEach((mesh, system) => { mesh.visible = visibleSystems.has(system); });
+    mountRef.current?.parentElement?.setAttribute('data-visible-atlas-systems', [...visibleSystems].sort().join(','));
 
     partTexture.needsUpdate = true;
 
     // Adjust depthWrite for context organ materials so overlay vessels/nerves render without occlusion
     const materials = systemMaterialsRef.current;
     if (materials) {
-      const isIsolationActive =
-        (isolatedElements && isolatedElements.size > 0) ||
-        isAutonomicTarget ||
-        useNerveContext ||
-        isHraHeartReferenceTarget ||
-        isHraGenericOrganTarget ||
-        isZReferenceTarget;
       const cardiacMat = materials.get('cardiac');
       if (cardiacMat) {
-        cardiacMat.depthWrite = !isIsolationActive;
+        cardiacMat.depthWrite = true;
       }
       const arterialMat = materials.get('arterial');
       if (arterialMat) {
@@ -3715,13 +3799,13 @@ varying float partSelected;
         isSplanchnicTarget ? 0.46 : 0.38
       );
       controlsRef.current.update();
-    } else if (isLungTarget && cameraRef.current && controlsRef.current) {
+    } else if (!connection && isLungTarget && cameraRef.current && controlsRef.current) {
       const center = new THREE.Vector3(0.0, 1.335, -0.005);
       controlsRef.current.minDistance = 0.05;
       controlsRef.current.target.copy(center);
       cameraRef.current.position.set(0.0, 1.350, 0.48);
       controlsRef.current.update();
-    } else if (isAbdomenTarget && cameraRef.current && controlsRef.current) {
+    } else if (!connection && isAbdomenTarget && cameraRef.current && controlsRef.current) {
       const center = new THREE.Vector3(0.0, 1.110, 0.02);
       controlsRef.current.minDistance = 0.05;
       controlsRef.current.target.copy(center);
@@ -3773,7 +3857,8 @@ varying float partSelected;
     const selectionTexture = selectionTextureRef.current;
     if (!atlas || !selectionData || !selectionTexture || !modelsReady) return;
 
-    const targetHighlight = isolatedPartId || selectedOrganId;
+    const connection = getOrganConnection(isolatedPartId);
+    const targetHighlight = connection?.targetId || isolatedPartId || selectedOrganId;
     const isAutonomic = targetHighlight && (
       targetHighlight.toLowerCase().includes('sympath') ||
       targetHighlight.toLowerCase().includes('cardiac plexus') ||
@@ -3796,6 +3881,11 @@ varying float partSelected;
     });
 
     selectionTexture.needsUpdate = true;
+    connectionAnchorsRef.current = connection ? atlas.parts.filter(p => selectedElements?.has(p.id))
+      .sort((a,b) => {
+        const volume = (p:Part) => (p.bounds[1][0]-p.bounds[0][0])*(p.bounds[1][1]-p.bounds[0][1])*(p.bounds[1][2]-p.bounds[0][2]);
+        return volume(b)-volume(a);
+      }).slice(0,3).map(p => partSurfaceAnchorsRef.current.get(p.id)?.clone() || new THREE.Vector3().addVectors(new THREE.Vector3(...p.bounds[0]),new THREE.Vector3(...p.bounds[1])).multiplyScalar(.5)) : [];
 
     // Keep 3D scene clean without cartoon pointer rings or cones
     if (selectionPointerRef.current) {
@@ -3848,6 +3938,10 @@ varying float partSelected;
           // Warm teaching-atlas bone keeps individual ribs/vertebrae visible
           // against the light mobile studio without changing source geometry.
           mat.color.setHex(0xcdb88e);
+        } else if ((getOrganConnection(isolatedPartId)?.owner || isolatedPartId) === 'kidney' && sysId === 'urinary') {
+          mat.color.setHex(0x9d5947);
+        } else if ((getOrganConnection(isolatedPartId)?.owner || isolatedPartId) === 'heart' && sysId === 'cardiac') {
+          mat.color.setHex(0x99454a);
         } else {
           const origSys = SYSTEMS.find((s) => s.id === sysId);
           if (origSys) mat.color.setHex(parseInt(origSys.color.replace('#', '0x')));
@@ -3914,6 +4008,8 @@ varying float partSelected;
         data-testid="anatomy-floating-label-layer"
         className="absolute inset-0 z-[8] pointer-events-none overflow-hidden"
       />
+
+      <div ref={connectionLayerRef} data-testid="anatomy-connection-callout" className="absolute inset-0 z-[9] pointer-events-none overflow-hidden" />
 
       {(graphicsError || contextLost) && (
         <div role="alert" className={`absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 p-6 text-center ${isLight ? 'bg-slate-50 text-slate-800' : 'bg-slate-950 text-slate-200'}`}>

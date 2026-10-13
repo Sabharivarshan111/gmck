@@ -1,0 +1,15 @@
+.organ-connections{--oc-ink:#e8edf5;--oc-muted:#acb8c8;--oc-bg:#151b28;--oc-border:#374151;color:var(--oc-ink);font-family:inherit}
+.organ-connections.oc-light{--oc-ink:#172338;--oc-muted:#526179;--oc-bg:#f5f8fc;--oc-border:#cbd5e1}
+.organ-connections header>small{font-size:10px;letter-spacing:.12em;color:var(--oc-muted);font-weight:700}
+.organ-connections h3{font-size:19px;line-height:1.4;font-weight:700;margin:6px 0 8px}.organ-connections h3 span{font-size:12px;color:var(--oc-muted);margin-left:8px}
+.organ-connections p{font-size:13px;line-height:1.65;color:var(--oc-muted);margin:8px 0 16px;overflow-wrap:anywhere}
+.oc-group{margin-top:20px}.oc-group h4{text-transform:capitalize;font-size:12px;font-weight:700;color:var(--oc-muted);letter-spacing:.05em;margin-bottom:9px}
+.oc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:10px}
+.oc-card{display:flex;align-items:center;gap:10px;width:100%;min-height:64px;padding:12px;border:1px solid var(--oc-border);border-radius:14px;background:var(--oc-bg);color:var(--oc-ink);text-align:left;cursor:pointer}
+.oc-card:focus-visible,.oc-diagram button:focus-visible{outline:2px solid #38bdf8;outline-offset:3px}.oc-card:hover{border-color:#6c819e}
+.oc-card>span{flex:1;min-width:0}.oc-card strong{font-size:13px;line-height:1.5;display:block;overflow-wrap:anywhere}.oc-card small{display:block;color:var(--oc-muted);font-size:10px;line-height:1.5;margin-top:4px}
+.oc-card i{width:7px;height:7px;border-radius:50%;background:#aac5dc;flex-shrink:0}.oc-arterial i{background:#ef8c91}.oc-venous i{background:#82b4ef}.oc-card>svg{flex-shrink:0;color:var(--oc-muted)}
+.oc-note summary,.oc-legacy-notes>summary{min-height:44px;display:flex;align-items:center;font-size:12px;color:var(--oc-muted);cursor:pointer}.oc-note p{padding:0 12px}
+.oc-diagram{border:1px solid var(--oc-border);border-radius:16px;background:var(--oc-bg);padding:14px;margin-top:22px;scroll-margin:12px}.oc-diagram header{display:flex;align-items:center;gap:8px;font-size:14px}.oc-diagram header strong{flex:1}.oc-diagram button{min-width:44px;min-height:44px;display:grid;place-items:center;border-radius:10px;background:transparent;color:var(--oc-ink)}.oc-diagram>small{font-size:11px;color:var(--oc-muted)}
+.oc-diagram svg{width:100%;height:auto;margin-top:10px}.oc-diagram svg rect{fill:var(--oc-bg);stroke:var(--oc-border)}.oc-diagram svg text{fill:var(--oc-ink);font-size:10px;font-family:inherit}.oc-diagram p{margin-bottom:0}
+.oc-legacy-notes{margin-top:24px}.oc-legacy-notes>summary{font-weight:600;color:inherit;min-height:48px}

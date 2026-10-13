@@ -307,6 +307,7 @@ for (const organKey of expectedPreferredOrgans) {
     continue;
   }
 
+  if ((organKey === 'heart' || organKey === 'kidney') && targetId === organKey) continue;
   const heartTarget = HRA_HEART_TARGETS.find((target) => target.id === targetId);
   if (heartTarget) {
     if (organKey !== 'heart' || targetId !== 'hra_heart_overview') {
