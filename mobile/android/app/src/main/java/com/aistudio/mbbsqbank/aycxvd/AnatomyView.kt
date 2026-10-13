@@ -92,7 +92,7 @@ class AnatomyView(private val reactContext: ThemedReactContext) : GLSurfaceView(
   override fun onHostDestroy() { release() }
   fun release() { reactContext.removeLifecycleEventListener(this); queueEvent { scene.parts=emptyList(); scene.batches=emptyList() } }
   private data class Part(val id: String, val name: String, val system: String, val bounds: FloatArray, val positions: FloatArray, val normals: FloatArray, val indices: ShortArray)
-  private data class Batch(val vertices: FloatBuffer, val indices: ShortBuffer, val count: Int)
+  private data class Batch(val vertices: FloatBuffer, val indices: ShortBuffer, val count: Int, val transparent: Boolean)
   private inner class Scene : Renderer {
     var model="atlas"; var loadedModel=""; var parts: List<Part> = emptyList(); var batches: List<Batch> = emptyList()
     var visible=setOf<String>(); var context=setOf<String>(); var hidden=setOf<String>(); var annotations=setOf<String>()
@@ -152,6 +152,7 @@ class AnatomyView(private val reactContext: ThemedReactContext) : GLSurfaceView(
       val group = ArrayList<Part>()
       var vertexCount = 0
       var indexCount = 0
+      var transparent = false
       fun flush() {
         if (indexCount == 0) return
         // Primitive direct buffers avoid millions of boxed Float allocations.
@@ -172,15 +173,21 @@ class AnatomyView(private val reactContext: ThemedReactContext) : GLSurfaceView(
           base += n
         }
         vb.position(0); ib.position(0)
-        result.add(Batch(vb, ib, indexCount))
+        result.add(Batch(vb, ib, indexCount, transparent))
         group.clear(); vertexCount = 0; indexCount = 0
       }
-      for (p in displayed) {
-        val n = p.positions.size / 3
-        if (vertexCount + n > 65535) flush()
-        group.add(p); vertexCount += n; indexCount += p.indices.size
+      // Opaque vessels first; translucent organ context must not hide them via depth writes.
+      for (pass in 0..1) {
+        transparent = pass == 1
+        for (p in displayed) {
+          if ((p.id in context && p.id !in visible) != transparent) continue
+          val n = p.positions.size / 3
+          if (vertexCount + n > 65535) flush()
+          group.add(p); vertexCount += n; indexCount += p.indices.size
+        }
+        flush()
       }
-      flush(); batches = result; dirty = false
+      batches = result; dirty = false
       emit("topModelStatus", Arguments.createMap().apply { putString("status", "ready"); putInt("parts", displayed.size) })
     }
     private fun fit() {
@@ -202,7 +209,8 @@ class AnatomyView(private val reactContext: ThemedReactContext) : GLSurfaceView(
       Matrix.multiplyMM(temp,0,view,0,rotation,0);Matrix.multiplyMM(mvp,0,projection,0,temp,0)
       GLES20.glUseProgram(program);GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(program,"uMvp"),1,false,mvp,0);GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(program,"uRotation"),1,false,rotation,0)
       val pos=GLES20.glGetAttribLocation(program,"aPosition");val norm=GLES20.glGetAttribLocation(program,"aNormal");val col=GLES20.glGetAttribLocation(program,"aColor")
-      for(b in batches){b.vertices.position(0);GLES20.glVertexAttribPointer(pos,3,GLES20.GL_FLOAT,false,40,b.vertices);b.vertices.position(3);GLES20.glVertexAttribPointer(norm,3,GLES20.GL_FLOAT,false,40,b.vertices);b.vertices.position(6);GLES20.glVertexAttribPointer(col,4,GLES20.GL_FLOAT,false,40,b.vertices);GLES20.glEnableVertexAttribArray(pos);GLES20.glEnableVertexAttribArray(norm);GLES20.glEnableVertexAttribArray(col);GLES20.glDrawElements(GLES20.GL_TRIANGLES,b.count,GLES20.GL_UNSIGNED_SHORT,b.indices)}
+      for(b in batches){GLES20.glDepthMask(!b.transparent);b.vertices.position(0);GLES20.glVertexAttribPointer(pos,3,GLES20.GL_FLOAT,false,40,b.vertices);b.vertices.position(3);GLES20.glVertexAttribPointer(norm,3,GLES20.GL_FLOAT,false,40,b.vertices);b.vertices.position(6);GLES20.glVertexAttribPointer(col,4,GLES20.GL_FLOAT,false,40,b.vertices);GLES20.glEnableVertexAttribArray(pos);GLES20.glEnableVertexAttribArray(norm);GLES20.glEnableVertexAttribArray(col);GLES20.glDrawElements(GLES20.GL_TRIANGLES,b.count,GLES20.GL_UNSIGNED_SHORT,b.indices)}
+      GLES20.glDepthMask(true)
       labels()
     }
     private fun project(x: Float,y: Float,z: Float): FloatArray { val p=FloatArray(4);Matrix.multiplyMV(p,0,mvp,0,floatArrayOf(x,y,z,1f),0);return floatArrayOf((p[0]/p[3]*.5f+.5f)*w,(-p[1]/p[3]*.5f+.5f)*h,p[2]/p[3]) }
