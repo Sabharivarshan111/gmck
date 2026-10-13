@@ -95,7 +95,6 @@ jobs:
       - name: Publish clearly labelled native test APK
         uses: softprops/action-gh-release@v2
         with:
-          target_commitish: ${{ github.sha }}
           tag_name: native-offline-preview-${{ github.run_number }}
           name: ORBIT Native Preview · offline simulator test
           prerelease: true
@@ -113,6 +112,8 @@ jobs:
             Full offline detail was chosen over the earlier 10 MB cap.
 
             Built from `${{ github.sha }}`.
+            Source code: https://github.com/${{ github.repository }}/commit/${{ github.sha }}.
+            Use the linked commit for this preview; automatic tag archives use the default branch.
           files: |
             mobile/android/app/build/outputs/apk/preview/*.apk
             native-preview-size.json

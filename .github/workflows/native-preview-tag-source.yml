@@ -1,4 +1,4 @@
-name: Correct native preview source tag
+name: Record native preview source provenance
 on:
   push:
     branches: [codex/native-offline-simulator]
@@ -14,9 +14,7 @@ jobs:
           script: |
             const owner=context.repo.owner, repo=context.repo.repo;
             const source='f23c9ccf19b11813a3802737f9dcccf60625a0ea';
-            const old='9a1a39dddf362e8a186690d6c1f2da3d20273fc4';
-            const ref=await github.rest.git.getRef({owner,repo,ref:'tags/native-offline-preview-2'});
-            if(ref.data.object.sha!==old && ref.data.object.sha!==source) throw Error('Preview source tag changed unexpectedly');
-            if(ref.data.object.sha===old) await github.rest.git.updateRef({owner,repo,ref:'tags/native-offline-preview-2',sha:source,force:false});
-            await github.rest.repos.updateRelease({owner,repo,release_id:412094585,target_commitish:source});
-            core.info('Preview source tag matches its actual binary commit.');
+            const release=await github.rest.repos.getRelease({owner,repo,release_id:412094585});
+            const line='Source code for this APK: https://github.com/'+owner+'/'+repo+'/commit/'+source+'. Automatic tag source archives currently reference the default branch; use the linked commit for this native preview.';
+            if(!release.data.body.includes(line)) await github.rest.repos.updateRelease({owner,repo,release_id:412094585,body:release.data.body+'\n\n'+line});
+            core.info('Actual binary source commit recorded; tag mutation is blocked by token workflow scope.');
