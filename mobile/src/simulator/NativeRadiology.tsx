@@ -43,6 +43,7 @@ export function NativeRadiology(){
  const reset=()=>{setZoom(1);setPan({x:0,y:0});setContrast(1);setDraft(null);setSelected(null);};
  const saveLabel=()=>{if(!draft||!name.trim())return;const items=[...personal,{...draft,id:String(Date.now()),name:name.trim().slice(0,80),note:'Personal study label. Not an expert-verified anatomical annotation.',provenance:'personal' as const}].slice(-16);setPersonal(items);void AsyncStorage.setItem(storageKey,JSON.stringify(items));setDraft(null);setMark(false);};
  const uri=Platform.OS==='android'?'asset:/simulator/'+current.image.replace('/clinical-reference/',''):'/native-simulator/'+current.image.replace('/clinical-reference/','');
+ useEffect(()=>{let live=true;Image.getSize(uri,(width,height)=>{if(live&&width>0&&height>0)setImageAspect(width/height);},()=>undefined);return()=>{live=false;};},[uri]);
  return <ScrollView contentContainerStyle={ui.page}>
   <View style={ui.row}><Action label="Chest X-ray" selected={mode==='xray'} onPress={()=>{setMode('xray');reset();}}/><Action label="Brain MRI" selected={mode==='mri'} onPress={()=>{setMode('mri');reset();}}/></View>
   <Copy muted>Acquired teaching reference · independent of the simulated patient.</Copy>
@@ -50,7 +51,7 @@ export function NativeRadiology(){
   <View style={ui.row}><Action label={labels?'Hide labels':'Show labels'} onPress={()=>setLabels(!labels)}/><Action label={mark?'Tap image to mark':'Add study label'} selected={mark} onPress={()=>{setLabels(true);setMark(!mark);}}/><Action label="Reset view" onPress={reset}/></View>
   <View testID="radiology-image-stage" style={styles.stage} onLayout={e=>setSize({width:e.nativeEvent.layout.width,height:e.nativeEvent.layout.height})}>
    <View {...responder.panHandlers} style={StyleSheet.absoluteFill}><View pointerEvents="none" style={{position:'absolute',left:margin,right:margin,top:0,bottom:0,overflow:'hidden'}}>
-    {mode==='xray'?<Image accessibilityLabel={current.alt} source={{uri}} resizeMode="stretch" style={{position:'absolute',left:rect.x-margin,top:rect.y,width:rect.width,height:rect.height}} onLoad={e=>{const img=e.nativeEvent.source;if(img.width&&img.height)setImageAspect(img.width/img.height);}}/>:<OrbitMRI accessibilityLabel={`T1 ${plane}, slice ${slice+1}; radiological orientation`} plane={plane} slice={slice} contrast={contrast} zoom={zoom} style={{position:'absolute',left:pan.x,right:-pan.x,top:pan.y,bottom:-pan.y}}/>}
+    {mode==='xray'?<Image accessibilityLabel={current.alt} source={{uri}} resizeMode="stretch" style={{position:'absolute',left:rect.x-margin,top:rect.y,width:rect.width,height:rect.height}} onLoad={e=>{const img=e.nativeEvent.source;if(img?.width&&img?.height)setImageAspect(img.width/img.height);}}/>:<OrbitMRI accessibilityLabel={`T1 ${plane}, slice ${slice+1}; radiological orientation`} plane={plane} slice={slice} contrast={contrast} zoom={zoom} style={{position:'absolute',left:pan.x,right:-pan.x,top:pan.y,bottom:-pan.y}}/>}
    </View></View>
    {labels&&<ImageCallouts items={[...refs,...personal]} rect={rect} width={size.width} height={size.height} margin={margin} onSelect={setSelected}/>}
    {(mode==='mri'&&plane!=='sagittal')||(mode==='xray'&&current.orientation)?<View pointerEvents="none" style={styles.orientation}><Text style={{color:'#ced4da'}}>R</Text><Text style={{color:'#ced4da'}}>L</Text></View>:null}
