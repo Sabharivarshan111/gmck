@@ -21,7 +21,7 @@ function writeModel(key,parts){
   const [simple,error]=MeshoptSimplifier.simplify(indices,positions,3,target,limit,['ErrorAbsolute']);
   const vertices=[...new Set(simple)],remap=new Map(vertices.map((v,i)=>[v,i]));
   if(vertices.length>65535)throw Error('Mesh index limit '+p.id);
-  const header=Buffer.alloc(8);header.writeUInt32BE(vertices.length);header.writeUInt32BE(simple.length);
+  const header=Buffer.alloc(8);header.writeUInt32BE(vertices.length);header.writeUInt32BE(simple.length,4);
   const verts=Buffer.alloc(vertices.length*9);
   vertices.forEach((v,j)=>{for(let k=0;k<3;k++){
    const lo=p.bounds[0][k],span=p.bounds[1][k]-lo;

@@ -15,7 +15,7 @@ for(const file of fs.readdirSync(root+'/models').filter(f=>f.endsWith('.json.gz'
  let offset=8;const ids=new Set();
  for(const part of meta){
   const n=bytes.readUInt32BE(offset),count=bytes.readUInt32BE(offset+4);offset+=8;
-  assert.ok(n>0&&n<=65535);assert.ok(count>=3&&count%3===0);
+  assert.ok(n>0&&n<=65535,'Vertex count '+model+' '+part.id+' '+n);assert.ok(count>=3&&count%3===0,'Triangle count '+model+' '+part.id+' '+count);
   offset+=n*9;
   for(let i=0;i<count;i++)assert.ok(bytes.readUInt16BE(offset+i*2)<n);
   offset+=count*2;
