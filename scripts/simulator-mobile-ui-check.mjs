@@ -134,8 +134,8 @@ requireText(
   'Bedside examination tabs must show a two-column phone layout.'
 );
 requireText(
-  tutorial,
-  'h-[100dvh]',
+  read('src/simulator/instruments/EcgStudio.css'),
+  'height:100dvh',
   'ECG/ICU tutorial lost its full-height mobile sheet.'
 );
 requireText(

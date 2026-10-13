@@ -8,6 +8,7 @@ on:
       - 'scripts/simulator-mobile-ux-smoke.mjs'
       - 'scripts/simulator-studio-e2e.mjs'
       - 'scripts/simulator-eye-e2e.mjs'
+      - 'scripts/simulator-ecg-e2e.mjs'
       - 'scripts/simulator-eye-check.mjs'
       - 'public/models/eye-exam/**'
       - 'public/clinical-reference/**'
