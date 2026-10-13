@@ -1,0 +1,24 @@
+name: Radiology reference pixel review
+on:
+  push:
+    branches: [codex/native-offline-simulator]
+    paths:
+      - 'scripts/review-radiology-reference.py'
+      - '.github/workflows/radiology-reference-review.yml'
+permissions:
+  contents: read
+jobs:
+  reference:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install Pillow
+      - run: python scripts/review-radiology-reference.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exact-radiology-reference-review
+          path: radiology-review
