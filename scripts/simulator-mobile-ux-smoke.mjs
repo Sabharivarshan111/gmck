@@ -197,9 +197,16 @@ await check('spread-anatomy-inventory-and-clickable-labels', async () => {
   await heartLabel.click();
 
   const drawer = page.getByTestId('organ-detail-drawer');
-  await visible(drawer, 'Heart dossier from floating label');
-  await visible(drawer.getByRole('heading', { name: /Heart/i }).first(), 'Heart heading from floating label');
-  await shot('02c-spread-heart-label-details');
+  await page.waitForFunction(() =>
+    document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-isolated') === 'heart'
+  );
+  assert(await drawer.count() === 0, 'Heart tap must open the model without a dossier');
+  await visible(page.getByTestId('mobile-isolation-banner'), 'Focused Heart model');
+  await shot('02c-heart-label-model');
+  await page.getByRole('button', { name: 'Open selected structure anatomy details', exact: true }).click();
+  await visible(drawer, 'Heart dossier from information control');
+  await visible(drawer.getByRole('heading', { name: /Heart/i }).first(), 'Heart details heading');
+  await shot('02d-heart-explicit-details');
 
   await documentFits('Spread anatomy mobile inventory');
 });

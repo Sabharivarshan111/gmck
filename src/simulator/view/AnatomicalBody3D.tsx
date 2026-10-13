@@ -1248,6 +1248,10 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   onDissectPart,
   onAtlasLoaded,
 }) => {
+  const [showVesselContext, setShowVesselContext] = useState(false);
+  useEffect(() => { setShowVesselContext(false); }, [isolatedPartId]);
+  const selectedConnection = getOrganConnection(isolatedPartId);
+  const isVesselConnection = !!selectedConnection && selectedConnection.kind !== 'relation';
   const mountRef = useRef<HTMLDivElement>(null);
   const connectionLayerRef = useRef<HTMLDivElement>(null);
   const partSurfaceAnchorsRef = useRef<Map<string, THREE.Vector3>>(new Map());
@@ -1448,7 +1452,7 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
     // 2. Camera setup
     const isMobileDevice = width < 768 || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     const defaultDist = isMobileDevice ? 3.4 : 2.8;
-    const camera = new THREE.PerspectiveCamera(34, width / height, 0.05, 50);
+    const camera = new THREE.PerspectiveCamera(34, width / height, 0.001, 50);
     camera.position.set(0, 0.85, defaultDist);
     cameraRef.current = camera;
 
@@ -1687,7 +1691,14 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
         const subtitle = document.createElement('small');
         subtitle.style.cssText='display:block;font:400 10px/1.5 system-ui;color:#a9bacb';
         subtitle.textContent=connection.kind==='relation'?connection.direction+' relation':connection.kind==='arterial'?'Arterial supply · registered atlas':'Venous drainage · registered atlas';
-        caption.appendChild(subtitle);root.appendChild(caption);
+        caption.appendChild(subtitle);
+        if (connection.targetId === 'atlas:FJ3421') {
+          const branches = document.createElement('small');
+          branches.style.cssText = subtitle.style.cssText;
+          branches.textContent = 'Hepatic · splenic · left gastric branches shown';
+          caption.appendChild(branches);
+        }
+        root.appendChild(caption);
         svg=document.createElementNS(ns,'svg');svg.setAttribute('data-testid','connection-leaders');
         svg.setAttribute('aria-hidden','true');svg.style.cssText='position:absolute;inset:0;width:100%;height:100%;overflow:visible';root.appendChild(svg);
       }
@@ -2452,7 +2463,7 @@ varying float partSelected;
           onSelectOrganIdRef.current(organKey);
         }
       } else {
-        // Inspect: resolve to organ and view clinical dossier without hiding the body
+        // Inspect: resolve the organ and open its focused model.
         if (onSelectOrganIdRef.current) {
           const organKey = correctPartSystem(clickedPart).system === 'skeletal' ? clickedPart.id : resolvePartToOrganKey(clickedPart, atlas);
           onSelectOrganIdRef.current(organKey);
@@ -3312,8 +3323,15 @@ varying float partSelected;
       ? describeAtlasTarget(targetKey, atlas)
       : null;
     const isolatedElements = isolatedTarget ? isolatedTarget.ids : null;
+    // Registered branches give the short celiac trunk a readable vascular frame.
+    // They remain unselected: the callout still identifies the trunk itself.
+    const celiacBranches = targetKey === 'atlas:FJ3421'
+      ? new Set(['FJ3078', 'FJ2562', 'FJ3420', 'FJ3499', 'FJ3544', 'FJ3640'])
+      : null;
     const contextKey = contextOrganId || resolveContextOrganId(targetKey, selectedOrganId);
-    const contextElements = (contextKey && contextKey !== targetKey) ? resolveAtlasElementIds(contextKey, atlas) : null;
+    const contextElements = (contextKey && contextKey !== targetKey &&
+      (!connection || connection.kind === 'relation' || showVesselContext))
+      ? resolveAtlasElementIds(contextKey, atlas) : null;
     if (connection?.owner === 'heart' && contextElements) {
       const shell = new Set(['FJ2428','FJ2438','FJ2439','FJ3413','FJ3411','FJ3417','FJ2966','FJ2924','FJ3019','FJ3645']);
       for (const id of contextElements) if (!shell.has(id)) contextElements.delete(id);
@@ -3663,9 +3681,13 @@ varying float partSelected;
               isolationBox.expandByPoint(new THREE.Vector3(p.bounds[1][0], p.bounds[1][1], p.bounds[1][2]));
             }
           }
+        } else if (celiacBranches?.has(p.id)) {
+          visible = 1.0;
+          isolationBox.expandByPoint(new THREE.Vector3(...p.bounds[0]));
+          isolationBox.expandByPoint(new THREE.Vector3(...p.bounds[1]));
         } else if (contextElements && contextElements.has(p.id)) {
           visible = 0.35;
-          if (connection) {
+          if (connection?.kind === 'relation') {
             isolationBox.expandByPoint(new THREE.Vector3(...p.bounds[0]));
             isolationBox.expandByPoint(new THREE.Vector3(...p.bounds[1]));
           }
@@ -3819,9 +3841,9 @@ varying float partSelected;
       const maxDim = Math.max(size.x, size.y, size.z, 0.08);
       const cameraDistance = isolationCameraDistance(size, cameraRef.current.fov, cameraRef.current.aspect, window.innerWidth < 1024, rendererRef.current?.domElement.clientHeight || 636);
 
-      controlsRef.current.minDistance = 0.05;
+      controlsRef.current.minDistance = Math.max(0.005, maxDim * 0.05);
       controlsRef.current.target.copy(center);
-      cameraRef.current.position.set(center.x, center.y + 0.005, center.z + cameraDistance);
+      cameraRef.current.position.set(center.x, center.y + maxDim * 0.02, center.z + cameraDistance);
       controlsRef.current.update();
     } else if (
       !isolatedPartId &&
@@ -3839,6 +3861,7 @@ varying float partSelected;
     cameraPreset,
     isolatedPartId,
     contextOrganId,
+    showVesselContext,
     selectedOrganId,
     layerPeel,
     modelsReady,
@@ -4017,6 +4040,17 @@ varying float partSelected;
           <p className="max-w-sm text-sm">{graphicsError || 'The browser paused graphics to free memory. The view will resume when graphics are restored. ICU and clinical cases remain available.'}</p>
           <button type="button" onClick={() => window.location.reload()} className="min-h-11 rounded-xl bg-sky-600 px-5 py-3 font-semibold text-white">Reload simulator</button>
         </div>
+      )}
+
+      {isVesselConnection && (
+        <button
+          type="button"
+          aria-pressed={showVesselContext}
+          onClick={() => setShowVesselContext(value => !value)}
+          className="absolute right-3 top-[176px] z-20 min-h-11 max-w-[140px] rounded-xl border border-slate-600 bg-slate-900 px-3 py-2 text-xs font-semibold text-slate-100"
+        >
+          {showVesselContext ? 'Hide organ context' : 'Show organ context'}
+        </button>
       )}
 
       {/* Loading Progress Bar */}

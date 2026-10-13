@@ -3,5 +3,5 @@ export function isolationCameraDistance(size: { x: number; y: number; z: number 
   const tangent = Math.tan(fovDegrees * Math.PI / 360);
   const usableHeight = mobile ? Math.max(0.16, Math.min(0.60, (viewportHeight - 312) / viewportHeight)) : 0.84;
   const usableWidth = mobile ? 0.82 : 0.90;
-  return Math.max(0.15, size.y / (2 * tangent * usableHeight), size.x / (2 * tangent * Math.max(0.1, aspect) * usableWidth)) + size.z / 2;
+  return Math.max(0.025, size.y / (2 * tangent * usableHeight), size.x / (2 * tangent * Math.max(0.1, aspect) * usableWidth)) + size.z / 2;
 }
