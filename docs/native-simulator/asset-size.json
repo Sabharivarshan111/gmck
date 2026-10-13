@@ -1,0 +1,249 @@
+{
+  "schema": 1,
+  "parts": 3145,
+  "models": {
+    "atlas": {
+      "parts": 2234,
+      "sourceTriangles": 2288268,
+      "triangles": 782935,
+      "bytes": 9259887,
+      "sha256": "4ec20b5f28e83199bdf4c72745fa0dce96305e7b14bc596d3d1697123ff354b8"
+    },
+    "kidney_left": {
+      "parts": 22,
+      "sourceTriangles": 83692,
+      "triangles": 50230,
+      "bytes": 456969,
+      "sha256": "cc554d0c0891750bfddf79124dff64936ce19dca145f9b079508d4a0d55bdee4"
+    },
+    "kidney_right": {
+      "parts": 24,
+      "sourceTriangles": 84088,
+      "triangles": 47527,
+      "bytes": 432557,
+      "sha256": "e062118f9b9feb0f9433f1f72a9c0447bcae188db93a0f4d66b14bd341e984c0"
+    },
+    "liver": {
+      "parts": 26,
+      "sourceTriangles": 60369,
+      "triangles": 26599,
+      "bytes": 239523,
+      "sha256": "bb7e3b3f632acd22847716ae0db8a7aa0bfdd56ce1a7c56e555164ba3ff73186"
+    },
+    "lung": {
+      "parts": 67,
+      "sourceTriangles": 288463,
+      "triangles": 142599,
+      "bytes": 1348754,
+      "sha256": "a89d437951feadd1675a043408c60fbf388f1b80fa6d15ae99d2ac3401c3f55c"
+    },
+    "pancreas": {
+      "parts": 5,
+      "sourceTriangles": 14170,
+      "triangles": 8081,
+      "bytes": 73570,
+      "sha256": "1cc86de5eac69046c1d7624c05b24985c74630b107b26eb114fba7b7c32b8c35"
+    },
+    "spleen": {
+      "parts": 5,
+      "sourceTriangles": 16872,
+      "triangles": 6508,
+      "bytes": 60403,
+      "sha256": "ac1145f2d1b0fe64d6ece369190dfbaa19643073cf6d60625aaebb15fe8eba47"
+    },
+    "small_intestine": {
+      "parts": 10,
+      "sourceTriangles": 33524,
+      "triangles": 28994,
+      "bytes": 262502,
+      "sha256": "e6a505e9f16d84137f60af99061862b704fde9fb2140375e9494df2588498f6b"
+    },
+    "urinary_bladder": {
+      "parts": 6,
+      "sourceTriangles": 10073,
+      "triangles": 4637,
+      "bytes": 44822,
+      "sha256": "4b05124866ad516a32bb3926571b6e4dfafb7a6c40eedb7c48b215a80e0ecbe4"
+    },
+    "thymus": {
+      "parts": 2,
+      "sourceTriangles": 2730,
+      "triangles": 1758,
+      "bytes": 15594,
+      "sha256": "4da5c0277a8f219326b1ed1d2a1d7df787bf1c7e7bd2c7f22e3909476b9cb780"
+    },
+    "blood_vasculature": {
+      "parts": 104,
+      "sourceTriangles": 359598,
+      "triangles": 109082,
+      "bytes": 967244,
+      "sha256": "43f2bf5cde5ebff83d32ee3ebe8310cdd67decfb10c2b885dfac3c30c74d7695"
+    },
+    "eye_left": {
+      "parts": 23,
+      "sourceTriangles": 455294,
+      "triangles": 102993,
+      "bytes": 971179,
+      "sha256": "e6bc9f72c3238bd52fbf0498be02bafeb08d0338f72b73c91408049e051dd023"
+    },
+    "eye_right": {
+      "parts": 23,
+      "sourceTriangles": 455086,
+      "triangles": 103010,
+      "bytes": 975629,
+      "sha256": "c86e5cc6da3f6467849e0f5c5f62db6f6eecca190df0f85d42005a23eda34fd1"
+    },
+    "ureter_left": {
+      "parts": 14,
+      "sourceTriangles": 30618,
+      "triangles": 14789,
+      "bytes": 129890,
+      "sha256": "b11728e3dd11964db3fc8280436d96d62cd32c90342231eb2c18f8977acd32d7"
+    },
+    "ureter_right": {
+      "parts": 13,
+      "sourceTriangles": 28410,
+      "triangles": 13586,
+      "bytes": 122785,
+      "sha256": "da984442d8b62bceed90a4c74d98ebbdf7975ba51493027c6a4e50a721f952f5"
+    },
+    "spinal_cord": {
+      "parts": 30,
+      "sourceTriangles": 16358,
+      "triangles": 9874,
+      "bytes": 84104,
+      "sha256": "9e61e4fee6058837ca07165f39d4f3919911a35d1940a9075a5dab9a3723570f"
+    },
+    "pelvis_male": {
+      "parts": 14,
+      "sourceTriangles": 73862,
+      "triangles": 47994,
+      "bytes": 433662,
+      "sha256": "c4928d28d973ab31623f4d2b9ae3ca292ef97ab3206055a95e9e35afddada2e4"
+    },
+    "prostate": {
+      "parts": 18,
+      "sourceTriangles": 224676,
+      "triangles": 43215,
+      "bytes": 386921,
+      "sha256": "d982d8dc14ddfe38f54cd12a4b0a4347617de9d258903edaf9eb635a2bdbadf3"
+    },
+    "skin": {
+      "parts": 1,
+      "sourceTriangles": 185314,
+      "triangles": 22238,
+      "bytes": 202899,
+      "sha256": "50fc93ff5787e89e546a6b9b14e6b63cce86e0670de2f9149246283ea52cf7d8"
+    },
+    "knee_left": {
+      "parts": 20,
+      "sourceTriangles": 22892,
+      "triangles": 7225,
+      "bytes": 64889,
+      "sha256": "7debf47c90540c5faa6c79a822ceb6782700602914f23201505cee002379883a"
+    },
+    "knee_right": {
+      "parts": 20,
+      "sourceTriangles": 22892,
+      "triangles": 7210,
+      "bytes": 65021,
+      "sha256": "7c5a452536454895f794c1d91e2e1ac03ffec2c95092487bba860182dc5e61f1"
+    },
+    "uterus": {
+      "parts": 10,
+      "sourceTriangles": 37184,
+      "triangles": 10541,
+      "bytes": 99818,
+      "sha256": "745e9d94f1438e62e1f05c7195cc191ccf25b3b9a81b7185c5e08db2a71e1a6a"
+    },
+    "ovary_left": {
+      "parts": 1,
+      "sourceTriangles": 424,
+      "triangles": 418,
+      "bytes": 3609,
+      "sha256": "aa18f29b2c78534b5a68d200a2a157b47cf03c6afd41f286d80b6e367359e4f2"
+    },
+    "ovary_right": {
+      "parts": 1,
+      "sourceTriangles": 410,
+      "triangles": 400,
+      "bytes": 3481,
+      "sha256": "820090f1e307be502390d90e5f1029c5e48800e81394ee64a581904518bb212a"
+    },
+    "fallopian_tube_left": {
+      "parts": 4,
+      "sourceTriangles": 18281,
+      "triangles": 6778,
+      "bytes": 61454,
+      "sha256": "d032df6a201bd93d6256a165f83aaae67ffbd52d1ab63a03351ee7cddbbf62f1"
+    },
+    "fallopian_tube_right": {
+      "parts": 4,
+      "sourceTriangles": 17770,
+      "triangles": 6716,
+      "bytes": 60830,
+      "sha256": "e53f9ec5906237c5e8228c66dec398ebb7146a7e3156f99d3a261b80e67ae66a"
+    },
+    "placenta": {
+      "parts": 8,
+      "sourceTriangles": 188365,
+      "triangles": 36045,
+      "bytes": 327752,
+      "sha256": "3abb4ba6fd8846c514c3cc11b36c6eb20e96d4f1f04be5dd3a5563408887eb27"
+    },
+    "brain_reference": {
+      "parts": 104,
+      "sourceTriangles": 272262,
+      "triangles": 159909,
+      "bytes": 1279304,
+      "sha256": "1a0a379718b99abfcdcff624f8f284a314972bce3d7a00dfa1cf990c12a260df"
+    },
+    "stomach_reference": {
+      "parts": 4,
+      "sourceTriangles": 78554,
+      "triangles": 14962,
+      "bytes": 139366,
+      "sha256": "eb8344b88f1030e0ba0784d6905d772a149f2cafa6723f9bc6dff14c7866acf4"
+    },
+    "pectoralis_major_reference": {
+      "parts": 6,
+      "sourceTriangles": 11160,
+      "triangles": 10158,
+      "bytes": 76210,
+      "sha256": "a1151c16c98c4ea67b157f03276dcd091608cca79843ce174cbe0432e18a9a63"
+    },
+    "deltoid_reference": {
+      "parts": 6,
+      "sourceTriangles": 20488,
+      "triangles": 18620,
+      "bytes": 160045,
+      "sha256": "7ff7e01c55f1a417435caefc7702f2f5cec78bd0fbbdb6d5c5c015b56a2876d5"
+    },
+    "major_joints_reference": {
+      "parts": 30,
+      "sourceTriangles": 26984,
+      "triangles": 22087,
+      "bytes": 165745,
+      "sha256": "b00e04570993ec280bdd0ce9c49450d11fbb389c11d6614b5201f1367a35eacb"
+    },
+    "hra_heart": {
+      "parts": 14,
+      "sourceTriangles": 164119,
+      "triangles": 54280,
+      "bytes": 497785,
+      "sha256": "61054abf9d1537584a401747b681b5b2231bd512ed441c471563773b5ce2b49b"
+    },
+    "peripheral_nerves": {
+      "parts": 272,
+      "sourceTriangles": 193875,
+      "triangles": 102962,
+      "bytes": 830821,
+      "sha256": "f69c10b2bc09a04cda683754a02ea302725fee329a41f915f8d0586e00b1c1a3"
+    }
+  },
+  "geometryBytes": 20491589,
+  "pgBytes": 8744604,
+  "contentBytes": 29236193,
+  "maxAtlasErrorMetres": 0.0008,
+  "budget": "Full offline detail authorised; 10 MB cap relaxed by owner."
+}

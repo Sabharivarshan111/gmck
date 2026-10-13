@@ -36,6 +36,9 @@ export default defineConfig({
     alias: [
       { find: '@data', replacement: path.resolve(root, '..', 'src', 'data') },
       { find: '@shared', replacement: path.resolve(root, '..', 'src', 'lib') },
+      { find: '@simulator', replacement: path.resolve(root, '..', 'src', 'simulator') },
+      { find: '@/native/OrbitAnatomy', replacement: path.resolve(__dirname, 'shims/orbit-anatomy.tsx') },
+      { find: '@/native/OrbitMRI', replacement: path.resolve(__dirname, 'shims/orbit-mri.tsx') },
       // Before the bare '@' alias below, which matches by prefix.
       {
         find: '@/native/NativeOrbitSound',

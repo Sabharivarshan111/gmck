@@ -6,7 +6,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@data/*": ["../src/data/*"],
-      "@shared/*": ["../src/lib/*"]
+      "@shared/*": ["../src/lib/*"],
+      "@simulator/*": ["../src/simulator/*"]
     }
   },
   "include": [

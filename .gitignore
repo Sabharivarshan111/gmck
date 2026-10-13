@@ -40,3 +40,8 @@ remotion-ad/out/
 # PG data is reproducibly generated into web and Android assets at build time.
 /public/pg/
 /mobile/android/app/src/main/assets/pg/
+
+# Rebuilt from licensed source assets by native release/verification workflows.
+/mobile/android/app/src/main/assets/simulator/
+/mobile/android/app/src/main/assets/pg/
+/public/native-simulator/

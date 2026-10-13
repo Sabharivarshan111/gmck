@@ -11,6 +11,7 @@ module.exports = {
           // Shared with the web app — see metro.config.js.
           '@data': '../src/data',
           '@shared': '../src/lib',
+          '@simulator': '../src/simulator',
         },
       },
     ],
