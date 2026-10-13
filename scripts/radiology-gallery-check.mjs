@@ -1,0 +1,5 @@
+import assert from 'node:assert/strict';import fs from 'node:fs';import {chestXrayCases} from '../src/simulator/instruments/radiology/chestXrayCases.ts';
+const sources=JSON.parse(fs.readFileSync('public/clinical-reference/radiology/cases/sources.json','utf8'));
+assert.equal(chestXrayCases.length,23);assert.equal(new Set(chestXrayCases.map(c=>c.id)).size,chestXrayCases.length);
+let bytes=0;for(const c of chestXrayCases){assert.ok(c.source.startsWith('https://commons.wikimedia.org/wiki/File:'));assert.ok(c.author.length>0);assert.ok(/CC0|CC BY|Public domain/.test(c.license));assert.ok(!/NC|ND/.test(c.license));assert.ok(c.findings.length>=3);assert.ok(c.pitfall&&c.differential);assert.ok(fs.existsSync('public'+c.image));if(c.id!=='normal'){bytes+=fs.statSync('public'+c.image).size;const r=sources.cases.find(r=>'cxr-'+r.id===c.id);assert.ok(r);assert.equal(r.metadata.LicenseShortName,c.license);}}
+assert.ok(bytes<5*1024*1024);console.log(`${chestXrayCases.length} licensed films, local assets and source records verified; new images ${(bytes/1048576).toFixed(2)} MiB.`);

@@ -1,0 +1,44 @@
+name: ORBIT Radiology Gallery
+on:
+  push:
+    paths: ['src/simulator/instruments/radiology/**', 'public/clinical-reference/radiology/cases/**', 'scripts/radiology-gallery*.mjs', '.github/workflows/radiology-gallery.yml']
+  pull_request:
+    paths: ['src/simulator/instruments/radiology/**', 'public/clinical-reference/radiology/cases/**', 'scripts/radiology-gallery*.mjs', '.github/workflows/radiology-gallery.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --legacy-peer-deps --ignore-scripts --no-audit --no-fund
+      - run: npm --prefix mobile ci --legacy-peer-deps --ignore-scripts --no-audit --no-fund
+      - run: node --experimental-strip-types scripts/radiology-gallery-check.mjs
+      - run: npm run check:simulator-assets
+      - run: npm run check:simulator-mobile
+      - run: npm run build:vercel
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+      - run: npm run check:deploy
+      - run: npm install --no-save --package-lock=false --legacy-peer-deps playwright@1.55.0
+      - run: npx playwright install --with-deps chromium
+      - name: Exercise all films and real MRI planes at phone widths
+        run: |
+          node scripts/radiology-gallery-preview.mjs > /tmp/radio-preview.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4180/simulator >/dev/null; then break; fi
+            sleep 1
+          done
+          node --experimental-strip-types scripts/radiology-gallery-e2e.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: radiology-gallery-${{ github.sha }}
+          path: artifacts/radiology-gallery
+          if-no-files-found: warn
+          retention-days: 14
