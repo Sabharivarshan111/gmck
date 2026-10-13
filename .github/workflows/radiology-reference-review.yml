@@ -4,6 +4,7 @@ on:
     branches: [codex/native-offline-simulator]
     paths:
       - 'scripts/review-radiology-reference.py'
+      - 'mobile/src/simulator/radiologyAnnotations.ts'
       - '.github/workflows/radiology-reference-review.yml'
 permissions:
   contents: read
