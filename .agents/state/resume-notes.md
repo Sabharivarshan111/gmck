@@ -2194,3 +2194,5 @@ Read new private evidence batch after successful CI pilot; continue supported au
 
 ### DO NOT
 Use Gemini/model APIs for this job; claim perfect medical answers or legal immunity; publish private TXT/passages; reset remaining IDs when holding a row; claim all historic NEET-PG/FMGE/INI-CET years are verified. Attribution remains About. Frozen root src is unchanged.
+
+Final publication checkpoint: PR75 merged at 756a66682ad8d039a71ef4f0e1f5f7f44bfe9480; production dpl_CxHZsCfZ3umTaeQDop36Gq4yBJSV READY with orbitmbbs.vercel.app alias. Feature head 69613f344f305a9ab16c4bbf85679d3ce9e25cd0 passed web/content/offline/browser CI. Browser answer reveal made zero PG review calls. Android JS bundle and required native guards passed locally; no device/Play upload claim. Private pilot run 38339003334 succeeded (42 TXT, ten evidence sets, zero provider calls), batch 69613f344f305a9ab16c4bbf85679d3ce9e25cd0-38339003334-1; next original IDs s00-10 through19. Inspect malformed numeric distractors in s00-14 before authoring it. Full explanation and clinical-review work remains unfinished.
