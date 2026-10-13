@@ -2,9 +2,9 @@ name: ORBIT Connected Anatomy
 on:
   push:
     branches: [main]
-    paths: ['src/simulator/data/organConnections.ts', 'src/simulator/controls/OrganConnections*', 'src/simulator/controls/OrganDetailDrawer.tsx', 'src/simulator/view/AnatomicalBody3D.tsx', 'scripts/organ-connections*', 'scripts/build-organ-connections.mjs', '.github/workflows/organ-connections.yml']
+    paths: ['src/simulator/data/organConnections.ts', 'src/simulator/controls/OrganConnections*', 'src/simulator/controls/OrganDetailDrawer.tsx', 'src/simulator/view/AnatomicalBody3D.tsx', 'scripts/organ-connections*', 'scripts/direct-organ-open-e2e.mjs', 'src/pages/Simulator.tsx', 'src/simulator/view/isolationFraming.ts', 'scripts/build-organ-connections.mjs', '.github/workflows/organ-connections.yml']
   pull_request:
-    paths: ['src/simulator/data/organConnections.ts', 'src/simulator/controls/OrganConnections*', 'src/simulator/controls/OrganDetailDrawer.tsx', 'src/simulator/view/AnatomicalBody3D.tsx', 'scripts/organ-connections*', 'scripts/build-organ-connections.mjs', '.github/workflows/organ-connections.yml']
+    paths: ['src/simulator/data/organConnections.ts', 'src/simulator/controls/OrganConnections*', 'src/simulator/controls/OrganDetailDrawer.tsx', 'src/simulator/view/AnatomicalBody3D.tsx', 'scripts/organ-connections*', 'scripts/direct-organ-open-e2e.mjs', 'src/pages/Simulator.tsx', 'src/simulator/view/isolationFraming.ts', 'scripts/build-organ-connections.mjs', '.github/workflows/organ-connections.yml']
 permissions:
   contents: read
 jobs:
@@ -40,9 +40,12 @@ jobs:
             sleep 1
           done
           node --experimental-strip-types scripts/organ-connections-e2e.mjs
+          if [ "$ORGAN_CONNECTION_GROUP" = "0" ]; then node scripts/direct-organ-open-e2e.mjs; fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: organ-connections-${{ github.sha }}-${{ matrix.group }}
-          path: artifacts/organ-connections
+          path: |
+            artifacts/organ-connections
+            artifacts/direct-organ-open
           retention-days: 14

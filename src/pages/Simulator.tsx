@@ -1,3 +1,4 @@
+import { ORGAN_ANATOMY_DATABASE } from '@/simulator/data/organAnatomyData';
 import { getOrganConnection } from '@/simulator/data/organConnections';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -230,7 +231,7 @@ export const Simulator: React.FC = () => {
 
   const handleSelectCatalogPart = useCallback((id: string) => {
     setMobilePanel(null);
-    setIsolatedPartId(id); setSelectedOrganId(id); setContextOrganId(null); setExplodeAmount(0); setToolMode('inspect');
+    setIsolatedPartId(id); setSelectedOrganId(null); setContextOrganId(null); setExplodeAmount(0); setToolMode('inspect');
   }, []);
 
   const handleChangeRegion = (region: 'anterior' | 'head' | 'thorax' | 'abdomen') => {
@@ -238,32 +239,24 @@ export const Simulator: React.FC = () => {
   };
 
   const handleSelect3DOrgan = useCallback((organId: string) => {
-    if (toolMode === 'isolate') {
-      // In Isolate mode, whole-organ requests prefer a verified dedicated
-      // source model (HRA/Z-Anatomy) over the lower-detail whole-body mesh.
-      const preferredTarget =
-        getPreferredAnatomyIsolationTarget(organId) || organId;
-      setIsolatedPartId((prev) =>
-        prev === preferredTarget || prev === organId ? null : preferredTarget
-      );
-      setContextOrganId(null);
-    } else {
-      // In Inspect mode: Highlight structure in 3D & open clinical dossier without hiding the body!
-      setSelectedOrganId(organId);
-      setContextOrganId(null);
-    }
-
-    // While the anatomy is spread, preserve the learner's current spatial
-    // orientation. Clicking a floating label should open the dossier, not snap
-    // the camera back to a regional preset.
-    if (explodeAmount <= 0.08) {
-      const lower = organId.toLowerCase();
-      if (isPeripheralNerveTarget(organId)) setCameraPreset('anterior');
-      else if (lower.includes('brain') || lower.includes('head')) setCameraPreset('head');
-      else if (lower.includes('heart') || lower.includes('lung') || lower.includes('aorta')) setCameraPreset('thorax');
-      else if (lower.includes('liver') || lower.includes('abdomen') || lower.includes('kidney') || lower.includes('stomach') || lower.includes('spleen')) setCameraPreset('abdomen');
-    }
-  }, [toolMode, explodeAmount]);
+    const preferredTarget = getPreferredAnatomyIsolationTarget(organId) || organId;
+    // A model tap opens the model. The information control opens its dossier.
+    setSelectedOrganId(null);
+    setContextOrganId(null);
+    setMobilePanel(null);
+    setMobileTab('3d');
+    setExplodeAmount(0);
+    setLayerPeel(0);
+    setIsXray(false);
+    setIsolatedPartId((previous) =>
+      toolMode === 'isolate' && previous === preferredTarget ? null : preferredTarget
+    );
+    const lower = organId.toLowerCase();
+    if (isPeripheralNerveTarget(organId)) setCameraPreset('anterior');
+    else if (lower.includes('brain') || lower.includes('head')) setCameraPreset('head');
+    else if (lower.includes('heart') || lower.includes('lung') || lower.includes('aorta')) setCameraPreset('thorax');
+    else if (lower.includes('liver') || lower.includes('abdomen') || lower.includes('kidney') || lower.includes('stomach') || lower.includes('spleen')) setCameraPreset('abdomen');
+  }, [toolMode]);
 
   // Isolation and full exploded inventory are mutually exclusive interaction
   // modes. Any isolate request from the dossier/deep-inspector reassembles the
@@ -587,7 +580,7 @@ export const Simulator: React.FC = () => {
                 <div className="absolute top-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 sim-dark:bg-slate-900/95 backdrop-blur-md border border-amber-300 sim-dark:border-amber-700 shadow-md">
                   <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                   <span className="text-xs font-bold text-slate-800 sim-dark:text-slate-200">
-                    {getOrganConnection(isolatedPartId)?.label || atlasCatalog?.parts.find(p => p.id === isolatedPartId)?.name || getHraHeartTarget(isolatedPartId)?.label || getHraOrganTarget(isolatedPartId)?.label || getZAnatomyReferenceTarget(isolatedPartId)?.label || isolatedPartId.replace(/_/g, ' ')}
+                    {getOrganConnection(isolatedPartId)?.label || atlasCatalog?.parts.find(p => p.id === isolatedPartId)?.name || getHraHeartTarget(isolatedPartId)?.label || getHraOrganTarget(isolatedPartId)?.label || getZAnatomyReferenceTarget(isolatedPartId)?.label || ORGAN_ANATOMY_DATABASE[isolatedPartId]?.name || isolatedPartId.replace(/_/g, ' ')}
                   </span>
                   {contextOrganId && contextOrganId !== isolatedPartId && (
                     <span className="text-[11px] font-semibold text-slate-500 sim-dark:text-slate-400 border-l border-slate-300 sim-dark:border-slate-700 pl-2">
@@ -1130,7 +1123,7 @@ export const Simulator: React.FC = () => {
                     className="mobile-selection-details"
                   >
                     <span className="mobile-selection-name">
-                      {getOrganConnection(isolatedPartId)?.label || atlasCatalog?.parts.find(p => p.id === isolatedPartId)?.name || getHraHeartTarget(isolatedPartId)?.label || getHraOrganTarget(isolatedPartId)?.label || getZAnatomyReferenceTarget(isolatedPartId)?.label || isolatedPartId.replace(/_/g, ' ')}
+                      {getOrganConnection(isolatedPartId)?.label || atlasCatalog?.parts.find(p => p.id === isolatedPartId)?.name || getHraHeartTarget(isolatedPartId)?.label || getHraOrganTarget(isolatedPartId)?.label || getZAnatomyReferenceTarget(isolatedPartId)?.label || ORGAN_ANATOMY_DATABASE[isolatedPartId]?.name || isolatedPartId.replace(/_/g, ' ')}
                     </span>
                     <span className="mobile-selection-hint">Selection details</span>
                     <Info aria-hidden="true" className="w-5 h-5 shrink-0" />
