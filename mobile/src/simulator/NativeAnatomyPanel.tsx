@@ -1,11 +1,13 @@
 import React,{useCallback,useMemo,useState} from 'react';
-import {FlatList,Modal,ScrollView,StyleSheet,TextInput,View,useWindowDimensions} from 'react-native';
+import {FlatList,ScrollView,StyleSheet,TextInput,View,useWindowDimensions} from 'react-native';
 import Svg,{Path,Rect,Text as SvgText} from 'react-native-svg';
 import {Text} from '@/components/Text';import {Touchable} from '@/components/Touchable';import {Sheet} from '@/components/Sheet';import {Slider} from '@/components/Slider';import {useTheme} from '@/theme';import {OrbitAnatomy} from '@/native/OrbitAnatomy';
 import {ORGAN_ANATOMY_DATABASE} from '@simulator/data/organAnatomyData';
 import {ORGAN_CONNECTIONS,type OrganConnection} from '@simulator/data/organConnections';
 import {getPreferredAnatomyIsolationTarget} from '@simulator/data/preferredAnatomyReferences';
 import {ANATOMY_PARTS,ANATOMY_TARGETS,ANATOMY_REFERENCES} from './anatomyCatalog';
+import {normalisePeripheralNerveTarget} from '@simulator/data/peripheralNerves';
+import {typeScale} from '@/theme/typography';
 import {Action,Card,Copy,ui} from './SimulatorUi';
 type Pick={model:string;ids:readonly string[];label:string;owner:string;connection?:OrganConnection};
 const mainOrgans=['heart','lungs','liver','kidney','brain','stomach','pancreas','spleen','small_intestine','urinary_bladder'];
@@ -19,7 +21,7 @@ export function NativeAnatomyPanel(){
  const [context,setContext]=useState(false),[hidden,setHidden]=useState<string[]>([]),[cut,setCut]=useState(false),[spread,setSpread]=useState(0),[camera,setCamera]=useState(0),[points,setPoints]=useState(emptyPoints),[status,setStatus]=useState('loading'),[message,setMessage]=useState('');
  const [browse,setBrowse]=useState(false),[query,setQuery]=useState(''),[diagram,setDiagram]=useState<OrganConnection|null>(null);
  const select=useCallback((owner:string,target?:string)=>{
-  const key=target||getPreferredAnatomyIsolationTarget(owner)||owner,view=ANATOMY_TARGETS[key]||ANATOMY_TARGETS[owner];
+  const key=target||getPreferredAnatomyIsolationTarget(owner)||owner,view=ANATOMY_TARGETS[key]||ANATOMY_TARGETS[normalisePeripheralNerveTarget(key)||'']||ANATOMY_TARGETS[owner];
   if(!view||!view.ids.length){setDetails(owner);return;}
   setPick({...view,label:ORGAN_ANATOMY_DATABASE[owner]?.name||partMap.get(key)?.name||owner,owner});setContext(false);setSpread(0);setDetails(null);setBrowse(false);setStatus('loading');
  },[]);
@@ -29,7 +31,7 @@ export function NativeAnatomyPanel(){
  const annotations=useMemo(()=>pick?pick.connection?.partIds.slice(0,3)||pick.ids.slice(0,1):mainOrgans.slice(0,4).map(id=>ANATOMY_TARGETS[id]?.ids.find(i=>partMap.get(i)?.model==='atlas')).filter((i):i is string=>!!i),[pick]);
  const selectedOrgan=details?ORGAN_ANATOMY_DATABASE[details]:null;
  const links=details?(ORGAN_CONNECTIONS[details]||[]).filter(c=>section==='Supply'?c.kind!=='relation':c.kind==='relation'):[];
- const browseItems=useMemo(()=>ANATOMY_PARTS.filter(p=>p.model==='atlas'&&p.name.toLowerCase().includes(query.toLowerCase())),[query]);
+ const browseItems=useMemo(()=>ANATOMY_PARTS.filter(p=>(p.model==='atlas'||p.model==='peripheral_nerves')&&p.name.toLowerCase().includes(query.toLowerCase())),[query]);
  const labelPositions=points.filter(p=>p.x>=0&&p.y>=80);
  return <View style={{flex:1}}>
   <View style={[styles.stage,{height:Math.max(420,height-232)}]}>
@@ -41,10 +43,11 @@ export function NativeAnatomyPanel(){
    {status==='error'&&<View accessibilityRole="alert" style={styles.failure}><Copy>Offline 3D could not load: {message}</Copy><Action label="Retry offline model" onPress={reset}/></View>}
    {status==='loading'&&<View pointerEvents="none" style={styles.loading}><Text style={{color:'#cbd5e1'}}>Loading bundled anatomy…</Text></View>}
    <Svg pointerEvents="none" style={StyleSheet.absoluteFill}>
-    {labelPositions.map((p,i)=>{const x=18,y=92+i*53,owner=owners.get(p.id),name=pick?.label||ORGAN_ANATOMY_DATABASE[owner||'']?.name||partMap.get(p.id)?.name||'';return <React.Fragment key={p.id}><Path d={`M ${x+25} ${y+34} V ${p.y-18} Q ${x+25} ${p.y-12} ${x+31} ${p.y-12} H ${p.x-6} Q ${p.x} ${p.y-12} ${p.x} ${p.y-6} V ${p.y}`} stroke={pick?.connection?.kind==='venous'?'#7db6ed':'#f0878d'} strokeWidth={1.4} fill="none"/><Path d={`M${p.x-4} ${p.y-7} L${p.x} ${p.y} L${p.x+4} ${p.y-7}`} stroke="#f0878d" strokeWidth={1.4} fill="none"/>{pick&&<><Rect x={x} y={y} width={210} height={34} rx={10} fill="#101e2b" stroke="#779cb5"/><SvgText x={x+10} y={y+22} fill="#e5edf6" fontSize={12}>{name.slice(0,31)}</SvgText></>}</React.Fragment>;})}
+    {labelPositions.map((p,i)=>{const x=18,y=126+i*56,owner=owners.get(p.id),name=pick?.label||ORGAN_ANATOMY_DATABASE[owner||'']?.name||partMap.get(p.id)?.name||'';return <React.Fragment key={p.id}><Path d={`M ${x+25} ${y+34} V ${p.y-18} Q ${x+25} ${p.y-12} ${x+31} ${p.y-12} H ${p.x-6} Q ${p.x} ${p.y-12} ${p.x} ${p.y-6} V ${p.y}`} stroke={pick?.connection?.kind==='venous'?'#7db6ed':'#f0878d'} strokeWidth={1.4} fill="none"/><Path d={`M${p.x-4} ${p.y-7} L${p.x} ${p.y} L${p.x+4} ${p.y-7}`} stroke="#f0878d" strokeWidth={1.4} fill="none"/>{pick&&<><Rect x={x} y={y} width={210} height={34} rx={10} fill="#101e2b" stroke="#779cb5"/><SvgText x={x+10} y={y+22} fill="#e5edf6" fontSize={12}>{name.slice(0,31)}</SvgText></>}</React.Fragment>;})}
    </Svg>
-   {!pick&&<View style={styles.shortcuts}>{mainOrgans.slice(0,4).map(owner=><Touchable key={owner} label={'Open '+ORGAN_ANATOMY_DATABASE[owner].name+' model'} onPress={()=>select(owner)} style={styles.organ}><Text style={{color:'#e5edf6',fontWeight:'700'}}>{owner==='kidney'?'Kidneys':owner[0].toUpperCase()+owner.slice(1)}</Text></Touchable>)}</View>}
-   {pick&&<View style={[styles.selection,{backgroundColor:colors.card,borderColor:colors.border}]}><View style={{flex:1}}><Text style={{color:colors.text,fontWeight:'700'}}>{pick.label}</Text><Text style={{color:colors.textMuted,fontSize:11}}>{pick.model==='atlas'?'BodyParts3D · registered anatomy':'Separate source reference · '+pick.model}</Text></View><Action label="Details" onPress={()=>{setSection('Overview');setDetails(pick.owner);}}/><Action label="Restore" onPress={reset}/></View>}
+   {!pick&&labelPositions.length>0&&<View pointerEvents="box-none" style={StyleSheet.absoluteFill}>{labelPositions.map((p,i)=>{const owner=owners.get(p.id);if(!owner)return null;return <Touchable key={p.id} label={'Open '+ORGAN_ANATOMY_DATABASE[owner].name+' model'} onPress={()=>select(owner)} style={[styles.organ,{position:'absolute',left:12,top:126+i*56,width:104}]}><Text style={[typeScale.caption,{color:'#e5edf6'}]}>{owner==='kidney'?'Kidneys':owner[0].toUpperCase()+owner.slice(1)}</Text></Touchable>;})}</View>}
+   {!pick&&labelPositions.length===0&&<View style={styles.shortcuts}>{mainOrgans.slice(0,4).map(owner=><Touchable key={owner} label={'Open '+ORGAN_ANATOMY_DATABASE[owner].name+' model'} onPress={()=>select(owner)} style={styles.organ}><Text style={{color:'#e5edf6',fontWeight:'700'}}>{owner==='kidney'?'Kidneys':owner[0].toUpperCase()+owner.slice(1)}</Text></Touchable>)}</View>}
+   {pick&&<View style={[styles.selection,{backgroundColor:colors.card,borderColor:colors.border}]}><View style={{flex:1}}><Text style={{color:colors.text,fontWeight:'700'}}>{pick.label}</Text><Text style={[typeScale.caption,{color:colors.textMuted}]}>{pick.model==='atlas'?'BodyParts3D · registered anatomy':'Separate source reference · '+pick.model}</Text></View><Action label="Details" onPress={()=>{setSection('Overview');setDetails(pick.owner);}}/><Action label="Restore" onPress={reset}/></View>}
   </View>
   <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={[ui.row,{padding:12}]}>
    <Action label="Browse" onPress={()=>setBrowse(true)}/><Action label={cut?'Scalpel on':'Scalpel'} selected={cut} onPress={()=>setCut(!cut)}/>

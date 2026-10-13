@@ -7,7 +7,7 @@ import {ORGAN_CONNECTIONS} from '../src/simulator/data/organConnections.ts';
 import {HRA_ORGAN_MODELS,HRA_ORGAN_TARGETS,hraOrganMeshMatchesTarget} from '../src/simulator/data/hraOrgans.ts';
 import {ZANATOMY_REFERENCE_MODELS,ZANATOMY_REFERENCE_TARGETS,zAnatomyMeshMatchesTarget} from '../src/simulator/data/zanatomyReferences.ts';
 import {HRA_HEART_MODEL_URL,HRA_HEART_TARGETS,hraHeartMeshMatchesTarget} from '../src/simulator/data/hraHeart.ts';
-import {peripheralNerveKeyForMeshName} from '../src/simulator/data/peripheralNerves.ts';
+import {peripheralNerveKeyForMeshName,peripheralNerveRegistrationIssue} from '../src/simulator/data/peripheralNerves.ts';
 await MeshoptSimplifier.ready;
 const out='mobile/android/app/src/main/assets/simulator';fs.mkdirSync(out+'/models',{recursive:true});
 const maxError=Number(process.env.NATIVE_ANATOMY_ERROR||.0008),allParts=[],models={},targets={},references=[];
@@ -73,7 +73,7 @@ function glbParts(url,key,source,organ){
  gltf.nodes.forEach((_,i)=>{if(!parents.has(i))walk(i,new Matrix4());});return parts;
 }
 const specs=[...HRA_ORGAN_MODELS.map(m=>({...m,source:'HuBMAP HRA'})),...ZANATOMY_REFERENCE_MODELS.map(m=>({...m,source:'Z-Anatomy'})),{key:'hra_heart',url:HRA_HEART_MODEL_URL,organKey:'heart',source:'HuBMAP HRA'},{key:'peripheral_nerves',url:'/models/zanatomy_peripheral_nerves.glb',organKey:'nervous',source:'Z-Anatomy peripheral nerves'}];
-for(const spec of specs){const parts=writeModel(spec.key,glbParts(spec.url,spec.key,spec.source,spec.organKey));
+for(const spec of specs){const sourceParts=glbParts(spec.url,spec.key,spec.source,spec.organKey);const parts=writeModel(spec.key,spec.key==='peripheral_nerves'?sourceParts.filter(p=>!peripheralNerveRegistrationIssue(p.name)):sourceParts);
  const definitions=spec.key==='hra_heart'?HRA_HEART_TARGETS:spec.source==='HuBMAP HRA'?HRA_ORGAN_TARGETS.filter(t=>t.modelKeys.includes(spec.key)):ZANATOMY_REFERENCE_TARGETS.filter(t=>t.modelKey===spec.key);
  for(const target of definitions){const ids=parts.filter(p=>spec.key==='hra_heart'?hraHeartMeshMatchesTarget(p.name,target.id):spec.source==='HuBMAP HRA'?hraOrganMeshMatchesTarget(p.name,target.id):zAnatomyMeshMatchesTarget(p.name,target.id)).map(p=>p.id);
   if(target.kind==='schematic')continue;

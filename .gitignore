@@ -45,3 +45,6 @@ remotion-ad/out/
 /mobile/android/app/src/main/assets/simulator/
 /mobile/android/app/src/main/assets/pg/
 /public/native-simulator/
+
+/mobile/src/simulator/lessonCatalog.ts
+/mobile/src/simulator/NativeEcgHeartModel.tsx

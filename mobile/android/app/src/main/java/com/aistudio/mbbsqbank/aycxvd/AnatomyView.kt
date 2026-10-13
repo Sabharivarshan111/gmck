@@ -58,12 +58,20 @@ class AnatomyView(private val reactContext: ThemedReactContext) : GLSurfaceView(
     }
     requestRender()
   }
-  fun cameraAction(value: Int) { queueEvent { when(value % 10) { 1 -> scene.zoom = (scene.zoom*.8f).coerceAtLeast(.35f); 2 -> scene.zoom = (scene.zoom*1.25f).coerceAtMost(3f); 3 -> scene.yaw -= 25f; 4 -> scene.yaw += 25f; 5 -> { scene.yaw=0f; scene.pitch=0f; scene.zoom=1f } } }; requestRender() }
+  fun cameraAction(value: Int) { queueEvent { when(value % 10) { 1 -> scene.zoom = (scene.zoom*.8f).coerceAtLeast(.35f); 2 -> scene.zoom = (scene.zoom*1.25f).coerceAtMost(3f); 3 -> scene.yaw -= 25f; 4 -> scene.yaw += 25f; 5 -> { scene.yaw=0f; scene.pitch=0f; scene.zoom=1f; scene.panX=0f; scene.panY=0f } } }; requestRender() }
   override fun onTouchEvent(event: MotionEvent): Boolean {
     pinch.onTouchEvent(event)
     when(event.actionMasked) {
       MotionEvent.ACTION_DOWN -> { downX=event.x; downY=event.y; lastX=event.x; lastY=event.y; moved=false; parent?.requestDisallowInterceptTouchEvent(true) }
+      MotionEvent.ACTION_POINTER_DOWN -> { moved=true; lastX=(event.getX(0)+event.getX(1))/2; lastY=(event.getY(0)+event.getY(1))/2 }
+      MotionEvent.ACTION_POINTER_UP -> { moved=true; lastX=event.getX(if(event.actionIndex==0)1 else 0); lastY=event.getY(if(event.actionIndex==0)1 else 0) }
       MotionEvent.ACTION_MOVE -> {
+        if(event.pointerCount>=2) {
+          val x=(event.getX(0)+event.getX(1))/2; val y=(event.getY(0)+event.getY(1))/2
+          val dx=x-lastX; val dy=y-lastY; moved=true
+          queueEvent { scene.pan(dx,dy) }; requestRender(); lastX=x; lastY=y
+          return true
+        }
         if(event.pointerCount==1 && !pinch.isInProgress) {
           val dx=event.x-lastX; val dy=event.y-lastY
           if(abs(event.x-downX)+abs(event.y-downY)>12f) moved=true
@@ -89,7 +97,7 @@ class AnatomyView(private val reactContext: ThemedReactContext) : GLSurfaceView(
     var model="atlas"; var loadedModel=""; var parts: List<Part> = emptyList(); var batches: List<Batch> = emptyList()
     var visible=setOf<String>(); var context=setOf<String>(); var hidden=setOf<String>(); var annotations=setOf<String>()
     var region="full"; var layer="surface"; var spread=0f; var dirty=true; var refit=true
-    var yaw=0f; var pitch=0f; var zoom=1f
+    var yaw=0f; var pitch=0f; var zoom=1f; var panX=0f; var panY=0f
     private var program=0; private var w=1; private var h=1; private var radius=1f
     private var center=floatArrayOf(0f,.85f,0f); private var distance=3f
     private val projection=FloatArray(16); private val view=FloatArray(16); private val rotation=FloatArray(16); private val mvp=FloatArray(16); private val temp=FloatArray(16)
@@ -120,6 +128,10 @@ class AnatomyView(private val reactContext: ThemedReactContext) : GLSurfaceView(
       parts=result;loadedModel=model;dirty=true;refit=true
       emit("topModelStatus",Arguments.createMap().apply { putString("status","ready");putInt("parts",parts.size) })
     }
+    fun pan(dx: Float, dy: Float) {
+      val scale = distance * zoom * 2 * tan(34f * PI.toFloat() / 360) / h
+      panX -= dx * scale; panY += dy * scale
+    }
     private fun regionPart(p: Part): Boolean { val y=(p.bounds[1]+p.bounds[4])/2;return when(region){"head"->y>1.45f;"thorax"->y in 1.2f..1.46f;"abdomen"->y in .8f..1.23f;else->true} }
     private fun visiblePart(p: Part): Boolean {
       if(p.id in hidden)return false
@@ -135,14 +147,41 @@ class AnatomyView(private val reactContext: ThemedReactContext) : GLSurfaceView(
     }
     private fun offset(p: Part): FloatArray { if(spread<.01f)return floatArrayOf(0f,0f,0f);val k=(p.system.hashCode() and 0xffff)%12;val a=k*PI.toFloat()/6;return floatArrayOf(cos(a)*spread*.3f,sin(a)*spread*.16f,spread*((k%3)-1)*.1f) }
     private fun rebuild() {
-      displayed=parts.filter(::visiblePart);val result=ArrayList<Batch>();var vertices=ArrayList<Float>();var indices=ArrayList<Short>();var vertexCount=0
-      fun flush() { if(indices.isEmpty())return;val vb=ByteBuffer.allocateDirect(vertices.size*4).order(ByteOrder.nativeOrder()).asFloatBuffer();vertices.forEach(vb::put);vb.position(0);val ib=ByteBuffer.allocateDirect(indices.size*2).order(ByteOrder.nativeOrder()).asShortBuffer();indices.forEach(ib::put);ib.position(0);result.add(Batch(vb,ib,indices.size));vertices=ArrayList();indices=ArrayList();vertexCount=0 }
-      for(p in displayed) {
-        val n=p.positions.size/3;if(vertexCount+n>65535)flush();val c=color(p);val o=offset(p);val alpha=if(p.id in context && p.id !in visible).18f else 1f
-        for(v in 0 until n) { for(k in 0..2)vertices.add(p.positions[v*3+k]+o[k]);for(k in 0..2)vertices.add(p.normals[v*3+k]);for(k in 0..2)vertices.add(c[k]);vertices.add(alpha) }
-        for(index in p.indices)indices.add(((index.toInt() and 0xffff)+vertexCount).toShort());vertexCount+=n
+      displayed = parts.filter(::visiblePart)
+      val result = ArrayList<Batch>()
+      val group = ArrayList<Part>()
+      var vertexCount = 0
+      var indexCount = 0
+      fun flush() {
+        if (indexCount == 0) return
+        // Primitive direct buffers avoid millions of boxed Float allocations.
+        val vb = ByteBuffer.allocateDirect(vertexCount * 40).order(ByteOrder.nativeOrder()).asFloatBuffer()
+        val ib = ByteBuffer.allocateDirect(indexCount * 2).order(ByteOrder.nativeOrder()).asShortBuffer()
+        var base = 0
+        for (p in group) {
+          val n = p.positions.size / 3
+          val c = color(p); val o = offset(p)
+          val alpha = if (p.id in context && p.id !in visible) .18f else 1f
+          for (v in 0 until n) {
+            for (k in 0..2) vb.put(p.positions[v * 3 + k] + o[k])
+            for (k in 0..2) vb.put(p.normals[v * 3 + k])
+            for (k in 0..2) vb.put(c[k])
+            vb.put(alpha)
+          }
+          for (index in p.indices) ib.put(((index.toInt() and 0xffff) + base).toShort())
+          base += n
+        }
+        vb.position(0); ib.position(0)
+        result.add(Batch(vb, ib, indexCount))
+        group.clear(); vertexCount = 0; indexCount = 0
       }
-      flush();batches=result;dirty=false
+      for (p in displayed) {
+        val n = p.positions.size / 3
+        if (vertexCount + n > 65535) flush()
+        group.add(p); vertexCount += n; indexCount += p.indices.size
+      }
+      flush(); batches = result; dirty = false
+      emit("topModelStatus", Arguments.createMap().apply { putString("status", "ready"); putInt("parts", displayed.size) })
     }
     private fun fit() {
       val fitting=displayed.filter { context.isEmpty() || it.id in visible }
@@ -151,14 +190,14 @@ class AnatomyView(private val reactContext: ThemedReactContext) : GLSurfaceView(
       for(p in fitting){val o=offset(p);for(k in 0..2){lo[k]=min(lo[k],p.bounds[k]+o[k]);hi[k]=max(hi[k],p.bounds[k+3]+o[k])}}
       center=FloatArray(3){(lo[it]+hi[it])/2};radius=max(.01f,max(hi[0]-lo[0],max(hi[1]-lo[1],hi[2]-lo[2])))
       val tangent=tan(34f*PI.toFloat()/360);distance=max((hi[1]-lo[1])/(2*tangent*.64f),(hi[0]-lo[0])/(2*tangent*(w.toFloat()/h)*.84f))+(hi[2]-lo[2])/2
-      distance=max(radius*.6f,distance);yaw=0f;pitch=0f;zoom=1f;refit=false
+      distance=max(radius*.6f,distance);yaw=0f;pitch=0f;zoom=1f;panX=0f;panY=0f;refit=false
     }
     override fun onDrawFrame(gl: GL10?) {
       GLES20.glClearColor(.025f,.035f,.055f,1f);GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
       if(program==0)return
       try { if(loadedModel!=model)load();if(dirty)rebuild();if(refit)fit() }catch(e: Exception){emit("topModelStatus",Arguments.createMap().apply {putString("status","error");putString("message",e.message)});return}
       Matrix.perspectiveM(projection,0,34f,w.toFloat()/h,max(.0001f,radius*.001f),max(5f,radius*20))
-      Matrix.setLookAtM(view,0,center[0],center[1],center[2]+distance*zoom,center[0],center[1],center[2],0f,1f,0f)
+      Matrix.setLookAtM(view,0,center[0]+panX,center[1]+panY,center[2]+distance*zoom,center[0]+panX,center[1]+panY,center[2],0f,1f,0f)
       Matrix.setIdentityM(rotation,0);Matrix.translateM(rotation,0,center[0],center[1],center[2]);Matrix.rotateM(rotation,0,pitch,1f,0f,0f);Matrix.rotateM(rotation,0,yaw,0f,1f,0f);Matrix.translateM(rotation,0,-center[0],-center[1],-center[2])
       Matrix.multiplyMM(temp,0,view,0,rotation,0);Matrix.multiplyMM(mvp,0,projection,0,temp,0)
       GLES20.glUseProgram(program);GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(program,"uMvp"),1,false,mvp,0);GLES20.glUniformMatrix4fv(GLES20.glGetUniformLocation(program,"uRotation"),1,false,rotation,0)
@@ -169,7 +208,7 @@ class AnatomyView(private val reactContext: ThemedReactContext) : GLSurfaceView(
     private fun project(x: Float,y: Float,z: Float): FloatArray { val p=FloatArray(4);Matrix.multiplyMV(p,0,mvp,0,floatArrayOf(x,y,z,1f),0);return floatArrayOf((p[0]/p[3]*.5f+.5f)*w,(-p[1]/p[3]*.5f+.5f)*h,p[2]/p[3]) }
     private fun labels() {
       val array=Arguments.createArray()
-      for(p in displayed.filter { it.id in annotations }) {
+      for(p in parts.filter { it.id in annotations && (visible.isEmpty() || it in displayed) }) {
         val c=FloatArray(3){(p.bounds[it]+p.bounds[it+3])/2};val o=offset(p);var nearest=0;var best=Float.MAX_VALUE
         for(v in p.positions.indices step 3){if(p.positions[v+2]<c[2])continue;val d=(0..2).sumOf { k->((p.positions[v+k]-c[k]).toDouble()).pow(2) }.toFloat();if(d<best){best=d;nearest=v}}
         val q=project(p.positions[nearest]+o[0],p.positions[nearest+1]+o[1],p.positions[nearest+2]+o[2])
