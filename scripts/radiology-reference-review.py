@@ -11,7 +11,7 @@ def get(url):
    if attempt==1: raise
    print("Retry",str(e),flush=True);time.sleep(10)
 time.sleep(5)
-query="https://commons.wikimedia.org/w/api.php?"+urllib.parse.urlencode({"action":"query","format":"json","titles":"|".join("File:"+t for t in titles),"prop":"imageinfo","iiprop":"url|extmetadata","iiurlwidth":"960"})
+query="https://commons.wikimedia.org/w/api.php?"+urllib.parse.urlencode({"action":"query","format":"json","titles":"|".join("File:"+t for t in titles),"prop":"imageinfo","iiprop":"url|size|extmetadata","iiurlwidth":"960"})
 pages=json.load(get(query))["query"]["pages"]
 (out/"all-source-metadata.json").write_text(json.dumps(pages,indent=2))
 lookup={p["title"].replace(" ","_"):p for p in pages.values()}
@@ -24,6 +24,10 @@ for i,title in enumerate(titles):
   if not any(s in license.lower() for s in ["cc0","cc by","public domain"]): raise Exception("Unaccepted licence: "+license)
   if "nc" in license.lower() or "nd" in license.lower(): raise Exception("Restricted licence")
   download=info.get("thumburl",info["url"])
+  if "/thumb/" not in download:
+   width=500 if info.get("width",1000)>500 else 250
+   parts=info["url"].rsplit("/",1)
+   download=parts[0].replace("/commons/","/commons/thumb/")+"/"+parts[1]+"/"+str(width)+"px-"+parts[1]
   download=download.replace("upload.wikimedia.org/wikipedia/commons/thumb/","thumb.wikimedia.org/wikipedia/commons/thumb/")
   b=get(download).read(); (out/(str(i)+".original")).write_bytes(b)
   im=Image.open(out/(str(i)+".original")).convert("RGB"); im.thumbnail((1400,1400))
