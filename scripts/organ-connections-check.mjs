@@ -26,3 +26,5 @@ console.log(`${Object.keys(catalog).length} dossiers / ${ids.size} connections: 
 const view=fs.readFileSync('src/simulator/view/AnatomicalBody3D.tsx','utf8');
 assert(view.includes('mat.customProgramCacheKey = () => `orbit-atlas-v2-${sys.id}`'),'system-specific GLSL must have distinct shader cache keys');
 assert(view.includes('partSurfaceAnchorsRef.current.set(p.id'),'leaders must anchor to source surface vertices');
+
+assert(view.includes('mesh.visible = visibleSystems.has(system)'), 'hidden atlas systems must skip draw calls');

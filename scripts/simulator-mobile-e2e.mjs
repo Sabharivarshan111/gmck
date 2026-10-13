@@ -593,6 +593,7 @@ await feature('organ-drawer-and-anatomy-dossier', async () => {
   await visible(drawer, 'pectoralis major dossier');
   const vascularTab = drawer.getByTestId('organ-drawer-tab-vascular');
   await vascularTab.click();
+  await drawer.getByText('Detailed vascular and nerve notes', { exact: true }).click();
   const inspectChild = drawer.getByTestId('arterial-node-thoracoacromial-3d');
   await visible(inspectChild, 'thoracoacromial Inspect in 3D');
   await inspectChild.click();
@@ -643,6 +644,7 @@ await feature('every-organ-dossier-innervation-and-3d-target', async () => {
     const vascularTab = drawer.getByTestId('organ-drawer-tab-vascular');
     await vascularTab.scrollIntoViewIfNeeded();
     await vascularTab.click();
+    await drawer.getByText('Detailed vascular and nerve notes', { exact: true }).click();
     const nerveHeading = drawer.getByText('Peripheral & Autonomic Nerves', { exact: true });
     await nerveHeading.scrollIntoViewIfNeeded();
     await visible(nerveHeading, organ + ' innervation section');

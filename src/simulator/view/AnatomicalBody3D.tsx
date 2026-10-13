@@ -3610,6 +3610,7 @@ varying float partSelected;
     if (layerPeel > 0.88) peelOrder[4].forEach((s) => peeledSystems.add(s));
 
       const isolationBox = new THREE.Box3();
+      const visibleSystems = new Set<SystemId>();
 
     atlas.parts.forEach((p, i) => {
       let visible = 1.0;
@@ -3693,7 +3694,12 @@ varying float partSelected;
 
       if (!isolatedPartId && !partBelongsToRegion(p, cameraPreset)) visible = 0;
       partData[i * 4 + 3] = visible;
+      if (visible >= 0.1) visibleSystems.add(p.system);
     });
+    // Fragment discard still runs every hidden system's vertex shader. Skip
+    // entire draw calls when isolation/dissection hides a whole system.
+    systemMeshesRef.current.forEach((mesh, system) => { mesh.visible = visibleSystems.has(system); });
+    mountRef.current?.parentElement?.setAttribute('data-visible-atlas-systems', [...visibleSystems].sort().join(','));
 
     partTexture.needsUpdate = true;
 

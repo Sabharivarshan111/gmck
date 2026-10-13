@@ -1,6 +1,7 @@
 name: ORBIT Connected Anatomy
 on:
   push:
+    branches: [main]
     paths: ['src/simulator/data/organConnections.ts', 'src/simulator/controls/OrganConnections*', 'src/simulator/controls/OrganDetailDrawer.tsx', 'src/simulator/view/AnatomicalBody3D.tsx', 'scripts/organ-connections*', 'scripts/build-organ-connections.mjs', '.github/workflows/organ-connections.yml']
   pull_request:
     paths: ['src/simulator/data/organConnections.ts', 'src/simulator/controls/OrganConnections*', 'src/simulator/controls/OrganDetailDrawer.tsx', 'src/simulator/view/AnatomicalBody3D.tsx', 'scripts/organ-connections*', 'scripts/build-organ-connections.mjs', '.github/workflows/organ-connections.yml']
@@ -10,6 +11,12 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        group: [0, 1, 2, 3]
+    env:
+      ORGAN_CONNECTION_GROUP: ${{ matrix.group }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -36,6 +43,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: organ-connections-${{ github.sha }}
+          name: organ-connections-${{ github.sha }}-${{ matrix.group }}
           path: artifacts/organ-connections
           retention-days: 14
