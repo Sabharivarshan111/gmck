@@ -2702,3 +2702,14 @@ DO NOT: Call Preview 11 MRI screenshot proof; it was blank after a pan. Do not c
 **NEXT:** Test-only commit 7c85112b1bcf98ca07cd0acdd8c6a67165a9b5ec adds native MRI pan and coronary/renal artery/renal vein/celiac selection captures. Actual Android run38535793952 is running. Inspect those captures, fix any real failures, then update evidence. This does not change Preview 12 application code.
 
 **DO NOT:** Claim all connections have 3D meshes: 225 registered views have captured geometry; source gaps remain explicitly teaching schematics. Preserve main/PG explanation work; no Play publication authorized.
+
+
+## 2026-10-14 — Codex — Native vessel audit passed
+
+**DONE:** Test-only Android run38535793952/job115758225098 succeeded on 7c85112b1bcf98ca07cd0acdd8c6a67165a9b5ec. Actual airplane-mode UI drove heart → coronary supply, abdomen → kidney → renal artery and renal vein, and liver supply → celiac trunk/common hepatic artery. Inspected coronary-native, renal-artery-native, renal-vein-native and celiac-native screenshots: selected vessels visible with leaders, branches exposed, no dossier masking. Inspected mri-pan-native: the image/landmarks stayed visible after the same upward drag that blanked Preview 11. Existing ECG, pupils and local media flow also passed. Artifact11880578887 contains captures/logcat/XML.
+
+**HALF-DONE:** Full web parity and hardware/TalkBack/clinical fidelity remain unfinished. These specific flows have emulator proof; this is not proof of every organ relation. Source gaps still use labeled schematics.
+
+**NEXT:** Preview 12 remains the latest application build, from c9f29a970a3fadac09865081e7a566deb651a928: https://github.com/Sabharivarshan111/gmck/releases/download/native-offline-preview-12/app-preview.apk, 98,923,917 bytes, SHA256 5dc6e273e8464f65605deaf575d112d193b4c4c31a88f0034a6286114301e0b0. The later commits add tests/docs only. Continue remaining parity/device work before production APK/AAB and merge; PR85 stays draft.
+
+**DO NOT:** Treat test-only commits as new APK releases, claim full parity, change production authentication or publish to Play. Preserve concurrent PG explanations.
