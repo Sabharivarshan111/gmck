@@ -2671,3 +2671,12 @@ Newest APK: https://github.com/Sabharivarshan111/gmck/releases/download/native-o
 Includes direct heart/organ focus, revised leaders/child selection, guided ECG/QTc/PV, corrected POCUS controls and offline movies, plus MRI/X-ray calipers. Core native run38512340986 and UI run38512341147 on caliper commit passed; real RN-web caliper screenshot inspected. Android graphics are not proven by these checks.
 
 First actual Android attempt38511692929 failed before simulator navigation because a Pixel Launcher ANR covered the app. Last1500 logcat lines did not identify an ORBIT crash, but this is not device proof. New run38513311985 uses 720x1600/320dpi, closes only the specifically identified launcher ANR, relaunches ORBIT, and captures complete logcat/activities/final screenshot on failure. It remains running at this checkpoint. No assertion suppresses an ORBIT ANR or renderer/media failure. Complete that run and fix genuine failures; full parity/physical device checks still unfinished.
+
+
+### Critical fresh-install finding — wait for Preview 10
+
+Installed-device run38513311985 got through launcher recovery and exposed the real FirstRun onboarding screen: fresh Preview 9 incorrectly requires Google sign-in. Do NOT recommend Preview 9 as usable fresh offline/guest entry. Earlier guest-entry claims were wrong, corrected to the user. No ORBIT crash was identified; simulator rendering/media still untested because onboarding blocked entry.
+
+Fix committed in 884a099ab96354377ee4a635eda6c0592cc03f76: both native preview and emulator workflows reuse the existing android-debug workflow's explicit GOOGLE_SIGN_IN_ENABLED=false source override ONLY within their separately installable test build. Production authMode.ts remains !__DEV__; runtime code/RLS/Supabase config unchanged. Both normal and --debug-apk auth-mode tests passed locally, plus 13 Android storage/sign-out/security cases. Each workflow tests production auth first and its preview override second. The emulator now fills local display name, year and university, asserts no Google-required caption, completes setup in airplane mode, then handles the walkthrough and proceeds to simulator checks.
+
+New APK build38515364887 (expected Preview 10), core38515365036, emulator38515365017 are running. Fix fresh-install navigation first, then verify native graphics/playback. No production sign-in bypass, merge, AAB or Play release. Supabase skill read for auth-boundary review; docs fetch was attempted but no Supabase feature/API/database change implemented.
