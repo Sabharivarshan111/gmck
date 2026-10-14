@@ -44,6 +44,7 @@ on:
       # The paths filter below is what keeps this affordable — a commit that
       # only moves documentation still burns no runner.
       - main
+      - codex/native-offline-simulator
       - claude/native-app-sync
       # Shared Android/iPhone web UI changes also get an ad-free APK.
       - codex/native-web-parity
@@ -62,6 +63,10 @@ on:
       - 'mobile/**'
       - 'src/**'
       - '.github/workflows/android-internal.yml'
+      - 'scripts/build-pg-compact.mjs'
+      - 'scripts/build-native-simulator-assets.mjs'
+      - 'scripts/build-native-simulator-lessons.mjs'
+      - 'scripts/check-android-offline-package.py'
 
 # One run per branch, and a new push cancels the one it supersedes.
 #
@@ -103,9 +108,11 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: Install offline content build dependencies
+        working-directory: ${{ github.workspace }}
         run: npm ci --legacy-peer-deps
 
       - name: Build packaged native simulator and PG content
+        working-directory: ${{ github.workspace }}
         run: |
           node scripts/build-pg-compact.mjs
           node scripts/check-pg-release-content.mjs
@@ -223,6 +230,11 @@ jobs:
           "$SDK"/build-tools/37.0.0/apksigner verify --print-certs "$APK" \
             | grep -iE "SHA-1|SHA-256" || echo "(apksigner could not read the APK)"
 
+      - name: Verify native offline assets in the packaged APK
+        working-directory: ${{ github.workspace }}
+        run: |
+          python scripts/check-android-offline-package.py mobile/android/app/build/outputs/apk/internal --source-commit ${{ github.sha }}
+
       - name: Publish the APK where a phone can download it
         uses: softprops/action-gh-release@v2
         with:
@@ -239,6 +251,12 @@ jobs:
             **No ads at all** — not live ones and not Google's test ones
             either. This build sets `ADS_ENABLED = false`, so the AdMob SDK
             never starts, the consent form never runs, and nothing is loaded.
+
+            Includes the packaged native offline patient simulator, annotated imaging,
+            ECG teaching and existing offline PG practice. Built from the simulator
+            branch for review; full parity and physical-device validation remain ongoing.
+            This build does not upload anything to Google Play.
+            Source: https://github.com/Sabharivarshan111/gmck/commit/${{ github.sha }}.
 
             Built from `${{ github.sha }}`.
           files: mobile/android/app/build/outputs/apk/internal/*.apk
