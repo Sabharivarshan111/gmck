@@ -39,8 +39,24 @@ try{
   await page.getByText('Right blink: absent · Left blink: absent',{exact:true}).waitFor();
   await page.getByRole('button',{name:'Cotton · left cornea',exact:true}).click();
   await page.getByText('Right blink: present · Left blink: present',{exact:true}).waitFor();
+  await page.getByRole('button',{name:'Open auscultation',exact:true}).click();
+  await page.getByRole('button',{name:'S3 gallop',exact:true}).click();
+  await page.getByRole('button',{name:'Play reference sound',exact:true}).click();
+  await page.getByText('Playing local synthetic reference.',{exact:true}).waitFor();
+  await page.getByRole('button',{name:'Stop listening',exact:true}).click();
+  await page.locator('svg').last().screenshot({path:`${out}/auscultation-${width}.png`});
+  await page.getByRole('button',{name:'Open bedside examination',exact:true}).click();
+  await page.getByRole('button',{name:'Edema 2+',exact:true}).click();
+  await page.getByRole('button',{name:'Apply shin pressure',exact:true}).click();
+  await page.waitForTimeout(5200);
+  await page.getByRole('button',{name:'Release shin pressure',exact:true}).click();
+  await page.getByText('Observe recovery',{exact:true}).waitFor();
+  await page.locator('svg').last().screenshot({path:`${out}/edema-${width}.png`});
+  await page.getByRole('button',{name:'Clubbing',exact:true}).click();
+  await page.getByRole('button',{name:'Clubbing findings',exact:true}).click();
+  await page.locator('svg').last().screenshot({path:`${out}/clubbing-${width}.png`});
   assert.equal(errors.length,0,errors.join('\n'));await page.close();
  }
- console.log('Native ECG capture/groups/segments/enlarge and eye light/RAPD/CN III/V1 reflex controls passed at 360/390/430px. RN-web layout only; Android rendering not verified.');
- for(const name of ['ecg-390','eye-390']){console.log('UI_IMAGE_BEGIN '+name);console.log(fs.readFileSync(`${out}/${name}.png`).toString('base64'));console.log('UI_IMAGE_END');}
+ console.log('Native ECG capture/groups/segments/enlarge eye light/RAPD/CN III/V1 reflex, offline audio clip playback and bedside controls passed at 360/390/430px. RN-web layout only; Android rendering not verified.');
+ for(const name of ['ecg-390','eye-390','auscultation-390','edema-390','clubbing-390']){console.log('UI_IMAGE_BEGIN '+name);console.log(fs.readFileSync(`${out}/${name}.png`).toString('base64'));console.log('UI_IMAGE_END');}
 }catch(error){console.error(log.slice(-3000));throw error;}finally{await browser?.close();server.kill();}

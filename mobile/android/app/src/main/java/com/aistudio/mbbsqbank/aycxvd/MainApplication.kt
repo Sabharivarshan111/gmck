@@ -18,6 +18,7 @@ class MainApplication : Application(), ReactApplication {
           // Lives in this app rather than in a node module, so autolinking has
           // nothing to find and it is registered by hand. See SoundModule.kt.
           add(SoundPackage())
+          add(SimAudioPackage())
           add(SpeechPackage())
           add(NotifyPackage())
           add(FilesPackage())

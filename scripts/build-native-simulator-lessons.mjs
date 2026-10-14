@@ -9,6 +9,8 @@ const datasets=[
  ['src/simulator/instruments/EcgIcuTutorialModal.tsx',{intervals:'ECG_INTERVALS',patterns:'ECG_PATTERNS',leads:'ECG_LEADS',chest:'ECG_CHEST'}],
  ['src/simulator/controls/InterventionPanel.tsx',{interventions:'SIMULATOR_ACTIONS'}],
  ['src/simulator/instruments/Ecg12LeadCanvas.tsx',{SEGMENTS:'ECG_SEGMENTS'}],
+ ['src/simulator/instruments/auscultationSites.ts',{AUSCULTATION_SITES:'AUSCULTATION_SITES',SOUND_LIBRARY:'SOUND_LIBRARY'}],
+ ['src/simulator/instruments/auscultationRouting.ts',{HEART_SOUND_DESCRIPTIONS:'HEART_SOUND_DESCRIPTIONS',LUNG_SOUND_DESCRIPTIONS:'LUNG_SOUND_DESCRIPTIONS'}],
 ];
 let catalog='// Generated from the shared teaching source; do not edit.\n';
 for(const [file,names] of datasets){
@@ -21,7 +23,16 @@ for(const [file,names] of datasets){
  }ts.forEachChild(node,visit);}visit(root);
  for(const name of Object.keys(names))if(!found.has(name))throw Error('Missing source lesson '+file+' '+name);
 }
+const audioPath='public/clinical-reference/auscultation/manifest.json';
+const audioClips=fs.existsSync(audioPath)?JSON.parse(fs.readFileSync(audioPath,'utf8')).clips:[];
+catalog+='export const AUDIO_CLIPS:Array<{group:string;preset:string;mode:string;rate:number;file:string}> = '+JSON.stringify(audioClips)+';\n';
 fs.writeFileSync(out+'/lessonCatalog.ts',catalog);
+const soundSource=ts.createSourceFile('sound.ts',fs.readFileSync('src/simulator/instruments/StethoscopeSynthesizer.ts','utf8'),ts.ScriptTarget.Latest,true);
+const soundTypes=soundSource.statements.filter(n=>ts.isTypeAliasDeclaration(n)&&['AuscultationSite','HeartSoundPreset','LungSoundPreset'].includes(n.name.text)).map(n=>n.getText(soundSource)).join('\n');
+const routeSource=ts.createSourceFile('route.ts',fs.readFileSync('src/simulator/instruments/auscultationRouting.ts','utf8'),ts.ScriptTarget.Latest,true);
+const route=routeSource.statements.find(n=>ts.isFunctionDeclaration(n)&&n.name?.text==='resolveAuscultation');
+if(!route)throw Error('Missing source auscultation routing');
+fs.writeFileSync(out+'/nativeAuscultationRouting.ts', '// Generated shared routing without browser audio imports.\nimport type {PatientPathologyState,PatientVitals} from \'@simulator/types\';\n'+soundTypes+'\n'+route.getText(routeSource)+'\n');
 const file='src/simulator/instruments/EcgHeartModel.tsx',code=fs.readFileSync(file,'utf8');
 const root=ts.createSourceFile(file,code,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX),edits=[];
 function visit(node){

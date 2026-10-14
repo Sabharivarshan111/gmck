@@ -89,6 +89,7 @@ fs.writeFileSync('mobile/src/simulator/anatomyCatalog.ts',catalog);
 for(const old of ['anatomy.bin.gz','atlas.json.gz'])fs.rmSync(out+'/'+old,{force:true});
 fs.mkdirSync(out+'/radiology',{recursive:true});fs.cpSync('public/clinical-reference/radiology',out+'/radiology',{recursive:true});
 fs.mkdirSync(out+'/pocus',{recursive:true});fs.cpSync('public/clinical-reference/pocus',out+'/pocus',{recursive:true});
+fs.mkdirSync(out+'/auscultation',{recursive:true});fs.cpSync('public/clinical-reference/auscultation',out+'/auscultation',{recursive:true});
 fs.writeFileSync(out+'/ATTRIBUTION_BODYPARTS3D.md',fs.readFileSync('public/models/ATTRIBUTION_BODYPARTS3D.md','utf8')+'\n\n## Native offline pack adaptations\nSource identities and independent reference frames are retained. Native model geometry is further simplified with an absolute 0.8 mm BodyParts3D error bound, with source-scaled limits on other files. Positions are quantized to unsigned 16-bit per-part bounds, normals to signed 8-bit, and payloads compressed with gzip. Unverified vestibular-nerve geometry is withheld. Model source licenses and component attribution above remain applicable.\n');
 for(const spec of ZANATOMY_REFERENCE_MODELS)fs.copyFileSync('public'+spec.manifestUrl,out+'/models/'+spec.key+'.source.json');
 fs.copyFileSync('public/models/zanatomy_peripheral_nerves.manifest.json',out+'/models/peripheral_nerves.source.json');
