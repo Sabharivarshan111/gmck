@@ -2,7 +2,7 @@ name: WIP Native vs Vercel Studio Visual Evidence
 
 on:
   push:
-    branches: [main, codex/native-vault-full-port-20261014]
+    branches: [main, codex/native-vault-full-port-20261014, codex/native-vault-audit-20261015]
     paths:
       - '.github/workflows/android-debug.yml'
       - '.github/workflows/native-vault-visual-evidence.yml'
@@ -10,6 +10,7 @@ on:
       - 'mobile/src/components/NativeEcgTwelveLead.tsx'
       - 'mobile/src/screens/SimulatorScreen.tsx'
       - 'mobile/scripts/native_clinical_studio_screenshots.py'
+      - 'mobile/scripts/audit_native_vault_screenshots.py'
   workflow_dispatch:
 
 permissions:
@@ -85,6 +86,12 @@ jobs:
           script: |
             adb install -r downloaded-apk/app-preview.apk
             ORBIT_SCREENSHOT_OUT=artifacts/native-vault-parity python3 mobile/scripts/native_clinical_studio_screenshots.py
+
+      - name: Audit and assemble Vercel versus installed Android screenshots
+        if: always()
+        run: |
+          python3 -m pip install --quiet --break-system-packages pillow
+          python3 mobile/scripts/audit_native_vault_screenshots.py artifacts/native-vault-parity
 
       - name: Upload side-by-side evidence (unapproved WIP, not a release)
         if: always()

@@ -27,6 +27,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   const focused = useIsFocused();
   const web = useRef<WebView<unknown>>(null);
   const [url, setUrl] = useState<string | null>(null);
+  const [studioScenarioId, setStudioScenarioId] = useState('normal');
   const [nativeMode, setNativeMode] = useState<{kind: 'monitor' | 'case' | 'ecg'; scenarioId: string} | null>(null);
   const [active, setActive] = useState(AppState.currentState === 'active');
   const [loading, setLoading] = useState(true);
@@ -65,12 +66,13 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   if (nativeMode?.kind === 'case') return <NativeClinicalCase scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />;
 
   if (!url) {
-    return <NativeClinicalStudio onExit={onExit} onOpen={destination => {
+    return <NativeClinicalStudio onExit={onExit} scenarioId={studioScenarioId} onScenarioChange={setStudioScenarioId} onOpen={destination => {
       if (destination.kind === 'monitor') {
-        setNativeMode({ kind: 'monitor', scenarioId: 'normal' });
+        setNativeMode({ kind: 'monitor', scenarioId: studioScenarioId });
         return;
       }
       if (destination.kind === 'case') {
+        setStudioScenarioId(destination.id);
         setNativeMode({ kind: 'case', scenarioId: destination.id });
         return;
       }
@@ -78,6 +80,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
         setNativeMode({ kind: 'ecg', scenarioId: destination.scenario });
         return;
       }
+      if (destination.kind === 'anatomy') setStudioScenarioId('normal');
       setFailed(false);
       setLoading(true);
       setCanGoBack(false);

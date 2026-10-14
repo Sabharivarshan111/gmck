@@ -25,6 +25,9 @@ type Screen = { kind: 'anatomy' | 'monitor' } | { kind: 'tool'; id: string; scen
 interface Props {
   onExit: () => void;
   onOpen: (screen: Screen) => void;
+  /** Preserve the same case selection across screens as the Vercel page. */
+  scenarioId: string;
+  onScenarioChange: (scenarioId: string) => void;
 }
 
 const NIGHT = {
@@ -55,12 +58,11 @@ function AnatomyStudioIcon() {
   </Svg>;
 }
 
-export default function NativeClinicalStudio({ onExit, onOpen }: Props) {
+export default function NativeClinicalStudio({ onExit, onOpen, scenarioId, onScenarioChange }: Props) {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [section, setSection] = useState<'skills' | 'cases'>('skills');
-  const [scenarioId, setScenarioId] = useState('normal');
   const [query, setQuery] = useState('');
   const [showFindings, setShowFindings] = useState(false);
   const [pickerVisible, setPickerVisible] = useState(false);
@@ -70,9 +72,11 @@ export default function NativeClinicalStudio({ onExit, onOpen }: Props) {
   const q = query.trim().toLowerCase();
   const skills = useMemo(() => NATIVE_CLINICAL_SKILLS.filter(s => `${s.title} ${s.hint}`.toLowerCase().includes(q)), [q]);
   const cases = useMemo(() => NATIVE_CLINICAL_SCENARIOS.filter(s => s.id !== 'normal' && `${s.title} ${s.category}`.toLowerCase().includes(q)), [q]);
-  const columns = width <= 340 ? 1 : 2;
+  // Same CSS breakpoints as the canonical web .studio-grid.
+  const columns = width <= 340 ? 1 : width >= 640 ? 3 : 2;
+  const headingSize = Math.max(30, Math.min(44, width * 0.07));
   const bodyWidth = Math.min(width, 800) - 36;
-  const skillWidth = columns === 2 ? (bodyWidth - 12) / 2 : bodyWidth;
+  const skillWidth = (bodyWidth - 12 * (columns - 1)) / columns;
 
   const buttonStyle = (radius = 20) => ({ backgroundColor: c.card, borderColor: c.border, borderWidth: 1, borderRadius: radius });
   return (
@@ -94,7 +98,7 @@ export default function NativeClinicalStudio({ onExit, onOpen }: Props) {
       <KeyboardSafe>
       <ScrollView keyboardShouldPersistTaps="handled" style={{ flex: 1 }} contentContainerStyle={[styles.main, { paddingBottom: 34 + insets.bottom }]} showsVerticalScrollIndicator={false}>
         <Text style={[styles.eyebrow, { color: c.accent }]}>EXPLORE. LISTEN. PRACTISE.</Text>
-        <Text style={[styles.heading, { color: c.ink }]}>What would you{'\n'}like to learn?</Text>
+        <Text style={[styles.heading, { color: c.ink, fontSize: headingSize, lineHeight: headingSize * 1.12 }]}>What would you{'\n'}like to learn?</Text>
         <Text style={[styles.intro, { color: c.muted }]}>Start with normal findings, explore anatomy, or work through a patient case.</Text>
         <Pressable testID="studio-native-anatomy" accessibilityRole="button" accessibilityLabel="Explore 3D anatomy" onPress={() => onOpen({ kind: 'anatomy' })}
           style={[styles.anatomy, buttonStyle()]}>
@@ -129,7 +133,7 @@ export default function NativeClinicalStudio({ onExit, onOpen }: Props) {
             <Pressable accessibilityRole="button" accessibilityLabel="Findings to show" onPress={() => setPickerVisible(true)} style={[styles.findingsSelect, { backgroundColor: c.raised, borderColor: c.border }]}>
               <Text style={{ color: c.ink, flex: 1 }} numberOfLines={2}>{activeScenario.title}</Text><ChevronRight color={c.muted} size={18} />
             </Pressable>
-            {!normal && <Pressable onPress={() => setScenarioId('normal')}><Text style={{ color: c.accent, marginTop: 12, textDecorationLine: 'underline' }}>Return to normal baseline</Text></Pressable>}
+            {!normal && <Pressable onPress={() => onScenarioChange('normal')}><Text style={{ color: c.accent, marginTop: 12, textDecorationLine: 'underline' }}>Return to normal baseline</Text></Pressable>}
             <Text style={[styles.footnote, { color: c.muted, marginTop: 10 }]}>Each tool uses this selection. Sound demonstrations inside Auscultation can override it.</Text>
           </>}
         </View>}
@@ -185,7 +189,7 @@ export default function NativeClinicalStudio({ onExit, onOpen }: Props) {
           <View style={[styles.modalPanel, { backgroundColor: c.card, borderColor: c.border }]}>
             <Text style={{ color: c.ink, fontWeight: '700', fontSize: 17, marginBottom: 12 }}>Findings to show</Text>
             <ScrollView keyboardShouldPersistTaps="handled">
-              {NATIVE_CLINICAL_SCENARIOS.map(s => <Pressable key={s.id} onPress={() => { setScenarioId(s.id); setPickerVisible(false); }} style={[styles.pickerRow, { borderBottomColor: c.border }]}>
+              {NATIVE_CLINICAL_SCENARIOS.map(s => <Pressable key={s.id} onPress={() => { onScenarioChange(s.id); setPickerVisible(false); }} style={[styles.pickerRow, { borderBottomColor: c.border }]}>
                 <Text style={{ color: s.id === scenarioId ? c.accent : c.ink }}>{s.title}</Text>
               </Pressable>)}
             </ScrollView>

@@ -1,9 +1,10 @@
 name: Native Vault parity port - nonrelease checks
 on:
   push:
-    branches: [main, codex/native-vault-full-port-20261014]
+    branches: [main, codex/native-vault-full-port-20261014, codex/native-vault-audit-20261015]
     paths:
       - 'mobile/src/components/NativeClinicalStudio.tsx'
+      - 'mobile/scripts/native-vault-layout-contract-check.mjs'
       - 'mobile/src/components/NativeClinicalCase.tsx'
       - 'mobile/src/components/NativeIcuMonitor.tsx'
       - 'mobile/src/components/NativeEcgTwelveLead.tsx'
@@ -52,6 +53,7 @@ jobs:
           npm run check:keyboard
           node scripts/native-clinical-engine-check.mjs
           node scripts/native-ecg12-parity-check.mjs
+          node scripts/native-vault-layout-contract-check.mjs
           node scripts/simulator-parity-contract-check.mjs
       - name: Lint native port screens
         working-directory: mobile
