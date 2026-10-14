@@ -1,0 +1,40 @@
+name: Native Vault parity port - nonrelease checks
+on:
+  push:
+    branches: [codex/native-vault-full-port-20261014]
+    paths:
+      - 'mobile/src/components/NativeClinicalStudio.tsx'
+      - 'mobile/src/lib/nativeClinicalCatalog.ts'
+      - 'mobile/src/lib/nativeSimulatorRouting.ts'
+      - 'mobile/src/screens/SimulatorScreen.tsx'
+      - 'mobile/scripts/native-clinical-parity-check.mjs'
+      - 'src/pages/Simulator.tsx'
+      - '.github/workflows/native-vault-port-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-clinical-parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - name: Install native toolchain modules
+        working-directory: mobile
+        run: npm ci --legacy-peer-deps
+      - name: Verify entire native app TypeScript
+        working-directory: mobile
+        run: npm run typecheck
+      - name: Verify native simulator UI source and catalog parity
+        working-directory: mobile
+        run: node scripts/native-clinical-parity-check.mjs
+      - name: Lint native port screens
+        working-directory: mobile
+        run: npx eslint src/components/NativeClinicalStudio.tsx src/screens/SimulatorScreen.tsx src/lib/nativeClinicalCatalog.ts src/lib/nativeSimulatorRouting.ts
