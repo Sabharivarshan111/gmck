@@ -7,6 +7,8 @@ import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { useTheme } from '@/theme';
 import NativeClinicalStudio from '@/components/NativeClinicalStudio';
+import NativeIcuMonitor from '@/components/NativeIcuMonitor';
+import NativeClinicalCase from '@/components/NativeClinicalCase';
 import { nativeClinicalRoute } from '@/lib/nativeSimulatorRouting';
 import { simulatorNavigation } from '@/lib/simulatorNavigation';
 
@@ -14,8 +16,9 @@ import { simulatorNavigation } from '@/lib/simulatorNavigation';
  * WIP Native Vercel parity migration.
  *
  * The discovery/skill/case selection screen is now actual React Native.
- * Detailed interactive modules are STILL WEB-RENDERED until each RN port
- * passes screenshots and functional checks. Do not ship as "fully native".
+ * ICU telemetry and clinical case interventions are now native and share the
+ * site's real physiology engine. Anatomy and the remaining diagnostic tools
+ * still use a hosted renderer; do not ship as full native parity.
  */
 export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   const { colors } = useTheme();
@@ -23,12 +26,14 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   const focused = useIsFocused();
   const web = useRef<WebView<unknown>>(null);
   const [url, setUrl] = useState<string | null>(null);
+  const [nativeMode, setNativeMode] = useState<{kind: 'monitor' | 'case'; scenarioId: string} | null>(null);
   const [active, setActive] = useState(AppState.currentState === 'active');
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
   const [canGoBack, setCanGoBack] = useState(false);
   const returnToNativeStudio = () => {
     setUrl(null);
+    setNativeMode(null);
     setFailed(false);
     setCanGoBack(false);
   };
@@ -41,7 +46,9 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
       if (!focused) return false;
-      if (url) {
+      if (nativeMode) {
+        setNativeMode(null);
+      } else if (url) {
         if (canGoBack && web.current) web.current.goBack();
         else returnToNativeStudio();
       } else {
@@ -50,10 +57,21 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
       return true;
     });
     return () => sub.remove();
-  }, [canGoBack, focused, onExit, url]);
+  }, [canGoBack, focused, onExit, url, nativeMode]);
+
+  if (nativeMode?.kind === 'monitor') return <NativeIcuMonitor scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />;
+  if (nativeMode?.kind === 'case') return <NativeClinicalCase scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />;
 
   if (!url) {
     return <NativeClinicalStudio onExit={onExit} onOpen={destination => {
+      if (destination.kind === 'monitor') {
+        setNativeMode({ kind: 'monitor', scenarioId: 'normal' });
+        return;
+      }
+      if (destination.kind === 'case') {
+        setNativeMode({ kind: 'case', scenarioId: destination.id });
+        return;
+      }
       setFailed(false);
       setLoading(true);
       setCanGoBack(false);
