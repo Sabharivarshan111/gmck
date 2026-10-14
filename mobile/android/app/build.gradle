@@ -382,5 +382,5 @@ def clinicalAssets = tasks.register("syncClinicalReferenceAssets", Sync) {
     into(layout.buildDirectory.dir("generated/clinicalAssets/clinical-reference"))
     include("radiology/**", "clubbing.jpg")
 }
-android.sourceSets.main.assets.srcDir(layout.buildDirectory.dir("generated/clinicalAssets"))
+android.sourceSets.main.assets.srcDir(layout.buildDirectory.dir("generated/clinicalAssets").get().asFile)
 tasks.named("preBuild").configure { dependsOn(clinicalAssets) }

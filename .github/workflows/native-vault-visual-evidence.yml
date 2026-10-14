@@ -62,15 +62,7 @@ jobs:
           npm install --no-save --package-lock=false --legacy-peer-deps playwright@1.55.0
           npx playwright install --with-deps chromium
           mkdir -p artifacts/native-vault-parity
-          npx playwright screenshot --browser chromium --viewport-size="393,852" --wait-for-timeout=7500 \
-            'https://orbitmbbs.vercel.app/simulator' \
-            artifacts/native-vault-parity/00-vercel-studio-393x852.png
-          npx playwright screenshot --browser chromium --viewport-size="393,852" --wait-for-timeout=7500 \
-            'https://orbitmbbs.vercel.app/simulator?mode=case&scenario=stemi' \
-            artifacts/native-vault-parity/00-vercel-case-393x852.png
-          npx playwright screenshot --browser chromium --viewport-size="393,852" --wait-for-timeout=7500 \
-            'https://orbitmbbs.vercel.app/simulator?mode=telemetry' \
-            artifacts/native-vault-parity/00-vercel-icu-393x852.png
+          node mobile/scripts/vercel_mobile_vault_screenshots.mjs artifacts/native-vault-parity
 
       - name: Enable emulator acceleration
         run: |
@@ -89,7 +81,11 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           script: |
+            adb shell wm size 1179x2556
+            adb shell wm density 480
             adb install -r downloaded-apk/app-preview.apk
+            adb shell wm size > artifacts/native-vault-parity/android-display-size.txt
+            adb shell wm density > artifacts/native-vault-parity/android-display-density.txt
             ORBIT_SCREENSHOT_OUT=artifacts/native-vault-parity python3 mobile/scripts/native_clinical_studio_screenshots.py
 
       - name: Audit and assemble Vercel versus installed Android screenshots

@@ -9,9 +9,19 @@ folder.mkdir(parents=True,exist_ok=True)
 pairs=[
  ('studio','00-vercel-studio-393x852.png','01-android-native-clinical-studio.png'),
  ('case','00-vercel-case-393x852.png','03-android-native-stemi-case.png'),
- ('icu','00-vercel-icu-393x852.png','05-android-native-icu-waveforms.png')
+ ('icu','00-vercel-icu-393x852.png','05-android-native-icu-waveforms.png'),
+ ('studio-light','00-vercel-studio-light-393x852.png','01b-native-clinical-studio-light.png'),
+ ('case-choices','00-vercel-case-choices-393x852.png','02-android-native-case-choices.png'),
+ ('xray','00-vercel-xray-393x852.png','12-android-offline-native-xray.png'),
+ ('xray-case','00-vercel-xray-case-393x852.png','13-android-native-xray-case.png'),
+ ('mri-axial','00-vercel-mri-axial-393x852.png','14-android-offline-native-mri-axial.png'),
+ ('mri-coronal','00-vercel-mri-coronal-393x852.png','15-android-offline-native-mri-coronal.png'),
+ ('mri-sagittal','00-vercel-mri-sagittal-393x852.png','16-android-offline-native-mri-sagittal.png'),
+ ('radiology-fullscreen','00-vercel-radiology-fullscreen-393x852.png','17-android-native-radiology-fullscreen.png'),
+ ('clubbing','00-vercel-clubbing-393x852.png','18-android-offline-native-clubbing.png'),
+ ('clubbing-viva','00-vercel-clubbing-viva-393x852.png','19-android-native-clubbing-viva.png')
 ]
-result={"status":"NOT_CERTIFIED","pairs":[],"notes":"Different platforms have system chrome and font rendering differences. Visual review of screenshots AND functional tests is required; 3D/imaging/sound not fully native."}
+result={"status":"NOT_CERTIFIED","pairs":[],"notes":"Different platforms have system chrome and font rendering differences. Visual review of screenshots AND functional tests is required; 3D/POCUS/sound not fully native."}
 for label,web,native in pairs:
     w,n=folder/web,folder/native
     item={"label":label,"web":web,"native":native,"captured_both":w.exists() and n.exists()}
