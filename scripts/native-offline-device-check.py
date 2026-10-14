@@ -1,5 +1,6 @@
 """Exercise the actual packaged Android app with networking disabled.
 UIAutomator locates real accessibility labels; captured pixels are device output.
+Includes the packaged ultrasound movies alongside the offline diagnostics.
 """
 import base64, json, re, subprocess, time, xml.etree.ElementTree as ET
 from pathlib import Path

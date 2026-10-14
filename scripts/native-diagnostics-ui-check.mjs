@@ -67,8 +67,19 @@ try{
   await page.getByRole('button',{name:'cardiac plax',exact:true}).click();
   await page.getByText('Parasternal long-axis reference',{exact:true}).scrollIntoViewIfNeeded();
   await page.screenshot({path:`${out}/pocus-reference-${width}.png`});
+  await page.getByRole('button',{name:'Open ECG studio',exact:true}).click();
+  await page.getByRole('button',{name:/^Lesson 6:/}).click();
+  await page.getByRole('button',{name:'75 bpm',exact:true}).click();
+  await page.getByText(/Correct. Four large squares/).waitFor();
+  await page.getByRole('button',{name:'Intervals',exact:true}).click();
+  await page.getByText(/QTc 431 ms/).waitFor();
+  await page.getByRole('button',{name:'Bazett · QT / √RR',exact:true}).click();
+  await page.getByText(/QTc 447 ms/).waitFor();
+  await page.getByRole('button',{name:'Cardiac cycle',exact:true}).click();
+  await page.getByText('Pressure–volume loop',{exact:true}).scrollIntoViewIfNeeded();
+  await page.screenshot({path:`${out}/ecg-studio-${width}.png`});
   assert.equal(errors.length,0,errors.join('\n'));await page.close();
  }
  console.log('Native ECG capture/groups/segments/enlarge eye light/RAPD/CN III/V1 reflex, offline audio clip playback, bedside panels and POCUS controls/reference stills passed at 360/390/430px. RN-web layout only; Android rendering not verified.');
- for(const name of ['ecg-390','eye-390','auscultation-390','edema-390','clubbing-390','pocus-reference-390']){console.log('UI_IMAGE_BEGIN '+name);console.log(fs.readFileSync(`${out}/${name}.png`).toString('base64'));console.log('UI_IMAGE_END');}
+ for(const name of ['ecg-390','eye-390','auscultation-390','edema-390','clubbing-390','pocus-reference-390','ecg-studio-390']){console.log('UI_IMAGE_BEGIN '+name);console.log(fs.readFileSync(`${out}/${name}.png`).toString('base64'));console.log('UI_IMAGE_END');}
 }catch(error){console.error(log.slice(-3000));throw error;}finally{await browser?.close();server.kill();}

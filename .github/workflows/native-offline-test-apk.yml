@@ -108,6 +108,8 @@ jobs:
             Native Android test build with packaged anatomy, MRI/X-ray references,
             ECG learning/cardiac cycle, 12-lead teaching ECG, pupil/reflex examination,
             bedside/clubbing panels, local heart/lung audio, cases/monitor and PG practice.
+            Adds guided ECG lessons, QT correction and pressure–volume teaching loops,
+            clearer organ leaders and direct selection within the focused model.
             ARM64 phones only. No ads. Installs beside the current production app;
             the launcher name is ORBIT Native Preview. Google sign-in is not configured
             for this separate test package; use the existing guest entry.

@@ -9,6 +9,8 @@ on:
       - 'mobile/preview/radiology*'
       - 'mobile/preview/ecg*'
       - 'mobile/src/simulator/NativeEcgSheet.tsx'
+      - 'mobile/src/simulator/NativeEcgStudio.tsx'
+      - 'mobile/src/simulator/SimulatorUi.tsx'
       - 'mobile/src/simulator/NativeEyeExam.tsx'
       - 'mobile/src/simulator/NativeAuscultation.tsx'
       - 'mobile/src/simulator/NativeBedsideExam.tsx'

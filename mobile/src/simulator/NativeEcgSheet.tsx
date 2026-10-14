@@ -2,7 +2,7 @@ import React,{useEffect,useMemo,useRef,useState} from 'react';
 import {ScrollView,View} from 'react-native';
 import Svg,{Path,Rect,Text as SvgText} from 'react-native-svg';
 import {Action,Card,Copy,ui} from './SimulatorUi';
-import {ECG_SEGMENTS} from './lessonCatalog';
+import {ECG_SEGMENTS,ECG_WAVES} from './lessonCatalog';
 import {drawEcg} from './ecgDrawing';
 import {VectorContext} from './vectorContext';
 const groups=['I · II · III','aVR · aVL · aVF','V1 · V2 · V3','V4 · V5 · V6','All 12'];
@@ -23,6 +23,6 @@ export function NativeEcgSheet({rhythm,heartRate}:{rhythm:string;heartRate:numbe
     {marks.map((m,i)=>m.kind==='path'?<Path key={i} d={m.d} stroke={m.color} strokeWidth={m.width} strokeDasharray={m.dash.length?m.dash:undefined} fill="none"/>:m.kind==='rect'?<Rect key={i} x={m.x} y={m.y} width={m.width} height={m.height} fill={m.color}/>:<SvgText key={i} x={m.x} y={m.y} fill={m.color} fontSize={parseFloat(m.font.replace('bold ',''))} fontWeight={m.font.includes('bold')?'bold':'normal'} fontFamily="monospace">{m.text}</SvgText>)}
    </Svg></ScrollView>
   </View>
-  {meta&&<><Card title={meta.name}><Copy>{meta.normalDurationMs}</Copy><Copy>{meta.physioOrigin}</Copy></Card><Card title="Lead direction"><Copy>{meta.vectorExplanation}</Copy><Copy>{meta.leadsAnalysis}</Copy></Card><Card title="Clinical teaching notes"><Copy>{meta.clinicalPearls}</Copy></Card></>}
+  {meta&&<><Card title={meta.name}><Copy>{meta.normalDurationMs}</Copy><Copy>{meta.id==='pr'?ECG_WAVES.find(w=>w.name==='PR')?.text:meta.physioOrigin}</Copy></Card><Card title="Lead direction">{meta.id==='pr'?<Copy>Follow the P wave and the conduction interval on the highlighted strip; the flat PR segment is only part of the interval.</Copy>:<><Copy>{meta.vectorExplanation}</Copy><Copy>{meta.leadsAnalysis}</Copy></>}</Card><Card title="Clinical teaching notes"><Copy>{meta.clinicalPearls}</Copy></Card></>}
  </ScrollView>;
 }

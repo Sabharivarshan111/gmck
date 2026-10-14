@@ -2268,3 +2268,12 @@ Native preview source-note correction uses release body metadata only; no retry 
 **HALF-DONE** — native OrbitSimAudio TurboModule/player, audio UI, bedside schematics, scan background/freeze corrections are being checked and committed. Local types passed before last bedside edits; unused Rect import removed. Current testAPK2 does not include these tools.
 **NEXT** — commit player/panels + strict sound source/checksum guards, follow actual Kotlin/JS/UI CI, inspect screenshots, build refreshed ad-free ARM64 testAPK. Complete POCUS and native device/emulator review before production26 APK/AAB.
 **DO NOT** — do not call browser audio proof Android playback; no production/native completion claim, no Play publication, no10MB data cuts. Keep212 source-derived clips and their manifest in public/clinical-reference/auscultation, copied to APK by asset builder. Do not restore .gz Android model filenames or overwrite shared web/native PG work.
+
+
+## 2026-10-14 — Native Android continuation
+
+Preview 6 published from 1021d6935eb40d3d224511a8e99e952e90539439: 98,743,134 bytes; SHA256 7129a94ccadfda307e4ad6e6dd83b5aed4b3c32554e4aa58f69cb00249041af1. APK: https://github.com/Sabharivarshan111/gmck/releases/download/native-offline-preview-6/app-preview.apk. Kotlin, bundle and archive checks passed; actual device rendering/playback remains unverified.
+
+New changes: professional leader sizing, venous colour/direction, one selected connection callout, child-mesh selection within focus, compact controls, six guided ECG lessons/rate quiz, QT calculator and shared-model PV loop with invalid-model guard. Local types/lint and strict offline model/MRI/audio guards passed.
+
+POCUS movies now tracked in 6f79edee33dae196bea33f73011ddf46eb82883f after narrow force-add for global MP4 ignore. Two source-derived movies/posters total 158,980 bytes. Earlier preview build correctly failed missing movies before publication. Fully qualified MainActivity fixes debug emulator launch. Fresh APK, component UI, actual native compilation and offline emulator checks required on this change; no production merge/release/Play update yet. Full parity/device proof remains necessary.
