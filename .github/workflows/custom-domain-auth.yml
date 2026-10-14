@@ -1,0 +1,111 @@
+name: Verify and repair custom domain Google sign-in
+on:
+  push:
+    branches: [codex/custom-domain-google-auth-20261014]
+    paths: ['.github/workflows/custom-domain-auth.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: orbit-auth-url-configuration
+  cancel-in-progress: false
+jobs:
+  redirect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      TOK_A: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      TOK_B: ${{ secrets.SUPABASE_TOKEN }}
+      TOK_C: ${{ secrets.SUPABASE_PAT }}
+    steps:
+      - name: Update only website return URLs and verify real OAuth callbacks
+        run: |
+          python3 -u - <<'PY'
+          import os, json, urllib.request, urllib.parse, urllib.error, http.cookiejar, time
+
+          ref = 'pmtgeydtqypwrypshhsx'
+          canonical = 'https://orbitmbbs.site/'
+          token = next((os.environ[n] for n in ('TOK_A', 'TOK_B', 'TOK_C') if os.environ.get(n)), None)
+          if not token:
+              raise SystemExit('No Supabase management token is configured in repository secrets.')
+
+          # Never print the auth config: it also contains provider secrets.
+          endpoint = f'https://api.supabase.com/v1/projects/{ref}/config/auth'
+          def config(method='GET', payload=None):
+              data = None if payload is None else json.dumps(payload).encode()
+              req = urllib.request.Request(endpoint, data=data, method=method,
+                  headers={'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'})
+              try:
+                  with urllib.request.urlopen(req, timeout=30) as r:
+                      return json.load(r)
+              except urllib.error.HTTPError as e:
+                  raise RuntimeError(f'Auth configuration {method} failed: HTTP {e.code}') from None
+
+          before = config()
+          print('Previous Site URL:', before.get('site_url'))
+          previous = [v.strip() for v in (before.get('uri_allow_list') or '').split(',') if v.strip()]
+          allowed = list(previous)
+          # Exact owned origins only. Preserve every existing mobile/development URL.
+          additions = [canonical, 'https://www.orbitmbbs.site/', 'https://orbitmbbs.vercel.app/',
+                       'https://orbitmbbs.vercel.app']
+          if before.get('site_url'):
+              additions.append(before['site_url'])
+          for url in additions:
+              if url not in allowed:
+                  allowed.append(url)
+          desired = {'site_url': canonical, 'uri_allow_list': ','.join(allowed)}
+          if any(before.get(k) != v for k, v in desired.items()):
+              config('PATCH', desired)
+          after = config()
+          assert after.get('site_url') == canonical, 'Site URL did not persist'
+          actual = [v.strip() for v in after.get('uri_allow_list', '').split(',') if v.strip()]
+          assert all(url in actual for url in allowed), 'A redirect permission is missing'
+          print('Verified Site URL:', after['site_url'])
+          print('Verified allowed return URLs:', actual)
+
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self, *args):
+                  return None
+
+          def check_callback(return_url, expect):
+              # Request a genuine Google authorization URL, then cancel at the
+              # provider callback. No account is accessed or signed in by this check.
+              jar = http.cookiejar.CookieJar()
+              opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar), NoRedirect())
+              def request(url):
+                  try:
+                      return opener.open(url, timeout=30)
+                  except urllib.error.HTTPError as e:
+                      return e
+              base = f'https://{ref}.supabase.co/auth/v1/'
+              params = {'provider': 'google'}
+              if return_url is not None:
+                  params['redirect_to'] = return_url
+              response = request(base + 'authorize?' + urllib.parse.urlencode(params))
+              assert response.code == 302, f'Authorize failed: HTTP {response.code}'
+              google = urllib.parse.urlparse(response.headers.get('Location', ''))
+              assert google.hostname == 'accounts.google.com', 'Google provider did not open'
+              state = urllib.parse.parse_qs(google.query).get('state', [''])[0]
+              assert state, 'Google authorization state is missing'
+              callback = request(base + 'callback?' + urllib.parse.urlencode({
+                  'state': state, 'error': 'access_denied',
+                  'error_description': 'ORBIT redirect verification without account login'}))
+              target = urllib.parse.urlparse(callback.headers.get('Location', ''))
+              destination = target._replace(query='', fragment='').geturl()
+              assert callback.code == 302 and destination == expect, f'Callback returned {callback.code} to {destination}'
+              print('PASS real OAuth callback:', return_url or '(default)', '->', destination)
+
+          # Configuration reload can briefly lag the Management API.
+          for attempt in range(6):
+              try:
+                  for url in (canonical, 'https://www.orbitmbbs.site/', 'https://orbitmbbs.vercel.app/'):
+                      check_callback(url, url)
+                  check_callback(None, canonical)
+                  check_callback('https://untrusted.invalid/', canonical)
+                  break
+              except AssertionError:
+                  if attempt == 5:
+                      raise
+                  time.sleep(5)
+          print('Google redirect repair complete. Account login itself was not automated.')
+          PY
