@@ -59,7 +59,7 @@ try {
   // Exercise every actionable button in every clinical case, including
   // "wrong" choices. Bad choices must produce feedback, not crashes/NaNs.
   const actionsText = readFileSync(join(mobile,'src/lib/nativeClinicalActions.ts'),'utf8');
-  const jsonActions = actionsText.match(/export const NATIVE_CLINICAL_ACTIONS:[^=]*= (\\[[\\s\\S]*?\\]);/);
+  const jsonActions = actionsText.match(/export const NATIVE_CLINICAL_ACTIONS:[^=]*= (\[[\s\S]*?\]);/);
   assert.ok(jsonActions,'Native action catalog not found');
   const actions = JSON.parse(jsonActions[1]);
   assert.equal(actions.length,27);
