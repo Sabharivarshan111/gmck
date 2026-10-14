@@ -42,7 +42,7 @@ function EcgPaper({ cfg, group, segment, width }: {
     const xStart = col * cellWidth;
     const yCenter = row * rowH + rowH / 2 + 10;
     return { lead, row, col, xStart, yCenter, cellWidth, trace: nativeEcgTracePath(lead,cfg,xStart,yCenter,cellWidth) };
-  }), [cfg, group, plotWidth, plottedLeads]);
+  }), [cfg, group, plotWidth, plottedLeads, rowH]);
 
   const bandRects: {x:number;y:number;w:number;h:number;key:string}[] = [];
   if (seg) {
