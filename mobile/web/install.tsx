@@ -88,6 +88,7 @@ export function InstallApp() {
       }}>×</button>
     </aside>}
     <dialog ref={dialog} className="orbit-install-dialog" aria-labelledby="orbit-install-title" onClose={stopVideo}>
+      <button type="button" className="orbit-install-x" aria-label="Close installation instructions" onClick={() => dialog.current?.close()}>×</button>
       <header><img src="/icon-192.png" alt="" width="44" height="44" /><div><h2 id="orbit-install-title">{installed ? 'ORBIT is installed' : 'Install ORBIT'}</h2><p>Your studies, one tap away.</p></div></header>
       {installed ? <p>You are already using ORBIT as an app.</p> : <>
         {ready && <button className="orbit-install-primary" disabled={busy} onClick={install}>{busy ? 'Opening install prompt…' : 'Install on this device'}</button>}
