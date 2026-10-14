@@ -33,7 +33,7 @@ function EcgPaper({ cfg, group, segment, width }: {
   const plotWidth = group === 4 ? W_LARGE : W_SMALL;
   const rowH = (H - 130) / 3;
   const seg = NATIVE_ECG_SEGMENTS.find(s => s.id === segment);
-  const plottedLeads = (group === 4 ? NATIVE_ECG_LEADS : NATIVE_ECG_LEADS.slice(group * 3, group * 3 + 3));
+  const plottedLeads = useMemo(() => group === 4 ? NATIVE_ECG_LEADS : NATIVE_ECG_LEADS.slice(group * 3, group * 3 + 3), [group]);
   const paths = useMemo(() => plottedLeads.map(lead => {
     const index = NATIVE_ECG_LEADS.findIndex(l => l.id === lead.id);
     const col = group === 4 ? Math.floor(index / 3) : 0;
