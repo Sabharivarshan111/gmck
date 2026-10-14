@@ -2,6 +2,7 @@ import { useCallback, useSyncExternalStore } from 'react';
 import {
   fetchCloudProfile,
   readLocalProfile,
+  persistLocalProfile,
   registerOpen,
   saveProfile as persistProfile,
   YEAR_TO_KEY,
@@ -50,9 +51,19 @@ export async function hydrateProfile(): Promise<void> {
   hydrated = true;
   emit();
 
+  const hydrationSaveSeq = latestSaveSeq;
   const cloud = await fetchCloudProfile();
   if (cloud) {
     cloudProfile = cloud;
+    // Restore an existing account on the new domain/PWA storage context.
+    // A delayed cloud response must never overwrite newly completed setup.
+    if (!localProfile && hydrationSaveSeq === latestSaveSeq &&
+        Object.hasOwn(YEAR_TO_KEY, cloud.year)) {
+      try {
+        const recovered = await persistLocalProfile(cloud);
+        if (hydrationSaveSeq === latestSaveSeq) localProfile = recovered;
+      } catch { /* Ask for setup if the old profile or local storage is invalid. */ }
+    }
     emit();
   }
   const open = await registerOpen();
@@ -82,13 +93,12 @@ export function useProfile() {
   useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
   const save = useCallback(async (next: LocalProfile) => {
-    // 1. Optimistic synchronous update so UI updates in 0ms without waiting for network.
-    localProfile = next;
-    emit();
-
     const seq = ++latestSaveSeq;
     try {
-      const cloud = await persistProfile(next);
+      const cloud = await persistProfile(next, clean => {
+        // Dismiss onboarding only after a validated durable local write.
+        if (seq === latestSaveSeq) { localProfile = clean; emit(); }
+      });
       // Discard stale out-of-order network responses if a newer save was initiated
       if (seq !== latestSaveSeq) {
         return;
@@ -116,8 +126,9 @@ export function useProfile() {
         reconcileProgress().catch(() => {});
         emit();
       }
-    } catch {
-      // Local write already succeeded in persistProfile
+    } catch (error) {
+      // Validation/storage failures must remain visible to FirstRun/ProfileSheet.
+      throw error;
     }
   }, []);
 

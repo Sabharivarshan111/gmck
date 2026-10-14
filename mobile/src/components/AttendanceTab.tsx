@@ -16,6 +16,8 @@ import {
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
+import { Sheet } from '@/components/Sheet';
+import { DatePicker } from '@/components/DatePicker';
 import { useTheme, withAlpha } from '@/theme';
 import { onColor } from '@/theme/color';
 import { typeScale } from '@/theme/typography';
@@ -77,6 +79,20 @@ const POSTING_SUGGESTIONS = [
 ];
 
 const WEEKDAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+/** One shared picker for Android and the browser, using local calendar days. */
+function PostingDateField({label,value,onChange,minDate}:{label:string;value:string;onChange:(next:string)=>void;minDate?:number}) {
+  const {colors}=useTheme();
+  const [open,setOpen]=useState(false);
+  return <>
+    <Touchable label={label} hint="Choose a date from the calendar" onPress={()=>setOpen(true)} style={[styles.input,{borderColor:colors.border,minHeight:44}]}>
+      <Text style={{color:colors.text}}>{parseLocalIsoDate(value)?value:'Choose date'} · Calendar</Text>
+    </Touchable>
+    <Sheet visible={open} onClose={()=>setOpen(false)} title={label}>
+      <DatePicker value={parseLocalIsoDate(value)?.getTime()??null} minDate={minDate} onChange={stamp=>{onChange(formatLocalIsoDate(new Date(stamp)));setOpen(false);}}/>
+    </Sheet>
+  </>;
+}
 
 /** Interactive Mini-Calendar for postings and college-specific holiday overrides. */
 function RotationCalendar({
@@ -228,6 +244,10 @@ function RotationCalendar({
           return (
             <Touchable
               key={d.iso}
+              hitSlop={0}
+              scale={false}
+              state={{selected:d.isCustomHoliday,checked:d.isOff}}
+              onLongPress={d.isGazetted && prepaidHolidays ? ()=>toggleOfficial(d.iso) : undefined}
               onPress={() => handlePress(d)}
               disabled={!editable}
               label={`${WEEKDAY_NAMES[(d.dayOfWeek + 6) % 7]}, ${d.monthShort} ${d.dayNum}${d.holidayTitle ? ` - ${d.holidayTitle}` : ''}${d.isOff ? ' - Holiday' : ' - Working day'}`}
@@ -370,6 +390,7 @@ export function AttendanceTab() {
   useSyncExternalStore(subscribeAttendance, attendanceVersion, attendanceVersion);
   const { items, hydrated } = getAttendance();
 
+  const [formError,setFormError]=useState<string|null>(null);
   const [kind, setKind] = useState<AttendanceKind>('theory');
   const [adding, setAdding] = useState(false);
   const [name, setName] = useState('');
@@ -421,6 +442,12 @@ export function AttendanceTab() {
   const submit = useCallback(async () => {
     const trimmed = name.trim();
     if (!trimmed) {
+      return;
+    }
+    setFormError(null);
+    if(kind==='posting' && (!parseLocalIsoDate(startDate) || !parseLocalIsoDate(endDate) ||
+        !postingDurationDays(startDate,endDate) || !Number.isFinite(Number(days)) || Number(days)<1 || Number(days)>730)) {
+      setFormError('Choose valid start and end dates, with a duration from 1 to 730 days.');
       return;
     }
     const total = Number(days);
@@ -536,6 +563,7 @@ export function AttendanceTab() {
             }}
             onTarget={async next => updateAttendance(item.id, { target: next })}
             onRemove={async () => removeAttendance(item.id)}
+            onUpdateDates={async (nextStart,nextEnd,nextDays)=>updateAttendance(item.id,{startDate:nextStart,endDate:nextEnd,totalDays:nextDays})}
             onUpdateHolidays={async nextHolidays =>
               updateAttendance(item.id, { holidays: nextHolidays })
             }
@@ -545,6 +573,7 @@ export function AttendanceTab() {
           />
         ))}
 
+        {formError&&<Text accessibilityRole="alert" style={{color:colors.danger}}>{formError}</Text>}
         {adding ? (
           <View style={[styles.form, { backgroundColor: colors.card, borderColor: colors.border }]}>
             {/* Quick subject / posting suggestion pills */}
@@ -635,25 +664,11 @@ export function AttendanceTab() {
                 <View style={styles.rowTwoCols}>
                   <View style={styles.flexOne}>
                     <Text style={[styles.formLabel, { color: colors.textMuted }]}>START DATE (YYYY-MM-DD)</Text>
-                    <TextInput
-                      value={startDate}
-                      onChangeText={changeStartDate}
-                      placeholder="YYYY-MM-DD"
-                      placeholderTextColor={colors.textMuted}
-                      accessibilityLabel="Posting start date"
-                      style={[styles.input, { color: colors.text, borderColor: colors.border }]}
-                    />
+                    <PostingDateField label="Posting start date" value={startDate} onChange={changeStartDate}/>
                   </View>
                   <View style={styles.flexOne}>
                     <Text style={[styles.formLabel, { color: colors.textMuted }]}>END DATE (YYYY-MM-DD)</Text>
-                    <TextInput
-                      value={endDate}
-                      onChangeText={changeEndDate}
-                      placeholder="YYYY-MM-DD"
-                      placeholderTextColor={colors.textMuted}
-                      accessibilityLabel="Posting end date"
-                      style={[styles.input, { color: colors.text, borderColor: colors.border }]}
-                    />
+                    <PostingDateField label="Posting end date" value={endDate} onChange={changeEndDate} minDate={parseLocalIsoDate(startDate)?.getTime()}/>
                   </View>
                 </View>
                 <View>
@@ -850,6 +865,7 @@ function AttendanceCard({
   onSetMonthlyTotalClasses,
   onUpdateHolidays,
   onUpdateGazettedWorkingDays,
+  onUpdateDates,
 }: {
   item: AttendanceItem;
   onMark: (item: AttendanceItem, present: boolean) => void;
@@ -860,6 +876,7 @@ function AttendanceCard({
   onSetMonthlyTotalClasses: (monthKey: string, count?: number) => void;
   onUpdateHolidays: (holidays: string[]) => void;
   onUpdateGazettedWorkingDays: (dates: string[]) => void;
+  onUpdateDates: (start:string,end:string,totalDays:number)=>Promise<void>|void;
 }) {
   const { colors } = useTheme();
   const verdict = verdictFor(item);
@@ -893,6 +910,11 @@ function AttendanceCard({
   const monthlyTotalSum = monthlyTotals.reduce((sum, value) => sum + value, 0);
 
   const [showCalendar, setShowCalendar] = useState(false);
+  const [editDates,setEditDates]=useState(false);
+  const [rangeStart,setRangeStart]=useState(item.startDate??formatLocalIsoDate(new Date()));
+  const [rangeEnd,setRangeEnd]=useState(item.endDate??postingEndDate(item.startDate??formatLocalIsoDate(new Date()),item.totalDays??28)??formatLocalIsoDate(new Date()));
+  const calendarDays=item.totalDays??postingDurationDays(item.startDate??'',item.endDate??'')??0;
+  const openDates=()=>{const start=parseLocalIsoDate(item.startDate??'')?item.startDate!:formatLocalIsoDate(new Date());setRangeStart(start);setRangeEnd(parseLocalIsoDate(item.endDate??'')?item.endDate!:postingEndDate(start,item.totalDays??28)??start);setEditDates(true);};
   const [showSimulator, setShowSimulator] = useState(false);
 
   const tone = verdict.safe ? colors.success : colors.danger;
@@ -1279,7 +1301,7 @@ function AttendanceCard({
       ) : null}
 
       {/* Clinical postings calendar view */}
-      {item.kind === 'posting' && item.startDate && item.totalDays ? (
+      {item.kind === 'posting' ? (
         <View style={styles.accordionWrap}>
           <Touchable
             onPress={() => setShowCalendar(v => !v)}
@@ -1298,10 +1320,11 @@ function AttendanceCard({
             )}
           </Touchable>
 
+          {showCalendar && (!parseLocalIsoDate(item.startDate??'')||calendarDays<1) ? <Text style={{color:colors.textMuted}}>Choose posting dates to display your calendar.</Text> : null}
           {showCalendar ? (
             <RotationCalendar
-              startDateStr={item.startDate}
-              totalDays={item.totalDays}
+              startDateStr={item.startDate??''}
+              totalDays={calendarDays}
               skipSundays={Boolean(item.skipSundays)}
               skipSaturdays={Boolean(item.skipSaturdays)}
               prepaidHolidays={Boolean(item.prepaidHolidays)}
@@ -1312,6 +1335,12 @@ function AttendanceCard({
               editable={true}
             />
           ) : null}
+          <Touchable label="Edit posting dates" onPress={openDates} style={{minHeight:44,justifyContent:'center'}}><Text style={{color:colors.accent}}>Edit posting dates</Text></Touchable>
+          <Sheet visible={editDates} onClose={()=>setEditDates(false)} title="Posting dates">
+            <PostingDateField label="Saved posting start date" value={rangeStart} onChange={next=>{setRangeStart(next);if(!postingDurationDays(next,rangeEnd))setRangeEnd(next);}}/>
+            <PostingDateField label="Saved posting end date" value={rangeEnd} onChange={setRangeEnd} minDate={parseLocalIsoDate(rangeStart)?.getTime()}/>
+            <Touchable label="Save posting dates" disabled={!postingDurationDays(rangeStart,rangeEnd)||postingDurationDays(rangeStart,rangeEnd)!>730} onPress={()=>{const n=postingDurationDays(rangeStart,rangeEnd);if(n)void Promise.resolve(onUpdateDates(rangeStart,rangeEnd,n)).then(()=>{setEditDates(false);setShowCalendar(true);});}} style={{minHeight:44,justifyContent:'center'}}><Text style={{color:colors.accent}}>Save dates</Text></Touchable>
+          </Sheet>
         </View>
       ) : null}
 

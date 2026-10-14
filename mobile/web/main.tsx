@@ -11,7 +11,7 @@ async function boot() {
   if ('serviceWorker' in navigator) {
     try { await navigator.serviceWorker.register('/sw.js'); } catch { /* online app remains usable */ }
   }
-  await hydrateFiles();
+  await hydrateFiles().catch(() => { /* Small study records can use localStorage if IndexedDB is unavailable. File imports still report their storage error. */ });
   await completeBrowserAuth().catch(() => {});
   createRoot(document.getElementById('root')!).render(<><InstallApp /><App /></>);
 }

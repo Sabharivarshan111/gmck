@@ -25,14 +25,22 @@ export async function transaction<T>(store: string, mode: IDBTransactionMode, op
 }
 const storage = {
   async getItem(key: string) {
-    const saved = await transaction('strings', 'readonly', store => store.get(key));
-    if (typeof saved === 'string') return saved;
+    try {
+      const saved = await transaction('strings', 'readonly', store => store.get(key));
+      if (typeof saved === 'string') return saved;
+    } catch { /* Safari may deny IndexedDB while durable localStorage still works. */ }
     return localStorage.getItem(key);
   },
   async setItem(key: string, value: string) {
-    await transaction('strings', 'readwrite', store => store.put(value, key));
-    // Small shared records remain visible to the unchanged simulator shell.
-    if (value.length < 100_000) try { localStorage.setItem(key, value); } catch { /* IDB is authoritative */ }
+    let indexedError: unknown;
+    try { await transaction('strings', 'readwrite', store => store.put(value, key)); }
+    catch (error) { indexedError = error; }
+    // Small setup records have two durable options; never pretend memory is saved.
+    if (value.length < 100_000) {
+      try { localStorage.setItem(key, value); return; }
+      catch (error) { if (indexedError) throw error; }
+    }
+    if (indexedError) throw indexedError;
   },
   async removeItem(key: string) {
     await transaction('strings', 'readwrite', store => store.delete(key));
