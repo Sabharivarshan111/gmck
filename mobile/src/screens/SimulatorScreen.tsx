@@ -8,6 +8,7 @@ import { Touchable } from '@/components/Touchable';
 import { useTheme } from '@/theme';
 import NativeClinicalStudio from '@/components/NativeClinicalStudio';
 import NativeIcuMonitor from '@/components/NativeIcuMonitor';
+import NativeEcgTwelveLead from '@/components/NativeEcgTwelveLead';
 import NativeClinicalCase from '@/components/NativeClinicalCase';
 import { nativeClinicalRoute } from '@/lib/nativeSimulatorRouting';
 import { simulatorNavigation } from '@/lib/simulatorNavigation';
@@ -26,7 +27,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   const focused = useIsFocused();
   const web = useRef<WebView<unknown>>(null);
   const [url, setUrl] = useState<string | null>(null);
-  const [nativeMode, setNativeMode] = useState<{kind: 'monitor' | 'case'; scenarioId: string} | null>(null);
+  const [nativeMode, setNativeMode] = useState<{kind: 'monitor' | 'case' | 'ecg'; scenarioId: string} | null>(null);
   const [active, setActive] = useState(AppState.currentState === 'active');
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
@@ -60,6 +61,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   }, [canGoBack, focused, onExit, url, nativeMode]);
 
   if (nativeMode?.kind === 'monitor') return <NativeIcuMonitor scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />;
+  if (nativeMode?.kind === 'ecg') return <NativeEcgTwelveLead scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />;
   if (nativeMode?.kind === 'case') return <NativeClinicalCase scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />;
 
   if (!url) {
@@ -70,6 +72,10 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
       }
       if (destination.kind === 'case') {
         setNativeMode({ kind: 'case', scenarioId: destination.id });
+        return;
+      }
+      if (destination.kind === 'tool' && destination.id === 'ecg12') {
+        setNativeMode({ kind: 'ecg', scenarioId: destination.scenario });
         return;
       }
       setFailed(false);
