@@ -2313,3 +2313,14 @@ HALF-DONE: Flow assertions do not establish visual correctness. Screenshot revie
 NEXT: Follow-up moves ECG segment controls into a sheet, bounds image translation/zoom, removes the erroneous test swipe, reserves native anatomy viewport space above/below controls, offsets leaders into stage coordinates, and makes regional shortcuts match each region. Verify types/lint plus Android/component CI and inspect actual MRI/heart screenshots before recommending the new APK. Updates are checkpointed on this branch to survive workspace pruning.
 
 DO NOT: Call Preview 11 MRI screenshot proof; it was blank after a pan. Do not claim full parity, all clinical content audited, production release, or Play publication. Preserve shared PG explanations and main branch work.
+
+
+## 2026-10-14 — Codex — Preview 12 native visuals verified
+
+**DONE:** Preview 12 built from c9f29a970a3fadac09865081e7a566deb651a928. APK https://github.com/Sabharivarshan111/gmck/releases/download/native-offline-preview-12/app-preview.apk; 98,923,917 bytes; SHA256 5dc6e273e8464f65605deaf575d112d193b4c4c31a88f0034a6286114301e0b0. Core38533318814, UI38533318699, APK38533318765 and real offline Android38533318893 passed. Inspected actual native heart, MRI and ECG captures: whole heart including apex clear of controls, visible T1 image with slice landmarks, and calibrated ECG trace above the fold. Component images also inspected. No production authentication or website changes.
+
+**HALF-DONE:** Full web parity and physical-device clinical fidelity remain unfinished. Existing preview is ARM64/ad-free/local setup and installs beside production. No production APK/AAB, merge or Play upload. Do not repeat Preview 11's blank-MRI screenshot as proof.
+
+**NEXT:** Test-only commit 7c85112b1bcf98ca07cd0acdd8c6a67165a9b5ec adds native MRI pan and coronary/renal artery/renal vein/celiac selection captures. Actual Android run38535793952 is running. Inspect those captures, fix any real failures, then update evidence. This does not change Preview 12 application code.
+
+**DO NOT:** Claim all connections have 3D meshes: 225 registered views have captured geometry; source gaps remain explicitly teaching schematics. Preserve main/PG explanation work; no Play publication authorized.
