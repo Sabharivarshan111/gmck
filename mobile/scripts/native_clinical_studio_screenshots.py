@@ -24,7 +24,7 @@ def main():
     scroll_until("Acute Inferior STEMI", tries=8)
     shot("02-android-native-case-choices")
     tap("Acute Inferior STEMI")
-    wait_visible("Clinical interventions")
+    wait_visible("Patient Simulator")
     shot("03-android-native-stemi-case")
 
     scroll_until("IV Saline", tries=8)
