@@ -136,6 +136,9 @@ jobs:
           npm run check:admin
           npm run check:simulator
           node scripts/simulator-parity-contract-check.mjs
+          node scripts/native-clinical-parity-check.mjs
+          node scripts/native-clinical-engine-check.mjs
+          node scripts/native-ecg12-parity-check.mjs
           npm run check:calendar-columns
           npm run check:note-links
 
@@ -238,6 +241,8 @@ jobs:
           prerelease: true
           body: |
             Signed release build of the Orbit MBBS native app.
+
+            IMPORTANT: Native Vault 1:1 Vercel parity is WORK IN PROGRESS. Native clinical studio, patient cases, ICU telemetry and 12-lead ECG are included, but 3D anatomy, POCUS, radiology, auscultation and other deep tools still rely on the website. This prerelease is NOT a fully offline, native, or pixel-identical Vault.
 
             - `app-release.aab` — upload this to Google Play.
             - `app-release.apk` — install this directly to test the real thing.
