@@ -58,6 +58,7 @@ on:
       - claude/android-react-native-app-o54cjj
       - claude/native-app-sync
       - codex/native-vault-full-port-20261014
+      - codex/native-vault-audit-20261015
     # Only when something that reaches the APK changes.
     #
     # This used to fire on every push. Three Android builds ran per push, per

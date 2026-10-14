@@ -5,6 +5,7 @@
 import assert from 'node:assert/strict';
 import { build } from 'esbuild';
 import { mkdtemp, rm } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -55,7 +56,32 @@ try {
   heart.applyAction('aspirin_ticagrelor');
   assert.ok(heart.pathology.myocardialIschemia < ischemia, 'antiplatelet has no action');
 
-  console.log('PASS: all 43 web cases, waveform channels and 3 real native case intervention pathways.');
+  // Exercise every actionable button in every clinical case, including
+  // "wrong" choices. Bad choices must produce feedback, not crashes/NaNs.
+  const actionsText = readFileSync(join(mobile,'src/lib/nativeClinicalActions.ts'),'utf8');
+  const jsonActions = actionsText.match(/export const NATIVE_CLINICAL_ACTIONS:[^=]*= (\[[\s\S]*?\]);/);
+  assert.ok(jsonActions,'Native action catalog not found');
+  const actions = JSON.parse(jsonActions[1]);
+  assert.equal(actions.length,27);
+  let exercised=0;
+  for (const scenario of SCENARIOS) {
+    for (const action of actions) {
+      const patient = new PhysiologyKernel(scenario.id);
+      const response = patient.applyAction(action.id);
+      assert.equal(typeof response,'string',scenario.id+' '+action.id+' no textual feedback');
+      assert.ok(response.length>0,scenario.id+' '+action.id+' blank feedback');
+      patient.tick(0.08);
+      const vitalValues = Object.entries(patient.getLiveVitals());
+      for (const [key,value] of vitalValues)
+        assert.ok(Number.isFinite(value),scenario.id+' '+action.id+' corrupted vital '+key);
+      for (const key of ['ecg','artLine','pleth','capno','cvp'])
+        assert.ok(Number.isFinite(patient.sampleWaveforms()[key]),scenario.id+' '+action.id+' corrupt trace '+key);
+      exercised++;
+    }
+  }
+  assert.equal(exercised, 43*27, 'Not all visible clinical actions exercised');
+  console.log('PASS: '+exercised+' engine actions tested (all 27 buttons in all 43 cases; feedback, finite vitals, waveforms).');
+  console.log('PASS: all 43 web cases, waveform channels and 3 physiology-specific intervention pathways.');
 } finally {
   await rm(work, { recursive: true, force: true });
 }

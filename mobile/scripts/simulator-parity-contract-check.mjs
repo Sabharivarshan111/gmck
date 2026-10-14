@@ -26,6 +26,8 @@ for (const [symbol, source] of [
   ['<NativeClinicalCase', entry],
   ['<NativeIcuMonitor', entry],
   ['<NativeEcgTwelveLead', entry],
+  ['<NativeRadiologyViewer', entry],
+  ['<NativeClubbingTrainer', entry],
   ['nativeClinicalRoute(destination)', entry],
   ['<Svg', monitor],
   ['<Svg', ecg],
@@ -42,4 +44,4 @@ for (const symbol of ['SimulatorStudio','AnatomicalBody3D','DiagnosticTools','Ic
   assert.ok(web.includes(symbol), 'Vercel reference source missing: ' + symbol);
 }
 console.log('PASS: Android genuine native studio, cases, monitor and ECG are routed; outdated fake studio absent.');
-console.log('WIP: 3D anatomy, POCUS, radiology, auscultation and full Vault 1:1 pixel parity still require native work and screenshot proof.');
+console.log('WIP: 3D anatomy, POCUS, auscultation and full Vault 1:1 pixel parity still require native work and screenshot proof.');

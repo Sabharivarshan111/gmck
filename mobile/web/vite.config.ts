@@ -83,9 +83,11 @@ export default defineConfig({
   resolve: {
     extensions: ['.web.tsx', '.web.ts', '.web.jsx', '.web.js', '.tsx', '.ts', '.jsx', '.js', '.json'],
     alias: [
+      { find: "@/native/NativeOrbitRadiology", replacement: path.resolve(__dirname, "../preview/shims/radiology.ts") },
       { find: 'fflate', replacement: path.resolve(root, '../node_modules/fflate/esm/browser.js') },
       { find: 'fzstd', replacement: path.resolve(root, '../node_modules/fzstd/esm/index.mjs') },
       { find: 'sql.js', replacement: path.resolve(root, '../node_modules/sql.js/dist/sql-wasm-browser.js') },
+      { find: '@simulator', replacement: path.resolve(root, '..', 'src', 'simulator') },
       { find: '@data', replacement: path.resolve(root, '..', 'src', 'data') },
       { find: '@shared', replacement: path.resolve(root, '..', 'src', 'lib') },
       // Before the bare '@' alias below, which matches by prefix.

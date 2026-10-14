@@ -375,3 +375,12 @@ dependencies {
         implementation jscFlavor
     }
 }
+
+// Use the exact Vercel reference files in every APK variant, without a second copy.
+def clinicalAssets = tasks.register("syncClinicalReferenceAssets", Sync) {
+    from(rootProject.file("../../public/clinical-reference"))
+    into(layout.buildDirectory.dir("generated/clinicalAssets/clinical-reference"))
+    include("radiology/**", "clubbing.jpg")
+}
+android.sourceSets.main.assets.srcDir(layout.buildDirectory.dir("generated/clinicalAssets").get().asFile)
+tasks.named("preBuild").configure { dependsOn(clinicalAssets) }

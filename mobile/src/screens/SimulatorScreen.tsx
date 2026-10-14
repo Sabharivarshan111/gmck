@@ -4,12 +4,15 @@ import { WebView } from 'react-native-webview';
 import { useIsFocused } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '@/components/Text';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Touchable } from '@/components/Touchable';
 import { useTheme } from '@/theme';
 import NativeClinicalStudio from '@/components/NativeClinicalStudio';
 import NativeIcuMonitor from '@/components/NativeIcuMonitor';
 import NativeEcgTwelveLead from '@/components/NativeEcgTwelveLead';
 import NativeClinicalCase from '@/components/NativeClinicalCase';
+import NativeRadiologyViewer from '@/components/NativeRadiologyViewer';
+import NativeClubbingTrainer from '@/components/NativeClubbingTrainer';
 import { nativeClinicalRoute } from '@/lib/nativeSimulatorRouting';
 import { simulatorNavigation } from '@/lib/simulatorNavigation';
 
@@ -18,7 +21,7 @@ import { simulatorNavigation } from '@/lib/simulatorNavigation';
  *
  * The discovery/skill/case selection screen is now actual React Native.
  * ICU telemetry and clinical case interventions are now native and share the
- * site's real physiology engine. Anatomy and the remaining diagnostic tools
+ * site's real physiology engine. Radiology also renders offline with native Android bitmaps. Anatomy and the remaining diagnostic tools
  * still use a hosted renderer; do not ship as full native parity.
  */
 export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
@@ -27,7 +30,9 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   const focused = useIsFocused();
   const web = useRef<WebView<unknown>>(null);
   const [url, setUrl] = useState<string | null>(null);
-  const [nativeMode, setNativeMode] = useState<{kind: 'monitor' | 'case' | 'ecg'; scenarioId: string} | null>(null);
+  const [studioScenarioId, setStudioScenarioId] = useState('normal');
+  const [studioTheme, setStudioTheme] = useState<'dark' | 'light'>('dark');
+  const [nativeMode, setNativeMode] = useState<{kind: 'monitor' | 'case' | 'ecg' | 'radiology' | 'clubbing'; scenarioId: string} | null>(null);
   const [active, setActive] = useState(AppState.currentState === 'active');
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
@@ -37,6 +42,20 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
     setNativeMode(null);
     setFailed(false);
     setCanGoBack(false);
+  };
+
+  useEffect(() => {
+    let mounted = true;
+    AsyncStorage.getItem('orbit-simulator-theme').then(value => {
+      if (mounted && (value === 'dark' || value === 'light')) setStudioTheme(value);
+    }).catch(() => undefined);
+    return () => { mounted = false; };
+  }, []);
+
+  const onToggleStudioTheme = () => {
+    const next = studioTheme === 'dark' ? 'light' : 'dark';
+    setStudioTheme(next);
+    AsyncStorage.setItem('orbit-simulator-theme', next).catch(() => undefined);
   };
 
   useEffect(() => {
@@ -64,13 +83,18 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   if (nativeMode?.kind === 'ecg') return <NativeEcgTwelveLead scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />;
   if (nativeMode?.kind === 'case') return <NativeClinicalCase scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />;
 
+  if (nativeMode?.kind === 'radiology') return <NativeRadiologyViewer onBack={returnToNativeStudio} />;
+
+  if (nativeMode?.kind === 'clubbing') return <NativeClubbingTrainer onBack={returnToNativeStudio} />;
+
   if (!url) {
-    return <NativeClinicalStudio onExit={onExit} onOpen={destination => {
+    return <NativeClinicalStudio onExit={onExit} scenarioId={studioScenarioId} onScenarioChange={setStudioScenarioId} theme={studioTheme} onToggleTheme={onToggleStudioTheme} onOpen={destination => {
       if (destination.kind === 'monitor') {
-        setNativeMode({ kind: 'monitor', scenarioId: 'normal' });
+        setNativeMode({ kind: 'monitor', scenarioId: studioScenarioId });
         return;
       }
       if (destination.kind === 'case') {
+        setStudioScenarioId(destination.id);
         setNativeMode({ kind: 'case', scenarioId: destination.id });
         return;
       }
@@ -78,6 +102,15 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
         setNativeMode({ kind: 'ecg', scenarioId: destination.scenario });
         return;
       }
+      if (destination.kind === 'tool' && destination.id === 'radiology') {
+        setNativeMode({ kind: 'radiology', scenarioId: destination.scenario });
+        return;
+      }
+      if (destination.kind === 'tool' && destination.id === 'clubbing') {
+        setNativeMode({ kind: 'clubbing', scenarioId: destination.scenario });
+        return;
+      }
+      if (destination.kind === 'anatomy') setStudioScenarioId('normal');
       setFailed(false);
       setLoading(true);
       setCanGoBack(false);
@@ -96,6 +129,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
             style={[styles.screen, { backgroundColor: colors.background }]}
             javaScriptEnabled
             domStorageEnabled
+            injectedJavaScriptBeforeContentLoaded={`try { localStorage.setItem('orbit-simulator-theme', ${JSON.stringify(studioTheme)}); } catch (_) {} true;`}
             originWhitelist={['https://*', 'about:blank']}
             mixedContentMode="never"
             allowFileAccess={false}

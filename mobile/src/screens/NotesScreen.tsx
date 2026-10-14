@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -11,6 +11,9 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import type { RootTabParamList } from '@/navigation/types';
 import {
   ArrowLeft,
   BookOpen,
@@ -96,6 +99,11 @@ export default function NotesScreen() {
    */
   const [flashcards, setFlashcards] = useState(() => getPendingLaunchDeck() != null);
   const [simulatorOpen, setSimulatorOpen] = useState(false);
+  const navigation = useNavigation<BottomTabNavigationProp<RootTabParamList, 'Notes'>>();
+  useLayoutEffect(() => {
+    navigation.setOptions({ tabBarStyle: simulatorOpen ? { display: 'none' } : undefined });
+    return () => navigation.setOptions({ tabBarStyle: undefined });
+  }, [navigation, simulatorOpen]);
   const [proformasOpen, setProformasOpen] = useState(false);
   const [pgEntranceOpen, setPgEntranceOpen] = useState(false);
   const [datasetCasesOpen, setDatasetCasesOpen] = useState(false);
