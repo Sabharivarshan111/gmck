@@ -10,8 +10,8 @@ import { simulatorNavigation } from '@/lib/simulatorNavigation';
 
 /**
  * V27 simulator visual parity: the website is the only renderer for this
- * screen. The old simplified "offline native studio" is NOT an anatomy
- * equivalent and must not be offered as if it were the Vercel simulator.
+ * screen. A simplified anatomy substitute is NOT equivalent to the
+ * Vercel renderer and must never be presented as feature parity.
  *
  * This provides live visual/feature parity while online. Do not advertise
  * offline 3D: those assets and their Three.js renderer are not bundled in
