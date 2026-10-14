@@ -31,12 +31,11 @@ assert.deepEqual(extract('NATIVE_CLINICAL_SKILLS'), skills, 'native skill choice
 
 for (const [element, label] of [
   ['studio-native-anatomy', '3D anatomy'],
-  ['studio-native-skills', 'skill selector'],
-  ['studio-native-cases', 'case selector'],
   ['studio-native-baseline', 'findings selector'],
   ['studio-native-search', 'search'],
   ['studio-native-monitor', 'ICU monitor'],
 ]) assert.ok(native.includes(element), 'native screen missing ' + label);
+assert.ok(native.includes('studio-native-${k}') && native.includes("(['skills','cases'] as const)"), 'native skill/case segmented controls are missing');
 assert.ok(entry.includes('<NativeClinicalStudio'), 'simulator entry does not show native studio');
 assert.ok(routes.includes('orbitmbbs.vercel.app/simulator'), 'deep module fallback routing lost');
 assert.ok(webPage.includes("searchParams.get('mode') === 'telemetry'"), 'web telemetry deep link missing');
