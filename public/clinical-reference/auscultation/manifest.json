@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "source": "src/simulator/instruments/StethoscopeSynthesizer.ts",
-  "sourceSha256": "5cfd6f4f9f3f27904b6835a007e68a0d3c96af7aeca766c6a56c5648c834f783",
+  "sourceSha256": "fe0c4b38ee2f88a360bba4c74f1c810728c8ab9f31d276b842edd1b85f273974",
   "sampleRate": 22050,
   "method": "Existing Web Audio DSP rendered offline; middle cycle after filter warm-up, mono PCM quantization and Ogg Vorbis encoding. Native tempo adjustment preserves pitch; references are synthetic educational sounds.",
   "clips": [
@@ -14,7 +14,7 @@
       "bytes": 4271,
       "sha256": "2b0e017eea704e862c45452a12c8845c66543456a7cf728bbb317f5e040ccd0c",
       "peak": 1,
-      "rms": 0.06729784088714752
+      "rms": 0.06729783048889929
     },
     {
       "group": "cardiac",
@@ -24,8 +24,8 @@
       "file": "cardiac_normal_bell_60.ogg",
       "bytes": 4221,
       "sha256": "65621aea99a2e8c9fce3edded7ba619cbb9db16665f2d482ec7e291e2812c4ca",
-      "peak": 0.9538257718086243,
-      "rms": 0.102686272911347
+      "peak": 0.9538258910179138,
+      "rms": 0.10268626600640147
     },
     {
       "group": "cardiac",
@@ -35,8 +35,8 @@
       "file": "cardiac_normal_bell_90.ogg",
       "bytes": 4162,
       "sha256": "1844ed5434779a16bfda34836caee020a8fd362eb48e870d082f86f007253221",
-      "peak": 0.9894723296165466,
-      "rms": 0.11876552712257653
+      "peak": 0.9894722700119019,
+      "rms": 0.11876521713229492
     },
     {
       "group": "cardiac",
@@ -46,8 +46,8 @@
       "file": "cardiac_normal_bell_120.ogg",
       "bytes": 4143,
       "sha256": "5beafbb96ef367e86cb47f2b59665cdb5473d1178aa36f68c320e3b7888f850d",
-      "peak": 0.9853390455245972,
-      "rms": 0.13901409032849796
+      "peak": 0.9853391051292419,
+      "rms": 0.13901405917966606
     },
     {
       "group": "cardiac",
@@ -58,7 +58,7 @@
       "bytes": 4257,
       "sha256": "e13e6d3fbc5b10c15849d087ae66947c91fd4a63123f75ca79aa6a9b3f82b84a",
       "peak": 1,
-      "rms": 0.15402860641013408
+      "rms": 0.15402841314573598
     },
     {
       "group": "cardiac",
@@ -69,7 +69,7 @@
       "bytes": 4220,
       "sha256": "d03934e090b3a5c58b6cdf3348a604838f9da3d565e38dae61d58ec8df2d248a",
       "peak": 1,
-      "rms": 0.16602691205705813
+      "rms": 0.16602693251478093
     },
     {
       "group": "cardiac",
@@ -80,7 +80,7 @@
       "bytes": 4616,
       "sha256": "89854dea7197df1f00278c836571d5f854ee56a7a7d62d875d8b4dcd41a259a8",
       "peak": 1,
-      "rms": 0.08079593715889433
+      "rms": 0.08079610484314435
     },
     {
       "group": "cardiac",
@@ -90,8 +90,8 @@
       "file": "cardiac_s3_gallop_bell_60.ogg",
       "bytes": 4541,
       "sha256": "18c01641c495bfea230427728884708a0acf82337a0737665775aac24ede26f8",
-      "peak": 0.9538264274597168,
-      "rms": 0.12495759521256851
+      "peak": 0.9538266658782959,
+      "rms": 0.12495787949674915
     },
     {
       "group": "cardiac",
@@ -101,8 +101,8 @@
       "file": "cardiac_s3_gallop_bell_90.ogg",
       "bytes": 4483,
       "sha256": "2a9a0b75a96049bbdc515c56f290e95dd29af860768b2b6c96befdf7f2f9fde4",
-      "peak": 0.9894723296165466,
-      "rms": 0.14371368118557945
+      "peak": 0.9894722700119019,
+      "rms": 0.14371374878384033
     },
     {
       "group": "cardiac",
@@ -113,7 +113,7 @@
       "bytes": 4468,
       "sha256": "7efd03c03dce22b7db2520d5b003518e439cadd97676e1e3300c0b706c908ffb",
       "peak": 0.9963611364364624,
-      "rms": 0.17056985613444686
+      "rms": 0.17056987962925663
     },
     {
       "group": "cardiac",
@@ -123,8 +123,8 @@
       "file": "cardiac_s3_gallop_bell_150.ogg",
       "bytes": 4407,
       "sha256": "5fbe3765f57ea534a72a9a774755b1db24fb51e7eeb1203efd909eb5c26132bf",
-      "peak": 0.9584711194038391,
-      "rms": 0.18306026699744496
+      "peak": 0.958469808101654,
+      "rms": 0.18306028769535215
     },
     {
       "group": "cardiac",
@@ -135,7 +135,7 @@
       "bytes": 4227,
       "sha256": "970e129579ccb84c86a3b603b780dd8fa8482286ee60a87ed4ed026ddee00b05",
       "peak": 1,
-      "rms": 0.19957240726581407
+      "rms": 0.19957254182078588
     },
     {
       "group": "cardiac",
@@ -146,7 +146,7 @@
       "bytes": 4558,
       "sha256": "9f365de7543035740ff7ab29c2034e0b3e87d0449519874d7c0da8d14b66c820",
       "peak": 1,
-      "rms": 0.08173567691094585
+      "rms": 0.08173573820984799
     },
     {
       "group": "cardiac",
@@ -156,8 +156,8 @@
       "file": "cardiac_s4_gallop_bell_60.ogg",
       "bytes": 4522,
       "sha256": "813b45ebe6b51671443db21162d4d82dceca3bdae75d40f3de95b443dd12018b",
-      "peak": 0.9506235122680664,
-      "rms": 0.12116721572766784
+      "peak": 0.9506239295005798,
+      "rms": 0.12116748707574203
     },
     {
       "group": "cardiac",
@@ -167,8 +167,8 @@
       "file": "cardiac_s4_gallop_bell_90.ogg",
       "bytes": 4404,
       "sha256": "8c257f14e0208d144a1476965eaaf8a7dc42fe9b73706f083605dbd39ea0b11e",
-      "peak": 0.9958939552307129,
-      "rms": 0.14327936818281958
+      "peak": 0.9958927631378174,
+      "rms": 0.14327917043520463
     },
     {
       "group": "cardiac",
@@ -178,8 +178,8 @@
       "file": "cardiac_s4_gallop_bell_120.ogg",
       "bytes": 4425,
       "sha256": "5664e6e492629a6d31f29983239801d259846d37336694a25b13412179032fc3",
-      "peak": 0.9960730075836182,
-      "rms": 0.16327834986612916
+      "peak": 0.9960722327232361,
+      "rms": 0.1632782807401759
     },
     {
       "group": "cardiac",
@@ -190,7 +190,7 @@
       "bytes": 4340,
       "sha256": "b027727305cdd361cdaf068fb40d522f1b5c1626aa4a8ef5c992aacbfd8b7b56",
       "peak": 1,
-      "rms": 0.1815858487261212
+      "rms": 0.18158593456788202
     },
     {
       "group": "cardiac",
@@ -201,7 +201,7 @@
       "bytes": 4263,
       "sha256": "36667025f757862c93e05757c227cb55a510b28dc8278013a12034ca732c47c8",
       "peak": 1,
-      "rms": 0.18782971296116793
+      "rms": 0.18783019629393113
     },
     {
       "group": "cardiac",
@@ -212,7 +212,7 @@
       "bytes": 8011,
       "sha256": "5ec18bf67bcb2d68e55a2c19b83114f182106d9ce90594794cbaf82eed86fee0",
       "peak": 1,
-      "rms": 0.20460060149103115
+      "rms": 0.20460061424321097
     },
     {
       "group": "cardiac",
@@ -223,7 +223,7 @@
       "bytes": 5698,
       "sha256": "11c1bbd171877220e51ef79926e80c78ceeaf1eaa9f3f3cd21b238d5dd47f4bc",
       "peak": 1,
-      "rms": 0.20641038620041657
+      "rms": 0.20641026089549822
     },
     {
       "group": "cardiac",
@@ -234,7 +234,7 @@
       "bytes": 4962,
       "sha256": "7fac6d1934500a688ac93a2a14e72e197ca00a4fce5e90bbe79ae33e02f7e278",
       "peak": 1,
-      "rms": 0.20913933964322065
+      "rms": 0.20913943408219937
     },
     {
       "group": "cardiac",
@@ -245,7 +245,7 @@
       "bytes": 4565,
       "sha256": "2908060209d145925a83ad100c719dbd462662755b98d53c2a9b670ed1c1939e",
       "peak": 1,
-      "rms": 0.22664687221995738
+      "rms": 0.22664707406517193
     },
     {
       "group": "cardiac",
@@ -256,7 +256,7 @@
       "bytes": 4478,
       "sha256": "250ade5d055794790174375bf1fa3efc2e9e37871500ddd0134f9881a37988f6",
       "peak": 1,
-      "rms": 0.24483918614896352
+      "rms": 0.24483897818095915
     },
     {
       "group": "cardiac",
@@ -267,7 +267,7 @@
       "bytes": 4524,
       "sha256": "5a9b1ccc638a161ad9bf5be7f96dcfc0ebd3dc12bb9b090f6afc5e4d2f3aae15",
       "peak": 1,
-      "rms": 0.23451720464442669
+      "rms": 0.2345171311461336
     },
     {
       "group": "cardiac",
@@ -277,8 +277,8 @@
       "file": "cardiac_aortic_stenosis_bell_30.ogg",
       "bytes": 5458,
       "sha256": "d142e166bc244f31240bd69a280f0b7fb45830f73c8cc8f1625121c3d047fc38",
-      "peak": 0.9715772867202759,
-      "rms": 0.07273798029680205
+      "peak": 0.9715782999992371,
+      "rms": 0.07273790438606674
     },
     {
       "group": "cardiac",
@@ -288,8 +288,8 @@
       "file": "cardiac_aortic_stenosis_bell_60.ogg",
       "bytes": 4935,
       "sha256": "6e00d15a7cbcd64ab95b591f52a7b96a33ab71dc8576125fd05277c5e44fdfe4",
-      "peak": 0.9538256525993347,
-      "rms": 0.10499084222654809
+      "peak": 0.9538260102272034,
+      "rms": 0.10499082912799901
     },
     {
       "group": "cardiac",
@@ -300,7 +300,7 @@
       "bytes": 4679,
       "sha256": "381e9b3d8566396bca2b92218e126f5bebfaed6fa61aaa5697988c25607702f7",
       "peak": 0.9767204523086548,
-      "rms": 0.1156328471150283
+      "rms": 0.11563314805927806
     },
     {
       "group": "cardiac",
@@ -310,8 +310,8 @@
       "file": "cardiac_aortic_stenosis_bell_120.ogg",
       "bytes": 4567,
       "sha256": "c618e687d8f7cfe11ec0734e452046863e7198fe2f49d305081abf2afc8b12be",
-      "peak": 0.9853388667106628,
-      "rms": 0.1355656283666723
+      "peak": 0.9853395819664001,
+      "rms": 0.1355654484282257
     },
     {
       "group": "cardiac",
@@ -322,7 +322,7 @@
       "bytes": 4533,
       "sha256": "66caa3dccc62fec762bc57dce077a1c24ac47557aba2596aacc317f312b9212a",
       "peak": 1,
-      "rms": 0.14797089627803367
+      "rms": 0.14797099453720886
     },
     {
       "group": "cardiac",
@@ -333,7 +333,271 @@
       "bytes": 4494,
       "sha256": "720c0f1d0580ecd1d4d53a4517e95501d8ea7e384859013119618743c0d32196",
       "peak": 1,
-      "rms": 0.1580235249413527
+      "rms": 0.15802373907046466
+    },
+    {
+      "group": "cardiac",
+      "preset": "pulmonic_stenosis",
+      "mode": "bell",
+      "rate": 30,
+      "file": "cardiac_pulmonic_stenosis_bell_30.ogg",
+      "bytes": 5518,
+      "sha256": "82b24454124ea316f9233eafe4e6c6f9e21ade219ee2fc74460cab7912d5c900",
+      "peak": 1,
+      "rms": 0.07370879228498861
+    },
+    {
+      "group": "cardiac",
+      "preset": "pulmonic_stenosis",
+      "mode": "bell",
+      "rate": 60,
+      "file": "cardiac_pulmonic_stenosis_bell_60.ogg",
+      "bytes": 4948,
+      "sha256": "03de8ed5a980c03d4a6ed7f53bb9a2031b787898c76edc2e7841dacf462d586d",
+      "peak": 0.9538264870643616,
+      "rms": 0.10972851752175303
+    },
+    {
+      "group": "cardiac",
+      "preset": "pulmonic_stenosis",
+      "mode": "bell",
+      "rate": 90,
+      "file": "cardiac_pulmonic_stenosis_bell_90.ogg",
+      "bytes": 4704,
+      "sha256": "98d54d17229b07ba89db76d3f3d4b46dbf5b30640d032fa0b2be93d37338a63c",
+      "peak": 0.9894735813140869,
+      "rms": 0.12390710000923057
+    },
+    {
+      "group": "cardiac",
+      "preset": "pulmonic_stenosis",
+      "mode": "bell",
+      "rate": 120,
+      "file": "cardiac_pulmonic_stenosis_bell_120.ogg",
+      "bytes": 4567,
+      "sha256": "785c2f20e55bcafff5a94646785b5552be967b2d4a5486b75be62781a0f94b20",
+      "peak": 0.9853394627571106,
+      "rms": 0.1435698278009047
+    },
+    {
+      "group": "cardiac",
+      "preset": "pulmonic_stenosis",
+      "mode": "bell",
+      "rate": 150,
+      "file": "cardiac_pulmonic_stenosis_bell_150.ogg",
+      "bytes": 4601,
+      "sha256": "18f7691a9a9cb10e6ba1a117f26bce05fc02a8c3672a5975232f65edfbb7eccf",
+      "peak": 1,
+      "rms": 0.1588403228334778
+    },
+    {
+      "group": "cardiac",
+      "preset": "pulmonic_stenosis",
+      "mode": "bell",
+      "rate": 180,
+      "file": "cardiac_pulmonic_stenosis_bell_180.ogg",
+      "bytes": 4505,
+      "sha256": "4fe92106780c544de4b3779b5d207b218733d7cd0d974baef3398ceef9648fe9",
+      "peak": 1,
+      "rms": 0.17247707856871095
+    },
+    {
+      "group": "cardiac",
+      "preset": "vsd",
+      "mode": "bell",
+      "rate": 30,
+      "file": "cardiac_vsd_bell_30.ogg",
+      "bytes": 5566,
+      "sha256": "ee90ce975dd59e44dec2970db612beceb3dc047949f0dc79ceda41523db70479",
+      "peak": 1,
+      "rms": 0.15612302432537506
+    },
+    {
+      "group": "cardiac",
+      "preset": "vsd",
+      "mode": "bell",
+      "rate": 60,
+      "file": "cardiac_vsd_bell_60.ogg",
+      "bytes": 5002,
+      "sha256": "7b4723e8d28d4c5f39d2c29d6f40b8e432df0af5b7a9b60a780ff6b76b5e6ed7",
+      "peak": 0.9412248730659485,
+      "rms": 0.19041390320225063
+    },
+    {
+      "group": "cardiac",
+      "preset": "vsd",
+      "mode": "bell",
+      "rate": 90,
+      "file": "cardiac_vsd_bell_90.ogg",
+      "bytes": 4750,
+      "sha256": "9726f969e947223ea70de19e9d9337d54ed62a28deffca67ed637e761d78f12f",
+      "peak": 0.999332845211029,
+      "rms": 0.2106261297520347
+    },
+    {
+      "group": "cardiac",
+      "preset": "vsd",
+      "mode": "bell",
+      "rate": 120,
+      "file": "cardiac_vsd_bell_120.ogg",
+      "bytes": 4618,
+      "sha256": "06210f682640fabd7c0a69b6f8b4bb5a0579569333d13d7de4909ff9aceca01a",
+      "peak": 0.9824041128158569,
+      "rms": 0.22921686810946754
+    },
+    {
+      "group": "cardiac",
+      "preset": "vsd",
+      "mode": "bell",
+      "rate": 150,
+      "file": "cardiac_vsd_bell_150.ogg",
+      "bytes": 4627,
+      "sha256": "88e6367c4421b02eee03dd527f0489adbb4625116f870b22f2b6f0ce2589a62f",
+      "peak": 1,
+      "rms": 0.23871026506830348
+    },
+    {
+      "group": "cardiac",
+      "preset": "vsd",
+      "mode": "bell",
+      "rate": 180,
+      "file": "cardiac_vsd_bell_180.ogg",
+      "bytes": 4488,
+      "sha256": "a3978dda8c914fd2cba4740a043eb1901618efc2743738205c9c29fbf5ba1805",
+      "peak": 1,
+      "rms": 0.25410062938839534
+    },
+    {
+      "group": "cardiac",
+      "preset": "hcm",
+      "mode": "bell",
+      "rate": 30,
+      "file": "cardiac_hcm_bell_30.ogg",
+      "bytes": 5432,
+      "sha256": "27b6adb1405d1256a4c48cd294fb90677690b5ee3c277500701fb898b85ae6e2",
+      "peak": 1,
+      "rms": 0.07888440446671545
+    },
+    {
+      "group": "cardiac",
+      "preset": "hcm",
+      "mode": "bell",
+      "rate": 60,
+      "file": "cardiac_hcm_bell_60.ogg",
+      "bytes": 4914,
+      "sha256": "07fe07cbea88aeeeb6d5818586b9d96d18d74f64a6b52b4f8177f8df69de2a50",
+      "peak": 0.9538264870643616,
+      "rms": 0.11116962354986698
+    },
+    {
+      "group": "cardiac",
+      "preset": "hcm",
+      "mode": "bell",
+      "rate": 90,
+      "file": "cardiac_hcm_bell_90.ogg",
+      "bytes": 4660,
+      "sha256": "eb43000d3e1cb6876b9dc49c1e6a2d533013b31c0a1fe376a8d5410d4c69a276",
+      "peak": 0.9894720911979675,
+      "rms": 0.12663344301244675
+    },
+    {
+      "group": "cardiac",
+      "preset": "hcm",
+      "mode": "bell",
+      "rate": 120,
+      "file": "cardiac_hcm_bell_120.ogg",
+      "bytes": 4534,
+      "sha256": "5cfef4dc713adec4aec59ad2601c3914d791f34dad7edf8b3d624ef0be799e6a",
+      "peak": 0.9853397607803345,
+      "rms": 0.1499055699980199
+    },
+    {
+      "group": "cardiac",
+      "preset": "hcm",
+      "mode": "bell",
+      "rate": 150,
+      "file": "cardiac_hcm_bell_150.ogg",
+      "bytes": 4554,
+      "sha256": "4b8cea01b1e8e4cc4e39f2fc2b5620997b6d6b963c7a1c519615c57fde49276b",
+      "peak": 1,
+      "rms": 0.16762536624166682
+    },
+    {
+      "group": "cardiac",
+      "preset": "hcm",
+      "mode": "bell",
+      "rate": 180,
+      "file": "cardiac_hcm_bell_180.ogg",
+      "bytes": 4458,
+      "sha256": "21d269a9e0448da447796b72d0669641df4d1603bf9ef520ec1f01ddcb343374",
+      "peak": 1,
+      "rms": 0.18061823185558762
+    },
+    {
+      "group": "cardiac",
+      "preset": "pda",
+      "mode": "bell",
+      "rate": 30,
+      "file": "cardiac_pda_bell_30.ogg",
+      "bytes": 9345,
+      "sha256": "3e9d975b48af27a23d6d1f0a72241157eb04e53a039eb06924d3bcd4c97c6bb2",
+      "peak": 1,
+      "rms": 0.2997366431241184
+    },
+    {
+      "group": "cardiac",
+      "preset": "pda",
+      "mode": "bell",
+      "rate": 60,
+      "file": "cardiac_pda_bell_60.ogg",
+      "bytes": 6585,
+      "sha256": "2a33b5f830e834544f5cd247414d81ad593f9a2dbc05e3ffc548f27fd4ae5758",
+      "peak": 1,
+      "rms": 0.30494525179197135
+    },
+    {
+      "group": "cardiac",
+      "preset": "pda",
+      "mode": "bell",
+      "rate": 90,
+      "file": "cardiac_pda_bell_90.ogg",
+      "bytes": 5515,
+      "sha256": "f70a83fa23db1d6dfafa605fe6c9cecdb3da5785574bbb0d96f8899a1d84bccb",
+      "peak": 1,
+      "rms": 0.30240790228896336
+    },
+    {
+      "group": "cardiac",
+      "preset": "pda",
+      "mode": "bell",
+      "rate": 120,
+      "file": "cardiac_pda_bell_120.ogg",
+      "bytes": 5093,
+      "sha256": "1beb1e44e740fcc17842c1927c5f71cbab0a37066cd798baf2cc5dd8e24c4cc2",
+      "peak": 1,
+      "rms": 0.2959064805819486
+    },
+    {
+      "group": "cardiac",
+      "preset": "pda",
+      "mode": "bell",
+      "rate": 150,
+      "file": "cardiac_pda_bell_150.ogg",
+      "bytes": 4741,
+      "sha256": "6c10015f769ad43df7f951a3dd97954a5b039615efa18f52b3ab420af883ac9f",
+      "peak": 1,
+      "rms": 0.30478224647291663
+    },
+    {
+      "group": "cardiac",
+      "preset": "pda",
+      "mode": "bell",
+      "rate": 180,
+      "file": "cardiac_pda_bell_180.ogg",
+      "bytes": 4588,
+      "sha256": "369f64edeaf2cdcc15f0de07e8e165218d882ebb9fcc920154322bb6d6049913",
+      "peak": 1,
+      "rms": 0.28824963069592785
     },
     {
       "group": "cardiac",
@@ -344,7 +608,7 @@
       "bytes": 5494,
       "sha256": "479d1063680a7bb52835e35c2ada2d5f73662e3e20521ac5634e71789ddbe4e6",
       "peak": 1,
-      "rms": 0.17772480835944576
+      "rms": 0.17772470083019007
     },
     {
       "group": "cardiac",
@@ -354,8 +618,8 @@
       "file": "cardiac_mitral_regurg_bell_60.ogg",
       "bytes": 4917,
       "sha256": "305a1391ffe23716e06286929de55b2bacf6d402c08157b9969d9ae1ac923fcc",
-      "peak": 0.9938254952430725,
-      "rms": 0.21232839835472087
+      "peak": 0.9938242435455322,
+      "rms": 0.21232844494491626
     },
     {
       "group": "cardiac",
@@ -365,8 +629,8 @@
       "file": "cardiac_mitral_regurg_bell_90.ogg",
       "bytes": 4700,
       "sha256": "f522e5b36f1e0796757154338c3ba1d94726d9014a5d3f4b50c4a720f128922c",
-      "peak": 0.9993663430213928,
-      "rms": 0.23464641370993852
+      "peak": 0.9993654489517212,
+      "rms": 0.23464635286258342
     },
     {
       "group": "cardiac",
@@ -376,8 +640,8 @@
       "file": "cardiac_mitral_regurg_bell_120.ogg",
       "bytes": 4558,
       "sha256": "33f02f4eb0d250f759154e4a45bdb587fa7efd9faf20fb71b564b0548fa39f76",
-      "peak": 0.9628261923789978,
-      "rms": 0.25431167230877927
+      "peak": 0.9628263711929321,
+      "rms": 0.2543116308871817
     },
     {
       "group": "cardiac",
@@ -388,7 +652,7 @@
       "bytes": 4570,
       "sha256": "58b70c45ffc54acf1f5b4581401b88120722c7d55a7d96dd3894d87bfc1fc484",
       "peak": 1,
-      "rms": 0.2703272574959819
+      "rms": 0.2703271523250209
     },
     {
       "group": "cardiac",
@@ -399,7 +663,7 @@
       "bytes": 4457,
       "sha256": "f0626e10090e741f48de130a46d0c6bdaab7fb6e052059fcae0d90bd51ccbb8c",
       "peak": 1,
-      "rms": 0.28578330844230776
+      "rms": 0.2857833299581486
     },
     {
       "group": "cardiac",
@@ -410,7 +674,7 @@
       "bytes": 5484,
       "sha256": "270007c9d240051d20ac65f259215889ce4471334496d6b44958126668e16766",
       "peak": 1,
-      "rms": 0.16905289598544915
+      "rms": 0.16905288057100093
     },
     {
       "group": "cardiac",
@@ -420,8 +684,8 @@
       "file": "cardiac_tricuspid_regurg_bell_60.ogg",
       "bytes": 4923,
       "sha256": "9928add7e86decb40c8c46c6dc86d393b8ff0f2f79329452fa641626260a7c27",
-      "peak": 0.9599521160125732,
-      "rms": 0.20245043586270017
+      "peak": 0.9599556922912598,
+      "rms": 0.2024504187865433
     },
     {
       "group": "cardiac",
@@ -431,8 +695,8 @@
       "file": "cardiac_tricuspid_regurg_bell_90.ogg",
       "bytes": 4712,
       "sha256": "674162f632a42c429cec531bd827a3b5f2df8c04e271f9c942c3a1b1adccd28e",
-      "peak": 0.9993221163749695,
-      "rms": 0.22397413217994475
+      "peak": 0.9993202686309814,
+      "rms": 0.22397426296130876
     },
     {
       "group": "cardiac",
@@ -442,8 +706,8 @@
       "file": "cardiac_tricuspid_regurg_bell_120.ogg",
       "bytes": 4552,
       "sha256": "1214f77513fb9f3167569b08214a93a93605d88f38bdd7e7e259b82982556b91",
-      "peak": 0.9661991596221924,
-      "rms": 0.24325071931770287
+      "peak": 0.9661992192268372,
+      "rms": 0.24325004152238908
     },
     {
       "group": "cardiac",
@@ -454,7 +718,7 @@
       "bytes": 4572,
       "sha256": "32a90c47bbdf109b0f9597f482edd30c354bda662846936149f46bb0f3500cf3",
       "peak": 1,
-      "rms": 0.2574161931270119
+      "rms": 0.2574162376530181
     },
     {
       "group": "cardiac",
@@ -465,7 +729,7 @@
       "bytes": 4448,
       "sha256": "4a94a5893709cfc24146b465b226a01762bdbbb59b07101e926be7d6d176e917",
       "peak": 1,
-      "rms": 0.2723905679415741
+      "rms": 0.2723907712123199
     },
     {
       "group": "cardiac",
@@ -476,7 +740,7 @@
       "bytes": 8558,
       "sha256": "4cc4b6e4264e4040bbef4aafd34626f724b017b972315918b05a6113abd28e79",
       "peak": 1,
-      "rms": 0.09892047332733303
+      "rms": 0.09892056094387229
     },
     {
       "group": "cardiac",
@@ -486,8 +750,8 @@
       "file": "cardiac_aortic_regurg_bell_60.ogg",
       "bytes": 5863,
       "sha256": "c0ec15cb203905ccd958588b0877422c2db93f727c5c98c03fcf5178018f676c",
-      "peak": 0.953826367855072,
-      "rms": 0.11485469554801868
+      "peak": 0.9538267254829407,
+      "rms": 0.11485439023851433
     },
     {
       "group": "cardiac",
@@ -498,7 +762,7 @@
       "bytes": 5068,
       "sha256": "400f0da3486cd568630ecb47ab4295dab25b6b2ead000730eb0bcb6d6db04b5a",
       "peak": 1,
-      "rms": 0.12306009660189016
+      "rms": 0.12305986387683344
     },
     {
       "group": "cardiac",
@@ -508,8 +772,8 @@
       "file": "cardiac_aortic_regurg_bell_120.ogg",
       "bytes": 4572,
       "sha256": "28427890fe503eed3bb44b35e08a3ff9f579c1a3213a68c8caa5af56b81a44b3",
-      "peak": 0.9853389859199524,
-      "rms": 0.14040323663618587
+      "peak": 0.9853397607803345,
+      "rms": 0.1404027755656165
     },
     {
       "group": "cardiac",
@@ -520,7 +784,7 @@
       "bytes": 4460,
       "sha256": "e1898036c67e7dbb75d0f5f5a2b912c97eefa5de920bbb20b8111f44f461e2d4",
       "peak": 1,
-      "rms": 0.15402943004228242
+      "rms": 0.15402939225619489
     },
     {
       "group": "cardiac",
@@ -531,7 +795,7 @@
       "bytes": 4346,
       "sha256": "6c7dd624d798b1a466ff7871941b761524bf49913db555123fe1a4425b127776",
       "peak": 1,
-      "rms": 0.16664243174192636
+      "rms": 0.16664230400110605
     },
     {
       "group": "cardiac",
@@ -542,7 +806,7 @@
       "bytes": 5258,
       "sha256": "11c06b49fde13f037c7ef0850eabc019e50033ff73baf1bec9c79cb856b3f257",
       "peak": 1,
-      "rms": 0.09007981644911048
+      "rms": 0.09007972683936886
     },
     {
       "group": "cardiac",
@@ -552,8 +816,8 @@
       "file": "cardiac_friction_rub_bell_60.ogg",
       "bytes": 5172,
       "sha256": "6a59c0ac5dd5e9713c635444f224fc1a0a5afe584c036984cc5b02d6fc2ce2fb",
-      "peak": 0.9537592530250549,
-      "rms": 0.1332491150911131
+      "peak": 0.9537593126296997,
+      "rms": 0.13324935464651685
     },
     {
       "group": "cardiac",
@@ -563,8 +827,8 @@
       "file": "cardiac_friction_rub_bell_90.ogg",
       "bytes": 5160,
       "sha256": "4148873c7ec86c3ffe1b89fe1a1f123e7e332e6b449029b118a30cb0bfa45f83",
-      "peak": 0.9894730448722839,
-      "rms": 0.1574244620094701
+      "peak": 0.989472508430481,
+      "rms": 0.15742439378417528
     },
     {
       "group": "cardiac",
@@ -574,8 +838,8 @@
       "file": "cardiac_friction_rub_bell_120.ogg",
       "bytes": 4803,
       "sha256": "7a60bfeea831aac4ca24693f5cb214a6ade8fc5c1e96019e463516b34c7a1df7",
-      "peak": 0.9971240162849426,
-      "rms": 0.18353070957976605
+      "peak": 0.9971235990524292,
+      "rms": 0.18353070309245187
     },
     {
       "group": "cardiac",
@@ -586,7 +850,7 @@
       "bytes": 4759,
       "sha256": "6086835ffd6d862c6cc8d04baa2a980359022e3d46b420bd3aeceaaf2d9e5cef",
       "peak": 1,
-      "rms": 0.19537668333031957
+      "rms": 0.1953764559667927
     },
     {
       "group": "cardiac",
@@ -597,7 +861,7 @@
       "bytes": 4705,
       "sha256": "601afe30c7c24debb3ae16988f17aff226e5f67a86e3d1b15809f3eb0b0fab95",
       "peak": 1,
-      "rms": 0.1999166986222263
+      "rms": 0.1999166205824972
     },
     {
       "group": "cardiac",
@@ -607,8 +871,8 @@
       "file": "cardiac_tamponade_muffled_bell_30.ogg",
       "bytes": 4282,
       "sha256": "fba355efae48863020f890248b0f23a4be2c9bda2eca76f074471242012a4187",
-      "peak": 0.6881803870201111,
-      "rms": 0.044380731490696046
+      "peak": 0.6881793141365051,
+      "rms": 0.044380900631962684
     },
     {
       "group": "cardiac",
@@ -619,7 +883,7 @@
       "bytes": 4176,
       "sha256": "9d564bff5c7a27ef52349dc66bdc91dd6539ee4dea07e854022171fc37b7a727",
       "peak": 0.6248145699501038,
-      "rms": 0.0666872585529622
+      "rms": 0.06668738981269762
     },
     {
       "group": "cardiac",
@@ -629,8 +893,8 @@
       "file": "cardiac_tamponade_muffled_bell_90.ogg",
       "bytes": 4140,
       "sha256": "5075a246b638a5aa979ea769068e568b14d308f93b954c4f88bb0b2bfbbca75f",
-      "peak": 0.6665134429931641,
-      "rms": 0.07765054870369019
+      "peak": 0.6665136218070984,
+      "rms": 0.07765048852146303
     },
     {
       "group": "cardiac",
@@ -640,8 +904,8 @@
       "file": "cardiac_tamponade_muffled_bell_120.ogg",
       "bytes": 4135,
       "sha256": "f6ff8e0e7a08ec2794d53081ae7cdacb9af95c4ce3b13f3a1df770737c80ca29",
-      "peak": 0.6243125200271606,
-      "rms": 0.09061060416678074
+      "peak": 0.6243131756782532,
+      "rms": 0.09061063616774957
     },
     {
       "group": "cardiac",
@@ -652,7 +916,7 @@
       "bytes": 4121,
       "sha256": "d28260c712d1edd15b7b7a5cd63d2b0cd285782b036f689355d3f551ef807c43",
       "peak": 0.7321318984031677,
-      "rms": 0.1001627036375094
+      "rms": 0.1001628071544648
     },
     {
       "group": "cardiac",
@@ -662,8 +926,8 @@
       "file": "cardiac_tamponade_muffled_bell_180.ogg",
       "bytes": 4116,
       "sha256": "2b38e51604c9c74bfc2b29b048e028cc37b8761c9e3a1c3749f648ac3f5cf2f6",
-      "peak": 0.7090741991996765,
-      "rms": 0.1072864995393816
+      "peak": 0.7090750932693481,
+      "rms": 0.10728658909610207
     },
     {
       "group": "cardiac",
@@ -674,7 +938,7 @@
       "bytes": 7949,
       "sha256": "3a158a5bf0f5d12d5cf5c1a4a65524e5e87ea9f3136c74b822e8a7a6579f6ce1",
       "peak": 1,
-      "rms": 0.19617035712806932
+      "rms": 0.1961703662722523
     },
     {
       "group": "cardiac",
@@ -685,7 +949,7 @@
       "bytes": 5645,
       "sha256": "cdcc62c3fb46211323fe4c7cb8e8b018a7149ce8a4f7c7f2247c72c77a6ac45b",
       "peak": 1,
-      "rms": 0.1904706218535305
+      "rms": 0.1904706412503597
     },
     {
       "group": "cardiac",
@@ -696,7 +960,7 @@
       "bytes": 4864,
       "sha256": "cb87194d13fd1c8b7e017d178ac9f8199eee9b1e504aa822fb66a36970b589e3",
       "peak": 1,
-      "rms": 0.18345726862392492
+      "rms": 0.1834573229376782
     },
     {
       "group": "cardiac",
@@ -707,7 +971,7 @@
       "bytes": 4575,
       "sha256": "5f37c26156a21f06c079404fcc7ea3881c0da67a2026abc465fc935c6517d00f",
       "peak": 1,
-      "rms": 0.20105106454322652
+      "rms": 0.20105125579441552
     },
     {
       "group": "cardiac",
@@ -718,7 +982,7 @@
       "bytes": 4449,
       "sha256": "042cac70309310d2d5f9569505436dac9ad7cbccf129cb8e1b8a528e9770a4d0",
       "peak": 1,
-      "rms": 0.22974293821674446
+      "rms": 0.2297430343225598
     },
     {
       "group": "cardiac",
@@ -729,7 +993,7 @@
       "bytes": 4424,
       "sha256": "77ddb620eafa9e230b6fd03e8550f7c7ea9ef5c5eb71e4350ded5f0bd769aece",
       "peak": 1,
-      "rms": 0.21625859218898105
+      "rms": 0.21625851364141238
     },
     {
       "group": "pulmonary",
@@ -916,7 +1180,7 @@
       "bytes": 29783,
       "sha256": "c410169178cc78fe374ea763c99ba49ec8365e608ea6583d8149a54ebeb6b2cf",
       "peak": 0.8756489753723145,
-      "rms": 0.18919094438320763
+      "rms": 0.1891909448124266
     },
     {
       "group": "pulmonary",
@@ -927,7 +1191,7 @@
       "bytes": 17185,
       "sha256": "67a4160099276ef72323ca19cc1e6b3bd0a059a61b257e544b73f88ce3f0ef30",
       "peak": 0.9085420370101929,
-      "rms": 0.187439190341711
+      "rms": 0.18743919077837456
     },
     {
       "group": "pulmonary",
@@ -938,7 +1202,7 @@
       "bytes": 13057,
       "sha256": "45e7fe84455ada4803ec1e2fd73f515d50d8496545467908226826e5afb76444",
       "peak": 0.860158383846283,
-      "rms": 0.1850869702483122
+      "rms": 0.18508696467340296
     },
     {
       "group": "pulmonary",
@@ -949,7 +1213,7 @@
       "bytes": 10615,
       "sha256": "222feace8335327e15a3f86774e91ce1033aaa9b4c6b25984643b3aec321d4fd",
       "peak": 0.8807725310325623,
-      "rms": 0.18203947774023824
+      "rms": 0.18203948400363595
     },
     {
       "group": "pulmonary",
@@ -960,7 +1224,7 @@
       "bytes": 9347,
       "sha256": "88fd8f13124eb5f86d9317b39a1caddfccf96de6d65c305f4b3b00bbebd91a6d",
       "peak": 0.8998119235038757,
-      "rms": 0.18103939270378586
+      "rms": 0.18103939908311814
     },
     {
       "group": "pulmonary",
@@ -971,7 +1235,7 @@
       "bytes": 8511,
       "sha256": "65c21d28e313ee57bf391fa45f0e759d5fe087c84f14a108a4dc1e28342a39ef",
       "peak": 0.9224612712860107,
-      "rms": 0.18103642694348135
+      "rms": 0.18103642941268194
     },
     {
       "group": "pulmonary",
@@ -982,7 +1246,7 @@
       "bytes": 7837,
       "sha256": "b81f1af5a9d5ffcf4eccb1d37cc3967a85823e98cd41457c898ddb53d7f93685",
       "peak": 0.9719379544258118,
-      "rms": 0.18031427062061509
+      "rms": 0.18031426759612174
     },
     {
       "group": "pulmonary",
@@ -993,7 +1257,7 @@
       "bytes": 7043,
       "sha256": "ed7a9e0f6db67ee920051711d2fb1ebd4b9ecfe484bab62d833a14f25d7f1100",
       "peak": 0.788327157497406,
-      "rms": 0.1805935645420436
+      "rms": 0.18059357194396147
     },
     {
       "group": "pulmonary",
@@ -1004,7 +1268,7 @@
       "bytes": 26990,
       "sha256": "54e454a2a4678bcfcb9fd1c177609f74a075954aee5d49c92539b51ce0f71111",
       "peak": 0.8756489753723145,
-      "rms": 0.1911558414167937
+      "rms": 0.19115582462987435
     },
     {
       "group": "pulmonary",
@@ -1015,7 +1279,7 @@
       "bytes": 15286,
       "sha256": "5f9f2f1d7b0fef25c913b94dcb801bdc8e6a5980b83f6b640cb69d49fff2e36a",
       "peak": 0.9085420370101929,
-      "rms": 0.18946929097264611
+      "rms": 0.18946929103790888
     },
     {
       "group": "pulmonary",
@@ -1026,7 +1290,7 @@
       "bytes": 11429,
       "sha256": "012a2b163f96d4aa184ec90fa52fb9bc40fa09bb342d00c7bb63f3ce0abb8a3c",
       "peak": 0.860158383846283,
-      "rms": 0.1869710087920851
+      "rms": 0.18697098165950102
     },
     {
       "group": "pulmonary",
@@ -1037,7 +1301,7 @@
       "bytes": 9337,
       "sha256": "b7661582fb247eb69a5943125fc9ab1053f8e5e6d5f6edd7d324634c8de3dbd8",
       "peak": 0.8807725310325623,
-      "rms": 0.18394704494304914
+      "rms": 0.18394703397993312
     },
     {
       "group": "pulmonary",
@@ -1048,7 +1312,7 @@
       "bytes": 8246,
       "sha256": "975dfd4f887d930403f8174690624deed1d4a88e2e83857347d6d730c30e7059",
       "peak": 0.8998116254806519,
-      "rms": 0.18315734215159302
+      "rms": 0.18315731728993703
     },
     {
       "group": "pulmonary",
@@ -1059,7 +1323,7 @@
       "bytes": 7457,
       "sha256": "baeab7e21e731a2dfab6897b58e8496f1db37e52ad5587a3177d7f98d7d7d71a",
       "peak": 0.9224613904953003,
-      "rms": 0.18282834602566836
+      "rms": 0.18282836504518457
     },
     {
       "group": "pulmonary",
@@ -1069,8 +1333,8 @@
       "file": "pulmonary_wheeze_bell_42.ogg",
       "bytes": 6898,
       "sha256": "fd8a947eee0351fd06de8da79fa4a912366cf35916bcf327155882dd4e85a618",
-      "peak": 0.9719379544258118,
-      "rms": 0.18046868879136274
+      "peak": 0.9719380736351013,
+      "rms": 0.18046872305436684
     },
     {
       "group": "pulmonary",
@@ -1081,7 +1345,7 @@
       "bytes": 6422,
       "sha256": "9d5932013ec17b2465b1699d3c43dbf3ff224b1b6aa7b46eaab39791c4a95317",
       "peak": 0.788327157497406,
-      "rms": 0.1805878929803916
+      "rms": 0.1805878834290769
     },
     {
       "group": "pulmonary",
@@ -1092,7 +1356,7 @@
       "bytes": 26568,
       "sha256": "bd23898ae9e7c34220739076fbbdb7b71edbf962c5109daf6e500bf8bf1842ed",
       "peak": 0.888789176940918,
-      "rms": 0.18892373116440453
+      "rms": 0.18892382976046135
     },
     {
       "group": "pulmonary",
@@ -1102,8 +1366,8 @@
       "file": "pulmonary_stridor_bell_12.ogg",
       "bytes": 15141,
       "sha256": "c880af940030197f8bfbe2e18decbf2b01eb5d6d0a758e6fde9e5e1c701ec6a5",
-      "peak": 0.8994187712669373,
-      "rms": 0.1864527639120702
+      "peak": 0.8994188904762268,
+      "rms": 0.1864528914164611
     },
     {
       "group": "pulmonary",
@@ -1113,8 +1377,8 @@
       "file": "pulmonary_stridor_bell_18.ogg",
       "bytes": 11288,
       "sha256": "49fa8a469408cb585d72950bd080938c558bad2821285e109de245da8af59370",
-      "peak": 0.8771603107452393,
-      "rms": 0.1843553931897137
+      "peak": 0.877158522605896,
+      "rms": 0.18435542582659684
     },
     {
       "group": "pulmonary",
@@ -1124,8 +1388,8 @@
       "file": "pulmonary_stridor_bell_24.ogg",
       "bytes": 9381,
       "sha256": "7a33621ef2db9f471d7455b74d86e522dbb0e8c4e671814d81d545032a8e366c",
-      "peak": 0.8752819895744324,
-      "rms": 0.18026353162736142
+      "peak": 0.8752824664115906,
+      "rms": 0.18026364750095109
     },
     {
       "group": "pulmonary",
@@ -1135,8 +1399,8 @@
       "file": "pulmonary_stridor_bell_30.ogg",
       "bytes": 8123,
       "sha256": "4496775d74953ace7c20a6e8e1b7f8402fc083cfa9c50fbf5e65602854e6bf5c",
-      "peak": 0.9122143983840942,
-      "rms": 0.17978111339940184
+      "peak": 0.9122148156166077,
+      "rms": 0.17978118245183056
     },
     {
       "group": "pulmonary",
@@ -1146,8 +1410,8 @@
       "file": "pulmonary_stridor_bell_36.ogg",
       "bytes": 7408,
       "sha256": "5bbd182f4b4b2685594be8f449f409fbeead30bc9a5e160b09f8e5953b662641",
-      "peak": 0.9106444716453552,
-      "rms": 0.18017305646559004
+      "peak": 0.9106422662734985,
+      "rms": 0.18017307933060428
     },
     {
       "group": "pulmonary",
@@ -1158,7 +1422,7 @@
       "bytes": 6782,
       "sha256": "cb59573df789abca16a9f221136a8e1459b2858553aca18d5187b421e37da740",
       "peak": 0.977372944355011,
-      "rms": 0.17674663055187703
+      "rms": 0.17674660863566766
     },
     {
       "group": "pulmonary",
@@ -1168,8 +1432,8 @@
       "file": "pulmonary_stridor_bell_48.ogg",
       "bytes": 6299,
       "sha256": "3be7e1a4ed5bbdf2eb660cd31a9082f59be2a629cf9338746752e683300b5315",
-      "peak": 0.7846619486808777,
-      "rms": 0.1783554269992024
+      "peak": 0.784660279750824,
+      "rms": 0.1783552743800463
     },
     {
       "group": "cardiac",
@@ -1180,7 +1444,7 @@
       "bytes": 4889,
       "sha256": "15857677b157c0e94930c17d4284fa75e9dbc055e63ddff31cb3aaf3a2adb250",
       "peak": 1,
-      "rms": 0.06777789061314632
+      "rms": 0.06777786863929469
     },
     {
       "group": "cardiac",
@@ -1191,7 +1455,7 @@
       "bytes": 4734,
       "sha256": "bfbd6fe1f24529b964c477d6631022bfdf073a619707184b6bed191b51cb5cc1",
       "peak": 0.9663447141647339,
-      "rms": 0.1038220748505502
+      "rms": 0.10382203961438498
     },
     {
       "group": "cardiac",
@@ -1202,7 +1466,7 @@
       "bytes": 4718,
       "sha256": "597bfc4c84d77ea2546532603dada30345af5a256776578c101f30f4dea4429f",
       "peak": 1,
-      "rms": 0.11887495736544454
+      "rms": 0.11887503912638327
     },
     {
       "group": "cardiac",
@@ -1212,8 +1476,8 @@
       "file": "cardiac_normal_diaphragm_120.ogg",
       "bytes": 4656,
       "sha256": "c84ec0e3b6c1b253f85d9aa40a5fefad238ca19ca9b259fd76e9a4d9ad8b154b",
-      "peak": 0.9407231211662292,
-      "rms": 0.14479850759213614
+      "peak": 0.9407219886779785,
+      "rms": 0.14479834968446248
     },
     {
       "group": "cardiac",
@@ -1224,7 +1488,7 @@
       "bytes": 4692,
       "sha256": "50bf90b87b1a069ce9a2d07314dfadfda538b262cc207868fa9476000589f9d7",
       "peak": 1,
-      "rms": 0.1516099121435846
+      "rms": 0.15161002631088172
     },
     {
       "group": "cardiac",
@@ -1235,7 +1499,7 @@
       "bytes": 4700,
       "sha256": "c347bb19613736b7a13d1330928dff62af8f76598c0f2a4de9ce27b4820378a8",
       "peak": 1,
-      "rms": 0.1663504896096313
+      "rms": 0.1663504353198447
     },
     {
       "group": "cardiac",
@@ -1246,7 +1510,7 @@
       "bytes": 5365,
       "sha256": "8c66ee074cf375ff35e45fa8df734397118e80d2decbcf28ddef3afe596a276e",
       "peak": 1,
-      "rms": 0.08118156903107915
+      "rms": 0.08118154816786687
     },
     {
       "group": "cardiac",
@@ -1256,8 +1520,8 @@
       "file": "cardiac_s3_gallop_diaphragm_60.ogg",
       "bytes": 5171,
       "sha256": "809f384cd7a269fa6dfa1a6db33faab40ab17b8d27651b99bde544e300de5439",
-      "peak": 0.9663453698158264,
-      "rms": 0.12159235972487668
+      "peak": 0.9663447141647339,
+      "rms": 0.12159229745115568
     },
     {
       "group": "cardiac",
@@ -1268,7 +1532,7 @@
       "bytes": 5157,
       "sha256": "cf9e3a22d8a09ef4a1714f055534aac861dec69b11971aa80086dacae70c882f",
       "peak": 1,
-      "rms": 0.1404747290160612
+      "rms": 0.1404744965759985
     },
     {
       "group": "cardiac",
@@ -1278,8 +1542,8 @@
       "file": "cardiac_s3_gallop_diaphragm_120.ogg",
       "bytes": 5153,
       "sha256": "13b67264d58fa3ce17f27d4e5836a919009a70e7f6fce96c0222b7ad4b33b8c9",
-      "peak": 0.990553617477417,
-      "rms": 0.1702645986087145
+      "peak": 0.9905531406402588,
+      "rms": 0.17026453408887707
     },
     {
       "group": "cardiac",
@@ -1289,8 +1553,8 @@
       "file": "cardiac_s3_gallop_diaphragm_150.ogg",
       "bytes": 4975,
       "sha256": "e94087191f117ab2549db44b235eb13d2f3c60cf0f4f2b0f6cb1f9cfdbae4741",
-      "peak": 0.9496431350708008,
-      "rms": 0.17948226405706416
+      "peak": 0.9496451616287231,
+      "rms": 0.17948243255327795
     },
     {
       "group": "cardiac",
@@ -1301,7 +1565,7 @@
       "bytes": 4797,
       "sha256": "d7999c9abe7bfcb6f134d3e8c2dcfb81cf91e6fb43ea8329d5aed2dbde6787a8",
       "peak": 1,
-      "rms": 0.2018839865189599
+      "rms": 0.20188362793299525
     },
     {
       "group": "cardiac",
@@ -1312,7 +1576,7 @@
       "bytes": 5324,
       "sha256": "7e245c5e6ca18d7f61abc8cdf4232fc8ca1ca82b1c05a3f8195549e936e78889",
       "peak": 1,
-      "rms": 0.08107296347304248
+      "rms": 0.08107300281467426
     },
     {
       "group": "cardiac",
@@ -1323,7 +1587,7 @@
       "bytes": 5148,
       "sha256": "5fe8f29bafa74edca21f3643879223d90408220680ca11fb3c3a32e678722c8c",
       "peak": 0.9659953117370605,
-      "rms": 0.12093928464398623
+      "rms": 0.12093915658132691
     },
     {
       "group": "cardiac",
@@ -1334,7 +1598,7 @@
       "bytes": 5145,
       "sha256": "3606590951737d40617cffd8db8f9c94189555db036edc8aa2cef37e2e265da5",
       "peak": 1,
-      "rms": 0.14000235745653905
+      "rms": 0.14000261397765926
     },
     {
       "group": "cardiac",
@@ -1344,8 +1608,8 @@
       "file": "cardiac_s4_gallop_diaphragm_120.ogg",
       "bytes": 5073,
       "sha256": "4c36036179b11fa0f86486d7e5822c2ec10c937d278b278f420d9cce6737f3aa",
-      "peak": 0.985692024230957,
-      "rms": 0.16945909391985278
+      "peak": 0.9856919050216675,
+      "rms": 0.16945934753067318
     },
     {
       "group": "cardiac",
@@ -1356,7 +1620,7 @@
       "bytes": 4959,
       "sha256": "6f0ffa22eb0cf3c42a4a50ffbe00123759e81485ba2de7d7738ac80217b77798",
       "peak": 1,
-      "rms": 0.17633047465280663
+      "rms": 0.1763306986333403
     },
     {
       "group": "cardiac",
@@ -1367,7 +1631,7 @@
       "bytes": 4763,
       "sha256": "6a1cfcf24fec439b24a00524bd615bbf0b384de809c02d28e87a64a58c9d91d8",
       "peak": 1,
-      "rms": 0.19141897806927333
+      "rms": 0.19141888472064772
     },
     {
       "group": "cardiac",
@@ -1378,7 +1642,7 @@
       "bytes": 13967,
       "sha256": "e3341ed8251e5021a656224ba377e118000c3062333f61c5a315792811d6fa39",
       "peak": 1,
-      "rms": 0.20647625890781712
+      "rms": 0.20647613616881208
     },
     {
       "group": "cardiac",
@@ -1389,7 +1653,7 @@
       "bytes": 8606,
       "sha256": "0b48333a82bc77f2eea20c8ee0ff56f26476414ae714330c69bfa49b2e5546cb",
       "peak": 1,
-      "rms": 0.20890231184843924
+      "rms": 0.20890207427452057
     },
     {
       "group": "cardiac",
@@ -1400,7 +1664,7 @@
       "bytes": 6650,
       "sha256": "49f37eeca6b3c61356b8ce0e9876720b87c38477b6b2bc2b852c8180fbb9c4f5",
       "peak": 1,
-      "rms": 0.2066966402042618
+      "rms": 0.2066967355256729
     },
     {
       "group": "cardiac",
@@ -1411,7 +1675,7 @@
       "bytes": 5701,
       "sha256": "4f8bf631d1c6b560f4a18388a4f3c1ea9833427f3877bc8388434176c7ff9359",
       "peak": 1,
-      "rms": 0.22860130093781308
+      "rms": 0.22860114760551103
     },
     {
       "group": "cardiac",
@@ -1422,7 +1686,7 @@
       "bytes": 5340,
       "sha256": "372c16235c7f9955c61db4657f89f5502edce87bd6e8ee7b445d9c81c00eb432",
       "peak": 1,
-      "rms": 0.24090237618322702
+      "rms": 0.24090246515309244
     },
     {
       "group": "cardiac",
@@ -1433,7 +1697,7 @@
       "bytes": 5259,
       "sha256": "3f2d920ca40f3dd4e472bcc18930208bdf3eecee05079f6c93a6800caf1f4971",
       "peak": 1,
-      "rms": 0.22789386812336893
+      "rms": 0.2278938484790166
     },
     {
       "group": "cardiac",
@@ -1443,8 +1707,8 @@
       "file": "cardiac_aortic_stenosis_diaphragm_30.ogg",
       "bytes": 6946,
       "sha256": "ac2ef3a05970fc48ecba7db1807ed5eee077709b0aa5fb189855b0d46a542a88",
-      "peak": 0.9393057227134705,
-      "rms": 0.08776277000103005
+      "peak": 0.9393060803413391,
+      "rms": 0.08776279957704627
     },
     {
       "group": "cardiac",
@@ -1454,8 +1718,8 @@
       "file": "cardiac_aortic_stenosis_diaphragm_60.ogg",
       "bytes": 6114,
       "sha256": "a4bf7dd708ad9651da71b0735757aa477b6511b457755ef1c29e9cdb11cda66c",
-      "peak": 0.9663448929786682,
-      "rms": 0.11985252550250525
+      "peak": 0.9663446545600891,
+      "rms": 0.11985253440899157
     },
     {
       "group": "cardiac",
@@ -1465,8 +1729,8 @@
       "file": "cardiac_aortic_stenosis_diaphragm_90.ogg",
       "bytes": 5789,
       "sha256": "07756bcc06ed91fd7af2b1aa4bb96d1f7f9681db883e4b48ac2769ac8a8fe4fd",
-      "peak": 0.9429866075515747,
-      "rms": 0.12792389320848924
+      "peak": 0.9429869055747986,
+      "rms": 0.12792367561815415
     },
     {
       "group": "cardiac",
@@ -1476,8 +1740,8 @@
       "file": "cardiac_aortic_stenosis_diaphragm_120.ogg",
       "bytes": 5510,
       "sha256": "133712f4f91e4f760e0d03439b2535e8b5939ea3145eb1b1227f010f84b2945a",
-      "peak": 0.9407228231430054,
-      "rms": 0.15361784875918177
+      "peak": 0.9407238960266113,
+      "rms": 0.15361782287303516
     },
     {
       "group": "cardiac",
@@ -1488,7 +1752,7 @@
       "bytes": 5518,
       "sha256": "cacd46c5ccb21457abc1c00708e87f6236ffa1470c435e5bf2d44fac2c3953a2",
       "peak": 1,
-      "rms": 0.15693211023001866
+      "rms": 0.15693192793181146
     },
     {
       "group": "cardiac",
@@ -1499,7 +1763,271 @@
       "bytes": 5364,
       "sha256": "7ecb130db984d5aba9d9320420f57b903e35e9c75e3963714f81c402a9ba9717",
       "peak": 1,
-      "rms": 0.17056279596406454
+      "rms": 0.17056259364057474
+    },
+    {
+      "group": "cardiac",
+      "preset": "pulmonic_stenosis",
+      "mode": "diaphragm",
+      "rate": 30,
+      "file": "cardiac_pulmonic_stenosis_diaphragm_30.ogg",
+      "bytes": 6972,
+      "sha256": "7813b33cbdff6d23197cfea21a3a503cf44ab6b851ee72ce7c18ea0cf436ea42",
+      "peak": 1,
+      "rms": 0.0909990790827634
+    },
+    {
+      "group": "cardiac",
+      "preset": "pulmonic_stenosis",
+      "mode": "diaphragm",
+      "rate": 60,
+      "file": "cardiac_pulmonic_stenosis_diaphragm_60.ogg",
+      "bytes": 6056,
+      "sha256": "8cb5678f0fab5e427bc075ec1a0f6f6c6bf46a7af3df27d36cba788e88837cb3",
+      "peak": 0.9663447737693787,
+      "rms": 0.12354063158344816
+    },
+    {
+      "group": "cardiac",
+      "preset": "pulmonic_stenosis",
+      "mode": "diaphragm",
+      "rate": 90,
+      "file": "cardiac_pulmonic_stenosis_diaphragm_90.ogg",
+      "bytes": 5761,
+      "sha256": "ab28e2f6844ed78ae9471d694df035dcd3f6c5c20c27bd46386a1a5b092541eb",
+      "peak": 1,
+      "rms": 0.13567703794647437
+    },
+    {
+      "group": "cardiac",
+      "preset": "pulmonic_stenosis",
+      "mode": "diaphragm",
+      "rate": 120,
+      "file": "cardiac_pulmonic_stenosis_diaphragm_120.ogg",
+      "bytes": 5516,
+      "sha256": "366925f100dbe5ea8cb6a6a768febdcdf34ddbf6dd313988bd242af74d37c246",
+      "peak": 0.9407219886779785,
+      "rms": 0.16160319037196633
+    },
+    {
+      "group": "cardiac",
+      "preset": "pulmonic_stenosis",
+      "mode": "diaphragm",
+      "rate": 150,
+      "file": "cardiac_pulmonic_stenosis_diaphragm_150.ogg",
+      "bytes": 5448,
+      "sha256": "4bdc8728bbc6193ecced47232201aa9aa1d470476bdaedb3185ea2bd241ff2c8",
+      "peak": 1,
+      "rms": 0.16835061447726185
+    },
+    {
+      "group": "cardiac",
+      "preset": "pulmonic_stenosis",
+      "mode": "diaphragm",
+      "rate": 180,
+      "file": "cardiac_pulmonic_stenosis_diaphragm_180.ogg",
+      "bytes": 5380,
+      "sha256": "4c5862de0f498c8c578f9a797b376afbe2b13ac430844c7a20f6e833f55178e0",
+      "peak": 1,
+      "rms": 0.18580559812371972
+    },
+    {
+      "group": "cardiac",
+      "preset": "vsd",
+      "mode": "diaphragm",
+      "rate": 30,
+      "file": "cardiac_vsd_diaphragm_30.ogg",
+      "bytes": 6957,
+      "sha256": "70fd595df3b87a9f8a80a7619dede1b6e112a01304fcc5d9d73dd2cc6af18365",
+      "peak": 1,
+      "rms": 0.20269041394159346
+    },
+    {
+      "group": "cardiac",
+      "preset": "vsd",
+      "mode": "diaphragm",
+      "rate": 60,
+      "file": "cardiac_vsd_diaphragm_60.ogg",
+      "bytes": 6108,
+      "sha256": "df79a44cff408a9465d9d47b73ac275799eb275c1cdf3b369f7ea2910af1c6c0",
+      "peak": 1,
+      "rms": 0.2459742609815239
+    },
+    {
+      "group": "cardiac",
+      "preset": "vsd",
+      "mode": "diaphragm",
+      "rate": 90,
+      "file": "cardiac_vsd_diaphragm_90.ogg",
+      "bytes": 5750,
+      "sha256": "04a7223936dc8458764eddb0cc4bdaefe2ce2adbeb05336132add0e991cbbea8",
+      "peak": 1,
+      "rms": 0.2682504378846118
+    },
+    {
+      "group": "cardiac",
+      "preset": "vsd",
+      "mode": "diaphragm",
+      "rate": 120,
+      "file": "cardiac_vsd_diaphragm_120.ogg",
+      "bytes": 5463,
+      "sha256": "2f3415d876e0dff47262302fce9662564d3d1af0d67f12dc002793ef3bd0d890",
+      "peak": 1,
+      "rms": 0.2982872084346669
+    },
+    {
+      "group": "cardiac",
+      "preset": "vsd",
+      "mode": "diaphragm",
+      "rate": 150,
+      "file": "cardiac_vsd_diaphragm_150.ogg",
+      "bytes": 5338,
+      "sha256": "bfff19f1d33143c144d8b0ba7b4e7ff89c3eb315b27cad7a2a86874169077a32",
+      "peak": 1,
+      "rms": 0.3123410671790257
+    },
+    {
+      "group": "cardiac",
+      "preset": "vsd",
+      "mode": "diaphragm",
+      "rate": 180,
+      "file": "cardiac_vsd_diaphragm_180.ogg",
+      "bytes": 5194,
+      "sha256": "02c541bead39fb294c17b03f401b2ede1568770cbde4d754f143ef03d9a0a333",
+      "peak": 1,
+      "rms": 0.3239638226888923
+    },
+    {
+      "group": "cardiac",
+      "preset": "hcm",
+      "mode": "diaphragm",
+      "rate": 30,
+      "file": "cardiac_hcm_diaphragm_30.ogg",
+      "bytes": 6892,
+      "sha256": "137457c63040840473ee38549508647524e9c8f630a9fb42bf03716dde853ca4",
+      "peak": 1,
+      "rms": 0.08577924640749937
+    },
+    {
+      "group": "cardiac",
+      "preset": "hcm",
+      "mode": "diaphragm",
+      "rate": 60,
+      "file": "cardiac_hcm_diaphragm_60.ogg",
+      "bytes": 5980,
+      "sha256": "5e142faa2a786ed77b6ebeb97cc41b32e25328378375778dafe334fa184a7ed9",
+      "peak": 0.9663447737693787,
+      "rms": 0.11824863186435595
+    },
+    {
+      "group": "cardiac",
+      "preset": "hcm",
+      "mode": "diaphragm",
+      "rate": 90,
+      "file": "cardiac_hcm_diaphragm_90.ogg",
+      "bytes": 5713,
+      "sha256": "127eb19dc02dae3d6e4acf8ea1751bc6e6ba18726d626f1209ac59c5a5fcd5d6",
+      "peak": 1,
+      "rms": 0.13387454110692285
+    },
+    {
+      "group": "cardiac",
+      "preset": "hcm",
+      "mode": "diaphragm",
+      "rate": 120,
+      "file": "cardiac_hcm_diaphragm_120.ogg",
+      "bytes": 5471,
+      "sha256": "e309b7191d7bc9c7a9297f78a6b54ee3d2b1928d92ca35e4f02072cd48c6cac1",
+      "peak": 0.9407244324684143,
+      "rms": 0.1621220198654844
+    },
+    {
+      "group": "cardiac",
+      "preset": "hcm",
+      "mode": "diaphragm",
+      "rate": 150,
+      "file": "cardiac_hcm_diaphragm_150.ogg",
+      "bytes": 5403,
+      "sha256": "a80e399145e95eb1b4dfc03c03a9dfb6815397367845e73b4520246b7aebeb63",
+      "peak": 1,
+      "rms": 0.17422365146285052
+    },
+    {
+      "group": "cardiac",
+      "preset": "hcm",
+      "mode": "diaphragm",
+      "rate": 180,
+      "file": "cardiac_hcm_diaphragm_180.ogg",
+      "bytes": 5322,
+      "sha256": "11f295e45868c55da4c44ad8e215427c92dda2eb9e0a2426b792e4392a70c559",
+      "peak": 1,
+      "rms": 0.1876609016408032
+    },
+    {
+      "group": "cardiac",
+      "preset": "pda",
+      "mode": "diaphragm",
+      "rate": 30,
+      "file": "cardiac_pda_diaphragm_30.ogg",
+      "bytes": 13161,
+      "sha256": "7a29d82fc3cd652be3bfa3a76f1d8565082545c0e002315fd8227dcb16ad5495",
+      "peak": 1,
+      "rms": 0.32961628921951847
+    },
+    {
+      "group": "cardiac",
+      "preset": "pda",
+      "mode": "diaphragm",
+      "rate": 60,
+      "file": "cardiac_pda_diaphragm_60.ogg",
+      "bytes": 8518,
+      "sha256": "4abdc563ce39e92bf0ec8845c1551cc3b4f51dd466bff8173fb2892865bd99dc",
+      "peak": 1,
+      "rms": 0.33497943426050975
+    },
+    {
+      "group": "cardiac",
+      "preset": "pda",
+      "mode": "diaphragm",
+      "rate": 90,
+      "file": "cardiac_pda_diaphragm_90.ogg",
+      "bytes": 6842,
+      "sha256": "c10520ebe2b8bad18a620a57678842b5bff477fe53c0d0c56e6870d3cef44794",
+      "peak": 1,
+      "rms": 0.3319410001061846
+    },
+    {
+      "group": "cardiac",
+      "preset": "pda",
+      "mode": "diaphragm",
+      "rate": 120,
+      "file": "cardiac_pda_diaphragm_120.ogg",
+      "bytes": 6094,
+      "sha256": "b15ebc3bb888c3cb1b000bf150cfd14aca38654608f9bdfe238de550c5bd2b61",
+      "peak": 1,
+      "rms": 0.3328248515681278
+    },
+    {
+      "group": "cardiac",
+      "preset": "pda",
+      "mode": "diaphragm",
+      "rate": 150,
+      "file": "cardiac_pda_diaphragm_150.ogg",
+      "bytes": 5581,
+      "sha256": "0f0fff79b0e2030f729b0c2f4ca67f8b7bc629f138d354448bd681d75b6c609d",
+      "peak": 1,
+      "rms": 0.33710949661763095
+    },
+    {
+      "group": "cardiac",
+      "preset": "pda",
+      "mode": "diaphragm",
+      "rate": 180,
+      "file": "cardiac_pda_diaphragm_180.ogg",
+      "bytes": 5259,
+      "sha256": "11ada55835e662d9210fb3c7975e3b1e179b1e70f945151a9e60f9ceba08ac63",
+      "peak": 1,
+      "rms": 0.3340759247279233
     },
     {
       "group": "cardiac",
@@ -1510,7 +2038,7 @@
       "bytes": 6946,
       "sha256": "da28fb28df96cbe792f2778c13051a6e957b49de63aaf383eadd642054a95b13",
       "peak": 1,
-      "rms": 0.2130894633685359
+      "rms": 0.213089303494037
     },
     {
       "group": "cardiac",
@@ -1521,7 +2049,7 @@
       "bytes": 6062,
       "sha256": "775cb33f34b36cf7dc019001717cc44a9fae10302756175a32eda948a706238a",
       "peak": 1,
-      "rms": 0.25624755397667187
+      "rms": 0.25624766165094387
     },
     {
       "group": "cardiac",
@@ -1532,7 +2060,7 @@
       "bytes": 5701,
       "sha256": "c9b0b923adae3239ca0ebd68dcacae3d62965dc21667f72a7ba221078658842a",
       "peak": 1,
-      "rms": 0.28411683553728145
+      "rms": 0.2841166777263734
     },
     {
       "group": "cardiac",
@@ -1543,7 +2071,7 @@
       "bytes": 5435,
       "sha256": "fcbafce9f6d590e6a43197c1309239aa2bc3e8add446ea67e714ef8411e00aeb",
       "peak": 1,
-      "rms": 0.314850982511543
+      "rms": 0.3148511779831214
     },
     {
       "group": "cardiac",
@@ -1554,7 +2082,7 @@
       "bytes": 5340,
       "sha256": "c9a5b9c2bface4674d97055f5c62a4e4d61a19b08b31d7c827edd472058645b1",
       "peak": 1,
-      "rms": 0.32785514851697956
+      "rms": 0.327855057453378
     },
     {
       "group": "cardiac",
@@ -1565,7 +2093,7 @@
       "bytes": 5208,
       "sha256": "a70d35445cee5e96dd08fd8ebb7dd3519972c96f2c6b9b63ffa85f14f68d3ddb",
       "peak": 1,
-      "rms": 0.34054754610758575
+      "rms": 0.340547490433841
     },
     {
       "group": "cardiac",
@@ -1576,7 +2104,7 @@
       "bytes": 6927,
       "sha256": "00235bc0eb416a300f3d3932a9adf086eccaffa17813fbe15b3014566b2c2920",
       "peak": 1,
-      "rms": 0.2038012020901154
+      "rms": 0.2038011734421032
     },
     {
       "group": "cardiac",
@@ -1587,7 +2115,7 @@
       "bytes": 6155,
       "sha256": "85a07306c8a0097fd1446acf9e4b63584fd42f71a66de4f222be7eb5dcb33b83",
       "peak": 1,
-      "rms": 0.24502664424483012
+      "rms": 0.24502681969797188
     },
     {
       "group": "cardiac",
@@ -1598,7 +2126,7 @@
       "bytes": 5719,
       "sha256": "48979519ad3d4a555698dbbd5c2b25468bcdd719e0f146d2d1ef4b41768aecff",
       "peak": 1,
-      "rms": 0.2720443884767878
+      "rms": 0.27204434001473754
     },
     {
       "group": "cardiac",
@@ -1609,7 +2137,7 @@
       "bytes": 5459,
       "sha256": "5e06efe11f3620abc4cdf819b9130004f44b4797cc1b306a64eca73c27e77c82",
       "peak": 1,
-      "rms": 0.30260934893039504
+      "rms": 0.3026093882909327
     },
     {
       "group": "cardiac",
@@ -1620,7 +2148,7 @@
       "bytes": 5326,
       "sha256": "b32032e06b1b1c24394fa6f09c0e74a752d864dc16681b3be770ed65cb572290",
       "peak": 1,
-      "rms": 0.3132785996075585
+      "rms": 0.31327869345455955
     },
     {
       "group": "cardiac",
@@ -1631,7 +2159,7 @@
       "bytes": 5187,
       "sha256": "e54df12cde053e75cfd571d8195291acd96260203d9ae0318e4de14b7258efd1",
       "peak": 1,
-      "rms": 0.32548255287801164
+      "rms": 0.3254827216897299
     },
     {
       "group": "cardiac",
@@ -1642,7 +2170,7 @@
       "bytes": 11137,
       "sha256": "8d95216b75c812e565d8a8162359255a28e477be33f85e9631cd2f7da99cfb56",
       "peak": 1,
-      "rms": 0.14314098031846717
+      "rms": 0.1431410259297858
     },
     {
       "group": "cardiac",
@@ -1653,7 +2181,7 @@
       "bytes": 6992,
       "sha256": "9323e66885a08751af02c65fe44a7f44fd06ff7f4f5b848ed185ddf6ba4d1a25",
       "peak": 1,
-      "rms": 0.14233596418512204
+      "rms": 0.14233592284911936
     },
     {
       "group": "cardiac",
@@ -1664,7 +2192,7 @@
       "bytes": 5924,
       "sha256": "9403fabd4e89cea297bcc517074e286f8c0fde592cd50a34da94127ce8fde36c",
       "peak": 1,
-      "rms": 0.13289231075205551
+      "rms": 0.13289218970485886
     },
     {
       "group": "cardiac",
@@ -1675,7 +2203,7 @@
       "bytes": 5189,
       "sha256": "cd6fc89ecb56fa37a7505b5be33649d796e1f5c088b4647920f0e7e668b0b932",
       "peak": 1,
-      "rms": 0.14887249248995268
+      "rms": 0.14887233644618844
     },
     {
       "group": "cardiac",
@@ -1686,7 +2214,7 @@
       "bytes": 4933,
       "sha256": "f3e3fbc3dd3b6457f2280f58809fb16d40eb122ebd159cc533d53acd1e0d0d89",
       "peak": 1,
-      "rms": 0.14804030693396045
+      "rms": 0.14804030724839226
     },
     {
       "group": "cardiac",
@@ -1697,7 +2225,7 @@
       "bytes": 4732,
       "sha256": "1bf4e542d2bbf5febe4626377f7b4223d1896de388997080dadb23dbfe754fd6",
       "peak": 1,
-      "rms": 0.16680077394920256
+      "rms": 0.1668006900176352
     },
     {
       "group": "cardiac",
@@ -1708,7 +2236,7 @@
       "bytes": 6893,
       "sha256": "57a0d73f33c2242e8f5d1828c9ea78c4299f5cf030f05ff144379231b25b0116",
       "peak": 1,
-      "rms": 0.12025414677047173
+      "rms": 0.12025417237397892
     },
     {
       "group": "cardiac",
@@ -1719,7 +2247,7 @@
       "bytes": 6844,
       "sha256": "d3edf0e015b4d2d4248afc7a1a600d2417ef92dc822f220009abba6468af1e37",
       "peak": 1,
-      "rms": 0.17762398829748796
+      "rms": 0.17762386583425907
     },
     {
       "group": "cardiac",
@@ -1730,7 +2258,7 @@
       "bytes": 6926,
       "sha256": "45990f1926bf6c4da4225cbc4cad7de6bbb994cb7d0eb76dcfb94ba905798bd6",
       "peak": 1,
-      "rms": 0.20959225389385602
+      "rms": 0.2095923421034777
     },
     {
       "group": "cardiac",
@@ -1741,7 +2269,7 @@
       "bytes": 6197,
       "sha256": "ebba971ac4f320c8838731facc6ad35aa5efab281b202ee0239e5f9ba088f080",
       "peak": 1,
-      "rms": 0.2421669847735625
+      "rms": 0.24216701308366934
     },
     {
       "group": "cardiac",
@@ -1752,7 +2280,7 @@
       "bytes": 5977,
       "sha256": "862814e7daed3c4928311de995f41a943526372528df252790a15d8151d7e174",
       "peak": 1,
-      "rms": 0.2564883550634712
+      "rms": 0.2564883405877286
     },
     {
       "group": "cardiac",
@@ -1763,7 +2291,7 @@
       "bytes": 5789,
       "sha256": "45b19085009e663662f3ab5952ad1e118dcf5c833be8c5e720bb06d4998a5270",
       "peak": 1,
-      "rms": 0.25776534140417123
+      "rms": 0.2577652492530418
     },
     {
       "group": "cardiac",
@@ -1773,8 +2301,8 @@
       "file": "cardiac_tamponade_muffled_diaphragm_30.ogg",
       "bytes": 4845,
       "sha256": "8c5e06741d37ecde29051b4d9503d84ca21ce956cb1e989998246cf4b53e8ad9",
-      "peak": 0.704807460308075,
-      "rms": 0.04472399594857693
+      "peak": 0.7048078179359436,
+      "rms": 0.04472393175105398
     },
     {
       "group": "cardiac",
@@ -1784,8 +2312,8 @@
       "file": "cardiac_tamponade_muffled_diaphragm_60.ogg",
       "bytes": 4729,
       "sha256": "91a0b64a05a729c6df5223590b3cd3aae4d2d0c5b8586d81bb96bd9c0c9f267b",
-      "peak": 0.6330953240394592,
-      "rms": 0.06580729038011737
+      "peak": 0.6330970525741577,
+      "rms": 0.06580737772011937
     },
     {
       "group": "cardiac",
@@ -1795,8 +2323,8 @@
       "file": "cardiac_tamponade_muffled_diaphragm_90.ogg",
       "bytes": 4748,
       "sha256": "7d4475b829ce5e31208808d07d67323e7b7a074dbebca7ae8e36b22ee25af39d",
-      "peak": 0.7032734155654907,
-      "rms": 0.07741864491280456
+      "peak": 0.7032738327980042,
+      "rms": 0.07741859370635402
     },
     {
       "group": "cardiac",
@@ -1806,8 +2334,8 @@
       "file": "cardiac_tamponade_muffled_diaphragm_120.ogg",
       "bytes": 4632,
       "sha256": "61b62241c773770b076a7819c0fb0713bec80adda19811ba354ec581cbf4f514",
-      "peak": 0.6204528212547302,
-      "rms": 0.09233426582051395
+      "peak": 0.620453953742981,
+      "rms": 0.0923341456910746
     },
     {
       "group": "cardiac",
@@ -1817,8 +2345,8 @@
       "file": "cardiac_tamponade_muffled_diaphragm_150.ogg",
       "bytes": 4721,
       "sha256": "f0e179f3dd5b36e61fcc9a5d5a566c0178791e7facfb2f5dc9ebdfc310b9394a",
-      "peak": 0.7181207537651062,
-      "rms": 0.0988907735726695
+      "peak": 0.7181214690208435,
+      "rms": 0.09889073909840257
     },
     {
       "group": "cardiac",
@@ -1828,8 +2356,8 @@
       "file": "cardiac_tamponade_muffled_diaphragm_180.ogg",
       "bytes": 4616,
       "sha256": "666ddb800edd3ace72ea26ddb73befa4fca34330880a6fde9e173ca56cbfca3a",
-      "peak": 0.7416497468948364,
-      "rms": 0.10555853775916672
+      "peak": 0.7416501641273499,
+      "rms": 0.10555852655010667
     },
     {
       "group": "cardiac",
@@ -1840,7 +2368,7 @@
       "bytes": 13763,
       "sha256": "a4e542218c6927dd11e4c5d02de1312492df242dcf5a13628d900bf3f8b20bde",
       "peak": 1,
-      "rms": 0.19820715793910862
+      "rms": 0.19820715016905432
     },
     {
       "group": "cardiac",
@@ -1851,7 +2379,7 @@
       "bytes": 8360,
       "sha256": "bd12dfa10f5bea2d8648f1d208aed7740366d05560e01f9a93dd5076fbd3b994",
       "peak": 1,
-      "rms": 0.19493409958828986
+      "rms": 0.19493416696832191
     },
     {
       "group": "cardiac",
@@ -1862,7 +2390,7 @@
       "bytes": 6453,
       "sha256": "a690f8bddf0698995b6ef2d7795d96244d0cb180ce5e1473bb745f8f77402bc2",
       "peak": 1,
-      "rms": 0.18195215726096028
+      "rms": 0.18195213626468792
     },
     {
       "group": "cardiac",
@@ -1873,7 +2401,7 @@
       "bytes": 5632,
       "sha256": "29549231e90d1e924d3e7072348010c08e549fff27996ad983f9d152a64c9c0b",
       "peak": 1,
-      "rms": 0.205529111807378
+      "rms": 0.20552901767954715
     },
     {
       "group": "cardiac",
@@ -1884,7 +2412,7 @@
       "bytes": 5389,
       "sha256": "373785b67d6160932f8c39fb4d3de55f7777488d87068b8aa8b0a3ae12f333fb",
       "peak": 1,
-      "rms": 0.22340102802914102
+      "rms": 0.2234008770653237
     },
     {
       "group": "cardiac",
@@ -1895,7 +2423,7 @@
       "bytes": 5335,
       "sha256": "702e812f0806cb6f3672245dd46741b9fe01eb9e9d94cadea595afa51dc0696d",
       "peak": 1,
-      "rms": 0.2102536757425011
+      "rms": 0.2102535106311191
     },
     {
       "group": "pulmonary",
@@ -2082,7 +2610,7 @@
       "bytes": 39568,
       "sha256": "50504076da24822f751b9a896832d4fd07c7f68ea70a9fb69831b95181cdb449",
       "peak": 0.9794307947158813,
-      "rms": 0.1892131452529384
+      "rms": 0.1892131444467373
     },
     {
       "group": "pulmonary",
@@ -2093,7 +2621,7 @@
       "bytes": 22994,
       "sha256": "faadaf93571e3bab24124c5b6d31b70d0e431b9b0c309cb677267fc327ab5599",
       "peak": 0.9696928262710571,
-      "rms": 0.19090542256670148
+      "rms": 0.19090542728445087
     },
     {
       "group": "pulmonary",
@@ -2104,7 +2632,7 @@
       "bytes": 16958,
       "sha256": "34e318073fe96d9ae4be89faa782477bd712ba8742483e3bfad129033815929d",
       "peak": 0.9275766015052795,
-      "rms": 0.19509403653846963
+      "rms": 0.19509403694602445
     },
     {
       "group": "pulmonary",
@@ -2115,7 +2643,7 @@
       "bytes": 13991,
       "sha256": "dd6afc0af1cfbab11d793ab5846003b983411c4121c052c87601d7c330209f0a",
       "peak": 0.9290128350257874,
-      "rms": 0.1966943978904142
+      "rms": 0.19669439753861825
     },
     {
       "group": "pulmonary",
@@ -2126,7 +2654,7 @@
       "bytes": 11983,
       "sha256": "237f648cf09600198330fc5b352cf4f3d2461735341ad1a93c583f201808905e",
       "peak": 0.8901287317276001,
-      "rms": 0.1991385932966541
+      "rms": 0.19913859590913963
     },
     {
       "group": "pulmonary",
@@ -2137,7 +2665,7 @@
       "bytes": 10716,
       "sha256": "3f28c693e311aaea659b4e312f15f81f2e0a54b1e3845c0c8a5776ab9a6eae1b",
       "peak": 0.9366875886917114,
-      "rms": 0.20000598154638505
+      "rms": 0.20000598280249485
     },
     {
       "group": "pulmonary",
@@ -2148,7 +2676,7 @@
       "bytes": 9732,
       "sha256": "4dc77124a3f3e7b942ed82a8cb5aa973e2c9f8541115dbf73f7b7b2311b55269",
       "peak": 0.9978550672531128,
-      "rms": 0.19936576078189136
+      "rms": 0.19936575092088493
     },
     {
       "group": "pulmonary",
@@ -2159,7 +2687,7 @@
       "bytes": 9057,
       "sha256": "ba32be7cacc881881a9d6f90ebcf446daf0eb1d17c923f88c20e3d412324793d",
       "peak": 0.8385125994682312,
-      "rms": 0.20033267772220253
+      "rms": 0.2003326841825399
     },
     {
       "group": "pulmonary",
@@ -2170,7 +2698,7 @@
       "bytes": 34593,
       "sha256": "ca3cb5c662ff9f9889f8bd078ce0c13c48e507bda821e342f4935ddbb4206b24",
       "peak": 0.9794307947158813,
-      "rms": 0.19796705771155831
+      "rms": 0.19796705768546158
     },
     {
       "group": "pulmonary",
@@ -2181,7 +2709,7 @@
       "bytes": 19187,
       "sha256": "bd6689467909a6c9f2458e0c046fa07142d8ce86775f8eca6aef64042eb97a3b",
       "peak": 0.9696928262710571,
-      "rms": 0.19741932017249444
+      "rms": 0.197419300110193
     },
     {
       "group": "pulmonary",
@@ -2192,7 +2720,7 @@
       "bytes": 14019,
       "sha256": "5c35f16270eb2696d9ff3f6444816f33c71f43784d26be8a20c36ed095b11da5",
       "peak": 0.9275766015052795,
-      "rms": 0.19912686667500748
+      "rms": 0.19912686693296724
     },
     {
       "group": "pulmonary",
@@ -2203,7 +2731,7 @@
       "bytes": 11391,
       "sha256": "eb202b3a0cd664bba92ffd8cc767fd6b618f5d480cb753b1d438554465a87126",
       "peak": 0.9290128350257874,
-      "rms": 0.19860706596747627
+      "rms": 0.19860707676640074
     },
     {
       "group": "pulmonary",
@@ -2214,7 +2742,7 @@
       "bytes": 9825,
       "sha256": "1d2bff069bae84d715883d2760d470eeaf7e66d682f0ae586ceeba1fa9d2856a",
       "peak": 0.8901287317276001,
-      "rms": 0.20135950583275353
+      "rms": 0.20135951132136268
     },
     {
       "group": "pulmonary",
@@ -2225,7 +2753,7 @@
       "bytes": 8739,
       "sha256": "1415d85e1578924155b9d922e9785b1799a51f1eb77384a097e6a57ed6511d3b",
       "peak": 0.9366875886917114,
-      "rms": 0.20081644459420228
+      "rms": 0.20081645652299562
     },
     {
       "group": "pulmonary",
@@ -2236,7 +2764,7 @@
       "bytes": 8095,
       "sha256": "296e94e42ebaa449248cb2543ac5eb781e2caa17435725f180ef24fad7faff91",
       "peak": 0.9978550672531128,
-      "rms": 0.196670418832543
+      "rms": 0.1966704228442053
     },
     {
       "group": "pulmonary",
@@ -2247,7 +2775,7 @@
       "bytes": 7502,
       "sha256": "11183cf7ce3486daab6e7dfcf55415d370afe0a1011994dd9e803f719ab9d61e",
       "peak": 0.8385133743286133,
-      "rms": 0.19568895958001925
+      "rms": 0.1956889194616628
     },
     {
       "group": "pulmonary",
@@ -2258,7 +2786,7 @@
       "bytes": 36668,
       "sha256": "a726e12336ab08b5526b470610b47dab7981b222154b24f4e9feb7728fd7d2fc",
       "peak": 1,
-      "rms": 0.19378055171021813
+      "rms": 0.1937805247593259
     },
     {
       "group": "pulmonary",
@@ -2268,8 +2796,8 @@
       "file": "pulmonary_stridor_diaphragm_12.ogg",
       "bytes": 20120,
       "sha256": "f66960c339dd532e9ba5f84d25e673e43f6e4c3af25052c5c6249902aeacbc8a",
-      "peak": 0.9908316135406494,
-      "rms": 0.1924000703080684
+      "peak": 0.9908285737037659,
+      "rms": 0.1924000921247565
     },
     {
       "group": "pulmonary",
@@ -2279,8 +2807,8 @@
       "file": "pulmonary_stridor_diaphragm_18.ogg",
       "bytes": 14616,
       "sha256": "e74fa19a3ada2cfdfba56c221b66af2540431fa1524e1cbb5365b4a7036e654d",
-      "peak": 0.9335501194000244,
-      "rms": 0.19529575765819474
+      "peak": 0.933550238609314,
+      "rms": 0.19529573698623412
     },
     {
       "group": "pulmonary",
@@ -2290,8 +2818,8 @@
       "file": "pulmonary_stridor_diaphragm_24.ogg",
       "bytes": 11829,
       "sha256": "7851472f0fbb73c7634c8cb6736c789d65f4f6afb0574771869c95dc25bfb05a",
-      "peak": 0.9965726137161255,
-      "rms": 0.19129617208785835
+      "peak": 0.9965735673904419,
+      "rms": 0.1912961336380661
     },
     {
       "group": "pulmonary",
@@ -2301,8 +2829,8 @@
       "file": "pulmonary_stridor_diaphragm_30.ogg",
       "bytes": 10183,
       "sha256": "9ded78019be43b9d15dba734cce22f436f3f63b0905d359fcc5fb172f957b5c5",
-      "peak": 0.8877332210540771,
-      "rms": 0.19224174144574155
+      "peak": 0.8877330422401428,
+      "rms": 0.19224166848902344
     },
     {
       "group": "pulmonary",
@@ -2312,8 +2840,8 @@
       "file": "pulmonary_stridor_diaphragm_36.ogg",
       "bytes": 9058,
       "sha256": "339536e5fbe45040cb8bea85574045c67b1eb101aecb1f3b6bca522de503898e",
-      "peak": 0.9600179195404053,
-      "rms": 0.19191180604621352
+      "peak": 0.9600178599357605,
+      "rms": 0.19191184728306845
     },
     {
       "group": "pulmonary",
@@ -2324,7 +2852,7 @@
       "bytes": 8297,
       "sha256": "7112a0d877b95516323c11c7742e0754da621ec462884238ff7b7103ec488164",
       "peak": 1,
-      "rms": 0.187976575828049
+      "rms": 0.18797666370259447
     },
     {
       "group": "pulmonary",
@@ -2334,9 +2862,9 @@
       "file": "pulmonary_stridor_diaphragm_48.ogg",
       "bytes": 7782,
       "sha256": "97ecc6d831ab040cfda275ba6cf4996c4f5ed315e704affbf82b95c2417c6e3b",
-      "peak": 0.8665836453437805,
-      "rms": 0.18719755448482767
+      "peak": 0.866584062576294,
+      "rms": 0.18719749289236196
     }
   ],
-  "bytes": 1806977
+  "bytes": 2079469
 }

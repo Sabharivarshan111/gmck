@@ -36,14 +36,14 @@ assert.equal(resolveAuscultation(normal.initialPathology, normal.initialVitals, 
 assert.equal(resolveAuscultation(normal.initialPathology, normal.initialVitals, 'trachea', 'normal').lung, 'bronchial');
 for (const scenario of scenarios) for (const site of ['mitral','aortic','tricuspid','pulmonic','erb','lung_bases','lung_apices','trachea']) {
   const sound = resolveAuscultation(scenario.initialPathology, scenario.initialVitals, site, scenario.id);
-  assert.ok(['silent','normal','s3_gallop','s4_gallop','mitral_stenosis','aortic_stenosis','mitral_regurg','tricuspid_regurg','aortic_regurg','friction_rub','tamponade_muffled'].includes(sound.heart));
+  assert.ok(['silent','normal','s3_gallop','s4_gallop','mitral_stenosis','aortic_stenosis','pulmonic_stenosis','vsd','hcm','pda','mitral_regurg','tricuspid_regurg','aortic_regurg','friction_rub','tamponade_muffled'].includes(sound.heart));
   assert.ok(['silent','vesicular','bronchial','crackles','wheeze','stridor'].includes(sound.lung));
 }
 let currentContext;
 globalThis.window = { AudioContext: function() { return currentContext; }, setInterval: () => 1, clearInterval: () => {} };
 const results = [];
 for (const mode of ['bell', 'diaphragm']) {
-  for (const preset of ['normal','s3_gallop','s4_gallop','mitral_stenosis','aortic_stenosis','mitral_regurg','tricuspid_regurg','aortic_regurg','friction_rub','tamponade_muffled','vesicular','bronchial','crackles','wheeze','stridor','silent']) {
+  for (const preset of ['normal','s3_gallop','s4_gallop','mitral_stenosis','aortic_stenosis','pulmonic_stenosis','vsd','hcm','pda','mitral_regurg','tricuspid_regurg','aortic_regurg','friction_rub','tamponade_muffled','vesicular','bronchial','crackles','wheeze','stridor','silent']) {
     currentContext = new webAudio.OfflineAudioContext(1, 22050 * 5, 22050);
     currentContext.resume = async () => {}; // Offline rendering has no hardware/autoplay state.
     const engine = new StethoscopeAudioEngine();

@@ -49,7 +49,7 @@ for(const reference of references.references){
 }
 const audio=JSON.parse(fs.readFileSync(root+'/auscultation/manifest.json'));
 assert.equal(audio.sourceSha256,createHash('sha256').update(fs.readFileSync(audio.source)).digest('hex'),'Sound clips must match shared DSP source');
-assert.equal(audio.clips.length,212,'All heart/lung presets, filter modes and reference rates');
+assert.equal(audio.clips.length,260,'All heart/lung presets, filter modes and reference rates');
 for(const clip of audio.clips){const bytes=fs.readFileSync(root+'/auscultation/'+clip.file);assert.equal(bytes.length,clip.bytes);assert.equal(createHash('sha256').update(bytes).digest('hex'),clip.sha256,'Audio checksum '+clip.file);assert.ok(clip.rms>0&&clip.peak<=1);}
 console.log('Offline audio: '+audio.clips.length+' source-derived loops, '+audio.bytes+' bytes; source and every encoded clip hash verified.');
 console.log('Offline source assets: '+partCount+' named meshes, '+registered+' registered connections, full MRI volume and native screen verified.');

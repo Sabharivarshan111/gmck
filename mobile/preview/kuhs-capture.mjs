@@ -31,7 +31,7 @@ console.log('Existing-user prompt remembers choice after reload, offline.');
 
 await page.goto('http://127.0.0.1:5198/?screen=home');
 await page.waitForTimeout(800);
-await page.getByLabel('Question bank: Kerala University of Health Sciences (KUHS). Change university',{exact:true}).click();
+await page.getByLabel('Settings',{exact:true}).click();
 await capture('02-university-choice');
 await page.goto('http://127.0.0.1:5198/?screen=home');
 await page.getByLabel('Settings',{exact:true}).click();

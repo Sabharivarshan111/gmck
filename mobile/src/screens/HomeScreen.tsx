@@ -19,10 +19,8 @@ import { SortableGrid } from '@/components/SortableGrid';
 import { useSubjectOrder } from '@/hooks/useSubjectOrder';
 import { SettingsSheet } from '@/components/SettingsSheet';
 import { UniversityConfirmation } from '@/components/UniversityConfirmation';
-import { UniversityChoice } from '@/components/UniversityChoice';
 import { GuestAccountUpgrade } from '@/components/GuestAccountUpgrade';
 import { availableBankUniversity } from '@/lib/kuhsAvailability';
-import { UNIVERSITY_LABEL } from '@shared/university';
 import { ThemeMenu, type Anchor } from '@/components/ThemeMenu';
 import { HomeMenuSheet } from '@/components/HomeMenuSheet';
 import { premiumExpiresAt } from '@/lib/premium';
@@ -241,9 +239,8 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
   const [anchor, setAnchor] = useState<Anchor | null>(null);
   const themeButton = useRef<React.ComponentRef<typeof View>>(null);
 
-  const { yearKey: year, streak, setYear, university, setUniversity } = useProfile();
+  const { yearKey: year, streak, setYear, university } = useProfile();
   const bankUniversity = availableBankUniversity(university);
-  const [universityOpen, setUniversityOpen] = useState(false);
 
   useFocusEffect(useCallback(() => {
     let active = true;
@@ -531,20 +528,6 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
       </View>
 
       {!editing ? <GuestAccountUpgrade /> : null}
-
-      {!editing ? (
-        <Touchable
-          onPress={() => setUniversityOpen(true)}
-          label={university ? `Question bank: ${UNIVERSITY_LABEL[university]}. Change university` : 'Choose your question bank university'}
-          style={{ borderWidth: 1, borderColor: university ? colors.border : colors.accent,
-            backgroundColor: university ? colors.card : withAlpha(colors.accent, 0.1),
-            borderRadius: 14, paddingHorizontal: 16, paddingVertical: 12, marginBottom: 16 }}>
-          <Text style={{ color: colors.text, fontWeight: '700' }}>
-            {university ? `Question bank · ${university.toUpperCase()}` : 'Choose your university · TNMGR or KUHS'}
-          </Text>
-          {!university ? <Text style={{ color: colors.textMuted, marginTop: 3 }}>Select the university for your past papers.</Text> : null}
-        </Touchable>
-      ) : null}
 
         {editing ? (
           <View
@@ -1126,16 +1109,6 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
         textSize={textSize}
         onTextSizeChange={setTextSize}
       />
-
-      <Sheet visible={universityOpen} onClose={() => setUniversityOpen(false)} title="Question bank university">
-        <Text style={{ color: colors.textMuted, marginBottom: 14 }}>
-          Choose the university whose past papers you want to study. You can change this later in Settings.
-        </Text>
-        <UniversityChoice value={university} onChange={option => {
-          void setUniversity(option);
-          setUniversityOpen(false);
-        }} />
-      </Sheet>
 
       <YearPickerSheet
         visible={yearPickerOpen}

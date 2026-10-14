@@ -121,7 +121,7 @@ async function getDeviceId(): Promise<string> {
  * anonymously first if there is no session. Cloud failures are non-fatal —
  * the local write has already happened, so the app keeps working offline.
  */
-export async function saveProfile(profile: LocalProfile): Promise<CloudProfile | null> {
+export async function persistLocalProfile(profile: LocalProfile): Promise<LocalProfile> {
   const check = validateDisplayName(profile.display_name);
   if (!check.ok) {
     throw new DisplayNameError(check.reason ?? 'Invalid name.');
@@ -133,6 +133,12 @@ export async function saveProfile(profile: LocalProfile): Promise<CloudProfile |
     ...(isUniversity(profile.university) ? { university: profile.university } : {}),
   };
   await writeLocalProfile(clean);
+  return clean;
+}
+
+export async function saveProfile(profile: LocalProfile, onLocalSaved?: (clean: LocalProfile) => void): Promise<CloudProfile | null> {
+  const clean = await persistLocalProfile(profile);
+  onLocalSaved?.(clean);
 
   try {
     let { data: sessionData } = await supabase.auth.getSession();

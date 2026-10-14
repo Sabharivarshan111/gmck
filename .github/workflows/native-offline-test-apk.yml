@@ -95,7 +95,7 @@ jobs:
            for item in ['assets/simulator/models/atlas.mesh.pack','assets/simulator/radiology/brain-t1.pack','assets/pg/manifest.json','assets/index.android.bundle','assets/simulator/auscultation/manifest.json','assets/simulator/pocus/plax.mp4','assets/simulator/pocus/subcostal.mp4']:
             assert item in names,item
            sound=json.loads(z.read('assets/simulator/auscultation/manifest.json'))
-           assert len(sound['clips'])==212
+           assert len(sound['clips'])==260
            for clip in sound['clips']:
             item='assets/simulator/auscultation/'+clip['file']
             assert z.getinfo(item).compress_type==zipfile.ZIP_STORED, 'Android asset FD requires uncompressed audio: '+item

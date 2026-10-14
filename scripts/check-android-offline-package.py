@@ -22,7 +22,7 @@ for file in files:
         volume=gzip.decompress(z.read(prefix+"simulator/radiology/brain-t1.pack"))
         assert hashlib.sha256(volume).hexdigest()==mri["volumeSha256"], "Corrupt MRI volume"
         sound=json.loads(z.read(prefix+"simulator/auscultation/manifest.json"))
-        assert len(sound["clips"])==212
+        assert len(sound["clips"])==260
         for clip in sound["clips"]:
             item=prefix+"simulator/auscultation/"+clip["file"]
             data=z.read(item)

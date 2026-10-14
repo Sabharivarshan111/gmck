@@ -1,6 +1,6 @@
 /** Build compact offline reference loops from the existing procedural DSP.
  * Only this build tool uses Web Audio; Android plays local Ogg files natively. */
-import fs from 'node:fs';import crypto from 'node:crypto';import ts from '../mobile/node_modules/typescript/lib/typescript.js';import {chromium} from 'playwright';import {spawnSync} from 'node:child_process';
+import fs from 'node:fs';import crypto from 'node:crypto';import ts from '../mobile/node_modules/typescript/lib/typescript.js';import {chromium} from '../mobile/node_modules/playwright-core/index.mjs';import {spawnSync} from 'node:child_process';
 const sourcePath='src/simulator/instruments/StethoscopeSynthesizer.ts',source=fs.readFileSync(sourcePath,'utf8');
 const root=ts.createSourceFile(sourcePath,source,ts.ScriptTarget.Latest,true,ts.ScriptKind.TS),edits=[];
 // Unlock/resume apply to live AudioContext only. Preserve every DSP operation.
@@ -11,11 +11,11 @@ function visit(node){
 }visit(root);let adapted=source;for(const [a,b,text] of edits.sort((a,b)=>b[0]-a[0]))adapted=adapted.slice(0,a)+text+adapted.slice(b);
 const js=ts.transpileModule(adapted.replace('export class StethoscopeAudioEngine','class StethoscopeAudioEngine'),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText.replace(/export \{\};?\s*$/,'');
 const dir='public/clinical-reference/auscultation';fs.mkdirSync(dir,{recursive:true});
-const browser=await chromium.launch({headless:true});const page=await browser.newPage();const clips=[];
+const browser=await chromium.launch({headless:true,executablePath:process.env.ORBIT_CHROME,args:['--no-sandbox']});const page=await browser.newPage();const clips=[];
 try{
  await page.addScriptTag({content:js+'\nwindow.SoundEngine=StethoscopeAudioEngine;'});
  if(!await page.evaluate(()=>typeof window.SoundEngine==='function'))throw Error('Offline DSP constructor did not load');
- const hearts=['normal','s3_gallop','s4_gallop','mitral_stenosis','aortic_stenosis','mitral_regurg','tricuspid_regurg','aortic_regurg','friction_rub','tamponade_muffled'];
+ const hearts=['normal','s3_gallop','s4_gallop','mitral_stenosis','aortic_stenosis','pulmonic_stenosis','vsd','hcm','pda','mitral_regurg','tricuspid_regurg','aortic_regurg','friction_rub','tamponade_muffled'];
  const lungs=['vesicular','bronchial','crackles','wheeze','stridor'];
  for(const mode of ['bell','diaphragm'])for(const group of ['cardiac','pulmonary']){
   const presets=group==='cardiac'?[...hearts,'mitral_stenosis_af']:lungs;

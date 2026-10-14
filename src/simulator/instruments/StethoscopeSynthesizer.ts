@@ -21,6 +21,10 @@ export type HeartSoundPreset =
   | 's4_gallop'
   | 'mitral_stenosis'
   | 'aortic_stenosis'
+  | 'pulmonic_stenosis'
+  | 'vsd'
+  | 'hcm'
+  | 'pda'
   | 'mitral_regurg'
   | 'tricuspid_regurg'
   | 'aortic_regurg'
@@ -441,6 +445,23 @@ export class StethoscopeAudioEngine {
         break;
       }
 
+      case 'pulmonic_stenosis': {
+        this.synthesizeAorticStenosisMurmur(t + 0.04, systolicTime - 0.065, 0.8, 460);
+        break;
+      }
+      case 'hcm': {
+        this.synthesizeAorticStenosisMurmur(t + 0.04, systolicTime - 0.07, 0.8, 300, 0.4);
+        break;
+      }
+      case 'vsd': {
+        this.synthesizeMitralRegurgMurmur(t, systolicTime, 0.85, 650);
+        break;
+      }
+      case 'pda': {
+        this.synthesizeContinuousMurmur(t, cycleDuration, systolicTime, 0.75);
+        break;
+      }
+
       case 'tricuspid_regurg': {
         // Teaching approximation: holosystolic envelope, not a recorded patient.
         this.synthesizeMitralRegurgMurmur(t, systolicTime, 0.7);
@@ -723,7 +744,7 @@ export class StethoscopeAudioEngine {
     source.stop(st + duration);
   }
 
-  private synthesizeAorticStenosisMurmur(t: number, duration: number, peakGain: number): void {
+  private synthesizeAorticStenosisMurmur(t: number, duration: number, peakGain: number, frequency = 360, peakPhase = 0.52): void {
     if (!this.ctx || !this.chestWallResonance || !this.noiseBuffer) return;
     const st = this.safe(t);
     const source = this.trackSource(this.ctx.createBufferSource());
@@ -736,7 +757,7 @@ export class StethoscopeAudioEngine {
 
     const bpf = this.ctx.createBiquadFilter();
     bpf.type = 'bandpass';
-    bpf.frequency.setValueAtTime(360, st);
+    bpf.frequency.setValueAtTime(frequency, st);
     bpf.Q.setValueAtTime(1.4, st);
 
     const shelf = this.ctx.createBiquadFilter();
@@ -746,7 +767,7 @@ export class StethoscopeAudioEngine {
 
     // Diamond-shaped crescendo-decrescendo gain envelope
     const gain = this.ctx.createGain();
-    const halfDur = duration * 0.52;
+    const halfDur = duration * peakPhase;
     gain.gain.setValueAtTime(0.001, st);
     gain.gain.linearRampToValueAtTime(peakGain, st + halfDur);
     gain.gain.exponentialRampToValueAtTime(0.001, st + duration);
@@ -761,7 +782,7 @@ export class StethoscopeAudioEngine {
     source.stop(st + duration);
   }
 
-  private synthesizeMitralRegurgMurmur(t: number, duration: number, peakGain: number): void {
+  private synthesizeMitralRegurgMurmur(t: number, duration: number, peakGain: number, frequency = 440): void {
     if (!this.ctx || !this.chestWallResonance || !this.noiseBuffer) return;
     const st = this.safe(t);
     const source = this.trackSource(this.ctx.createBufferSource());
@@ -775,7 +796,7 @@ export class StethoscopeAudioEngine {
 
     const bpf = this.ctx.createBiquadFilter();
     bpf.type = 'bandpass';
-    bpf.frequency.setValueAtTime(440, st);
+    bpf.frequency.setValueAtTime(frequency, st);
     bpf.Q.setValueAtTime(1.2, st);
 
     // Holosystolic plateau envelope
@@ -823,6 +844,21 @@ export class StethoscopeAudioEngine {
 
     source.start(st);
     source.stop(st + duration);
+  }
+
+  /** Continuous turbulent flow with greatest intensity around S2. */
+  private synthesizeContinuousMurmur(t: number, duration: number, systole: number, peakGain: number): void {
+    if (!this.ctx || !this.chestWallResonance || !this.noiseBuffer) return;
+    const st = this.safe(t), source = this.trackSource(this.ctx.createBufferSource());
+    source.buffer = this.noiseBuffer; source.loop = true;
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'bandpass'; filter.frequency.setValueAtTime(400, st); filter.Q.setValueAtTime(0.9, st);
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(peakGain * 0.22, st);
+    gain.gain.linearRampToValueAtTime(peakGain, st + systole);
+    gain.gain.linearRampToValueAtTime(peakGain * 0.22, st + duration);
+    source.connect(filter); filter.connect(gain); gain.connect(this.chestWallResonance);
+    source.start(st); source.stop(st + duration);
   }
 
   private synthesizePericardialScratch(t: number, duration: number, peakGain: number): void {
