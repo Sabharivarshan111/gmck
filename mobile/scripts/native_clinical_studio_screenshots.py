@@ -50,7 +50,18 @@ def main():
     time.sleep(0.8)
     shot("07-android-case-return-preserved")
 
-    print("Native clinical UI/monitor/case screenshots generated. Compare with web.")
+    tap("Back to clinical studio")
+    wait_visible("Explore 3D anatomy")
+    tap("12-lead ECG")
+    wait_visible("WAVE GUIDE")
+    shot("08-android-native-12lead-ecg")
+    tap("All 12")
+    shot("09-android-native-ecg-all-leads")
+    tap("QRS")
+    wait_visible("Electrophysiological")
+    shot("10-android-native-ecg-qrs-teaching")
+
+    print("Native clinical UI/monitor/case/ECG screenshots generated. Compare with web.")
     print("Offline/physical-device parity is NOT yet certified by this script.")
 
 
