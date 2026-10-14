@@ -8,7 +8,7 @@
 // the new HTML anyway — but one that ever fell back to the cached shell keeps
 // being served the asset hashes that shell names, and those ARE cached. Bumping
 // this is the one lever that empties the old cache for everybody.
-const SW_VERSION = 'v23-ios-calendar-murmurs-2026-10-14';
+const SW_VERSION = 'v24-install-video-2026-10-14';
 const CACHE_NAME = `mbbs-qb-${SW_VERSION}`;
 
 const PRECACHE_URLS = [
@@ -123,6 +123,8 @@ self.addEventListener('fetch', (event) => {
   // Never intercept cross-origin, OAuth, or API traffic.
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith('/~oauth')) return;
+  // Let the browser/CDN handle byte-range requests for the installation video.
+  if (url.pathname.startsWith('/installation/')) return;
 
   if (url.pathname.startsWith('/_orbit/files/')) {
     event.respondWith(readPrivateFile(url, request));
