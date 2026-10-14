@@ -20,3 +20,6 @@ export function layoutAnnotations(items:readonly Annotation[],rect:ImageRect,wid
     return sorted.map((item,i)=>({...item,side,labelY:ys[i],labelX:side==='left'?8:width-margin+8,lineX:side==='left'?margin-8:width-margin+8}));
   });
 }
+
+/** Calibrated source distance; display zoom and pan never alter the measurement. */
+export function referenceDistance(a:{x:number;y:number},b:{x:number;y:number},extent:readonly number[]){return Math.hypot((b.x-a.x)*extent[0],(b.y-a.y)*extent[1]);}

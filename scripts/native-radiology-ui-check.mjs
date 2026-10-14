@@ -33,6 +33,16 @@ try{
  await screenshot(page,'sagittal-mri');
  await page.getByRole('button',{name:'Identify Cerebellum',exact:true}).click();
  await page.getByText('Teaching landmark on this exact resampled reference slice.',{exact:false}).waitFor();
+ await page.getByRole('button',{name:'Measure image',exact:true}).click();
+ const stage=page.getByTestId('radiology-image-stage');await stage.scrollIntoViewIfNeeded();
+ const b=await stage.boundingBox();assert(b);
+ await stage.click({position:{x:b.width/2-25,y:b.height/2}});
+ await stage.click({position:{x:b.width/2+25,y:b.height/2}});
+ const readout=page.getByText(/^[0-9]+\.[0-9] mm · resampled voxel spacing$/);await readout.waitFor();
+ assert(parseFloat(await readout.textContent())>0);
+ await screenshot(page,'mri-calipers');
+ await page.getByRole('button',{name:'Reviewed axial landmarks',exact:true}).click();
+ await page.getByText('Tap two points on the image.',{exact:true}).waitFor();
  assert.equal(errors.length,0,errors.join('\n'));
  console.log('Native imaging components: normal X-ray, pneumothorax, effusion, axial and sagittal MRI, clickable labels passed in RN web preview. Android graphics/device behavior not verified here.');
  for(const name of ['pneumothorax','pleural-effusion','axial-mri','sagittal-mri']){

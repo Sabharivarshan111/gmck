@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {fittedImage,imagePoint,sourcePoint,layoutAnnotations} from '../src/simulator/annotationGeometry.ts';
+import {fittedImage,imagePoint,sourcePoint,layoutAnnotations,referenceDistance} from '../src/simulator/annotationGeometry.ts';
 for(const width of [360,390,430,800])for(const zoom of [1,1.7,3]){
  const rect=fittedImage(width,520,1.2,86,zoom,20,-13);
  for(const point of [{x:.2,y:.3},{x:.5,y:.5},{x:.8,y:.7}]){
@@ -16,3 +16,6 @@ assert.equal(laid.length,5);
 for(let i=1;i<laid.length;i++)assert.ok(laid[i].labelY-laid[i-1].labelY>=44);
 assert.equal(layoutAnnotations(items,fittedImage(390,520,1,86,3,1000),390,520,86).length,0);
 console.log('Annotation transforms: 36 round trips, collision spacing and off-screen suppression passed.');
+
+assert.ok(Math.abs(referenceDistance({x:.2,y:.3},{x:.5,y:.7},[100,100])-50)<1e-10);
+assert.ok(Math.abs(referenceDistance({x:.2,y:.3},{x:.5,y:.7},[1000,1000])-500)<1e-10);
