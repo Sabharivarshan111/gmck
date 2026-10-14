@@ -22,7 +22,7 @@ A feature is **native** only if its actual interactive UI and relevant computati
 | Clinical cases catalog | `PhysiologyKernel.ts` | `nativeClinicalCatalog.ts` | 43 source-aligned entries coded; parity check pending |
 | Full body, anatomy layers & camera | `AnatomicalBody3D.tsx` & asset atlas | Native accelerated 3D renderer, model loading, orbit/zoom/pan | NOT PORTED; hosted renderer still used |
 | Region isolation, organ relations, scalpel, peeling | `src/simulator/view`, `controls`, `data` | Native mesh picking, state, hit testing, tap targets | NOT PORTED |
-| ECG studio, moving waveform, 12 leads | `src/simulator/instruments/DiagnosticTools.tsx` | Native Canvas/SVG/Skia waveform & teaching tools | NOT PORTED |
+| ECG studio, moving waveform, 12 leads | `src/simulator/instruments/DiagnosticTools.tsx` | Native Canvas/SVG/Skia waveform & teaching tools | 12-lead calibrated ECG, lead-group selector and six teaching wave segments ported in SVG with matching descriptions; magnified cutout and full ECG specialist tutorial pending |
 | Auscultation & heart murmurs/breath sounds | Simulator tools and audio assets | Native accurate audio selection, loop, audio focus | NOT PORTED |
 | POCUS/ultrasound interactive teaching | Simulator tools and imaging assets | Native probe, plane controls, labeled views | NOT PORTED |
 | Annotated X-ray/MRI | Simulator tools and radiology assets | Native image/volume viewers with arrows and tooltips | NOT PORTED |
@@ -51,6 +51,7 @@ A feature is **native** only if its actual interactive UI and relevant computati
 
 - **Implemented in this branch:** real RN clinical-studio discovery screen; source-mirrored 7 skills and 43 clinical case metadata records; native search/segments/case choice/theme mode; checks to catch Vercel catalog drift.
 - **Implemented during continuation:** native 4-channel ICU monitor with live SVG traces and same Vercel PhysiologyKernel, native clinical-case intervention screen using the same actual simulation state, 27 matching web interventions, shareable engine injection so case changes remain visible in monitor, keyboard-safe search input, and shared TS module alias across Babel/Metro/TypeScript.
+- **Implemented during continuation:** native 12-lead ECG teaching canvas with all web lead names, standard calibration, STEMI and other rhythm waveforms, ECG segment selection, capture and tour mode. It uses native SVG and works offline. Advanced web ECG cutout, heart 3D visualization and ICU ECG tutorial still need native ports.
 - **Not implemented:** native Three.js-equivalent 3D dissection, renderer, organ labeling, interactive radiology, auscultation, full 12-lead ECG tutorial, POCUS and many other modules.
-- **Temporary behavior:** anatomy and advanced diagnostic tools still open the hosted Vercel renderer as a compatibility fallback, **not** an offline native port. Case interventions and bedside telemetry now use React Native and the shared Vercel physiology engine.
+- **Temporary behavior:** anatomy and non-ECG diagnostic tools still open the hosted Vercel renderer as a compatibility fallback, **not** an offline native port. Case interventions and bedside telemetry now use React Native and the shared Vercel physiology engine.
 - **Release policy:** this branch is a draft, NOT an all-feature parity release. Never merge solely because it compiles.
