@@ -35,9 +35,9 @@ assert.ok(rows.length >= 40, 'web clinical case extraction incomplete');
 assert.equal(skills.length, 7, 'web clinical skill extraction incomplete');
 assert.deepEqual(extract('NATIVE_CLINICAL_SCENARIOS'), rows, 'native case choices diverged from Vercel');
 assert.deepEqual(extract('NATIVE_CLINICAL_SKILLS'), skills, 'native skill choices diverged from Vercel');
-const actions = [...actionsSource.matchAll(/\\{\\s*id:\\s*'([^']+)',\\s*label:\\s*'([^']+)',\\s*sub:\\s*'([^']+)',\\s*icon:\\s*'([^']+)',\\s*cat:\\s*'([^']+)',\\s*color:\\s*'([^']+)'\\s*\\}/g)]
+const actions = [...actionsSource.matchAll(/\{\s*id:\s*'([^']+)',\s*label:\s*'([^']+)',\s*sub:\s*'([^']+)',\s*icon:\s*'([^']+)',\s*cat:\s*'([^']+)',\s*color:\s*'([^']+)'\s*\}/g)]
   .map(m => ({ id: m[1], label: m[2], sub: m[3], icon: m[4], cat: m[5], color: m[6] }));
-const parsedNativeActions = nativeActions.match(/export const NATIVE_CLINICAL_ACTIONS:[^=]*= (\\[[\\s\\S]*?\\]);/);
+const parsedNativeActions = nativeActions.match(/export const NATIVE_CLINICAL_ACTIONS:[^=]*= (\[[\s\S]*?\]);/);
 assert.ok(parsedNativeActions, 'native clinical actions data missing');
 assert.deepEqual(JSON.parse(parsedNativeActions[1]), actions, 'native intervention choices diverged from web');
 assert.equal(actions.length, 27);
