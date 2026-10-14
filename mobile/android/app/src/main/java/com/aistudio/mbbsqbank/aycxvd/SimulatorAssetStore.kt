@@ -14,8 +14,9 @@ import java.util.concurrent.ConcurrentHashMap
  * No script, credentials, redirects or arbitrary URL can enter this download path.
  */
 internal class SimulatorAssetStore(private val context: Context) {
+  @Volatile var initialPatient: String? = null
+  @Volatile var referenceMode: Boolean = false
   private val manifest = JSONObject(context.assets.open("simulator/asset-manifest.json").bufferedReader().use { it.readText() })
-  private val locks = ConcurrentHashMap<String, Any>()
   private val directory = File(context.filesDir, "simulator-models-v1").apply { mkdirs() }
 
   private fun mime(path: String) = when (path.substringAfterLast('.')) {
@@ -25,6 +26,8 @@ internal class SimulatorAssetStore(private val context: Context) {
     "json" -> "application/json"
     "jpg", "jpeg" -> "image/jpeg"
     "png" -> "image/png"
+    "gif" -> "image/gif"
+    "webp" -> "image/webp"
     "svg" -> "image/svg+xml"
     "glb" -> "model/gltf-binary"
     else -> "application/octet-stream"
@@ -33,6 +36,12 @@ internal class SimulatorAssetStore(private val context: Context) {
   fun response(path: String): WebResourceResponse {
     if (!path.matches(Regex("/[A-Za-z0-9_./-]+")) || path.contains("..")) return failure(403, "Forbidden")
     val packagedPath = if (path == "/simulator" || path == "/") "/index.html" else path
+    if (packagedPath == "/index.html" && initialPatient != null) {
+      val safe = initialPatient!!.replace("<", "\\u003c").replace(">", "\\u003e")
+      val html = context.assets.open("simulator/index.html").bufferedReader().use { it.readText() }
+        .replace("<head>", "<head><script type=\"application/json\" id=\"orbit-native-patient\">$safe</script>")
+      return WebResourceResponse("text/html", "UTF-8", ByteArrayInputStream(html.toByteArray()))
+    }
     try {
       return WebResourceResponse(mime(packagedPath), "UTF-8", context.assets.open("simulator$packagedPath"))
     } catch (_: java.io.IOException) { /* A pinned large reference may be cached below. */ }
@@ -84,4 +93,9 @@ internal class SimulatorAssetStore(private val context: Context) {
   }
 
   fun failure(code: Int, message: String) = WebResourceResponse("text/plain", "UTF-8", code, message, emptyMap(), ByteArrayInputStream(message.toByteArray()))
+  companion object {
+    // WebView teardown can overlap an in-flight model request from the previous
+    // surface. Shared locks prevent two instances writing the same cache file.
+    private val locks = ConcurrentHashMap<String, Any>()
+  }
 }

@@ -34,8 +34,30 @@ zoom/rotation, dissection, restoration, teaching details and offline reload.
 Current status: **NOT CERTIFIED**. Do not label a build "all functionality
 identical" until installed-device evidence and the functional audit pass.
 
+The native patient-case surface now includes the source mobile header/HUD,
+department filters, searchable 43-case selector, compact Rx/error badges,
+anatomy layers, diagnostic entry points and bottom tabs. The latest six events
+remain visible after repeated treatments. A validated patient snapshot transfers
+the complete kernel (including internal targets and waveform phases) into the
+local anatomy/tool surface and back. Node tests confirm forward/backward
+continuity for every scenario after treatments; this still requires device QA.
+
+Debug builds have a read-only reference-browser intent for the same Vercel
+simulator on the same Android WebView, viewport, fonts and GPU. Production
+builds cannot enable it. Third-party requests, including live ad scripts and
+service-worker ad requests, are blocked. The separate QA helper APK reads the
+actual accessibility tree without waiting for continuously updating vitals to
+become idle; it never restarts or freezes the native app. It is not part of the
+user APK.
+
 Prior build: debug-530 built Kotlin and APK successfully. The initial reference
 capture stopped at ICU; the following audit commit makes emulator capture
 independent of a Vercel reference failure. The timer fixes avoid pre-advancing a
 patient during ICU initialization and pause duplicate case timers while ICU is
 open. Nested hardware Back returns to the same patient engine.
+
+Debug-531 also built successfully. Its genuine Android studio screenshots reveal
+spacing, inset and emoji-font differences. Its case did open: the failure image
+shows it, but `uiautomator dump` failed with "could not get idle state". This is
+why the next capture uses the live-tree helper rather than the idle-waiting CLI.
+Those captures are baseline evidence, not a successful parity audit.

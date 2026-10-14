@@ -5,7 +5,7 @@
  * web tutorial/audio controls are tracked separately as not yet ported.
  */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { AppState, BackHandler, Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { AppState, BackHandler, Pressable, ScrollView, StatusBar, StyleSheet, View, useWindowDimensions } from 'react-native';
 import Svg, { Line, Path } from 'react-native-svg';
 import { ArrowLeft, RotateCcw } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -121,7 +121,8 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
   const paths = useMemo(() => CHANNELS.map(c => channelPath(samples, c.key, c.channel)), [samples]);
   const waveWidth = Math.max(300, Math.min(width - 30, 720));
   return (
-    <View testID="native-icu-monitor" style={[styles.screen, { paddingTop: insets.top }]}>
+    <View testID="native-icu-monitor" style={[styles.screen, { paddingTop: insets.top }]} >
+      <StatusBar barStyle="light-content" />
       <View style={styles.header}>
         <Pressable testID="native-icu-back" accessibilityRole="button" accessibilityLabel="Back to clinical studio" style={styles.headButton} onPress={onBack}>
           <ArrowLeft color="#e2e8f0" size={21} />

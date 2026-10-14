@@ -22,9 +22,12 @@ pairs=[
  ('clubbing-viva','00-vercel-clubbing-viva-393x852.png','19-android-native-clubbing-viva.png')
 ]
 result={"status":"NOT_CERTIFIED","pairs":[],"notes":"Different platforms have system chrome and font rendering differences. Visual review of screenshots AND functional tests is required; 3D/POCUS/sound not fully native."}
+device_reference_file=folder/'vercel-mobile-device-audit.json'
+device_references=json.loads(device_reference_file.read_text()).get('captures',[]) if device_reference_file.exists() else []
 for label,web,native in pairs:
     w,n=folder/web,folder/native
     item={"label":label,"web":web,"native":native,"captured_both":w.exists() and n.exists()}
+    item['referencePlatform']='same Android device' if Path(web).stem in device_references else 'mobile browser viewport'
     if item["captured_both"]:
         with Image.open(w) as aa,Image.open(n) as bb:
             a=ImageOps.exif_transpose(aa).convert('RGB')
@@ -59,6 +62,10 @@ if anatomy_file.exists():
                 bounds=target.get('renderer',{}).get('nativeBounds')
                 if bounds:
                     b=b.crop(tuple(bounds))
+                    # On-device Vercel references include the identical Android
+                    # system bars, unlike optional Playwright reference exports.
+                    if a.size == native_image.size:
+                        a=a.crop(tuple(bounds))
                 item['dimensions']={'vercel':list(a.size),'nativeContent':list(b.size)}
                 a.thumbnail((393,852));b.thumbnail((393,852))
                 canvas=Image.new('RGB',(800,920),'#171821')

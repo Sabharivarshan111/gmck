@@ -19,12 +19,30 @@ window.addEventListener('orbit-native-active', event => {
 });
 // Device QA reads real renderer state, never a success based on a timeout.
 let lastGeometry = '';
+let pendingModels = 0;
+let modelError = false;
+const sourceFetch = window.fetch.bind(window);
+const audit = new URLSearchParams(location.search).get('native_audit') === '1';
+if (audit) window.fetch = async (input, init) => {
+  const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
+  if (!url.includes('/models/')) return sourceFetch(input, init);
+  pendingModels++;
+  try {
+    const response = await sourceFetch(input, init);
+    if (!response.ok) modelError = true;
+    response.clone().arrayBuffer().catch(() => { modelError = true; }).finally(() => { pendingModels--; });
+    return response;
+  } catch (error) { pendingModels--; modelError = true; throw error; }
+};
 setInterval(() => {
+  const patient = (window as unknown as { __orbitPatientKernel?: object }).__orbitPatientKernel;
+  if (patient) console.info('ORBIT_NATIVE_PATIENT:' + JSON.stringify({ ...patient, nativeTheme: localStorage.getItem('orbit-simulator-theme') }));
+  if (!audit) return;
   const renderer = document.querySelector('[data-testid="anatomy-renderer"]');
   const canvas = renderer?.querySelector('canvas');
   const systems = renderer?.getAttribute('data-visible-atlas-systems');
-  const geometry = JSON.stringify({ route: location.search, viewport: [window.innerWidth, window.innerHeight], systems, canvas: canvas ? [canvas.width, canvas.height] : null, loading: /LOADING BODYPARTS3D/.test(renderer?.textContent || ''), graphicsError: !!renderer?.querySelector('[role="alert"]'), resources: performance.getEntriesByType('resource').filter(entry => entry.name.includes('/models/')).length });
-  if (geometry !== lastGeometry && systems && canvas) {
+  const geometry = JSON.stringify({ route: location.search, viewport: [window.innerWidth, window.innerHeight], systems, canvas: canvas ? [canvas.width, canvas.height] : null, loading: /LOADING BODYPARTS3D/.test(renderer?.textContent || '') || pendingModels > 0, graphicsError: !!renderer?.querySelector('[role="alert"]') || modelError || /failed to load|could not be loaded/.test(renderer?.textContent || ''), resources: performance.getEntriesByType('resource').filter(entry => entry.name.includes('/models/')).length });
+  if (geometry !== lastGeometry && systems !== null && canvas) {
     console.info('ORBIT_NATIVE_GEOMETRY:' + geometry);
     lastGeometry = geometry;
   }

@@ -54,7 +54,6 @@ def main():
         screenshot("04-android-after-native-clinical-intervention")
         results.append("IV saline intervention produces clinical feedback")
 
-        scroll_to_tappable("Live ICU monitor")
         tap("Live ICU monitor")
         expect("SWEEP 25 mm/s")
         screenshot("05-android-native-icu-waveforms")
@@ -159,9 +158,10 @@ def main():
         print("FAIL in real Android UI automation:",repr(exc))
         try:
             shot("99-native-failure-screen")
-            xml=adb("shell","uiautomator","dump","/sdcard/orbit_ui.xml",check=False,capture=True)
-            adb("pull","/sdcard/orbit_ui.xml",str(OUT/"99-native-failure-ui.xml"),check=False)
-            (OUT/"99-native-failure.txt").write_text(repr(exc)+"\n"+(xml.stdout or ""))
+            from native_screenshot_driver import dump_ui
+            dump_ui()
+            (OUT/"99-native-failure-ui.xml").write_text(Path("/tmp/window.xml").read_text())
+            (OUT/"99-native-failure.txt").write_text(repr(exc))
         except Exception as capture_err:
             print("Failure evidence capture also failed:",capture_err)
         raise

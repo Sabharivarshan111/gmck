@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, AppState, BackHandler, StyleSheet, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, AppState, BackHandler, StatusBar, StyleSheet, View } from 'react-native';
 import LocalSimulator from '@/native/LocalSimulator';
 import { useIsFocused } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -13,6 +13,8 @@ import NativeEcgTwelveLead from '@/components/NativeEcgTwelveLead';
 import NativeClinicalCase from '@/components/NativeClinicalCase';
 import NativeRadiologyViewer from '@/components/NativeRadiologyViewer';
 import NativeClubbingTrainer from '@/components/NativeClubbingTrainer';
+import { PhysiologyKernel } from '@simulator/engine/PhysiologyKernel';
+import { restoreClinicalSnapshot } from '@/lib/clinicalSnapshot';
 import { nativeClinicalRoute } from '@/lib/nativeSimulatorRouting';
 
 /**
@@ -28,14 +30,18 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const focused = useIsFocused();
+  const caseEngine = useRef<PhysiologyKernel | null>(null);
+  const [initialPatient, setInitialPatient] = useState<string | undefined>();
   const [url, setUrl] = useState<string | null>(null);
   const [studioScenarioId, setStudioScenarioId] = useState('normal');
   const [studioTheme, setStudioTheme] = useState<'dark' | 'light'>('dark');
+  const [rendererTheme, setRendererTheme] = useState<'dark' | 'light'>('dark');
   const [nativeMode, setNativeMode] = useState<{kind: 'monitor' | 'case' | 'ecg' | 'radiology' | 'clubbing'; scenarioId: string} | null>(null);
   const [active, setActive] = useState(AppState.currentState === 'active');
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
   const [backRequest, setBackRequest] = useState(0);
+  const wrap = (child: React.ReactNode) => <>{focused && <StatusBar barStyle={nativeMode?.kind === 'monitor' || nativeMode?.kind === 'ecg' ? 'light-content' : studioTheme === 'light' ? 'dark-content' : 'light-content'} />}{child}</>;
   const returnToNativeStudio = () => {
     setUrl(null);
     setNativeMode(null);
@@ -64,10 +70,10 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
       if (!focused) return false;
-      if (nativeMode) {
-        setNativeMode(null);
-      } else if (url) {
+      if (url) {
         setBackRequest(value => value + 1);
+      } else if (nativeMode) {
+        setNativeMode(null);
       } else {
         onExit();
       }
@@ -76,22 +82,31 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
     return () => sub.remove();
   }, [focused, onExit, url, nativeMode]);
 
-  if (nativeMode?.kind === 'monitor') return <NativeIcuMonitor scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />;
-  if (nativeMode?.kind === 'ecg') return <NativeEcgTwelveLead scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />;
-  if (nativeMode?.kind === 'case') return <NativeClinicalCase scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />;
+  if (nativeMode?.kind === 'monitor') return wrap(<NativeIcuMonitor scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />);
+  if (nativeMode?.kind === 'ecg') return wrap(<NativeEcgTwelveLead scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />);
+  if (nativeMode?.kind === 'case' && !url) return wrap(<NativeClinicalCase scenarioId={nativeMode.scenarioId}
+    engine={caseEngine.current || undefined} theme={studioTheme} onToggleTheme={onToggleStudioTheme}
+    onScenarioChange={id => { setStudioScenarioId(id); setNativeMode({ kind: 'case', scenarioId: id }); }}
+    onOpen={query => {
+      setRendererTheme(studioTheme);
+      setInitialPatient(JSON.stringify(caseEngine.current));
+      setBackRequest(0); setFailed(false); setLoading(true);
+      setUrl('https://orbitmbbs.vercel.app/simulator?' + query);
+    }} onBack={returnToNativeStudio} />);
 
-  if (nativeMode?.kind === 'radiology') return <NativeRadiologyViewer onBack={returnToNativeStudio} />;
+  if (nativeMode?.kind === 'radiology') return wrap(<NativeRadiologyViewer theme={studioTheme} onBack={returnToNativeStudio} />);
 
-  if (nativeMode?.kind === 'clubbing') return <NativeClubbingTrainer onBack={returnToNativeStudio} />;
+  if (nativeMode?.kind === 'clubbing') return wrap(<NativeClubbingTrainer theme={studioTheme} onBack={returnToNativeStudio} />);
 
   if (!url) {
-    return <NativeClinicalStudio onExit={onExit} scenarioId={studioScenarioId} onScenarioChange={setStudioScenarioId} theme={studioTheme} onToggleTheme={onToggleStudioTheme} onOpen={destination => {
+    return wrap(<NativeClinicalStudio onExit={onExit} scenarioId={studioScenarioId} onScenarioChange={setStudioScenarioId} theme={studioTheme} onToggleTheme={onToggleStudioTheme} onOpen={destination => {
       if (destination.kind === 'monitor') {
         setNativeMode({ kind: 'monitor', scenarioId: studioScenarioId });
         return;
       }
       if (destination.kind === 'case') {
         setStudioScenarioId(destination.id);
+        caseEngine.current = new PhysiologyKernel(destination.id);
         setNativeMode({ kind: 'case', scenarioId: destination.id });
         return;
       }
@@ -108,25 +123,46 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
         return;
       }
       if (destination.kind === 'anatomy') setStudioScenarioId('normal');
+      setInitialPatient(undefined);
+      setRendererTheme(studioTheme);
       setFailed(false);
       setLoading(true);
       setBackRequest(0);
       setUrl(nativeClinicalRoute(destination));
-    }} />;
+    }} />);
   }
 
-  return (
-    <View style={[styles.screen, { backgroundColor: colors.background, paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+  return wrap(
+    <View style={[styles.screen, { backgroundColor: studioTheme==='light'?'#f7f7fa':'#000', paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       {!failed ? (
         <View style={styles.screen}>
           <LocalSimulator
             testID="orbit-local-anatomy-renderer"
-            route={url.replace('https://orbitmbbs.vercel.app', '') + '&nativeTheme=' + studioTheme}
+            route={url.replace('https://orbitmbbs.vercel.app', '') + '&nativeTheme=' + rendererTheme}
+            initialPatient={initialPatient}
             active={focused && active}
             backRequest={backRequest}
             style={[styles.screen, { backgroundColor: colors.background }]}
             onStatus={({ nativeEvent }) => {
-              if (nativeEvent.status === 'exit') returnToNativeStudio();
+              if (nativeEvent.status === 'vault') onExit();
+              if (nativeEvent.status === 'patient' && nativeEvent.patient) {
+                try {
+                  const theme = JSON.parse(nativeEvent.patient).nativeTheme;
+                  if ((theme === 'light' || theme === 'dark') && theme !== studioTheme) {
+                    setStudioTheme(theme); AsyncStorage.setItem('orbit-simulator-theme', theme).catch(() => undefined);
+                  }
+                } catch { /* Incomplete bridge message. */ }
+              }
+              if (nativeEvent.status === 'exit') {
+                setUrl(null); setFailed(false);
+                if (nativeMode?.kind !== 'case') setNativeMode(null);
+              }
+              if (nativeEvent.status === 'patient' && nativeEvent.patient && nativeMode?.kind === 'case' && caseEngine.current) {
+                if (restoreClinicalSnapshot(caseEngine.current, nativeEvent.patient)) {
+                  const id = caseEngine.current.currentScenario.id;
+                  if (nativeMode.scenarioId !== id) { setStudioScenarioId(id); setNativeMode({ kind: 'case', scenarioId: id }); }
+                }
+              }
               if (nativeEvent.status === 'loading') setLoading(true);
               if (nativeEvent.status === 'ready') setLoading(false);
               if (nativeEvent.status === 'error') { setFailed(true); setLoading(false); }

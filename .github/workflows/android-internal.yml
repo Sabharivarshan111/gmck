@@ -107,6 +107,7 @@ jobs:
         run: |
           npm ci --legacy-peer-deps --ignore-scripts
           node mobile/scripts/build-local-simulator.mjs
+          node mobile/scripts/clinical-snapshot-check.mjs
 
       - name: Typecheck
         working-directory: mobile

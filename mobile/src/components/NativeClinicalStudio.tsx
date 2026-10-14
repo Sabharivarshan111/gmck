@@ -81,7 +81,7 @@ export default function NativeClinicalStudio({ onExit, onOpen, scenarioId, onSce
 
   const buttonStyle = (radius = 20) => ({ backgroundColor: c.card, borderColor: c.border, borderWidth: 1, borderRadius: radius });
   return (
-    <View testID="native-clinical-studio" style={{ flex: 1, backgroundColor: c.background, paddingTop: insets.top }}>
+    <View testID="native-clinical-studio" style={{ flex: 1, backgroundColor: c.background, paddingTop: insets.top, paddingBottom: insets.bottom }}>
       <View style={[styles.header, { backgroundColor: c.background, borderBottomColor: c.border }]}>
         <Pressable testID="studio-native-back" accessibilityRole="button" accessibilityLabel="Back to Vault" onPress={onExit} style={[styles.iconButton, buttonStyle(14)]}>
           <ArrowLeft color={c.ink} size={20} />
@@ -97,7 +97,7 @@ export default function NativeClinicalStudio({ onExit, onOpen, scenarioId, onSce
       </View>
 
       <KeyboardSafe>
-      <ScrollView keyboardShouldPersistTaps="handled" style={{ flex: 1 }} contentContainerStyle={[styles.main, { paddingBottom: 34 + insets.bottom }]} showsVerticalScrollIndicator={false}>
+      <ScrollView keyboardShouldPersistTaps="handled" style={{ flex: 1 }} contentContainerStyle={[styles.main, { paddingBottom: 28 }]} showsVerticalScrollIndicator={false}>
         <Text style={[styles.eyebrow, { color: c.accent }]}>EXPLORE. LISTEN. PRACTISE.</Text>
         <Text style={[styles.heading, { color: c.ink, fontSize: headingSize, lineHeight: headingSize * 1.12 }]}>What would you{'\n'}like to learn?</Text>
         <Text style={[styles.intro, { color: c.muted }]}>Start with normal findings, explore anatomy, or work through a patient case.</Text>
@@ -108,7 +108,7 @@ export default function NativeClinicalStudio({ onExit, onOpen, scenarioId, onSce
             <Text style={[styles.anatomyTitle, { color: c.ink }]}>Explore 3D anatomy</Text>
             <Text style={[styles.hint, { color: c.muted, marginTop: 5 }]}>Bones, muscles, organs & nerves · no case needed</Text>
           </View>
-          <ChevronRight color={c.ink} size={22} />
+          <ChevronRight color={c.accent} size={22} />
         </Pressable>
 
         <View style={[styles.segment, buttonStyle(16)]}>
@@ -127,7 +127,7 @@ export default function NativeClinicalStudio({ onExit, onOpen, scenarioId, onSce
               <Text style={{ color: c.accent, fontWeight: '700', fontSize: 13 }}>{normal ? 'Normal findings' : 'Case comparison'}</Text>
             </View>
             <Text style={[styles.baselineSubtitle, { color: c.muted }]}>{normal ? 'Healthy adult at rest' : activeScenario.title}</Text>
-            <Text style={{ color: c.muted, fontSize: 11, alignSelf: 'flex-end', marginTop: 8 }}>Change findings ↓</Text>
+            <Text style={{ color: c.accent, fontSize: 11, alignSelf: 'flex-end', marginTop: 8 }}>Change findings ↓</Text>
           </Pressable>
           {(showFindings || !normal) && <>
             <Text style={{ color: c.muted, fontSize: 12, marginTop: 12 }}>Findings to show</Text>
@@ -150,7 +150,7 @@ export default function NativeClinicalStudio({ onExit, onOpen, scenarioId, onSce
             {skills.map(item => (
               <Pressable key={item.id} testID={`studio-native-skill-${item.id}`} accessibilityRole="button" onPress={() => onOpen({ kind: 'tool', id: item.id, scenario: scenarioId })}
                 style={[styles.skillCard, buttonStyle(), { width: skillWidth }]}>
-                <Text style={styles.emoji} accessible={false}>{item.emoji}</Text>
+                <Text style={[styles.emoji, { color: c.ink, fontFamily: 'sans-serif' }]} accessible={false}>{item.emoji}</Text>
                 <Text style={[styles.skillTitle, { color: c.ink }]}>{item.title}</Text>
                 <Text style={[styles.hint, { color: c.muted, flexGrow: 1 }]}>{item.hint}</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
@@ -162,7 +162,7 @@ export default function NativeClinicalStudio({ onExit, onOpen, scenarioId, onSce
           </View>
           {skills.length === 0 && <Text style={{ color: c.muted }}>No matching skill. Try “ECG” or “lungs”.</Text>}
           <Pressable testID="studio-native-monitor" accessibilityRole="button" onPress={() => onOpen({ kind: 'monitor' })} style={[styles.monitor, buttonStyle()]}>
-            <Text style={styles.emoji} accessible={false}>📈</Text>
+            <Text style={[styles.emoji, { color: c.ink, fontFamily: 'sans-serif' }]} accessible={false}>📈</Text>
             <View style={{ flex: 1 }}>
               <Text style={{ color: c.ink, fontSize: 15, fontWeight: '700' }}>Open live monitor</Text>
               <Text style={[styles.hint, { color: c.muted, marginTop: 4 }]}>See ECG, oxygen saturation & respiratory waveforms</Text>
@@ -205,10 +205,10 @@ export default function NativeClinicalStudio({ onExit, onOpen, scenarioId, onSce
 const styles = StyleSheet.create({
   header: { paddingHorizontal: 20, paddingVertical: 12, flexDirection: 'row', alignItems: 'center', gap: 14, borderBottomWidth: 1 },
   iconButton: { minWidth: 44, minHeight: 44, justifyContent: 'center', alignItems: 'center' },
-  logo: { fontSize: 13, fontWeight: '800', letterSpacing: 2 },
-  logoSub: { fontSize: 10, fontWeight: '800', letterSpacing: 1.3 },
+  logo: { fontSize: 13, lineHeight: 19.5, fontWeight: '800', letterSpacing: 2 },
+  logoSub: { fontSize: 10, lineHeight: 15, fontWeight: '800', letterSpacing: 1.3 },
   main: { width: '100%', maxWidth: 800, alignSelf: 'center', paddingHorizontal: 18, paddingTop: 28 },
-  eyebrow: { fontSize: 10, fontWeight: '800', letterSpacing: 1.8 },
+  eyebrow: { fontSize: 10, lineHeight: 15, fontWeight: '800', letterSpacing: 1.8 },
   heading: { fontSize: 38, lineHeight: 43, fontWeight: '800', letterSpacing: -1.3, marginTop: 10, marginBottom: 14 },
   intro: { fontSize: 15, lineHeight: 24, marginBottom: 24, maxWidth: 440 },
   anatomy: { paddingHorizontal: 18, paddingVertical: 22, flexDirection: 'row', alignItems: 'center', gap: 14 },
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   segment: { padding: 4, flexDirection: 'row', gap: 4, marginTop: 24, marginBottom: 16 },
   segmentItem: { minHeight: 48, flex: 1, justifyContent: 'center', borderRadius: 12 },
   baseline: { padding: 16 },
-  baselineSubtitle: { fontSize: 12, marginTop: 8 },
+  baselineSubtitle: { fontSize: 12, lineHeight: 18, marginTop: 8 },
   findingsSelect: { borderWidth: 1, marginTop: 5, minHeight: 48, borderRadius: 12, paddingHorizontal: 8, flexDirection: 'row', alignItems: 'center' },
   search: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 18, marginBottom: 14, paddingHorizontal: 14 },
   input: { minHeight: 48, flex: 1, fontSize: 14, paddingVertical: 0 },

@@ -43,7 +43,7 @@ assert.deepEqual(JSON.parse(parsedNativeActions[1]), actions, 'native interventi
 assert.equal(actions.length, 27);
 assert.ok(monitor.includes("from '@simulator/engine/PhysiologyKernel'"), 'monitor must share the Vercel kernel');
 assert.ok(caseScreen.includes("from '@simulator/engine/PhysiologyKernel'"), 'case must share the Vercel kernel');
-assert.ok(caseScreen.includes('kernel.current.applyAction(actionId)'), 'native case must run true interventions');
+assert.ok(caseScreen.includes('patient.applyAction(actionId)'), 'native case must run true interventions');
 assert.ok(monitor.includes('kernel.current.sampleWaveforms()'), 'native monitor must render real physiology traces');
 assert.ok(entry.includes('<NativeIcuMonitor'), 'native monitor not routed');
 assert.ok(entry.includes('<NativeClinicalCase'), 'native case not routed');

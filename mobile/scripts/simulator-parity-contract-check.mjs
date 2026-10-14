@@ -31,7 +31,7 @@ for (const [symbol, source] of [
   ['nativeClinicalRoute(destination)', entry],
   ['<Svg', monitor],
   ['<Svg', ecg],
-  ['kernel.current.applyAction(actionId)', cases],
+  ['patient.applyAction(actionId)', cases],
   ['studio-native-anatomy', studio],
 ]) assert.ok(source.includes(symbol), 'Android native migration contract missing: ' + symbol);
 
