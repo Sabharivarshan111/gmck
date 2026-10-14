@@ -186,7 +186,7 @@ export default function NativeClinicalStudio({ onExit, onOpen, scenarioId, onSce
       </KeyboardSafe>
 
       <Modal visible={pickerVisible} onRequestClose={() => setPickerVisible(false)} transparent animationType="fade">
-        <View style={styles.modalBackdrop}>
+        <View style={[styles.modalBackdrop, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
           <View style={[styles.modalPanel, { backgroundColor: c.card, borderColor: c.border }]}>
             <Text style={{ color: c.ink, fontWeight: '700', fontSize: 17, marginBottom: 12 }}>Findings to show</Text>
             <ScrollView keyboardShouldPersistTaps="handled">
