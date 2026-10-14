@@ -8,7 +8,7 @@ import com.facebook.react.uimanager.annotations.ReactProp
 import kotlin.math.*
 /** Native Canvas teaching appearance model; not acquired or diagnostic ultrasound. */
 class PocusView(context:ThemedReactContext):View(context) {
- var mode="cardiac_plax";var gain=1f;var depth=16f;var heartRate=75f;var frozen=true;var fluid=0f;var ischemia=0f;var air=0f;var mMode=false
+ var mode="cardiac_plax";var gain=1f;var depth=16f;var heartRate=75f;var frozen=true;var fluid=0f;var ischemia=0f;var air=0f;var mMode=false;var colorDoppler=false
  private val paint=Paint(Paint.ANTI_ALIAS_FLAG);private var hold=0L;private val started=SystemClock.elapsedRealtime()
  private val texture=Bitmap.createBitmap(256,256,Bitmap.Config.ARGB_8888)
  private val redraw=object:Runnable{override fun run(){if(isShown&&!frozen){invalidate();postDelayed(this,100)}}}
@@ -38,6 +38,7 @@ class PocusView(context:ThemedReactContext):View(context) {
    paint.color=Color.LTGRAY;paint.strokeWidth=3f;canvas.drawLine(218f,119f,226f+pulse*90,162f,paint);canvas.drawLine(241f,129f,230f-pulse*90,163f,paint)
    ellipse(canvas,RectF(238f,173f,295f,225f),grey);ellipse(canvas,RectF(244f,179f,289f,219f),Color.BLACK)
    if(fluid>.02f)ellipse(canvas,RectF(70f,83f,289f,257f),Color.BLACK,4f+fluid*16)
+   if(colorDoppler){paint.alpha=160;val forward=sin(seconds*2*PI.toFloat()*heartRate/60)>0;ellipse(canvas,RectF(210f,129f,235f,176f),if(forward)Color.rgb(205,67,66)else Color.rgb(68,126,219));paint.alpha=255}
   }else if(mode=="fast_morison"){
    ellipse(canvas,RectF(55f,55f,288f,202f),grey);ellipse(canvas,RectF(180f,132f,293f,242f),0xff505050.toInt());ellipse(canvas,RectF(195f,147f,278f,221f),0xffb0b0b0.toInt())
    if(fluid>.02f){paint.color=Color.BLACK;val stripe=Path();stripe.moveTo(110f,177f);stripe.quadTo(210f,190f,280f,206f);stripe.quadTo(186f,205f+fluid*35,110f,177f);canvas.drawPath(stripe,paint)}
@@ -48,7 +49,18 @@ class PocusView(context:ThemedReactContext):View(context) {
    if(fluid>.15f){paint.color=Color.WHITE;paint.strokeWidth=2f;for(i in 0..4)canvas.drawLine(70f+i*45,80f,56f+i*54,290f,paint)}
   }
   canvas.restore();canvas.restore()
-  if(mMode){paint.color=0xff05070b.toInt();canvas.drawRect(228f,145f,355f,285f,paint);paint.color=Color.GRAY;paint.strokeWidth=1f;for(i in 0..24){val y=150f+i*5;canvas.drawLine(230f,y,352f,y,paint)};paint.color=Color.WHITE;val p=Path();for(x in 230..352){val y=220+sin(x*.11+seconds)*14;if(x==230)p.moveTo(x.toFloat(),y.toFloat())else p.lineTo(x.toFloat(),y.toFloat())};paint.style=Paint.Style.STROKE;paint.strokeWidth=2f;canvas.drawPath(p,paint);paint.style=Paint.Style.FILL}
+  if(mMode){
+   paint.color=0xff05070b.toInt();canvas.drawRect(228f,145f,355f,285f,paint);paint.strokeWidth=1f
+   if(mode=="lung"){
+    // Qualitative seashore/barcode appearance, not acquired M-mode data.
+    paint.color=Color.GRAY
+    for(i in 0..24){val y=150f+i*5;if(y<190f||air>.5f)canvas.drawLine(230f,y,352f,y,paint)}
+    if(air<=.5f)for(y in 192..282 step 2)for(x in 230..352 step 2){val n=((x*31+y*17+(seconds*10).toInt())%101+45);paint.color=Color.rgb(n,n,n);canvas.drawPoint(x.toFloat(),y.toFloat(),paint)}
+   }else{
+    paint.color=Color.GRAY;for(i in 0..24){val y=150f+i*5;canvas.drawLine(230f,y,352f,y,paint)}
+    paint.color=Color.WHITE;val p=Path();for(x in 230..352){val y=220+sin(x*.11+seconds)*14;if(x==230)p.moveTo(x.toFloat(),y.toFloat())else p.lineTo(x.toFloat(),y.toFloat())};paint.style=Paint.Style.STROKE;paint.strokeWidth=2f;canvas.drawPath(p,paint);paint.style=Paint.Style.FILL
+   }
+  }
   paint.shader=null;paint.alpha=255;paint.color=Color.LTGRAY;paint.textSize=10f;canvas.drawText("SIMULATED · "+mode.replace('_',' '),12f,16f,paint);canvas.drawText("GAIN "+(gain*100).toInt()+"% · DEPTH "+depth.toInt()+" cm",12f,309f,paint);canvas.drawText(if(frozen)"FROZEN" else "LIVE",290f,16f,paint);canvas.restore()
  }
  fun release(){removeCallbacks(redraw);texture.recycle()}
@@ -63,6 +75,7 @@ class PocusViewManager:SimpleViewManager<PocusView>(){
  @ReactProp(name="fluid",defaultFloat=0f) fun fluid(view:PocusView,value:Float){view.fluid=value.coerceIn(0f,1f);view.invalidate()}
  @ReactProp(name="ischemia",defaultFloat=0f) fun ischemia(view:PocusView,value:Float){view.ischemia=value.coerceIn(0f,1f);view.invalidate()}
  @ReactProp(name="air",defaultFloat=0f) fun air(view:PocusView,value:Float){view.air=value.coerceIn(0f,1f);view.invalidate()}
+ @ReactProp(name="colorDoppler",defaultBoolean=false) fun colorDoppler(view:PocusView,value:Boolean){view.colorDoppler=value;view.invalidate()}
  @ReactProp(name="mMode",defaultBoolean=false) fun mMode(view:PocusView,value:Boolean){view.mMode=value;view.invalidate()}
  @ReactProp(name="frozen",defaultBoolean=true) fun frozen(view:PocusView,value:Boolean){view.setFreeze(value)}
  override fun onDropViewInstance(view:PocusView){view.release();super.onDropViewInstance(view)}

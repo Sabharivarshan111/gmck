@@ -39,6 +39,14 @@ const mriBytes=zlib.gunzipSync(fs.readFileSync(root+'/radiology/brain-t1.pack'))
 const anatomy=fs.readFileSync('mobile/src/screens/SimulatorScreen.android.tsx','utf8');
 assert.ok(!/react-native-webview|https:\/\/orbitmbbs/.test(anatomy),'Native screen cannot navigate to hosted simulator');
 assert.ok(fs.existsSync('mobile/android/app/src/main/assets/pg/manifest.json'),'Offline PG manifest');
+const references=JSON.parse(fs.readFileSync(root+'/pocus/native-references.json'));
+assert.equal(references.references.length,2,'Both acquired cardiac ultrasound loops');
+for(const reference of references.references){
+ const source=fs.readFileSync(root+'/pocus/'+reference.source),movie=fs.readFileSync(root+'/pocus/'+reference.movie);
+ assert.equal(createHash('sha256').update(source).digest('hex'),reference.sourceSha256);
+ assert.equal(createHash('sha256').update(movie).digest('hex'),reference.movieSha256);
+ assert.ok(fs.existsSync(root+'/pocus/'+reference.poster));
+}
 const audio=JSON.parse(fs.readFileSync(root+'/auscultation/manifest.json'));
 assert.equal(audio.sourceSha256,createHash('sha256').update(fs.readFileSync(audio.source)).digest('hex'),'Sound clips must match shared DSP source');
 assert.equal(audio.clips.length,212,'All heart/lung presets, filter modes and reference rates');

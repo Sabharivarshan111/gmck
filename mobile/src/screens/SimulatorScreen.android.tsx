@@ -1,7 +1,9 @@
 import React,{useEffect,useRef,useState} from 'react';
 import {AppState,BackHandler,Modal,ScrollView,StyleSheet,View} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useIsFocused} from '@react-navigation/native';
+import {useIsFocused,useNavigation} from '@react-navigation/native';
+import type {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
+import type {RootTabParamList} from '@/navigation/types';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Text} from '@/components/Text';
 import {useTheme} from '@/theme';
@@ -31,7 +33,8 @@ const storageKey='orbit-native-simulator-session-v1';
 const actionIds=new Set(SIMULATOR_ACTIONS.map(a=>a.id));
 /** Android views and packaged assets. No web navigation in the simulator. */
 export default function SimulatorScreen({onExit}:{onExit:()=>void}){
- const {colors}=useTheme(),insets=useSafeAreaInsets(),focused=useIsFocused();
+ const {colors}=useTheme(),insets=useSafeAreaInsets(),focused=useIsFocused(),navigation=useNavigation<BottomTabNavigationProp<RootTabParamList>>();
+ useEffect(()=>{if(!focused)return;navigation.setOptions({tabBarStyle:{display:'none'}});return()=>navigation.setOptions({tabBarStyle:undefined});},[focused,navigation]);
  const [initialKernel]=useState(()=>new PhysiologyKernel('normal'));
  const kernel=useRef(initialKernel),elapsed=useRef(0),actions=useRef<SavedSession['actions']>([]),samples=useRef<TelemetryWaveformSample[]>([]);
  const [opened3D,setOpened3D]=useState(false);

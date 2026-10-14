@@ -86,7 +86,7 @@ jobs:
           with zipfile.ZipFile(apk) as z:
            names=set(z.namelist())
            print('Packaged model files: '+str(sorted(n for n in names if n.startswith('assets/simulator/models/'))[:8]))
-           for item in ['assets/simulator/models/atlas.mesh.pack','assets/simulator/radiology/brain-t1.pack','assets/pg/manifest.json','assets/index.android.bundle','assets/simulator/auscultation/manifest.json']:
+           for item in ['assets/simulator/models/atlas.mesh.pack','assets/simulator/radiology/brain-t1.pack','assets/pg/manifest.json','assets/index.android.bundle','assets/simulator/auscultation/manifest.json','assets/simulator/pocus/plax.mp4','assets/simulator/pocus/subcostal.mp4']:
             assert item in names,item
            sound=json.loads(z.read('assets/simulator/auscultation/manifest.json'))
            assert len(sound['clips'])==212
@@ -113,7 +113,8 @@ jobs:
             for this separate test package; use the existing guest entry.
 
             This is an unfinished test build, not a production AAB or Play update.
-            Full POCUS/reference parity remains in progress. Android graphics,
+            Includes archived ultrasound loops, native virtual calipers and teaching
+            colour/M-mode controls. Android graphics,
             touch and actual audio playback still need device review.
             Full offline detail was chosen over the earlier 10 MB cap.
 

@@ -32,7 +32,7 @@ def shot(name):
 adb('shell','svc','wifi','disable');adb('shell','svc','data','disable')
 adb('shell','settings','put','global','airplane_mode_on','1')
 adb('shell','am','force-stop',package)
-adb('shell','am','start','-n',package+'/.MainActivity')
+adb('shell','am','start','-n',package+'/com.aistudio.mbbsqbank.aycxvd.MainActivity')
 time.sleep(15)
 try:
  visible=labels()
@@ -47,6 +47,9 @@ try:
  assert any('Playing local synthetic reference.' in l for l in labels()),labels()
  shot('audio-native');tap('Stop listening',scroll=True);tap('Close diagnostic view')
  tap('X-ray & MRI · annotated references',scroll=True);tap('Brain MRI',scroll=True);time.sleep(3);shot('mri-native');tap('Close diagnostic view')
+ tap('Ultrasound teaching view',scroll=True);tap('Play archived ultrasound loop',scroll=True);time.sleep(3)
+ assert not any('local reference could not load' in l for l in labels()),labels()
+ shot('pocus-reference-native');tap('Pause archived ultrasound loop',scroll=True);tap('Close diagnostic view')
  tap('3D');time.sleep(10);shot('body-native');tap('Open Heart & Great Vessels model',timeout=20);time.sleep(3);shot('heart-native')
  # Native app must remain foreground without a crash after all tools.
  activity=adb('shell','dumpsys','activity','activities').decode()

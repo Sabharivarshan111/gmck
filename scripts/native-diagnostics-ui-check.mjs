@@ -55,8 +55,20 @@ try{
   await page.getByRole('button',{name:'Clubbing',exact:true}).click();
   await page.getByRole('button',{name:'Clubbing findings',exact:true}).click();
   await page.locator('svg').last().screenshot({path:`${out}/clubbing-${width}.png`});
+  await page.getByRole('button',{name:'Open ultrasound',exact:true}).click();
+  await page.getByText('Parasternal long-axis reference',{exact:true}).waitFor();
+  assert.equal(await page.getByTestId('pocus-prop-harness').getAttribute('data-gain'),'1','Native renderer receives a multiplier, not a percentage');
+  await page.getByRole('button',{name:'Ultrasound calipers',exact:true}).click();
+  await page.getByRole('button',{name:'Place centre calipers',exact:true}).click();
+  await page.getByText('Simulated distance: 2.2 cm',{exact:true}).waitFor();
+  await page.getByRole('button',{name:'Colour Doppler',exact:true}).click();
+  await page.getByRole('button',{name:'lung',exact:true}).click();
+  await page.getByText('Lung B-mode and M-mode reference',{exact:true}).waitFor();
+  await page.getByRole('button',{name:'cardiac plax',exact:true}).click();
+  await page.getByText('Parasternal long-axis reference',{exact:true}).scrollIntoViewIfNeeded();
+  await page.screenshot({path:`${out}/pocus-reference-${width}.png`});
   assert.equal(errors.length,0,errors.join('\n'));await page.close();
  }
- console.log('Native ECG capture/groups/segments/enlarge eye light/RAPD/CN III/V1 reflex, offline audio clip playback and bedside controls passed at 360/390/430px. RN-web layout only; Android rendering not verified.');
- for(const name of ['ecg-390','eye-390','auscultation-390','edema-390','clubbing-390']){console.log('UI_IMAGE_BEGIN '+name);console.log(fs.readFileSync(`${out}/${name}.png`).toString('base64'));console.log('UI_IMAGE_END');}
+ console.log('Native ECG capture/groups/segments/enlarge eye light/RAPD/CN III/V1 reflex, offline audio clip playback, bedside panels and POCUS controls/reference stills passed at 360/390/430px. RN-web layout only; Android rendering not verified.');
+ for(const name of ['ecg-390','eye-390','auscultation-390','edema-390','clubbing-390','pocus-reference-390']){console.log('UI_IMAGE_BEGIN '+name);console.log(fs.readFileSync(`${out}/${name}.png`).toString('base64'));console.log('UI_IMAGE_END');}
 }catch(error){console.error(log.slice(-3000));throw error;}finally{await browser?.close();server.kill();}

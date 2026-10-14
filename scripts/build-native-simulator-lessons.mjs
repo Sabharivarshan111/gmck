@@ -9,6 +9,7 @@ const datasets=[
  ['src/simulator/instruments/EcgIcuTutorialModal.tsx',{intervals:'ECG_INTERVALS',patterns:'ECG_PATTERNS',leads:'ECG_LEADS',chest:'ECG_CHEST'}],
  ['src/simulator/controls/InterventionPanel.tsx',{interventions:'SIMULATOR_ACTIONS'}],
  ['src/simulator/instruments/Ecg12LeadCanvas.tsx',{SEGMENTS:'ECG_SEGMENTS'}],
+ ['src/simulator/instruments/pocus/PocusReference.tsx',{references:'POCUS_REFERENCES'}],
  ['src/simulator/instruments/auscultationSites.ts',{AUSCULTATION_SITES:'AUSCULTATION_SITES',SOUND_LIBRARY:'SOUND_LIBRARY'}],
  ['src/simulator/instruments/auscultationRouting.ts',{HEART_SOUND_DESCRIPTIONS:'HEART_SOUND_DESCRIPTIONS',LUNG_SOUND_DESCRIPTIONS:'LUNG_SOUND_DESCRIPTIONS'}],
 ];
