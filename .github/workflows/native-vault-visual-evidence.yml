@@ -2,7 +2,7 @@ name: WIP Native vs Vercel Studio Visual Evidence
 
 on:
   push:
-    branches: [codex/native-vault-full-port-20261014]
+    branches: [main, codex/native-vault-full-port-20261014]
     paths:
       - '.github/workflows/android-debug.yml'
       - '.github/workflows/native-vault-visual-evidence.yml'
