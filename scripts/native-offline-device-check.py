@@ -72,15 +72,21 @@ try:
  tap('Auscultation · heart & lung sounds',scroll=True);tap('Play reference sound',scroll=True);time.sleep(3)
  assert any('Playing local synthetic reference.' in l for l in labels()),labels()
  shot('audio-native');tap('Stop listening',scroll=True);tap('Close diagnostic view')
- tap('X-ray & MRI · annotated references',scroll=True);tap('Brain MRI',scroll=True);time.sleep(3);shot('mri-native');tap('Close diagnostic view')
+ tap('X-ray & MRI · annotated references',scroll=True);tap('Brain MRI',scroll=True);time.sleep(3);shot('mri-native');swipe();time.sleep(.5);shot('mri-pan-native');tap('Close diagnostic view')
  tap('Ultrasound teaching view',scroll=True);tap('Play ultrasound',scroll=True);time.sleep(2);tap('Freeze ultrasound',scroll=True);shot('pocus-native');tap('Play archived ultrasound loop',scroll=True);time.sleep(3)
  assert not any('local reference could not load' in l for l in labels()),labels()
  shot('pocus-reference-native');tap('Pause archived ultrasound loop',scroll=True);tap('Close diagnostic view')
  tap('3D');time.sleep(10);shot('body-native');tap('Open Heart & Great Vessels model',timeout=20);time.sleep(3);shot('heart-native')
+ tap('Details');tap('Supply');tap('Inspect Coronary artery',scroll=True);time.sleep(3);shot('coronary-native')
+ tap('Restore');tap('Abdomen');time.sleep(3);tap('Open Renal System (Right & Left Kidneys) model',timeout=20);time.sleep(3);shot('kidney-native')
+ tap('Details');tap('Supply');tap('Inspect Renal artery',scroll=True);time.sleep(3);shot('renal-artery-native')
+ tap('Details');tap('Supply');tap('Inspect Renal vein',scroll=True);time.sleep(3);shot('renal-vein-native')
+ tap('Restore');time.sleep(2);tap('Open Liver & Biliary Apparatus model',timeout=20);time.sleep(3)
+ tap('Details');tap('Supply');tap('Inspect Celiac Trunk & Common Hepatic Artery',scroll=True);time.sleep(3);shot('celiac-native')
  # Native app must remain foreground without a crash after all tools.
  activity=adb('shell','dumpsys','activity','activities').decode()
  assert package in activity,activity[-2000:]
- for name in ['heart-native','mri-native','pupil-native']:
+ for name in ['heart-native','mri-native','pupil-native','renal-artery-native','renal-vein-native','celiac-native']:
   print('UI_IMAGE_BEGIN '+name);print(base64.b64encode((out/(name+'.png')).read_bytes()).decode());print('UI_IMAGE_END')
  print('Actual Android offline simulator: ECG, pupils, local media decoding/playback, MRI and heart focus exercised. Emulator pixels saved; physical hardware and clinical sound fidelity unverified.')
 finally:
