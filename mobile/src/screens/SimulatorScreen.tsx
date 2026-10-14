@@ -4,6 +4,7 @@ import { WebView } from 'react-native-webview';
 import { useIsFocused } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '@/components/Text';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Touchable } from '@/components/Touchable';
 import { useTheme } from '@/theme';
 import NativeClinicalStudio from '@/components/NativeClinicalStudio';
@@ -28,6 +29,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   const web = useRef<WebView<unknown>>(null);
   const [url, setUrl] = useState<string | null>(null);
   const [studioScenarioId, setStudioScenarioId] = useState('normal');
+  const [studioTheme, setStudioTheme] = useState<'dark' | 'light'>('dark');
   const [nativeMode, setNativeMode] = useState<{kind: 'monitor' | 'case' | 'ecg'; scenarioId: string} | null>(null);
   const [active, setActive] = useState(AppState.currentState === 'active');
   const [loading, setLoading] = useState(true);
@@ -38,6 +40,20 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
     setNativeMode(null);
     setFailed(false);
     setCanGoBack(false);
+  };
+
+  useEffect(() => {
+    let mounted = true;
+    AsyncStorage.getItem('orbit-simulator-theme').then(value => {
+      if (mounted && (value === 'dark' || value === 'light')) setStudioTheme(value);
+    }).catch(() => undefined);
+    return () => { mounted = false; };
+  }, []);
+
+  const onToggleStudioTheme = () => {
+    const next = studioTheme === 'dark' ? 'light' : 'dark';
+    setStudioTheme(next);
+    AsyncStorage.setItem('orbit-simulator-theme', next).catch(() => undefined);
   };
 
   useEffect(() => {
@@ -66,7 +82,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   if (nativeMode?.kind === 'case') return <NativeClinicalCase scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />;
 
   if (!url) {
-    return <NativeClinicalStudio onExit={onExit} scenarioId={studioScenarioId} onScenarioChange={setStudioScenarioId} onOpen={destination => {
+    return <NativeClinicalStudio onExit={onExit} scenarioId={studioScenarioId} onScenarioChange={setStudioScenarioId} theme={studioTheme} onToggleTheme={onToggleStudioTheme} onOpen={destination => {
       if (destination.kind === 'monitor') {
         setNativeMode({ kind: 'monitor', scenarioId: studioScenarioId });
         return;
