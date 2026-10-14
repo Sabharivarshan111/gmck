@@ -7,6 +7,12 @@ on:
       - 'mobile/src/simulator/ImageCallouts.tsx'
       - 'mobile/src/simulator/radiologyAnnotations.ts'
       - 'mobile/preview/radiology*'
+      - 'mobile/preview/ecg*'
+      - 'mobile/src/simulator/NativeEcgSheet.tsx'
+      - 'mobile/src/simulator/NativeEyeExam.tsx'
+      - 'mobile/src/simulator/vectorContext.ts'
+      - 'scripts/build-native-simulator-lessons.mjs'
+      - 'scripts/native-diagnostics-ui-check.mjs'
       - 'mobile/preview/shims/orbit-mri.tsx'
       - 'scripts/native-radiology-ui-check.mjs'
       - '.github/workflows/native-radiology-ui.yml'
@@ -29,9 +35,13 @@ jobs:
       - working-directory: mobile
         run: npm ci --legacy-peer-deps
       - run: npx playwright install --with-deps chromium
+      - run: node scripts/build-native-simulator-lessons.mjs
       - run: node scripts/native-radiology-ui-check.mjs
+      - run: node scripts/native-diagnostics-ui-check.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: native-imaging-component-proof
-          path: native-radiology-proof
+          path: |
+            native-radiology-proof
+            native-diagnostics-proof

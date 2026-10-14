@@ -8,6 +8,7 @@ const datasets=[
  ['src/simulator/instruments/EcgBeatExplorer.tsx',{beatPhases:'ECG_PHASES',normalBeatPath:'ECG_BEAT_PATH'}],
  ['src/simulator/instruments/EcgIcuTutorialModal.tsx',{intervals:'ECG_INTERVALS',patterns:'ECG_PATTERNS',leads:'ECG_LEADS',chest:'ECG_CHEST'}],
  ['src/simulator/controls/InterventionPanel.tsx',{interventions:'SIMULATOR_ACTIONS'}],
+ ['src/simulator/instruments/Ecg12LeadCanvas.tsx',{SEGMENTS:'ECG_SEGMENTS'}],
 ];
 let catalog='// Generated from the shared teaching source; do not edit.\n';
 for(const [file,names] of datasets){
@@ -40,3 +41,25 @@ const used=Object.values(tags).filter(name=>name!=='Svg'&&new RegExp('<'+name+'(
 result=result.replace("import React, { useId } from 'react';","import React, { useId } from 'react';\nimport Svg,{"+used.join(',')+"} from 'react-native-svg';");
 fs.writeFileSync(out+'/NativeEcgHeartModel.tsx',result);
 console.log('Native source lessons and exact heart vector generated.');
+
+// Keep the calibrated source drawing intact. Native SVG records its Canvas
+// operations; no DOM, canvas element or WebView is included in the APK.
+const ecgFile='src/simulator/instruments/Ecg12LeadCanvas.tsx';
+const ecgCode=fs.readFileSync(ecgFile,'utf8');
+const ecgRoot=ts.createSourceFile(ecgFile,ecgCode,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
+let drawing;
+function findDrawing(node){
+ if(ts.isCallExpression(node)&&node.expression.getText(ecgRoot)==='useEffect'){
+  const callback=node.arguments[0];
+  if(callback&&ts.isArrowFunction(callback)&&ts.isBlock(callback.body)&&callback.body.getText(ecgRoot).includes('const canvas = canvasRef.current'))drawing=callback.body;
+ }
+ ts.forEachChild(node,findDrawing);
+}
+findDrawing(ecgRoot);
+if(!drawing)throw Error('Missing calibrated ECG source drawing');
+const statements=drawing.statements;
+const start=statements.findIndex(n=>n.getText(ecgRoot).startsWith("ctx.fillStyle = '#fff5f5'"));
+if(start<0)throw Error('Missing ECG grid origin');
+const body=statements.slice(start).map(n=>n.getText(ecgRoot)).join('\n');
+fs.writeFileSync(out+'/ecgDrawing.ts',`// Generated from ${ecgFile}; do not edit.\nimport {ECG_SEGMENTS as SEGMENTS} from './lessonCatalog';\nimport type {VectorContext} from './vectorContext';\nexport function drawEcg(ctx:VectorContext,rhythm:string,heartRate:number,activeSegment:string,leadGroup:number){\nconst w=leadGroup===4?840:420,h=480;\n${body}\n}\n`);
+console.log('Native calibrated 12-lead drawing generated from shared source.');

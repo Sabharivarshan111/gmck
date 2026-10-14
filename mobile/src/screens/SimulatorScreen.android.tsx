@@ -15,13 +15,15 @@ import {NativeAnatomyPanel} from '@/simulator/NativeAnatomyPanel';
 import {NativeMonitor} from '@/simulator/NativeMonitor';
 import {NativeCases} from '@/simulator/NativeCases';
 import {NativeRadiology} from '@/simulator/NativeRadiology';
+import {NativeEyeExam} from '@/simulator/NativeEyeExam';
+import {NativeEcgSheet} from '@/simulator/NativeEcgSheet';
 import {NativeEcgStudio} from '@/simulator/NativeEcgStudio';
 import {NativePocus} from '@/simulator/NativePocus';
 import {SIMULATOR_ACTIONS} from '@/simulator/lessonCatalog';
 import {Action,Card,Copy,ui} from '@/simulator/SimulatorUi';
 const Anatomy=React.memo(NativeAnatomyPanel);
 type Tab='Skills'|'3D'|'Monitor'|'Cases';
-type Tool='radiology'|'ecg'|'ultrasound'|null;
+type Tool='radiology'|'ecg'|'ultrasound'|'ecg12'|'eyes'|null;
 type SavedSession={scenario:string;elapsed:number;actions:Array<{at:number;id:string}>};
 const storageKey='orbit-native-simulator-session-v1';
 const actionIds=new Set(SIMULATOR_ACTIONS.map(a=>a.id));
@@ -88,10 +90,10 @@ export default function SimulatorScreen({onExit}:{onExit:()=>void}){
    {opened3D&&<View style={[StyleSheet.absoluteFill,{display:tab==='3D'&&focused&&active?'flex':'none'}]}><Anatomy/></View>}
    {tab==='Monitor'&&<NativeMonitor vitals={vitals} samples={trace} rhythm={pathology.ecgRhythm}/>}
    {tab==='Cases'&&<NativeCases scenario={scenario} logs={logs} onScenario={choose} onAction={apply}/>}
-   {tab==='Skills'&&<ScrollView contentContainerStyle={ui.page}><Card title="Clinical learning studio"><Copy>Explore normal findings, compare disease cases and inspect anatomy offline.</Copy><Action label="ECG learning studio" onPress={()=>setTool('ecg')}/><Action label="X-ray & MRI · annotated references" onPress={()=>setTool('radiology')}/><Action label="Ultrasound teaching view" onPress={()=>setTool('ultrasound')}/><Action label="NEET PG · offline practice" onPress={()=>setPg(true)}/><Action label="Clinical case proformas" onPress={()=>setForms(true)}/><Action label="General examination guide" onPress={()=>setExam(true)}/><Action label={running?'Pause simulated patient':'Resume simulated patient'} onPress={()=>setRunning(!running)}/></Card></ScrollView>}
+   {tab==='Skills'&&<ScrollView contentContainerStyle={ui.page}><Card title="Clinical learning studio"><Copy>Explore normal findings, compare disease cases and inspect anatomy offline.</Copy><Action label="12-lead ECG · captured teaching trace" onPress={()=>setTool('ecg12')}/><Action label="ECG learning studio" onPress={()=>setTool('ecg')}/><Action label="X-ray & MRI · annotated references" onPress={()=>setTool('radiology')}/><Action label="Ultrasound teaching view" onPress={()=>setTool('ultrasound')}/><Action label="NEET PG · offline practice" onPress={()=>setPg(true)}/><Action label="Clinical case proformas" onPress={()=>setForms(true)}/><Action label="Pupil & cranial nerve examination" onPress={()=>setTool('eyes')}/><Action label="General examination guide" onPress={()=>setExam(true)}/><Action label={running?'Pause simulated patient':'Resume simulated patient'} onPress={()=>setRunning(!running)}/></Card></ScrollView>}
   </View>
   <View style={[styles.tabs,{borderTopColor:colors.border}]}>{(['Skills','3D','Monitor','Cases'] as const).map(t=><Action key={t} label={t} selected={tab===t} onPress={()=>{setTab(t);if(t==='3D')setOpened3D(true);if(t==='Monitor')setTrace(samples.current.slice());}}/>)}</View>
-  <Modal visible={!!tool} onRequestClose={()=>setTool(null)} animationType="none" statusBarTranslucent><View style={[styles.screen,{backgroundColor:colors.background,paddingTop:insets.top,paddingBottom:insets.bottom}]}><View style={styles.header}><Action label="Close diagnostic view" onPress={()=>setTool(null)}/><Text style={[typeScale.bodyStrong,{color:colors.text}]}>{tool==='radiology'?'X-ray & MRI':tool==='ecg'?'ECG learning studio':'Ultrasound'}</Text></View>{tool==='radiology'?<NativeRadiology/>:tool==='ecg'?<NativeEcgStudio/>:tool==='ultrasound'?<NativePocus vitals={vitals} pathology={pathology}/>:null}</View></Modal>
+  <Modal visible={!!tool} onRequestClose={()=>setTool(null)} animationType="none" statusBarTranslucent><View style={[styles.screen,{backgroundColor:colors.background,paddingTop:insets.top,paddingBottom:insets.bottom}]}><View style={styles.header}><Action label="Close diagnostic view" onPress={()=>setTool(null)}/><Text style={[typeScale.bodyStrong,{color:colors.text}]}>{tool==='radiology'?'X-ray & MRI':tool==='ecg'?'ECG learning studio':tool==='ecg12'?'12-lead ECG':tool==='eyes'?'Eye examination':'Ultrasound'}</Text></View>{tool==='radiology'?<NativeRadiology/>:tool==='ecg'?<NativeEcgStudio/>:tool==='ecg12'?<NativeEcgSheet rhythm={pathology.ecgRhythm} heartRate={vitals.heartRate}/>:tool==='eyes'?<NativeEyeExam pathology={pathology}/>:tool==='ultrasound'?<NativePocus vitals={vitals} pathology={pathology}/>:null}</View></Modal>
   <PgEntranceBankModal visible={pg} onClose={()=>setPg(false)}/><ClinicalProformaModal visible={forms} onClose={()=>setForms(false)}/><GeneralExamSheet visible={exam} onClose={()=>setExam(false)}/>
  </View>;
 }

@@ -48,3 +48,5 @@ remotion-ad/out/
 
 /mobile/src/simulator/lessonCatalog.ts
 /mobile/src/simulator/NativeEcgHeartModel.tsx
+
+/mobile/src/simulator/ecgDrawing.ts
