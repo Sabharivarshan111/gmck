@@ -2655,3 +2655,10 @@ Preview 6 published from 1021d6935eb40d3d224511a8e99e952e90539439: 98,743,134 by
 New changes: professional leader sizing, venous colour/direction, one selected connection callout, child-mesh selection within focus, compact controls, six guided ECG lessons/rate quiz, QT calculator and shared-model PV loop with invalid-model guard. Local types/lint and strict offline model/MRI/audio guards passed.
 
 POCUS movies now tracked in 6f79edee33dae196bea33f73011ddf46eb82883f after narrow force-add for global MP4 ignore. Two source-derived movies/posters total 158,980 bytes. Earlier preview build correctly failed missing movies before publication. Fully qualified MainActivity fixes debug emulator launch. Fresh APK, component UI, actual native compilation and offline emulator checks required on this change; no production merge/release/Play update yet. Full parity/device proof remains necessary.
+
+
+### Native reference calipers checkpoint
+
+Commit 1fac04acc4101182e7d95201755bc4318e6ad55a adds two-point native radiology measurements. MRI uses the reference volume's exact resampled spacing; X-rays report image pixels without fabricated physical calibration. Markers stay in source coordinates across zoom/pan and clear on film/plane/slice changes. Local types, lint and distance/coordinate tests passed; UI run 38512341147 passed, including two actual taps and slice-reset behavior. Downloaded its artifact and inspected mri-calipers.png: line/endpoints and leaders align in the sagittal reference. Core native verification on this change remains running.
+
+Earlier 196e7ba89e2406532020fd182e090c4619f3a1f6 native core run 38511693035 and UI run 38511692889 succeeded. ARM64 test APK run 38511692902 and actual offline Android emulator run 38511692929 are still running at this checkpoint. That APK will contain arrows, focus/ECG/POCUS fixes but precedes calipers; don't claim calipers shipped until rebuilding from 1fac04a or later. Preview 6 remains the verified existing download until these runs complete.
