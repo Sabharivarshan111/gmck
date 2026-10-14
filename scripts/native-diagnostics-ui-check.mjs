@@ -58,6 +58,8 @@ try{
   await page.getByRole('button',{name:'Open ultrasound',exact:true}).click();
   await page.getByText('Parasternal long-axis reference',{exact:true}).waitFor();
   assert.equal(await page.getByTestId('pocus-prop-harness').getAttribute('data-gain'),'1','Native renderer receives a multiplier, not a percentage');
+  assert(await page.getByRole('button',{name:'Play ultrasound',exact:true}).isEnabled(),'Manual scan playback must remain available with reduced motion');
+  await page.getByRole('button',{name:'Play ultrasound',exact:true}).click();await page.getByRole('button',{name:'Freeze ultrasound',exact:true}).click();
   await page.getByRole('button',{name:'Ultrasound calipers',exact:true}).click();
   await page.getByRole('button',{name:'Place centre calipers',exact:true}).click();
   await page.getByText('Simulated distance: 2.2 cm',{exact:true}).waitFor();
@@ -67,6 +69,8 @@ try{
   await page.getByRole('button',{name:'cardiac plax',exact:true}).click();
   await page.getByText('Parasternal long-axis reference',{exact:true}).scrollIntoViewIfNeeded();
   await page.screenshot({path:`${out}/pocus-reference-${width}.png`});
+  const playReference=page.getByRole('button',{name:'Play archived ultrasound loop',exact:true});assert(await playReference.isEnabled(),'Reduced motion pauses by default; it must not block requested media');
+  await playReference.click();await page.getByRole('button',{name:'Pause archived ultrasound loop',exact:true}).click();
   await page.getByRole('button',{name:'Open ECG studio',exact:true}).click();
   await page.getByRole('button',{name:/^Lesson 6:/}).click();
   await page.getByRole('button',{name:'75 bpm',exact:true}).click();

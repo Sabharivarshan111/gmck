@@ -28,11 +28,13 @@ try{
  await page.waitForFunction(()=>document.querySelector('[data-testid="preview-mri-canvas"]')?.width===112);
  await page.getByRole('button',{name:'Identify Midbrain',exact:true}).waitFor();
  await screenshot(page,'axial-mri');
+ await page.getByRole('button',{name:'Image tools',exact:true}).click();
  await page.getByRole('button',{name:'Reviewed sagittal landmarks',exact:true}).click();
  await page.getByRole('button',{name:'Identify Corpus callosum',exact:true}).waitFor();
  await screenshot(page,'sagittal-mri');
  await page.getByRole('button',{name:'Identify Cerebellum',exact:true}).click();
  await page.getByText('Teaching landmark on this exact resampled reference slice.',{exact:false}).waitFor();
+ await page.getByRole('button',{name:'Image tools',exact:true}).click();
  await page.getByRole('button',{name:'Measure image',exact:true}).click();
  const stage=page.getByTestId('radiology-image-stage');await stage.scrollIntoViewIfNeeded();
  const b=await stage.boundingBox();assert(b);
@@ -41,6 +43,7 @@ try{
  const readout=page.getByText(/^[0-9]+\.[0-9] mm · resampled voxel spacing$/);await readout.waitFor();
  assert(parseFloat(await readout.textContent())>0);
  await screenshot(page,'mri-calipers');
+ await page.getByRole('button',{name:'Image tools',exact:true}).click();
  await page.getByRole('button',{name:'Reviewed axial landmarks',exact:true}).click();
  await page.getByText('Tap two points on the image.',{exact:true}).waitFor();
  assert.equal(errors.length,0,errors.join('\n'));

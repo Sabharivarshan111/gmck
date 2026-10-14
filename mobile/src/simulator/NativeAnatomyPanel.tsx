@@ -1,7 +1,7 @@
 import React,{useCallback,useMemo,useState} from 'react';
 import {FlatList,ScrollView,StyleSheet,TextInput,View} from 'react-native';
 import Svg,{Path,Rect,Text as SvgText} from 'react-native-svg';
-import {Text} from '@/components/Text';import {Touchable} from '@/components/Touchable';import {Sheet} from '@/components/Sheet';import {Slider} from '@/components/Slider';import {useTheme} from '@/theme';import {OrbitAnatomy} from '@/native/OrbitAnatomy';
+import {Text} from '@/components/Text';import {Touchable} from '@/components/Touchable';import {Sheet} from '@/components/Sheet';import {SimSlider as Slider} from './SimulatorUi';import {useTheme} from '@/theme';import {OrbitAnatomy} from '@/native/OrbitAnatomy';
 import {ORGAN_ANATOMY_DATABASE} from '@simulator/data/organAnatomyData';
 import {ORGAN_CONNECTIONS,type OrganConnection} from '@simulator/data/organConnections';
 import {getPreferredAnatomyIsolationTarget} from '@simulator/data/preferredAnatomyReferences';
@@ -57,7 +57,7 @@ export function NativeAnatomyPanel(){
   </ScrollView>
   <Sheet visible={browse} onClose={()=>setBrowse(false)} title="Offline anatomy" scrollable={false}>
    <View style={ui.row}>{['surface','vessels','viscera','skeleton','nerves'].map(l=><Action key={l} label={l} selected={layer===l} onPress={()=>{setLayer(l);setPick(null);setBrowse(false);}}/>)}</View>
-   <Copy muted>Spread anatomy: {Math.round(spread*100)}%</Copy><Slider label="Spread anatomy" value={spread} min={0} max={1} step={.05} format={v=>Math.round(v*100)+'%'} onChange={v=>{setPick(null);setSpread(v);}}/>
+   <Slider label="Spread anatomy" value={spread} min={0} max={1} step={.05} format={v=>Math.round(v*100)+'%'} onChange={v=>{setPick(null);setSpread(v);}}/>
    <TextInput accessibilityLabel="Search anatomical parts" placeholder="Search 2,234 registered parts" placeholderTextColor={colors.textMuted} value={query} onChangeText={setQuery} style={[styles.search,{color:colors.text,borderColor:colors.border}]}/>
    <FlatList style={{maxHeight:360}} data={browseItems} keyExtractor={p=>p.id} initialNumToRender={12} maxToRenderPerBatch={12} renderItem={({item})=><Touchable label={'View '+item.name} onPress={()=>{setPick({model:item.model,ids:[item.id],label:item.name,owner:owners.get(item.id)||item.id});setBrowse(false);}} style={styles.part}><Text style={{color:colors.text}}>{item.name}</Text><Text style={{color:colors.textMuted,fontSize:11}}>{item.system} · {item.id}</Text></Touchable>}/>
   </Sheet>

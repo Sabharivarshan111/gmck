@@ -1,7 +1,7 @@
 import React,{useMemo,useState} from 'react';
 import {ScrollView,View} from 'react-native';
 import Svg,{Circle,Line,Path,Text as SvgText} from 'react-native-svg';
-import {Slider} from '@/components/Slider';
+import {SimSlider as Slider} from './SimulatorUi';
 import {NativeEcgHeartModel,type Activation} from './NativeEcgHeartModel';
 import {CardiacCycleEngine,DEFAULT_CARDIAC_PARAMS} from '@simulator/instruments/cardiac-engine/CardiacCyclePhysics';
 import {ECG_STEPS,ECG_WAVES,ECG_PHASES,ECG_BEAT_PATH,ECG_INTERVALS,ECG_PATTERNS,ECG_LEADS,ECG_CHEST} from './lessonCatalog';

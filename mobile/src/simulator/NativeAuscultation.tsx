@@ -2,7 +2,7 @@ import React,{useEffect,useRef,useState} from 'react';
 import {AppState,ScrollView,View} from 'react-native';
 import Svg,{Circle,Ellipse,Line,Path,Text as SvgText} from 'react-native-svg';
 import Audio from '@/native/NativeOrbitSimAudio';
-import {Slider} from '@/components/Slider';
+import {SimSlider as Slider} from './SimulatorUi';
 import type {PatientPathologyState,PatientVitals} from '@simulator/types';
 import {resolveAuscultation} from './nativeAuscultationRouting';
 import type {AuscultationSite,HeartSoundPreset,LungSoundPreset} from './nativeAuscultationRouting';

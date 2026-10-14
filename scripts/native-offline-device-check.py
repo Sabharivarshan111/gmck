@@ -32,7 +32,7 @@ def tap(label,scroll=False,timeout=40):
    text=n.get('content-desc') or n.get('text') or ''
    if text==label:
     x1,y1,x2,y2=map(int,re.findall(r'\d+',n.get('bounds')))
-    if x2>x1 and y2>y1:
+    if x2>x1 and y2>y1 and n.get('enabled')!='false' and n.get('clickable')=='true':
      adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2));time.sleep(.6);return
   if scroll:swipe()
   time.sleep(.6)
@@ -72,8 +72,8 @@ try:
  tap('Auscultation · heart & lung sounds',scroll=True);tap('Play reference sound',scroll=True);time.sleep(3)
  assert any('Playing local synthetic reference.' in l for l in labels()),labels()
  shot('audio-native');tap('Stop listening',scroll=True);tap('Close diagnostic view')
- tap('X-ray & MRI · annotated references',scroll=True);tap('Brain MRI',scroll=True);time.sleep(3);shot('mri-native');tap('Close diagnostic view')
- tap('Ultrasound teaching view',scroll=True);tap('Play archived ultrasound loop',scroll=True);time.sleep(3)
+ tap('X-ray & MRI · annotated references',scroll=True);tap('Brain MRI',scroll=True);time.sleep(3);swipe();time.sleep(.5);shot('mri-native');tap('Close diagnostic view')
+ tap('Ultrasound teaching view',scroll=True);tap('Play ultrasound',scroll=True);time.sleep(2);tap('Freeze ultrasound',scroll=True);shot('pocus-native');tap('Play archived ultrasound loop',scroll=True);time.sleep(3)
  assert not any('local reference could not load' in l for l in labels()),labels()
  shot('pocus-reference-native');tap('Pause archived ultrasound loop',scroll=True);tap('Close diagnostic view')
  tap('3D');time.sleep(10);shot('body-native');tap('Open Heart & Great Vessels model',timeout=20);time.sleep(3);shot('heart-native')
