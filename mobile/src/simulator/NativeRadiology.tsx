@@ -12,7 +12,7 @@ import {chestXrayCases} from '@simulator/instruments/radiology/chestXrayCases';
 import {Action,Card,Copy,ui} from './SimulatorUi';
 import {MRI_REFERENCE_LABELS,XRAY_REFERENCE_LABELS} from './radiologyAnnotations';
 import {ImageCallouts} from './ImageCallouts';
-import {fittedImage,imagePoint,sourcePoint,referenceDistance,type Annotation} from './annotationGeometry';
+import {fittedImage,imagePoint,sourcePoint,referenceDistance,boundedImagePan,type Annotation} from './annotationGeometry';
 const normal:Annotation[]=[
  ['Trachea',.49,.17],['Right lung',.30,.43],['Left lung',.67,.40],['Heart border',.63,.64],['Right hemidiaphragm',.30,.78],
 ].map(([name,x,y],i)=>({id:'normal-'+i,name:String(name),x:Number(x),y:Number(y),note:'Approximate surface landmark on this normal reference. Image positioning can change appearances.',provenance:'reference' as const}));
@@ -36,14 +36,16 @@ export function NativeRadiology(){
  const [measuring,setMeasuring]=useState(false),[measurePoints,setMeasurePoints]=useState<Array<{x:number;y:number}>>([]);
  const extent=mode==='mri'?[dimensions[u]*spacing[u],dimensions[v]*spacing[v]]:imageSize;
  const distance=measurePoints.length===2&&extent?referenceDistance(measurePoints[0],measurePoints[1],extent):null;
- const state=useRef({rect,mark,measuring,pan,key});
- state.current={rect,mark,measuring,pan,key};
+ const state=useRef({rect,mark,measuring,pan,key,size,margin});
+ state.current={rect,mark,measuring,pan,key,size,margin};
+ const imageWidth=rect.width,imageHeight=rect.height;
+ useEffect(()=>{setPan(p=>{const next=boundedImagePan({width:imageWidth,height:imageHeight},size.width,size.height,margin,p.x,p.y);return next.x===p.x&&next.y===p.y?p:next;});},[imageWidth,imageHeight,size.width,size.height,margin]);
  const gestureStart=useRef({x:0,y:0});
  const responder=useMemo(()=>PanResponder.create({
   onStartShouldSetPanResponder:()=>true,
   onMoveShouldSetPanResponder:()=>true,
   onPanResponderGrant:()=>{gestureStart.current=state.current.pan;},
-  onPanResponderMove:(_,g)=>{if(!state.current.mark&&!state.current.measuring)setPan({x:gestureStart.current.x+g.dx,y:gestureStart.current.y+g.dy});},
+  onPanResponderMove:(_,g)=>{if(!state.current.mark&&!state.current.measuring){const view=state.current,next=boundedImagePan(view.rect,view.size.width,view.size.height,view.margin,gestureStart.current.x+g.dx,gestureStart.current.y+g.dy);setPan(p=>p.x===next.x&&p.y===next.y?p:next);}},
   onPanResponderRelease:(e,g)=>{if((state.current.mark||state.current.measuring)&&Math.hypot(g.dx,g.dy)<8){const p=sourcePoint(state.current.rect,e.nativeEvent.locationX,e.nativeEvent.locationY);if(p.x>=0&&p.x<=1&&p.y>=0&&p.y<=1){if(state.current.measuring)setMeasurePoints(points=>points.length===1?[points[0],p]:[p]);else{setDraft(p);setName('');}}}},
  }),[]);
  useEffect(()=>{let live=true;setPersonal([]);void AsyncStorage.getItem(storageKey).then(raw=>{if(!live||!raw)return;try{const items=JSON.parse(raw);if(Array.isArray(items))setPersonal(items.filter(p=>p.provenance==='personal'&&typeof p.name==='string'&&Number.isFinite(p.x)&&Number.isFinite(p.y)&&p.x>=0&&p.x<=1&&p.y>=0&&p.y<=1).slice(0,16));}catch{/* Bad local data does not affect reference images. */}});return()=>{live=false;};},[storageKey]);

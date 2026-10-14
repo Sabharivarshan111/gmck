@@ -23,3 +23,9 @@ export function layoutAnnotations(items:readonly Annotation[],rect:ImageRect,wid
 
 /** Calibrated source distance; display zoom and pan never alter the measurement. */
 export function referenceDistance(a:{x:number;y:number},b:{x:number;y:number},extent:readonly number[]){return Math.hypot((b.x-a.x)*extent[0],(b.y-a.y)*extent[1]);}
+
+/** Pan only through image overflow; a fitted reference stays visible. */
+export function boundedImagePan(rect:{width:number;height:number},width:number,height:number,margin:number,x:number,y:number){
+ const limitX=Math.max(0,(rect.width-Math.max(1,width-2*margin))/2),limitY=Math.max(0,(rect.height-Math.max(1,height))/2);
+ return {x:Math.max(-limitX,Math.min(limitX,x)),y:Math.max(-limitY,Math.min(limitY,y))};
+}

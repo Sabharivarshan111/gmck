@@ -118,7 +118,8 @@ jobs:
             clearer organ leaders and direct selection within the focused model.
             Includes two-point MRI/X-ray measurements with explicit reference-image units,
             compact imaging controls, visible slider values and deliberate video playback
-            when reduced-motion preferences are enabled.
+            when reduced-motion preferences are enabled. ECG controls prioritize the trace;
+            image panning stays within the reference and anatomy controls reserve model space.
             ARM64 phones only. No ads. Installs beside the current production app;
             the launcher name is ORBIT Native Preview. Complete local display name/year/university setup; Google sign-in is
             disabled only for this separate test package. Production authentication

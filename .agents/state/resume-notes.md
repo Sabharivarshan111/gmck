@@ -2302,3 +2302,14 @@ Installed-device run38513311985 got through launcher recovery and exposed the re
 Fix committed in 884a099ab96354377ee4a635eda6c0592cc03f76: both native preview and emulator workflows reuse the existing android-debug workflow's explicit GOOGLE_SIGN_IN_ENABLED=false source override ONLY within their separately installable test build. Production authMode.ts remains !__DEV__; runtime code/RLS/Supabase config unchanged. Both normal and --debug-apk auth-mode tests passed locally, plus 13 Android storage/sign-out/security cases. Each workflow tests production auth first and its preview override second. The emulator now fills local display name, year and university, asserts no Google-required caption, completes setup in airplane mode, then handles the walkthrough and proceeds to simulator checks.
 
 New APK build38515364887 (expected Preview 10), core38515365036, emulator38515365017 are running. Fix fresh-install navigation first, then verify native graphics/playback. No production sign-in bypass, merge, AAB or Play release. Supabase skill read for auth-boundary review; docs fetch was attempted but no Supabase feature/API/database change implemented.
+
+
+### 2026-10-14 — Preview 11 offline flow passed; visual follow-up
+
+DONE: Preview 11 source 89848f3e99c8f0c89967829d5eccb8a23168f182. APK https://github.com/Sabharivarshan111/gmck/releases/download/native-offline-preview-11/app-preview.apk, 98,921,037 bytes, SHA256 0d62cfc4403238dde51fc1c6c02f1303ea962a3bb9322b03964e4191a6e5a711. Core38518536065, UI38518536202, APK38518536247 and actual Android offline run38518536136 passed. Fresh local setup in airplane mode, simulator entry, ECG, pupil controls, audio player state, explicit scan/video playback and direct heart focus exercised. Production authentication unchanged. Separately installed ad-free ARM64 preview; no production AAB or Play upload.
+
+HALF-DONE: Flow assertions do not establish visual correctness. Screenshot review found the ECG trace below many controls, the heart apex partly covered by the selected card, and blank MRI after the test swiped through the image. The image PanResponder allowed unbounded translation. Physical-device fidelity and full web parity remain unverified.
+
+NEXT: Follow-up moves ECG segment controls into a sheet, bounds image translation/zoom, removes the erroneous test swipe, reserves native anatomy viewport space above/below controls, offsets leaders into stage coordinates, and makes regional shortcuts match each region. Verify types/lint plus Android/component CI and inspect actual MRI/heart screenshots before recommending the new APK. Updates are checkpointed on this branch to survive workspace pruning.
+
+DO NOT: Call Preview 11 MRI screenshot proof; it was blank after a pan. Do not claim full parity, all clinical content audited, production release, or Play publication. Preserve shared PG explanations and main branch work.

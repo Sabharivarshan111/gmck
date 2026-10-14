@@ -12,12 +12,13 @@ try{
  for(const width of [360,390,430]){
   const page=await browser.newPage({viewport:{width,height:844},reducedMotion:'reduce'}),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('http://127.0.0.1:4179/ecg.html',{waitUntil:'networkidle'});
+  await page.getByRole('button',{name:'Wave segments',exact:true}).click();
   await page.getByRole('button',{name:'ST Segment',exact:true}).click();
   await page.getByText('Clinical teaching notes',{exact:true}).waitFor();
   const paths=await page.locator('svg path').count();assert(paths>12,'ECG trace missing');
   for(const group of ['aVR · aVL · aVF','V1 · V2 · V3','V4 · V5 · V6','All 12'])await page.getByRole('button',{name:group,exact:true}).click();
   await page.getByRole('button',{name:'Enlarge ECG',exact:true}).click();await page.getByRole('button',{name:'Fit ECG to screen',exact:true}).click();
-  await page.getByRole('button',{name:'stemi_inferior',exact:true}).click();await page.getByText(/captured stemi inferior/).waitFor();
+  await page.getByRole('button',{name:'stemi_inferior',exact:true}).click();await page.getByText(/Captured stemi inferior/).waitFor();
   await page.getByRole('button',{name:'I · II · III',exact:true}).click();
   await page.locator('svg').last().screenshot({path:`${out}/ecg-${width}.png`});
   await page.getByRole('button',{name:'Open eye examination',exact:true}).click();
