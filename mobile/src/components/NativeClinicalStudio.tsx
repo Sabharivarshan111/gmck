@@ -28,6 +28,8 @@ interface Props {
   /** Preserve the same case selection across screens as the Vercel page. */
   scenarioId: string;
   onScenarioChange: (scenarioId: string) => void;
+  theme: 'dark' | 'light';
+  onToggleTheme: () => void;
 }
 
 const NIGHT = {
@@ -58,10 +60,9 @@ function AnatomyStudioIcon() {
   </Svg>;
 }
 
-export default function NativeClinicalStudio({ onExit, onOpen, scenarioId, onScenarioChange }: Props) {
+export default function NativeClinicalStudio({ onExit, onOpen, scenarioId, onScenarioChange, theme, onToggleTheme }: Props) {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [section, setSection] = useState<'skills' | 'cases'>('skills');
   const [query, setQuery] = useState('');
   const [showFindings, setShowFindings] = useState(false);
@@ -90,7 +91,7 @@ export default function NativeClinicalStudio({ onExit, onOpen, scenarioId, onSce
           <Text style={[styles.logoSub, { color: c.muted }]}>CLINICAL STUDIO</Text>
         </View>
         <Pressable accessibilityRole="button" accessibilityLabel={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-          testID="studio-native-theme" onPress={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} style={[styles.iconButton, buttonStyle(14)]}>
+          testID="studio-native-theme" onPress={onToggleTheme} style={[styles.iconButton, buttonStyle(14)]}>
           {theme === 'dark' ? <Sun color={c.ink} size={20} /> : <Moon color={c.ink} size={20} />}
         </Pressable>
       </View>
@@ -124,9 +125,9 @@ export default function NativeClinicalStudio({ onExit, onOpen, scenarioId, onSce
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
               <HeartPulse color={c.accent} size={20} />
               <Text style={{ color: c.accent, fontWeight: '700', fontSize: 13 }}>{normal ? 'Normal findings' : 'Case comparison'}</Text>
-              <Text style={{ color: c.muted, marginLeft: 'auto', fontSize: 11 }}>Change findings ↓</Text>
             </View>
             <Text style={[styles.baselineSubtitle, { color: c.muted }]}>{normal ? 'Healthy adult at rest' : activeScenario.title}</Text>
+            <Text style={{ color: c.muted, fontSize: 11, alignSelf: 'flex-end', marginTop: 8 }}>Change findings ↓</Text>
           </Pressable>
           {(showFindings || !normal) && <>
             <Text style={{ color: c.muted, fontSize: 12, marginTop: 12 }}>Findings to show</Text>
