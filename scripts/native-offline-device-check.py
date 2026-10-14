@@ -55,6 +55,13 @@ try:
  root=dump()
  if dismiss_launcher_anr(root):root=dump()
  visible=[n.get('content-desc') or n.get('text') or '' for n in root.iter('node')]
+ if 'Set up your studies' in visible:
+  assert 'Google Sign-In Required' not in visible, 'Offline preview incorrectly requires Google sign-in'
+  tap('Display name');adb('shell','input','text','OfflinePreview');adb('shell','input','keyevent','4')
+  tap('1st Year',scroll=True)
+  tap('Tamil Nadu Dr. M.G.R. Medical University (TNMGR)',scroll=True)
+  tap('Start studying',scroll=True);time.sleep(2)
+  visible=labels()
  if 'Skip the walkthrough' in visible:tap('Skip the walkthrough');tap('Close the walkthrough')
  tap('Vault');tap('Simulator & Anatomy',scroll=True)
  assert any('Offline native studio' in l for l in labels()),labels()

@@ -42,6 +42,12 @@ jobs:
       - name: Disable every ad in the preview
         working-directory: mobile
         run: printf 'export const ADS_ENABLED = false;\n' > src/lib/adsMode.ts
+      - name: Enable local setup only in this separately installable preview
+        working-directory: mobile
+        run: |
+          node scripts/auth-mode-check.mjs
+          printf 'export const GOOGLE_SIGN_IN_ENABLED = false;\n' > src/lib/authMode.ts
+          node scripts/auth-mode-check.mjs --debug-apk
       - name: Give this separately installable preview a clear launcher name
         run: |
           python - <<'PY'

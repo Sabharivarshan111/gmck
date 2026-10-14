@@ -44,6 +44,12 @@ jobs:
       - name: Disable every ad in the preview
         working-directory: mobile
         run: printf 'export const ADS_ENABLED = false;\n' > src/lib/adsMode.ts
+      - name: Enable local setup only in this separately installable preview
+        working-directory: mobile
+        run: |
+          node scripts/auth-mode-check.mjs
+          printf 'export const GOOGLE_SIGN_IN_ENABLED = false;\n' > src/lib/authMode.ts
+          node scripts/auth-mode-check.mjs --debug-apk
       - name: Give this separately installable preview a clear launcher name
         run: |
           python - <<'PY'
@@ -112,8 +118,9 @@ jobs:
             clearer organ leaders and direct selection within the focused model.
             Includes two-point MRI/X-ray measurements with explicit reference-image units.
             ARM64 phones only. No ads. Installs beside the current production app;
-            the launcher name is ORBIT Native Preview. Google sign-in is not configured
-            for this separate test package; use the existing guest entry.
+            the launcher name is ORBIT Native Preview. Complete local display name/year/university setup; Google sign-in is
+            disabled only for this separate test package. Production authentication
+            is unchanged.
 
             This is an unfinished test build, not a production AAB or Play update.
             Includes archived ultrasound loops, native virtual calipers and teaching
