@@ -50,6 +50,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with: {name: pg-bank-browser-evidence, path: mobile/preview/pg-bank-evidence/}
+      - name: Generate native simulator lesson modules for typechecking
+        if: ${{ hashFiles('scripts/build-native-simulator-lessons.mjs') != '' }}
+        run: node scripts/build-native-simulator-lessons.mjs
       - run: npm --prefix mobile run typecheck
       - run: npm --prefix mobile run check:keyboard
       - run: node scripts/check-pg-content-integrity.mjs
