@@ -4,7 +4,6 @@ import { WebView } from 'react-native-webview';
 import { useIsFocused } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '@/components/Text';
-import { Touchable } from '@/components/Touchable';
 import { useTheme } from '@/theme';
 import NativeClinicalStudio from '@/components/NativeClinicalStudio';
 import { nativeClinicalRoute } from '@/lib/nativeSimulatorRouting';
@@ -114,10 +113,6 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
           </Touchable>}
         </View>
       )}
-      <Touchable label="Return to native clinical studio" onPress={returnToNativeStudio}
-        style={[styles.back, { borderColor: colors.border, backgroundColor: colors.background }]}>
-        <Text style={{ color: colors.text }}>← Clinical studio</Text>
-      </Touchable>
     </View>
   );
 }
@@ -127,5 +122,4 @@ const styles = StyleSheet.create({
   loading: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, alignItems: 'center', justifyContent: 'center', gap: 12 },
   message: { flex: 1, justifyContent: 'center', padding: 24, gap: 16 },
   retry: { minHeight: 44, alignItems: 'center', borderRadius: 12, justifyContent: 'center', padding: 12 },
-  back: { minHeight: 44, borderTopWidth: 1, padding: 12, alignItems: 'center', justifyContent: 'center' },
 });
