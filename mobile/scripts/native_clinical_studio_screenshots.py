@@ -1,29 +1,58 @@
 #!/usr/bin/env python3
-"""Capture genuine Android native clinical studio screen for 1:1 Vercel comparison."""
+"""Real Android screenshot+tap proof for native clinical studio, case, ICU monitor."""
 from native_screenshot_driver import launch, first_run, tap, wait_visible, shot, scroll_until, scroll_up, visible
 import time
+
+
+def back_to_top():
+    for _ in range(10):
+        if visible("Explore 3D anatomy") or visible("Practise a case"):
+            return
+        scroll_up()
+
 
 def main():
     launch()
     first_run()
-    # Native bottom navigation is accessible by the label "Vault".
     tap("Vault")
     wait_visible("Simulator & Anatomy")
     tap("Simulator & Anatomy")
     wait_visible("Explore 3D anatomy")
-    time.sleep(1)
     shot("01-android-native-clinical-studio")
+
     tap("Practise a case")
-    scroll_until("Acute Inferior STEMI", tries=6)
-    shot("02-android-native-cases")
-    for _ in range(8):
-        if visible("Learn a skill"):
+    scroll_until("Acute Inferior STEMI", tries=8)
+    shot("02-android-native-case-choices")
+    tap("Acute Inferior STEMI")
+    wait_visible("Clinical interventions")
+    shot("03-android-native-stemi-case")
+
+    scroll_until("IV Saline", tries=8)
+    tap("IV Saline")
+    scroll_until("Clinical activity log", tries=14)
+    # Clicking an intervention must update the offline Vercel physiology,
+    # not merely display a nonfunctional shortcut to the website.
+    if not visible("IV Normal Saline"):
+        scroll_until("IV Normal Saline", tries=8)
+    shot("04-android-after-native-clinical-intervention")
+
+    for _ in range(12):
+        if visible("Live ICU monitor"):
             break
         scroll_up()
-    tap("Learn a skill")
-    scroll_until("Auscultation", tries=6)
-    shot("03-android-native-skills")
-    print("REAL Android screenshots complete. This is NOT verification of deeper native tools.")
+    tap("Live ICU monitor")
+    wait_visible("SWEEP 25 mm/s")
+    shot("05-android-native-icu-waveforms")
+    tap("Pause monitor")
+    wait_visible("Resume")
+    shot("06-android-native-icu-paused")
+    tap("Back to clinical studio")
+    time.sleep(0.8)
+    shot("07-android-case-return-preserved")
+
+    print("Native clinical UI/monitor/case screenshots generated. Compare with web.")
+    print("Offline/physical-device parity is NOT yet certified by this script.")
+
 
 if __name__ == "__main__":
     main()
