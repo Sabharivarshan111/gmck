@@ -10,7 +10,7 @@ A feature is **native** only if its actual interactive UI and relevant computati
 
 **Data synchronization:** where safe, share pure TS constants/data with web; when source uses DOM/WebGL, port the interaction and renderer while preserving the same model/clinical content. Backend-only AI/chat/network calls cannot be made to work offline without an explicit offline inference replacement; show honest connectivity errors instead of mock clinical results.
 
-**Do not release on partial parity:** version name alone proves nothing; require signed release APK/AAB, emulator screenshots at 360×800 and 393×852, an actual Android-device test, and functional assertions for every interactive element.
+**Merge versus release are different:** the user specifically authorized landing incremental native port source on main so future builds start from it. That merge is a code checkpoint, **not** a declaration that Android matches Vercel 1:1. A version number alone proves nothing. A FULL PARITY RELEASE requires signed APK/AAB, passing functional tests, emulator screenshots at 360×800 and 393×852, a physical Android-device comparison, and audited interaction coverage for every visible control.
 
 ## Required module-by-module parity
 
@@ -47,11 +47,19 @@ A feature is **native** only if its actual interactive UI and relevant computati
 5. Verify taps, search, gestures, audio, 3D interactions, ECG waves, annotations, UI navigation, background/foreground, memory use and low-end device stability.
 6. Only then label 100% native parity and cut/upload a Play build.
 
-## WIP checkpoint (2026-10-14)
+## WIP checkpoint (2026-10-15)
 
 - **Implemented in this branch:** real RN clinical-studio discovery screen; source-mirrored 7 skills and 43 clinical case metadata records; native search/segments/case choice/theme mode; checks to catch Vercel catalog drift.
 - **Implemented during continuation:** native 4-channel ICU monitor with live SVG traces and same Vercel PhysiologyKernel, native clinical-case intervention screen using the same actual simulation state, 27 matching web interventions, shareable engine injection so case changes remain visible in monitor, keyboard-safe search input, and shared TS module alias across Babel/Metro/TypeScript.
 - **Implemented during continuation:** native 12-lead ECG teaching canvas with all web lead names, standard calibration, STEMI and other rhythm waveforms, ECG segment selection, capture and tour mode. It uses native SVG and works offline. Advanced web ECG cutout, heart 3D visualization and ICU ECG tutorial still need native ports.
 - **Not implemented:** native Three.js-equivalent 3D dissection, renderer, organ labeling, interactive radiology, auscultation, full 12-lead ECG tutorial, POCUS and many other modules.
 - **Temporary behavior:** anatomy and non-ECG diagnostic tools still open the hosted Vercel renderer as a compatibility fallback, **not** an offline native port. Case interventions and bedside telemetry now use React Native and the shared Vercel physiology engine.
-- **Release policy:** this branch is a draft, NOT an all-feature parity release. Never merge solely because it compiles.
+- **Main branch policy:** this checkpoint may be merged into main because its owner explicitly requested that ongoing native port work become the permanent build base; this does not mean the port is finished. Do not label any build 100% native or 1:1 Vercel parity without the remaining modules and visual/functional evidence.
+
+## Continuing work after merge
+
+1. Read this contract and the Vercel `src/simulator/` reference at the latest main commit before altering any native UI. All existing Vercel visual details and functionality are canonical.
+2. Build from the **main** branch, not a previous version 26 or the obsolete fake offline simulator. The native entry screen is `mobile/src/screens/SimulatorScreen.tsx`; studio and modules live in `mobile/src/components/Native*.tsx`.
+3. Reuse shared web clinical data/physiology, but implement remaining 3D/imaging/sound modules in real Android. Temporary hosted fallback code must be removed only after each native equivalent passes UI parity, offline and performance testing.
+4. Always run `node mobile/scripts/simulator-parity-contract-check.mjs`, `node mobile/scripts/native-clinical-parity-check.mjs`, and the two offline simulator checks from the `mobile/` directory, as well as `npm run typecheck`, `npm run lint` and the screenshot evidence workflow.
+5. Mark every new feature as incomplete until native-vs-browser screenshots for the same scenario and viewport have been inspected. No made-up green QA status or claim that screenshot automation ran when it didn't.
