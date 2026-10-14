@@ -6,7 +6,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@data/*": ["../src/data/*"],
-      "@shared/*": ["../src/lib/*"]
+      "@shared/*": ["../src/lib/*"],
+      "@simulator/*": ["../src/simulator/*"]
     }
   },
   "include": [
@@ -15,7 +16,9 @@
     "*.ts",
     "*.tsx",
     "../src/data/**/*.ts",
-    "../src/lib/profanity.ts"
+    "../src/lib/profanity.ts",
+    "../src/simulator/engine/PhysiologyKernel.ts",
+    "../src/simulator/types.ts"
   ],
   "exclude": ["**/node_modules", "**/Pods"]
 }
