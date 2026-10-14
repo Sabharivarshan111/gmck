@@ -10,6 +10,8 @@ const sharedData = path.resolve(__dirname, '..', 'src', 'data');
 // rather than forked — notably the display-name blocklist, which would drift
 // if it were duplicated. Only files this app actually imports are bundled.
 const sharedLib = path.resolve(__dirname, '..', 'src', 'lib');
+// Pure simulation physiology, shared exactly with Vercel instead of forked.
+const sharedSimulator = path.resolve(__dirname, '..', 'src', 'simulator');
 
 /**
  * Metro configuration
@@ -20,11 +22,12 @@ const sharedLib = path.resolve(__dirname, '..', 'src', 'lib');
 const config = {
   // Metro refuses to resolve files outside the project root unless they are
   // explicitly watched.
-  watchFolders: [sharedData, sharedLib],
+  watchFolders: [sharedData, sharedLib, sharedSimulator],
   resolver: {
     extraNodeModules: {
       '@data': sharedData,
       '@shared': sharedLib,
+      '@simulator': sharedSimulator,
     },
     /*
      * Where a file OUTSIDE this folder looks for node_modules.
