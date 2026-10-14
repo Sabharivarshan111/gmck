@@ -65,13 +65,15 @@ function Metric({ label, secondary, value, color, alert }: {
 
 export interface NativeIcuMonitorProps {
   scenarioId?: string;
+  /** Optional shared case engine: preserves intervention effects in monitor. */
+  engine?: PhysiologyKernel;
   onBack: () => void;
 }
 
-export default function NativeIcuMonitor({ scenarioId = 'normal', onBack }: NativeIcuMonitorProps) {
+export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack }: NativeIcuMonitorProps) {
   const { width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
-  const kernel = useRef(new PhysiologyKernel(scenarioId));
+  const kernel = useRef(engine ?? new PhysiologyKernel(scenarioId));
   const [vitals, setVitals] = useState<PatientVitals>(() => ({ ...kernel.current.getLiveVitals() }));
   const [rhythm, setRhythm] = useState(() => kernel.current.pathology.ecgRhythm);
   const [samples, setSamples] = useState<SampleBuffer>(() => initialBuffer(kernel.current));
@@ -84,11 +86,11 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', onBack }: Nati
     return () => sub.remove();
   }, []);
   useEffect(() => {
-    kernel.current.setScenario(scenarioId);
+    if (!engine) kernel.current.setScenario(scenarioId);
     setVitals({ ...kernel.current.getLiveVitals() });
     setRhythm(kernel.current.pathology.ecgRhythm);
     setSamples(initialBuffer(kernel.current));
-  }, [scenarioId]);
+  }, [scenarioId, engine]);
   useEffect(() => {
     if (!running || !active) return;
     let last = Date.now();
@@ -123,6 +125,7 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', onBack }: Nati
         </View>
         <Pressable accessibilityRole="button" accessibilityLabel="Reset telemetry" onPress={() => {
           kernel.current.setScenario(scenarioId);
+          setRhythm(kernel.current.pathology.ecgRhythm);
           setSamples(initialBuffer(kernel.current));
           setVitals({ ...kernel.current.getLiveVitals() });
         }} style={styles.headButton}><RotateCcw color="#cbd5e1" size={19} /></Pressable>
