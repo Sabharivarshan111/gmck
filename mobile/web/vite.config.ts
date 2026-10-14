@@ -136,6 +136,7 @@ export default defineConfig({
         replacement: path.resolve(__dirname, 'adapters', 'unavailable.ts'),
       },
       { find: '@/native/NativeOrbitPgBank', replacement: path.resolve(__dirname, '../preview/shims/pg-bank.ts') },
+      { find: '@/native/LocalSimulator', replacement: path.resolve(__dirname, '../preview/shims/local-simulator.tsx') },
       { find: '@', replacement: path.resolve(root, 'src') },
       // lucide-react-native needs react-native-svg; the DOM build is equivalent
       // and exports the same icon names.
