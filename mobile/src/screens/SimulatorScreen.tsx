@@ -4,6 +4,7 @@ import { WebView } from 'react-native-webview';
 import { useIsFocused } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '@/components/Text';
+import { Touchable } from '@/components/Touchable';
 import { useTheme } from '@/theme';
 import NativeClinicalStudio from '@/components/NativeClinicalStudio';
 import { nativeClinicalRoute } from '@/lib/nativeSimulatorRouting';
