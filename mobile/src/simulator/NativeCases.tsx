@@ -14,7 +14,7 @@ export function NativeCases({scenario,logs,onScenario,onAction}:{scenario:Extend
   <Card title="Session feedback">{logs.slice(-20).reverse().map((log,i)=><Copy key={i}>{log}</Copy>)}</Card>
   <Sheet visible={choose} onClose={()=>setChoose(false)} title="Offline clinical scenarios" scrollable={false}>
    <TextInput accessibilityLabel="Search clinical cases" value={query} onChangeText={setQuery} placeholder="Search condition or system" placeholderTextColor={colors.textMuted} style={{minHeight:44,color:colors.text,padding:12,borderWidth:1,borderColor:colors.border,borderRadius:12}}/>
-   <FlatList style={{maxHeight:420}} data={SCENARIOS.filter(c=>`${c.title} ${c.category} ${c.history}`.toLowerCase().includes(query.toLowerCase()))} keyExtractor={c=>c.id} initialNumToRender={10} renderItem={({item})=><Touchable label={'Start '+item.title} onPress={()=>{onScenario(item.id);setChoose(false);}} style={{minHeight:60,paddingVertical:12}}><Copy>{item.title}</Copy><Copy muted>{item.category}</Copy></Touchable>}/>
+   <FlatList keyboardShouldPersistTaps="handled" style={{maxHeight:420}} data={SCENARIOS.filter(c=>`${c.title} ${c.category} ${c.history}`.toLowerCase().includes(query.toLowerCase()))} keyExtractor={c=>c.id} initialNumToRender={10} renderItem={({item})=><Touchable label={'Start '+item.title} onPress={()=>{onScenario(item.id);setChoose(false);}} style={{minHeight:60,paddingVertical:12}}><Copy>{item.title}</Copy><Copy muted>{item.category}</Copy></Touchable>}/>
   </Sheet>
  </ScrollView>;
 }

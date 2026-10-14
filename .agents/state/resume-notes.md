@@ -2335,3 +2335,19 @@ DO NOT: Call Preview 11 MRI screenshot proof; it was blank after a pan. Do not c
 **NEXT:** Preview 12 remains the latest application build, from c9f29a970a3fadac09865081e7a566deb651a928: https://github.com/Sabharivarshan111/gmck/releases/download/native-offline-preview-12/app-preview.apk, 98,923,917 bytes, SHA256 5dc6e273e8464f65605deaf575d112d193b4c4c31a88f0034a6286114301e0b0. The later commits add tests/docs only. Continue remaining parity/device work before production APK/AAB and merge; PR85 stays draft.
 
 **DO NOT:** Treat test-only commits as new APK releases, claim full parity, change production authentication or publish to Play. Preserve concurrent PG explanations.
+
+
+## 2026-10-14 — offline Android build continuation
+
+**DONE:** Fixed three build failures on 025b56c: simulator inputs already live inside KeyboardSafe Sheet but keyboard guard lacked their ancestor declarations. Guard now parses JSX ancestry and rejects inputs outside Sheet; negative regression verified. Anatomy/case/X-ray lists handle selection while keyboard is open. All 39 release Checks commands passed locally; edge/inset check and targeted lint pass. Build reports will be attached alongside APK/AAB; internal notes preserve Play installation/local data, and branch release stays prerelease/not latest.
+
+**HALF-DONE:** Fresh debug/internal/release builds must complete from this follow-up. Native content is unchanged apart from keyboard list taps. Local regenerated content checks passed (3143 named meshes,225 registered views, full MRI,212 audio clips,21 PG packs); typecheck pending completion. Prior025b56c CI type/lint/content generation passed.
+
+**NEXT:** Follow three Android workflows, fix failures, verify packaged native assets/checksums and deliver exact current APK/AAB links. Keep branch isolated; no main merge or Play upload.
+
+**DO NOT:** Recommend prior release-690 for offline port or claim full parity/physical-device clinical review. Preview12 remains existing ad-free ARM64 download until fresh normal workflows succeed.
+
+
+2026-10-14 publication blocked: auto-review rejected git push3392e41 to publicSabharivarshan111/gmck codex/native-offline-simulator. Connected GitHub identitySabharivarshan111 and owner/admin/push permission were verified, but review still requires explicit permission to publish modified source publicly. Do not bypass through connector/alternate git routes. User approval must authorize pushing this prepared fix to that public branch. Previous builds38540809522/38540809548/38540809518 failed only at keyboard guard; these changes address that failure. No new builds were triggered, no remote push/merge/Play upload completed.
+
+2026-10-14 owner explicitly authorised pushing this fix to gmck and releasing the three build variants. Local git push lacks credential access in the current runtime; connected GitHub API is used for the same approved eight-file commit. Local TypeScript/targeted lint and39 release checks passed. No main merge or Play upload.

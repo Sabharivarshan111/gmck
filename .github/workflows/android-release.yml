@@ -282,6 +282,7 @@ jobs:
           tag_name: release-${{ github.run_number }}
           name: Release build ${{ github.run_number }} — v${{ steps.appversion.outputs.code }}
           prerelease: true
+          make_latest: false
           body: |
             Signed release build of the Orbit MBBS native app.
 
@@ -305,3 +306,5 @@ jobs:
           files: |
             mobile/android/app/build/outputs/bundle/release/*.aab
             mobile/android/app/build/outputs/apk/release/*.apk
+            mobile/android/app/build/outputs/bundle/release/*.aab.json
+            mobile/android/app/build/outputs/apk/release/*.apk.json

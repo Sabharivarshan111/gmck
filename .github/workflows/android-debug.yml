@@ -353,6 +353,8 @@ jobs:
             Source: https://github.com/Sabharivarshan111/gmck/commit/${{ github.sha }}.
 
             Built from `${{ github.sha }}`.
-          files: mobile/android/app/build/outputs/apk/preview/*.apk
+          files: |
+            mobile/android/app/build/outputs/apk/preview/*.apk
+            mobile/android/app/build/outputs/apk/preview/*.apk.json
           prerelease: true
           make_latest: false

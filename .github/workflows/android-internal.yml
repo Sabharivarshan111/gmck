@@ -244,9 +244,10 @@ jobs:
             Real package name, real upload key — **Google Sign-In works in
             this build**, once its SHA-1 is registered in Google Cloud.
 
-            **Uninstall the Play Store copy of Orbit MBBS before installing
-            this.** Same package name with a different signature, so Android
-            will refuse the install otherwise.
+            This uses the production package with the upload-key signature.
+            A Play-installed copy may have a different signing certificate;
+            use the separate debug APK for review if Android reports a mismatch.
+            Keep the Play-installed app and its local study data.
 
             **No ads at all** — not live ones and not Google's test ones
             either. This build sets `ADS_ENABLED = false`, so the AdMob SDK
@@ -259,6 +260,8 @@ jobs:
             Source: https://github.com/Sabharivarshan111/gmck/commit/${{ github.sha }}.
 
             Built from `${{ github.sha }}`.
-          files: mobile/android/app/build/outputs/apk/internal/*.apk
+          files: |
+            mobile/android/app/build/outputs/apk/internal/*.apk
+            mobile/android/app/build/outputs/apk/internal/*.apk.json
           prerelease: true
           make_latest: false

@@ -17,6 +17,7 @@
 //
 //   node scripts/keyboard-check.mjs
 import fs from 'node:fs/promises';
+import ts from 'typescript';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -30,7 +31,16 @@ const SRC = path.join(root, 'src');
  * inputs. It is not a way to silence the check — if the ancestor changes, this
  * is the note that says what to re-verify.
  */
+const SHEET_ONLY_INPUTS = new Set([
+  'simulator/NativeAnatomyPanel.tsx',
+  'simulator/NativeCases.tsx',
+  'simulator/NativeRadiology.tsx',
+]);
+
 const LIFTED_BY_ANCESTOR = {
+  'simulator/NativeAnatomyPanel.tsx': 'All anatomy search inputs are inside Sheet, whose modal root is KeyboardSafe',
+  'simulator/NativeCases.tsx': 'Case search is inside Sheet, whose modal root is KeyboardSafe',
+  'simulator/NativeRadiology.tsx': 'Both X-ray search and personal marker name are inside Sheet, whose modal root is KeyboardSafe',
   'components/PgRecentAnswerReview.tsx': 'PgEntranceBankModal always renders PgRecentAnswerReview inside KeyboardSafe; the entire scrollable modal body is lifted above the keyboard',
   'components/StudyBuddy.tsx': 'StudyBuddyPanel is presented only inside Sheet: AskAiScreen buddy sheet and SettingsSheet; Sheet wraps its scrollable body in KeyboardSafe',
   'components/ProfileSheet.tsx': 'Sheet wraps its body in KeyboardSafe',
@@ -68,6 +78,25 @@ for await (const file of walk(SRC)) {
   if (/KeyboardSafe/.test(body)) {
     covered += 1;
     continue;
+  }
+  if (SHEET_ONLY_INPUTS.has(rel)) {
+    // An exemption must stop applying if a future edit moves an input out of
+    // the modal. JSX ancestry, rather than a file-wide Sheet mention, proves it.
+    const source = ts.createSourceFile(rel, body, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+    const visit = node => {
+      if (ts.isJsxSelfClosingElement(node) || ts.isJsxElement(node)) {
+        const tag = ts.isJsxElement(node) ? node.openingElement.tagName : node.tagName;
+        if (tag.getText(source) === 'TextInput') {
+          let ancestor = node.parent;
+          while (ancestor && !(ts.isJsxElement(ancestor) && ancestor.openingElement.tagName.getText(source) === 'Sheet')) ancestor = ancestor.parent;
+          if (!ancestor) failures.push(`${rel} has a TextInput outside its keyboard-safe Sheet`);
+        }
+      }
+      ts.forEachChild(node, visit);
+    };
+    visit(source);
+    const sheet = await fs.readFile(path.join(SRC, 'components/Sheet.tsx'), 'utf8');
+    if (!/<KeyboardSafe\b/.test(sheet)) failures.push('Sheet no longer wraps these simulator inputs in KeyboardSafe');
   }
   if (LIFTED_BY_ANCESTOR[rel]) {
     unusedAllowances.delete(rel);
