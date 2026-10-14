@@ -35,7 +35,7 @@ try{
    },{mode,group,preset,rate});
    if(rendered.peak<.0001||!Number.isFinite(rendered.rms))throw Error('Silent/nonfinite DSP '+preset);
    const file=`${group}_${preset}_${mode}_${rate}.ogg`,raw='/tmp/orbit-reference.pcm';fs.writeFileSync(raw,Buffer.from(rendered.pcm,'base64'));
-   const result=spawnSync('ffmpeg',['-y','-v','error','-f','s16le','-ar','22050','-ac','1','-i',raw,'-c:a','libvorbis','-q:a','3',dir+'/'+file]);if(result.status!==0)throw Error(result.stderr.toString());
+   const result=spawnSync('ffmpeg',['-y','-v','error','-f','s16le','-ar','22050','-ac','1','-i',raw,'-c:a','libvorbis','-q:a','3',dir+'/'+file]);if(result.status!==0)throw Error(result.error?.message||result.stderr?.toString()||'Audio encoder failed');
    const bytes=fs.readFileSync(dir+'/'+file);clips.push({group,preset,mode,rate,file,bytes:bytes.length,sha256:crypto.createHash('sha256').update(bytes).digest('hex'),peak:rendered.peak,rms:rendered.rms});
   }
  }
