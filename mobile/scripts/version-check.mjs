@@ -47,11 +47,11 @@ if (gradleCode && tsCode) {
   );
 }
 /*
- * The owner confirmed version 23 has been uploaded to Play and explicitly
- * requested 24 for the next build (2026-09-25). Keep the build and this pin
- * together until the owner confirms another upload.
+ * VersionCode 26 was built on 2026-10-14. The owner explicitly requested
+ * version 27 as the next Android build. Keep the Gradle version in sync.
+ * This pin verifies source version only; it does not imply Play publication.
  */
-const PINNED_VERSION_CODE = 25;
+const PINNED_VERSION_CODE = 27;
 if (gradleCode) {
   check(
     Number(gradleCode[1]) === PINNED_VERSION_CODE,

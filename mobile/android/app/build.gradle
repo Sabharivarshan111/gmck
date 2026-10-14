@@ -108,10 +108,9 @@ android {
         applicationId "com.aistudio.mbbsqbank.aycxvd"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // Version 24 follows the owner's uploaded version 23. Includes the
-        // note, imported deck, file chooser and customization fixes.
-        versionCode 25
-        versionName "0.0.0.25"
+        // Version 27 candidate follows the already built versionCode 26; release only after real-device QA.
+        versionCode 27
+        versionName "0.0.0.27"
 
         // Deep-link / OAuth callback scheme, consumed by the intent-filter in
         // AndroidManifest.xml. Added with an indexed put rather than assigning
