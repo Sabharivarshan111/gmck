@@ -10,7 +10,7 @@ const errors=[];page.on('pageerror',error=>errors.push(error.message));
 const captures=[];
 async function shot(name) {
   await page.waitForTimeout(250);
-  const viewport=await page.evaluate(()=>({width:innerWidth,height:innerHeight}));
+  const viewport=await page.evaluate(()=>({width:window.innerWidth,height:window.innerHeight}));
   if(viewport.width!==393||viewport.height!==852) throw Error('Reference viewport is not mobile 393×852');
   await page.screenshot({path:resolve(out,name+'.png')});captures.push(name);
 }
