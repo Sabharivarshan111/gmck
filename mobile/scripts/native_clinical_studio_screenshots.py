@@ -52,13 +52,14 @@ def main():
 
     tap("Back to clinical studio")
     wait_visible("Explore 3D anatomy")
+    scroll_until("12-lead ECG", tries=10)
     tap("12-lead ECG")
     wait_visible("WAVE GUIDE")
     shot("08-android-native-12lead-ecg")
     tap("All 12")
     shot("09-android-native-ecg-all-leads")
     tap("QRS")
-    wait_visible("Electrophysiological")
+    scroll_until("Electrophysiological", tries=7)
     shot("10-android-native-ecg-qrs-teaching")
 
     print("Native clinical UI/monitor/case/ECG screenshots generated. Compare with web.")
