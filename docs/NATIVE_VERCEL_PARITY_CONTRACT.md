@@ -28,8 +28,8 @@ A feature is **native** only if its actual interactive UI and relevant computati
 | Annotated X-ray/MRI | Simulator tools and radiology assets | Native image/volume viewers with arrows and tooltips | NOT PORTED |
 | Pupils, cranial nerves, general examination | Simulator tools | Native exam UI, physiology state, case response | NOT PORTED |
 | Clubbing trainer | `ClubbingTrainer.tsx` | Native visual and Schamroth-exam interactions | NOT PORTED |
-| ICU monitor | `IcuMonitor.tsx` + `PhysiologyKernel.ts` | Native animated traces and vital-driven alarms | NOT PORTED |
-| Interventions/case debrief | `InterventionPanel.tsx`, `PhysiologyKernel.ts` | Native scenario state/interventions/history | NOT PORTED |
+| ICU monitor | `IcuMonitor.tsx` + `PhysiologyKernel.ts` | Native animated traces and vital-driven alarms | Functional 4-channel native SVG port with shared Vercel PhysiologyKernel; web-specific ECG tutorials/audio still pending |
+| Interventions/case debrief | `InterventionPanel.tsx`, `PhysiologyKernel.ts` | Native scenario state/interventions/history | Native case screen with shared PhysiologyKernel and all 27 intervention actions; expanded visual parity and clinical debrief pending |
 | Handwritten notes, diagrams, audio, PDFs | `src/components/handwritten/` and native Notes | Native modules exist | Full web parity NOT verified |
 | NEET PG practice & explanation fidelity | Web PG/quiz surfaces | Native PG bank modules exist | Content/UI parity NOT verified |
 | Flashcards & Anki import/media | `src/components/flashcards/` | Native `FlashcardsScreen` | Full deck/media/gesture parity NOT verified |
@@ -50,6 +50,7 @@ A feature is **native** only if its actual interactive UI and relevant computati
 ## WIP checkpoint (2026-10-14)
 
 - **Implemented in this branch:** real RN clinical-studio discovery screen; source-mirrored 7 skills and 43 clinical case metadata records; native search/segments/case choice/theme mode; checks to catch Vercel catalog drift.
-- **Not implemented:** native Three.js-equivalent 3D dissection, renderer, organ labeling, interactive radiology, auscultation, ECG, POCUS, monitor and many other modules.
-- **Temporary behavior:** selecting an advanced module still opens the full hosted Vercel renderer as a compatibility fallback, **not** an offline native port.
+- **Implemented during continuation:** native 4-channel ICU monitor with live SVG traces and same Vercel PhysiologyKernel, native clinical-case intervention screen using the same actual simulation state, 27 matching web interventions, shareable engine injection so case changes remain visible in monitor, keyboard-safe search input, and shared TS module alias across Babel/Metro/TypeScript.
+- **Not implemented:** native Three.js-equivalent 3D dissection, renderer, organ labeling, interactive radiology, auscultation, full 12-lead ECG tutorial, POCUS and many other modules.
+- **Temporary behavior:** anatomy and advanced diagnostic tools still open the hosted Vercel renderer as a compatibility fallback, **not** an offline native port. Case interventions and bedside telemetry now use React Native and the shared Vercel physiology engine.
 - **Release policy:** this branch is a draft, NOT an all-feature parity release. Never merge solely because it compiles.
