@@ -44,7 +44,36 @@ for label,web,native in pairs:
             item["side_by_side"]=path.name
     result["pairs"].append(item)
 (folder/"native-visual-audit.json").write_text(json.dumps(result,indent=2))
+anatomy_file=folder/"native-anatomy-captures.json"
+if anatomy_file.exists():
+    anatomy=json.loads(anatomy_file.read_text())
+    body_pairs=[]
+    for target in anatomy['targets']:
+        w=folder/f"anatomy-vercel-{target['id']}.png"
+        n=folder/f"anatomy-android-{target['id']}.png"
+        item={'id':target['id'],'captured_both':w.exists() and n.exists(),'appearanceVerified':False,'controlsVerified':False}
+        if item['captured_both']:
+            with Image.open(w) as web_image,Image.open(n) as native_image:
+                a=web_image.convert('RGB')
+                b=native_image.convert('RGB')
+                bounds=target.get('renderer',{}).get('nativeBounds')
+                if bounds:
+                    b=b.crop(tuple(bounds))
+                item['dimensions']={'vercel':list(a.size),'nativeContent':list(b.size)}
+                a.thumbnail((393,852));b.thumbnail((393,852))
+                canvas=Image.new('RGB',(800,920),'#171821')
+                canvas.paste(a,(0,35));canvas.paste(b,(406,35))
+                draw=ImageDraw.Draw(canvas)
+                draw.text((8,10),f"VERCEL MOBILE - {target['id']}",fill='white')
+                draw.text((415,10),f"ACTUAL ANDROID - {target['id']}",fill='white')
+                draw.text((8,900),'Review shape, vessels, nerves, relations and controls; NOT CERTIFIED',fill='#ff9a9a')
+                name=f"comparison-anatomy-{target['id']}.png"
+                canvas.save(folder/name);item['comparison']=name
+        body_pairs.append(item)
+    (folder/'anatomy-visual-audit.json').write_text(json.dumps({'status':'NOT_CERTIFIED','pairs':body_pairs},indent=2))
 print(json.dumps(result,indent=2))
 # Fail the audit as incomplete when visual evidence is missing, but preserve artifacts.
 if not all(p["captured_both"] for p in result["pairs"]):
     raise SystemExit("INCOMPLETE: one or more actual Vercel/Android screenshots missing")
+if anatomy_file.exists() and not all(pair['captured_both'] for pair in body_pairs):
+    raise SystemExit('INCOMPLETE: one or more actual organ screenshots missing')

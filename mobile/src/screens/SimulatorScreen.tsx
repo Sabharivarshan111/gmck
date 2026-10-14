@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, AppState, BackHandler, Linking, StyleSheet, View } from 'react-native';
-import { WebView } from 'react-native-webview';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, AppState, BackHandler, StyleSheet, View } from 'react-native';
+import LocalSimulator from '@/native/LocalSimulator';
 import { useIsFocused } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '@/components/Text';
@@ -14,21 +14,20 @@ import NativeClinicalCase from '@/components/NativeClinicalCase';
 import NativeRadiologyViewer from '@/components/NativeRadiologyViewer';
 import NativeClubbingTrainer from '@/components/NativeClubbingTrainer';
 import { nativeClinicalRoute } from '@/lib/nativeSimulatorRouting';
-import { simulatorNavigation } from '@/lib/simulatorNavigation';
 
 /**
  * WIP Native Vercel parity migration.
  *
  * The discovery/skill/case selection screen is now actual React Native.
  * ICU telemetry and clinical case interventions are now native and share the
- * site's real physiology engine. Radiology also renders offline with native Android bitmaps. Anatomy and the remaining diagnostic tools
- * still use a hosted renderer; do not ship as full native parity.
+ * site's real physiology engine. Radiology renders offline with native Android bitmaps. Anatomy and the remaining
+ * diagnostic tools use the locally bundled canonical WebGL renderer with
+ * checksum-pinned model caching. Device visual parity still needs certification.
  */
 export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const focused = useIsFocused();
-  const web = useRef<WebView<unknown>>(null);
   const [url, setUrl] = useState<string | null>(null);
   const [studioScenarioId, setStudioScenarioId] = useState('normal');
   const [studioTheme, setStudioTheme] = useState<'dark' | 'light'>('dark');
@@ -36,12 +35,11 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   const [active, setActive] = useState(AppState.currentState === 'active');
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
-  const [canGoBack, setCanGoBack] = useState(false);
+  const [backRequest, setBackRequest] = useState(0);
   const returnToNativeStudio = () => {
     setUrl(null);
     setNativeMode(null);
     setFailed(false);
-    setCanGoBack(false);
   };
 
   useEffect(() => {
@@ -69,15 +67,14 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
       if (nativeMode) {
         setNativeMode(null);
       } else if (url) {
-        if (canGoBack && web.current) web.current.goBack();
-        else returnToNativeStudio();
+        setBackRequest(value => value + 1);
       } else {
         onExit();
       }
       return true;
     });
     return () => sub.remove();
-  }, [canGoBack, focused, onExit, url, nativeMode]);
+  }, [focused, onExit, url, nativeMode]);
 
   if (nativeMode?.kind === 'monitor') return <NativeIcuMonitor scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />;
   if (nativeMode?.kind === 'ecg') return <NativeEcgTwelveLead scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />;
@@ -113,48 +110,26 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
       if (destination.kind === 'anatomy') setStudioScenarioId('normal');
       setFailed(false);
       setLoading(true);
-      setCanGoBack(false);
+      setBackRequest(0);
       setUrl(nativeClinicalRoute(destination));
     }} />;
   }
 
   return (
-    <View style={[styles.screen, { backgroundColor: colors.background, paddingTop: insets.top }]}>
-      {focused && active && !failed ? (
+    <View style={[styles.screen, { backgroundColor: colors.background, paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+      {!failed ? (
         <View style={styles.screen}>
-          <WebView<unknown>
-            ref={web}
-            testID="orbit-simulator-deep-module-temporary-web"
-            source={{ uri: url }}
+          <LocalSimulator
+            testID="orbit-local-anatomy-renderer"
+            route={url.replace('https://orbitmbbs.vercel.app', '') + '&nativeTheme=' + studioTheme}
+            active={focused && active}
+            backRequest={backRequest}
             style={[styles.screen, { backgroundColor: colors.background }]}
-            javaScriptEnabled
-            domStorageEnabled
-            injectedJavaScriptBeforeContentLoaded={`try { localStorage.setItem('orbit-simulator-theme', ${JSON.stringify(studioTheme)}); } catch (_) {} true;`}
-            originWhitelist={['https://*', 'about:blank']}
-            mixedContentMode="never"
-            allowFileAccess={false}
-            setSupportMultipleWindows={false}
-            mediaPlaybackRequiresUserAction
-            allowsInlineMediaPlayback
-            incognito
-            cacheEnabled={false}
-            cacheMode="LOAD_NO_CACHE"
-            onLoadStart={() => { setLoading(true); }}
-            onLoadEnd={() => setLoading(false)}
-            onError={() => { setFailed(true); setLoading(false); }}
-            onHttpError={({ nativeEvent }) => {
-              if (nativeEvent.url.startsWith('https://orbitmbbs.vercel.app/simulator') && nativeEvent.statusCode >= 400) {
-                setFailed(true);
-                setLoading(false);
-              }
-            }}
-            onRenderProcessGone={() => { setFailed(true); setLoading(false); }}
-            onNavigationStateChange={state => setCanGoBack(state.canGoBack)}
-            onShouldStartLoadWithRequest={request => {
-              const action = simulatorNavigation(request.url);
-              if (action === 'vault') onExit();
-              if (action === 'external') void Linking.openURL(request.url).catch(() => undefined);
-              return action === 'allow';
+            onStatus={({ nativeEvent }) => {
+              if (nativeEvent.status === 'exit') returnToNativeStudio();
+              if (nativeEvent.status === 'loading') setLoading(true);
+              if (nativeEvent.status === 'ready') setLoading(false);
+              if (nativeEvent.status === 'error') { setFailed(true); setLoading(false); }
             }}
           />
           {loading && <View pointerEvents="none" style={[styles.loading, { backgroundColor: colors.background }]}>
@@ -165,7 +140,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
       ) : (
         <View style={styles.message}>
           <Text style={{ color: colors.text }}>{failed ?
-            'This advanced interactive tool still uses the online renderer during the native port. Reconnect and retry, or return to the native studio.' :
+            'The interactive renderer could not open. Retry or return to the studio. Anatomy models need an initial connection, then remain cached on this device.' :
             'The teaching module pauses while ORBIT is in the background.'}</Text>
           {failed && <Touchable label="Retry simulator" onPress={() => { setFailed(false); setLoading(true); }} style={[styles.retry, { backgroundColor: colors.accent }]}>
             <Text style={{ color: colors.onAccent }}>Try again</Text>

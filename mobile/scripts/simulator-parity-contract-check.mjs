@@ -36,12 +36,21 @@ for (const [symbol, source] of [
 ]) assert.ok(source.includes(symbol), 'Android native migration contract missing: ' + symbol);
 
 assert.doesNotMatch(entry, /Offline native studio|Clinical learning studio|arrowsToFakeOrgans/i, 'obsolete fake native simulator restored');
-assert.ok(deepLinks.includes('https://orbitmbbs.vercel.app/simulator'), 'hosted compatibility fallback must remain canonical');
-assert.match(entry, /<WebView<unknown>/, 'unfinished advanced tools still need a safe compatibility renderer');
-assert.match(entry, /incognito\s*\n\s*cacheEnabled=\{false\}/, 'hosted compatibility renderer must not show outdated cache');
-assert.ok(entry.includes('simulatorNavigation(request.url)'), 'navigation policy lost');
+assert.ok(deepLinks.includes('https://orbitmbbs.vercel.app/simulator'), 'routes must retain canonical Vercel query semantics');
+assert.match(entry, /<LocalSimulator/, 'anatomy must use the locally bundled canonical renderer');
+assert.doesNotMatch(entry, /source=\{\{ uri: url \}\}/, 'hosted simulator page must not return');
+const view = src('android/app/src/main/java/com/aistudio/mbbsqbank/aycxvd/SimulatorViewManager.kt');
+const store = src('android/app/src/main/java/com/aistudio/mbbsqbank/aycxvd/SimulatorAssetStore.kt');
+const renderer = src('simulator-renderer/main.tsx');
+assert.ok(renderer.includes("../../src/pages/Simulator"), 'canonical renderer source must be reused without a divergent organ substitute');
+for (const policy of ['settings.allowFileAccess = false', 'settings.allowContentAccess = false', 'MIXED_CONTENT_NEVER_ALLOW', 'uri.host != HOST', 'BuildConfig.DEBUG']) {
+  assert.ok(view.includes(policy), 'local renderer safety policy lost: ' + policy);
+}
+for (const policy of ['manifest.optJSONObject(path)', 'MessageDigest.getInstance("SHA-256")', 'instanceFollowRedirects = false', 'written > expectedSize', 'context.filesDir']) {
+  assert.ok(store.includes(policy), 'persistent canonical asset validation lost: ' + policy);
+}
 for (const symbol of ['SimulatorStudio','AnatomicalBody3D','DiagnosticTools','IcuMonitor','OrganDetailDrawer']) {
   assert.ok(web.includes(symbol), 'Vercel reference source missing: ' + symbol);
 }
 console.log('PASS: Android genuine native studio, cases, monitor and ECG are routed; outdated fake studio absent.');
-console.log('WIP: 3D anatomy, POCUS, auscultation and full Vault 1:1 pixel parity still require native work and screenshot proof.');
+console.log('Canonical anatomy/diagnostic renderer is local, with pinned persistent model downloads. WIP: actual device appearance, gestures, sound and full Vault parity still need screenshot/functional proof.');

@@ -59,6 +59,7 @@ on:
       - claude/native-app-sync
       - codex/native-vault-full-port-20261014
       - codex/native-vault-audit-20261015
+      - codex/native-vault-anatomy-cache-20261014
     # Only when something that reaches the APK changes.
     #
     # This used to fire on every push. Three Android builds ran per push, per
@@ -114,6 +115,12 @@ jobs:
       - name: Install dependencies
         working-directory: mobile
         run: npm ci --legacy-peer-deps
+
+      - name: Bundle the local canonical anatomy and diagnostic renderer
+        working-directory: .
+        run: |
+          npm ci --legacy-peer-deps --ignore-scripts
+          node mobile/scripts/build-local-simulator.mjs
 
       - name: Typecheck
         working-directory: mobile

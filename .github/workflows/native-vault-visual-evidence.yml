@@ -2,7 +2,7 @@ name: WIP Native vs Vercel Studio Visual Evidence
 
 on:
   push:
-    branches: [main, codex/native-vault-full-port-20261014, codex/native-vault-audit-20261015]
+    branches: [main, codex/native-vault-full-port-20261014, codex/native-vault-audit-20261015, codex/native-vault-anatomy-cache-20261014]
     paths:
       - '.github/workflows/android-debug.yml'
       - '.github/workflows/native-vault-visual-evidence.yml'
@@ -25,7 +25,7 @@ permissions:
 jobs:
   screenshots:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -63,6 +63,7 @@ jobs:
           npm install --no-save --package-lock=false --legacy-peer-deps playwright@1.55.0
           npx playwright install --with-deps chromium
           mkdir -p artifacts/native-vault-parity
+          node mobile/scripts/native-anatomy-parity-manifest.mjs artifacts/native-vault-parity/anatomy-coverage.json
           node mobile/scripts/vercel_mobile_vault_screenshots.mjs artifacts/native-vault-parity
 
       - name: Enable emulator acceleration
@@ -76,8 +77,8 @@ jobs:
         if: ${{ !cancelled() && steps.apk.outcome == 'success' }}
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 29
-          target: default
+          api-level: 35
+          target: google_apis
           arch: x86_64
           profile: pixel_7_pro
           emulator-boot-timeout: 300
@@ -89,7 +90,11 @@ jobs:
             adb install -r downloaded-apk/app-preview.apk
             adb shell wm size > artifacts/native-vault-parity/android-display-size.txt
             adb shell wm density > artifacts/native-vault-parity/android-display-density.txt
-            ORBIT_SCREENSHOT_OUT=artifacts/native-vault-parity python3 mobile/scripts/native_clinical_studio_screenshots.py
+            ORBIT_SCREENSHOT_OUT=artifacts/native-vault-parity python3 mobile/scripts/run_native_vault_captures.py
+
+      - name: Capture every Vercel organ at the actual Android renderer dimensions
+        if: ${{ !cancelled() && steps.apk.outcome == 'success' }}
+        run: node mobile/scripts/vercel_anatomy_screenshots.mjs artifacts/native-vault-parity
 
       - name: Audit and assemble Vercel versus installed Android screenshots
         if: always()

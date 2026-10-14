@@ -83,6 +83,12 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
+      - name: Bundle the local canonical anatomy and diagnostic renderer
+        working-directory: .
+        run: |
+          npm ci --legacy-peer-deps --ignore-scripts
+          node mobile/scripts/build-local-simulator.mjs
+
       - name: Typecheck
         run: npm run typecheck
 

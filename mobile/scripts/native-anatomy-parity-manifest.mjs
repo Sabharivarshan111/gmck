@@ -20,7 +20,7 @@ for(const chunk of atlas.chunks) {
 const organIds=[...new Set([...Object.keys(model.ORGAN_ANATOMY_DATABASE),...Object.keys(model.PREFERRED_ANATOMY_OVERVIEW_TARGETS)])];
 const manifest={
   status:'NOT_CERTIFIED',reference:'Vercel mobile 393x852 portrait',
-  nativeRendererStatus:'Anatomy is still hosted in the existing Android compatibility WebView. No complete offline native geometry port has been certified.',
+  nativeRendererStatus:'Anatomy uses the canonical locally bundled WebGL renderer. Source model files are checksum-pinned and cached after first download. Device visual and offline parity still require verification.',
   referencePartCount:parts.length,
   systems:model.SYSTEMS.map(s=>({id:s.id,name:s.name,referenceCount:parts.filter(p=>p.system===s.id).length,structures:parts.filter(p=>p.system===s.id).map(p=>({id:p.id,name:p.name,source:p.source||'BodyParts3D'})),nativeScreenshot:null,vercelScreenshot:null,visualParityVerified:false})),
   organs:organIds.map(id=>({id,name:model.ORGAN_ANATOMY_DATABASE[id]?.name||id.replaceAll('_',' '),preferredReference:model.PREFERRED_ANATOMY_OVERVIEW_TARGETS[id]||id,hasTeachingDetails:!!model.ORGAN_ANATOMY_DATABASE[id],nativeScreenshot:null,vercelScreenshot:null,appearanceVerified:false,controlsVerified:false})),
