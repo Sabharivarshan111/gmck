@@ -93,7 +93,7 @@ jobs:
            for clip in sound['clips']:
             item='assets/simulator/auscultation/'+clip['file']
             assert z.getinfo(item).compress_type==zipfile.ZIP_STORED, 'Android asset FD requires uncompressed audio: '+item
-           report={'apkBytes':apk.stat().st_size,'apkMB':apk.stat().st_size/1000000,'offlineAssetBytes':sum(i.file_size for i in z.infolist() if i.filename.startswith(('assets/simulator/','assets/pg/'))),'abi':'arm64-v8a','package':'com.aistudio.mbbsqbank.aycxvd.debug','productionRelease':False}
+           report={'audioClips':len(sound['clips']),'audioClipBytes':sound['bytes'],'apkBytes':apk.stat().st_size,'apkMB':apk.stat().st_size/1000000,'offlineAssetBytes':sum(i.file_size for i in z.infolist() if i.filename.startswith(('assets/simulator/','assets/pg/'))),'abi':'arm64-v8a','package':'com.aistudio.mbbsqbank.aycxvd.debug','productionRelease':False}
           Path('native-preview-size.json').write_text(json.dumps(report,indent=2))
           print(json.dumps(report))
           PY

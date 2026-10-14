@@ -24,7 +24,7 @@ for(const [file,names] of datasets){
  for(const name of Object.keys(names))if(!found.has(name))throw Error('Missing source lesson '+file+' '+name);
 }
 const audioPath='public/clinical-reference/auscultation/manifest.json';
-const audioClips=fs.existsSync(audioPath)?JSON.parse(fs.readFileSync(audioPath,'utf8')).clips:[];
+const audioClips=fs.existsSync(audioPath)?JSON.parse(fs.readFileSync(audioPath,'utf8')).clips.map(({group,preset,mode,rate,file})=>({group,preset,mode,rate,file})):[];
 catalog+='export const AUDIO_CLIPS:Array<{group:string;preset:string;mode:string;rate:number;file:string}> = '+JSON.stringify(audioClips)+';\n';
 fs.writeFileSync(out+'/lessonCatalog.ts',catalog);
 const soundSource=ts.createSourceFile('sound.ts',fs.readFileSync('src/simulator/instruments/StethoscopeSynthesizer.ts','utf8'),ts.ScriptTarget.Latest,true);
