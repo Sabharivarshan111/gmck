@@ -135,6 +135,7 @@ jobs:
           npm run check:study-buddy
           npm run check:admin
           npm run check:simulator
+          node scripts/simulator-parity-contract-check.mjs
           npm run check:calendar-columns
           npm run check:note-links
 
