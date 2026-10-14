@@ -64,7 +64,7 @@ def main():
         tap("Resume monitor")
         expect("Pause")
         results.append("ECG/ART/PLETH/CO2 and pause/resume")
-        tap("Back to clinical studio")
+        adb("shell","input","keyevent","4")
         expect("Patient Simulator")
         screenshot("07-android-case-return-preserved")
         tap("Back to clinical studio")

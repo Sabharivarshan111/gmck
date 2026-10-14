@@ -7,10 +7,11 @@
  * The web magnified cutout and ECG heartbeat 3D tutorial still need porting.
  */
 import React, { useEffect, useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { AppState, Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
 import Svg, { Line, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { ArrowLeft, Play, Pause, RotateCcw } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useIsFocused } from '@react-navigation/native';
 import { Text } from '@/components/Text';
 import { NATIVE_ECG_LEADS, NATIVE_ECG_SEGMENTS, type NativeEcgSegmentId } from '@/lib/nativeEcgReference';
 import { leadById, nativeEcgTracePath, type NativeEcgConfig } from '@/lib/nativeEcgWaveform';
@@ -85,6 +86,9 @@ function EcgPaper({ cfg, group, segment, width }: {
 const button = { borderWidth:1, borderColor:BORDER, backgroundColor:PANEL, borderRadius:12, minHeight:44, justifyContent:'center' as const, paddingHorizontal:10 };
 export default function NativeEcgTwelveLead({ scenarioId, onBack }: Props) {
   const insets=useSafeAreaInsets();
+  const focused=useIsFocused();
+  const [active,setActive]=useState(AppState.currentState==='active');
+  useEffect(()=>{const sub=AppState.addEventListener('change',state=>setActive(state==='active'));return()=>sub.remove();},[]);
   const {width}=useWindowDimensions();
   const [capture,setCapture]=useState<NativeEcgConfig>(()=> {
     const k=new PhysiologyKernel(scenarioId);
@@ -101,13 +105,13 @@ export default function NativeEcgTwelveLead({ scenarioId, onBack }: Props) {
     setCapture({rhythm:k.pathology.ecgRhythm,heartRate:k.vitals.heartRate});
   };
   useEffect(()=>{
-    if(!tour)return;
+    if(!tour||!active||!focused)return;
     const i=setInterval(()=>setSegment(previous=>{
       const index=BEAT_ORDER.indexOf(previous==='all'?'p':previous);
       return BEAT_ORDER[(index+1)%BEAT_ORDER.length];
     }),4200);
     return()=>clearInterval(i);
-  },[tour]);
+  },[tour,active,focused]);
   const canvasWidth=zoomed ? (group===4?W_LARGE:W_SMALL) : width-30;
   const chooseSegment=(id:NativeEcgSegmentId)=>{setTour(false);setSegment(id);};
   return <View testID="native-ecg12-studio" style={{flex:1,backgroundColor:'#020617',paddingTop:insets.top}}>

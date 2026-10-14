@@ -24,7 +24,9 @@ try {
   await page.getByRole('button',{name:'Switch to dark theme'}).click();
   await page.getByRole('button',{name:'Practise a case',exact:true}).click();await shot('00-vercel-case-choices-393x852');
   await page.getByRole('button',{name:/Acute Inferior STEMI/}).click();await page.getByTestId('simulator-bottom-tabs').waitFor({state:'visible'});await shot('00-vercel-case-393x852');
-  await open('?mode=telemetry&scenario=stemi');await page.getByTestId('mobile-monitor-stage').waitFor({state:'visible'});await shot('00-vercel-icu-393x852');
+  await page.getByTestId('intervention-saline').click();
+  await page.getByTestId('simulator-tab-monitor').click();
+  await page.locator('[data-active-tab="telemetry"]').waitFor({state:'visible'});await shot('00-vercel-icu-393x852');
   await open('?tool=radiology');
   await page.locator('.radio-stage img').waitFor({state:'visible',timeout:60000});
   await page.waitForFunction(()=>{const image=document.querySelector('.radio-stage img');return image?.complete&&image.naturalWidth>0;});
@@ -47,6 +49,11 @@ try {
   await page.getByRole('button',{name:'Reveal answer',exact:true}).click();
   await shot('00-vercel-clubbing-viva-393x852');
   if(errors.length) throw Error('Vercel client errors: '+errors.join('; '));
+} catch(error) {
+  errors.push(error.message);
+  await page.screenshot({path:resolve(out,'99-vercel-mobile-failure.png')}).catch(()=>undefined);
+  await writeFile(resolve(out,'99-vercel-mobile-failure.html'),await page.content());
+  throw error;
 } finally {
   await writeFile(resolve(out,'vercel-mobile-audit.json'),JSON.stringify({viewport:{width:393,height:852},captures,errors},null,2));
   await browser.close();

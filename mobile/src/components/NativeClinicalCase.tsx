@@ -7,6 +7,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AppState, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { ArrowLeft, Activity, RotateCcw } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useIsFocused } from '@react-navigation/native';
 import { Text } from '@/components/Text';
 import { PhysiologyKernel } from '@simulator/engine/PhysiologyKernel';
 import { NATIVE_CLINICAL_ACTIONS } from '@/lib/nativeClinicalActions';
@@ -24,6 +25,7 @@ const groups: { id: ActionGroup; title: string }[] = [
 const round = (n: number) => Math.round(n).toString();
 export default function NativeClinicalCase({ scenarioId, onBack }: { scenarioId: string; onBack: () => void }) {
   const insets = useSafeAreaInsets();
+  const focused = useIsFocused();
   const kernel = useRef(new PhysiologyKernel(scenarioId));
   const [vitals, setVitals] = useState<PatientVitals>(() => ({ ...kernel.current.getLiveVitals() }));
   const [group, setGroup] = useState<ActionGroup>('all');
@@ -37,19 +39,19 @@ export default function NativeClinicalCase({ scenarioId, onBack }: { scenarioId:
   }, [scenarioId]);
 
   useEffect(() => {
-    if (showMonitor) return;
+    if (showMonitor || !focused) return;
     const t = setInterval(() => {
       if (AppState.currentState !== 'active') return;
       kernel.current.tick(0.125);
       setVitals({ ...kernel.current.getLiveVitals() });
     }, 125);
     return () => clearInterval(t);
-  }, [showMonitor]);
+  }, [showMonitor, focused]);
 
   const scenario = kernel.current.currentScenario;
   const apply = (actionId: string) => {
-    const result = kernel.current.applyAction(actionId);
-    setLogs(previous => [result, ...previous].slice(0, 25));
+    kernel.current.applyAction(actionId);
+    setLogs([...kernel.current.logs]);
     setVitals({ ...kernel.current.getLiveVitals() });
   };
 

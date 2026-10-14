@@ -129,6 +129,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
             style={[styles.screen, { backgroundColor: colors.background }]}
             javaScriptEnabled
             domStorageEnabled
+            injectedJavaScriptBeforeContentLoaded={`try { localStorage.setItem('orbit-simulator-theme', ${JSON.stringify(studioTheme)}); } catch (_) {} true;`}
             originWhitelist={['https://*', 'about:blank']}
             mixedContentMode="never"
             allowFileAccess={false}

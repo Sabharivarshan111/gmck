@@ -192,11 +192,20 @@ def first_run() -> None:
 
     # The screenshot-only dev Hermes bundle sets __DEV__ true, so the app's own
     # testing bypass unlocks setup. Production builds are not modified.
-    tap("Display name")
+    root = dump_ui()
+    editable = [n for n in root.iter("node") if "EditText" in n.attrib.get("class", "") and "display name" in node_label(n).lower()]
+    if not editable:
+        raise RuntimeError("Display name input not found during native onboarding")
+    center = bounds_center(editable[0].attrib.get("bounds", ""))
+    if center is None:
+        raise RuntimeError("Display name input has no usable bounds")
+    adb("shell", "input", "tap", str(center[0]), str(center[1]))
     adb("shell", "input", "text", "NativePreview")
     adb("shell", "input", "keyevent", "4")
     time.sleep(0.8)
     tap("Final Year", required=False)
+    scroll_to_tappable("Tamil Nadu")
+    tap("Tamil Nadu")
     if not visible("Start studying"):
         # Some devices expose only the visible text, not the accessibility label.
         tap("YEAR", required=False)

@@ -49,7 +49,8 @@ jobs:
               await new Promise(resolve=>setTimeout(resolve,15000));
             }
             throw new Error('Timed out waiting for a matching native debug APK');
-      - uses: actions/download-artifact@v4
+      - id: apk
+        uses: actions/download-artifact@v4
         with:
           name: orbit-debug-apk
           path: downloaded-apk
@@ -65,12 +66,14 @@ jobs:
           node mobile/scripts/vercel_mobile_vault_screenshots.mjs artifacts/native-vault-parity
 
       - name: Enable emulator acceleration
+        if: ${{ !cancelled() && steps.apk.outcome == 'success' }}
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
       - name: Screenshot actual installed React Native views on Android
+        if: ${{ !cancelled() && steps.apk.outcome == 'success' }}
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
