@@ -11,17 +11,30 @@ def dump():
  adb('shell','uiautomator','dump','/sdcard/orbit-ui.xml')
  return ET.fromstring(adb('shell','cat','/sdcard/orbit-ui.xml').decode().lstrip())
 def labels():return [(n.get('content-desc') or n.get('text') or '') for n in dump().iter('node')]
-def tap(label,scroll=False,timeout=25):
+def dismiss_launcher_anr(root):
+ nodes=list(root.iter('node'));visible=[n.get('text') or '' for n in nodes]
+ if "Pixel Launcher isn't responding" not in visible:return False
+ for n in nodes:
+  if n.get('text')=='Close app':
+   x1,y1,x2,y2=map(int,re.findall(r'\d+',n.get('bounds')))
+   adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2));time.sleep(2)
+   adb('shell','am','start','-n',package+'/com.aistudio.mbbsqbank.aycxvd.MainActivity');time.sleep(5);return True
+ return False
+def swipe(up=True):
+ x=360;start,end=(1280,560) if up else (450,1350)
+ adb('shell','input','swipe',str(x),str(start),str(x),str(end),'400')
+def tap(label,scroll=False,timeout=40):
  end=time.time()+timeout
  while time.time()<end:
   root=dump()
+  if dismiss_launcher_anr(root):continue
   for n in root.iter('node'):
    text=n.get('content-desc') or n.get('text') or ''
    if text==label:
     x1,y1,x2,y2=map(int,re.findall(r'\d+',n.get('bounds')))
     if x2>x1 and y2>y1:
      adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2));time.sleep(.6);return
-  if scroll:adb('shell','input','swipe','540','1500','540','650','350')
+  if scroll:swipe()
   time.sleep(.6)
  raise AssertionError('Android control missing: '+label+'; '+str(labels()))
 def shot(name):
@@ -30,20 +43,25 @@ def shot(name):
  text=' '.join(labels())
  assert 'Offline 3D could not load' not in text,text
  assert 'Something went wrong' not in text,text
+# Render a representative 360dp viewport without the Pixel 6's costly full resolution.
+adb('shell','wm','size','720x1600');adb('shell','wm','density','320')
+adb('logcat','-c')
 adb('shell','svc','wifi','disable');adb('shell','svc','data','disable')
 adb('shell','settings','put','global','airplane_mode_on','1')
 adb('shell','am','force-stop',package)
 adb('shell','am','start','-n',package+'/com.aistudio.mbbsqbank.aycxvd.MainActivity')
 time.sleep(15)
 try:
- visible=labels()
+ root=dump()
+ if dismiss_launcher_anr(root):root=dump()
+ visible=[n.get('content-desc') or n.get('text') or '' for n in root.iter('node')]
  if 'Skip the walkthrough' in visible:tap('Skip the walkthrough');tap('Close the walkthrough')
  tap('Vault');tap('Simulator & Anatomy',scroll=True)
  assert any('Offline native studio' in l for l in labels()),labels()
  shot('skills-offline')
  tap('12-lead ECG · captured teaching trace',scroll=True);tap('ST Segment',scroll=True);shot('ecg12-native');tap('Close diagnostic view')
  tap('Pupil & cranial nerve examination',scroll=True);tap('CN III palsy · pupil involved',scroll=True);tap('Light · left',scroll=True)
- adb('shell','input','swipe','540','450','540','1600','500');time.sleep(.5);shot('pupil-native');tap('Close diagnostic view')
+ swipe(False);time.sleep(.5);shot('pupil-native');tap('Close diagnostic view')
  tap('Auscultation · heart & lung sounds',scroll=True);tap('Play reference sound',scroll=True);time.sleep(3)
  assert any('Playing local synthetic reference.' in l for l in labels()),labels()
  shot('audio-native');tap('Stop listening',scroll=True);tap('Close diagnostic view')
@@ -59,5 +77,7 @@ try:
   print('UI_IMAGE_BEGIN '+name);print(base64.b64encode((out/(name+'.png')).read_bytes()).decode());print('UI_IMAGE_END')
  print('Actual Android offline simulator: ECG, pupils, local media decoding/playback, MRI and heart focus exercised. Emulator pixels saved; physical hardware and clinical sound fidelity unverified.')
 finally:
- (out/'logcat.txt').write_bytes(adb('logcat','-d','-t','1500'))
+ (out/'logcat.txt').write_bytes(adb('logcat','-d'))
+ (out/'activities.txt').write_bytes(adb('shell','dumpsys','activity','activities'))
+ (out/'failure-or-final.png').write_bytes(adb('exec-out','screencap','-p'))
  (out/'final-ui.xml').write_bytes(adb('shell','cat','/sdcard/orbit-ui.xml'))

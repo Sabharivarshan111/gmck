@@ -110,6 +110,7 @@ jobs:
             bedside/clubbing panels, local heart/lung audio, cases/monitor and PG practice.
             Adds guided ECG lessons, QT correction and pressure–volume teaching loops,
             clearer organ leaders and direct selection within the focused model.
+            Includes two-point MRI/X-ray measurements with explicit reference-image units.
             ARM64 phones only. No ads. Installs beside the current production app;
             the launcher name is ORBIT Native Preview. Google sign-in is not configured
             for this separate test package; use the existing guest entry.
