@@ -83,8 +83,8 @@ export const Simulator: React.FC = () => {
   useEffect(() => { try { localStorage.setItem('orbit-simulator-theme', theme); } catch { /* Storage may be unavailable. */ } }, [theme]);
 
   // Mobile navigation tab state
-  const [mobileTab, setMobileTab] = useState<'studio' | '3d' | 'telemetry' | 'interventions'>(searchParams.get('mode') === 'anatomy' || searchParams.get('organ') || searchParams.get('layer') || searchParams.get('isolate') ? '3d' : 'studio');
-  const [clubbingOpen, setClubbingOpen] = useState(false);
+  const [mobileTab, setMobileTab] = useState<'studio' | '3d' | 'telemetry' | 'interventions'>(searchParams.get('mode') === 'telemetry' ? 'telemetry' : searchParams.get('mode') === 'case' ? 'interventions' : searchParams.get('mode') === 'anatomy' || searchParams.get('organ') || searchParams.get('layer') || searchParams.get('isolate') ? '3d' : 'studio');
+  const [clubbingOpen, setClubbingOpen] = useState(searchParams.get('tool') === 'clubbing');
   const [mobilePanel, setMobilePanel] = useState<'browse' | 'tools' | null>(null);
   const [renderQuality, setRenderQuality] = useState<'smooth' | 'crisp'>('crisp');
   const [cameraAction, setCameraAction] = useState<{kind: 'in' | 'out' | 'left' | 'right' | 'up' | 'down' | 'reset'; id: number}>({kind: 'in', id: 0});
