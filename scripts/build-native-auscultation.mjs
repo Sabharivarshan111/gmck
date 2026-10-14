@@ -9,11 +9,12 @@ function visit(node){
  if(ts.isIfStatement(node)&&node.expression.getText(root)==="this.ctx.state === 'suspended'"){edits.push([node.getStart(root),node.end,'']);return;}
  ts.forEachChild(node,visit);
 }visit(root);let adapted=source;for(const [a,b,text] of edits.sort((a,b)=>b[0]-a[0]))adapted=adapted.slice(0,a)+text+adapted.slice(b);
-const js=ts.transpileModule(adapted.replace('export class StethoscopeAudioEngine','class StethoscopeAudioEngine'),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.None}}).outputText.replace(/export \{\};?\s*$/,'');
+const js=ts.transpileModule(adapted.replace('export class StethoscopeAudioEngine','class StethoscopeAudioEngine'),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText.replace(/export \{\};?\s*$/,'');
 const dir='public/clinical-reference/auscultation';fs.mkdirSync(dir,{recursive:true});
 const browser=await chromium.launch({headless:true});const page=await browser.newPage();const clips=[];
 try{
  await page.addScriptTag({content:js+'\nwindow.SoundEngine=StethoscopeAudioEngine;'});
+ if(!await page.evaluate(()=>typeof window.SoundEngine==='function'))throw Error('Offline DSP constructor did not load');
  const hearts=['normal','s3_gallop','s4_gallop','mitral_stenosis','aortic_stenosis','mitral_regurg','tricuspid_regurg','aortic_regurg','friction_rub','tamponade_muffled'];
  const lungs=['vesicular','bronchial','crackles','wheeze','stridor'];
  for(const mode of ['bell','diaphragm'])for(const group of ['cardiac','pulmonary']){
