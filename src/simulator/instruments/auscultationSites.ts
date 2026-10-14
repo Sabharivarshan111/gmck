@@ -21,5 +21,22 @@ export const SOUND_LIBRARY: { id: HeartSoundPreset; title: string; site: Auscult
   { id: 'mitral_regurg', title: 'Mitral regurgitation', site: 'mitral', mode: 'diaphragm' },
   { id: 'tricuspid_regurg', title: 'Tricuspid regurgitation', site: 'tricuspid', mode: 'diaphragm' },
   { id: 'aortic_regurg', title: 'Aortic regurgitation', site: 'erb', mode: 'diaphragm' },
+  { id: 'pulmonic_stenosis', title: 'Pulmonic stenosis', site: 'pulmonic', mode: 'diaphragm' },
+  { id: 'vsd', title: 'Ventricular septal defect (VSD)', site: 'tricuspid', mode: 'diaphragm' },
+  { id: 'hcm', title: 'Hypertrophic obstructive cardiomyopathy (HCM)', site: 'tricuspid', mode: 'diaphragm' },
+  { id: 'pda', title: 'Patent ductus arteriosus (PDA)', site: 'pulmonic', mode: 'diaphragm' },
   { id: 'friction_rub', title: 'Pericardial friction rub', site: 'erb', mode: 'diaphragm' },
 ];
+
+/** Short recognition cues; radiation and maneuvers are described, not simulated. */
+export const MURMUR_GUIDE: Partial<Record<HeartSoundPreset,{timing:string;shape:string;tip:string}>> = {
+ aortic_stenosis:{timing:'Systolic ejection',shape:'Crescendo–decrescendo',tip:'Aortic area; may radiate to the carotids.'},
+ pulmonic_stenosis:{timing:'Systolic ejection',shape:'Crescendo–decrescendo',tip:'Pulmonic area; may radiate toward the left shoulder/back.'},
+ mitral_regurg:{timing:'Holosystolic',shape:'Blowing plateau',tip:'Apex; often radiates to the axilla.'},
+ tricuspid_regurg:{timing:'Holosystolic',shape:'Blowing plateau',tip:'Lower left sternal border; generally louder with inspiration.'},
+ vsd:{timing:'Holosystolic',shape:'Harsh plateau',tip:'Lower left sternal border; intensity does not measure defect severity.'},
+ hcm:{timing:'Systolic ejection',shape:'Crescendo–decrescendo',tip:'Left sternal border/apex; may become louder with standing or Valsalva.'},
+ mitral_stenosis:{timing:'Mid/late diastolic',shape:'Low-pitched rumble',tip:'Bell at the apex, left lateral position. Presystolic accentuation requires atrial contraction.'},
+ aortic_regurg:{timing:'Early diastolic',shape:'Decrescendo',tip:'Left sternal border; lean forward at end-expiration.'},
+ pda:{timing:'Continuous',shape:'Systolic and diastolic flow',tip:'Left infraclavicular/upper sternal region; often peaks near S2.'},
+};

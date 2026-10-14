@@ -1,6 +1,6 @@
 import { lazy, Suspense, useState } from 'react';
 import type { RefObject } from 'react';
-import { AUSCULTATION_SITES, SOUND_LIBRARY } from './auscultationSites';
+import { AUSCULTATION_SITES, SOUND_LIBRARY, MURMUR_GUIDE } from './auscultationSites';
 import type { AuscultationSite, HeartSoundPreset, LungSoundPreset, StethoscopeAudioEngine } from './StethoscopeSynthesizer';
 import { Phonocardiogram } from './Phonocardiogram';
 import { LUNG_SOUND_DESCRIPTIONS } from './auscultationRouting';
@@ -80,7 +80,7 @@ export function AuscultationTrainer({ theme, site, mode, volume, listening, over
     <button aria-pressed={motion} onClick={() => setMotion(!motion)}>{motion ? 'Pause organ movement' : 'Show organ movement'}</button>
     <p className="ausc-note">Heart contraction and lung expansion illustrate timing while listening; the movement is simplified.</p>
     {!training && pulmonary ? <div className="ausc-library"><label htmlFor="ausc-lung-sound">Breath sound demonstration</label><select id="ausc-lung-sound" value={lungOverride || ''} onChange={e => onLung((e.target.value || null) as LungSoundPreset | null)}><option value="">Current patient case</option>{Object.keys(LUNG_SOUND_DESCRIPTIONS).map(id => <option key={id} value={id}>{id === 'silent' ? 'Absent breath sounds' : id === 'vesicular' ? 'Normal vesicular breath sounds' : id[0].toUpperCase()+id.slice(1)}</option>)}</select></div> : !training ? <div className="ausc-library">
-      <label htmlFor="ausc-search">Sound library · heart demonstrations</label>
+      <label htmlFor="ausc-search">Heart sounds & murmur library · 9 murmur types</label>
       <input id="ausc-search" type="search" placeholder="Find a sound…" value={search} onChange={e => setSearch(e.target.value)} />
       <select aria-label="Sound demonstration" value={override || ''} onChange={e => chooseSound((e.target.value || null) as HeartSoundPreset | null)}>
         <option value="">Current patient case</option>
@@ -99,6 +99,7 @@ export function AuscultationTrainer({ theme, site, mode, volume, listening, over
     <Phonocardiogram engineRef={engineRef} listening={listening} pulmonary={pulmonary} traceKey={`${site}-${override}-${lungOverride}-${mode}`} showTimingLabels={showFindings} />
     {training && !revealed && <p className="ausc-note">Timing labels and findings appear after you check your answer.</p>}
     <div className="ausc-modes" aria-label="Stethoscope head"><button aria-pressed={mode === 'bell'} onClick={() => onMode('bell')}>Bell · low pitch</button><button aria-pressed={mode === 'diaphragm'} onClick={() => onMode('diaphragm')}>Diaphragm</button></div>
+    {showFindings && override && MURMUR_GUIDE[override] && <div className="ausc-note" aria-label="Murmur recognition guide"><strong>{MURMUR_GUIDE[override]!.timing} · {MURMUR_GUIDE[override]!.shape}</strong><p>{MURMUR_GUIDE[override]!.tip}</p><p>These are synthesized timing examples. Radiation and clinical maneuvers are not reproduced by this model.</p></div>}
     {showFindings && <details><summary>What should I hear?</summary><p>{description}</p></details>}
     {audioError && <p role="alert" className="ausc-error">{audioError}</p>}
     <div className="ausc-footer">

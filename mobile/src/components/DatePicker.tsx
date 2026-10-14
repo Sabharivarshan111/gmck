@@ -60,7 +60,8 @@ export function DatePicker({
     for (let day = 1; day <= daysInMonth; day += 1) {
       cells.push(day);
     }
-    return cells;
+    while (cells.length % 7) cells.push(null);
+    return Array.from({ length: cells.length / 7 }, (_, week) => cells.slice(week * 7, week * 7 + 7));
   }, [cursor]);
 
   const step = (by: number) => {
@@ -101,7 +102,8 @@ export function DatePicker({
       </View>
 
       <View style={styles.grid}>
-        {grid.map((day, i) => {
+        {grid.map((week, row) => <View key={row} style={styles.week}>
+        {week.map((day, i) => {
           if (day === null) {
             return <View key={`blank-${i}`} style={styles.cell} />;
           }
@@ -117,7 +119,8 @@ export function DatePicker({
               state={{ selected, disabled }}
               disabled={disabled}
               onPress={() => onChange(stamp)}
-              scaleTo={0.88}
+              scale={false}
+              hitSlop={0}
               style={styles.cell}>
               <View
                 style={[
@@ -144,7 +147,7 @@ export function DatePicker({
               </View>
             </Touchable>
           );
-        })}
+        })}</View>)}
       </View>
     </View>
   );
@@ -181,12 +184,13 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    gap: 0,
   },
   cell: {
-    width: `${100 / 7}%`,
+    flex: 1,
+    minHeight: 44,
     alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: 3,
   },
   day: {

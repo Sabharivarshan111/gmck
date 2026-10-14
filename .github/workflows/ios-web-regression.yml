@@ -1,0 +1,33 @@
+name: iOS web setup and attendance
+on:
+  push:
+    branches: [main, 'codex/ios-calendar-repair-*']
+    paths: ['mobile/**', 'src/simulator/instruments/**', '.github/workflows/ios-web-regression.yml', 'scripts/build-vercel-native.mjs']
+  pull_request:
+    paths: ['mobile/**', 'src/simulator/instruments/**', '.github/workflows/ios-web-regression.yml']
+concurrency:
+  group: ios-web-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  touch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci --legacy-peer-deps
+      - run: npm ci --legacy-peer-deps
+        working-directory: mobile
+      - run: node mobile/scripts/profile-persistence-check.mjs
+      - run: npm run build:vercel
+      - run: node node_modules/playwright-core/cli.js install --with-deps chromium webkit
+        working-directory: mobile
+      - run: node mobile/web/ios-regression.mjs
+      - run: ORBIT_BROWSER=webkit node mobile/web/ios-regression.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ios-calendar-evidence
+          path: /tmp/orbit-ios-evidence

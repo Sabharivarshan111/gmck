@@ -21,7 +21,7 @@ try {
   await page.getByLabel('Settings',{exact:true}).waitFor();
   await page.locator('img[alt="🫀"]').waitFor();await page.waitForFunction(()=>Array.from(document.querySelectorAll('img[alt="🫀"],img[alt="🧠"]')).every(img=>img.complete&&img.naturalWidth>0));
   check('Android subject emoji artwork renders',true);
-  await shot('01-home');check('Native homepage renders with KUHS', (await page.locator('body').innerText()).includes('Question bank · KUHS'));
+  await shot('01-home');check('Home omits duplicate university card', !(await page.locator('body').innerText()).includes('Question bank ·'));
   await page.getByLabel('Menu',{exact:true}).click();await page.getByLabel('Patient simulator',{exact:true}).waitFor();await shot('02-menu');
   await page.getByLabel('All subjects',{exact:true}).click();check('Native browse pushes browser history',page.url().endsWith('/browse'));await shot('03-browse');
   await page.goto('http://127.0.0.1:5225/browse/first-year/anatomy,basic-tissues');
@@ -31,10 +31,10 @@ try {
   await page.goto('http://127.0.0.1:5225/');await page.getByLabel('Settings',{exact:true}).click();
   await page.getByRole('radio',{name:'Tamil Nadu Dr. M.G.R. Medical University (TNMGR)',exact:true}).click();
   await page.getByRole('radio',{name:'Kerala University of Health Sciences (KUHS)',exact:true}).click();await shot('05-university-settings');
-  await page.goto('http://127.0.0.1:5225/notes');await page.getByLabel('Anki-style flashcards, browse decks by year',{exact:true}).waitFor();await shot('06-notes');
+  await page.goto('http://127.0.0.1:5225/notes');await page.getByLabel('Anki flashcards',{exact:true}).waitFor();await shot('06-notes');
   for (const fixture of ['legacy1','legacy2','v3']) {
     await page.goto('http://127.0.0.1:5225/notes');
-    await page.getByLabel('Anki-style flashcards, browse decks by year',{exact:true}).click();
+    await page.getByLabel('Anki flashcards',{exact:true}).click();
     await page.getByLabel('Import your Anki cards from an apkg file',{exact:true}).click();
     const chooserPromise=page.waitForEvent('filechooser');await page.getByLabel('Choose an apkg file to import',{exact:true}).click();
     await (await chooserPromise).setFiles(path.join(root,'mobile/preview/fixtures/apkg',fixture+'.apkg'));
@@ -43,7 +43,7 @@ try {
     check(fixture+' imports actual cards and Anki answer buttons',(await page.locator('body').innerText()).includes('Atrial depolarisation') && (await page.locator('body').innerText()).includes('Again'));
     if(fixture==='v3')await shot('07-anki-study');
   }
-  await page.goto('http://127.0.0.1:5225/notes');await page.getByLabel('Anki-style flashcards, browse decks by year',{exact:true}).click();await page.getByLabel('Import your Anki cards from an apkg file',{exact:true}).click();
+  await page.goto('http://127.0.0.1:5225/notes');await page.getByLabel('Anki flashcards',{exact:true}).click();await page.getByLabel('Import your Anki cards from an apkg file',{exact:true}).click();
   await page.getByLabel('Study v3, 10 cards',{exact:true}).waitFor();check('Imported decks persist after reload',await page.getByLabel('Study legacy1, 10 cards',{exact:true}).count()===1);
   // Inspect persisted media references, then request the actual local bytes.
   await page.evaluate(async()=>{await navigator.serviceWorker.ready;if(!navigator.serviceWorker.controller)await new Promise(resolve=>navigator.serviceWorker.addEventListener('controllerchange',resolve,{once:true}));});
