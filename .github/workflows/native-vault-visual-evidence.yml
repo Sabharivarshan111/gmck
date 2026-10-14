@@ -58,6 +58,12 @@ jobs:
           npx playwright screenshot --browser chromium --viewport-size="393,852" --wait-for-timeout=7500 \
             'https://orbitmbbs.vercel.app/simulator' \
             artifacts/native-vault-parity/00-vercel-studio-393x852.png
+          npx playwright screenshot --browser chromium --viewport-size="393,852" --wait-for-timeout=7500 \
+            'https://orbitmbbs.vercel.app/simulator?mode=case&scenario=stemi' \
+            artifacts/native-vault-parity/00-vercel-case-393x852.png
+          npx playwright screenshot --browser chromium --viewport-size="393,852" --wait-for-timeout=7500 \
+            'https://orbitmbbs.vercel.app/simulator?mode=telemetry' \
+            artifacts/native-vault-parity/00-vercel-icu-393x852.png
 
       - name: Enable emulator acceleration
         run: |
