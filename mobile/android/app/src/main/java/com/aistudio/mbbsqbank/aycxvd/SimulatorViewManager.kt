@@ -110,7 +110,7 @@ class SimulatorViewManager : SimpleViewManager<WebView>() {
     if (request == 0) return
     view.evaluateJavascript("""
       (() => {
-        const selectors = ['[aria-label="Exit full screen"]','[aria-label="Close ECG tutorial"]','[aria-label="Close diagnostic tool"]','[title="Close Drawer"]','[aria-label="Close anatomy browser"]','[aria-label="Close anatomy tools"]'];
+        const selectors = ['[aria-label="Exit full screen"]','[aria-label="Close ECG tutorial"]','[aria-label="Close bedside examination"]','[aria-label="Close clubbing skill"]','[aria-label="Close diagnostic tool"]','[title="Close Drawer"]','[aria-label="Close anatomy browser"]','[aria-label="Close anatomy tools"]'];
         for (const selector of selectors) {
           const button = document.querySelector(selector);
           if (button && button.getClientRects().length) { button.click(); return true; }

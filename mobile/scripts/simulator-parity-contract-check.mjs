@@ -43,6 +43,7 @@ const view = src('android/app/src/main/java/com/aistudio/mbbsqbank/aycxvd/Simula
 const store = src('android/app/src/main/java/com/aistudio/mbbsqbank/aycxvd/SimulatorAssetStore.kt');
 const renderer = src('simulator-renderer/main.tsx');
 assert.ok(renderer.includes("../../src/pages/Simulator"), 'canonical renderer source must be reused without a divergent organ substitute');
+assert.ok(renderer.includes('mobile-touch-targets.css') && renderer.includes('<ThemeProvider>'), 'canonical mobile touch sizing and global theme provider must accompany the simulator');
 for (const policy of ['settings.allowFileAccess = false', 'settings.allowContentAccess = false', 'MIXED_CONTENT_NEVER_ALLOW', 'uri.host != HOST', 'BuildConfig.DEBUG']) {
   assert.ok(view.includes(policy), 'local renderer safety policy lost: ' + policy);
 }

@@ -2,7 +2,9 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Simulator } from '../../src/pages/Simulator';
+import { ThemeProvider } from '../../src/components/theme/ThemeProvider';
 import '../../src/index.css';
+import '../../src/simulator/mobile-touch-targets.css';
 
 // The canonical teaching renderer runs locally. The Android host owns navigation
 // and delivers the exact, checksum-pinned source geometry from its persistent cache.
@@ -28,5 +30,5 @@ setInterval(() => {
   }
 }, 1000);
 createRoot(document.getElementById('root')!).render(
-  <BrowserRouter><Routes><Route path="*" element={<Simulator />} /></Routes></BrowserRouter>,
+  <ThemeProvider><BrowserRouter><Routes><Route path="*" element={<Simulator />} /></Routes></BrowserRouter></ThemeProvider>,
 );
