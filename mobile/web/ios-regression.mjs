@@ -11,22 +11,22 @@ const browser=await engine.launch({headless:true,...(engine===chromium?{executab
 const errors=[];const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,reducedMotion:'reduce',timezoneId:'Asia/Kolkata'});
 await context.route('**/*',r=>r.request().url().startsWith('http://127.0.0.1:5226')?r.continue():r.abort());
 await context.addInitScript(()=>localStorage.setItem('orbit:tour-v1',JSON.stringify({seen:1})));
-const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
+const page=await context.newPage();await page.clock.setFixedTime(new Date('2026-10-14T09:00:00+05:30'));page.on('pageerror',e=>errors.push(e.message));
 const label=s=>page.getByLabel(s,{exact:true});const tap=async s=>{await label(s).scrollIntoViewIfNeeded();await label(s).tap();};
 try{
 await page.goto('http://127.0.0.1:5226');
 await label('Continue').or(label('Display name')).first().waitFor();
-if(await label('Continue').count())await tap('Continue');
+if(await label('Continue').count())await label('Continue').tap({timeout:2000}).catch(()=>{});
 await label('Display name').fill('Calendar tester');
 await page.getByRole('radio',{name:'Final Year',exact:true}).tap();
 await page.getByRole('radio',{name:'Tamil Nadu Dr. M.G.R. Medical University (TNMGR)',exact:true}).tap();await tap('Start studying');
 await label('Settings').waitFor();await page.reload();await label('Settings').waitFor();assert.equal(await label('Display name').count(),0);assert.ok(!(await page.locator('body').innerText()).includes('Question bank ·'));console.log('PASS fresh setup stays complete after reload');
 await page.goto('http://127.0.0.1:5226/progress');await tap('Attendance');await tap('Clinical postings');await tap('Add a posting');await label('Posting name').fill('Paediatrics');
 await tap('Posting start date');
-// Select a deterministic October 2026 range regardless of today's month.
-for(let i=0;i<12 && !(await label('5 October 2026').count());i++){await tap('Previous month');}
+// Wait for the modal to mount before addressing a date; do not inspect a stale render.
+await label('5 October 2026').waitFor();
 await tap('5 October 2026');assert.ok((await label('Posting start date').innerText()).includes('2026-10-05'));
-await tap('Posting end date');if(!(await label('31 October 2026').count()))await tap('Previous month');await tap('31 October 2026');assert.ok((await label('Posting end date').innerText()).includes('2026-10-31'));console.log('PASS touch selects exact local start and end dates');
+await tap('Posting end date');await page.getByText('November 2026',{exact:true}).waitFor();await tap('Previous month');await tap('31 October 2026');assert.ok((await label('Posting end date').innerText()).includes('2026-10-31'));console.log('PASS touch selects exact local start and end dates');
 await tap('Add this posting');await tap('View Rotation Calendar and Holidays');
 const day=page.getByLabel('Sat, Oct 17 - Working day',{exact:true});await day.scrollIntoViewIfNeeded();await day.tap();await page.getByLabel('Sat, Oct 17 - Holiday',{exact:true}).waitFor();
 await page.reload();await tap('Attendance');await tap('Clinical postings');await tap('View Rotation Calendar and Holidays');await page.getByLabel('Sat, Oct 17 - Holiday',{exact:true}).waitFor();console.log('PASS calendar opens and holiday selection persists');

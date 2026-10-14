@@ -313,6 +313,7 @@ await check('thoracoacromial-reopens-pectoralis-not-heart', async () => {
   let drawer = page.getByTestId('organ-detail-drawer');
   await visible(drawer, 'Pectoralis dossier');
   await drawer.getByTestId('organ-drawer-tab-vascular').click();
+  await drawer.getByText('Detailed vascular and nerve notes', {exact: true}).click();
   const inspect = drawer.getByTestId('arterial-node-thoracoacromial-3d');
   await visible(inspect, 'Thoracoacromial Inspect in 3D');
   await inspect.click();
