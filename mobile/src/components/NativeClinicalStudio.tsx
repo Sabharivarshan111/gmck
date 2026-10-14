@@ -17,6 +17,7 @@ import { ArrowLeft, ChevronRight, HeartPulse, Moon, Search, Sun } from 'lucide-r
 import Svg, { Circle, Defs, LinearGradient, Path, Stop } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '@/components/Text';
+import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { NATIVE_CLINICAL_SCENARIOS, NATIVE_CLINICAL_SKILLS } from '@/lib/nativeClinicalCatalog';
 
 type Screen = { kind: 'anatomy' | 'monitor' } | { kind: 'tool'; id: string; scenario: string } | { kind: 'case'; id: string };
@@ -90,6 +91,7 @@ export default function NativeClinicalStudio({ onExit, onOpen }: Props) {
         </Pressable>
       </View>
 
+      <KeyboardSafe>
       <ScrollView keyboardShouldPersistTaps="handled" style={{ flex: 1 }} contentContainerStyle={[styles.main, { paddingBottom: 34 + insets.bottom }]} showsVerticalScrollIndicator={false}>
         <Text style={[styles.eyebrow, { color: c.accent }]}>EXPLORE. LISTEN. PRACTISE.</Text>
         <Text style={[styles.heading, { color: c.ink }]}>What would you{'\n'}like to learn?</Text>
@@ -176,6 +178,7 @@ export default function NativeClinicalStudio({ onExit, onOpen }: Props) {
         </View>}
         <Text style={[styles.footnote, { color: c.muted, marginTop: 24 }]}>Teaching simulations for learning examination and anatomy.</Text>
       </ScrollView>
+      </KeyboardSafe>
 
       <Modal visible={pickerVisible} onRequestClose={() => setPickerVisible(false)} transparent animationType="fade">
         <View style={styles.modalBackdrop}>
