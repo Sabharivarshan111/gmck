@@ -11,7 +11,7 @@ const browser=await engine.launch({headless:true,...(engine===chromium?{executab
 const errors=[];const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,reducedMotion:'reduce',timezoneId:'Asia/Kolkata'});
 await context.route('**/*',r=>r.request().url().startsWith('http://127.0.0.1:5226')?r.continue():r.abort());
 await context.addInitScript(()=>localStorage.setItem('orbit:tour-v1',JSON.stringify({seen:1})));
-const page=await context.newPage();await page.clock.setFixedTime(new Date('2026-10-14T09:00:00+05:30'));page.on('pageerror',e=>errors.push(e.message));
+const page=await context.newPage();await page.clock.install({time:new Date('2026-10-14T09:00:00+05:30')});page.on('pageerror',e=>errors.push(e.message));
 const label=s=>page.getByLabel(s,{exact:true});const tap=async s=>{await label(s).scrollIntoViewIfNeeded();await label(s).tap();};
 try{
 await page.goto('http://127.0.0.1:5226');
