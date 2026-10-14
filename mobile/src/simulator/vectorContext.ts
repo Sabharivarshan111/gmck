@@ -14,5 +14,7 @@ export class VectorContext {
  stroke(){this.marks.push({kind:'path',d:this.path,color:this.strokeStyle,width:this.lineWidth,dash:this.dash.slice()});}
  setLineDash(dash:number[]){this.dash=dash;}
  fillRect(x:number,y:number,width:number,height:number){this.marks.push({kind:'rect',x,y,width,height,color:this.fillStyle});}
- fillText(text:string,x:number,y:number){this.marks.push({kind:'text',x,y,text,color:this.fillStyle,font:this.font});}
+ // Segment durations appear in the native guide card; omit the source
+ // inline bracket, which overlaps the Lead II heading on a narrow screen.
+ fillText(text:string,x:number,y:number){if(text.startsWith('[ '))return;this.marks.push({kind:'text',x,y,text,color:this.fillStyle,font:this.font});}
 }
