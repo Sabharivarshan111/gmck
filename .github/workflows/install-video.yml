@@ -1,0 +1,28 @@
+name: iPhone installation video playback
+on:
+  push:
+    branches: [main, codex/iphone-install-video-20261014]
+    paths: ['mobile/web/install*', 'public/installation/**', 'public/sw.js', '.github/workflows/install-video.yml']
+  pull_request:
+    paths: ['mobile/web/install*', 'public/installation/**', 'public/sw.js', '.github/workflows/install-video.yml']
+jobs:
+  playback:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci --legacy-peer-deps
+      - run: npm ci --legacy-peer-deps
+        working-directory: mobile
+      - run: npm --prefix mobile run web:build
+      - run: node mobile/node_modules/playwright-core/cli.js install --with-deps chromium webkit
+      - run: node mobile/web/install-video-check.mjs
+      - run: ORBIT_BROWSER=webkit node mobile/web/install-video-check.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: installation-video-player
+          path: /tmp/orbit-install-video

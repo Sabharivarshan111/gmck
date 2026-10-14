@@ -29,12 +29,28 @@ export function InstallApp() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const dialog = useRef<HTMLDialogElement>(null);
+  const video = useRef<HTMLVideoElement>(null);
+  const [showVideo, setShowVideo] = useState(false);
+  const [videoMessage, setVideoMessage] = useState('');
+  function stopVideo() {
+    video.current?.pause();
+    if (video.current && video.current.readyState > 0) video.current.currentTime = 0;
+    setShowVideo(false);
+    setVideoMessage('');
+  }
+  function watchVideo() {
+    setShowVideo(true);
+    setVideoMessage('');
+    // Invoke play in the tap handler so iPhone allows playback with narration.
+    void video.current?.play().catch(() => setVideoMessage('Tap Play on the video to start.'));
+    requestAnimationFrame(() => video.current?.scrollIntoView({ block: 'nearest' }));
+  }
   const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const android = /Android/.test(navigator.userAgent);
   useEffect(() => {
-    const open = () => { setMessage(''); dialog.current?.showModal(); };
+    const open = () => { stopVideo(); setMessage(''); dialog.current?.showModal(); };
     const available = () => setReady(true);
-    const done = () => { pendingPrompt = null; setInstalled(true); dialog.current?.close(); };
+    const done = () => { stopVideo(); pendingPrompt = null; setInstalled(true); dialog.current?.close(); };
     const mode = window.matchMedia('(display-mode: standalone)');
     const changed = () => setInstalled(isStandalone());
     window.addEventListener('orbit-install-open', open);
@@ -71,11 +87,20 @@ export function InstallApp() {
         setHidden(true); try { localStorage.setItem('orbit-install-dismissed', String(Date.now())); } catch { /* optional preference */ }
       }}>×</button>
     </aside>}
-    <dialog ref={dialog} className="orbit-install-dialog" aria-labelledby="orbit-install-title">
+    <dialog ref={dialog} className="orbit-install-dialog" aria-labelledby="orbit-install-title" onClose={stopVideo}>
       <header><img src="/icon-192.png" alt="" width="44" height="44" /><div><h2 id="orbit-install-title">{installed ? 'ORBIT is installed' : 'Install ORBIT'}</h2><p>Your studies, one tap away.</p></div></header>
       {installed ? <p>You are already using ORBIT as an app.</p> : <>
         {ready && <button className="orbit-install-primary" disabled={busy} onClick={install}>{busy ? 'Opening install prompt…' : 'Install on this device'}</button>}
-        {(isiOS || !android) && <section><h3>iPhone & iPad</h3><ol><li>Open <strong>orbitmbbs.site</strong> in Safari.</li><li>Tap <strong>Share</strong> (the square with an up arrow).</li><li>Choose <strong>Add to Home Screen</strong>. Enable <strong>Open as Web App</strong> if shown, then tap <strong>Add</strong>.</li></ol></section>}
+        {(isiOS || !android) && <section><h3>iPhone & iPad</h3><ol><li>Open <strong>orbitmbbs.site</strong> in Safari.</li><li>Tap <strong>Share</strong> (the square with an up arrow).</li><li>Choose <strong>Add to Home Screen</strong>. Enable <strong>Open as Web App</strong> if shown, then tap <strong>Add</strong>.</li></ol>
+          <button type="button" className="orbit-install-watch" aria-expanded={showVideo} aria-controls="orbit-iphone-guide" onClick={watchVideo}><span aria-hidden="true">▶ </span>Watch how to install on iPhone</button>
+          <div id="orbit-iphone-guide" hidden={!showVideo}>
+            <video ref={video} className="orbit-install-video" aria-label="iPhone installation guide video" controls playsInline preload="none" src="/installation/iphone-guide-20261014.mp4" onError={() => setVideoMessage('The video could not load. Try again or follow the steps above.')}>
+              <track kind="captions" src="/installation/iphone-guide-20261014.vtt" srcLang="en" label="English" />
+            </video>
+            {videoMessage && <p role="status" className="orbit-install-note">{videoMessage}</p>}
+            <a className="orbit-install-video-link" href="/installation/iphone-guide-20261014.mp4" target="_blank" rel="noopener noreferrer">Open video in a new tab</a>
+          </div>
+        </section>}
         {(!isiOS) && <section><h3>{android ? 'Android' : 'Android & desktop'}</h3><ol><li>Open ORBIT in Chrome or Edge.</li><li>Tap the browser menu <strong>⋮</strong>, then <strong>Install app</strong> or <strong>Add to Home screen → Install</strong>.</li><li>Confirm <strong>Install</strong> and open the ORBIT icon.</li></ol></section>}
         {!isiOS && <p className="orbit-install-note">If your browser only offers “Create shortcut”, try Chrome and reload this page. Some in-app browsers do not support installation.</p>}
         <p className="orbit-install-note">Installation is free. Offline study uses questions and files already saved on this device; AI and sync need internet.</p>
