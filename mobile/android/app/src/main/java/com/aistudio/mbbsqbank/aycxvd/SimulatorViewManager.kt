@@ -71,6 +71,12 @@ class SimulatorViewManager : SimpleViewManager<WebView>() {
         }
         override fun onHideCustomView() { hideFullscreen(this@apply) }
         override fun onConsoleMessage(message: ConsoleMessage): Boolean {
+          if (message.message().startsWith("ORBIT_NATIVE_RENDER_ERROR:")) {
+            if (BuildConfig.DEBUG) android.util.Log.e("ORBIT_ANATOMY", message.message().take(1200))
+            status(this@apply, "error")
+          } else if (BuildConfig.DEBUG && message.messageLevel() == ConsoleMessage.MessageLevel.ERROR) {
+            android.util.Log.e("ORBIT_SIMULATOR", message.message().take(1200))
+          }
           if (message.message().contains("THREE.WebGLProgram: Shader Error")) {
             if (BuildConfig.DEBUG) android.util.Log.e("ORBIT_ANATOMY", "ORBIT_NATIVE_SHADER_ERROR:" + message.message())
             status(this@apply, "error")

@@ -11,7 +11,7 @@ Anatomy and the remaining diagnostic instruments now have a dedicated **local
 WebGL view** in the native app. This is not a separate native OpenGL rewrite.
 The renderer imports the canonical `src/pages/Simulator.tsx` without changing
 the live website. Its build, teaching data, styles and metadata occupy about
-3.63 MB before APK compression. Exact model files are downloaded on demand,
+3.44 MB before APK compression. Exact model files are downloaded on demand,
 verified against the build's SHA-256 manifest, and stored in private persistent
 device storage. A first connection is required for each previously unseen model.
 The full atlas's compressed geometry alone is about 31.4 MiB, so exact geometry
@@ -61,3 +61,11 @@ spacing, inset and emoji-font differences. Its case did open: the failure image
 shows it, but `uiautomator dump` failed with "could not get idle state". This is
 why the next capture uses the live-tree helper rather than the idle-waiting CLI.
 Those captures are baseline evidence, not a successful parity audit.
+
+The first cached-renderer device capture was blank before geometry loaded. The
+DOM entry resolved mobile React 19 while source hooks resolved web React 18.
+The renderer now explicitly aliases and deduplicates React/React DOM to the
+canonical web packages; the build rejects any mobile React dependency in its
+module graph. Bundle size dropped by about 195 KB. A root render boundary and
+startup error reporting prevent a silent white screen. Latest device proof is
+still required.

@@ -24,6 +24,8 @@ def ready(timeout=180, expected_route=None):
         output = adb("logcat", "-d", "-s", "ORBIT_ANATOMY:I", "*:S", capture=True).stdout
         if "ORBIT_NATIVE_SHADER_ERROR:" in output:
             raise RuntimeError("Actual Android WebGL shader failed to compile")
+        if "ORBIT_NATIVE_RENDER_ERROR:" in output:
+            raise RuntimeError("Actual Android renderer startup failed: " + output[-1500:])
         for line in reversed(output.splitlines()):
             if "ORBIT_NATIVE_GEOMETRY:" not in line:
                 continue

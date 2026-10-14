@@ -23,8 +23,21 @@ export default defineConfig({
   window.__orbitPatientKernel = kernel;
 `);
     },
+    generateBundle() {
+      const duplicate = [...this.getModuleIds()].find(id => /\/mobile\/node_modules\/react(?:-dom)?\//.test(id));
+      if (duplicate) throw Error('Local renderer resolved the native app React copy: ' + duplicate);
+    },
   }, react()],
-  resolve: { alias: { '@': resolve(__dirname, '../../src') } },
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, '../../src'),
+      // mobile/ uses React 19, while the canonical renderer uses React 18.
+      // One DOM renderer must share one dispatcher with every source hook.
+      react: resolve(__dirname, '../../node_modules/react'),
+      'react-dom': resolve(__dirname, '../../node_modules/react-dom'),
+    },
+    dedupe: ['react', 'react-dom'],
+  },
   css: { postcss: resolve(__dirname, '../..') },
   build: { outDir: '../android/app/build/generated/simulatorAssets/simulator', emptyOutDir: true },
 });

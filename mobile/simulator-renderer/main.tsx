@@ -6,6 +6,19 @@ import { ThemeProvider } from '../../src/components/theme/ThemeProvider';
 import '../../src/index.css';
 import '../../src/simulator/mobile-touch-targets.css';
 
+class RendererBoundary extends React.Component<{ children: React.ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  componentDidCatch(error: Error) { console.error('ORBIT_NATIVE_RENDER_ERROR:' + error.message); }
+  render() {
+    return this.state.failed ? <main role="alert" style={{ padding: 24, background: '#0e0e11', color: '#f5f5f7', minHeight: '100vh' }}>
+      <h1>The teaching renderer could not open</h1><p>Reload the module to retry.</p><button onClick={() => location.reload()}>Reload</button>
+    </main> : this.props.children;
+  }
+}
+window.addEventListener('error', event => console.error('ORBIT_NATIVE_RENDER_ERROR:' + event.message));
+window.addEventListener('unhandledrejection', event => console.error('ORBIT_NATIVE_RENDER_ERROR:' + String(event.reason)));
+
 // The canonical teaching renderer runs locally. The Android host owns navigation
 // and delivers the exact, checksum-pinned source geometry from its persistent cache.
 const theme = new URLSearchParams(location.search).get('nativeTheme');
@@ -48,5 +61,5 @@ setInterval(() => {
   }
 }, 1000);
 createRoot(document.getElementById('root')!).render(
-  <ThemeProvider><BrowserRouter><Routes><Route path="*" element={<Simulator />} /></Routes></BrowserRouter></ThemeProvider>,
+  <RendererBoundary><ThemeProvider><BrowserRouter><Routes><Route path="*" element={<Simulator />} /></Routes></BrowserRouter></ThemeProvider></RendererBoundary>,
 );
