@@ -47,7 +47,7 @@ try:
  assert any('Playing local synthetic reference.' in l for l in labels()),labels()
  shot('audio-native');tap('Stop listening',scroll=True);tap('Close diagnostic view')
  tap('X-ray & MRI · annotated references',scroll=True);tap('Brain MRI',scroll=True);time.sleep(3);shot('mri-native');tap('Close diagnostic view')
- tap('3D');time.sleep(10);shot('body-native');tap('Heart',timeout=20);time.sleep(3);shot('heart-native')
+ tap('3D');time.sleep(10);shot('body-native');tap('Open Heart & Great Vessels model',timeout=20);time.sleep(3);shot('heart-native')
  # Native app must remain foreground without a crash after all tools.
  activity=adb('shell','dumpsys','activity','activities').decode()
  assert package in activity,activity[-2000:]
