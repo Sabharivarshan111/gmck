@@ -167,7 +167,7 @@ export default function NativeClinicalStudio({ onExit, onOpen }: Props) {
             style={[styles.caseCard, buttonStyle()]}>
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 13, color: c.accent, marginBottom: 4 }}>{item.category}</Text>
-              <Text style={{ fontSize: 16, color: c.ink, fontWeight: '750' }}>{item.title}</Text>
+              <Text style={{ fontSize: 16, color: c.ink, fontWeight: '700' }}>{item.title}</Text>
               <Text style={[styles.hint, { color: c.muted, marginTop: 6 }]}>{item.subtitle}</Text>
             </View>
             <ChevronRight size={20} color={c.accent} />
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   heading: { fontSize: 38, lineHeight: 43, fontWeight: '800', letterSpacing: -1.3, marginTop: 10, marginBottom: 14 },
   intro: { fontSize: 15, lineHeight: 24, marginBottom: 24, maxWidth: 440 },
   anatomy: { paddingHorizontal: 18, paddingVertical: 22, flexDirection: 'row', alignItems: 'center', gap: 14 },
-  anatomyTitle: { fontSize: 16, fontWeight: '750' },
+  anatomyTitle: { fontSize: 16, fontWeight: '700' },
   hint: { fontSize: 13, lineHeight: 19.5 },
   segment: { padding: 4, flexDirection: 'row', gap: 4, marginTop: 24, marginBottom: 16 },
   segmentItem: { minHeight: 48, flex: 1, justifyContent: 'center', borderRadius: 12 },
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
   skillCard: { paddingHorizontal: 16, paddingVertical: 20, gap: 12, minHeight: 200 },
   emoji: { fontSize: 36, lineHeight: 45 },
-  skillTitle: { fontSize: 16, lineHeight: 22, fontWeight: '750' },
+  skillTitle: { fontSize: 16, lineHeight: 22, fontWeight: '700' },
   monitor: { marginTop: 18, flexDirection: 'row', padding: 18, alignItems: 'center', gap: 12 },
   caseCard: { padding: 18, flexDirection: 'row', alignItems: 'center', gap: 10 },
   footnote: { fontSize: 11, lineHeight: 17.6 },
