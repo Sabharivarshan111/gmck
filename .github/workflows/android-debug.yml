@@ -55,6 +55,7 @@ on:
       # The paths filter below is what keeps this affordable — a commit that
       # only moves documentation still burns no runner.
       - main
+      - codex/native-offline-simulator
       - claude/android-react-native-app-o54cjj
       - claude/native-app-sync
     # Only when something that reaches the APK changes.
@@ -72,6 +73,10 @@ on:
       - 'mobile/**'
       - 'src/**'
       - '.github/workflows/android-debug.yml'
+      - 'scripts/build-pg-compact.mjs'
+      - 'scripts/build-native-simulator-assets.mjs'
+      - 'scripts/build-native-simulator-lessons.mjs'
+      - 'scripts/check-android-offline-package.py'
 
 # One run per branch, and a new push cancels the one it supersedes.
 #
@@ -112,6 +117,19 @@ jobs:
       - name: Install dependencies
         working-directory: mobile
         run: npm ci --legacy-peer-deps
+
+      - name: Install offline content build dependencies
+        working-directory: ${{ github.workspace }}
+        run: npm ci --legacy-peer-deps
+
+      - name: Build packaged native simulator and PG content
+        working-directory: ${{ github.workspace }}
+        run: |
+          node scripts/build-pg-compact.mjs
+          node scripts/check-pg-release-content.mjs
+          node --experimental-strip-types scripts/build-native-simulator-assets.mjs
+          node scripts/build-native-simulator-lessons.mjs
+          node --experimental-strip-types scripts/check-native-offline-assets.mjs
 
       - name: Typecheck
         working-directory: mobile
@@ -258,7 +276,7 @@ jobs:
       - name: Sign the debug build with the upload key, if the repo has one
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-        if: ${{ env.ANDROID_KEYSTORE_BASE64 != '' }}
+        if: ${{ env.ANDROID_KEYSTORE_BASE64 != '' && github.ref != 'refs/heads/codex/native-offline-simulator' }}
         run: |
           set -euo pipefail
           printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/debug-signing.jks"
@@ -288,6 +306,11 @@ jobs:
           echo "package name: com.aistudio.mbbsqbank.aycxvd.debug"
           "$SDK"/build-tools/37.0.0/apksigner verify --print-certs "$APK" \
             | grep -iE "SHA-1|SHA-256" || echo "(apksigner could not read the APK)"
+
+      - name: Verify native offline assets in the packaged APK
+        working-directory: ${{ github.workspace }}
+        run: |
+          python scripts/check-android-offline-package.py mobile/android/app/build/outputs/apk/preview --source-commit ${{ github.sha }}
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -323,7 +346,15 @@ jobs:
             either. This build sets `ADS_ENABLED = false`, so the AdMob SDK
             never starts, the consent form never runs, and nothing is loaded.
 
+            Includes the packaged native offline patient simulator, annotated imaging,
+            ECG teaching and existing offline PG practice. Built from the simulator
+            branch for review; full parity and physical-device validation remain ongoing.
+            This build does not upload anything to Google Play.
+            Source: https://github.com/Sabharivarshan111/gmck/commit/${{ github.sha }}.
+
             Built from `${{ github.sha }}`.
-          files: mobile/android/app/build/outputs/apk/preview/*.apk
+          files: |
+            mobile/android/app/build/outputs/apk/preview/*.apk
+            mobile/android/app/build/outputs/apk/preview/*.apk.json
           prerelease: true
           make_latest: false

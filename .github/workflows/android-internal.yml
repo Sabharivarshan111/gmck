@@ -44,6 +44,7 @@ on:
       # The paths filter below is what keeps this affordable — a commit that
       # only moves documentation still burns no runner.
       - main
+      - codex/native-offline-simulator
       - claude/native-app-sync
       # Shared Android/iPhone web UI changes also get an ad-free APK.
       - codex/native-web-parity
@@ -62,6 +63,10 @@ on:
       - 'mobile/**'
       - 'src/**'
       - '.github/workflows/android-internal.yml'
+      - 'scripts/build-pg-compact.mjs'
+      - 'scripts/build-native-simulator-assets.mjs'
+      - 'scripts/build-native-simulator-lessons.mjs'
+      - 'scripts/check-android-offline-package.py'
 
 # One run per branch, and a new push cancels the one it supersedes.
 #
@@ -101,6 +106,19 @@ jobs:
       - name: Install dependencies
         working-directory: mobile
         run: npm ci --legacy-peer-deps
+
+      - name: Install offline content build dependencies
+        working-directory: ${{ github.workspace }}
+        run: npm ci --legacy-peer-deps
+
+      - name: Build packaged native simulator and PG content
+        working-directory: ${{ github.workspace }}
+        run: |
+          node scripts/build-pg-compact.mjs
+          node scripts/check-pg-release-content.mjs
+          node --experimental-strip-types scripts/build-native-simulator-assets.mjs
+          node scripts/build-native-simulator-lessons.mjs
+          node --experimental-strip-types scripts/check-native-offline-assets.mjs
 
       - name: Typecheck
         working-directory: mobile
@@ -212,6 +230,11 @@ jobs:
           "$SDK"/build-tools/37.0.0/apksigner verify --print-certs "$APK" \
             | grep -iE "SHA-1|SHA-256" || echo "(apksigner could not read the APK)"
 
+      - name: Verify native offline assets in the packaged APK
+        working-directory: ${{ github.workspace }}
+        run: |
+          python scripts/check-android-offline-package.py mobile/android/app/build/outputs/apk/internal --source-commit ${{ github.sha }}
+
       - name: Publish the APK where a phone can download it
         uses: softprops/action-gh-release@v2
         with:
@@ -221,15 +244,24 @@ jobs:
             Real package name, real upload key — **Google Sign-In works in
             this build**, once its SHA-1 is registered in Google Cloud.
 
-            **Uninstall the Play Store copy of Orbit MBBS before installing
-            this.** Same package name with a different signature, so Android
-            will refuse the install otherwise.
+            This uses the production package with the upload-key signature.
+            A Play-installed copy may have a different signing certificate;
+            use the separate debug APK for review if Android reports a mismatch.
+            Keep the Play-installed app and its local study data.
 
             **No ads at all** — not live ones and not Google's test ones
             either. This build sets `ADS_ENABLED = false`, so the AdMob SDK
             never starts, the consent form never runs, and nothing is loaded.
 
+            Includes the packaged native offline patient simulator, annotated imaging,
+            ECG teaching and existing offline PG practice. Built from the simulator
+            branch for review; full parity and physical-device validation remain ongoing.
+            This build does not upload anything to Google Play.
+            Source: https://github.com/Sabharivarshan111/gmck/commit/${{ github.sha }}.
+
             Built from `${{ github.sha }}`.
-          files: mobile/android/app/build/outputs/apk/internal/*.apk
+          files: |
+            mobile/android/app/build/outputs/apk/internal/*.apk
+            mobile/android/app/build/outputs/apk/internal/*.apk.json
           prerelease: true
           make_latest: false

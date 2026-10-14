@@ -1,0 +1,25 @@
+name: Package acquired POCUS loops for native offline playback
+on:
+  push:
+    branches: [codex/native-offline-simulator]
+    paths: ['.github/workflows/native-pocus-source.yml', 'scripts/build-native-pocus-references.py']
+permissions:
+  contents: write
+jobs:
+  references:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: python scripts/build-native-pocus-references.py
+      - name: Save native derivatives and source provenance
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public/clinical-reference/pocus
+          git add -f public/clinical-reference/pocus/plax.mp4 public/clinical-reference/pocus/subcostal.mp4
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Package attributed ultrasound loops for native Android playback'
+          git pull --rebase origin codex/native-offline-simulator
+          git push origin HEAD:codex/native-offline-simulator

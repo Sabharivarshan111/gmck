@@ -26,6 +26,7 @@ on:
       # main included so a merge here cuts a release with no API access
       # needed — see the note in android-debug.yml.
       - main
+      - codex/native-offline-simulator
       - claude/native-app-sync
       - codex/native-web-parity
     # Documentation-only handoff commits must not cancel an AAB/APK that is
@@ -36,6 +37,10 @@ on:
       - 'src/**'
       - 'public/**'
       - '.github/workflows/android-release.yml'
+      - 'scripts/build-pg-compact.mjs'
+      - 'scripts/build-native-simulator-assets.mjs'
+      - 'scripts/build-native-simulator-lessons.mjs'
+      - 'scripts/check-android-offline-package.py'
 
 # One run per branch, and a new artifact-affecting push cancels the one it supersedes.
 #
@@ -82,6 +87,19 @@ jobs:
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
+
+      - name: Install offline content build dependencies
+        working-directory: ${{ github.workspace }}
+        run: npm ci --legacy-peer-deps
+
+      - name: Build packaged native simulator and PG content
+        working-directory: ${{ github.workspace }}
+        run: |
+          node scripts/build-pg-compact.mjs
+          node scripts/check-pg-release-content.mjs
+          node --experimental-strip-types scripts/build-native-simulator-assets.mjs
+          node scripts/build-native-simulator-lessons.mjs
+          node --experimental-strip-types scripts/check-native-offline-assets.mjs
 
       - name: Typecheck
         run: npm run typecheck
@@ -153,6 +171,27 @@ jobs:
             || { echo "::error::src/lib/adsMode.ts is not in its shipped form."; exit 1; }
           echo "ads: live (ADS_ENABLED = !__DEV__, and a release bundle sets __DEV__ false)"
 
+      - name: Install the SDK components the build pins
+        run: |
+          set -euo pipefail
+          SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          SDKM="$SDK/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKM" --licenses > /dev/null 2>&1 || true
+          install_one() {
+            for candidate in "$@"; do
+              if "$SDKM" "$candidate"; then
+                echo "installed $candidate"
+                return 0
+              fi
+            done
+            echo "::error::none of these could be installed: $*"
+            return 1
+          }
+          [ -d "$SDK/platforms/android-37" ] || [ -d "$SDK/platforms/android-37.0" ] \
+            || install_one "platforms;android-37.0" "platforms;android-37"
+          [ -d "$SDK/build-tools/37.0.0" ] || install_one "build-tools;37.0.0"
+          [ -d "$SDK/ndk/27.1.12297006" ] || install_one "ndk;27.1.12297006"
+
       - name: Restore the upload keystore
         # The keystore is stored as base64 in a repository secret. It never
         # exists in the repo, and is written outside the workspace so it cannot
@@ -187,6 +226,14 @@ jobs:
         # Runners are ephemeral, but do not rely on that.
         if: always()
         run: rm -f "$RUNNER_TEMP/my-upload-key.jks"
+
+      - name: Verify native offline assets in the packaged AAB and APK
+        working-directory: ${{ github.workspace }}
+        run: |
+          python scripts/check-android-offline-package.py mobile/android/app/build/outputs/bundle/release --source-commit ${{ github.sha }}
+          if [ -d mobile/android/app/build/outputs/apk/release ]; then
+            python scripts/check-android-offline-package.py mobile/android/app/build/outputs/apk/release --source-commit ${{ github.sha }}
+          fi
 
       - name: Upload AAB
         uses: actions/upload-artifact@v4
@@ -235,6 +282,7 @@ jobs:
           tag_name: release-${{ github.run_number }}
           name: Release build ${{ github.run_number }} — v${{ steps.appversion.outputs.code }}
           prerelease: true
+          make_latest: false
           body: |
             Signed release build of the Orbit MBBS native app.
 
@@ -248,7 +296,15 @@ jobs:
             `CE:EA:8A:41:BB:07:78:C4:78:26:D8:8F:CC:E0:2C:C9:EB:29:40:68`,
             the certificate Play accepted in the upload key reset.
 
+            Includes the packaged native offline patient simulator, annotated imaging,
+            ECG teaching and existing offline PG practice. Built from the simulator
+            branch for review; full parity and physical-device validation remain ongoing.
+            This build does not upload anything to Google Play.
+            Source: https://github.com/Sabharivarshan111/gmck/commit/${{ github.sha }}.
+
             Built from `${{ github.sha }}`.
           files: |
             mobile/android/app/build/outputs/bundle/release/*.aab
             mobile/android/app/build/outputs/apk/release/*.apk
+            mobile/android/app/build/outputs/bundle/release/*.aab.json
+            mobile/android/app/build/outputs/apk/release/*.apk.json

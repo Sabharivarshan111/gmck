@@ -20,11 +20,12 @@ const sharedLib = path.resolve(__dirname, '..', 'src', 'lib');
 const config = {
   // Metro refuses to resolve files outside the project root unless they are
   // explicitly watched.
-  watchFolders: [sharedData, sharedLib],
+  watchFolders: [sharedData, sharedLib, path.resolve(__dirname, '..', 'src', 'simulator')],
   resolver: {
     extraNodeModules: {
       '@data': sharedData,
       '@shared': sharedLib,
+      '@simulator': path.resolve(__dirname, '..', 'src', 'simulator'),
     },
     /*
      * Where a file OUTSIDE this folder looks for node_modules.

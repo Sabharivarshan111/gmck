@@ -1,0 +1,56 @@
+name: Build native offline auscultation reference loops
+on:
+  push:
+    branches: [codex/native-offline-simulator]
+    paths: ['.github/workflows/native-auscultation-source.yml', 'scripts/build-native-auscultation.mjs']
+permissions:
+  contents: write
+concurrency:
+  group: native-audio-source
+  cancel-in-progress: true
+jobs:
+  audio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --legacy-peer-deps
+      - working-directory: mobile
+        run: npm ci --legacy-peer-deps
+      - name: Verify existing source-derived clips before rendering
+        id: catalog
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';import crypto from 'node:crypto';
+          const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
+          let needsRender=true;
+          try{
+            const dir='public/clinical-reference/auscultation',m=JSON.parse(fs.readFileSync(dir+'/manifest.json'));
+            needsRender=m.sourceSha256!==hash(fs.readFileSync(m.source))||m.clips.length!==260||m.clips.some(c=>{const b=fs.readFileSync(dir+'/'+c.file);return b.length!==c.bytes||hash(b)!==c.sha256;});
+          }catch{}
+          fs.appendFileSync(process.env.GITHUB_OUTPUT,'needs_render='+needsRender+'\n');
+          console.log(needsRender?'Source changed; regenerate reference loops.':'All 260 existing clips match the shared source and checksums.');
+          JS
+      - if: steps.catalog.outputs.needs_render == 'true'
+        run: node mobile/node_modules/playwright-core/cli.js install --with-deps chromium
+      - if: steps.catalog.outputs.needs_render == 'true'
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - if: steps.catalog.outputs.needs_render == 'true'
+        run: node scripts/build-native-auscultation.mjs
+      - name: Save generated source-derived audio only
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public/clinical-reference/auscultation
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Package reproducible offline auscultation loops from shared DSP'
+          git pull --rebase origin codex/native-offline-simulator
+          git push origin HEAD:codex/native-offline-simulator
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-auscultation-audit
+          path: public/clinical-reference/auscultation/manifest.json

@@ -1,0 +1,20 @@
+name: Record native preview source provenance
+on:
+  push:
+    branches: [codex/native-offline-simulator]
+    paths: ['.github/workflows/native-preview-tag-source.yml']
+permissions:
+  contents: write
+jobs:
+  source-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const owner=context.repo.owner, repo=context.repo.repo;
+            const source='f23c9ccf19b11813a3802737f9dcccf60625a0ea';
+            const release=await github.rest.repos.getRelease({owner,repo,release_id:412094585});
+            const line='Source code for this APK: https://github.com/'+owner+'/'+repo+'/commit/'+source+'. Automatic tag source archives currently reference the default branch; use the linked commit for this native preview.';
+            if(!release.data.body.includes(line)) await github.rest.repos.updateRelease({owner,repo,release_id:412094585,body:release.data.body+'\n\n'+line});
+            core.info('Actual binary source commit recorded; tag mutation is blocked by token workflow scope.');

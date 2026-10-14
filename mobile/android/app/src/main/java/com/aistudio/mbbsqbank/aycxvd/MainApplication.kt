@@ -18,6 +18,7 @@ class MainApplication : Application(), ReactApplication {
           // Lives in this app rather than in a node module, so autolinking has
           // nothing to find and it is registered by hand. See SoundModule.kt.
           add(SoundPackage())
+          add(SimAudioPackage())
           add(SpeechPackage())
           add(NotifyPackage())
           add(FilesPackage())
@@ -30,6 +31,7 @@ class MainApplication : Application(), ReactApplication {
           // A view, not a module — see GlassViewManager for why that is a
           // different registration path under the New Architecture.
           add(GlassPackage())
+          add(AnatomyPackage())
         },
     )
   }

@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "method": "First-frame JPEG and H.264 MP4 derivatives of existing attributed GIF reference loops; native decoder compatibility only. Original source/licence metadata remains in PocusReference.tsx.",
+  "references": [
+    {
+      "source": "plax.gif",
+      "sourceSha256": "0a4fa9c6e234f9cce5ae0618094d3b9124b88c896b114ad2baa543aed5f6c16d",
+      "poster": "plax-poster.jpg",
+      "movie": "plax.mp4",
+      "movieSha256": "0c8bb29b26de2a0ff9c5181001c68dea6d62c85a529b6e3aac8870c156d4560d",
+      "bytes": 77882
+    },
+    {
+      "source": "subcostal.gif",
+      "sourceSha256": "4b2f9037153cd37032a09c162e58573371a75142eeb3c47704e89dddc2cd0299",
+      "poster": "subcostal-poster.jpg",
+      "movie": "subcostal.mp4",
+      "movieSha256": "4e800eb87e57f4e232171567f44f7fe8e7a15974c79fe8e647262dafdcc3f9db",
+      "bytes": 81098
+    }
+  ]
+}

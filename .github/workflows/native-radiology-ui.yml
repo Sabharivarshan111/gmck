@@ -1,0 +1,55 @@
+name: Native imaging UI preview verification
+on:
+  push:
+    branches: [codex/native-offline-simulator]
+    paths:
+      - 'mobile/src/simulator/NativeRadiology.tsx'
+      - 'mobile/src/simulator/ImageCallouts.tsx'
+      - 'mobile/src/simulator/radiologyAnnotations.ts'
+      - 'mobile/preview/radiology*'
+      - 'mobile/preview/ecg*'
+      - 'mobile/src/simulator/NativeEcgSheet.tsx'
+      - 'mobile/src/simulator/NativeEcgStudio.tsx'
+      - 'mobile/src/simulator/SimulatorUi.tsx'
+      - 'mobile/src/simulator/NativeEyeExam.tsx'
+      - 'mobile/src/simulator/NativeAuscultation.tsx'
+      - 'mobile/src/simulator/NativeBedsideExam.tsx'
+      - 'mobile/src/simulator/NativePocus.tsx'
+      - 'mobile/src/simulator/NativePocusReference.tsx'
+      - 'mobile/preview/shims/orbit-pocus.tsx'
+      - 'mobile/preview/shims/simulator-audio.ts'
+      - 'mobile/src/simulator/vectorContext.ts'
+      - 'scripts/build-native-simulator-lessons.mjs'
+      - 'scripts/native-diagnostics-ui-check.mjs'
+      - 'mobile/preview/shims/orbit-mri.tsx'
+      - 'scripts/native-radiology-ui-check.mjs'
+      - '.github/workflows/native-radiology-ui.yml'
+permissions:
+  contents: read
+concurrency:
+  group: native-imaging-ui-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  ui:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --legacy-peer-deps
+      - run: npm install --legacy-peer-deps --no-save --package-lock=false playwright
+      - working-directory: mobile
+        run: npm ci --legacy-peer-deps
+      - run: npx playwright install --with-deps chromium
+      - run: node scripts/build-native-simulator-lessons.mjs
+      - run: node scripts/native-radiology-ui-check.mjs
+      - run: node scripts/native-diagnostics-ui-check.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-imaging-component-proof
+          path: |
+            native-radiology-proof
+            native-diagnostics-proof

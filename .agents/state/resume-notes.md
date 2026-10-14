@@ -2239,3 +2239,141 @@ Latest remote head5fdc486. Dedicated exhaustive CI reached heart/LAD/pectoralis/
 2026-10-13 follow-up: owner requested Heart tap open its model immediately and celiac trunk visibility. Implemented direct model selection, explicit info dossier, vessel-only default/context toggle, small-vessel camera clipping fix and registered celiac branch scaffold. New real-label/context regression scripts/direct-organ-open-e2e.mjs; local checks and 390px browser flow pass. Runtime PR/deployment pending at this checkpoint; no physical Android verification.
 
 2026-10-13 publication complete: PR #83 merged as 6b8fff793d46cac08e29d447b814c259703e4e9c. Production deployment dpl_7Fgmc13yZ61hYaUAQmLCCog8aDJr READY and aliased to orbitmbbs.vercel.app. Live Celiac supply control selects connection_412 and exposes Show organ context; public simulator route verified. This cloud browser lacks WebGL, so 3D graphics evidence is from local/CI Chromium, not the live cloud browser. Connected Anatomy run 38402555238: all 4 groups SUCCESS after retrying group 0 (initial run reported one unexplained page error 'int64' after every route passed; unchanged runtime retry passed). Covers all 36 dossiers/225 registered views, relation/drainage/rotation, and new Heart/Kidney/Liver/Lungs tap, explicit info reopening, celiac/context-toggle regression. Phone screenshots inspected at 360/390/430px; delivered combined preview ORBIT_Direct_Heart_Celiac.png. Local TypeScript/build/simulator/mobile/assets/catalog/small-vessel framing pass. Production smoke expectation aligned to direct-model Heart tapping in test-only follow-up 1ba433b; legacy simulator E2E failures remain recorded in prior audit, not claimed green. Physical Android gestures and TalkBack remain unverified.
+
+2026-10-13 native port WIP: owner requested native Android/offline simulator and PG. Full offline detail was chosen explicitly over strict 10 MB after measurement. Branch codex/native-offline-simulator contains native OpenGL source-asset renderer, MRI/POCUS views, source pack builder, initial anatomy UI; full assets+PG ~29.24MB (radiology/audio/JS additional). Existing SimulatorScreen is still WebView until complete native UI replaces it. No compiled Kotlin or APK/AAB yet. Finish native monitor/cases/lessons/diagnostics/audio, preview shims, verification and release integration before merging. Generated Android simulator/PG assets are reproducible and gitignored.
+
+
+## 2026-10-14 — Codex — native simulator recovered and wired, verification pending
+**DONE** — recovered remote native checkpoint fac58e3. CI run38446873169 compiled actual Android Kotlin and bundled JS successfully, generated full model/PG assets; only lint failure was unused OrbitMRI React import, now removed. User requested MRI/X-ray side labels with thin leaders and endpoint dots. Added native image callout layout, collision/transform regression, normal CXR landmarks and personal labels saved per exact MRI plane/slice. MRI has no source-registered anatomical label atlas: automatic gyrus/lesion labels still require verified source registration, never copy coordinates from the user screenshot.
+**HALF-DONE** — SimulatorScreen now native on this branch: persisted case session, shared engine/waveforms/actions, anatomy, MRI/Xray, schematic POCUS, ECG lessons/vector/cycle and existing PG practice. These new screens are not yet checked on a device or screenshot. Lesson catalog/vector generated before types in new native CI. Main/release unchanged; no new APK/AAB.
+**NEXT** — follow new native CI, fix compile/types/lint, restore preview shims, inspect actual device/emulator screens and source MRI slices, finish 12-lead inspection, native auscultation/pupil/PICCLED and POCUS/reference parity. Integrate asset generators into all release workflows, measure APK/AAB, then version26/build. Need active workspace/emulator for visual QA (scratch environment unavailable in this turn; GitHub API edits used).
+**DO NOT** — do not call native complete or merge this WIP; do not claim web preview proves Android GL/audio. Full detail over10MB already authorised. Unverified vestibular nerve geometry now withheld like web source. Do not silently remove features to release sooner.
+
+
+## 2026-10-14 — Codex — native port, reviewed MRI/X-ray callouts and test APK
+**DONE** — Android-specific SimulatorScreen.android.tsx replaces the WebView on Android; generic SimulatorScreen.tsx retains the web/iOS entry. Native shared-engine cases/monitor, local session replay, anatomy (direct organ/vessel focus), MRI/X-ray, ECG lessons/cardiac cycle and existing PG practice wired. Native Kotlin/bundle/types/lint + decoded asset/225 connection/MRI checksum/annotation geometry checks passed on a9ae7042 (run38461377568); web build passed. Anatomy context draws after opaque vessels with depth writes disabled; anatomy selection persists across tab switches.
+**DONE** — 21 MRI teaching landmarks on 5 exact reviewed slices, 24 X-ray finding markers plus normal landmarks, thin side leaders/dots, zoom/pan tracking and saved personal per-slice labels. Source plots manually inspected; exact raw MRI checksum pinned. No named gyri/lesion segmentation claim. Real RN component preview tests passed (38461377566), including normal film, pneumothorax, effusion, MRI planes and clickable labels; screenshots inspected. This is browser layout evidence, not Android Canvas/GLES/device proof. Reference and UI proof are in Actions artifacts.
+**HALF-DONE** — draft PR85 codex/native-offline-simulator. Main and production unchanged. Auscultation/pupil/PICCLED, 12-lead diagnostics and full POCUS/reference parity unfinished. All Android release workflows now generate and validate offline model/PG/lesson assets before types/bundle. Full-detail >10 MB choice remains authorised; do not remove data.
+**NEXT** — follow native-offline-test-apk.yml on f23c9ccf (38463930017): assemblePreview ARM64, separate .debug package, ad-free, launcher ORBIT Native Preview; publishes clearly incomplete prerelease only after archive checks. First test APK compiled at54018a23 but archive guard found .gz model names absent; not published. Models now .mesh.pack/.meta.pack (gzip content) to avoid Android .gz asset name rewriting. Runtime source loader and package checks agree. Two real failures fixed before publishing: binary index count overwrote vertex header (offset4 fixed), and RN-web image-load event lacked source dimensions (getSize fallback fixed). Finish remaining native parity before version26/signed production APK/AAB; no Play publication authorised.
+**DO NOT** — do not call this a completed native port or the test binary a production update. No physical Android/TalkBack claim. No native APK/AAB ready at this checkpoint; append actual publication/size once the guarded build finishes. Do not reopen generic web entry to port Android; Metro resolves .android.tsx correctly (NotesScreen imports without extension).
+
+
+2026-10-14 publication checkpoint: native-offline preview build38463930017 SUCCESS fromf23c9ccf. App archive contains atlas.mesh.pack/meta.pack, full MRI, local X-ray references, PG manifest/packs and bundled JS. Ad-free ARM64 .debug package, launcher ORBIT Native Preview. Public test APK: https://github.com/Sabharivarshan111/gmck/releases/download/native-offline-preview-2/app-preview.apk (96,807,571 bytes /96.8 MB). Packaged simulator+PG assets34,445,672 bytes. SHA256006d133c3419f9111a57af7ded9e709687f1248aa36bccd0b60bdaef092a9d51. Core native verification38463930100 SUCCESS; real component preview38461377566 SUCCESS; screenshots inspected. This is an unfinished device-review preview, not the production APK/AAB; use Guest because separate debug-package Google OAuth is unconfigured. Installs beside production; no uninstall instruction. Current main remains9a1a39dd, draftPR85. Remaining diagnostic parity and device/TalkBack review required before version26 production release. Release-2 tag initially defaulted to main despite binaryf23; tag mutation was rejected by GitHub Actions token (403, workflows=write needed); safe metadata-only workflow2f7920cc records actual source commit explicitly. Do not use automatic tag source archives for this preview; use commitf23c9ccf directly. Do not point users at older release-690 for this native port.
+
+Native preview source-note correction uses release body metadata only; no retry of the blocked tag mutation. Current app binary and download remain valid. Fresh build tasks may produce subsequent native-offline-preview-N test releases; do not mistake these for production AABs.
+
+
+## 2026-10-14 — Codex — ECG12/pupil screens verified; offline sound assets generated
+**DONE** — a5f3ffbe native SVG12-lead sheet + exact shared pupil/reflex model. Preview38503545617 SUCCESS360/390/430px, screenshots inspected. Audio source packd98893f from successful38504964937:212 loops/1,806,977bytes, existing DSP, both filter modes and reference rates. See HANDOFF newest section.
+**HALF-DONE** — native OrbitSimAudio TurboModule/player, audio UI, bedside schematics, scan background/freeze corrections are being checked and committed. Local types passed before last bedside edits; unused Rect import removed. Current testAPK2 does not include these tools.
+**NEXT** — commit player/panels + strict sound source/checksum guards, follow actual Kotlin/JS/UI CI, inspect screenshots, build refreshed ad-free ARM64 testAPK. Complete POCUS and native device/emulator review before production26 APK/AAB.
+**DO NOT** — do not call browser audio proof Android playback; no production/native completion claim, no Play publication, no10MB data cuts. Keep212 source-derived clips and their manifest in public/clinical-reference/auscultation, copied to APK by asset builder. Do not restore .gz Android model filenames or overwrite shared web/native PG work.
+
+
+## 2026-10-14 — Native Android continuation
+
+Preview 6 published from 1021d6935eb40d3d224511a8e99e952e90539439: 98,743,134 bytes; SHA256 7129a94ccadfda307e4ad6e6dd83b5aed4b3c32554e4aa58f69cb00249041af1. APK: https://github.com/Sabharivarshan111/gmck/releases/download/native-offline-preview-6/app-preview.apk. Kotlin, bundle and archive checks passed; actual device rendering/playback remains unverified.
+
+New changes: professional leader sizing, venous colour/direction, one selected connection callout, child-mesh selection within focus, compact controls, six guided ECG lessons/rate quiz, QT calculator and shared-model PV loop with invalid-model guard. Local types/lint and strict offline model/MRI/audio guards passed.
+
+POCUS movies now tracked in 6f79edee33dae196bea33f73011ddf46eb82883f after narrow force-add for global MP4 ignore. Two source-derived movies/posters total 158,980 bytes. Earlier preview build correctly failed missing movies before publication. Fully qualified MainActivity fixes debug emulator launch. Fresh APK, component UI, actual native compilation and offline emulator checks required on this change; no production merge/release/Play update yet. Full parity/device proof remains necessary.
+
+
+### Native reference calipers checkpoint
+
+Commit 1fac04acc4101182e7d95201755bc4318e6ad55a adds two-point native radiology measurements. MRI uses the reference volume's exact resampled spacing; X-rays report image pixels without fabricated physical calibration. Markers stay in source coordinates across zoom/pan and clear on film/plane/slice changes. Local types, lint and distance/coordinate tests passed; UI run 38512341147 passed, including two actual taps and slice-reset behavior. Downloaded its artifact and inspected mri-calipers.png: line/endpoints and leaders align in the sagittal reference. Core native verification on this change remains running.
+
+Earlier 196e7ba89e2406532020fd182e090c4619f3a1f6 native core run 38511693035 and UI run 38511692889 succeeded. ARM64 test APK run 38511692902 and actual offline Android emulator run 38511692929 are still running at this checkpoint. That APK will contain arrows, focus/ECG/POCUS fixes but precedes calipers; don't claim calipers shipped until rebuilding from 1fac04a or later. Preview 6 remains the verified existing download until these runs complete.
+
+
+### Preview 9 published — native diagnostics/calipers
+
+Newest APK: https://github.com/Sabharivarshan111/gmck/releases/download/native-offline-preview-9/app-preview.apk. Actual source 572b6ad24e096f3372b004eaab3f8f0048632920; 98,920,493 bytes; SHA256 d1ffc2bcfbfdcba9efdde6e6a5a606df64ac06f326617c059119630f2c0f2124. Native APK run 38513311913/job115686478039 passed in 11m2s; archive includes 212 Ogg clips and two POCUS MP4s. Simulator/PG asset bytes 36,483,147. Preview package com.aistudio.mbbsqbank.aycxvd.debug, stable committed debug signing, ARM64, ad-free, launcher ORBIT Native Preview. Can update existing previews; installs beside production. No production APK/AAB/version bump/merge.
+
+Includes direct heart/organ focus, revised leaders/child selection, guided ECG/QTc/PV, corrected POCUS controls and offline movies, plus MRI/X-ray calipers. Core native run38512340986 and UI run38512341147 on caliper commit passed; real RN-web caliper screenshot inspected. Android graphics are not proven by these checks.
+
+First actual Android attempt38511692929 failed before simulator navigation because a Pixel Launcher ANR covered the app. Last1500 logcat lines did not identify an ORBIT crash, but this is not device proof. New run38513311985 uses 720x1600/320dpi, closes only the specifically identified launcher ANR, relaunches ORBIT, and captures complete logcat/activities/final screenshot on failure. It remains running at this checkpoint. No assertion suppresses an ORBIT ANR or renderer/media failure. Complete that run and fix genuine failures; full parity/physical device checks still unfinished.
+
+
+### Critical fresh-install finding — wait for Preview 10
+
+Installed-device run38513311985 got through launcher recovery and exposed the real FirstRun onboarding screen: fresh Preview 9 incorrectly requires Google sign-in. Do NOT recommend Preview 9 as usable fresh offline/guest entry. Earlier guest-entry claims were wrong, corrected to the user. No ORBIT crash was identified; simulator rendering/media still untested because onboarding blocked entry.
+
+Fix committed in 884a099ab96354377ee4a635eda6c0592cc03f76: both native preview and emulator workflows reuse the existing android-debug workflow's explicit GOOGLE_SIGN_IN_ENABLED=false source override ONLY within their separately installable test build. Production authMode.ts remains !__DEV__; runtime code/RLS/Supabase config unchanged. Both normal and --debug-apk auth-mode tests passed locally, plus 13 Android storage/sign-out/security cases. Each workflow tests production auth first and its preview override second. The emulator now fills local display name, year and university, asserts no Google-required caption, completes setup in airplane mode, then handles the walkthrough and proceeds to simulator checks.
+
+New APK build38515364887 (expected Preview 10), core38515365036, emulator38515365017 are running. Fix fresh-install navigation first, then verify native graphics/playback. No production sign-in bypass, merge, AAB or Play release. Supabase skill read for auth-boundary review; docs fetch was attempted but no Supabase feature/API/database change implemented.
+
+
+### 2026-10-14 — Preview 11 offline flow passed; visual follow-up
+
+DONE: Preview 11 source 89848f3e99c8f0c89967829d5eccb8a23168f182. APK https://github.com/Sabharivarshan111/gmck/releases/download/native-offline-preview-11/app-preview.apk, 98,921,037 bytes, SHA256 0d62cfc4403238dde51fc1c6c02f1303ea962a3bb9322b03964e4191a6e5a711. Core38518536065, UI38518536202, APK38518536247 and actual Android offline run38518536136 passed. Fresh local setup in airplane mode, simulator entry, ECG, pupil controls, audio player state, explicit scan/video playback and direct heart focus exercised. Production authentication unchanged. Separately installed ad-free ARM64 preview; no production AAB or Play upload.
+
+HALF-DONE: Flow assertions do not establish visual correctness. Screenshot review found the ECG trace below many controls, the heart apex partly covered by the selected card, and blank MRI after the test swiped through the image. The image PanResponder allowed unbounded translation. Physical-device fidelity and full web parity remain unverified.
+
+NEXT: Follow-up moves ECG segment controls into a sheet, bounds image translation/zoom, removes the erroneous test swipe, reserves native anatomy viewport space above/below controls, offsets leaders into stage coordinates, and makes regional shortcuts match each region. Verify types/lint plus Android/component CI and inspect actual MRI/heart screenshots before recommending the new APK. Updates are checkpointed on this branch to survive workspace pruning.
+
+DO NOT: Call Preview 11 MRI screenshot proof; it was blank after a pan. Do not claim full parity, all clinical content audited, production release, or Play publication. Preserve shared PG explanations and main branch work.
+
+
+## 2026-10-14 — Codex — Preview 12 native visuals verified
+
+**DONE:** Preview 12 built from c9f29a970a3fadac09865081e7a566deb651a928. APK https://github.com/Sabharivarshan111/gmck/releases/download/native-offline-preview-12/app-preview.apk; 98,923,917 bytes; SHA256 5dc6e273e8464f65605deaf575d112d193b4c4c31a88f0034a6286114301e0b0. Core38533318814, UI38533318699, APK38533318765 and real offline Android38533318893 passed. Inspected actual native heart, MRI and ECG captures: whole heart including apex clear of controls, visible T1 image with slice landmarks, and calibrated ECG trace above the fold. Component images also inspected. No production authentication or website changes.
+
+**HALF-DONE:** Full web parity and physical-device clinical fidelity remain unfinished. Existing preview is ARM64/ad-free/local setup and installs beside production. No production APK/AAB, merge or Play upload. Do not repeat Preview 11's blank-MRI screenshot as proof.
+
+**NEXT:** Test-only commit 7c85112b1bcf98ca07cd0acdd8c6a67165a9b5ec adds native MRI pan and coronary/renal artery/renal vein/celiac selection captures. Actual Android run38535793952 is running. Inspect those captures, fix any real failures, then update evidence. This does not change Preview 12 application code.
+
+**DO NOT:** Claim all connections have 3D meshes: 225 registered views have captured geometry; source gaps remain explicitly teaching schematics. Preserve main/PG explanation work; no Play publication authorized.
+
+
+## 2026-10-14 — Codex — Native vessel audit passed
+
+**DONE:** Test-only Android run38535793952/job115758225098 succeeded on 7c85112b1bcf98ca07cd0acdd8c6a67165a9b5ec. Actual airplane-mode UI drove heart → coronary supply, abdomen → kidney → renal artery and renal vein, and liver supply → celiac trunk/common hepatic artery. Inspected coronary-native, renal-artery-native, renal-vein-native and celiac-native screenshots: selected vessels visible with leaders, branches exposed, no dossier masking. Inspected mri-pan-native: the image/landmarks stayed visible after the same upward drag that blanked Preview 11. Existing ECG, pupils and local media flow also passed. Artifact11880578887 contains captures/logcat/XML.
+
+**HALF-DONE:** Full web parity and hardware/TalkBack/clinical fidelity remain unfinished. These specific flows have emulator proof; this is not proof of every organ relation. Source gaps still use labeled schematics.
+
+**NEXT:** Preview 12 remains the latest application build, from c9f29a970a3fadac09865081e7a566deb651a928: https://github.com/Sabharivarshan111/gmck/releases/download/native-offline-preview-12/app-preview.apk, 98,923,917 bytes, SHA256 5dc6e273e8464f65605deaf575d112d193b4c4c31a88f0034a6286114301e0b0. The later commits add tests/docs only. Continue remaining parity/device work before production APK/AAB and merge; PR85 stays draft.
+
+**DO NOT:** Treat test-only commits as new APK releases, claim full parity, change production authentication or publish to Play. Preserve concurrent PG explanations.
+
+
+## 2026-10-14 — offline Android build continuation
+
+**DONE:** Fixed three build failures on 025b56c: simulator inputs already live inside KeyboardSafe Sheet but keyboard guard lacked their ancestor declarations. Guard now parses JSX ancestry and rejects inputs outside Sheet; negative regression verified. Anatomy/case/X-ray lists handle selection while keyboard is open. All 39 release Checks commands passed locally; edge/inset check and targeted lint pass. Build reports will be attached alongside APK/AAB; internal notes preserve Play installation/local data, and branch release stays prerelease/not latest.
+
+**HALF-DONE:** Fresh debug/internal/release builds must complete from this follow-up. Native content is unchanged apart from keyboard list taps. Local regenerated content checks passed (3143 named meshes,225 registered views, full MRI,212 audio clips,21 PG packs); typecheck pending completion. Prior025b56c CI type/lint/content generation passed.
+
+**NEXT:** Follow three Android workflows, fix failures, verify packaged native assets/checksums and deliver exact current APK/AAB links. Keep branch isolated; no main merge or Play upload.
+
+**DO NOT:** Recommend prior release-690 for offline port or claim full parity/physical-device clinical review. Preview12 remains existing ad-free ARM64 download until fresh normal workflows succeed.
+
+
+2026-10-14 publication blocked: auto-review rejected git push3392e41 to publicSabharivarshan111/gmck codex/native-offline-simulator. Connected GitHub identitySabharivarshan111 and owner/admin/push permission were verified, but review still requires explicit permission to publish modified source publicly. Do not bypass through connector/alternate git routes. User approval must authorize pushing this prepared fix to that public branch. Previous builds38540809522/38540809548/38540809518 failed only at keyboard guard; these changes address that failure. No new builds were triggered, no remote push/merge/Play upload completed.
+
+2026-10-14 owner explicitly authorised pushing this fix to gmck and releasing the three build variants. Local git push lacks credential access in the current runtime; connected GitHub API is used for the same approved eight-file commit. Local TypeScript/targeted lint and39 release checks passed. No main merge or Play upload.
+
+
+## 2026-10-14 — iOS setup/calendar and murmur follow-up
+
+User explicitly authorized gmck push and all build releases. Initial verified builds: debug-489, internal-508, release-692 (APK+AAB), source45566de. Offline assets verified, 212 clips at that point. Web repairs pushed to codex/ios-calendar-repair-20261014: 6a91cb75 (Home university card removed, durable validated setup + own-account cloud recovery, small Safari storage fallback, touch date fields + saved posting date editor, 9 synthetic murmur types). Follow-up test-only90aff21 waits for mounted date sheets, fixed clock, expands collapsed vascular notes before anatomy check. Local touch and broad smoke passed before session interruption; CI rerun still pending. Native offline branch is separate from main; common fixes copied plus native murmur library and 260 clips regeneration underway. User also requested updated Remotion iPhone install guide for orbitmbbs.site; existing source Library identity libfile_6f0e7e7916288191979cb2b40fa812c9 version4, video libfile_ec8bf93f297c81918c78464cfe36ddc4. Render not yet finalized/saved. No real iPhone or real Google OAuth handshake verified. Finish web CI then publish common fixes to main, verify Vercel custom domain. Native refreshed three builds and updated guide remain pending.
+
+
+2026-10-14 follow-up checkpoint: Web PR86 merged to main39ac7296eac5fbae2a6d332667265e4aabd6f5c0. Vercel dpl_6uRw8wbAryieQ9SGvFfXB9sLa7Rh READY; orbitmbbs.site and www aliases assigned, HTTP200 and new v23 service worker verified. Chromium+WebKit setup/attendance/reopen checks passed (38575320287 and38575543831), full mobile UX including eye/ECG/studio/radiology/ultrasound/anatomy passed38575534869. Native code/assets pushed0e2f0231ff2feb737d8d3be7c11537204497e898, 260 source-derived Ogg loops; native verification38575373008 success. Workflow-only5f580ec fixes browser version mismatch in audio-source regeneration and skips already verified matching clips; it does not change artifact source or cancel existing builds. Debug38575373005, internal38575372996, release38575373010 are still compiling; watch those exact source0e2 runs and verify their released APK/AAB reports before handing over.
+
+Updated iPhone guide completed and saved to existing Library identities: ORBIT_iPhone_Home_Screen_Guide.mp4 libfile_ec8bf93f297c81918c78464cfe36ddc4 current file_000000009d08820e82e510d33c1355e9; ORBIT_Continuous_Source_and_Audit.zip libfile_6f0e7e7916288191979cb2b40fa812c9 version5 current file_00000000894481f5bc8fe0116b1b9715. Guide: orbitmbbs.site throughout, new Home and installed-app closing scene; H264/AAC 1080x1920 60fps 32sec/1920 frames; full decode passed, visual scenes verified. Video4216223 bytes SHA2563be02cdece74d71a57c909d9cbfc16c53053711e24f2b9a97c36191ef86cee3e. Raw initial geometry warnings were rechecked after layout and passed; future audit hook now waits for layout. Source archive preserves unrelated original reel contents. Both ordered replacements succeeded and metadata applied. No real physical iPhone or real Google OAuth handshake was exercised.
+
+
+## 2026-10-14 — completed iOS calendar/setup/murmur release
+
+PR86 merged to main39ac7296eac5fbae2a6d332667265e4aabd6f5c0 and deployed to orbitmbbs.site / www.orbitmbbs.site (READY deployment dpl_6uRw8wbAryieQ9SGvFfXB9sLa7Rh). Live HTTP200, SWv23 and client bundle SHA2560c9922e9bc6d643f76888d8837c7d0d763fa00e6d0f983ef6026dceba8f33344 match tested local output. Home university card removed; Settings unchanged for selection. Validated durable setup + own-account recovery; date pickers and saved posting date repair; nine synthetic murmurs with timing notes and normal comparison. Chromium+Safari/WebKit touch setup/reopen/calendar/date edit/holiday persistence and full mobile simulator UX passed.
+
+Native offline branch source0e2f0231ff2feb737d8d3be7c11537204497e898 released successfully:
+- debug-490 app-preview.apk 150705326 bytes SHA256f24b5ee562746788786870e5ba3e8f45b049a2715b276a02109a21cfd7436cda — ad-free, separate .debug package, guest setup.
+- internal-509 app-internal.apk 150705314 bytes SHA256a3a2a80d0e31580e762a99bd1a65047b03eb60cb3aa4549dc112acd730d21214 — ad-free production package/upload certificate.
+- release-693 app-release.apk 143053642 bytes SHA256dfbdf7cff9225521a9287c1656470618eb37d819ccb261d6bc3a012d9769b4eb; app-release.aab 120596495 bytes SHA2563edd4a756a61b9f64d709fbc376f246c5d141765ba09837c2b6d97c719a79d0a. Release has live ads.
+
+Every asset has its .json package verification report attached. GitHub asset digests match CI reports; all four packages verified 21 PG packs /185636 questions, 260 native audio clips and36770768 offline asset bytes. Three runs38575373005/38575372996/38575373010 succeeded; native offline verification38575373008 succeeded. Workflow-only5f580ec uses matching browser and validates existing clips before audio regeneration. These native offline releases are distinct from automatic builds on main (main still has the hosted simulator). No Play upload or version bump was performed.
+
+Updated 32-second iPhone guide for orbitmbbs.site saved to existing Library libfile_ec8bf93f297c81918c78464cfe36ddc4; MP4 H264/AAC1080x1920@60fps, 1920frames,4216223 bytes SHA2563be02cdece74d71a57c909d9cbfc16c53053711e24f2b9a97c36191ef86cee3e. Editable ORBIT_Continuous_Source_and_Audit.zip saved to existing libfile_6f0e7e7916288191979cb2b40fa812c9 version5; unrelated original reel contents preserved. Full media decode and selected final visual scenes passed; six startup geometry reads rechecked after layout passed. Both replacement saves and metadata application succeeded.
+
+Material limits: no physical iPhone or real Google OAuth handshake tested; no claim of perfect behavior on every physical device. User explicitly authorized gmck pushes and build releases. Task is completed.
