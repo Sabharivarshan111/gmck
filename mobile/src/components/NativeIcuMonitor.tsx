@@ -79,6 +79,7 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
   const [samples, setSamples] = useState<SampleBuffer>(() => initialBuffer());
   const [running, setRunning] = useState(true);
   const [audioEnabled, setAudioEnabled] = useState(false);
+  const toneEnabled = useRef(false);
   const lastBeep = useRef(0);
   const [active, setActive] = useState(AppState.currentState === 'active');
   const chosen = SCENARIOS.find(s => s.id === scenarioId) ?? SCENARIOS[0];
@@ -103,6 +104,7 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
     setSamples(initialBuffer());
   }, [scenarioId, engine, patient]);
   useEffect(() => {
+    toneEnabled.current = audioEnabled;
     if (!audioEnabled || !running || !active || !focused) OrbitSound?.stopMonitorTone();
     return () => OrbitSound?.stopMonitorTone();
   }, [audioEnabled, running, active, focused]);
@@ -115,7 +117,7 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
       last = now;
       const next = advanceNativeTelemetry(patient, dt);
       // Resolve the R wave before decimating UI updates; one beep per beat.
-      if (audioEnabled && next.some(sample => sample.ecg > 1.0) && now - lastBeep.current > 400) {
+      if (toneEnabled.current && next.some(sample => sample.ecg > 1.0) && now - lastBeep.current > 400) {
         lastBeep.current = now;
         OrbitSound?.monitorBeep(Math.max(300, 780 * patient.getLiveVitals().spo2 / 100));
       }
@@ -124,7 +126,7 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
       setRhythm(patient.pathology.ecgRhythm);
     }, 90);
     return () => clearInterval(timer);
-  }, [running, active, focused, audioEnabled, patient]);
+  }, [running, active, focused, patient]);
 
   const paths = useMemo(() => CHANNELS.map(c => channelPath(samples, c.key, c.channel)), [samples]);
   const waveWidth = Math.max(300, Math.min(width - 30, 720));
