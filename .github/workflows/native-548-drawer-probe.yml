@@ -9,8 +9,8 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: native-543-evidence-${{ github.ref }}
-  cancel-in-progress: true
+  group: native-drawer-evidence-${{ github.sha }}
+  cancel-in-progress: false
 
 permissions:
   actions: read

@@ -2226,20 +2226,20 @@ await step('a YouTube link is added to a note, and plays in it', async () => {
 await step('attendance counts classes, and says what is still spare', async () => {
   await open('screen=progress');
   await declineAdPromptIfShown();
-  await byLabel('Attendance').first().click({ force: true });
+  await byLabel('Attendance').first().click();
   await page.waitForTimeout(700);
 
-  await byLabel('Add a subject').click({ force: true });
+  await byLabel('Add a subject').click();
   await page.waitForTimeout(500);
   await byLabel('Subject name').fill('Pathology');
-  await byLabel('Add this subject').click({ force: true });
+  await byLabel('Add this subject').click();
   await page.waitForTimeout(600);
 
   for (let i = 0; i < 4; i += 1) {
-    await byLabel('Mark present for Pathology').click({ force: true });
+    await byLabel('Mark present for Pathology').click();
     await page.waitForTimeout(150);
   }
-  await byLabel('Mark absent for Pathology').click({ force: true });
+  await byLabel('Mark absent for Pathology').click();
   await page.waitForTimeout(600);
 
   const body = await page.locator('body').innerText();
@@ -2256,15 +2256,15 @@ await step('attendance counts classes, and says what is still spare', async () =
   }
 
   // A posting knows its length, which is what makes "you can miss N" honest.
-  await byLabel('Clinical postings').click({ force: true });
+  await byLabel('Clinical postings').click();
   await page.waitForTimeout(600);
-  await byLabel('Add a posting').click({ force: true });
+  await byLabel('Add a posting').click();
   await page.waitForTimeout(500);
   await byLabel('Posting name').fill('Paediatrics');
   await byLabel('Length of the posting in days').fill('30');
-  await byLabel('Add this posting').click({ force: true });
+  await byLabel('Add this posting').click();
   await page.waitForTimeout(600);
-  await byLabel('Mark present for Paediatrics').click({ force: true });
+  await byLabel('Mark present for Paediatrics').click();
   await page.waitForTimeout(500);
 
   const posting = await page.locator('body').innerText();
@@ -2737,7 +2737,7 @@ await step('a card you write can carry a picture, revealed with the answer', asy
   await page.evaluate(() => {
     globalThis.__orbitPickImage = true;
   });
-  await byLabel('Front of the card, the question').fill('Identify the structure arrowed.');
+  await byLabel('Front of the card, the question').fill('Recall the anatomy of this structure.');
   await byLabel('Add a picture to this card').click();
   await page.waitForTimeout(700);
   await page.evaluate(() => {
@@ -2751,7 +2751,7 @@ await step('a card you write can carry a picture, revealed with the answer', asy
   // A visual card may leave the answer blank: the diagram answers it.
   await byLabel('Add this card').click();
   await page.waitForTimeout(800);
-  await seesText('Identify the structure arrowed', 4000);
+  await seesText('Recall the anatomy of this structure', 4000);
 
   await byLabel('Go back').first().click();
   await page.waitForTimeout(700);
@@ -2810,10 +2810,7 @@ await step('a chapter offers to add your own deck, and a deck can be filed', asy
 });
 
 await step('a flashcard chapter opens, and a deck that cannot build offers a retry', async () => {
-  await open('screen=notes');
-  await byLabel('Notes').first().click();
-  await page.waitForTimeout(700);
-  await byLabel('Anki-style flashcards, browse decks by year').click();
+  await open('screen=flashcards');
   await page.waitForTimeout(800);
 
   await page.locator('[aria-label^="3rd Year"]').first().click();

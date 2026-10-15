@@ -166,6 +166,9 @@ def main():
         expect("Static synthetic ECG with calibrated grid", tries=15)
         screenshot("10b-android-full-ecg-teaching-studio")
         tap("Close diagnostic tool")
+        for _ in range(10):
+            if visible("WAVE GUIDE"): break
+            scroll_up()
         expect("WAVE GUIDE")
         results.append("Full canonical ICU lessons, lead-axis interaction and ECG teaching module return")
 

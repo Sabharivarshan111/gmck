@@ -29,6 +29,7 @@ const syncViewportHeight = () => {
   if (height > 0 && height !== viewportHeight) {
     viewportHeight = height;
     document.documentElement.style.setProperty('--orbit-native-vh', `${height / 100}px`);
+    document.documentElement.dataset.orbitNativeShortViewport = String(height <= 500);
   }
 };
 syncViewportHeight();

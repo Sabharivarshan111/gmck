@@ -64,6 +64,28 @@ try {
     console.log(`PASS browser integration: ${kind} mobile lesson, close handshake and patient export; no hidden atlas requests`);
     await page.close();
   }
+  // Exercise the actual anatomy drawer and native viewport bridge. Geometry
+  // requests are blocked here: this regression checks layout, not model proof.
+  const anatomy = await browser.newPage({ viewport:{width:393,height:800},isMobile:true,hasTouch:true });
+  await anatomy.route('**/models/**', route => route.abort());
+  await anatomy.goto(origin + '/simulator?mode=anatomy&organ=heart&isolate=heart&nativeTheme=dark');
+  const drawerHeight = async height => anatomy.waitForFunction(expected => {
+    const drawer = document.querySelector('[aria-label="Anatomy details"]');
+    return drawer && Math.abs(drawer.getBoundingClientRect().height - expected) < 1;
+  }, height, {timeout:15000});
+  await drawerHeight(496);
+  assert.equal(await anatomy.evaluate(() => document.documentElement.dataset.orbitNativeShortViewport), 'false');
+  await anatomy.getByRole('button',{name:'Read more',exact:true}).click();
+  await drawerHeight(704);
+  await anatomy.setViewportSize({width:393,height:400});
+  await drawerHeight(400);
+  assert.equal(await anatomy.evaluate(() => document.documentElement.dataset.orbitNativeShortViewport), 'true');
+  await anatomy.setViewportSize({width:393,height:800});
+  await drawerHeight(704);
+  await anatomy.getByRole('button',{name:'Read less',exact:true}).click();
+  await drawerHeight(496);
+  await anatomy.close();
+  console.log('PASS actual drawer layout: collapsed/expanded portrait, short window and restoration');
 } finally {
   await browser?.close();
   await new Promise(resolve => server.close(resolve));
