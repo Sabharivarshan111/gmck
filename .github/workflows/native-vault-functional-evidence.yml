@@ -34,6 +34,13 @@ jobs:
         with:
           node-version: '22'
           cache: npm
+      - name: Check the local advanced teaching integration in a mobile browser
+        run: |
+          npm ci --legacy-peer-deps --ignore-scripts
+          npm install --no-save --package-lock=false --legacy-peer-deps playwright@1.55.0
+          npx playwright install --with-deps chromium
+          node mobile/scripts/build-local-simulator.mjs
+          node mobile/scripts/native-teaching-browser-check.mjs
       - name: Wait for matching Android debug build
         id: debug
         uses: actions/github-script@v7
@@ -46,6 +53,7 @@ jobs:
             const allowed=new Set([
               '.github/workflows/native-vault-functional-evidence.yml',
               'mobile/scripts/native_diagnostic_controls.py',
+              'mobile/scripts/native-teaching-browser-check.mjs',
               'mobile/scripts/run_native_diagnostic_captures.py',
               'mobile/scripts/ui-dump/UiDump.java',
               '.agents/state/resume-notes.md'
@@ -78,9 +86,6 @@ jobs:
 
       - name: Screenshot the actual Vercel clinical studio for reference
         run: |
-          npm ci --legacy-peer-deps --ignore-scripts
-          npm install --no-save --package-lock=false --legacy-peer-deps playwright@1.55.0
-          npx playwright install --with-deps chromium
           mkdir -p artifacts/native-vault-parity
           node mobile/scripts/native-anatomy-parity-manifest.mjs artifacts/native-vault-parity/anatomy-coverage.json
           node mobile/scripts/vercel_mobile_vault_screenshots.mjs artifacts/native-vault-parity
