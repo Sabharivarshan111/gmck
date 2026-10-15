@@ -1,0 +1,22 @@
+import type { PhysiologyKernel } from '@simulator/engine/PhysiologyKernel';
+import type { TelemetryWaveformSample } from '@simulator/types';
+
+// Preserve the ~1.97s display window while resolving narrow R waves at 250Hz.
+// The old ~83Hz sampling could miss every R peak for some initial phases.
+export const NATIVE_ICU_SAMPLE_STEP = 0.004;
+export const NATIVE_ICU_BUFFER_LENGTH = 492;
+
+export function advanceNativeTelemetry(
+  patient: Pick<PhysiologyKernel, 'tick' | 'sampleWaveforms'>,
+  duration: number,
+): TelemetryWaveformSample[] {
+  if (!Number.isFinite(duration) || duration <= 0) return [];
+  const elapsed = Math.min(0.25, duration);
+  const slices = Math.ceil(elapsed / NATIVE_ICU_SAMPLE_STEP);
+  const samples: TelemetryWaveformSample[] = [];
+  for (let index = 0; index < slices; index++) {
+    patient.tick(elapsed / slices);
+    samples.push(patient.sampleWaveforms());
+  }
+  return samples;
+}

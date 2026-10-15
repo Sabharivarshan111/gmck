@@ -2301,3 +2301,22 @@ Core local renderer ~3.64MB; exact SHA-pinned private persistent model cache. De
 
 ### DO NOT
 - Do not gate preview audit on BuildConfig.DEBUG or label failed captures as passed. Original535 all organs showed unchanged whole-body screen because QA routing was compiled out.
+
+
+## 2026-10-15 — native ICU tone and secondary readings (Codex)
+
+### DONE
+- Anatomy QA branch87d4e662 Android build537 succeeded (run38667824033), installable debug-537 APK127285354 bytes. Vercel/browser CI38667829738 passed. Anatomy/mobile capture run38667824198 is still running against that exact APK; do not cancel by pushing runtime changes to its branch.
+- ICU follow-up adds actual native AudioTrack pulse using canonical90ms sine and0.08→0.001 gain, oxygen-dependent pitch, opt-in muted default, immediate tone cleanup on pause/mute/background/exit, CVP/temp/lactate, and one persistent kernel instead of constructing discarded engines each render. Device/audio proof is pending. Speaker audibility is not verified by headless emulator.
+- Local TypeScript/lint, sound TurboModule/codegen, Kotlin override checks and source-contract checks passed. Updated source-symbol pin from kernel.current to persistent patient variable; shared physiology remains unchanged.
+
+### HALF-DONE
+- Separate codex/native-vault-icu-20261015 branch builds these changes; dedicated ICU device workflow captures clinical UI/PCM playback without restarting the current anatomy capture. No complete parity or final production release claimed.
+
+### NEXT
+- Inspect run38667824198 artifacts/logs, especially all actual organ routes and same-device Vercel refs. Inspect ICU branch build and its separate clinical/PCM capture. Merge verified follow-up into anatomy branch after captures complete, then address any remaining UI/tutorial/function gaps.
+
+### DO NOT
+- Do not call PCM playback proof speaker-audibility proof. Do not claim current debug-537 contains the follow-up ICU changes. Do not cancel the active anatomy audit by pushing follow-up runtime changes to its branch.
+
+ICU follow-up regression found during phase sweep: original~83Hz sampling missed all R peaks for18% normal and22% STEMI initial phases. New pure advanceNativeTelemetry samples at250Hz, preserves the~1.97s display window and exact elapsed patient time; regression across100 starting phases per normal/STEMI now passes. Added to Android CI. ec122b89 was the initial ICU commit; use the newer sampling follow-up build, not its superseded build538.

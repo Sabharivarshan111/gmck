@@ -60,6 +60,7 @@ on:
       - codex/native-vault-full-port-20261014
       - codex/native-vault-audit-20261015
       - codex/native-vault-anatomy-cache-20261014
+      - codex/native-vault-icu-20261015
     # Only when something that reaches the APK changes.
     #
     # This used to fire on every push. Three Android builds ran per push, per
@@ -160,6 +161,7 @@ jobs:
           npm run check:agent-docs
           npm run check:payments
           npm run check:native-sound
+          node scripts/native-icu-sampling-check.mjs
           npm run check:subject-cards
           npm run check:anki
           npm run check:textbooks

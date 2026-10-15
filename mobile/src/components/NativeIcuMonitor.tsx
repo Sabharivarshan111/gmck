@@ -1,8 +1,8 @@
 /**
  * Actual React Native bedside telemetry. No HTML, remote URL or canvas WebView.
  * Uses the exact PhysiologyKernel class from the Vercel source tree. This is
- * a real, functional offline port of the 4-channel ICU monitor; additional
- * web tutorial/audio controls are tracked separately as not yet ported.
+ * an offline port of the 4-channel ICU monitor and source oxygen-pitched tone.
+ * The full web tutorial remains a separate teaching surface.
  */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AppState, BackHandler, Pressable, ScrollView, StatusBar, StyleSheet, View, useWindowDimensions } from 'react-native';
@@ -12,11 +12,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useIsFocused } from '@react-navigation/native';
 import { Text } from '@/components/Text';
 import { PhysiologyKernel, SCENARIOS } from '@simulator/engine/PhysiologyKernel';
+import OrbitSound from '@/native/NativeOrbitSound';
+import { advanceNativeTelemetry, NATIVE_ICU_BUFFER_LENGTH } from '@/lib/nativeIcuSampling';
 import type { PatientVitals, TelemetryWaveformSample } from '@simulator/types';
 
 const W = 340;
 const H = 360;
-const BUFFER_LENGTH = 164;
+const BUFFER_LENGTH = NATIVE_ICU_BUFFER_LENGTH;
 type Channel = keyof Pick<TelemetryWaveformSample, 'ecg' | 'artLine' | 'pleth' | 'capno'>;
 type SampleBuffer = TelemetryWaveformSample[];
 const CHANNELS: { key: Channel; label: string; note: string; color: string; channel: number }[] = [
@@ -71,11 +73,14 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
   const { width } = useWindowDimensions();
   const focused = useIsFocused();
   const insets = useSafeAreaInsets();
-  const kernel = useRef(engine ?? new PhysiologyKernel(scenarioId));
-  const [vitals, setVitals] = useState<PatientVitals>(() => ({ ...kernel.current.getLiveVitals() }));
-  const [rhythm, setRhythm] = useState(() => kernel.current.pathology.ecgRhythm);
+  const [patient] = useState(() => engine ?? new PhysiologyKernel(scenarioId));
+  const [vitals, setVitals] = useState<PatientVitals>(() => ({ ...patient.getLiveVitals() }));
+  const [rhythm, setRhythm] = useState(() => patient.pathology.ecgRhythm);
   const [samples, setSamples] = useState<SampleBuffer>(() => initialBuffer());
   const [running, setRunning] = useState(true);
+  const [audioEnabled, setAudioEnabled] = useState(false);
+  const toneEnabled = useRef(false);
+  const lastBeep = useRef(0);
   const [active, setActive] = useState(AppState.currentState === 'active');
   const chosen = SCENARIOS.find(s => s.id === scenarioId) ?? SCENARIOS[0];
 
@@ -93,11 +98,16 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
     return () => sub.remove();
   }, []);
   useEffect(() => {
-    if (!engine) kernel.current.setScenario(scenarioId);
-    setVitals({ ...kernel.current.getLiveVitals() });
-    setRhythm(kernel.current.pathology.ecgRhythm);
+    if (!engine) patient.setScenario(scenarioId);
+    setVitals({ ...patient.getLiveVitals() });
+    setRhythm(patient.pathology.ecgRhythm);
     setSamples(initialBuffer());
-  }, [scenarioId, engine]);
+  }, [scenarioId, engine, patient]);
+  useEffect(() => {
+    toneEnabled.current = audioEnabled;
+    if (!audioEnabled || !running || !active || !focused) OrbitSound?.stopMonitorTone();
+    return () => OrbitSound?.stopMonitorTone();
+  }, [audioEnabled, running, active, focused]);
   useEffect(() => {
     if (!running || !active || !focused) return;
     let last = Date.now();
@@ -105,18 +115,18 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
       const now = Date.now();
       const dt = Math.min(0.25, Math.max(0.01, (now - last) / 1000));
       last = now;
-      const next: SampleBuffer = [];
-      const slices = Math.max(1, Math.min(15, Math.round(dt / 0.012)));
-      for (let i = 0; i < slices; i++) {
-        kernel.current.tick(dt / slices);
-        next.push(kernel.current.sampleWaveforms());
+      const next = advanceNativeTelemetry(patient, dt);
+      // Resolve the R wave before decimating UI updates; one beep per beat.
+      if (toneEnabled.current && next.some(sample => sample.ecg > 1.0) && now - lastBeep.current > 400) {
+        lastBeep.current = now;
+        OrbitSound?.monitorBeep(Math.max(300, 780 * patient.getLiveVitals().spo2 / 100));
       }
       setSamples(previous => [...previous, ...next].slice(-BUFFER_LENGTH));
-      setVitals({ ...kernel.current.getLiveVitals() });
-      setRhythm(kernel.current.pathology.ecgRhythm);
+      setVitals({ ...patient.getLiveVitals() });
+      setRhythm(patient.pathology.ecgRhythm);
     }, 90);
     return () => clearInterval(timer);
-  }, [running, active, focused]);
+  }, [running, active, focused, patient]);
 
   const paths = useMemo(() => CHANNELS.map(c => channelPath(samples, c.key, c.channel)), [samples]);
   const waveWidth = Math.max(300, Math.min(width - 30, 720));
@@ -132,10 +142,10 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
           <Text style={{ color: '#94a3b8', fontSize: 11 }} numberOfLines={1}>{chosen.title}</Text>
         </View>
         <Pressable accessibilityRole="button" accessibilityLabel="Reset telemetry" onPress={() => {
-          kernel.current.setScenario(scenarioId);
-          setRhythm(kernel.current.pathology.ecgRhythm);
+          patient.setScenario(scenarioId);
+          setRhythm(patient.pathology.ecgRhythm);
           setSamples(initialBuffer());
-          setVitals({ ...kernel.current.getLiveVitals() });
+          setVitals({ ...patient.getLiveVitals() });
         }} style={styles.headButton}><RotateCcw color="#cbd5e1" size={19} /></Pressable>
       </View>
       <ScrollView contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: insets.bottom + 24 }} showsVerticalScrollIndicator={false}>
@@ -144,9 +154,13 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
             <View style={styles.statusDot} />
             <Text style={{ fontSize: 10, fontWeight: '700', color: '#34d399' }}>SWEEP 25 mm/s</Text>
             <Text style={{ color: '#64748b', fontSize: 11 }}> | </Text>
-            <Text testID="native-icu-rhythm" style={{ fontSize: 11, color: rhythm === 'vfib' || rhythm === 'vtach' ? '#f87171' : '#6ee7b7', flex: 1 }}>
+            <Text testID="native-icu-rhythm" numberOfLines={1} style={{ fontSize: 11, color: rhythm === 'vfib' || rhythm === 'vtach' ? '#f87171' : '#6ee7b7', flex: 1 }}>
               Rhythm: {rhythm.toUpperCase().replace('_', ' ')}
             </Text>
+            <Pressable accessibilityRole="switch" accessibilityState={{ checked: audioEnabled, disabled: !OrbitSound }} accessibilityLabel={audioEnabled ? 'Mute monitor tone' : 'Enable monitor tone'} disabled={!OrbitSound} onPress={() => setAudioEnabled(value => !value)} style={[styles.pause, { minHeight: 44, paddingHorizontal: 5 }]}>
+              <Text style={{ color: audioEnabled ? '#00e676' : '#94a3b8', fontSize: 10 }}>{audioEnabled ? '🔊 ON' : '🔇'}</Text>
+            </Pressable>
+
             <Pressable testID="native-icu-pause" accessibilityRole="button" accessibilityLabel={running ? 'Pause monitor' : 'Resume monitor'} onPress={() => setRunning(v => !v)} style={styles.pause}>
               <Text style={{ color: '#cbd5e1', fontSize: 11 }}>{running ? 'Pause' : 'Resume'}</Text>
             </Pressable>
@@ -168,9 +182,18 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
             <Metric label="SpO2 / PLETH" secondary="Oxygen saturation" value={`${fmt(vitals.spo2)}%`} color="#00e5ff" alert={vitals.spo2 < 92} />
             <Metric label="RESP / ETCO2" secondary={`EtCO2 ${fmt(vitals.etco2)} mmHg`} value={fmt(vitals.respiratoryRate)} color="#ffd600" />
           </View>
+          <View style={styles.secondary}>
+            {([{ label: 'CVP', value: vitals.cvp.toFixed(1), color: '#38bdf8' },
+               { label: 'TEMP', value: vitals.temperature.toFixed(1) + '°', color: '#cbd5e1' },
+               { label: 'LACTATE', value: vitals.lactate.toFixed(1), color: vitals.lactate > 4 ? '#f59e0b' : '#cbd5e1' }]).map(metric =>
+              <View key={metric.label} style={{ flex: 1, alignItems: 'center' }}>
+                <Text style={{ color: '#64748b', fontSize: 9 }}>{metric.label}</Text>
+                <Text style={{ color: metric.color, fontSize: 12, fontWeight: '700' }}>{metric.value}</Text>
+              </View>)}
+          </View>
         </View>
         <Text style={{ marginTop: 12, fontSize: 11, lineHeight: 17, color: '#94a3b8' }}>
-          Offline physiology uses the same Vercel case kernel. Simulated educational traces; not a medical device. Audio and full ECG tutorial are not yet native.
+          Simulated educational traces; not a medical device.
         </Text>
       </ScrollView>
     </View>
@@ -187,6 +210,7 @@ const styles = StyleSheet.create({
   pause: { minHeight: 34, paddingHorizontal: 9, justifyContent: 'center', borderWidth: 1, borderColor: '#334155', borderRadius: 9 },
   waveContainer: { backgroundColor: '#080c15', borderRadius: 8, alignSelf: 'center', marginVertical: 6, overflow: 'hidden' },
   channelLabel: { position: 'absolute', left: 8, flexDirection: 'row', paddingHorizontal: 4, paddingVertical: 2, alignItems: 'center', backgroundColor: '#0f172acc', borderRadius: 5 },
+  secondary: { flexDirection: 'row', paddingVertical: 8, marginHorizontal: 3, marginTop: 3, borderWidth: 1, borderColor: '#1e293b', backgroundColor: '#000' },
   numbers: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, padding: 3 },
   metric: { width: '49%', flexGrow: 1, flexBasis: 145, backgroundColor: '#0f172a', padding: 10, borderWidth: 1, borderRadius: 10, flexDirection: 'row', alignItems: 'center', minHeight: 76 },
 });

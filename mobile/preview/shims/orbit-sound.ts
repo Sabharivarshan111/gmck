@@ -20,6 +20,8 @@
 export default {
   play: () => {},
   preview: () => {},
+  monitorBeep: (_frequency: number) => {},
+  stopMonitorTone: () => {},
   /** No phone, nothing silencing it. */
   silencingReason: () => '',
 };

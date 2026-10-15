@@ -2,6 +2,7 @@
 """Android emulator interaction audit + actual screenshots (never browser mocks)."""
 from __future__ import annotations
 import json
+import re
 import time
 from pathlib import Path
 from native_screenshot_driver import (
@@ -57,6 +58,24 @@ def main():
         tap("Live ICU monitor")
         expect("SWEEP 25 mm/s")
         screenshot("05-android-native-icu-waveforms")
+        adb("logcat", "-c")
+        tap("Enable monitor tone")
+        expect("Mute monitor tone")
+        time.sleep(5)
+        tap("Mute monitor tone")
+        expect("Enable monitor tone")
+        tone_log = adb("logcat", "-d", "-s", "ORBIT_MONITOR_TONE:I", "*:S", capture=True).stdout
+        (OUT / "native-monitor-tone.txt").write_text(tone_log)
+        if not any(int(frames) > 0 for frames in re.findall(r"PCM_RENDERED frames=(\d+)", tone_log)):
+            raise RuntimeError("No native ICU pulse PCM playback recorded")
+        results.append("Native pulse PCM playback and mute state; speaker audibility unverified")
+        for metric in ["CVP", "TEMP", "LACTATE"]:
+            scroll_to_tappable(metric)
+            expect(metric)
+        screenshot("05b-android-native-icu-secondary-readings")
+        for _ in range(4):
+            if visible("Pause monitor"): break
+            scroll_up()
         tap("Pause monitor")
         expect("Resume")
         screenshot("06-android-native-icu-paused")
