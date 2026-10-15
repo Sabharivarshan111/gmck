@@ -4,15 +4,16 @@ import { writeFile } from 'node:fs/promises';
 const adb = (...args) => execFileSync('adb', args, { encoding: 'utf8' });
 const sockets = [...new Set(adb('shell', 'cat', '/proc/net/unix').match(/webview_devtools_remote[^\s]*/g) || [])];
 const results = [];
-const expression = (()=>({
+const expression = (()=>{const scan=document.querySelector('[data-testid="pocus-canvas"]');let scanHash=null;if(scan){const bytes=scan.getContext('2d')?.getImageData(0,0,scan.width,scan.height).data;if(bytes){let hash=2166136261;for(let i=0;i<bytes.length;i+=4)hash=Math.imul(hash^bytes[i]^bytes[i+1]^bytes[i+2],16777619);scanHash=hash>>>0;}}return ({
   url:location.href,
   viewport:[innerWidth,innerHeight],
+  scanHash,
   nativeVh:getComputedStyle(document.documentElement).getPropertyValue('--orbit-native-vh'),
   eye:{render:document.querySelector('[data-testid="eye-head-view"]')?.getAttribute('data-render-state'),response:{...document.querySelector('[data-testid="eye-response-state"]')?.dataset}},
   audioErrors:[...document.querySelectorAll('.ausc-error')].map(x=>x.textContent),
   buttons:[...document.querySelectorAll('button')].filter(x=>x.getClientRects().length).map(x=>({text:x.textContent,label:x.getAttribute('aria-label'),pressed:x.getAttribute('aria-pressed')})),
   canvases:[...document.querySelectorAll('canvas')].filter(x=>x.getClientRects().length).map(x=>({label:x.getAttribute('aria-label'),width:x.width,height:x.height,rect:{width:x.getBoundingClientRect().width,height:x.getBoundingClientRect().height}})),
-})).toString();
+});}).toString();
 for (const socket of sockets) {
   try {
     adb('forward', 'tcp:9222', 'localabstract:' + socket);

@@ -62,14 +62,18 @@ def pocus():
     open_skill('Ultrasound / POCUS')
     wait_visible('Synthetic ultrasound teaching scan',tries=30)
     capture('pocus-live')
-    press('Freeze');wait_visible('Unfreeze');capture('pocus-frozen')
-    press('Unfreeze');wait_visible('Freeze')
+    press('Freeze');wait_visible('Unfreeze');frozen=capture('pocus-frozen')
+    time.sleep(2);held=state('pocus-held')
+    assert frozen['scanHash'] is not None and held['scanHash']==frozen['scanHash'],(frozen,held)
+    press('Unfreeze');wait_visible('Freeze');time.sleep(1)
+    moving=state('pocus-moving');time.sleep(1);moved=state('pocus-moved')
+    assert moving['scanHash'] is not None and moving['scanHash']!=moved['scanHash'],(moving,moved)
     press('M-Mode');capture('pocus-mmode')
     # Gain and depth are real accessibility ranges; no injected values.
     gain=adjust_slider('Ultrasound gain',.65);depth=adjust_slider('Ultrasound depth',.7)
     capture('pocus-adjusted');press('Reference scans');capture('pocus-reference')
     press('Case simulation');wait_visible('Synthetic ultrasound teaching scan')
-    return {'freezeUnfreeze':True,'mModeButton':True,'gain':gain,'depth':depth,'referenceAndCaseSwitch':True}
+    return {'freezeHoldsActualCanvas':True,'unfreezeChangesActualCanvas':True,'mModeButton':True,'gain':gain,'depth':depth,'referenceAndCaseSwitch':True}
 
 
 def general():
