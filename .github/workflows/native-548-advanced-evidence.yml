@@ -116,7 +116,7 @@ jobs:
           profile: pixel_7_pro
           emulator-boot-timeout: 300
           disable-animations: true
-          emulator-options: -no-window -gpu software -feature -Vulkan -memory 3072 -cores 2 -noaudio -no-boot-anim
+          emulator-options: -no-window -gpu ${{ matrix.suite == 'eye' && 'lavapipe' || 'software' }} -memory 3072 -cores 2 -noaudio -no-boot-anim
           script: |
             adb shell wm size 1179x2556
             adb shell wm density 480

@@ -8,6 +8,7 @@ const expression = (()=>{const scan=document.querySelector('[data-testid="pocus-
   url:window.location.href,
   viewport:[window.innerWidth,window.innerHeight],
   scanHash,
+  sliders:[...document.querySelectorAll('input[type="range"]')].map(x=>({label:x.getAttribute('aria-label'),value:Number(x.value),min:Number(x.min),max:Number(x.max || 100)})),
   nativeVh:getComputedStyle(document.documentElement).getPropertyValue('--orbit-native-vh'),
   eye:{render:document.querySelector('[data-testid="eye-head-view"]')?.getAttribute('data-render-state'),response:{...document.querySelector('[data-testid="eye-response-state"]')?.dataset}},
   audioErrors:[...document.querySelectorAll('.ausc-error')].map(x=>x.textContent),

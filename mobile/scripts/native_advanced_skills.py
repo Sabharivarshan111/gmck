@@ -1,6 +1,6 @@
 """Interact through actual Android UI; inspector reads state without modifying it."""
 import os, json, subprocess, time, xml.etree.ElementTree as ET
-from native_screenshot_driver import OUT, adb, tap, wait_visible, shot, dump_ui, scroll_to_tappable, find_nodes, visible, screen_size
+from native_screenshot_driver import OUT, adb, tap, wait_visible, shot, dump_ui, scroll_to_tappable, find_nodes, visible, screen_size, reachable_nodes
 from native_diagnostic_controls import open_skill, adjust_slider
 
 def edge_scroll(up=False):
@@ -10,20 +10,45 @@ def edge_scroll(up=False):
     adb("shell","input","swipe",str(x),str(round(h*(.30 if up else .74))),str(x),str(round(h*(.76 if up else .28))),"550")
     time.sleep(1)
 
+def reach_control(label):
+    _, height = screen_size()
+    for attempt in range(24):
+        candidates = []
+        for node, rect in reachable_nodes(dump_ui()):
+            if node.get('clickable') != 'true' or node.get('enabled') == 'false':
+                continue
+            if label not in [node.get('text', '').strip(), node.get('content-desc', '').strip()]:
+                continue
+            x1, y1, x2, y2 = rect
+            candidates.append(((x2-x1)*(y2-y1), rect))
+        candidates.sort()
+        if candidates:
+            rect = candidates[0][1]
+            center = (rect[1]+rect[3])/2
+            if height*.10 <= center <= height*.94:
+                return rect
+            edge_scroll(center < height*.10)
+        else:
+            edge_scroll(attempt < 5)
+    raise RuntimeError('Could not reach exact enabled advanced control: ' + label)
+
+
 def press(label):
-    if not visible(label):
-        for _ in range(10):
-            edge_scroll(True)
-            if visible(label):break
-    for _ in range(20):
-        nodes=find_nodes(label)
-        if nodes:
-            _,h=screen_size()
-            if h*.10<=nodes[0][2]<=h*.94:
-                tap(label);return
-            edge_scroll(nodes[0][2]<h*.10)
-        else:edge_scroll()
-    raise RuntimeError("Could not reach actual advanced control: "+label)
+    x1, y1, x2, y2 = reach_control(label)
+    adb('shell', 'input', 'tap', str((x1+x2)//2), str((y1+y2)//2))
+    time.sleep(1)
+
+
+def adjust_web_slider(label, fraction):
+    # WebView HTML ranges lack AccessibilityNodeInfo.RangeInfo on this image.
+    # Read their DOM values, but change them only with a real Android touch.
+    before = next(s for s in state('slider-before')['sliders'] if s['label'] == label)
+    x1, y1, x2, y2 = reach_control(label)
+    adb('shell', 'input', 'tap', str(round(x1+(x2-x1)*fraction)), str((y1+y2)//2))
+    time.sleep(1)
+    after = next(s for s in state('slider-after')['sliders'] if s['label'] == label)
+    assert after['value'] != before['value'] and after['min'] <= after['value'] <= after['max'], (before, after)
+    return {'control':label, 'before':before['value'], 'after':after['value']}
 
 
 def state(name):
@@ -75,7 +100,7 @@ def auscultation():
     press('X-ray view');s=capture('auscultation-xray')
     assert any('X-ray view' in b['text'] and b['pressed']=='true' for b in s['buttons']),s
     press('Normal breath sounds');wait_visible('Stop Stethoscope')
-    adjust_slider('Stethoscope volume',.55);capture('auscultation-lung')
+    adjust_web_slider('Stethoscope volume',.55);capture('auscultation-lung')
     press('Stop Stethoscope');wait_visible('Place Stethoscope & Listen Live')
     return {'heartLungShortcuts':True,'listenPause':True,'bell':True,'backView':True,'xray':True,'volume':True,'speakerAudibility':'not tested'}
 
@@ -92,7 +117,7 @@ def pocus():
     assert moving['scanHash'] is not None and moving['scanHash']!=moved['scanHash'],(moving,moved)
     press('M-Mode');capture('pocus-mmode')
     # Gain and depth are real accessibility ranges; no injected values.
-    gain=adjust_slider('Ultrasound gain',.65);depth=adjust_slider('Ultrasound depth',.7)
+    gain=adjust_web_slider('Ultrasound gain',.65);depth=adjust_web_slider('Ultrasound depth',.7)
     capture('pocus-adjusted');press('Reference scans');capture('pocus-reference')
     press('Case simulation');wait_visible('Synthetic ultrasound teaching scan')
     return {'freezeHoldsActualCanvas':True,'unfreezeChangesActualCanvas':True,'mModeButton':True,'gain':gain,'depth':depth,'referenceAndCaseSwitch':True}
@@ -101,8 +126,15 @@ def pocus():
 def general():
     open_skill('General examination')
     wait_visible('Press shin',tries=30);capture('general-edema')
-    press('Scleral icterus');press('Look straight');wait_visible('Look down');press('Look down');wait_visible('Look straight')
-    press('Release upper lids');wait_visible('Elevate upper lids');press('Elevate upper lids');wait_visible('Release upper lids');capture('general-icterus')
+    press('Scleral icterus')
+    labels = [b['text'] for b in state('general-icterus-initial')['buttons']]
+    if 'Look straight' in labels:
+        press('Look straight');wait_visible('Look down')
+    press('Look down');wait_visible('Look straight')
+    labels = [b['text'] for b in state('general-lids-initial')['buttons']]
+    if 'Release upper lids' in labels:
+        press('Release upper lids');wait_visible('Elevate upper lids')
+    press('Elevate upper lids');wait_visible('Release upper lids');capture('general-icterus')
     press('Pallor & cyanosis');wait_visible('Estimated Hemoglobin:');capture('general-pallor')
     press('Ascites & thrill');press('Roll Patient to 45° Lateral Decubitus')
     wait_visible('Patient in 45° Lateral Tilt');capture('general-ascites-tilted')
