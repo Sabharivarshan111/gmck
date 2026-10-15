@@ -150,7 +150,7 @@ def capture_details(target, path, bounds, reference=False):
                     if heading and rect['y'] <= heading['rect']['y'] and heading['rect']['y']+heading['rect']['height'] <= rect['y']+rect['height']:
                         break
                     # Stay within the drawer body, clear of tabs/footer and text.
-                    x = rect['x'] + rect['width'] - 5
+                    x = rect['x'] + 36
                     top = rect['y'] + 20
                     bottom = rect['y'] + rect['height'] - 20
                     scale_x = (bounds[2]-bounds[0])/result['viewport'][0]
