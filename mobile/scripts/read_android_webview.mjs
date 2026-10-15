@@ -16,7 +16,7 @@ const expression = (() => {
 for (const socket of sockets) {
   try {
     adb('forward', 'tcp:9222', 'localabstract:' + socket);
-    const targets = await (await fetch('http://127.0.0.1:9222/json/list')).json();
+    const targets = await (await fetch('http://127.0.0.1:9222/json/list', {signal:AbortSignal.timeout(5000)})).json();
     for (const target of targets.filter(target => /\/simulator(?:\?|$)/.test(target.url))) {
       const ws = new WebSocket(target.webSocketDebuggerUrl);
       const value = await new Promise((resolve, reject) => {
@@ -38,3 +38,7 @@ for (const socket of sockets) {
 }
 await writeFile(process.argv[2], JSON.stringify({sockets,results}, null, 2));
 if (!results.length) console.warn('No debuggable Android WebView found.');
+
+// All requested reads and the evidence file write are complete. Do not keep
+// the CLI alive for an inspector or HTTP keep-alive close handshake.
+process.exit(0);

@@ -18,7 +18,10 @@ def expect(needle: str, tries: int = 5):
 def screenshot(name: str):
     shot(name)
     if name in ['05c-android-full-icu-tutorial', '05d-android-icu-lead-axis-lesson']:
-        subprocess.run(['node', 'mobile/scripts/read_android_webview.mjs', str(OUT / (name + '-dom.json'))], check=False, timeout=45)
+        try:
+            subprocess.run(['node', 'mobile/scripts/read_android_webview.mjs', str(OUT / (name + '-dom.json'))], check=False, timeout=45)
+        except subprocess.TimeoutExpired:
+            (OUT / (name + '-probe-error.txt')).write_text('Read-only layout inspector timed out; screenshot and actual UI control checks continue.')
 
 def press(label):
     if not visible(label):
