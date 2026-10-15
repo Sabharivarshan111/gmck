@@ -5,7 +5,6 @@
  */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AppState, Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { ArrowLeft, Activity, Sun, Moon, Layers, Stethoscope } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useIsFocused } from '@react-navigation/native';
 import { Text } from '@/components/Text';
@@ -15,6 +14,7 @@ import NativeCaseLibrary, { CASE_DAY, CASE_NIGHT } from '@/components/NativeCase
 import { PhysiologyKernel } from '@simulator/engine/PhysiologyKernel';
 import { NATIVE_CLINICAL_ACTIONS } from '@/lib/nativeClinicalActions';
 import NativeIcuMonitor from '@/components/NativeIcuMonitor';
+import { NativeSimulatorHeader, NativeSimulatorTabs } from '@/components/NativeSimulatorChrome';
 import type { PatientVitals } from '@simulator/types';
 
 type ActionGroup = 'all' | 'resus' | 'cardiac' | 'antidotes' | 'procedures';
@@ -25,9 +25,8 @@ const groups: { id: ActionGroup; title: string }[] = [
   { id: 'antidotes', title: 'Antidotes' },
   { id: 'procedures', title: 'Procedures' },
 ];
-const round = (n: number) => Math.round(n).toString();
-export default function NativeClinicalCase({ scenarioId, onBack, engine, theme = 'dark', onToggleTheme, onScenarioChange, onOpen }: {
-  scenarioId: string; onBack: () => void; engine?: PhysiologyKernel; theme?: 'light' | 'dark';
+export default function NativeClinicalCase({ scenarioId, onBack, onExit, engine, theme = 'dark', onToggleTheme, onScenarioChange, onOpen }: {
+  scenarioId: string; onBack: () => void; onExit?: () => void; engine?: PhysiologyKernel; theme?: 'light' | 'dark';
   onToggleTheme?: () => void; onScenarioChange?: (id: string) => void; onOpen?: (query: string) => void;
 }) {
   const insets = useSafeAreaInsets();
@@ -69,6 +68,9 @@ export default function NativeClinicalCase({ scenarioId, onBack, engine, theme =
     <NativeIcuMonitor
       scenarioId={scenarioId}
       engine={patient}
+      theme={theme} onToggleTheme={onToggleTheme} onExit={onExit ?? onBack} onSkills={onBack}
+      onAnatomy={() => onOpen?.(new URLSearchParams({ mode: 'anatomy', scenario: scenario.id }).toString())}
+      onCase={() => { setShowMonitor(false); setVitals({ ...patient.getLiveVitals() }); }}
       onBack={() => {
         setShowMonitor(false);
         setVitals({ ...patient.getLiveVitals() });
@@ -77,16 +79,7 @@ export default function NativeClinicalCase({ scenarioId, onBack, engine, theme =
   );
 
   return <KeyboardSafe style={[styles.root, { paddingTop: insets.top }]}>
-    <View testID="native-clinical-case" style={styles.header}>
-      <Pressable accessibilityRole="button" accessibilityLabel="Back to clinical studio" onPress={onBack} style={styles.icon}><ArrowLeft size={16} color={palette.ink} /></Pressable>
-      <View style={{ width: 28, height: 28, backgroundColor: palette.accent, borderRadius: 14, justifyContent: 'center', alignItems: 'center' }}><Activity size={16} color="#0e0e11" /></View>
-      <Text accessibilityLabel="Patient Simulator" style={{ color: palette.ink, fontWeight: '800', fontSize: 12, flex: 1 }}>Simulator</Text>
-      <View style={[styles.hud, { backgroundColor: palette.raised, borderColor: palette.border }]}>
-        <Text style={{ color: '#fb7185', fontSize: 12, fontWeight: '800' }}>♥ {round(vitals.heartRate)}</Text><Text style={{ color: '#64748b' }}>|</Text>
-        <Text style={{ color: '#22d3ee', fontSize: 12, fontWeight: '800' }}>{round(vitals.bpSystolic)}/{round(vitals.bpDiastolic)}</Text>
-      </View>
-      {onToggleTheme && <Touchable label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'} onPress={onToggleTheme} style={styles.icon}>{theme === 'dark' ? <Sun size={16} color="#facc15" /> : <Moon size={16} color="#475569" />}</Touchable>}
-    </View>
+    <View testID="native-clinical-case"><NativeSimulatorHeader theme={theme} vitals={vitals} onExit={onExit ?? onBack} onMonitor={() => setShowMonitor(true)} onToggleTheme={onToggleTheme} /></View>
     <View style={[styles.findings, { backgroundColor: palette.card }]}><Text style={{ color: palette.accent, fontWeight: '700', fontSize: 13 }}>Case findings · {scenario.title}</Text></View>
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 12, paddingTop: 34, paddingBottom: 20 }}>
       <View style={styles.panel}>
@@ -112,12 +105,7 @@ export default function NativeClinicalCase({ scenarioId, onBack, engine, theme =
       <Touchable label="Reset clinical case" onPress={() => { patient.setScenario(scenario.id); setVitals({ ...patient.getLiveVitals() }); setLogs([...patient.logs]); }} style={{ minHeight: 44, justifyContent: 'center', marginTop: 12 }}><Text style={{ color: palette.muted }}>↻ Reset clinical case</Text></Touchable>
       </View>
     </ScrollView>
-    <View style={[styles.bottomTabs, { paddingBottom: Math.max(8, insets.bottom) }]}>
-      <Touchable label="Back to clinical studio" onPress={onBack} style={styles.bottomTab}><Stethoscope size={15} color={palette.ink} /><Text style={styles.tabText}>Skills</Text></Touchable>
-      <Touchable label="Open patient 3D anatomy" onPress={() => onOpen?.(new URLSearchParams({ mode: 'anatomy', scenario: scenario.id }).toString())} style={styles.bottomTab}><Layers size={15} color={palette.muted} /><Text style={styles.tabText}>3D Anatomy</Text></Touchable>
-      <Touchable label="Live ICU monitor" onPress={() => setShowMonitor(true)} style={styles.bottomTab}><Activity size={15} color={palette.muted} /><Text style={styles.tabText}>ICU Monitor</Text></Touchable>
-      <View style={[styles.bottomTab, { backgroundColor: palette.accent, borderRadius: 14 }]}><Activity size={15} color="#171019" /><Text style={[styles.tabText, { color: '#171019' }]}>Rx & Case</Text></View>
-    </View>
+    <NativeSimulatorTabs theme={theme} selected="case" bottomInset={insets.bottom} onSkills={onBack} onAnatomy={() => onOpen?.(new URLSearchParams({ mode: 'anatomy', scenario: scenario.id }).toString())} onMonitor={() => setShowMonitor(true)} onCase={() => {}} />
   </KeyboardSafe>;
 }
 const makeStyles = (palette: typeof CASE_NIGHT) => StyleSheet.create({

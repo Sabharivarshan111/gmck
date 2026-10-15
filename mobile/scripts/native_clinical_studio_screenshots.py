@@ -7,7 +7,7 @@ import time
 from pathlib import Path
 from native_screenshot_driver import (
     OUT, adb, launch, first_run, tap, wait_visible, shot, scroll_until,
-    scroll_up, scroll_to_tappable, visible
+    scroll_up, scroll_to_tappable, visible, dump_ui, node_label, find_nodes, screen_size
 )
 
 def expect(needle: str, tries: int = 5):
@@ -16,6 +16,25 @@ def expect(needle: str, tries: int = 5):
 
 def screenshot(name: str):
     shot(name)
+
+def icu_control(label):
+    # Canonical mobile ICU has a horizontal status bar. Reach its real buttons
+    # with a gesture inside that bar, rather than scrolling the whole page.
+    width, _ = screen_size()
+    for _ in range(5):
+        nodes = find_nodes(label)
+        if nodes and width * .05 <= nodes[0][1] <= width * .95:
+            tap(label)
+            return
+        bars = [n for n in dump_ui().iter('node') if 'HorizontalScrollView' in n.get('class', '')]
+        if not bars:
+            raise RuntimeError('Actual ICU horizontal controls not found')
+        rect = list(map(int, re.findall(r'\d+', bars[0].get('bounds', ''))))
+        x1, y1, x2, y2 = rect
+        adb('shell', 'input', 'swipe', str(round(x1+(x2-x1)*.85)), str((y1+y2)//2), str(round(x1+(x2-x1)*.15)), str((y1+y2)//2), '450')
+        time.sleep(1)
+    raise RuntimeError('ICU status button not reachable: ' + label)
+
 
 def main():
     results=[]
@@ -59,10 +78,10 @@ def main():
         expect("SWEEP 25 mm/s")
         screenshot("05-android-native-icu-waveforms")
         adb("logcat", "-c")
-        tap("Enable monitor tone")
+        icu_control("Enable monitor tone")
         expect("Mute monitor tone")
         time.sleep(5)
-        tap("Mute monitor tone")
+        icu_control("Mute monitor tone")
         expect("Enable monitor tone")
         tone_log = adb("logcat", "-d", "-s", "ORBIT_MONITOR_TONE:I", "*:S", capture=True).stdout
         (OUT / "native-monitor-tone.txt").write_text(tone_log)
@@ -73,10 +92,7 @@ def main():
             scroll_to_tappable(metric)
             expect(metric)
         screenshot("05b-android-native-icu-secondary-readings")
-        for _ in range(4):
-            if visible("Pause monitor"): break
-            scroll_up()
-        tap("Open ICU tutorial")
+        icu_control("Open ICU tutorial")
         expect("ECG learning studio", tries=15)
         screenshot("05c-android-full-icu-tutorial")
         tap("Leads & axis")
@@ -84,12 +100,13 @@ def main():
         screenshot("05d-android-icu-lead-axis-lesson")
         tap("Close ECG tutorial")
         expect("SWEEP 25 mm/s")
-        tap("Pause monitor")
-        expect("Resume")
-        screenshot("06-android-native-icu-paused")
-        tap("Resume monitor")
-        expect("Pause")
-        results.append("ECG/ART/PLETH/CO2 and pause/resume")
+        # The canonical monitor has no pause/reset buttons. Verify its actual
+        # bottom tabs and theme controls, keeping the same case engine alive.
+        tap("Switch to light theme")
+        expect("Switch to dark theme")
+        screenshot("06-android-native-icu-light")
+        tap("Switch to dark theme")
+        results.append("Canonical ECG/ART/PLETH/CO2, full tutorial, live metrics and ICU theme controls")
         adb("shell","input","keyevent","4")
         expect("Patient Simulator")
         screenshot("07-android-case-return-preserved")

@@ -208,7 +208,7 @@ def scroll_to_tappable(needle: str, tries: int = 18) -> None:
     _, height = screen_size()
     for _ in range(tries + 1):
         nodes = find_nodes(needle)
-        if nodes and height * 0.10 <= nodes[0][2] <= height * 0.90:
+        if nodes and height * 0.10 <= nodes[0][2] <= height * 0.94:
             return
         if nodes and nodes[0][2] < height * 0.10:
             scroll_up()
@@ -240,8 +240,14 @@ def first_run() -> None:
 
     # The screenshot-only dev Hermes bundle sets __DEV__ true, so the app's own
     # testing bypass unlocks setup. Production builds are not modified.
-    root = dump_ui()
-    editable = [n for n in root.iter("node") if "EditText" in n.attrib.get("class", "") and "display name" in node_label(n).lower()]
+    editable = []
+    deadline = time.monotonic() + 60
+    while time.monotonic() < deadline:
+        root = dump_ui()
+        editable = [n for n in root.iter("node") if "EditText" in n.attrib.get("class", "") and "display name" in node_label(n).lower()]
+        if editable:
+            break
+        time.sleep(1)
     if not editable:
         raise RuntimeError("Display name input not found during native onboarding")
     center = bounds_center(editable[0].attrib.get("bounds", ""))

@@ -63,6 +63,7 @@ on:
       - codex/native-vault-icu-20261015
       - codex/native-vault-teaching-20261015
       - codex/native-vault-route-proof-20261015
+      - codex/native-vault-mobile-ui-20261015
     # Only when something that reaches the APK changes.
     #
     # This used to fire on every push. Three Android builds ran per push, per

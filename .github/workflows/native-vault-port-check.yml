@@ -1,7 +1,7 @@
 name: Native Vault parity port - nonrelease checks
 on:
   push:
-    branches: [main, codex/native-vault-full-port-20261014, codex/native-vault-audit-20261015]
+    branches: [main, codex/native-vault-full-port-20261014, codex/native-vault-audit-20261015, codex/native-vault-mobile-ui-20261015]
     paths:
       - 'mobile/src/components/NativeClinicalStudio.tsx'
       - 'mobile/src/components/NativeRadiologyViewer.tsx'
@@ -12,6 +12,9 @@ on:
       - 'mobile/scripts/native-vault-layout-contract-check.mjs'
       - 'mobile/src/components/NativeClinicalCase.tsx'
       - 'mobile/src/components/NativeIcuMonitor.tsx'
+      - 'mobile/src/components/NativeSimulatorChrome.tsx'
+      - 'mobile/src/lib/nativeIcuDisplay.ts'
+      - 'mobile/scripts/native-icu-display-check.mjs'
       - 'mobile/src/components/NativeEcgTwelveLead.tsx'
       - 'mobile/src/lib/nativeEcgReference.ts'
       - 'mobile/src/lib/nativeEcgWaveform.ts'
@@ -55,6 +58,8 @@ jobs:
         working-directory: mobile
         run: |
           node scripts/native-clinical-parity-check.mjs
+          node scripts/native-icu-display-check.mjs
+          node scripts/native-icu-sampling-check.mjs
           npm run check:keyboard
           node scripts/native-clinical-engine-check.mjs
           node scripts/native-ecg12-parity-check.mjs
@@ -64,4 +69,4 @@ jobs:
           npm run check:kotlin
       - name: Lint native port screens
         working-directory: mobile
-        run: npx eslint src/components/NativeRadiologyViewer.tsx src/components/NativeClubbingTrainer.tsx src/native/NativeOrbitRadiology.ts src/components/NativeClinicalStudio.tsx src/screens/SimulatorScreen.tsx src/lib/nativeClinicalCatalog.ts src/lib/nativeClinicalActions.ts src/lib/nativeSimulatorRouting.ts src/components/NativeIcuMonitor.tsx src/components/NativeClinicalCase.tsx src/components/NativeEcgTwelveLead.tsx src/lib/nativeEcgReference.ts src/lib/nativeEcgWaveform.ts
+        run: npx eslint src/components/NativeRadiologyViewer.tsx src/components/NativeClubbingTrainer.tsx src/native/NativeOrbitRadiology.ts src/components/NativeClinicalStudio.tsx src/screens/SimulatorScreen.tsx src/lib/nativeClinicalCatalog.ts src/lib/nativeClinicalActions.ts src/lib/nativeSimulatorRouting.ts src/components/NativeIcuMonitor.tsx src/components/NativeSimulatorChrome.tsx src/lib/nativeIcuDisplay.ts src/components/NativeClinicalCase.tsx src/components/NativeEcgTwelveLead.tsx src/lib/nativeEcgReference.ts src/lib/nativeEcgWaveform.ts

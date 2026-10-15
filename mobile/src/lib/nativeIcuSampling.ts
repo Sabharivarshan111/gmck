@@ -1,10 +1,10 @@
 import type { PhysiologyKernel } from '@simulator/engine/PhysiologyKernel';
 import type { TelemetryWaveformSample } from '@simulator/types';
 
-// Preserve the ~1.97s display window while resolving narrow R waves at 250Hz.
+// Resolve narrow kernel R waves at 250Hz for the native pulse tone.
+// The independent analytical display matches the canonical 4.8s canvas sweep.
 // The old ~83Hz sampling could miss every R peak for some initial phases.
 export const NATIVE_ICU_SAMPLE_STEP = 0.004;
-export const NATIVE_ICU_BUFFER_LENGTH = 492;
 
 export function advanceNativeTelemetry(
   patient: Pick<PhysiologyKernel, 'tick' | 'sampleWaveforms'>,
