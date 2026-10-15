@@ -1,5 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
+import tailwindcss from 'tailwindcss';
+import autoprefixer from 'autoprefixer';
 import { resolve } from 'node:path';
 
 const closeTeaching = (kind: string) => `
@@ -30,7 +32,11 @@ export default defineConfig({
       if (!source.includes(anatomyImport)) throw Error('Canonical anatomy import changed; review teaching-only presentation');
       // A teaching-only modal has no atlas viewport. Keep its patient clock and
       // canonical lesson UI without allocating an invisible full-body GPU scene.
-      const teachingOnly = source.replace(anatomyImport,
+      const viewportSource = source
+        .replaceAll("'max(360px, calc(100dvh - 180px))'", "'max(360px, calc(var(--orbit-native-vh, 1vh) * 100 - 180px))'")
+        .replaceAll("'max(360px, calc(100dvh - 208px))'", "'max(360px, calc(var(--orbit-native-vh, 1vh) * 100 - 208px))'")
+        .replaceAll("'max(500px, min(72dvh, 620px))'", "'max(500px, min(calc(var(--orbit-native-vh, 1vh) * 72), 620px))'");
+      const teachingOnly = viewportSource.replace(anatomyImport,
         "import { AnatomicalBody3D as CanonicalAnatomicalBody3D, resolvePartToOrganKey } from '../simulator/view/AnatomicalBody3D';\nconst AnatomicalBody3D = ['icu','ecg'].includes(new URLSearchParams(location.search).get('native_teaching') || '') ? () => null : CanonicalAnatomicalBody3D;");
       const hydrated = teachingOnly.replace(needle, needle + `
   if (!window.__orbitPatientHydrated) {
@@ -61,6 +67,19 @@ export default defineConfig({
     },
     dedupe: ['react', 'react-dom'],
   },
-  css: { postcss: resolve(__dirname, '../..') },
+  css: { postcss: { plugins: [
+    tailwindcss({ config: resolve(__dirname, '../../tailwind.config.ts') }),
+    autoprefixer(),
+    {
+      postcssPlugin: 'native-webview-viewport-lengths',
+      Declaration(declaration: { value: string }) {
+        // Android WebViews can collapse dvh-sized panels despite a valid
+        // innerHeight. Transform values only: Tailwind selectors
+        // must retain their canonical class names.
+        declaration.value = declaration.value.replace(/(-?(?:\d+\.?\d*|\.\d+))dvh\b/g,
+          (_, amount) => `calc(var(--orbit-native-vh, 1vh) * ${amount})`);
+      },
+    },
+  ] } },
   build: { outDir: '../android/app/build/generated/simulatorAssets/simulator', emptyOutDir: true },
 });
