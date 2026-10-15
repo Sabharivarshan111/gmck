@@ -65,6 +65,10 @@ public final class UiDump extends Instrumentation {
     xml.attribute(null, "enabled", Boolean.toString(value.isEnabled()));
     xml.attribute(null, "scrollable", Boolean.toString(value.isScrollable()));
     xml.attribute(null, "bounds", "["+rect.left+","+rect.top+"]["+rect.right+","+rect.bottom+"]");
+    AccessibilityNodeInfo.RangeInfo range = value.getRangeInfo();
+    if (range != null) xml.attribute(null, "range-now", Float.toString(range.getCurrent()));
+    xml.attribute(null, "selected", Boolean.toString(value.isSelected()));
+    xml.attribute(null, "checked", Boolean.toString(value.isChecked()));
     for (int i = 0; i < value.getChildCount(); i++) {
       AccessibilityNodeInfo child = value.getChild(i);
       if (child != null) { if (child.isVisibleToUser()) node(xml, child, depth + 1); child.recycle(); }
