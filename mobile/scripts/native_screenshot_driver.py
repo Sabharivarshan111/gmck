@@ -170,13 +170,14 @@ def scroll_until(needle: str, tries: int = 8) -> None:
 
 def scroll_to_tappable(needle: str, tries: int = 18) -> None:
     # A node can appear in uiautomator while clipped or underneath the fixed
-    # bottom assistant bar. Bring its centre into the unobstructed form first.
+    # bottom assistant bar. Keep the visible body tappable, including controls
+    # immediately below the header; a 24% cutoff strands top-of-scroll buttons.
     _, height = screen_size()
     for _ in range(tries + 1):
         nodes = find_nodes(needle)
-        if nodes and height * 0.24 <= nodes[0][2] <= height * 0.70:
+        if nodes and height * 0.10 <= nodes[0][2] <= height * 0.82:
             return
-        if nodes and nodes[0][2] < height * 0.24:
+        if nodes and nodes[0][2] < height * 0.10:
             scroll_up()
         else:
             scroll_down()
