@@ -2,9 +2,9 @@
  * React Native port of the Vercel captured ECG teaching canvas.
  * Calibrated 4x3 12-lead matrix, rhythm strip, teaching segments, tour,
  * lead groups and same source descriptions. Renders with native SVG,
- * supports offline use and makes no WebView/network calls.
+ * supports offline use. Advanced teaching opens a dedicated local WebView.
  *
- * The web magnified cutout and ECG heartbeat 3D tutorial still need porting.
+ * Advanced cutouts and heart teaching open the locally bundled canonical module.
  */
 import React, { useEffect, useMemo, useState } from 'react';
 import { AppState, Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
@@ -15,6 +15,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { Text } from '@/components/Text';
 import { NATIVE_ECG_LEADS, NATIVE_ECG_SEGMENTS, type NativeEcgSegmentId } from '@/lib/nativeEcgReference';
 import { leadById, nativeEcgTracePath, type NativeEcgConfig } from '@/lib/nativeEcgWaveform';
+import CanonicalTeachingOverlay from '@/components/CanonicalTeachingOverlay';
 import { PhysiologyKernel, SCENARIOS } from '@simulator/engine/PhysiologyKernel';
 
 interface Props { scenarioId: string; onBack: () => void }
@@ -98,6 +99,8 @@ export default function NativeEcgTwelveLead({ scenarioId, onBack }: Props) {
   const [zoomed,setZoomed]=useState(false);
   const [segment,setSegment]=useState<NativeEcgSegmentId>('all');
   const [tour,setTour]=useState(false);
+  const [teachingOpen,setTeachingOpen]=useState(false);
+  const teachingPatient=useMemo(()=>JSON.stringify(new PhysiologyKernel(scenarioId)),[scenarioId]);
   const scenario=SCENARIOS.find(s=>s.id===scenarioId)??SCENARIOS[0];
   const meta=NATIVE_ECG_SEGMENTS.find(s=>s.id===segment);
   const refresh=()=> {
@@ -105,13 +108,13 @@ export default function NativeEcgTwelveLead({ scenarioId, onBack }: Props) {
     setCapture({rhythm:k.pathology.ecgRhythm,heartRate:k.vitals.heartRate});
   };
   useEffect(()=>{
-    if(!tour||!active||!focused)return;
+    if(!tour||!active||!focused||teachingOpen)return;
     const i=setInterval(()=>setSegment(previous=>{
       const index=BEAT_ORDER.indexOf(previous==='all'?'p':previous);
       return BEAT_ORDER[(index+1)%BEAT_ORDER.length];
     }),4200);
     return()=>clearInterval(i);
-  },[tour,active,focused]);
+  },[tour,active,focused,teachingOpen]);
   const canvasWidth=zoomed ? (group===4?W_LARGE:W_SMALL) : width-30;
   const chooseSegment=(id:NativeEcgSegmentId)=>{setTour(false);setSegment(id);};
   return <View testID="native-ecg12-studio" style={{flex:1,backgroundColor:'#020617',paddingTop:insets.top}}>
@@ -125,6 +128,7 @@ export default function NativeEcgTwelveLead({ scenarioId, onBack }: Props) {
       </View>
     </View>
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingHorizontal:15,paddingBottom:insets.bottom+30,paddingTop:12,gap:12}}>
+      <Pressable accessibilityRole="button" accessibilityLabel="Open full ECG teaching studio" onPress={() => setTeachingOpen(true)} style={button}><Text style={{ color: INK, fontSize: 13 }}>Full ECG teaching studio</Text></Pressable>
       <View style={[styles.panel,{gap:8}]}>
         <View style={{flexDirection:'row',alignItems:'center',gap:8}}>
           <View style={{width:10,height:10,borderRadius:5,backgroundColor:'#dc2626'}} />
@@ -182,8 +186,9 @@ export default function NativeEcgTwelveLead({ scenarioId, onBack }: Props) {
           <Text style={{color:'#cbd5e1',fontSize:12,lineHeight:19}}>{value}</Text>
         </View>)}
       </View>}
-      <Text style={styles.small}>Synthetic ECG for education; use clinical ECGs for real patient decisions. The magnified cutout and advanced 3D tutorial remain under native port.</Text>
+      <Text style={styles.small}>Synthetic ECG for education; use clinical ECGs for real patient decisions.</Text>
     </ScrollView>
+    {teachingOpen && <CanonicalTeachingOverlay route={'/simulator?tool=ecg12&native_teaching=ecg&nativeTheme=dark&scenario=' + scenarioId} patient={teachingPatient} active={active && focused} onClose={() => setTeachingOpen(false)} />}
   </View>;
 }
 const styles=StyleSheet.create({

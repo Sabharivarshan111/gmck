@@ -116,10 +116,13 @@ def wait_visible(needle: str, tries: int = 6) -> None:
 
 def screen_size() -> tuple[int, int]:
     out = adb("shell", "wm", "size", capture=True).stdout or ""
-    m = re.search(r"(\d+)x(\d+)", out)
-    if not m:
+    sizes = re.findall(r"(\d+)x(\d+)", out)
+    if not sizes:
         return (1080, 2400)
-    return int(m.group(1)), int(m.group(2))
+    # wm reports physical size before an optional override. Input coordinates
+    # use the override; using the physical panel swipes outside the viewport.
+    width, height = sizes[-1]
+    return int(width), int(height)
 
 
 def scroll_down() -> None:

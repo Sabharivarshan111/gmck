@@ -51,7 +51,25 @@ anatomy_file=folder/"native-anatomy-captures.json"
 if anatomy_file.exists():
     anatomy=json.loads(anatomy_file.read_text())
     body_pairs=[]
-    for target in anatomy['targets']:
+    reference_path=folder/'vercel-anatomy-captures.json'
+    reference_targets={item['id']:item for item in json.loads(reference_path.read_text()).get('targets',[])} if reference_path.exists() else {}
+    native_targets={item['id']:item for item in anatomy['targets']}
+    coverage_path=folder/'anatomy-coverage.json'
+    expected=['whole-body','vessels','skeleton']+[item['id'] for item in json.loads(coverage_path.read_text())['organs']] if coverage_path.exists() else list(native_targets)
+    review_targets=[]
+    availability=[]
+    for target_id in expected:
+        target=native_targets.get(target_id,{'id':target_id})
+        review_targets.append(target)
+        native_details={item['id']:item for item in target.get('details',[])}
+        reference_details={item['id']:item for item in reference_targets.get(target_id,{}).get('details',[])}
+        for detail_id in dict.fromkeys([*native_details,*reference_details]):
+            n=native_details.get(detail_id,{})
+            w=reference_details.get(detail_id,{})
+            availability.append({'id':detail_id,'nativeAvailable':n.get('available'),'vercelAvailable':w.get('available')})
+            if n.get('available') or w.get('available'):
+                review_targets.append(n or {'id':detail_id})
+    for target in review_targets:
         w=folder/f"anatomy-vercel-{target['id']}.png"
         n=folder/f"anatomy-android-{target['id']}.png"
         item={'id':target['id'],'captured_both':w.exists() and n.exists(),'appearanceVerified':False,'controlsVerified':False}
@@ -77,7 +95,7 @@ if anatomy_file.exists():
                 name=f"comparison-anatomy-{target['id']}.png"
                 canvas.save(folder/name);item['comparison']=name
         body_pairs.append(item)
-    (folder/'anatomy-visual-audit.json').write_text(json.dumps({'status':'NOT_CERTIFIED','pairs':body_pairs},indent=2))
+    (folder/'anatomy-visual-audit.json').write_text(json.dumps({'status':'NOT_CERTIFIED','pairs':body_pairs,'sectionAvailability':availability},indent=2))
 print(json.dumps(result,indent=2))
 # Fail the audit as incomplete when visual evidence is missing, but preserve artifacts.
 if not all(p["captured_both"] for p in result["pairs"]):

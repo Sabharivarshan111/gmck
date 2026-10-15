@@ -71,7 +71,10 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
       if (!focused) return false;
       if (url) {
-        setBackRequest(value => value + 1);
+        if (failed) {
+          setUrl(null); setFailed(false);
+          if (nativeMode?.kind !== 'case') setNativeMode(null);
+        } else setBackRequest(value => value + 1);
       } else if (nativeMode) {
         setNativeMode(null);
       } else {
@@ -80,7 +83,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
       return true;
     });
     return () => sub.remove();
-  }, [focused, onExit, url, nativeMode]);
+  }, [focused, onExit, url, nativeMode, failed]);
 
   if (nativeMode?.kind === 'monitor') return wrap(<NativeIcuMonitor scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />);
   if (nativeMode?.kind === 'ecg') return wrap(<NativeEcgTwelveLead scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />);

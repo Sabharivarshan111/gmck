@@ -71,6 +71,9 @@ class SimulatorViewManager : SimpleViewManager<WebView>() {
         }
         override fun onHideCustomView() { hideFullscreen(this@apply) }
         override fun onConsoleMessage(message: ConsoleMessage): Boolean {
+          if (message.message().startsWith("ORBIT_NATIVE_TEACHING_CLOSED:") && Uri.parse(this@apply.url ?: "").host == HOST) {
+            status(this@apply, "exit")
+          }
           if (message.message().startsWith("ORBIT_NATIVE_RENDER_ERROR:")) {
             if (QA_ENABLED) android.util.Log.e("ORBIT_ANATOMY", message.message().take(1200))
             status(this@apply, "error")
@@ -114,6 +117,9 @@ class SimulatorViewManager : SimpleViewManager<WebView>() {
         override fun onPageStarted(view: WebView, url: String?, icon: android.graphics.Bitmap?) { status(view, "loading") }
         override fun onPageFinished(view: WebView, url: String?) {
           status(view, "ready")
+          if (QA_ENABLED && store.referenceMode && Uri.parse(url ?: "").host == REFERENCE_HOST) {
+            android.util.Log.i("ORBIT_ANATOMY", "ORBIT_NATIVE_REFERENCE_READY:" + url)
+          }
           if (QA_ENABLED && store.referenceMode) view.evaluateJavascript("""
             (() => {
               if (window.__orbitDeviceRead) return;
@@ -137,7 +143,7 @@ class SimulatorViewManager : SimpleViewManager<WebView>() {
                 const renderer = document.querySelector('[data-testid="anatomy-renderer"]');
                 const canvas = renderer?.querySelector('canvas');
                 const systems = renderer?.getAttribute('data-visible-atlas-systems');
-                const geometry = JSON.stringify({route:location.search,viewport:[innerWidth,innerHeight],systems,canvas:canvas?[canvas.width,canvas.height]:null,loading:/LOADING BODYPARTS3D/.test(renderer?.textContent||'')||pending>0,graphicsError:!!renderer?.querySelector('[role="alert"]')||failed||/failed to load|could not be loaded/.test(renderer?.textContent||''),resources:performance.getEntriesByType('resource').filter(entry=>entry.name.includes('/models/')).length,reference:true});
+                const geometry = JSON.stringify({route:location.search,viewport:[innerWidth,innerHeight],systems,section:document.querySelector('[aria-label="Anatomy detail sections"] [aria-selected="true"]')?.textContent?.trim()||null,canvas:canvas?[canvas.width,canvas.height]:null,loading:/LOADING BODYPARTS3D/.test(renderer?.textContent||'')||pending>0,graphicsError:!!renderer?.querySelector('[role="alert"]')||failed||/failed to load|could not be loaded/.test(renderer?.textContent||''),resources:performance.getEntriesByType('resource').filter(entry=>entry.name.includes('/models/')).length,reference:true});
                 if (geometry!==last && canvas && systems!==null) { console.info('ORBIT_NATIVE_GEOMETRY:'+geometry); last=geometry; }
               },1000);
             })()
@@ -150,6 +156,7 @@ class SimulatorViewManager : SimpleViewManager<WebView>() {
           if (request.isForMainFrame) status(view, "error")
         }
         override fun onRenderProcessGone(view: WebView, detail: RenderProcessGoneDetail): Boolean {
+          if (QA_ENABLED) android.util.Log.e("ORBIT_ANATOMY", "ORBIT_NATIVE_RENDER_ERROR:WebView renderer exited")
           status(view, "error"); return true
         }
       }

@@ -7,12 +7,14 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AppState, BackHandler, Pressable, ScrollView, StatusBar, StyleSheet, View, useWindowDimensions } from 'react-native';
 import Svg, { Line, Path } from 'react-native-svg';
-import { ArrowLeft, RotateCcw } from 'lucide-react-native';
+import { ArrowLeft, RotateCcw, GraduationCap } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useIsFocused } from '@react-navigation/native';
 import { Text } from '@/components/Text';
 import { PhysiologyKernel, SCENARIOS } from '@simulator/engine/PhysiologyKernel';
 import OrbitSound from '@/native/NativeOrbitSound';
+import CanonicalTeachingOverlay from '@/components/CanonicalTeachingOverlay';
+import { restoreClinicalSnapshot } from '@/lib/clinicalSnapshot';
 import { advanceNativeTelemetry, NATIVE_ICU_BUFFER_LENGTH } from '@/lib/nativeIcuSampling';
 import type { PatientVitals, TelemetryWaveformSample } from '@simulator/types';
 
@@ -79,6 +81,7 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
   const [samples, setSamples] = useState<SampleBuffer>(() => initialBuffer());
   const [running, setRunning] = useState(true);
   const [audioEnabled, setAudioEnabled] = useState(false);
+  const [tutorialOpen, setTutorialOpen] = useState(false);
   const toneEnabled = useRef(false);
   const lastBeep = useRef(0);
   const [active, setActive] = useState(AppState.currentState === 'active');
@@ -105,11 +108,11 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
   }, [scenarioId, engine, patient]);
   useEffect(() => {
     toneEnabled.current = audioEnabled;
-    if (!audioEnabled || !running || !active || !focused) OrbitSound?.stopMonitorTone();
+    if (!audioEnabled || !running || !active || !focused || tutorialOpen) OrbitSound?.stopMonitorTone();
     return () => OrbitSound?.stopMonitorTone();
-  }, [audioEnabled, running, active, focused]);
+  }, [audioEnabled, running, active, focused, tutorialOpen]);
   useEffect(() => {
-    if (!running || !active || !focused) return;
+    if (!running || !active || !focused || tutorialOpen) return;
     let last = Date.now();
     const timer = setInterval(() => {
       const now = Date.now();
@@ -126,7 +129,7 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
       setRhythm(patient.pathology.ecgRhythm);
     }, 90);
     return () => clearInterval(timer);
-  }, [running, active, focused, patient]);
+  }, [running, active, focused, patient, tutorialOpen]);
 
   const paths = useMemo(() => CHANNELS.map(c => channelPath(samples, c.key, c.channel)), [samples]);
   const waveWidth = Math.max(300, Math.min(width - 30, 720));
@@ -141,6 +144,7 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
           <Text style={styles.headerTitle}>ICU monitor</Text>
           <Text style={{ color: '#94a3b8', fontSize: 11 }} numberOfLines={1}>{chosen.title}</Text>
         </View>
+        <Pressable accessibilityRole="button" accessibilityLabel="Open ICU tutorial" onPress={() => setTutorialOpen(true)} style={styles.headButton}><GraduationCap color="#e879f9" size={21} /></Pressable>
         <Pressable accessibilityRole="button" accessibilityLabel="Reset telemetry" onPress={() => {
           patient.setScenario(scenarioId);
           setRhythm(patient.pathology.ecgRhythm);
@@ -196,6 +200,10 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
           Simulated educational traces; not a medical device.
         </Text>
       </ScrollView>
+      {tutorialOpen && <CanonicalTeachingOverlay route={'/simulator?mode=telemetry&native_teaching=icu&nativeTheme=dark&scenario=' + scenarioId} patient={JSON.stringify(patient)} active={active && focused}
+        onPatient={snapshot => { restoreClinicalSnapshot(patient, snapshot); }} onClose={() => {
+          setTutorialOpen(false); setVitals({ ...patient.getLiveVitals() }); setRhythm(patient.pathology.ecgRhythm); setSamples(initialBuffer());
+        }} />}
     </View>
   );
 }

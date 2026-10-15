@@ -5,8 +5,9 @@ No fixtures, production source changes or scripted success messages are used.
 """
 import json
 import time
+from urllib.parse import urlsplit, parse_qs
 from native_anatomy_screenshots import route
-from native_screenshot_driver import OUT, tap, wait_visible, shot, scroll_to_tappable
+from native_screenshot_driver import OUT, adb, tap, visible, wait_visible, shot, scroll_to_tappable
 
 def main():
     captures=[]
@@ -15,8 +16,27 @@ def main():
         captures.append(name)
         (OUT / 'vercel-mobile-device-audit.json').write_text(json.dumps({'platform':'Android WebView, same native device viewport', 'status':'NOT_CERTIFIED', 'captures':captures},indent=2))
     def open(query=''):
-        route('/simulator?' + query + '&device_reference=1',reference=True)
-        time.sleep(2)
+        path = '/simulator?' + query + '&device_reference=1'
+        route(path,reference=True)
+        deadline = time.monotonic() + 60
+        while time.monotonic() < deadline:
+            logs = adb('logcat','-d','-s','ORBIT_ANATOMY:I','*:S',capture=True).stdout
+            loaded = [line.split('ORBIT_NATIVE_REFERENCE_READY:',1)[1].strip() for line in logs.splitlines() if 'ORBIT_NATIVE_REFERENCE_READY:' in line]
+            if any(urlsplit(url).hostname == 'orbitmbbs.vercel.app' and parse_qs(urlsplit(url).query) == {**parse_qs(urlsplit(path).query), 'native_audit':['1']} for url in loaded):
+                return
+            time.sleep(1)
+        raise RuntimeError('The actual Vercel page never finished loading; do not label native screens as Vercel references')
+    # Mount the real local host independently of earlier capture failures.
+    # Bootstrap the studio only; no invisible atlas download is needed.
+    for _ in range(4):
+        if visible('Explore 3D anatomy'):
+            route('/simulator?reference_bootstrap=1')
+            tap('Explore 3D anatomy')
+            break
+        adb('shell','input','keyevent','4')
+        time.sleep(1)
+    else:
+        raise RuntimeError('Could not mount an Android renderer host for the actual Vercel reference')
     open()
     wait_visible('Explore 3D anatomy')
     capture('00-vercel-studio-393x852')

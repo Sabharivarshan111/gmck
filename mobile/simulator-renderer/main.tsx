@@ -54,7 +54,7 @@ setInterval(() => {
   const renderer = document.querySelector('[data-testid="anatomy-renderer"]');
   const canvas = renderer?.querySelector('canvas');
   const systems = renderer?.getAttribute('data-visible-atlas-systems');
-  const geometry = JSON.stringify({ route: location.search, viewport: [window.innerWidth, window.innerHeight], systems, canvas: canvas ? [canvas.width, canvas.height] : null, loading: /LOADING BODYPARTS3D/.test(renderer?.textContent || '') || pendingModels > 0, graphicsError: !!renderer?.querySelector('[role="alert"]') || modelError || /failed to load|could not be loaded/.test(renderer?.textContent || ''), resources: performance.getEntriesByType('resource').filter(entry => entry.name.includes('/models/')).length });
+  const geometry = JSON.stringify({ route: location.search, viewport: [window.innerWidth, window.innerHeight], systems, section: document.querySelector('[aria-label="Anatomy detail sections"] [aria-selected="true"]')?.textContent?.trim() || null, canvas: canvas ? [canvas.width, canvas.height] : null, loading: /LOADING BODYPARTS3D/.test(renderer?.textContent || '') || pendingModels > 0, graphicsError: !!renderer?.querySelector('[role="alert"]') || modelError || /failed to load|could not be loaded/.test(renderer?.textContent || ''), resources: performance.getEntriesByType('resource').filter(entry => entry.name.includes('/models/')).length });
   if (geometry !== lastGeometry && systems !== null && canvas) {
     console.info('ORBIT_NATIVE_GEOMETRY:' + geometry);
     lastGeometry = geometry;

@@ -2320,3 +2320,13 @@ Core local renderer ~3.64MB; exact SHA-pinned private persistent model cache. De
 - Do not call PCM playback proof speaker-audibility proof. Do not claim current debug-537 contains the follow-up ICU changes. Do not cancel the active anatomy audit by pushing follow-up runtime changes to its branch.
 
 ICU follow-up regression found during phase sweep: original~83Hz sampling missed all R peaks for18% normal and22% STEMI initial phases. New pure advanceNativeTelemetry samples at250Hz, preserves the~1.97s display window and exact elapsed patient time; regression across100 starting phases per normal/STEMI now passes. Added to Android CI. ec122b89 was the initial ICU commit; use the newer sampling follow-up build, not its superseded build538.
+
+
+## 2026-10-15 native Vault teaching and mobile evidence checkpoint
+- User authorizes fixes/build publication and wants all comparisons against MOBILE Vercel, including organs, Supply, Relations, venous drainage, and simulator. Still NOT_CERTIFIED.
+- ICU build 540 (e247dfbf1940d1f65b92d061203d15df7817e2ff), run38671319356, compiled and published successfully. Its actual Android capture38671319288 reached native studio/theme/case catalog/STEMI, then stopped before saline. Artifact11945177722.
+- Confirmed capture-driver bug from artifact: wm size reports physical1440x3120 BEFORE override1179x2556. Driver used physical coordinates, placing swipe outside actual viewport. Fixed to use final/effective size; regression checked both override and physical-only responses. This was not evidence that the intervention itself failed.
+- Anatomy baseline537 capture38667824198 remains in progress; do not cancel by pushing its anatomy branch.
+- New teaching branch based on remote ICU e247: native ECG and ICU remain native, with dedicated locally bundled canonical advanced teaching modal and patient snapshot handoff; native timers pause while source teaching owns the patient. Canonical src remains unchanged. No claim of native OpenGL anatomy.
+- Expanded actual Android vs same-device Vercel captures to each available Supply/Relations tab and venous drainage, selected-tab and exact-route provenance; live Vercel references wait for actual page-ready marker. Stop repeated global renderer failures early.
+- Full web build, optimized native JS bundle and typed integration passed locally; canonical renderer and final lint/phase checks rerun before publication. Hardware/emulator evidence still required.
