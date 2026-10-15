@@ -20,6 +20,8 @@ async function shot(name) {
 async function setup() {
   await page.goto('https://orbitmbbs.vercel.app/notes', { waitUntil: 'domcontentloaded' });
   await label('Continue').or(label('Display name')).or(label('Vault')).first().waitFor({ timeout: 60000 });
+  // First-run splash and walkthrough mount after the app's first paint.
+  await page.waitForTimeout(2000);
   if (await label('Continue').isVisible()) await tap('Continue');
   if (await label('Display name').isVisible()) {
     await label('Display name').fill('NativePreview');
