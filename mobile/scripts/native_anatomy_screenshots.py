@@ -58,58 +58,76 @@ def ready(timeout=180, expected_route=None, reference=False, section=None):
         time.sleep(1)
     raise RuntimeError("Android anatomy geometry never reached a stable loaded state; last metadata=" + json.dumps(last_metadata))
 
+def drawer_state(name):
+    path = OUT / (name + '-dom.json')
+    subprocess.run(['node', 'mobile/scripts/read_android_webview.mjs', str(path)], check=True, timeout=25)
+    for result in reversed(json.loads(path.read_text())['results']):
+        for panel in result.get('panels', []):
+            if panel['self'].get('label') == 'Anatomy details':
+                return result, panel
+    raise RuntimeError('Actual anatomy drawer not present in the installed WebView')
+
+
+def device_point(rect, viewport, bounds):
+    return (round(bounds[0] + (rect['x'] + rect['width']/2) * (bounds[2]-bounds[0])/viewport[0]),
+            round(bounds[1] + (rect['y'] + rect['height']/2) * (bounds[3]-bounds[1])/viewport[1]))
+
+
 def capture_details(target, path, bounds, reference=False):
-    """Use real drawer controls, verifying the selected DOM tab before capture."""
+    """Read real DOM geometry; all interactions remain physical Android touches."""
     if 'organ' not in target['query'] or target.get('hasTeachingDetails') is False:
         return []
     prefix = 'anatomy-vercel-' if reference else 'anatomy-android-'
+    result, panel = drawer_state(prefix + target['id'] + '-before')
+    if os.environ.get('ORBIT_ANATOMY_LAYOUT_ASSERT') == '1':
+        w, h = result['viewport']
+        expected = h if h <= 500 else min(h*.62, 540)
+        assert w < 768 and abs(panel['self']['rect']['height'] - expected) < 2, (expected, panel['self'])
+    if os.environ.get('ORBIT_ANATOMY_OVERVIEWS_ONLY') == '1':
+        return []
     details = []
-    # Read layout before any accessibility service handoff. One hierarchy
-    # snapshot owns the optional selection-strip tap, avoiding a second lookup.
-    if os.environ.get('ORBIT_ANATOMY_LAYOUT_PROBE') == '1':
-        subprocess.run(['node', 'mobile/scripts/read_android_webview.mjs', str(OUT / (prefix + target['id'] + '-before-dom.json'))], check=False, timeout=45)
-    root = dump_ui()
-    ET.ElementTree(root).write(OUT / (prefix + target['id'] + '-before.xml'))
-    for node in root.iter('node'):
-        if 'Open selected structure anatomy details' in node_label(node):
-            center = bounds_center(node.get('bounds', ''))
-            if center:
-                adb('shell', 'input', 'tap', str(center[0]), str(center[1]))
-                time.sleep(2)
-                break
-    if os.environ.get('ORBIT_ANATOMY_LAYOUT_PROBE') == '1':
-        subprocess.run(['node', 'mobile/scripts/read_android_webview.mjs', str(OUT / (prefix + target['id'] + '-after-dom.json'))], check=False, timeout=45)
     for label in ['Supply', 'Relations']:
         name = target['id'] + '-' + label.lower()
-        candidates = []
-        for node in dump_ui().iter('node'):
-            if label in [node.get('text', '').strip(), node.get('content-desc', '').strip()]:
-                center = bounds_center(node.attrib.get('bounds', ''))
-                if center: candidates.append(center)
-        if not candidates:
-            ET.ElementTree(dump_ui()).write(OUT / (prefix + name + '-missing.xml'))
-            shot(prefix + 'failure-' + name)
-            details.append({'id': name, 'section': label, 'available': True, 'captured': False, 'error': 'Detail tab could not be reached; availability unverified'})
-            continue
         try:
-            x, y = candidates[0]
+            result, panel = drawer_state(prefix + name + '-target')
+            control = next(c for c in panel['controls'] if c.get('text') == label and c['rect']['height'] > 0)
+            x, y = device_point(control['rect'], result['viewport'], bounds)
             adb('shell', 'input', 'tap', str(x), str(y))
-            metadata = ready(timeout=45, expected_route=path, reference=reference, section=label)
+            metadata = ready(timeout=30, expected_route=path, reference=reference, section=label)
             metadata['nativeBounds'] = bounds
             shot(prefix + name)
-            details.append({'id': name, 'section': label, 'available': True, 'captured': True, 'renderer': metadata})
-            if label == 'Supply':
-                venous = {'id': target['id'] + '-venous-drainage', 'section': 'Venous drainage', 'available': True}
-                try:
-                    scroll_to_tappable('Venous Drainage & Return', tries=8)
-                    shot(prefix + venous['id'])
-                    venous.update(captured=True, renderer=metadata)
-                except Exception as error:
-                    venous.update(captured=False, error=str(error))
-                details.append(venous)
+            details.append({'id':name, 'section':label, 'available':True, 'captured':True, 'renderer':metadata})
+            if label != 'Supply':
+                continue
+            venous = {'id':target['id']+'-venous-drainage', 'section':'Venous drainage', 'available':True}
+            try:
+                for attempt in range(12):
+                    result, panel = drawer_state(prefix + venous['id'] + '-scroll')
+                    area = max(panel['scrollAreas'], key=lambda item:item['rect']['width']*item['rect']['height'])
+                    rect = area['rect']
+                    heading = next((h for h in panel['headings'] if h.get('text') == 'Venous Drainage & Return'), None)
+                    if heading and rect['y'] <= heading['rect']['y'] and heading['rect']['y']+heading['rect']['height'] <= rect['y']+rect['height']:
+                        break
+                    # Stay within the drawer body, clear of tabs/footer and text.
+                    x = rect['x'] + rect['width'] - 5
+                    top = rect['y'] + 20
+                    bottom = rect['y'] + rect['height'] - 20
+                    scale_x = (bounds[2]-bounds[0])/result['viewport'][0]
+                    scale_y = (bounds[3]-bounds[1])/result['viewport'][1]
+                    if bottom-top < 40:
+                        raise RuntimeError('Anatomy drawer body has no usable touch scroll viewport')
+                    adb('shell','input','swipe',str(round(bounds[0]+x*scale_x)),str(round(bounds[1]+bottom*scale_y)),str(round(bounds[0]+x*scale_x)),str(round(bounds[1]+top*scale_y)),'250')
+                    time.sleep(.6)
+                else:
+                    raise RuntimeError('Venous heading did not enter the actual drawer scroll viewport')
+                shot(prefix + venous['id'])
+                venous.update(captured=True, renderer=ready(timeout=15, expected_route=path, reference=reference, section='Supply'))
+            except Exception as error:
+                venous.update(captured=False, error=str(error))
+            details.append(venous)
         except Exception as error:
             shot(prefix + 'failure-' + name)
-            details.append({'id': name, 'section': label, 'available': True, 'captured': False, 'error': str(error)})
+            details.append({'id':name, 'section':label, 'available':True, 'captured':False, 'error':str(error)})
     return details
 
 def main():
