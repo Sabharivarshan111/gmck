@@ -40,6 +40,7 @@ jobs:
             const allowed=new Set([
               '.github/workflows/native-548-drawer-probe.yml',
               'mobile/scripts/native_anatomy_screenshots.py',
+              'mobile/scripts/read_android_webview.mjs',
               'mobile/scripts/vercel_mobile_anatomy_probe.mjs',
             ]);
             if(comparison.status!=='ahead' || !comparison.files?.length || comparison.files.some(file=>!allowed.has(file.filename))) {
