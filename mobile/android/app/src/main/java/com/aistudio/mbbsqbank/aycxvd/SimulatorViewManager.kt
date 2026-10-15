@@ -165,13 +165,16 @@ class SimulatorViewManager : SimpleViewManager<WebView>() {
         val listener = object : BaseActivityEventListener() {
           override fun onNewIntent(intent: Intent) {
             intent.getStringExtra("orbit_anatomy_qa_route")?.let { route -> view.post {
+              android.util.Log.i("ORBIT_ANATOMY", "ORBIT_NATIVE_QA_ROUTE:" + route)
               store.referenceMode = intent.getBooleanExtra("orbit_anatomy_qa_reference", false)
               loadRoute(view, route)
             } }
           }
         }
         qaListeners[view] = listener
-        context.addActivityEventListener(listener)
+        // ThemedReactContext owns a separate activity-listener collection;
+        // hosting intents are delivered to the ReactApplicationContext.
+        context.reactApplicationContext.addActivityEventListener(listener)
       }
     }
   }
@@ -232,7 +235,7 @@ class SimulatorViewManager : SimpleViewManager<WebView>() {
 
   override fun onDropViewInstance(view: WebView) {
     hideFullscreen(view)
-    qaListeners.remove(view)?.let { (view.context as ThemedReactContext).removeActivityEventListener(it) }
+    qaListeners.remove(view)?.let { (view.context as ThemedReactContext).reactApplicationContext.removeActivityEventListener(it) }
     stores.remove(view); pendingRoutes.remove(view)
     view.stopLoading(); view.destroy(); super.onDropViewInstance(view)
   }
