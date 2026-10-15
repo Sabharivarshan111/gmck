@@ -29,7 +29,7 @@ def adb(*args: str, check: bool = True, capture: bool = False) -> subprocess.Com
     return run("adb", *args, check=check, capture=capture)
 
 
-def dump_ui() -> ET.Element:
+def _read_ui() -> ET.Element:
     if os.environ.get("ORBIT_UI_HELPER") == "1":
         for attempt in range(3):
             result = adb("shell", "am", "instrument", "-w", "com.orbit.qa/com.orbit.qa.UiDump", capture=True)
@@ -67,6 +67,25 @@ def bounds_center(bounds: str) -> tuple[int, int] | None:
     return (x1 + x2) // 2, (y1 + y2) // 2
 
 
+def dump_ui() -> ET.Element:
+    for _ in range(3):
+        root = _read_ui()
+        text = ' '.join(node_label(n) for n in root.iter('node'))
+        # A system launcher ANR is unrelated to ORBIT. Dismiss only this named
+        # launcher dialog; an ORBIT ANR must remain visible as an app failure.
+        if 'Pixel Launcher' in text and 'responding' in text:
+            for node in root.iter('node'):
+                if node_label(node).strip().lower() == 'close app':
+                    center = bounds_center(node.get('bounds', ''))
+                    if center:
+                        adb('shell', 'input', 'tap', str(center[0]), str(center[1]))
+                        time.sleep(1)
+                        break
+            continue
+        return root
+    raise RuntimeError('Pixel Launcher ANR still obstructs the app after dismissal')
+
+
 def find_nodes(needle: str) -> list[tuple[int, int, int, str]]:
     root = dump_ui()
     needle_l = needle.lower()
@@ -95,6 +114,20 @@ def visible(needle: str) -> bool:
 
 def tap(needle: str, required: bool = True) -> bool:
     nodes = find_nodes(needle)
+    clickable = []
+    for node in dump_ui().iter('node'):
+        label = node_label(node)
+        if needle.lower() not in label.lower() or node.get('clickable') != 'true' or node.get('enabled') == 'false':
+            continue
+        center = bounds_center(node.get('bounds', ''))
+        rect = list(map(int, re.findall(r'\d+', node.get('bounds', ''))))
+        if center and len(rect) == 4 and rect[2] > rect[0] and rect[3] > rect[1]:
+            clickable.append(((rect[2]-rect[0])*(rect[3]-rect[1]),center[0],center[1],label))
+    if clickable:
+        # Prefer the actual enabled button to a smaller static caption with the
+        # same words (e.g. the label above the radiology reference picker).
+        exact = [node for node in clickable if node[3].lower() == needle.lower()]
+        nodes = sorted(exact or clickable, key=lambda node: node[0])
     if not nodes:
         if required:
             raise RuntimeError(f"UI element not found: {needle!r}")
@@ -175,7 +208,7 @@ def scroll_to_tappable(needle: str, tries: int = 18) -> None:
     _, height = screen_size()
     for _ in range(tries + 1):
         nodes = find_nodes(needle)
-        if nodes and height * 0.10 <= nodes[0][2] <= height * 0.82:
+        if nodes and height * 0.10 <= nodes[0][2] <= height * 0.90:
             return
         if nodes and nodes[0][2] < height * 0.10:
             scroll_up()

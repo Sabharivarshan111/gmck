@@ -98,7 +98,9 @@ if anatomy_file.exists():
     (folder/'anatomy-visual-audit.json').write_text(json.dumps({'status':'NOT_CERTIFIED','pairs':body_pairs,'sectionAvailability':availability},indent=2))
 print(json.dumps(result,indent=2))
 # Fail the audit as incomplete when visual evidence is missing, but preserve artifacts.
-if not all(p["captured_both"] for p in result["pairs"]):
+if "--anatomy-only" in sys.argv and not anatomy_file.exists():
+    raise SystemExit("INCOMPLETE: actual Android anatomy capture data missing")
+if "--anatomy-only" not in sys.argv and not all(p["captured_both"] for p in result["pairs"]):
     raise SystemExit("INCOMPLETE: one or more actual Vercel/Android screenshots missing")
 if anatomy_file.exists() and not all(pair['captured_both'] for pair in body_pairs):
     raise SystemExit('INCOMPLETE: one or more actual organ screenshots missing')

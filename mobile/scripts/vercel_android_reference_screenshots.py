@@ -33,9 +33,15 @@ def main():
             route('/simulator?reference_bootstrap=1')
             tap('Explore 3D anatomy')
             break
-        adb('shell','input','keyevent','4')
-        time.sleep(1)
+        if visible('Close clubbing skill'):
+            tap('Close clubbing skill')
+        elif visible('Back to clinical studio'):
+            tap('Back to clinical studio')
+        else:
+            adb('shell','input','keyevent','4')
+            time.sleep(1)
     else:
+        shot('99-device-reference-bootstrap-failure')
         raise RuntimeError('Could not mount an Android renderer host for the actual Vercel reference')
     open()
     wait_visible('Explore 3D anatomy')
