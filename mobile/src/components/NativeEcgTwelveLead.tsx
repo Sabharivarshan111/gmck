@@ -13,6 +13,7 @@ import { GraduationCap, Play, Pause, RotateCcw, X } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useIsFocused } from '@react-navigation/native';
 import { Text } from '@/components/Text';
+import NativeEcgCutout from '@/components/NativeEcgCutout';
 import { NATIVE_ECG_LEADS, NATIVE_ECG_SEGMENTS, type NativeEcgSegmentId } from '@/lib/nativeEcgReference';
 import { leadById, nativeEcgTracePath, type NativeEcgConfig } from '@/lib/nativeEcgWaveform';
 import CanonicalTeachingOverlay from '@/components/CanonicalTeachingOverlay';
@@ -85,8 +86,9 @@ function EcgPaper({ cfg, group, segment, width }: {
 export default function NativeEcgTwelveLead({ scenarioId, onBack, theme = 'dark', engine }: Props) {
   const PANEL = theme === 'dark' ? '#0e0e11' : '#fff';
   const BORDER = theme === 'dark' ? '#34343a' : '#e2e8f0';
-  const INK = theme === 'dark' ? '#f5f5f7' : '#0f172a';
-  const muted = theme === 'dark' ? '#a6a6af' : '#64748b';
+  const INK = theme === 'dark' ? '#f1f5f9' : '#0f172a';
+  const panelInk = INK;
+  const muted = '#94a3b8';
   const styles = useMemo(() => makeStyles(PANEL, BORDER, muted), [PANEL, BORDER, muted]);
   const button = { borderWidth: 1, borderColor: BORDER, backgroundColor: theme === 'dark' ? '#1b1b21' : '#f1f5f9', borderRadius: 12, minHeight: 44, justifyContent: 'center' as const, paddingHorizontal: 12 };
   const insets=useSafeAreaInsets();
@@ -125,7 +127,7 @@ export default function NativeEcgTwelveLead({ scenarioId, onBack, theme = 'dark'
       patient.tick(Math.min(.25, Math.max(0, (now - last) / 1000)));
       last = now;
       const next = { rhythm: patient.pathology.ecgRhythm, heartRate: patient.getLiveVitals().heartRate };
-      setLive(next);
+      setLive(previous => previous.rhythm === next.rhythm && Math.round(previous.heartRate) === Math.round(next.heartRate) ? previous : next);
       setCapture(previous => previous.rhythm === next.rhythm ? previous : next);
     }, 125);
     return () => clearInterval(timer);
@@ -186,26 +188,27 @@ export default function NativeEcgTwelveLead({ scenarioId, onBack, theme = 'dark'
           {(['all',...BEAT_ORDER] as NativeEcgSegmentId[]).map(id=>{
             const m=NATIVE_ECG_SEGMENTS.find(s=>s.id===id);
             return <Pressable key={id} testID={`native-ecg-segment-${id}`} accessibilityRole="button" accessibilityState={{selected:id===segment}} onPress={()=>chooseSegment(id)}
-              style={[button,{minWidth:44,alignItems:'center',borderColor:id===segment?(m?.color??INK):BORDER,backgroundColor:id===segment?(m?.bandColor??INK):PANEL}]}>
-              <Text style={{color:id===segment?(m?(theme==='dark'?m.darkTextColor:m.lightTextColor):(theme==='dark'?'#0f172a':'#fff')):INK,fontSize:12,fontWeight:'800',fontFamily:'monospace'}}>{m?.shortName??'All'}</Text>
+              style={[button,{minWidth:44,alignItems:'center',borderColor:id===segment?(m?.color??INK):BORDER,backgroundColor:id===segment?(m?.bandColor??panelInk):PANEL}]}>
+              <Text style={{color:id===segment?(m?(theme==='dark'?m.darkTextColor:m.lightTextColor):(theme==='dark'?'#0f172a':'#fff')):panelInk,fontSize:12,fontWeight:'800',fontFamily:'monospace'}}>{m?.shortName??'All'}</Text>
             </Pressable>;
           })}
         </ScrollView>
       </View>
 
-      <Pressable accessibilityRole="button" accessibilityLabel="Open full ECG teaching studio" onPress={() => openTeaching('ecg')} style={button}><Text style={{ color: INK, fontSize: 13 }}>Full ECG teaching studio</Text></Pressable>
       {meta&&<View testID="native-ecg-teaching-segment" style={[styles.panel,{borderColor:meta.color,gap:10}]}>
-        <Text style={{color:INK,fontSize:14,fontWeight:'800'}}>{meta.name} — Electrophysiological & Diagnostic Walkthrough</Text>
+        <Text style={{color:panelInk,fontSize:14,fontWeight:'800'}}>{meta.name} — Electrophysiological & Diagnostic Walkthrough</Text>
         <Text style={{color:meta.color,fontSize:12,fontWeight:'700'}}>Normal Duration: {meta.normalDurationMs}</Text>
+        <NativeEcgCutout segmentId={meta.id} />
         {[
           ['⚡ BIOPHYSICAL & CONDUCTION ORIGIN',meta.physioOrigin],
           ['📐 3D DIPOLE VECTOR (V = D · L)',meta.vectorExplanation+'\n'+meta.leadsAnalysis],
           ['🩺 EXAMINER TRAPS & CLINICAL PEARLS',meta.clinicalPearls],
-        ].map(([name,value])=><View key={name} style={[styles.explanation,{borderColor:meta.color+'55'}]}>
-          <Text style={{color:'#e2e8f0',fontSize:12,fontWeight:'800',marginBottom:6}}>{name}</Text>
-          <Text style={{color:'#cbd5e1',fontSize:12,lineHeight:19}}>{value}</Text>
+        ].map(([name,value])=><View key={name} style={[styles.explanation,{borderColor:theme === 'dark' ? '#334155' : '#e2e8f0',backgroundColor:theme === 'dark' ? '#1e293b80' : '#f8fafc'}]}>
+          <Text style={{color:theme === 'dark' ? '#e2e8f0' : '#1e293b',fontSize:12,fontWeight:'800',marginBottom:6}}>{name}</Text>
+          <Text style={{color:theme === 'dark' ? '#cbd5e1' : '#475569',fontSize:13,lineHeight:21}}>{value}</Text>
         </View>)}
       </View>}
+      <Pressable accessibilityRole="button" accessibilityLabel="Open full ECG teaching studio" onPress={() => openTeaching('ecg')} style={button}><Text style={{ color: INK, fontSize: 13 }}>Full ECG teaching studio</Text></Pressable>
       <Text style={styles.small}>Synthetic ECG for education; use clinical ECGs for real patient decisions.</Text>
     </ScrollView>
     {tutorialOpen && <CanonicalTeachingOverlay route={'/simulator?mode=telemetry&native_teaching=icu&nativeTheme=' + theme + '&scenario=' + scenarioId} patient={teachingPatient} active={active && focused} onPatient={acceptPatient} onClose={() => setTutorialOpen(false)} />}

@@ -74,6 +74,7 @@ def main():
         scroll_to_tappable("IV Saline")
         tap("IV Saline")
         scroll_to_tappable("Clinical activity log")
+        scroll_to_tappable("IV Normal Saline")
         expect("IV Normal Saline")
         screenshot("04-android-after-native-clinical-intervention")
         results.append("IV saline intervention produces clinical feedback")
@@ -144,6 +145,8 @@ def main():
         tap("QRS")
         scroll_to_tappable("Electrophysiological")
         screenshot("10-android-native-ecg-qrs-teaching")
+        scroll_to_tappable("Single-Lead Magnified Cut-Out")
+        screenshot("10a-android-native-ecg-magnified-cutout")
         results.append("ECG lead groups and QRS teaching")
 
         for _ in range(6):

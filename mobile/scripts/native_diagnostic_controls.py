@@ -4,7 +4,7 @@ import re
 import time
 from native_screenshot_driver import (
     OUT, adb, launch, first_run, tap, scroll_to_tappable, dump_ui,
-    node_label, shot, wait_visible, visible, scroll_up,
+    node_label, shot, wait_visible, visible, scroll_up, reachable_nodes,
 )
 
 
@@ -26,7 +26,7 @@ def slider_value(label):
 
 
 def adjust_slider(label, fraction=.82):
-    scroll_to_tappable(label)
+    scroll_to_tappable(label, adjustable=True)
     before = slider_value(label)
     # Match the actual adjustable control, not an image whose description
     # includes the same phrase (e.g. axial MRI slice 56).
@@ -160,7 +160,6 @@ def radiology(results):
     shot('extra-native-xray-credits')
     results.append({'check': 'Labels, note reveal/hide, differential and source credits', 'passed': True})
     press('Brain MRI')
-    press('MRI slice')
     results.append({'check': 'Offline MRI slice adjustment', 'passed': True, **adjust_slider('MRI slice', .7)})
     for plane in ['Axial', 'Coronal', 'Sagittal']:
         press(plane)
