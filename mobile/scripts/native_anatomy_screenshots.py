@@ -5,6 +5,9 @@ Debug-only route intents change the actual WebView's URL. They never substitute 
 fixture, inject a fake model or exist in signed release builds.
 """
 import json
+import os
+import subprocess
+import xml.etree.ElementTree as ET
 import shlex
 import re
 import time
@@ -61,15 +64,23 @@ def capture_details(target, path, bounds, reference=False):
         return []
     prefix = 'anatomy-vercel-' if reference else 'anatomy-android-'
     details = []
+    # Mobile starts with a compact selected-structure strip. Open its actual
+    # details action before locating the sheet tabs.
+    if any('Open selected structure anatomy details' in node_label(n) for n in dump_ui().iter('node')):
+        tap('Open selected structure anatomy details')
+    if os.environ.get('ORBIT_ANATOMY_LAYOUT_PROBE') == '1':
+        subprocess.run(['node', 'mobile/scripts/read_android_webview.mjs', str(OUT / (prefix + target['id'] + '-dom.json'))], check=False, timeout=45)
     for label in ['Supply', 'Relations']:
         name = target['id'] + '-' + label.lower()
         candidates = []
         for node in dump_ui().iter('node'):
-            if node_label(node) == label:
+            if label in [node.get('text', '').strip(), node.get('content-desc', '').strip()]:
                 center = bounds_center(node.attrib.get('bounds', ''))
                 if center: candidates.append(center)
         if not candidates:
-            details.append({'id': name, 'section': label, 'available': False, 'captured': False})
+            ET.ElementTree(dump_ui()).write(OUT / (prefix + name + '-missing.xml'))
+            shot(prefix + 'failure-' + name)
+            details.append({'id': name, 'section': label, 'available': True, 'captured': False, 'error': 'Detail tab could not be reached; availability unverified'})
             continue
         try:
             x, y = candidates[0]
@@ -107,6 +118,9 @@ def main():
                {"id": "skeleton", "query": {"mode": "anatomy", "layer": "skeletal"}}]
     targets += [{"id": organ["id"], "query": {"mode": "anatomy", "organ": organ["id"], "isolate": organ["preferredReference"]}}
                 for organ in coverage["organs"]]
+    selected = os.environ.get('ORBIT_ANATOMY_TARGETS')
+    if selected:
+        targets = [t for t in targets if t['id'] in selected.split(',')]
     # The first intent is applied when the real anatomy surface is mounted.
     route("/simulator?" + urlencode(targets[0]["query"]))
     tap("Explore 3D anatomy")
