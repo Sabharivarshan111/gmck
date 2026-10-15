@@ -73,6 +73,35 @@ def device_point(rect, viewport, bounds):
             round(bounds[1] + (rect['y'] + rect['height']/2) * (bounds[3]-bounds[1])/viewport[1]))
 
 
+def capture_model(target, path, bounds, reference=False):
+    prefix = 'anatomy-vercel-' if reference else 'anatomy-android-'
+    name = prefix + target['id'] + '-model'
+    for attempt in range(36):
+        probe = OUT / (name + '-layout.json')
+        subprocess.run(['node','mobile/scripts/read_android_webview.mjs',str(probe)],check=True,timeout=25)
+        results = json.loads(probe.read_text())['results']
+        result = next(r for r in reversed(results) if not r.get('error') and r.get('viewport'))
+        status = result.get('modelStatus', {})
+        if status.get('error'):
+            raise RuntimeError('Actual anatomy renderer reports an error: ' + json.dumps(status))
+        if status.get('loading'):
+            time.sleep(3)
+            continue
+        panels = [p for p in result.get('panels',[]) if p['self'].get('label') == 'Anatomy details']
+        if panels:
+            close = next(c for c in panels[0]['controls'] if c.get('title') == 'Close Drawer')
+            x,y = device_point(close['rect'],result['viewport'],bounds)
+            adb('shell','input','tap',str(x),str(y))
+            time.sleep(.6)
+            continue
+        metadata = ready(timeout=30,expected_route=path,reference=reference)
+        metadata['nativeBounds'] = bounds
+        metadata['modelStatus'] = status
+        shot(name)
+        return {'id':target['id']+'-model','section':'Uncovered 3D model','available':True,'captured':True,'renderer':metadata}
+    raise RuntimeError('Model remained loading or covered by anatomy details')
+
+
 def capture_details(target, path, bounds, reference=False):
     """Read real DOM geometry; all interactions remain physical Android touches."""
     if 'organ' not in target['query'] or target.get('hasTeachingDetails') is False:
@@ -168,6 +197,8 @@ def main():
             name = "anatomy-android-" + target["id"]
             shot(name)
             details = capture_details(target, path, native_bounds)
+            if os.environ.get('ORBIT_MODEL_CAPTURE') == '1':
+                details.append(capture_model(target,path,native_bounds))
             results.append({**target, "route": path, "screenshot": name + ".png", "renderer": metadata, "captured": True, "details": details})
             missing_metadata = 0
             print("CAPTURED actual Android anatomy:", target["id"], flush=True)
