@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import tailwindcss from 'tailwindcss';
 import autoprefixer from 'autoprefixer';
+import type { AtRule } from 'postcss';
 import { resolve } from 'node:path';
 
 const closeTeaching = (kind: string) => `
@@ -72,6 +73,16 @@ export default defineConfig({
     autoprefixer(),
     {
       postcssPlugin: 'native-webview-viewport-lengths',
+      AtRule(rule: AtRule) {
+        // This canonical short-window exception makes the drawer full screen.
+        // Gate it with the same measured viewport as dvh lengths so a stale
+        // WebView media height cannot turn a portrait drawer into a full page.
+        if (rule.name !== 'media' || !/^\(max-width:\s*1023px\)\s*and\s*\(max-height:\s*500px\)$/.test(rule.params)) return;
+        rule.params = '(max-width: 1023px)';
+        rule.walkRules(child => {
+          child.selectors = child.selectors.map(selector => 'html[data-orbit-native-short-viewport="true"] ' + selector);
+        });
+      },
       Declaration(declaration: { value: string }) {
         // Android WebViews can collapse dvh-sized panels despite a valid
         // innerHeight. Transform values only: Tailwind selectors

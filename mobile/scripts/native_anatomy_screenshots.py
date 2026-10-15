@@ -5,6 +5,9 @@ Debug-only route intents change the actual WebView's URL. They never substitute 
 fixture, inject a fake model or exist in signed release builds.
 """
 import json
+import os
+import subprocess
+import xml.etree.ElementTree as ET
 import shlex
 import re
 import time
@@ -55,41 +58,76 @@ def ready(timeout=180, expected_route=None, reference=False, section=None):
         time.sleep(1)
     raise RuntimeError("Android anatomy geometry never reached a stable loaded state; last metadata=" + json.dumps(last_metadata))
 
+def drawer_state(name):
+    path = OUT / (name + '-dom.json')
+    subprocess.run(['node', 'mobile/scripts/read_android_webview.mjs', str(path)], check=True, timeout=25)
+    for result in reversed(json.loads(path.read_text())['results']):
+        for panel in result.get('panels', []):
+            if panel['self'].get('label') == 'Anatomy details':
+                return result, panel
+    raise RuntimeError('Actual anatomy drawer not present in the installed WebView')
+
+
+def device_point(rect, viewport, bounds):
+    return (round(bounds[0] + (rect['x'] + rect['width']/2) * (bounds[2]-bounds[0])/viewport[0]),
+            round(bounds[1] + (rect['y'] + rect['height']/2) * (bounds[3]-bounds[1])/viewport[1]))
+
+
 def capture_details(target, path, bounds, reference=False):
-    """Use real drawer controls, verifying the selected DOM tab before capture."""
-    if 'organ' not in target['query']:
+    """Read real DOM geometry; all interactions remain physical Android touches."""
+    if 'organ' not in target['query'] or target.get('hasTeachingDetails') is False:
         return []
     prefix = 'anatomy-vercel-' if reference else 'anatomy-android-'
+    result, panel = drawer_state(prefix + target['id'] + '-before')
+    if os.environ.get('ORBIT_ANATOMY_LAYOUT_ASSERT') == '1':
+        w, h = result['viewport']
+        expected = h if h <= 500 else min(h*.62, 540)
+        assert w < 768 and abs(panel['self']['rect']['height'] - expected) < 2, (expected, panel['self'])
+    if os.environ.get('ORBIT_ANATOMY_OVERVIEWS_ONLY') == '1':
+        return []
     details = []
     for label in ['Supply', 'Relations']:
         name = target['id'] + '-' + label.lower()
-        candidates = []
-        for node in dump_ui().iter('node'):
-            if node_label(node) == label:
-                center = bounds_center(node.attrib.get('bounds', ''))
-                if center: candidates.append(center)
-        if not candidates:
-            details.append({'id': name, 'section': label, 'available': False, 'captured': False})
-            continue
         try:
-            x, y = candidates[0]
+            result, panel = drawer_state(prefix + name + '-target')
+            control = next(c for c in panel['controls'] if c.get('text') == label and c['rect']['height'] > 0)
+            x, y = device_point(control['rect'], result['viewport'], bounds)
             adb('shell', 'input', 'tap', str(x), str(y))
-            metadata = ready(timeout=45, expected_route=path, reference=reference, section=label)
+            metadata = ready(timeout=30, expected_route=path, reference=reference, section=label)
             metadata['nativeBounds'] = bounds
             shot(prefix + name)
-            details.append({'id': name, 'section': label, 'available': True, 'captured': True, 'renderer': metadata})
-            if label == 'Supply':
-                venous = {'id': target['id'] + '-venous-drainage', 'section': 'Venous drainage', 'available': True}
-                try:
-                    scroll_to_tappable('Venous Drainage & Return', tries=8)
-                    shot(prefix + venous['id'])
-                    venous.update(captured=True, renderer=metadata)
-                except Exception as error:
-                    venous.update(captured=False, error=str(error))
-                details.append(venous)
+            details.append({'id':name, 'section':label, 'available':True, 'captured':True, 'renderer':metadata})
+            if label != 'Supply':
+                continue
+            venous = {'id':target['id']+'-venous-drainage', 'section':'Venous drainage', 'available':True}
+            try:
+                for attempt in range(12):
+                    result, panel = drawer_state(prefix + venous['id'] + '-scroll')
+                    area = max(panel['scrollAreas'], key=lambda item:item['rect']['width']*item['rect']['height'])
+                    rect = area['rect']
+                    heading = next((h for h in panel['headings'] if h.get('text') == 'Venous Drainage & Return'), None)
+                    if heading and rect['y'] <= heading['rect']['y'] and heading['rect']['y']+heading['rect']['height'] <= rect['y']+rect['height']:
+                        break
+                    # Stay within the drawer body, clear of tabs/footer and text.
+                    x = rect['x'] + rect['width'] - 5
+                    top = rect['y'] + 20
+                    bottom = rect['y'] + rect['height'] - 20
+                    scale_x = (bounds[2]-bounds[0])/result['viewport'][0]
+                    scale_y = (bounds[3]-bounds[1])/result['viewport'][1]
+                    if bottom-top < 40:
+                        raise RuntimeError('Anatomy drawer body has no usable touch scroll viewport')
+                    adb('shell','input','swipe',str(round(bounds[0]+x*scale_x)),str(round(bounds[1]+bottom*scale_y)),str(round(bounds[0]+x*scale_x)),str(round(bounds[1]+top*scale_y)),'250')
+                    time.sleep(.6)
+                else:
+                    raise RuntimeError('Venous heading did not enter the actual drawer scroll viewport')
+                shot(prefix + venous['id'])
+                venous.update(captured=True, renderer=ready(timeout=15, expected_route=path, reference=reference, section='Supply'))
+            except Exception as error:
+                venous.update(captured=False, error=str(error))
+            details.append(venous)
         except Exception as error:
             shot(prefix + 'failure-' + name)
-            details.append({'id': name, 'section': label, 'available': True, 'captured': False, 'error': str(error)})
+            details.append({'id':name, 'section':label, 'available':True, 'captured':False, 'error':str(error)})
     return details
 
 def main():
@@ -105,8 +143,11 @@ def main():
     targets = [{"id": "whole-body", "query": {"mode": "anatomy"}},
                {"id": "vessels", "query": {"mode": "anatomy", "layer": "vascular"}},
                {"id": "skeleton", "query": {"mode": "anatomy", "layer": "skeletal"}}]
-    targets += [{"id": organ["id"], "query": {"mode": "anatomy", "organ": organ["id"], "isolate": organ["preferredReference"]}}
+    targets += [{"id": organ["id"], "hasTeachingDetails": organ["hasTeachingDetails"], "query": {"mode": "anatomy", "organ": organ["id"], "isolate": organ["preferredReference"]}}
                 for organ in coverage["organs"]]
+    selected = os.environ.get('ORBIT_ANATOMY_TARGETS')
+    if selected:
+        targets = [t for t in targets if t['id'] in selected.split(',')]
     # The first intent is applied when the real anatomy surface is mounted.
     route("/simulator?" + urlencode(targets[0]["query"]))
     tap("Explore 3D anatomy")
@@ -139,22 +180,23 @@ def main():
         (OUT / "native-anatomy-captures.json").write_text(json.dumps({"status": "NOT_CERTIFIED", "targets": results}, indent=2))
         if missing_metadata >= 3 or (not results[-1]['captured'] and any(message in results[-1].get('error', '') for message in ['renderer startup failed', 'shader failed'])):
             raise RuntimeError('Global native renderer failure; stopping repeated route timeouts. See failure logcat and screenshots.')
-    # The live Vercel reference uses the same Android WebView, fonts, viewport and
-    # software GPU. This avoids desktop font fallback masquerading as mobile QA.
     references = []
-    for target in targets:
-        path = "/simulator?" + urlencode(target["query"])
-        try:
-            route(path, reference=True)
-            metadata = ready(expected_route=path, reference=True)
-            metadata["nativeBounds"] = native_bounds
-            shot("anatomy-vercel-" + target["id"])
-            details = capture_details(target, path, native_bounds, reference=True)
-            references.append({"id": target["id"], "captured": True, "renderer": metadata, "details": details})
-        except Exception as error:
-            shot("anatomy-vercel-failure-" + target["id"])
-            references.append({"id": target["id"], "captured": False, "error": str(error)})
-        (OUT / "vercel-anatomy-captures.json").write_text(json.dumps({"status": "NOT_CERTIFIED", "platform": "same Android WebView", "targets": references}, indent=2))
+    if os.environ.get('ORBIT_ANATOMY_REFERENCE') != 'browser':
+        # The live Vercel reference uses the same Android WebView, fonts, viewport and
+        # software GPU. This avoids desktop font fallback masquerading as mobile QA.
+        for target in targets:
+            path = "/simulator?" + urlencode(target["query"])
+            try:
+                route(path, reference=True)
+                metadata = ready(expected_route=path, reference=True)
+                metadata["nativeBounds"] = native_bounds
+                shot("anatomy-vercel-" + target["id"])
+                details = capture_details(target, path, native_bounds, reference=True)
+                references.append({"id": target["id"], "captured": True, "renderer": metadata, "details": details})
+            except Exception as error:
+                shot("anatomy-vercel-failure-" + target["id"])
+                references.append({"id": target["id"], "captured": False, "error": str(error)})
+            (OUT / "vercel-anatomy-captures.json").write_text(json.dumps({"status": "NOT_CERTIFIED", "platform": "same Android WebView", "targets": references}, indent=2))
     # A new renderer instance, with radios off, must reuse the actual private cache.
     adb("shell", "svc", "wifi", "disable", check=False)
     adb("shell", "svc", "data", "disable", check=False)
