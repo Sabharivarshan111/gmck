@@ -22,7 +22,7 @@ assert.equal(leads.length,12);
 assert.deepEqual(leads.map(l=>l.id),['I','II','III','aVR','aVL','aVF','V1','V2','V3','V4','V5','V6']);
 assert.equal(segments.length,6);
 for(const item of segments){
-  for(const key of ['name','normalDurationMs','physioOrigin','vectorExplanation','leadsAnalysis','clinicalPearls']){
+  for(const key of ['bandColor','name','normalDurationMs','physioOrigin','vectorExplanation','leadsAnalysis','clinicalPearls']){
     assert.ok(web.includes(item[key]),item.id+' '+key+' no longer agrees with Vercel ECG');
   }
 }

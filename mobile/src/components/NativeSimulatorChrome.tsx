@@ -20,6 +20,10 @@ export function NativeSimulatorHeader({ theme, vitals, onExit, onMonitor, onTogg
     <Pressable accessibilityRole="button" accessibilityLabel={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'} onPress={onToggleTheme} style={[styles.icon, { backgroundColor: p.raised, borderColor: p.border }]}>{theme === 'dark' ? <Sun size={16} color="#fbbf24" /> : <Moon size={16} color="#475569" />}</Pressable>
   </View>;
 }
+export function NativeSimulatorBanner({ theme, scenario }: { theme: SimulatorTheme; scenario: { id: string; title: string } }) {
+  const p = theme === 'light' ? CASE_DAY : CASE_NIGHT;
+  return <View style={{ paddingHorizontal: 16, paddingVertical: 8, borderBottomWidth: 1, borderColor: p.border, backgroundColor: p.card }}><Text style={{ color: p.accent, fontSize: 12, fontWeight: '600' }}>{scenario.id === 'normal' ? 'Normal teaching baseline · healthy adult at rest' : `Case findings · ${scenario.title}`}</Text></View>;
+}
 export function NativeSimulatorTabs({ theme, selected, bottomInset, onSkills, onAnatomy, onMonitor, onCase }: {
   theme: SimulatorTheme; selected: 'monitor' | 'case'; bottomInset: number;
   onSkills: () => void; onAnatomy: () => void; onMonitor: () => void; onCase: () => void;
@@ -47,7 +51,7 @@ const styles = StyleSheet.create({
   avatar: { width: 28, height: 28, borderRadius: 12, backgroundColor: '#e879f9', alignItems: 'center', justifyContent: 'center' },
   hud: { minHeight: 44, borderWidth: 1, borderRadius: 12, paddingHorizontal: 10, gap: 8, flexDirection: 'row', alignItems: 'center' },
   heart: { flexDirection: 'row', gap: 4, alignItems: 'center' },
-  hudText: { fontSize: 11, fontWeight: '700', fontFamily: 'monospace' },
+  hudText: { fontSize: 12, lineHeight: 18, fontWeight: '700', fontFamily: 'monospace' },
   footer: { paddingHorizontal: 12, paddingTop: 8 },
   tabs: { minHeight: 54, padding: 4, borderWidth: 1, borderRadius: 16, flexDirection: 'row', gap: 4 },
   tab: { minHeight: 44, borderRadius: 12, flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },

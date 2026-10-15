@@ -28,7 +28,11 @@ def slider_value(label):
 def adjust_slider(label, fraction=.82):
     scroll_to_tappable(label)
     before = slider_value(label)
-    x1, y1, x2, y2 = bounds(label)
+    # Match the actual adjustable control, not an image whose description
+    # includes the same phrase (e.g. axial MRI slice 56).
+    slider = next(n for n in dump_ui().iter('node')
+                  if label in node_label(n) and n.get('range-now') is not None)
+    x1, y1, x2, y2 = map(int, re.findall(r'\d+', slider.get('bounds', '')))
     adb('shell', 'input', 'tap', str(round(x1 + (x2-x1)*fraction)), str((y1+y2)//2))
     time.sleep(2)
     after = slider_value(label)

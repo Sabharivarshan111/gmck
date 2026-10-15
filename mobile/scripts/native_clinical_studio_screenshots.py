@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import re
 import time
+import subprocess
 from pathlib import Path
 from native_screenshot_driver import (
     OUT, adb, launch, first_run, tap, wait_visible, shot, scroll_until,
@@ -16,6 +17,8 @@ def expect(needle: str, tries: int = 5):
 
 def screenshot(name: str):
     shot(name)
+    if name in ['05c-android-full-icu-tutorial', '05d-android-icu-lead-axis-lesson']:
+        subprocess.run(['node', 'mobile/scripts/read_android_webview.mjs', str(OUT / (name + '-dom.json'))], check=False, timeout=45)
 
 def icu_control(label):
     # Canonical mobile ICU has a horizontal status bar. Reach its real buttons
@@ -122,8 +125,8 @@ def main():
 
         scroll_to_tappable("12-lead ECG")
         tap("12-lead ECG")
-        expect("WAVE GUIDE")
-        expect("Acute Inferior STEMI")
+        expect("Static synthetic ECG with calibrated grid")
+        expect("STEMI")
         screenshot("08-android-native-12lead-ecg")
         scroll_to_tappable("All 12")
         tap("All 12")
@@ -213,6 +216,7 @@ def main():
         print("FAIL in real Android UI automation:",repr(exc))
         try:
             shot("99-native-failure-screen")
+            subprocess.run(["node", "mobile/scripts/read_android_webview.mjs", str(OUT / "99-native-failure-dom.json")], check=False, timeout=45)
             from native_screenshot_driver import dump_ui
             dump_ui()
             (OUT/"99-native-failure-ui.xml").write_text(Path("/tmp/window.xml").read_text())

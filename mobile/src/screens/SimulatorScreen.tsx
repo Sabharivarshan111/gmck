@@ -41,8 +41,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
   const [backRequest, setBackRequest] = useState(0);
-  const nativeDarkSurface = nativeMode?.kind === 'ecg';
-  const darkStatusIcons = nativeMode?.kind === 'clubbing' || (!nativeDarkSurface && studioTheme === 'light');
+  const darkStatusIcons = nativeMode?.kind === 'clubbing' || studioTheme === 'light';
   const wrap = (child: React.ReactNode) => <>{focused && <StatusBar barStyle={darkStatusIcons ? 'dark-content' : 'light-content'} />}{child}</>;
   const returnToNativeStudio = () => {
     setUrl(null);
@@ -57,6 +56,11 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
     }).catch(() => undefined);
     return () => { mounted = false; };
   }, []);
+
+  const onStudioScenarioChange = (id: string) => {
+    setStudioScenarioId(id);
+    caseEngine.current = new PhysiologyKernel(id);
+  };
 
   const onToggleStudioTheme = () => {
     const next = studioTheme === 'dark' ? 'light' : 'dark';
@@ -97,7 +101,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
       setBackRequest(0); setFailed(false); setLoading(true);
       setUrl('https://orbitmbbs.vercel.app/simulator?' + new URLSearchParams({ mode: 'anatomy', scenario: patient.currentScenario.id }).toString());
     }} />);
-  if (nativeMode?.kind === 'ecg') return wrap(<NativeEcgTwelveLead scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />);
+  if (nativeMode?.kind === 'ecg') return wrap(<NativeEcgTwelveLead scenarioId={nativeMode.scenarioId} theme={studioTheme} engine={caseEngine.current || undefined} onBack={returnToNativeStudio} />);
   if (nativeMode?.kind === 'case' && !url) return wrap(<NativeClinicalCase scenarioId={nativeMode.scenarioId}
     engine={caseEngine.current || undefined} onExit={onExit} theme={studioTheme} onToggleTheme={onToggleStudioTheme}
     onScenarioChange={id => { setStudioScenarioId(id); setNativeMode({ kind: 'case', scenarioId: id }); }}
@@ -114,9 +118,9 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   if (nativeMode?.kind === 'clubbing') return wrap(<NativeClubbingTrainer onBack={returnToNativeStudio} />);
 
   if (!url) {
-    return wrap(<NativeClinicalStudio onExit={onExit} scenarioId={studioScenarioId} onScenarioChange={setStudioScenarioId} theme={studioTheme} onToggleTheme={onToggleStudioTheme} onOpen={destination => {
+    return wrap(<NativeClinicalStudio onExit={onExit} scenarioId={studioScenarioId} onScenarioChange={onStudioScenarioChange} theme={studioTheme} onToggleTheme={onToggleStudioTheme} onOpen={destination => {
       if (destination.kind === 'monitor') {
-        caseEngine.current = new PhysiologyKernel(studioScenarioId);
+        if (!caseEngine.current || caseEngine.current.currentScenario.id !== studioScenarioId) caseEngine.current = new PhysiologyKernel(studioScenarioId);
         setNativeMode({ kind: 'monitor', scenarioId: studioScenarioId });
         return;
       }
@@ -127,6 +131,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
         return;
       }
       if (destination.kind === 'tool' && destination.id === 'ecg12') {
+        if (!caseEngine.current || caseEngine.current.currentScenario.id !== destination.scenario) caseEngine.current = new PhysiologyKernel(destination.scenario);
         setNativeMode({ kind: 'ecg', scenarioId: destination.scenario });
         return;
       }
@@ -138,8 +143,10 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
         setNativeMode({ kind: 'clubbing', scenarioId: destination.scenario });
         return;
       }
-      if (destination.kind === 'anatomy') setStudioScenarioId('normal');
-      setInitialPatient(undefined);
+      if (destination.kind === 'anatomy') { setStudioScenarioId('normal'); caseEngine.current = new PhysiologyKernel('normal'); }
+      const nextScenario = destination.kind === 'tool' ? destination.scenario : 'normal';
+      if (!caseEngine.current || caseEngine.current.currentScenario.id !== nextScenario) caseEngine.current = new PhysiologyKernel(nextScenario);
+      setInitialPatient(JSON.stringify(caseEngine.current));
       setRendererTheme(studioTheme);
       setFailed(false);
       setLoading(true);
@@ -173,10 +180,13 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
                 setUrl(null); setFailed(false);
                 if (nativeMode?.kind !== 'case') setNativeMode(null);
               }
-              if (nativeEvent.status === 'patient' && nativeEvent.patient && nativeMode?.kind === 'case' && caseEngine.current) {
-                if (restoreClinicalSnapshot(caseEngine.current, nativeEvent.patient)) {
-                  const id = caseEngine.current.currentScenario.id;
-                  if (nativeMode.scenarioId !== id) { setStudioScenarioId(id); setNativeMode({ kind: 'case', scenarioId: id }); }
+              if (nativeEvent.status === 'patient' && nativeEvent.patient) {
+                const patient = caseEngine.current ?? new PhysiologyKernel(studioScenarioId);
+                if (restoreClinicalSnapshot(patient, nativeEvent.patient)) {
+                  caseEngine.current = patient;
+                  const id = patient.currentScenario.id;
+                  if (studioScenarioId !== id) setStudioScenarioId(id);
+                  if (nativeMode?.kind === 'case' && nativeMode.scenarioId !== id) setNativeMode({ kind: 'case', scenarioId: id });
                 }
               }
               if (nativeEvent.status === 'loading') setLoading(true);

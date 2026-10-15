@@ -14,7 +14,7 @@ import NativeCaseLibrary, { CASE_DAY, CASE_NIGHT } from '@/components/NativeCase
 import { PhysiologyKernel } from '@simulator/engine/PhysiologyKernel';
 import { NATIVE_CLINICAL_ACTIONS } from '@/lib/nativeClinicalActions';
 import NativeIcuMonitor from '@/components/NativeIcuMonitor';
-import { NativeSimulatorHeader, NativeSimulatorTabs } from '@/components/NativeSimulatorChrome';
+import { NativeSimulatorHeader, NativeSimulatorTabs, NativeSimulatorBanner } from '@/components/NativeSimulatorChrome';
 import type { PatientVitals } from '@simulator/types';
 
 type ActionGroup = 'all' | 'resus' | 'cardiac' | 'antidotes' | 'procedures';
@@ -80,7 +80,7 @@ export default function NativeClinicalCase({ scenarioId, onBack, onExit, engine,
 
   return <KeyboardSafe style={[styles.root, { paddingTop: insets.top }]}>
     <View testID="native-clinical-case"><NativeSimulatorHeader theme={theme} vitals={vitals} onExit={onExit ?? onBack} onMonitor={() => setShowMonitor(true)} onToggleTheme={onToggleTheme} /></View>
-    <View style={[styles.findings, { backgroundColor: palette.card }]}><Text style={{ color: palette.accent, fontWeight: '700', fontSize: 13 }}>Case findings · {scenario.title}</Text></View>
+    <NativeSimulatorBanner theme={theme} scenario={scenario} />
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 12, paddingTop: 34, paddingBottom: 20 }}>
       <View style={styles.panel}>
       <NativeCaseLibrary scenarioId={scenario.id} theme={theme} onSelect={id => { patient.setScenario(id); setVitals({ ...patient.getLiveVitals() }); setLogs([...patient.logs]); onScenarioChange?.(id); }} onOpen={query => onOpen?.(query)} />

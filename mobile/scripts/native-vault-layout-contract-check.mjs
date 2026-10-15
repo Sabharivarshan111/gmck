@@ -17,7 +17,7 @@ assert.ok(studio.includes('onScenarioChange(s.id)'), 'Native case selector must 
 assert.ok(studio.includes("alignSelf: 'flex-end', marginTop: 8"), 'Vercel baseline row order must match native');
 assert.ok(screen.includes("AsyncStorage.getItem('orbit-simulator-theme')"), 'Vercel theme preference must persist');
 assert.ok(studio.includes('onToggleTheme'), 'Native theme control must be wired');
-assert.ok(screen.includes('scenarioId={studioScenarioId} onScenarioChange={setStudioScenarioId}'),'case selection not retained across screen navigation');
+assert.ok(screen.includes('scenarioId={studioScenarioId} onScenarioChange={onStudioScenarioChange}'),'case selection not retained across screen navigation');
 assert.ok(screen.includes("setNativeMode({ kind: 'monitor', scenarioId: studioScenarioId })"),'monitor must use selected clinical findings');
 assert.ok(screen.includes('setStudioScenarioId(destination.id)'), 'case selection should persist on return like web');
 console.log('PASS: native studio grid, heading and clinical scenario persistence follow canonical Vercel.');

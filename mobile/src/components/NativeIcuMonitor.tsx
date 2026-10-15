@@ -17,7 +17,7 @@ import CanonicalTeachingOverlay from '@/components/CanonicalTeachingOverlay';
 import { restoreClinicalSnapshot } from '@/lib/clinicalSnapshot';
 import { advanceNativeTelemetry } from '@/lib/nativeIcuSampling';
 import { advanceIcuSweep, createIcuSweep, icuChannelPath } from '@/lib/nativeIcuDisplay';
-import { NativeSimulatorHeader, NativeSimulatorTabs } from '@/components/NativeSimulatorChrome';
+import { NativeSimulatorHeader, NativeSimulatorTabs, NativeSimulatorBanner } from '@/components/NativeSimulatorChrome';
 import { CASE_DAY, CASE_NIGHT } from '@/components/NativeCaseLibrary';
 import type { PatientVitals } from '@simulator/types';
 
@@ -32,7 +32,7 @@ function Metric({ label, secondary, value, color, border, alert, pressure, perce
   label: string; secondary: string; value: string; color: string; border: string; alert?: boolean; pressure?: boolean; percent?: boolean;
 }) {
   return <View style={[styles.metric, { borderColor: border, borderRadius: pressure ? 8 : 12 }]}>
-    <View><Text style={[styles.mono, { color, fontSize: 10, fontWeight: '600', letterSpacing: 1 }]}>{label}</Text>
+    <View><Text style={[styles.mono, { color, fontSize: 12, fontWeight: '600', letterSpacing: 0.6 }]}>{label}</Text>
       <Text style={[styles.mono, { color: '#a6a6af', fontSize: 12, lineHeight: 16 }]}>{secondary}</Text></View>
     <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4 }}><Text style={[styles.mono, { color: alert ? '#ef4444' : color, fontSize: pressure ? 20 : 30, fontWeight: '900', lineHeight: 36 }]}>{value}</Text>{percent && <Text style={[styles.mono, { color: '#a6a6af', fontSize: 12 }]}>%</Text>}</View>
   </View>;
@@ -129,21 +129,22 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
   return <View testID="native-icu-monitor" style={[styles.screen, { paddingTop: insets.top, backgroundColor: palette.background }]}>
     <StatusBar barStyle={theme === 'light' ? 'dark-content' : 'light-content'} />
     <NativeSimulatorHeader theme={theme} vitals={vitals} onExit={onExit ?? onBack} onMonitor={() => {}} onToggleTheme={onToggleTheme} />
+    <NativeSimulatorBanner theme={theme} scenario={patient.currentScenario} />
     <ScrollView contentContainerStyle={{ paddingHorizontal: 10, paddingTop: 34, paddingBottom: 150 }} showsVerticalScrollIndicator={false}>
       <View style={[styles.monitor, { height: stageHeight, backgroundColor: theme === 'light' ? '#0f172a' : '#050811' }]}>
         <View style={styles.main}>
           <View style={[styles.statusShell, { backgroundColor: theme === 'light' ? '#0f172a' : '#0e0e11' }]}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.status} testID="native-icu-status-controls">
-              <View style={styles.statusDot} /><Text style={[styles.mono, { color: '#34d399', fontSize: 10, fontWeight: '700' }]}>SWEEP 25 mm/s</Text>
-              <Text style={{ color: theme === 'dark' ? '#a6a6af' : '#475569', fontSize: 10 }}>|</Text>
-              <Text testID="native-icu-rhythm" style={{ color: '#cbd5e1', fontSize: 10 }}>Rhythm: <Text style={{ color: rhythm === 'vfib' || rhythm === 'vtach' ? '#ef4444' : rhythm.includes('stemi') ? '#fbbf24' : '#34d399', fontWeight: '900' }}>{rhythm.toUpperCase().replace('_', ' ')}</Text></Text>
-              <Pressable accessibilityRole="button" accessibilityLabel="Open ICU tutorial" onPress={() => setTutorialOpen(true)} style={styles.tutorial}><GraduationCap size={14} color="#fda4af" /><Text style={{ color: '#fda4af', fontSize: 10, fontWeight: '700' }}>🎓 Tutorial</Text></Pressable>
-              <Pressable accessibilityRole="switch" accessibilityState={{ checked: audioEnabled, disabled: !OrbitSound }} accessibilityLabel={audioEnabled ? 'Mute monitor tone' : 'Enable monitor tone'} disabled={!OrbitSound} onPress={() => setAudioEnabled(value => !value)} style={[styles.tone, { backgroundColor: audioEnabled ? '#022c2299' : '#1b1b21', borderColor: audioEnabled ? '#10b981' : '#34343a' }]}><Text style={{ color: audioEnabled ? '#6ee7b7' : '#a6a6af', fontSize: 10, fontWeight: '600' }}>{audioEnabled ? '🔊 Tone ON' : '🔇 Muted'}</Text></Pressable>
+              <View style={styles.statusDot} /><Text style={[styles.mono, { color: '#34d399', fontSize: 12, fontWeight: '700' }]}>SWEEP 25 mm/s</Text>
+              <Text style={{ color: theme === 'dark' ? '#a6a6af' : '#475569', fontSize: 12 }}>|</Text>
+              <Text testID="native-icu-rhythm" style={{ color: '#cbd5e1', fontSize: 12 }}>Rhythm: <Text style={{ color: rhythm === 'vfib' || rhythm === 'vtach' ? '#ef4444' : rhythm.includes('stemi') ? '#fbbf24' : '#34d399', fontWeight: '900' }}>{rhythm.toUpperCase().replace('_', ' ')}</Text></Text>
+              <Pressable accessibilityRole="button" accessibilityLabel="Open ICU tutorial" onPress={() => setTutorialOpen(true)} style={styles.tutorial}><GraduationCap size={14} color="#fda4af" /><Text style={{ color: '#fda4af', fontSize: 12, fontWeight: '700' }}>🎓 Tutorial</Text></Pressable>
+              <Pressable accessibilityRole="switch" accessibilityState={{ checked: audioEnabled, disabled: !OrbitSound }} accessibilityLabel={audioEnabled ? 'Mute monitor tone' : 'Enable monitor tone'} disabled={!OrbitSound} onPress={() => setAudioEnabled(value => !value)} style={[styles.tone, { backgroundColor: audioEnabled ? '#022c2299' : '#1b1b21', borderColor: audioEnabled ? '#10b981' : '#34343a' }]}><Text style={{ color: audioEnabled ? '#6ee7b7' : '#a6a6af', fontSize: 12, fontWeight: '600' }}>{audioEnabled ? '🔊 Tone ON' : '🔇 Muted'}</Text></Pressable>
             </ScrollView>
           </View>
           <View testID="native-icu-four-waveforms" style={styles.waveContainer}>
             <Svg width="100%" height="100%" viewBox="0 0 720 360" preserveAspectRatio="none">{CHANNELS.map((c, i) => <Path key={c.key} d={paths[i]} stroke={c.color} strokeWidth={2} fill="none" />)}</Svg>
-            {CHANNELS.map(c => <View pointerEvents="none" key={c.key} style={[styles.channelLabel, { top: c.top }]}><Text style={[styles.mono, { fontSize: 10, color: theme === 'light' && c.key === 'plethY' ? '#22d3ee' : c.labelColor, fontWeight: '700' }]}>{c.label}</Text><Text style={[styles.mono, { fontSize: 10, color: '#a6a6af' }]}>{c.note}</Text></View>)}
+            {CHANNELS.map(c => <View pointerEvents="none" key={c.key} style={[styles.channelLabel, { top: c.top }]}><Text style={[styles.mono, { fontSize: 12, color: theme === 'light' && c.key === 'plethY' ? '#22d3ee' : c.labelColor, fontWeight: '700' }]}>{c.label}</Text><Text style={[styles.mono, { fontSize: 12, color: '#a6a6af' }]}>{c.note}</Text></View>)}
           </View>
         </View>
         <View style={styles.numbers}>
@@ -158,7 +159,7 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
           <View style={styles.secondary}>
             {([{ label: 'CVP', value: vitals.cvp.toFixed(1), color: theme === 'dark' ? '#e784fb' : '#38bdf8' },
                { label: 'TEMP', value: vitals.temperature.toFixed(1) + '°', color: '#cbd5e1' },
-               { label: 'LACTATE', value: vitals.lactate.toFixed(1), color: vitals.lactate > 4 ? '#f59e0b' : '#cbd5e1' }]).map((metric, i) => <React.Fragment key={metric.label}>{i > 0 && <Text style={[styles.mono, { color: '#334155', fontSize: 12 }]}>|</Text>}<View style={{ flex: 1, alignItems: 'center' }}><Text style={[styles.mono, { color: '#a6a6af', fontSize: 9, lineHeight: 14 }]}>{metric.label}</Text><Text style={[styles.mono, { color: metric.color, fontSize: 12, fontWeight: '700', lineHeight: 16 }]}>{metric.value}</Text></View></React.Fragment>)}
+               { label: 'LACTATE', value: vitals.lactate.toFixed(1), color: vitals.lactate > 4 ? '#f59e0b' : '#cbd5e1' }]).map((metric, i) => <React.Fragment key={metric.label}>{i > 0 && <Text style={[styles.mono, { color: '#334155', fontSize: 12 }]}>|</Text>}<View style={{ flex: 1, alignItems: 'center' }}><Text style={[styles.mono, { color: '#a6a6af', fontSize: 12, lineHeight: 16 }]}>{metric.label}</Text><Text style={[styles.mono, { color: metric.color, fontSize: 12, fontWeight: '700', lineHeight: 16 }]}>{metric.value}</Text></View></React.Fragment>)}
           </View>
         </View>
       </View>
@@ -169,7 +170,7 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
 }
 const styles = StyleSheet.create({
   screen: { flex: 1 },
-  mono: { fontFamily: 'monospace' },
+  mono: { fontFamily: 'monospace', lineHeight: 18 },
   monitor: { borderWidth: 1, borderColor: '#34343a', borderRadius: 16, overflow: 'hidden' },
   main: { flex: 1, minHeight: 0, padding: 8 },
   statusShell: { borderWidth: 1, borderColor: '#34343a', borderRadius: 12, overflow: 'hidden' },

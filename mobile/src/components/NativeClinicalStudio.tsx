@@ -5,9 +5,9 @@
  * and SimulatorStudio.css. This file intentionally uses React Native Views,
  * Pressables and TextInputs instead of HTML or a WebView.
  *
- * Deep anatomy, ultrasound, imaging and telemetry ARE NOT ported yet.
- * Do not ship this component as "complete native parity"; it is the first
- * independently auditable native screen.
+ * Case controls, ICU, ECG and radiology use native views. Anatomy and advanced
+ * diagnostic teaching use the locally bundled canonical renderer and pinned
+ * geometry cache. Complete device parity requires actual screenshot review.
  */
 import React, { useMemo, useState } from 'react';
 import {
