@@ -19,6 +19,10 @@ permissions:
 
 jobs:
   controls:
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [eye, auscultation, pocus, general]
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
@@ -112,7 +116,7 @@ jobs:
           profile: pixel_7_pro
           emulator-boot-timeout: 300
           disable-animations: true
-          emulator-options: -no-window -gpu swiftshader_indirect -feature -Vulkan -memory 3072 -cores 2 -noaudio -no-boot-anim
+          emulator-options: -no-window -gpu software -feature -Vulkan -memory 3072 -cores 2 -noaudio -no-boot-anim
           script: |
             adb shell wm size 1179x2556
             adb shell wm density 480
@@ -120,7 +124,7 @@ jobs:
             bash mobile/scripts/build-ui-dump.sh
             adb shell wm size > artifacts/native-vault-parity/android-display-size.txt
             adb shell wm density > artifacts/native-vault-parity/android-display-density.txt
-            ORBIT_UI_HELPER=1 ORBIT_SCREENSHOT_OUT=artifacts/native-vault-parity python3 mobile/scripts/native_advanced_skills.py
+            ORBIT_ADVANCED_SUITE=${{ matrix.suite }} ORBIT_UI_HELPER=1 ORBIT_SCREENSHOT_OUT=artifacts/native-vault-parity python3 mobile/scripts/native_advanced_skills.py
 
       - name: Preserve host diagnostics for an emulator process exit
         if: always()
@@ -133,7 +137,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: native-548-advanced-${{ github.sha }}
+          name: native-548-advanced-${{ matrix.suite }}-${{ github.sha }}
           path: artifacts/native-vault-parity/
           if-no-files-found: warn
           retention-days: 14

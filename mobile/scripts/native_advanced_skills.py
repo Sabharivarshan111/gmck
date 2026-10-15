@@ -1,5 +1,5 @@
 """Interact through actual Android UI; inspector reads state without modifying it."""
-import json, subprocess, time, xml.etree.ElementTree as ET
+import os, json, subprocess, time, xml.etree.ElementTree as ET
 from native_screenshot_driver import OUT, adb, tap, wait_visible, shot, dump_ui, scroll_to_tappable, find_nodes, visible, screen_size
 from native_diagnostic_controls import open_skill, adjust_slider
 
@@ -112,6 +112,8 @@ def general():
 
 checks=[];failures=[]
 for name,suite in [('eye',eye),('auscultation',auscultation),('pocus',pocus),('general',general)]:
+    if os.environ.get('ORBIT_ADVANCED_SUITE') and name != os.environ['ORBIT_ADVANCED_SUITE']:
+        continue
     try:checks.append({'suite':name,'passed':True,'details':suite()})
     except Exception as e:
         failures.append({'suite':name,'error':repr(e)})
