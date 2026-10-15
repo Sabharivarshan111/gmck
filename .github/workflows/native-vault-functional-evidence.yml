@@ -54,6 +54,7 @@ jobs:
             const allowed=new Set([
               '.github/workflows/native-vault-functional-evidence.yml',
               'mobile/scripts/native_diagnostic_controls.py',
+              'mobile/scripts/native_screenshot_driver.py',
               'mobile/scripts/native-teaching-browser-check.mjs',
               'mobile/scripts/run_native_diagnostic_captures.py',
               'mobile/scripts/ui-dump/UiDump.java',
