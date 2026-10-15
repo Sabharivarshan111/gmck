@@ -4,7 +4,7 @@
  * A complete 3D anatomy/diagnostics port remains a separate deliverable.
  */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { AppState, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { AppState, BackHandler, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useIsFocused } from '@react-navigation/native';
 import { Text } from '@/components/Text';
@@ -14,6 +14,9 @@ import NativeCaseLibrary, { CASE_DAY, CASE_NIGHT } from '@/components/NativeCase
 import { PhysiologyKernel } from '@simulator/engine/PhysiologyKernel';
 import { NATIVE_CLINICAL_ACTIONS } from '@/lib/nativeClinicalActions';
 import NativeIcuMonitor from '@/components/NativeIcuMonitor';
+import NativeEcgTwelveLead from '@/components/NativeEcgTwelveLead';
+import NativeRadiologyViewer from '@/components/NativeRadiologyViewer';
+import NativeClubbingTrainer from '@/components/NativeClubbingTrainer';
 import { NativeSimulatorHeader, NativeSimulatorTabs, NativeSimulatorBanner } from '@/components/NativeSimulatorChrome';
 import type { PatientVitals } from '@simulator/types';
 
@@ -39,6 +42,7 @@ export default function NativeClinicalCase({ scenarioId, onBack, onExit, engine,
   const [vitals, setVitals] = useState<PatientVitals>(() => ({ ...patient.getLiveVitals() }));
   const [group, setGroup] = useState<ActionGroup>('all');
   const [showMonitor, setShowMonitor] = useState(false);
+  const [nativeTool, setNativeTool] = useState<'ecg12' | 'radiology' | 'clubbing' | null>(null);
   const [logs, setLogs] = useState<string[]>(() => [...patient.logs]);
 
   useEffect(() => {
@@ -48,14 +52,25 @@ export default function NativeClinicalCase({ scenarioId, onBack, onExit, engine,
   }, [scenarioId, patient]);
 
   useEffect(() => {
-    if (showMonitor || !focused) return;
+    if (showMonitor || nativeTool || !focused) return;
     const t = setInterval(() => {
       if (AppState.currentState !== 'active') return;
       patient.tick(0.125);
       setVitals({ ...patient.getLiveVitals() });
     }, 125);
     return () => clearInterval(t);
-  }, [showMonitor, focused, patient]);
+  }, [showMonitor, nativeTool, focused, patient]);
+
+  useEffect(() => {
+    if (!nativeTool || !focused) return;
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+      setNativeTool(null);
+      setVitals({ ...patient.getLiveVitals() });
+      setLogs([...patient.logs]);
+      return true;
+    });
+    return () => sub.remove();
+  }, [nativeTool, focused, patient]);
 
   const scenario = patient.currentScenario;
   const apply = (actionId: string) => {
@@ -63,6 +78,28 @@ export default function NativeClinicalCase({ scenarioId, onBack, onExit, engine,
     setLogs([...patient.logs]);
     setVitals({ ...patient.getLiveVitals() });
   };
+
+  const openCaseSurface = (query: string) => {
+    const params = new URLSearchParams(query);
+    if (params.get('mode') === 'telemetry') {
+      setShowMonitor(true);
+      return;
+    }
+    const tool = params.get('tool');
+    if (tool === 'ecg12' || tool === 'radiology' || tool === 'clubbing') {
+      setNativeTool(tool);
+      return;
+    }
+    onOpen?.(query);
+  };
+  const closeTool = () => {
+    setNativeTool(null);
+    setVitals({ ...patient.getLiveVitals() });
+    setLogs([...patient.logs]);
+  };
+  if (nativeTool === 'ecg12') return <NativeEcgTwelveLead scenarioId={scenario.id} engine={patient} theme={theme} onBack={closeTool} />;
+  if (nativeTool === 'radiology') return <NativeRadiologyViewer theme={theme} onBack={closeTool} />;
+  if (nativeTool === 'clubbing') return <NativeClubbingTrainer onBack={closeTool} />;
 
   if (showMonitor) return (
     <NativeIcuMonitor
@@ -83,7 +120,7 @@ export default function NativeClinicalCase({ scenarioId, onBack, onExit, engine,
     <NativeSimulatorBanner theme={theme} scenario={scenario} />
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 12, paddingTop: 34, paddingBottom: 20 }}>
       <View style={styles.panel}>
-      <NativeCaseLibrary scenarioId={scenario.id} theme={theme} onSelect={id => { patient.setScenario(id); setVitals({ ...patient.getLiveVitals() }); setLogs([...patient.logs]); onScenarioChange?.(id); }} onOpen={query => onOpen?.(query)} />
+      <NativeCaseLibrary scenarioId={scenario.id} theme={theme} onSelect={id => { patient.setScenario(id); setVitals({ ...patient.getLiveVitals() }); setLogs([...patient.logs]); onScenarioChange?.(id); }} onOpen={openCaseSurface} />
       <Text style={[styles.title, { marginTop: 20, fontSize: 18 }]}>Clinical interventions</Text>
       <ScrollView horizontal style={{ flexGrow: 0, marginTop: 10 }} contentContainerStyle={{ gap: 7, paddingBottom: 5 }} showsHorizontalScrollIndicator={false}>
         {groups.map(item => <Pressable accessibilityRole="button" testID={`native-case-group-${item.id}`} key={item.id} onPress={() => setGroup(item.id)}

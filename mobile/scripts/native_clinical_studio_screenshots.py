@@ -41,6 +41,7 @@ def icu_control(label):
 
 def main():
     results=[]
+    failures=[]
     try:
         launch()
         first_run()
@@ -95,21 +96,29 @@ def main():
             scroll_to_tappable(metric)
             expect(metric)
         screenshot("05b-android-native-icu-secondary-readings")
-        icu_control("Open ICU tutorial")
-        expect("ECG learning studio", tries=15)
-        screenshot("05c-android-full-icu-tutorial")
-        tap("Leads & axis")
-        expect("One heart. Twelve views.")
-        screenshot("05d-android-icu-lead-axis-lesson")
-        tap("Close ECG tutorial")
-        expect("SWEEP 25 mm/s")
+        try:
+            icu_control("Open ICU tutorial")
+            expect("ECG learning studio", tries=15)
+            screenshot("05c-android-full-icu-tutorial")
+            tap("Leads & axis")
+            expect("One heart. Twelve views.")
+            screenshot("05d-android-icu-lead-axis-lesson")
+            tap("Close ECG tutorial")
+            expect("SWEEP 25 mm/s")
+        except Exception as error:
+            failures.append({'check': 'Canonical ICU tutorial', 'error': str(error)})
+            screenshot('05e-android-tutorial-failure')
+            subprocess.run(['node', 'mobile/scripts/read_android_webview.mjs', str(OUT / '05e-tutorial-failure-dom.json')], check=False, timeout=45)
+            (OUT / '05e-tutorial-failure.xml').write_text(Path('/tmp/window.xml').read_text())
+            adb('shell', 'input', 'keyevent', '4')
+            expect('SWEEP 25 mm/s')
         # The canonical monitor has no pause/reset buttons. Verify its actual
         # bottom tabs and theme controls, keeping the same case engine alive.
         tap("Switch to light theme")
         expect("Switch to dark theme")
         screenshot("06-android-native-icu-light")
         tap("Switch to dark theme")
-        results.append("Canonical ECG/ART/PLETH/CO2, full tutorial, live metrics and ICU theme controls")
+        results.append("Canonical ECG/ART/PLETH/CO2, live metrics and ICU theme controls")
         adb("shell","input","keyevent","4")
         expect("Patient Simulator")
         screenshot("07-android-case-return-preserved")
@@ -212,6 +221,8 @@ def main():
         tap("Close clubbing skill")
         results.append("Offline clubbing reference, examination findings and viva reveal")
         print("All successfully exercised UI steps:",results)
+        if failures:
+            raise RuntimeError('Incomplete native functional checks: ' + json.dumps(failures))
     except Exception as exc:
         print("FAIL in real Android UI automation:",repr(exc))
         try:
@@ -227,7 +238,7 @@ def main():
     finally:
         adb("shell","svc","wifi","enable",check=False)
         adb("shell","svc","data","enable",check=False)
-        (OUT/"native-ui-audit.json").write_text(json.dumps({"passed":results},indent=2))
+        (OUT/"native-ui-audit.json").write_text(json.dumps({"passed":results,"failures":failures},indent=2))
 
 if __name__=="__main__":
     main()
