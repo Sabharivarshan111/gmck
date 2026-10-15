@@ -13,11 +13,12 @@ import { useIsFocused } from '@react-navigation/native';
 import { Text } from '@/components/Text';
 import { PhysiologyKernel, SCENARIOS } from '@simulator/engine/PhysiologyKernel';
 import OrbitSound from '@/native/NativeOrbitSound';
+import { advanceNativeTelemetry, NATIVE_ICU_BUFFER_LENGTH } from '@/lib/nativeIcuSampling';
 import type { PatientVitals, TelemetryWaveformSample } from '@simulator/types';
 
 const W = 340;
 const H = 360;
-const BUFFER_LENGTH = 164;
+const BUFFER_LENGTH = NATIVE_ICU_BUFFER_LENGTH;
 type Channel = keyof Pick<TelemetryWaveformSample, 'ecg' | 'artLine' | 'pleth' | 'capno'>;
 type SampleBuffer = TelemetryWaveformSample[];
 const CHANNELS: { key: Channel; label: string; note: string; color: string; channel: number }[] = [
@@ -112,17 +113,11 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
       const now = Date.now();
       const dt = Math.min(0.25, Math.max(0.01, (now - last) / 1000));
       last = now;
-      const next: SampleBuffer = [];
-      const slices = Math.max(1, Math.min(15, Math.round(dt / 0.012)));
-      for (let i = 0; i < slices; i++) {
-        patient.tick(dt / slices);
-        const sample = patient.sampleWaveforms();
-        next.push(sample);
-        // Source monitor beeps on the R wave, at most once every 400ms.
-        if (audioEnabled && sample.ecg > 1.0 && now - lastBeep.current > 400) {
-          lastBeep.current = now;
-          OrbitSound?.monitorBeep(Math.max(300, 780 * patient.getLiveVitals().spo2 / 100));
-        }
+      const next = advanceNativeTelemetry(patient, dt);
+      // Resolve the R wave before decimating UI updates; one beep per beat.
+      if (audioEnabled && next.some(sample => sample.ecg > 1.0) && now - lastBeep.current > 400) {
+        lastBeep.current = now;
+        OrbitSound?.monitorBeep(Math.max(300, 780 * patient.getLiveVitals().spo2 / 100));
       }
       setSamples(previous => [...previous, ...next].slice(-BUFFER_LENGTH));
       setVitals({ ...patient.getLiveVitals() });

@@ -2318,3 +2318,5 @@ Core local renderer ~3.64MB; exact SHA-pinned private persistent model cache. De
 
 ### DO NOT
 - Do not call PCM playback proof speaker-audibility proof. Do not claim current debug-537 contains the follow-up ICU changes. Do not cancel the active anatomy audit by pushing follow-up runtime changes to its branch.
+
+ICU follow-up regression found during phase sweep: original~83Hz sampling missed all R peaks for18% normal and22% STEMI initial phases. New pure advanceNativeTelemetry samples at250Hz, preserves the~1.97s display window and exact elapsed patient time; regression across100 starting phases per normal/STEMI now passes. Added to Android CI. ec122b89 was the initial ICU commit; use the newer sampling follow-up build, not its superseded build538.
