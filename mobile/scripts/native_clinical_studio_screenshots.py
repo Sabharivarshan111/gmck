@@ -20,6 +20,15 @@ def screenshot(name: str):
     if name in ['05c-android-full-icu-tutorial', '05d-android-icu-lead-axis-lesson']:
         subprocess.run(['node', 'mobile/scripts/read_android_webview.mjs', str(OUT / (name + '-dom.json'))], check=False, timeout=45)
 
+def press(label):
+    if not visible(label):
+        for _ in range(10):
+            scroll_up()
+            if visible(label):
+                break
+    scroll_to_tappable(label)
+    tap(label)
+
 def icu_control(label):
     # Canonical mobile ICU has a horizontal status bar. Reach its real buttons
     # with a gesture inside that bar, rather than scrolling the whole page.
@@ -105,14 +114,14 @@ def main():
             expect("One heart. Twelve views.")
             screenshot("05d-android-icu-lead-axis-lesson")
             tap("Close ECG tutorial")
-            expect("SWEEP 25 mm/s")
+            expect("Open ICU tutorial")
         except Exception as error:
             failures.append({'check': 'Canonical ICU tutorial', 'error': str(error)})
             screenshot('05e-android-tutorial-failure')
             subprocess.run(['node', 'mobile/scripts/read_android_webview.mjs', str(OUT / '05e-tutorial-failure-dom.json')], check=False, timeout=45)
             (OUT / '05e-tutorial-failure.xml').write_text(Path('/tmp/window.xml').read_text())
             adb('shell', 'input', 'keyevent', '4')
-            expect('SWEEP 25 mm/s')
+            expect('Open ICU tutorial')
         # The canonical monitor has no pause/reset buttons. Verify its actual
         # bottom tabs and theme controls, keeping the same case engine alive.
         tap("Switch to light theme")
@@ -187,25 +196,24 @@ def main():
         tap("Next →")
         expect("Large left pneumothorax")
         screenshot("13-android-native-xray-case")
-        scroll_to_tappable("Brain MRI")
-        tap("Brain MRI")
+        press("Brain MRI")
         scroll_to_tappable("Slice")
         expect("Slice 57 / 112")
         time.sleep(2)
+        scroll_to_tappable("axial MRI slice 57")
         expect("axial MRI slice 57")
         screenshot("14-android-offline-native-mri-axial")
-        scroll_to_tappable("Coronal")
-        tap("Coronal")
+        press("Coronal")
         expect("Slice 65 / 128")
+        scroll_to_tappable("coronal MRI slice 65")
         expect("coronal MRI slice 65")
         screenshot("15-android-offline-native-mri-coronal")
-        scroll_to_tappable("Sagittal")
-        tap("Sagittal")
+        press("Sagittal")
         expect("Slice 57 / 112")
+        scroll_to_tappable("sagittal MRI slice 57")
         expect("sagittal MRI slice 57")
         screenshot("16-android-offline-native-mri-sagittal")
-        scroll_to_tappable("Full screen")
-        tap("Full screen")
+        press("Full screen")
         expect("Close full screen")
         screenshot("17-android-native-radiology-fullscreen")
         tap("Close full screen")

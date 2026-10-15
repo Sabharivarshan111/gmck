@@ -163,7 +163,7 @@ def radiology(results):
     results.append({'check': 'Offline MRI slice adjustment', 'passed': True, **adjust_slider('MRI slice', .7)})
     for plane in ['Axial', 'Coronal', 'Sagittal']:
         press(plane)
-        scroll_to_tappable('MRI slice')
+        scroll_to_tappable(plane.lower() + ' MRI slice')
         wait_visible(plane.lower() + ' MRI slice', tries=15)
         shot('extra-native-mri-' + plane.lower())
     for _ in range(2):
