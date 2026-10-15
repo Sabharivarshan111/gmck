@@ -116,13 +116,17 @@ def visible(needle: str) -> bool:
 
 
 def tap(needle: str, required: bool = True) -> bool:
-    nodes = find_nodes(needle)
+    nodes = []
     clickable = []
     for node, (x1,y1,x2,y2) in reachable_nodes(dump_ui()):
         label = node_label(node)
-        if needle.lower() not in label.lower() or node.get('clickable') != 'true' or node.get('enabled') == 'false':
+        if needle.lower() not in label.lower():
             continue
-        clickable.append(((x2-x1)*(y2-y1),(x1+x2)//2,(y1+y2)//2,label))
+        item = ((x2-x1)*(y2-y1),(x1+x2)//2,(y1+y2)//2,label)
+        nodes.append(item)
+        if node.get('clickable') == 'true' and node.get('enabled') != 'false':
+            clickable.append(item)
+    nodes.sort()
     if clickable:
         exact = [node for node in clickable if node[3].lower() == needle.lower()]
         nodes = sorted(exact or clickable)
