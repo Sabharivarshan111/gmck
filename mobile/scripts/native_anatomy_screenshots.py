@@ -64,12 +64,21 @@ def capture_details(target, path, bounds, reference=False):
         return []
     prefix = 'anatomy-vercel-' if reference else 'anatomy-android-'
     details = []
-    # Mobile starts with a compact selected-structure strip. Open its actual
-    # details action before locating the sheet tabs.
-    if any('Open selected structure anatomy details' in node_label(n) for n in dump_ui().iter('node')):
-        tap('Open selected structure anatomy details')
+    # Read layout before any accessibility service handoff. One hierarchy
+    # snapshot owns the optional selection-strip tap, avoiding a second lookup.
     if os.environ.get('ORBIT_ANATOMY_LAYOUT_PROBE') == '1':
-        subprocess.run(['node', 'mobile/scripts/read_android_webview.mjs', str(OUT / (prefix + target['id'] + '-dom.json'))], check=False, timeout=45)
+        subprocess.run(['node', 'mobile/scripts/read_android_webview.mjs', str(OUT / (prefix + target['id'] + '-before-dom.json'))], check=False, timeout=45)
+    root = dump_ui()
+    ET.ElementTree(root).write(OUT / (prefix + target['id'] + '-before.xml'))
+    for node in root.iter('node'):
+        if 'Open selected structure anatomy details' in node_label(node):
+            center = bounds_center(node.get('bounds', ''))
+            if center:
+                adb('shell', 'input', 'tap', str(center[0]), str(center[1]))
+                time.sleep(2)
+                break
+    if os.environ.get('ORBIT_ANATOMY_LAYOUT_PROBE') == '1':
+        subprocess.run(['node', 'mobile/scripts/read_android_webview.mjs', str(OUT / (prefix + target['id'] + '-after-dom.json'))], check=False, timeout=45)
     for label in ['Supply', 'Relations']:
         name = target['id'] + '-' + label.lower()
         candidates = []
