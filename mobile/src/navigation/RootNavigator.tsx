@@ -1,4 +1,5 @@
 import React from 'react';
+import { StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useTheme } from '@/theme';
@@ -44,7 +45,7 @@ export default function RootNavigator() {
       // invokes `tabBar` directly, so passing the component would call it
       // outside React and break its hooks.
       // eslint-disable-next-line react/no-unstable-nested-components
-      tabBar={props => <BottomNav {...props} />}
+      tabBar={props => StyleSheet.flatten(props.descriptors[props.state.routes[props.state.index].key].options.tabBarStyle)?.display === 'none' ? null : <BottomNav {...props} />}
       screenOptions={{ headerShown: false }}>
       <Tab.Screen name="Home" component={HomeNavigator} />
       <Tab.Screen name="Notes" component={NotesScreen} />

@@ -1,42 +1,65 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, AppState, BackHandler, Linking, StyleSheet, View } from 'react-native';
-import { WebView } from 'react-native-webview';
+import { ActivityIndicator, AppState, BackHandler, StatusBar, StyleSheet, View } from 'react-native';
+import LocalSimulator from '@/native/LocalSimulator';
 import { useIsFocused } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '@/components/Text';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Touchable } from '@/components/Touchable';
 import { useTheme } from '@/theme';
 import NativeClinicalStudio from '@/components/NativeClinicalStudio';
 import NativeIcuMonitor from '@/components/NativeIcuMonitor';
 import NativeEcgTwelveLead from '@/components/NativeEcgTwelveLead';
 import NativeClinicalCase from '@/components/NativeClinicalCase';
+import NativeRadiologyViewer from '@/components/NativeRadiologyViewer';
+import NativeClubbingTrainer from '@/components/NativeClubbingTrainer';
+import { PhysiologyKernel } from '@simulator/engine/PhysiologyKernel';
+import { restoreClinicalSnapshot } from '@/lib/clinicalSnapshot';
 import { nativeClinicalRoute } from '@/lib/nativeSimulatorRouting';
-import { simulatorNavigation } from '@/lib/simulatorNavigation';
 
 /**
  * WIP Native Vercel parity migration.
  *
  * The discovery/skill/case selection screen is now actual React Native.
  * ICU telemetry and clinical case interventions are now native and share the
- * site's real physiology engine. Anatomy and the remaining diagnostic tools
- * still use a hosted renderer; do not ship as full native parity.
+ * site's real physiology engine. Radiology renders offline with native Android bitmaps. Anatomy and the remaining
+ * diagnostic tools use the locally bundled canonical WebGL renderer with
+ * checksum-pinned model caching. Device visual parity still needs certification.
  */
 export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const focused = useIsFocused();
-  const web = useRef<WebView<unknown>>(null);
+  const caseEngine = useRef<PhysiologyKernel | null>(null);
+  const [initialPatient, setInitialPatient] = useState<string | undefined>();
   const [url, setUrl] = useState<string | null>(null);
-  const [nativeMode, setNativeMode] = useState<{kind: 'monitor' | 'case' | 'ecg'; scenarioId: string} | null>(null);
+  const [studioScenarioId, setStudioScenarioId] = useState('normal');
+  const [studioTheme, setStudioTheme] = useState<'dark' | 'light'>('dark');
+  const [rendererTheme, setRendererTheme] = useState<'dark' | 'light'>('dark');
+  const [nativeMode, setNativeMode] = useState<{kind: 'monitor' | 'case' | 'ecg' | 'radiology' | 'clubbing'; scenarioId: string} | null>(null);
   const [active, setActive] = useState(AppState.currentState === 'active');
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
-  const [canGoBack, setCanGoBack] = useState(false);
+  const [backRequest, setBackRequest] = useState(0);
+  const wrap = (child: React.ReactNode) => <>{focused && <StatusBar barStyle={nativeMode?.kind === 'monitor' || nativeMode?.kind === 'ecg' ? 'light-content' : studioTheme === 'light' ? 'dark-content' : 'light-content'} />}{child}</>;
   const returnToNativeStudio = () => {
     setUrl(null);
     setNativeMode(null);
     setFailed(false);
-    setCanGoBack(false);
+  };
+
+  useEffect(() => {
+    let mounted = true;
+    AsyncStorage.getItem('orbit-simulator-theme').then(value => {
+      if (mounted && (value === 'dark' || value === 'light')) setStudioTheme(value);
+    }).catch(() => undefined);
+    return () => { mounted = false; };
+  }, []);
+
+  const onToggleStudioTheme = () => {
+    const next = studioTheme === 'dark' ? 'light' : 'dark';
+    setStudioTheme(next);
+    AsyncStorage.setItem('orbit-simulator-theme', next).catch(() => undefined);
   };
 
   useEffect(() => {
@@ -47,30 +70,43 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
       if (!focused) return false;
-      if (nativeMode) {
+      if (url) {
+        setBackRequest(value => value + 1);
+      } else if (nativeMode) {
         setNativeMode(null);
-      } else if (url) {
-        if (canGoBack && web.current) web.current.goBack();
-        else returnToNativeStudio();
       } else {
         onExit();
       }
       return true;
     });
     return () => sub.remove();
-  }, [canGoBack, focused, onExit, url, nativeMode]);
+  }, [focused, onExit, url, nativeMode]);
 
-  if (nativeMode?.kind === 'monitor') return <NativeIcuMonitor scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />;
-  if (nativeMode?.kind === 'ecg') return <NativeEcgTwelveLead scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />;
-  if (nativeMode?.kind === 'case') return <NativeClinicalCase scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />;
+  if (nativeMode?.kind === 'monitor') return wrap(<NativeIcuMonitor scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />);
+  if (nativeMode?.kind === 'ecg') return wrap(<NativeEcgTwelveLead scenarioId={nativeMode.scenarioId} onBack={returnToNativeStudio} />);
+  if (nativeMode?.kind === 'case' && !url) return wrap(<NativeClinicalCase scenarioId={nativeMode.scenarioId}
+    engine={caseEngine.current || undefined} theme={studioTheme} onToggleTheme={onToggleStudioTheme}
+    onScenarioChange={id => { setStudioScenarioId(id); setNativeMode({ kind: 'case', scenarioId: id }); }}
+    onOpen={query => {
+      setRendererTheme(studioTheme);
+      setInitialPatient(JSON.stringify(caseEngine.current));
+      setBackRequest(0); setFailed(false); setLoading(true);
+      setUrl('https://orbitmbbs.vercel.app/simulator?' + query);
+    }} onBack={returnToNativeStudio} />);
+
+  if (nativeMode?.kind === 'radiology') return wrap(<NativeRadiologyViewer theme={studioTheme} onBack={returnToNativeStudio} />);
+
+  if (nativeMode?.kind === 'clubbing') return wrap(<NativeClubbingTrainer theme={studioTheme} onBack={returnToNativeStudio} />);
 
   if (!url) {
-    return <NativeClinicalStudio onExit={onExit} onOpen={destination => {
+    return wrap(<NativeClinicalStudio onExit={onExit} scenarioId={studioScenarioId} onScenarioChange={setStudioScenarioId} theme={studioTheme} onToggleTheme={onToggleStudioTheme} onOpen={destination => {
       if (destination.kind === 'monitor') {
-        setNativeMode({ kind: 'monitor', scenarioId: 'normal' });
+        setNativeMode({ kind: 'monitor', scenarioId: studioScenarioId });
         return;
       }
       if (destination.kind === 'case') {
+        setStudioScenarioId(destination.id);
+        caseEngine.current = new PhysiologyKernel(destination.id);
         setNativeMode({ kind: 'case', scenarioId: destination.id });
         return;
       }
@@ -78,49 +114,58 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
         setNativeMode({ kind: 'ecg', scenarioId: destination.scenario });
         return;
       }
+      if (destination.kind === 'tool' && destination.id === 'radiology') {
+        setNativeMode({ kind: 'radiology', scenarioId: destination.scenario });
+        return;
+      }
+      if (destination.kind === 'tool' && destination.id === 'clubbing') {
+        setNativeMode({ kind: 'clubbing', scenarioId: destination.scenario });
+        return;
+      }
+      if (destination.kind === 'anatomy') setStudioScenarioId('normal');
+      setInitialPatient(undefined);
+      setRendererTheme(studioTheme);
       setFailed(false);
       setLoading(true);
-      setCanGoBack(false);
+      setBackRequest(0);
       setUrl(nativeClinicalRoute(destination));
-    }} />;
+    }} />);
   }
 
-  return (
-    <View style={[styles.screen, { backgroundColor: colors.background, paddingTop: insets.top }]}>
-      {focused && active && !failed ? (
+  return wrap(
+    <View style={[styles.screen, { backgroundColor: studioTheme==='light'?'#f7f7fa':'#000', paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+      {!failed ? (
         <View style={styles.screen}>
-          <WebView<unknown>
-            ref={web}
-            testID="orbit-simulator-deep-module-temporary-web"
-            source={{ uri: url }}
+          <LocalSimulator
+            testID="orbit-local-anatomy-renderer"
+            route={url.replace('https://orbitmbbs.vercel.app', '') + '&nativeTheme=' + rendererTheme}
+            initialPatient={initialPatient}
+            active={focused && active}
+            backRequest={backRequest}
             style={[styles.screen, { backgroundColor: colors.background }]}
-            javaScriptEnabled
-            domStorageEnabled
-            originWhitelist={['https://*', 'about:blank']}
-            mixedContentMode="never"
-            allowFileAccess={false}
-            setSupportMultipleWindows={false}
-            mediaPlaybackRequiresUserAction
-            allowsInlineMediaPlayback
-            incognito
-            cacheEnabled={false}
-            cacheMode="LOAD_NO_CACHE"
-            onLoadStart={() => { setLoading(true); }}
-            onLoadEnd={() => setLoading(false)}
-            onError={() => { setFailed(true); setLoading(false); }}
-            onHttpError={({ nativeEvent }) => {
-              if (nativeEvent.url.startsWith('https://orbitmbbs.vercel.app/simulator') && nativeEvent.statusCode >= 400) {
-                setFailed(true);
-                setLoading(false);
+            onStatus={({ nativeEvent }) => {
+              if (nativeEvent.status === 'vault') onExit();
+              if (nativeEvent.status === 'patient' && nativeEvent.patient) {
+                try {
+                  const theme = JSON.parse(nativeEvent.patient).nativeTheme;
+                  if ((theme === 'light' || theme === 'dark') && theme !== studioTheme) {
+                    setStudioTheme(theme); AsyncStorage.setItem('orbit-simulator-theme', theme).catch(() => undefined);
+                  }
+                } catch { /* Incomplete bridge message. */ }
               }
-            }}
-            onRenderProcessGone={() => { setFailed(true); setLoading(false); }}
-            onNavigationStateChange={state => setCanGoBack(state.canGoBack)}
-            onShouldStartLoadWithRequest={request => {
-              const action = simulatorNavigation(request.url);
-              if (action === 'vault') onExit();
-              if (action === 'external') void Linking.openURL(request.url).catch(() => undefined);
-              return action === 'allow';
+              if (nativeEvent.status === 'exit') {
+                setUrl(null); setFailed(false);
+                if (nativeMode?.kind !== 'case') setNativeMode(null);
+              }
+              if (nativeEvent.status === 'patient' && nativeEvent.patient && nativeMode?.kind === 'case' && caseEngine.current) {
+                if (restoreClinicalSnapshot(caseEngine.current, nativeEvent.patient)) {
+                  const id = caseEngine.current.currentScenario.id;
+                  if (nativeMode.scenarioId !== id) { setStudioScenarioId(id); setNativeMode({ kind: 'case', scenarioId: id }); }
+                }
+              }
+              if (nativeEvent.status === 'loading') setLoading(true);
+              if (nativeEvent.status === 'ready') setLoading(false);
+              if (nativeEvent.status === 'error') { setFailed(true); setLoading(false); }
             }}
           />
           {loading && <View pointerEvents="none" style={[styles.loading, { backgroundColor: colors.background }]}>
@@ -131,7 +176,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
       ) : (
         <View style={styles.message}>
           <Text style={{ color: colors.text }}>{failed ?
-            'This advanced interactive tool still uses the online renderer during the native port. Reconnect and retry, or return to the native studio.' :
+            'The interactive renderer could not open. Retry or return to the studio. Anatomy models need an initial connection, then remain cached on this device.' :
             'The teaching module pauses while ORBIT is in the background.'}</Text>
           {failed && <Touchable label="Retry simulator" onPress={() => { setFailed(false); setLoading(true); }} style={[styles.retry, { backgroundColor: colors.accent }]}>
             <Text style={{ color: colors.onAccent }}>Try again</Text>

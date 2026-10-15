@@ -27,6 +27,7 @@ class MainApplication : Application(), ReactApplication {
           add(BillingPackage())
           add(ApkgPackage())
           add(PgBankPackage())
+          add(RadiologyPackage())
           // A view, not a module — see GlassViewManager for why that is a
           // different registration path under the New Architecture.
           add(GlassPackage())

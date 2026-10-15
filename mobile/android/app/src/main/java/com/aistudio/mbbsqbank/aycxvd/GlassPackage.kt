@@ -24,5 +24,5 @@ class GlassPackage : BaseReactPackage() {
 
   override fun createViewManagers(
     reactContext: ReactApplicationContext
-  ): List<ViewManager<*, *>> = listOf(GlassViewManager())
+  ): List<ViewManager<*, *>> = listOf(GlassViewManager(), SimulatorViewManager())
 }

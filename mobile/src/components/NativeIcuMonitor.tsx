@@ -5,10 +5,11 @@
  * web tutorial/audio controls are tracked separately as not yet ported.
  */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { AppState, Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { AppState, BackHandler, Pressable, ScrollView, StatusBar, StyleSheet, View, useWindowDimensions } from 'react-native';
 import Svg, { Line, Path } from 'react-native-svg';
 import { ArrowLeft, RotateCcw } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useIsFocused } from '@react-navigation/native';
 import { Text } from '@/components/Text';
 import { PhysiologyKernel, SCENARIOS } from '@simulator/engine/PhysiologyKernel';
 import type { PatientVitals, TelemetryWaveformSample } from '@simulator/types';
@@ -26,14 +27,10 @@ const CHANNELS: { key: Channel; label: string; note: string; color: string; chan
 ];
 
 const fmt = (n: number) => String(Math.round(n));
-const initialBuffer = (engine: PhysiologyKernel): SampleBuffer => {
-  const samples: SampleBuffer = [];
-  for (let i = 0; i < BUFFER_LENGTH; i++) {
-    engine.tick(0.012);
-    samples.push(engine.sampleWaveforms());
-  }
-  return samples;
-};
+// A monitor must not advance the patient's clock simply by being opened.
+// Fill the display with real incoming samples; a new trace starts empty.
+const initialBuffer = (): SampleBuffer => [];
+
 const scaleValue = (s: TelemetryWaveformSample, channel: Channel): number => {
   if (channel === 'ecg') return s.ecg / 1.7;
   if (channel === 'artLine') return (s.artLine - 80) / 95;
@@ -72,14 +69,24 @@ export interface NativeIcuMonitorProps {
 
 export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack }: NativeIcuMonitorProps) {
   const { width } = useWindowDimensions();
+  const focused = useIsFocused();
   const insets = useSafeAreaInsets();
   const kernel = useRef(engine ?? new PhysiologyKernel(scenarioId));
   const [vitals, setVitals] = useState<PatientVitals>(() => ({ ...kernel.current.getLiveVitals() }));
   const [rhythm, setRhythm] = useState(() => kernel.current.pathology.ecgRhythm);
-  const [samples, setSamples] = useState<SampleBuffer>(() => initialBuffer(kernel.current));
+  const [samples, setSamples] = useState<SampleBuffer>(() => initialBuffer());
   const [running, setRunning] = useState(true);
   const [active, setActive] = useState(AppState.currentState === 'active');
   const chosen = SCENARIOS.find(s => s.id === scenarioId) ?? SCENARIOS[0];
+
+  useEffect(() => {
+    const back = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (!focused) return false;
+      onBack();
+      return true;
+    });
+    return () => back.remove();
+  }, [focused, onBack]);
 
   useEffect(() => {
     const sub = AppState.addEventListener('change', state => setActive(state === 'active'));
@@ -89,10 +96,10 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
     if (!engine) kernel.current.setScenario(scenarioId);
     setVitals({ ...kernel.current.getLiveVitals() });
     setRhythm(kernel.current.pathology.ecgRhythm);
-    setSamples(initialBuffer(kernel.current));
+    setSamples(initialBuffer());
   }, [scenarioId, engine]);
   useEffect(() => {
-    if (!running || !active) return;
+    if (!running || !active || !focused) return;
     let last = Date.now();
     const timer = setInterval(() => {
       const now = Date.now();
@@ -109,12 +116,13 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
       setRhythm(kernel.current.pathology.ecgRhythm);
     }, 90);
     return () => clearInterval(timer);
-  }, [running, active]);
+  }, [running, active, focused]);
 
   const paths = useMemo(() => CHANNELS.map(c => channelPath(samples, c.key, c.channel)), [samples]);
   const waveWidth = Math.max(300, Math.min(width - 30, 720));
   return (
-    <View testID="native-icu-monitor" style={[styles.screen, { paddingTop: insets.top }]}>
+    <View testID="native-icu-monitor" style={[styles.screen, { paddingTop: insets.top }]} >
+      <StatusBar barStyle="light-content" />
       <View style={styles.header}>
         <Pressable testID="native-icu-back" accessibilityRole="button" accessibilityLabel="Back to clinical studio" style={styles.headButton} onPress={onBack}>
           <ArrowLeft color="#e2e8f0" size={21} />
@@ -126,7 +134,7 @@ export default function NativeIcuMonitor({ scenarioId = 'normal', engine, onBack
         <Pressable accessibilityRole="button" accessibilityLabel="Reset telemetry" onPress={() => {
           kernel.current.setScenario(scenarioId);
           setRhythm(kernel.current.pathology.ecgRhythm);
-          setSamples(initialBuffer(kernel.current));
+          setSamples(initialBuffer());
           setVitals({ ...kernel.current.getLiveVitals() });
         }} style={styles.headButton}><RotateCcw color="#cbd5e1" size={19} /></Pressable>
       </View>

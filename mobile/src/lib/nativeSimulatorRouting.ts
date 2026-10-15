@@ -1,4 +1,4 @@
-/** Deep links into the existing live Vercel renderer while inner native modules are being ported. */
+/** Canonical simulator routes. Android maps them to its local renderer, retaining Vercel query semantics. */
 export type NativeClinicalDestination =
   | { kind: 'anatomy' | 'monitor' }
   | { kind: 'tool'; id: string; scenario: string }

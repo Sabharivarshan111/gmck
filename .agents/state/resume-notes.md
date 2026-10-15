@@ -2268,3 +2268,36 @@ Publication verified: production deployment dpl_GkLM1DY3bWvVpM2d1YuNp3UN5fPg REA
 DONE: Reproduced a real Google authorize/cancel callback requested from https://orbitmbbs.site/ returning to https://orbitmbbs.vercel.app/. Browser adapter already sends location.origin + '/'; live Supabase Site URL was still the older Vercel origin and redirect allowlist empty. Maintenance workflow .github/workflows/custom-domain-auth.yml uses the existing GitHub Actions Supabase token, changes only site_url and uri_allow_list, and never logs full config/provider secrets. Set live Site URL https://orbitmbbs.site/; exact allowed callbacks https://orbitmbbs.site/, https://www.orbitmbbs.site/, https://orbitmbbs.vercel.app/ and https://orbitmbbs.vercel.app. Existing permissions are preserved. No wildcard added.
 
 Verified: run38588872602 job115938098015 SUCCESS, persisted management config and five genuine Google authorize/cancel callbacks: both custom domains and prior Vercel domain return to their requested origins; missing/untrusted redirect targets return to orbitmbbs.site. Independent local public callback checks for both custom domains also passed HTTP302. No Google account login/session was automated; successful account completion remains untested by agent. Auth configuration takes effect immediately; no website rebuild or new Android build required. PR88 records maintenance workflow. NEXT: no remaining action in redirect scope. DO NOT change OAuth provider credentials, native id-token login or duplicate the already correct browser adapter.
+
+
+## 2026-10-14 — mobile anatomy cache audit in progress (Codex)
+
+User explicitly authorized fixes, pushes, builds and releases; use Vercel MOBILE UI, never desktop browser previews as Android evidence. Audit branch 530a42b fixes ICU pre-advance, nested Back, duplicate timers, hidden app navbar and makes emulator capture independent of Vercel failure. Debug run 38631518367 and screenshot run 38631518741 were still running.
+
+New anatomy work is isolated on codex/native-vault-anatomy-cache-20261014 so the prior device capture can finish. It builds a local canonical simulator from unmodified src/pages/Simulator.tsx (~3.63 MB). Dedicated native WebView surface serves APK JS/CSS and exact checksum-pinned persistent model files via virtual HTTPS. This is embedded WebGL, not a native OpenGL rewrite. First access to each model requires a connection; atlas compressed geometry alone ~31.4 MiB. RN studio/case/ICU/ECG/native-bitmap radiology/clubbing remain RN. All screenshot audits are NOT_CERTIFIED until reviewed. 2381 structures, 15 systems, 36 organ/teaching targets inventoried. Debug-only route intents capture actual Android renderer for each target; matching Vercel mobile captures use its actual viewport. See mobile/docs/vault-anatomy-parity-20261014.md. No final parity merge/release yet.
+
+
+## 2026-10-14 — revised mobile patient / anatomy audit (Codex)
+
+User authorized fixes, pushes, builds/releases; MOBILE Vercel UI only. Debug531 and c897 anatomy debug built. Actual baseline screenshots at /workspace/scratch/9722bfb4a6c4/ORBIT_Android_Mobile_Audit_531. Case DID open; hierarchy CLI failed because continuous vitals prevented idle. New separate com.orbit.qa helper reads live Android accessibility without restarting/freezing target app; excluded from user APK.
+
+RN mobile case now source-style header/HUD,43-case search/departments,badges,layers,diagnostics,bottomtabs. Patient snapshot bridge preserves private targets/phases/vitals/pathology/logs across native case and canonical local anatomy/tools. All43 treated scenarios pass forward/back continuity tests; department data matches source. Latest6 logs, theme/insets/statusbars, themed clubbing/radiology and WebChrome full-screen host corrected.
+
+Core local renderer ~3.64MB; exact SHA-pinned private persistent model cache. Dedicated embedded WebGL, NOT a native OpenGL rewrite. Debug-only Vercel reference runs on same Android WebView/fonts/GPU, blocks third parties/live ads/POSTs. HRA-only views legitimately have empty visible BodyParts3D system lists; corrected readiness waits model downloads and checks model/shader errors. Previous c897 screenshot run superseded. Latest Kotlin/helper compile and device captures pending. PR92 remains NOT_CERTIFIED; no final parity merge/signed production release yet. See mobile/docs/vault-anatomy-parity-20261014.md.
+
+
+## 2026-10-15 — optimized preview device audit repair (Codex)
+
+### DONE
+- Retrieved run38642609848 artifact11936757228. APK debug535 built, and actual emulator screenshot shows real canonical whole-body geometry rendering. All organ route switches/metadata failed because SimulatorViewManager gated QA on BuildConfig.DEBUG, but assemblePreview deliberately sets debuggable=false. Replaced with test-only QA_ENABLED (debug OR preview), leaving internal/release disabled.
+- PR93 browser adapter merged into anatomy branch at389a97d; browser compatibility fix preserved.
+- UI helper had transient No active Android window during onboarding. It now polls10seconds, retrieves interactive application windows, and driver retries reconnects. Added full device logcat to each failed anatomy target and last metadata to readiness errors.
+
+### HALF-DONE
+- No complete paired organ audit yet; old535 captures remain NOT_CERTIFIED. No production merge or signed final release. Dedicated embedded WebGL remains disclosed, not native OpenGL.
+
+### NEXT
+- Build/test updated preview; inspect actual Android/Vercel organ captures and native patient flow. Fix observed UI/function gaps, then production merge/release after verification.
+
+### DO NOT
+- Do not gate preview audit on BuildConfig.DEBUG or label failed captures as passed. Original535 all organs showed unchanged whole-body screen because QA routing was compiled out.

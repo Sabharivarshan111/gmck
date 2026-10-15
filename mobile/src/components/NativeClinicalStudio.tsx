@@ -25,6 +25,11 @@ type Screen = { kind: 'anatomy' | 'monitor' } | { kind: 'tool'; id: string; scen
 interface Props {
   onExit: () => void;
   onOpen: (screen: Screen) => void;
+  /** Preserve the same case selection across screens as the Vercel page. */
+  scenarioId: string;
+  onScenarioChange: (scenarioId: string) => void;
+  theme: 'dark' | 'light';
+  onToggleTheme: () => void;
 }
 
 const NIGHT = {
@@ -55,12 +60,10 @@ function AnatomyStudioIcon() {
   </Svg>;
 }
 
-export default function NativeClinicalStudio({ onExit, onOpen }: Props) {
+export default function NativeClinicalStudio({ onExit, onOpen, scenarioId, onScenarioChange, theme, onToggleTheme }: Props) {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [section, setSection] = useState<'skills' | 'cases'>('skills');
-  const [scenarioId, setScenarioId] = useState('normal');
   const [query, setQuery] = useState('');
   const [showFindings, setShowFindings] = useState(false);
   const [pickerVisible, setPickerVisible] = useState(false);
@@ -70,13 +73,15 @@ export default function NativeClinicalStudio({ onExit, onOpen }: Props) {
   const q = query.trim().toLowerCase();
   const skills = useMemo(() => NATIVE_CLINICAL_SKILLS.filter(s => `${s.title} ${s.hint}`.toLowerCase().includes(q)), [q]);
   const cases = useMemo(() => NATIVE_CLINICAL_SCENARIOS.filter(s => s.id !== 'normal' && `${s.title} ${s.category}`.toLowerCase().includes(q)), [q]);
-  const columns = width <= 340 ? 1 : 2;
+  // Same CSS breakpoints as the canonical web .studio-grid.
+  const columns = width <= 340 ? 1 : width >= 640 ? 3 : 2;
+  const headingSize = Math.max(30, Math.min(44, width * 0.07));
   const bodyWidth = Math.min(width, 800) - 36;
-  const skillWidth = columns === 2 ? (bodyWidth - 12) / 2 : bodyWidth;
+  const skillWidth = (bodyWidth - 12 * (columns - 1)) / columns;
 
   const buttonStyle = (radius = 20) => ({ backgroundColor: c.card, borderColor: c.border, borderWidth: 1, borderRadius: radius });
   return (
-    <View testID="native-clinical-studio" style={{ flex: 1, backgroundColor: c.background, paddingTop: insets.top }}>
+    <View testID="native-clinical-studio" style={{ flex: 1, backgroundColor: c.background, paddingTop: insets.top, paddingBottom: insets.bottom }}>
       <View style={[styles.header, { backgroundColor: c.background, borderBottomColor: c.border }]}>
         <Pressable testID="studio-native-back" accessibilityRole="button" accessibilityLabel="Back to Vault" onPress={onExit} style={[styles.iconButton, buttonStyle(14)]}>
           <ArrowLeft color={c.ink} size={20} />
@@ -86,15 +91,15 @@ export default function NativeClinicalStudio({ onExit, onOpen }: Props) {
           <Text style={[styles.logoSub, { color: c.muted }]}>CLINICAL STUDIO</Text>
         </View>
         <Pressable accessibilityRole="button" accessibilityLabel={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-          testID="studio-native-theme" onPress={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} style={[styles.iconButton, buttonStyle(14)]}>
+          testID="studio-native-theme" onPress={onToggleTheme} style={[styles.iconButton, buttonStyle(14)]}>
           {theme === 'dark' ? <Sun color={c.ink} size={20} /> : <Moon color={c.ink} size={20} />}
         </Pressable>
       </View>
 
       <KeyboardSafe>
-      <ScrollView keyboardShouldPersistTaps="handled" style={{ flex: 1 }} contentContainerStyle={[styles.main, { paddingBottom: 34 + insets.bottom }]} showsVerticalScrollIndicator={false}>
+      <ScrollView keyboardShouldPersistTaps="handled" style={{ flex: 1 }} contentContainerStyle={[styles.main, { paddingBottom: 28 }]} showsVerticalScrollIndicator={false}>
         <Text style={[styles.eyebrow, { color: c.accent }]}>EXPLORE. LISTEN. PRACTISE.</Text>
-        <Text style={[styles.heading, { color: c.ink }]}>What would you{'\n'}like to learn?</Text>
+        <Text style={[styles.heading, { color: c.ink, fontSize: headingSize, lineHeight: headingSize * 1.12 }]}>What would you{'\n'}like to learn?</Text>
         <Text style={[styles.intro, { color: c.muted }]}>Start with normal findings, explore anatomy, or work through a patient case.</Text>
         <Pressable testID="studio-native-anatomy" accessibilityRole="button" accessibilityLabel="Explore 3D anatomy" onPress={() => onOpen({ kind: 'anatomy' })}
           style={[styles.anatomy, buttonStyle()]}>
@@ -103,7 +108,7 @@ export default function NativeClinicalStudio({ onExit, onOpen }: Props) {
             <Text style={[styles.anatomyTitle, { color: c.ink }]}>Explore 3D anatomy</Text>
             <Text style={[styles.hint, { color: c.muted, marginTop: 5 }]}>Bones, muscles, organs & nerves · no case needed</Text>
           </View>
-          <ChevronRight color={c.ink} size={22} />
+          <ChevronRight color={c.accent} size={22} />
         </Pressable>
 
         <View style={[styles.segment, buttonStyle(16)]}>
@@ -120,16 +125,16 @@ export default function NativeClinicalStudio({ onExit, onOpen }: Props) {
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
               <HeartPulse color={c.accent} size={20} />
               <Text style={{ color: c.accent, fontWeight: '700', fontSize: 13 }}>{normal ? 'Normal findings' : 'Case comparison'}</Text>
-              <Text style={{ color: c.muted, marginLeft: 'auto', fontSize: 11 }}>Change findings ↓</Text>
             </View>
             <Text style={[styles.baselineSubtitle, { color: c.muted }]}>{normal ? 'Healthy adult at rest' : activeScenario.title}</Text>
+            <Text style={{ color: c.accent, fontSize: 11, alignSelf: 'flex-end', marginTop: 8 }}>Change findings ↓</Text>
           </Pressable>
           {(showFindings || !normal) && <>
             <Text style={{ color: c.muted, fontSize: 12, marginTop: 12 }}>Findings to show</Text>
             <Pressable accessibilityRole="button" accessibilityLabel="Findings to show" onPress={() => setPickerVisible(true)} style={[styles.findingsSelect, { backgroundColor: c.raised, borderColor: c.border }]}>
               <Text style={{ color: c.ink, flex: 1 }} numberOfLines={2}>{activeScenario.title}</Text><ChevronRight color={c.muted} size={18} />
             </Pressable>
-            {!normal && <Pressable onPress={() => setScenarioId('normal')}><Text style={{ color: c.accent, marginTop: 12, textDecorationLine: 'underline' }}>Return to normal baseline</Text></Pressable>}
+            {!normal && <Pressable onPress={() => onScenarioChange('normal')}><Text style={{ color: c.accent, marginTop: 12, textDecorationLine: 'underline' }}>Return to normal baseline</Text></Pressable>}
             <Text style={[styles.footnote, { color: c.muted, marginTop: 10 }]}>Each tool uses this selection. Sound demonstrations inside Auscultation can override it.</Text>
           </>}
         </View>}
@@ -145,7 +150,7 @@ export default function NativeClinicalStudio({ onExit, onOpen }: Props) {
             {skills.map(item => (
               <Pressable key={item.id} testID={`studio-native-skill-${item.id}`} accessibilityRole="button" onPress={() => onOpen({ kind: 'tool', id: item.id, scenario: scenarioId })}
                 style={[styles.skillCard, buttonStyle(), { width: skillWidth }]}>
-                <Text style={styles.emoji} accessible={false}>{item.emoji}</Text>
+                <Text style={[styles.emoji, { color: c.ink, fontFamily: 'sans-serif' }]} accessible={false}>{item.emoji}</Text>
                 <Text style={[styles.skillTitle, { color: c.ink }]}>{item.title}</Text>
                 <Text style={[styles.hint, { color: c.muted, flexGrow: 1 }]}>{item.hint}</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
@@ -157,7 +162,7 @@ export default function NativeClinicalStudio({ onExit, onOpen }: Props) {
           </View>
           {skills.length === 0 && <Text style={{ color: c.muted }}>No matching skill. Try “ECG” or “lungs”.</Text>}
           <Pressable testID="studio-native-monitor" accessibilityRole="button" onPress={() => onOpen({ kind: 'monitor' })} style={[styles.monitor, buttonStyle()]}>
-            <Text style={styles.emoji} accessible={false}>📈</Text>
+            <Text style={[styles.emoji, { color: c.ink, fontFamily: 'sans-serif' }]} accessible={false}>📈</Text>
             <View style={{ flex: 1 }}>
               <Text style={{ color: c.ink, fontSize: 15, fontWeight: '700' }}>Open live monitor</Text>
               <Text style={[styles.hint, { color: c.muted, marginTop: 4 }]}>See ECG, oxygen saturation & respiratory waveforms</Text>
@@ -181,11 +186,11 @@ export default function NativeClinicalStudio({ onExit, onOpen }: Props) {
       </KeyboardSafe>
 
       <Modal visible={pickerVisible} onRequestClose={() => setPickerVisible(false)} transparent animationType="fade">
-        <View style={styles.modalBackdrop}>
+        <View style={[styles.modalBackdrop, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
           <View style={[styles.modalPanel, { backgroundColor: c.card, borderColor: c.border }]}>
             <Text style={{ color: c.ink, fontWeight: '700', fontSize: 17, marginBottom: 12 }}>Findings to show</Text>
             <ScrollView keyboardShouldPersistTaps="handled">
-              {NATIVE_CLINICAL_SCENARIOS.map(s => <Pressable key={s.id} onPress={() => { setScenarioId(s.id); setPickerVisible(false); }} style={[styles.pickerRow, { borderBottomColor: c.border }]}>
+              {NATIVE_CLINICAL_SCENARIOS.map(s => <Pressable key={s.id} onPress={() => { onScenarioChange(s.id); setPickerVisible(false); }} style={[styles.pickerRow, { borderBottomColor: c.border }]}>
                 <Text style={{ color: s.id === scenarioId ? c.accent : c.ink }}>{s.title}</Text>
               </Pressable>)}
             </ScrollView>
@@ -200,10 +205,10 @@ export default function NativeClinicalStudio({ onExit, onOpen }: Props) {
 const styles = StyleSheet.create({
   header: { paddingHorizontal: 20, paddingVertical: 12, flexDirection: 'row', alignItems: 'center', gap: 14, borderBottomWidth: 1 },
   iconButton: { minWidth: 44, minHeight: 44, justifyContent: 'center', alignItems: 'center' },
-  logo: { fontSize: 13, fontWeight: '800', letterSpacing: 2 },
-  logoSub: { fontSize: 10, fontWeight: '800', letterSpacing: 1.3 },
+  logo: { fontSize: 13, lineHeight: 19.5, fontWeight: '800', letterSpacing: 2 },
+  logoSub: { fontSize: 10, lineHeight: 15, fontWeight: '800', letterSpacing: 1.3 },
   main: { width: '100%', maxWidth: 800, alignSelf: 'center', paddingHorizontal: 18, paddingTop: 28 },
-  eyebrow: { fontSize: 10, fontWeight: '800', letterSpacing: 1.8 },
+  eyebrow: { fontSize: 10, lineHeight: 15, fontWeight: '800', letterSpacing: 1.8 },
   heading: { fontSize: 38, lineHeight: 43, fontWeight: '800', letterSpacing: -1.3, marginTop: 10, marginBottom: 14 },
   intro: { fontSize: 15, lineHeight: 24, marginBottom: 24, maxWidth: 440 },
   anatomy: { paddingHorizontal: 18, paddingVertical: 22, flexDirection: 'row', alignItems: 'center', gap: 14 },
@@ -212,7 +217,7 @@ const styles = StyleSheet.create({
   segment: { padding: 4, flexDirection: 'row', gap: 4, marginTop: 24, marginBottom: 16 },
   segmentItem: { minHeight: 48, flex: 1, justifyContent: 'center', borderRadius: 12 },
   baseline: { padding: 16 },
-  baselineSubtitle: { fontSize: 12, marginTop: 8 },
+  baselineSubtitle: { fontSize: 12, lineHeight: 18, marginTop: 8 },
   findingsSelect: { borderWidth: 1, marginTop: 5, minHeight: 48, borderRadius: 12, paddingHorizontal: 8, flexDirection: 'row', alignItems: 'center' },
   search: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 18, marginBottom: 14, paddingHorizontal: 14 },
   input: { minHeight: 48, flex: 1, fontSize: 14, paddingVertical: 0 },

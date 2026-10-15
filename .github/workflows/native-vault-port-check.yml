@@ -1,9 +1,15 @@
 name: Native Vault parity port - nonrelease checks
 on:
   push:
-    branches: [main, codex/native-vault-full-port-20261014]
+    branches: [main, codex/native-vault-full-port-20261014, codex/native-vault-audit-20261015]
     paths:
       - 'mobile/src/components/NativeClinicalStudio.tsx'
+      - 'mobile/src/components/NativeRadiologyViewer.tsx'
+      - 'mobile/src/components/NativeClubbingTrainer.tsx'
+      - 'mobile/src/native/NativeOrbitRadiology.ts'
+      - 'mobile/android/app/src/main/java/com/aistudio/mbbsqbank/aycxvd/Radiology*.kt'
+      - 'mobile/scripts/native-radiology-check.mjs'
+      - 'mobile/scripts/native-vault-layout-contract-check.mjs'
       - 'mobile/src/components/NativeClinicalCase.tsx'
       - 'mobile/src/components/NativeIcuMonitor.tsx'
       - 'mobile/src/components/NativeEcgTwelveLead.tsx'
@@ -52,7 +58,10 @@ jobs:
           npm run check:keyboard
           node scripts/native-clinical-engine-check.mjs
           node scripts/native-ecg12-parity-check.mjs
+          node scripts/native-vault-layout-contract-check.mjs
           node scripts/simulator-parity-contract-check.mjs
+          node scripts/native-radiology-check.mjs
+          npm run check:kotlin
       - name: Lint native port screens
         working-directory: mobile
-        run: npx eslint src/components/NativeClinicalStudio.tsx src/screens/SimulatorScreen.tsx src/lib/nativeClinicalCatalog.ts src/lib/nativeClinicalActions.ts src/lib/nativeSimulatorRouting.ts src/components/NativeIcuMonitor.tsx src/components/NativeClinicalCase.tsx src/components/NativeEcgTwelveLead.tsx src/lib/nativeEcgReference.ts src/lib/nativeEcgWaveform.ts
+        run: npx eslint src/components/NativeRadiologyViewer.tsx src/components/NativeClubbingTrainer.tsx src/native/NativeOrbitRadiology.ts src/components/NativeClinicalStudio.tsx src/screens/SimulatorScreen.tsx src/lib/nativeClinicalCatalog.ts src/lib/nativeClinicalActions.ts src/lib/nativeSimulatorRouting.ts src/components/NativeIcuMonitor.tsx src/components/NativeClinicalCase.tsx src/components/NativeEcgTwelveLead.tsx src/lib/nativeEcgReference.ts src/lib/nativeEcgWaveform.ts

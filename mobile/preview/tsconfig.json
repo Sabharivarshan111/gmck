@@ -16,6 +16,7 @@
     "paths": {
       "@/*": ["../src/*"],
       "@data/*": ["../../src/data/*"],
+      "@simulator/*": ["../../src/simulator/*"],
       "@shared/*": ["../../src/lib/*"]
     }
   },
