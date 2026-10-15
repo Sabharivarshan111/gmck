@@ -1,0 +1,27 @@
+name: Vercel Mobile ECG Details
+on:
+  push:
+    branches: [codex/vercel-mobile-ecg-details-20261015]
+    paths: ['.github/workflows/vercel-mobile-ecg-details.yml','mobile/scripts/vercel_mobile_ecg_details.mjs']
+permissions:
+  contents: read
+jobs:
+  reference:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          npm ci --legacy-peer-deps --ignore-scripts
+          npm install --no-save --package-lock=false --legacy-peer-deps playwright@1.55.0
+          npx playwright install --with-deps chromium
+          node mobile/scripts/vercel_mobile_ecg_details.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vercel-mobile-ecg-details-${{ github.sha }}
+          path: artifacts/vercel-mobile-ecg-details/
+          retention-days: 14
