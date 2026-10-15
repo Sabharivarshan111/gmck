@@ -2,7 +2,7 @@ name: Native 548 Browser Smoke
 on:
   push:
     branches: [codex/native-548-browser-smoke-20261015]
-    paths: ['.github/workflows/native-548-browser-smoke.yml']
+    paths: ['.github/workflows/native-548-browser-smoke.yml', 'mobile/preview/smoke.mjs']
   workflow_dispatch:
 permissions:
   contents: read
@@ -28,7 +28,7 @@ jobs:
           export CHROME_PATH=$(node --input-type=module -e "import {chromium} from 'playwright';process.stdout.write(chromium.executablePath())")
           mkdir -p artifacts/native-browser-smoke
           set -o pipefail
-          npm --prefix mobile run check:smoke 2>&1 | tee artifacts/native-browser-smoke/output.log
+          SMOKE_DEBUG=1 npm --prefix mobile run check:smoke 2>&1 | tee artifacts/native-browser-smoke/output.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -36,4 +36,5 @@ jobs:
           path: |
             artifacts/native-browser-smoke/
             mobile/preview/artifacts/
+            /tmp/smoke-fail-*.png
           retention-days: 14

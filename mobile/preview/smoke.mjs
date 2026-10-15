@@ -101,7 +101,7 @@ await context.addInitScript(() => {
   try {
     window.localStorage.setItem(
       'orbit-profile-v1',
-      JSON.stringify({ display_name: 'Smoke', year: 'second' }),
+      JSON.stringify({ display_name: 'Smoke', year: 'second', university: 'tnmgr' }),
     );
   } catch {}
 });
@@ -131,6 +131,7 @@ async function step(name, fn) {
     results.push(['ok  ', name]);
     console.log(`  ok   ${name}`);
   } catch (error) {
+    await page.screenshot({path:'/tmp/smoke-fail-'+name.replace(/\W+/g,'-')+'.png'}).catch(()=>{});
     failed++;
     const msg = `${name} — ${String(error.message).split('\n')[0].slice(0, 110)}`;
     results.push(['FAIL', msg]);
@@ -356,7 +357,13 @@ async function declineAdPromptIfShown() {
 
 async function open(query) {
   await page.goto(`http://localhost:5202/?${query}`, { waitUntil: 'networkidle' });
-  await page.waitForTimeout(900);
+  await page.waitForTimeout(1600);
+  if (!new URLSearchParams(query).has('tour')) {
+    for (const label of ['Skip the walkthrough','Close the walkthrough']) {
+      const control=byLabel(label);
+      if (await control.isVisible().catch(()=>false)) {await control.click();await page.waitForTimeout(500);}
+    }
+  }
 }
 
 // ---- Home -----------------------------------------------------------------
@@ -1748,52 +1755,14 @@ await step('a flashcard session shows a card, then Anki\'s four buttons', async 
   await seesText('Current strategy of filaria control', 4000);
 });
 
-await step('notes offers flashcards and a locked case proforma, and no WhatsApp', async () => {
+await step('Vault opens functional proformas and flashcards, and no WhatsApp', async () => {
   await open('screen=notes');
-  await byLabel('Notes').first().click();
-  await page.waitForTimeout(900);
-
-  const body = await page.locator('body').innerText();
-  if (/whatsapp/i.test(body)) {
-    throw new Error('the WhatsApp block is back on the Notes tab');
-  }
-  await seesText('Anki-style flashcards', 4000);
-  await seesText('Case proforma', 4000);
-
-  /*
-   * Locked means no control at all, not a control that swallows presses. If
-   * this ever becomes a Touchable it will announce itself to TalkBack as
-   * something that can be activated, and it cannot.
-   *
-   * This is asserted against the **element**, not against a label string. The
-   * version before it looked for a label that had been reworded, so it counted
-   * zero and passed — every time, including on a proforma that had become a
-   * button. An assertion that cannot fail is worse than no assertion, because
-   * a green line says it was checked.
-   */
-  const proforma = byLabel('Case proforma. Coming soon, not yet available.');
-  if (!(await proforma.count())) {
-    throw new Error('the locked proforma card no longer announces itself to TalkBack');
-  }
-  const shape = await proforma.first().evaluate(el => ({
-    tag: el.tagName,
-    role: el.getAttribute('role'),
-    focusable: el.getAttribute('tabindex') !== null,
-    disabled: el.getAttribute('aria-disabled'),
-  }));
-  if (shape.tag === 'BUTTON' || shape.role === 'button' || shape.focusable) {
-    throw new Error(
-      `the locked proforma card is a pressable (${JSON.stringify(shape)}) — it must not offer a press it cannot honour`,
-    );
-  }
-  if (shape.disabled !== 'true') {
-    throw new Error('the locked proforma card does not carry aria-disabled, so TalkBack will not say it is unavailable');
-  }
-
-  await byLabel('Anki-style flashcards, browse decks by year').click();
-  await page.waitForTimeout(900);
-  await seesText('Anki-style cards', 4000);
-  await seesText('SELECT YEAR', 4000);
+  await tap('Vault');
+  await seesText('Your study space');
+  if (/whatsapp/i.test(await page.locator('body').innerText())) throw new Error('WhatsApp returned to Vault');
+  for (const name of ['Notes','NEET-PG practice questions','Simulator & Anatomy','Case proformas','Anki flashcards']) await byLabel(name).waitFor({state:'visible'});
+  await tap('Case proformas');await seesText('Clinical Case Proformas');await tap('Close proforma viewer');
+  await tap('Anki flashcards');await seesText('Anki-style cards');await seesText('SELECT YEAR');
 });
 
 /**
@@ -1896,8 +1865,7 @@ await step('a note filed under a chapter shows up on that chapter', async () => 
   await open('screen=progress');
   await page.waitForTimeout(900);
 
-  await byLabel('Vault').first().click();
-  await byLabel('Notes').first().click();
+  await page.getByRole('tab', { name: 'Notes', exact: true }).click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(600);
@@ -1961,8 +1929,7 @@ await step('a note filed under a chapter shows up on that chapter', async () => 
 await step('a saved note can be opened and read without editing it', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
-  await byLabel('Vault').first().click();
-  await byLabel('Notes').first().click();
+  await page.getByRole('tab', { name: 'Notes', exact: true }).click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(600);
@@ -2007,8 +1974,7 @@ await step('a saved note can be opened and read without editing it', async () =>
 await step('the note toolbar writes headings and points, and they render', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
-  await byLabel('Vault').first().click();
-  await byLabel('Notes').first().click();
+  await page.getByRole('tab', { name: 'Notes', exact: true }).click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(700);
@@ -2077,8 +2043,7 @@ await step('the note toolbar writes headings and points, and they render', async
 await step('notes highlight, and a picture opens a drawing canvas', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
-  await byLabel('Vault').first().click();
-  await byLabel('Notes').first().click();
+  await page.getByRole('tab', { name: 'Notes', exact: true }).click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(700);
@@ -2201,8 +2166,7 @@ await step('notes highlight, and a picture opens a drawing canvas', async () => 
 await step('a YouTube link is added to a note, and plays in it', async () => {
   await open('screen=progress');
   await declineAdPromptIfShown();
-  await byLabel('Vault').first().click({ force: true });
-  await byLabel('Notes').first().click({ force: true });
+  await page.getByRole('tab', { name: 'Notes', exact: true }).click();
   await page.waitForTimeout(700);
   await byLabel('Create a new study note').click({ force: true });
   await page.waitForTimeout(600);
@@ -2336,8 +2300,7 @@ await step('attendance counts classes, and says what is still spare', async () =
 await step('a picture in a note opens full screen', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
-  await byLabel('Vault').first().click();
-  await byLabel('Notes').first().click();
+  await page.getByRole('tab', { name: 'Notes', exact: true }).click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(700);
@@ -2375,8 +2338,7 @@ await step('a picture in a note opens full screen', async () => {
 await step('a note can be written by hand on a blank page', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
-  await byLabel('Vault').first().click();
-  await byLabel('Notes').first().click();
+  await page.getByRole('tab', { name: 'Notes', exact: true }).click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(700);
@@ -2548,8 +2510,7 @@ await step('a note can be written by hand on a blank page', async () => {
 await step('a note takes a recording, and the recording gets a player', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
-  await byLabel('Vault').first().click();
-  await byLabel('Notes').first().click();
+  await page.getByRole('tab', { name: 'Notes', exact: true }).click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(600);
@@ -2646,8 +2607,7 @@ await step('a note takes a recording, and the recording gets a player', async ()
 await step('fullscreen keeps the play, scrub, time and volume controls', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
-  await byLabel('Vault').first().click();
-  await byLabel('Notes').first().click();
+  await page.getByRole('tab', { name: 'Notes', exact: true }).click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(600);
@@ -2704,8 +2664,7 @@ await step('fullscreen keeps the play, scrub, time and volume controls', async (
 await step('a linked file can break, says so, and can be copied in instead', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
-  await byLabel('Vault').first().click();
-  await byLabel('Notes').first().click();
+  await page.getByRole('tab', { name: 'Notes', exact: true }).click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(600);
@@ -2923,7 +2882,7 @@ await step('the walkthrough runs end to end, and every step can be left', async 
   await page.addInitScript(() => {
     window.localStorage.setItem(
       'orbit-profile-v1',
-      JSON.stringify({ display_name: 'Asha', year: 'second' }),
+      JSON.stringify({ display_name: 'Asha', year: 'second', university: 'tnmgr' }),
     );
   });
   await open('tour=1');
@@ -3563,7 +3522,7 @@ await step('first run asks for the year instead of assuming one', async () => {
     }
     // The welcome has to have said the two things it exists to say.
     const welcomed = await first.evaluate(() => document.body.innerText);
-    if (!/Made by the community/i.test(welcomed) && !/Two things and you/i.test(welcomed)) {
+    if (!/Set up your studies/i.test(welcomed) || !/year and university/i.test(welcomed)) {
       throw new Error('the first-run gate is not the welcome screen');
     }
 
@@ -3605,6 +3564,7 @@ await step('first run asks for the year instead of assuming one', async () => {
     // And a real choice is the one that is stored — not the second-year default.
     await first.locator('[aria-label="3rd Year"]').first().click({ timeout: 4000 });
     await first.locator('[aria-label="Display name"]').first().fill('Fresher');
+    await first.getByRole('radio',{name:'Tamil Nadu Dr. M.G.R. Medical University (TNMGR)',exact:true}).click();
     await first.locator('[aria-label="Start studying"]').first().click({ timeout: 4000 });
     await first.waitForTimeout(1200);
     const stored = await first.evaluate(() => window.localStorage.getItem('orbit-profile-v1'));

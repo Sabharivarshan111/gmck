@@ -17,7 +17,7 @@ const expression = (()=>{const scan=document.querySelector('[data-testid="pocus-
 for (const socket of sockets) {
   try {
     adb('forward', 'tcp:9222', 'localabstract:' + socket);
-    const targets = await (await fetch('http://127.0.0.1:9222/json/list', {signal:AbortSignal.timeout(5000)})).json();
+    const targets = await (await fetch('http://127.0.0.1:9222/json/list', {signal:globalThis.AbortSignal.timeout(5000)})).json();
     for (const target of targets.filter(target => /\/simulator(?:\?|$)/.test(target.url))) {
       const ws = new WebSocket(target.webSocketDebuggerUrl);
       const value = await new Promise((resolve, reject) => {

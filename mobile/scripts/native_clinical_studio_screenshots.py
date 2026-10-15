@@ -23,14 +23,7 @@ def screenshot(name: str):
         except subprocess.TimeoutExpired:
             (OUT / (name + '-probe-error.txt')).write_text('Read-only layout inspector timed out; screenshot and actual UI control checks continue.')
 
-def press(label):
-    if not visible(label):
-        for _ in range(10):
-            scroll_up()
-            if visible(label):
-                break
-    scroll_to_tappable(label)
-    tap(label)
+from native_diagnostic_controls import press
 
 def icu_control(label):
     # Canonical mobile ICU has a horizontal status bar. Reach its real buttons
@@ -157,9 +150,13 @@ def main():
         tap("QRS")
         scroll_to_tappable("Electrophysiological")
         screenshot("10-android-native-ecg-qrs-teaching")
-        scroll_to_tappable("Single-Lead Magnified Cut-Out")
+        scroll_to_tappable("magnified Lead II with duration")
         screenshot("10a-android-native-ecg-magnified-cutout")
-        results.append("ECG lead groups and QRS teaching")
+        for segment in ['P', 'PR', 'QRS', 'ST', 'T', 'QT']:
+            press(segment)
+            scroll_to_tappable('magnified Lead II with duration')
+            screenshot('10b-android-ecg-cutout-' + segment.lower())
+        results.append("ECG lead groups and all six magnified teaching cutouts")
 
         for _ in range(6):
             if visible("Open full ECG teaching studio"): break
@@ -239,6 +236,7 @@ def main():
             raise RuntimeError('Incomplete native functional checks: ' + json.dumps(failures))
     except Exception as exc:
         print("FAIL in real Android UI automation:",repr(exc))
+        (OUT/'99-native-device-logcat.txt').write_text(adb('logcat', '-d', '-s', 'AndroidRuntime:E', 'ReactNativeJS:E', 'chromium:E', 'ActivityTaskManager:I', '*:S', capture=True, check=False).stdout[-150000:])
         try:
             shot("99-native-failure-screen")
             subprocess.run(["node", "mobile/scripts/read_android_webview.mjs", str(OUT / "99-native-failure-dom.json")], check=False, timeout=45)
