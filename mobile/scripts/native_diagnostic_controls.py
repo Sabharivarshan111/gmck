@@ -4,7 +4,7 @@ import re
 import time
 from native_screenshot_driver import (
     OUT, adb, launch, first_run, tap, scroll_to_tappable, dump_ui,
-    node_label, shot, wait_visible, visible, scroll_up, reachable_nodes,
+    node_label, shot, wait_visible, visible, scroll_up, scroll_down, screen_size, reachable_nodes,
 )
 
 
@@ -51,27 +51,37 @@ def open_skill(label):
     tap(label)
 
 
-def press(label):
-    if not visible(label):
-        for _ in range(10):
+def reach_button(label):
+    _, height = screen_size()
+    for attempt in range(32):
+        candidates = []
+        for node, rect in reachable_nodes(dump_ui()):
+            if node.get('clickable') != 'true' or node.get('enabled') == 'false':
+                continue
+            if label not in [node.get('text', '').strip(), node.get('content-desc', '').strip()]:
+                continue
+            x1, y1, x2, y2 = rect
+            candidates.append(((x2-x1)*(y2-y1), (x1+x2)//2, (y1+y2)//2, node))
+        candidates.sort(key=lambda item: item[0])
+        if candidates and height*.10 <= candidates[0][2] <= height*.94:
+            return candidates[0]
+        if (candidates and candidates[0][2] < height*.10) or (not candidates and attempt < 10):
             scroll_up()
-            if visible(label):
-                break
-    scroll_to_tappable(label)
-    tap(label)
+        else:
+            scroll_down()
+    raise RuntimeError('Exact enabled Android button could not be reached: ' + label)
+
+
+def press(label):
+    _, x, y, _ = reach_button(label)
+    adb('shell', 'input', 'tap', str(x), str(y))
+    time.sleep(1)
 
 
 def toggle(label):
-    if not visible(label):
-        for _ in range(10):
-            scroll_up()
-            if visible(label): break
-    scroll_to_tappable(label)
-    def selected():
-        return any(label == node_label(n) and n.get('selected') == 'true' for n in dump_ui().iter('node'))
-    before = selected()
-    tap(label)
-    after = selected()
+    before = reach_button(label)[3].get('selected') == 'true'
+    press(label)
+    after = reach_button(label)[3].get('selected') == 'true'
     if before == after:
         raise AssertionError(f'{label} did not change Android selected state')
     return {'control': label, 'beforeSelected': before, 'afterSelected': after}
@@ -163,7 +173,7 @@ def radiology(results):
     results.append({'check': 'Offline MRI slice adjustment', 'passed': True, **adjust_slider('MRI slice', .7)})
     for plane in ['Axial', 'Coronal', 'Sagittal']:
         press(plane)
-        scroll_to_tappable('MRI slice')
+        scroll_to_tappable(plane.lower() + ' MRI slice')
         wait_visible(plane.lower() + ' MRI slice', tries=15)
         shot('extra-native-mri-' + plane.lower())
     for _ in range(2):

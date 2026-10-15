@@ -1,7 +1,9 @@
 package com.aistudio.mbbsqbank.aycxvd
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
@@ -9,6 +11,7 @@ import com.facebook.react.defaults.DefaultReactActivityDelegate
 import com.swmansion.rnscreens.fragment.restoration.RNScreensFragmentFactory
 
 class MainActivity : ReactActivity() {
+  private var predictiveBackBridge: OnBackPressedCallback? = null
 
   /**
    * Why this override exists — it is the fix for "the app closes itself when I
@@ -32,6 +35,32 @@ class MainActivity : ReactActivity() {
    */
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(null)
+    // ReactActivity installs its dispatcher bridge only on API 36+. Our
+    // predictive-back opt-in also needs to reach JS BackHandler on API 33–35.
+    if (Build.VERSION.SDK_INT >= 33 && Build.VERSION.SDK_INT < 36) {
+      val bridge = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+          isEnabled = false
+          try {
+            this@MainActivity.onBackPressed()
+          } finally {
+            isEnabled = true
+          }
+        }
+      }
+      predictiveBackBridge = bridge
+      onBackPressedDispatcher.addCallback(this, bridge)
+    }
+  }
+
+  override fun invokeDefaultOnBackPressed() {
+    // Exclude the bridge when JS requests the default activity exit.
+    predictiveBackBridge?.isEnabled = false
+    try {
+      super.invokeDefaultOnBackPressed()
+    } finally {
+      predictiveBackBridge?.isEnabled = true
+    }
   }
 
   override fun onNewIntent(intent: Intent) {
