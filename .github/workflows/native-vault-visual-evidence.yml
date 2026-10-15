@@ -2,7 +2,7 @@ name: WIP Native vs Vercel Studio Visual Evidence
 
 on:
   push:
-    branches: [main, codex/native-vault-full-port-20261014, codex/native-vault-audit-20261015, codex/native-vault-anatomy-cache-20261014, codex/native-vault-teaching-20261015]
+    branches: [main, codex/native-vault-full-port-20261014, codex/native-vault-audit-20261015, codex/native-vault-anatomy-cache-20261014, codex/native-vault-teaching-20261015, codex/native-vault-route-proof-20261015]
     paths:
       - '.github/workflows/android-debug.yml'
       - '.github/workflows/native-vault-visual-evidence.yml'
@@ -72,6 +72,19 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+
+      - name: Install the Android emulator image with retries
+        if: ${{ !cancelled() && steps.apk.outcome == 'success' }}
+        run: |
+          yes | sdkmanager --licenses > /dev/null || true
+          for attempt in 1 2 3; do
+            if sdkmanager --install 'system-images;android-35;google_apis;x86_64' --channel=0; then
+              exit 0
+            fi
+            python3 -c 'import os,pathlib,shutil; root=pathlib.Path(os.environ["ANDROID_HOME"])/".temp"; [(shutil.rmtree(p) if p.is_dir() and not p.is_symlink() else p.unlink()) for p in root.glob("PackageOperation*")]'
+            sleep 5
+          done
+          exit 1
 
       - name: Screenshot actual installed React Native views on Android
         if: ${{ !cancelled() && steps.apk.outcome == 'success' }}

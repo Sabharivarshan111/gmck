@@ -41,7 +41,9 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
   const [backRequest, setBackRequest] = useState(0);
-  const wrap = (child: React.ReactNode) => <>{focused && <StatusBar barStyle={nativeMode?.kind === 'monitor' || nativeMode?.kind === 'ecg' ? 'light-content' : studioTheme === 'light' ? 'dark-content' : 'light-content'} />}{child}</>;
+  const nativeDarkSurface = nativeMode?.kind === 'monitor' || nativeMode?.kind === 'ecg';
+  const darkStatusIcons = nativeMode?.kind === 'clubbing' || (!nativeDarkSurface && studioTheme === 'light');
+  const wrap = (child: React.ReactNode) => <>{focused && <StatusBar barStyle={darkStatusIcons ? 'dark-content' : 'light-content'} />}{child}</>;
   const returnToNativeStudio = () => {
     setUrl(null);
     setNativeMode(null);
@@ -99,7 +101,8 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
 
   if (nativeMode?.kind === 'radiology') return wrap(<NativeRadiologyViewer theme={studioTheme} onBack={returnToNativeStudio} />);
 
-  if (nativeMode?.kind === 'clubbing') return wrap(<NativeClubbingTrainer theme={studioTheme} onBack={returnToNativeStudio} />);
+  // The canonical clubbing sheet is white in both studio themes.
+  if (nativeMode?.kind === 'clubbing') return wrap(<NativeClubbingTrainer theme="light" onBack={returnToNativeStudio} />);
 
   if (!url) {
     return wrap(<NativeClinicalStudio onExit={onExit} scenarioId={studioScenarioId} onScenarioChange={setStudioScenarioId} theme={studioTheme} onToggleTheme={onToggleStudioTheme} onOpen={destination => {
