@@ -1,6 +1,9 @@
 package com.orbit.qa;
 
 import android.app.Activity;
+import android.app.UiAutomation;
+import android.accessibilityservice.AccessibilityServiceInfo;
+import android.view.accessibility.AccessibilityWindowInfo;
 import android.app.Instrumentation;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -18,10 +21,22 @@ public final class UiDump extends Instrumentation {
   @Override public void onStart() {
     Bundle result = new Bundle();
     try {
-      AccessibilityNodeInfo root = getUiAutomation().getRootInActiveWindow();
-      for (int i=0; root == null && i<10; i++) {
-        android.os.SystemClock.sleep(50);
-        root = getUiAutomation().getRootInActiveWindow();
+      UiAutomation automation = getUiAutomation();
+      AccessibilityServiceInfo info = automation.getServiceInfo();
+      info.flags |= AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS;
+      automation.setServiceInfo(info);
+      AccessibilityNodeInfo root = null;
+      // Keyboard dismissal and activity transitions briefly have no active root.
+      // Observe the next real window without waiting for live vitals to go idle.
+      for (int i=0; root == null && i<100; i++) {
+        root = automation.getRootInActiveWindow();
+        if (root == null) for (AccessibilityWindowInfo window : automation.getWindows()) {
+          if (window.getType() == AccessibilityWindowInfo.TYPE_APPLICATION) {
+            root = window.getRoot();
+            if (root != null) break;
+          }
+        }
+        if (root == null) android.os.SystemClock.sleep(100);
       }
       if (root == null) throw new IllegalStateException("No active Android window");
       StringWriter writer = new StringWriter();

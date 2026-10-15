@@ -19,6 +19,7 @@ def route(path, reference=False):
 def ready(timeout=180, expected_route=None):
     start = time.monotonic()
     previous = None
+    last_metadata = None
     stable_since = time.monotonic()
     while time.monotonic() - start < timeout:
         output = adb("logcat", "-d", "-s", "ORBIT_ANATOMY:I", "*:S", capture=True).stdout
@@ -30,6 +31,7 @@ def ready(timeout=180, expected_route=None):
             if "ORBIT_NATIVE_GEOMETRY:" not in line:
                 continue
             value = json.loads(line.split("ORBIT_NATIVE_GEOMETRY:", 1)[1])
+            last_metadata = value
             if expected_route:
                 wanted=parse_qs(urlsplit(expected_route).query)
                 actual=parse_qs(value.get('route','').lstrip('?'))
@@ -46,7 +48,7 @@ def ready(timeout=180, expected_route=None):
                 return value
             break
         time.sleep(1)
-    raise RuntimeError("Android anatomy geometry never reached a stable loaded state")
+    raise RuntimeError("Android anatomy geometry never reached a stable loaded state; last metadata=" + json.dumps(last_metadata))
 
 def main():
     coverage = json.loads((OUT / "anatomy-coverage.json").read_text())
@@ -87,6 +89,7 @@ def main():
             shot("anatomy-android-failure-" + target["id"])
             results.append({**target, "route": path, "captured": False, "error": str(error)})
             print("FAILED actual Android anatomy:", target["id"], str(error), flush=True)
+            (OUT / ("anatomy-logcat-" + target["id"] + ".txt")).write_text(adb("logcat", "-d", capture=True).stdout[-100000:])
         (OUT / "native-anatomy-captures.json").write_text(json.dumps({"status": "NOT_CERTIFIED", "targets": results}, indent=2))
     # The live Vercel reference uses the same Android WebView, fonts, viewport and
     # software GPU. This avoids desktop font fallback masquerading as mobile QA.

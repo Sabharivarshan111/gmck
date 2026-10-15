@@ -38,7 +38,7 @@ class SimulatorViewManager : SimpleViewManager<WebView>() {
   @SuppressLint("SetJavaScriptEnabled")
   override fun createViewInstance(context: ThemedReactContext): WebView {
     val store = SimulatorAssetStore(context)
-    if (BuildConfig.DEBUG) ServiceWorkerController.getInstance().setServiceWorkerClient(object : ServiceWorkerClient() {
+    if (QA_ENABLED) ServiceWorkerController.getInstance().setServiceWorkerClient(object : ServiceWorkerClient() {
       override fun shouldInterceptRequest(request: WebResourceRequest): WebResourceResponse? {
         return if (request.method == "GET" && request.url.scheme == "https" && request.url.host == REFERENCE_HOST) null else store.failure(403, "Third-party QA request blocked")
       }
@@ -72,20 +72,20 @@ class SimulatorViewManager : SimpleViewManager<WebView>() {
         override fun onHideCustomView() { hideFullscreen(this@apply) }
         override fun onConsoleMessage(message: ConsoleMessage): Boolean {
           if (message.message().startsWith("ORBIT_NATIVE_RENDER_ERROR:")) {
-            if (BuildConfig.DEBUG) android.util.Log.e("ORBIT_ANATOMY", message.message().take(1200))
+            if (QA_ENABLED) android.util.Log.e("ORBIT_ANATOMY", message.message().take(1200))
             status(this@apply, "error")
-          } else if (BuildConfig.DEBUG && message.messageLevel() == ConsoleMessage.MessageLevel.ERROR) {
+          } else if (QA_ENABLED && message.messageLevel() == ConsoleMessage.MessageLevel.ERROR) {
             android.util.Log.e("ORBIT_SIMULATOR", message.message().take(1200))
           }
           if (message.message().contains("THREE.WebGLProgram: Shader Error")) {
-            if (BuildConfig.DEBUG) android.util.Log.e("ORBIT_ANATOMY", "ORBIT_NATIVE_SHADER_ERROR:" + message.message())
+            if (QA_ENABLED) android.util.Log.e("ORBIT_ANATOMY", "ORBIT_NATIVE_SHADER_ERROR:" + message.message())
             status(this@apply, "error")
           }
           if (message.message().startsWith("ORBIT_NATIVE_PATIENT:")) {
             val patient = message.message().removePrefix("ORBIT_NATIVE_PATIENT:")
             if (patient.length < 500000) status(this@apply, "patient", patient)
           }
-          if (BuildConfig.DEBUG && message.message().startsWith("ORBIT_NATIVE_GEOMETRY:")) {
+          if (QA_ENABLED && message.message().startsWith("ORBIT_NATIVE_GEOMETRY:")) {
             android.util.Log.i("ORBIT_ANATOMY", message.message())
           }
           return true
@@ -96,13 +96,13 @@ class SimulatorViewManager : SimpleViewManager<WebView>() {
           val uri = request.url
           // QA only: the real Vercel page on the same Android WebView/GPU/fonts.
           // Third-party requests (including live ad scripts) remain blocked.
-          if (BuildConfig.DEBUG && store.referenceMode && request.method == "GET" && uri.scheme == "https" && uri.host == REFERENCE_HOST) return null
+          if (QA_ENABLED && store.referenceMode && request.method == "GET" && uri.scheme == "https" && uri.host == REFERENCE_HOST) return null
           if (uri.scheme != "https" || uri.host != HOST || request.method != "GET") return store.failure(403, "Forbidden")
           return store.response(uri.path ?: "/")
         }
         override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
           val uri = request.url
-          if (BuildConfig.DEBUG && store.referenceMode && uri.scheme == "https" && uri.host == REFERENCE_HOST && uri.path == "/simulator") return false
+          if (QA_ENABLED && store.referenceMode && uri.scheme == "https" && uri.host == REFERENCE_HOST && uri.path == "/simulator") return false
           if (uri.scheme == "https" && uri.host == HOST && uri.path == "/simulator") return false
           if (uri.host == HOST && uri.path == "/notes") status(view, "vault")
           else if (uri.scheme == "https") {
@@ -114,7 +114,7 @@ class SimulatorViewManager : SimpleViewManager<WebView>() {
         override fun onPageStarted(view: WebView, url: String?, icon: android.graphics.Bitmap?) { status(view, "loading") }
         override fun onPageFinished(view: WebView, url: String?) {
           status(view, "ready")
-          if (BuildConfig.DEBUG && store.referenceMode) view.evaluateJavascript("""
+          if (QA_ENABLED && store.referenceMode) view.evaluateJavascript("""
             (() => {
               if (window.__orbitDeviceRead) return;
               window.__orbitDeviceRead = true;
@@ -153,7 +153,7 @@ class SimulatorViewManager : SimpleViewManager<WebView>() {
           status(view, "error"); return true
         }
       }
-      if (BuildConfig.DEBUG) {
+      if (QA_ENABLED) {
         val view = this
         val listener = object : BaseActivityEventListener() {
           override fun onNewIntent(intent: Intent) {
@@ -172,8 +172,8 @@ class SimulatorViewManager : SimpleViewManager<WebView>() {
   @ReactProp(name = "route")
   fun setRoute(view: WebView, route: String?) {
     val context = view.context as ThemedReactContext
-    val qaRoute = if (BuildConfig.DEBUG) context.currentActivity?.intent?.getStringExtra("orbit_anatomy_qa_route") else null
-    stores[view]?.referenceMode = BuildConfig.DEBUG && context.currentActivity?.intent?.getBooleanExtra("orbit_anatomy_qa_reference", false) == true
+    val qaRoute = if (QA_ENABLED) context.currentActivity?.intent?.getStringExtra("orbit_anatomy_qa_route") else null
+    stores[view]?.referenceMode = QA_ENABLED && context.currentActivity?.intent?.getBooleanExtra("orbit_anatomy_qa_reference", false) == true
     (qaRoute ?: route)?.let { pendingRoutes[view] = it }
   }
 
@@ -189,10 +189,10 @@ class SimulatorViewManager : SimpleViewManager<WebView>() {
 
   private fun loadRoute(view: WebView, route: String?) {
     if (route == null || !route.startsWith("/simulator") || route.startsWith("//")) return
-    val host = if (BuildConfig.DEBUG && stores[view]?.referenceMode == true) REFERENCE_HOST else HOST
+    val host = if (QA_ENABLED && stores[view]?.referenceMode == true) REFERENCE_HOST else HOST
     val base = Uri.parse("https://$host$route")
     val context = view.context as ThemedReactContext
-    val uri = if (BuildConfig.DEBUG && context.currentActivity?.intent?.hasExtra("orbit_anatomy_qa_route") == true)
+    val uri = if (QA_ENABLED && context.currentActivity?.intent?.hasExtra("orbit_anatomy_qa_route") == true)
       base.buildUpon().appendQueryParameter("native_audit", "1").build() else base
     if (uri.host == host && uri.path == "/simulator" && view.url != uri.toString()) view.loadUrl(uri.toString())
   }
@@ -238,6 +238,9 @@ class SimulatorViewManager : SimpleViewManager<WebView>() {
     state.callback.onCustomViewHidden()
   }
   companion object {
+    // Preview APKs are optimized and therefore have DEBUG=false.
+    // Device routing is confined to the two test variants; never internal/release.
+    private val QA_ENABLED = BuildConfig.DEBUG || BuildConfig.BUILD_TYPE == "preview"
     private const val HOST = "appassets.androidplatform.net"
     private const val REFERENCE_HOST = "orbitmbbs.vercel.app"
   }

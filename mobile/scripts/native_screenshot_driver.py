@@ -31,12 +31,15 @@ def adb(*args: str, check: bool = True, capture: bool = False) -> subprocess.Com
 
 def dump_ui() -> ET.Element:
     if os.environ.get("ORBIT_UI_HELPER") == "1":
-        result = adb("shell", "am", "instrument", "-w", "com.orbit.qa/com.orbit.qa.UiDump", capture=True)
-        for line in result.stdout.splitlines():
-            if line.startswith("INSTRUMENTATION_RESULT: orbit_ui="):
-                xml = line.split("=", 1)[1]
-                Path("/tmp/window.xml").write_text(xml)
-                return ET.fromstring(xml)
+        for attempt in range(3):
+            result = adb("shell", "am", "instrument", "-w", "com.orbit.qa/com.orbit.qa.UiDump", capture=True)
+            for line in result.stdout.splitlines():
+                if line.startswith("INSTRUMENTATION_RESULT: orbit_ui="):
+                    xml = line.split("=", 1)[1]
+                    Path("/tmp/window.xml").write_text(xml)
+                    return ET.fromstring(xml)
+            # Each run reconnects UiAutomation after a transient window handoff.
+            time.sleep(0.5)
         raise RuntimeError("Live Android hierarchy dump failed: " + result.stdout[-800:])
     adb("shell", "uiautomator", "dump", "/sdcard/window.xml", check=False)
     adb("pull", "/sdcard/window.xml", "/tmp/window.xml", check=False)

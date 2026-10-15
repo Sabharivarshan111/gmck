@@ -2284,3 +2284,20 @@ User authorized fixes, pushes, builds/releases; MOBILE Vercel UI only. Debug531 
 RN mobile case now source-style header/HUD,43-case search/departments,badges,layers,diagnostics,bottomtabs. Patient snapshot bridge preserves private targets/phases/vitals/pathology/logs across native case and canonical local anatomy/tools. All43 treated scenarios pass forward/back continuity tests; department data matches source. Latest6 logs, theme/insets/statusbars, themed clubbing/radiology and WebChrome full-screen host corrected.
 
 Core local renderer ~3.64MB; exact SHA-pinned private persistent model cache. Dedicated embedded WebGL, NOT a native OpenGL rewrite. Debug-only Vercel reference runs on same Android WebView/fonts/GPU, blocks third parties/live ads/POSTs. HRA-only views legitimately have empty visible BodyParts3D system lists; corrected readiness waits model downloads and checks model/shader errors. Previous c897 screenshot run superseded. Latest Kotlin/helper compile and device captures pending. PR92 remains NOT_CERTIFIED; no final parity merge/signed production release yet. See mobile/docs/vault-anatomy-parity-20261014.md.
+
+
+## 2026-10-15 — optimized preview device audit repair (Codex)
+
+### DONE
+- Retrieved run38642609848 artifact11936757228. APK debug535 built, and actual emulator screenshot shows real canonical whole-body geometry rendering. All organ route switches/metadata failed because SimulatorViewManager gated QA on BuildConfig.DEBUG, but assemblePreview deliberately sets debuggable=false. Replaced with test-only QA_ENABLED (debug OR preview), leaving internal/release disabled.
+- PR93 browser adapter merged into anatomy branch at389a97d; browser compatibility fix preserved.
+- UI helper had transient No active Android window during onboarding. It now polls10seconds, retrieves interactive application windows, and driver retries reconnects. Added full device logcat to each failed anatomy target and last metadata to readiness errors.
+
+### HALF-DONE
+- No complete paired organ audit yet; old535 captures remain NOT_CERTIFIED. No production merge or signed final release. Dedicated embedded WebGL remains disclosed, not native OpenGL.
+
+### NEXT
+- Build/test updated preview; inspect actual Android/Vercel organ captures and native patient flow. Fix observed UI/function gaps, then production merge/release after verification.
+
+### DO NOT
+- Do not gate preview audit on BuildConfig.DEBUG or label failed captures as passed. Original535 all organs showed unchanged whole-body screen because QA routing was compiled out.
