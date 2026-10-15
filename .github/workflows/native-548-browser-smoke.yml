@@ -2,7 +2,7 @@ name: Native 548 Browser Smoke
 on:
   push:
     branches: [codex/native-548-browser-smoke-20261015]
-    paths: ['.github/workflows/native-548-browser-smoke.yml']
+    paths: ['.github/workflows/native-548-browser-smoke.yml', 'mobile/preview/smoke.mjs']
   workflow_dispatch:
 permissions:
   contents: read

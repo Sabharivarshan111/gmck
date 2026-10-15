@@ -1865,8 +1865,7 @@ await step('a note filed under a chapter shows up on that chapter', async () => 
   await open('screen=progress');
   await page.waitForTimeout(900);
 
-  await byLabel('Vault').first().click();
-  await byLabel('Notes').first().click();
+  await page.getByRole('tab', { name: 'Notes', exact: true }).click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(600);
@@ -1930,8 +1929,7 @@ await step('a note filed under a chapter shows up on that chapter', async () => 
 await step('a saved note can be opened and read without editing it', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
-  await byLabel('Vault').first().click();
-  await byLabel('Notes').first().click();
+  await page.getByRole('tab', { name: 'Notes', exact: true }).click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(600);
@@ -1976,8 +1974,7 @@ await step('a saved note can be opened and read without editing it', async () =>
 await step('the note toolbar writes headings and points, and they render', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
-  await byLabel('Vault').first().click();
-  await byLabel('Notes').first().click();
+  await page.getByRole('tab', { name: 'Notes', exact: true }).click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(700);
@@ -2046,8 +2043,7 @@ await step('the note toolbar writes headings and points, and they render', async
 await step('notes highlight, and a picture opens a drawing canvas', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
-  await byLabel('Vault').first().click();
-  await byLabel('Notes').first().click();
+  await page.getByRole('tab', { name: 'Notes', exact: true }).click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(700);
@@ -2170,8 +2166,7 @@ await step('notes highlight, and a picture opens a drawing canvas', async () => 
 await step('a YouTube link is added to a note, and plays in it', async () => {
   await open('screen=progress');
   await declineAdPromptIfShown();
-  await byLabel('Vault').first().click({ force: true });
-  await byLabel('Notes').first().click({ force: true });
+  await page.getByRole('tab', { name: 'Notes', exact: true }).click();
   await page.waitForTimeout(700);
   await byLabel('Create a new study note').click({ force: true });
   await page.waitForTimeout(600);
@@ -2305,8 +2300,7 @@ await step('attendance counts classes, and says what is still spare', async () =
 await step('a picture in a note opens full screen', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
-  await byLabel('Vault').first().click();
-  await byLabel('Notes').first().click();
+  await page.getByRole('tab', { name: 'Notes', exact: true }).click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(700);
@@ -2344,8 +2338,7 @@ await step('a picture in a note opens full screen', async () => {
 await step('a note can be written by hand on a blank page', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
-  await byLabel('Vault').first().click();
-  await byLabel('Notes').first().click();
+  await page.getByRole('tab', { name: 'Notes', exact: true }).click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(700);
@@ -2517,8 +2510,7 @@ await step('a note can be written by hand on a blank page', async () => {
 await step('a note takes a recording, and the recording gets a player', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
-  await byLabel('Vault').first().click();
-  await byLabel('Notes').first().click();
+  await page.getByRole('tab', { name: 'Notes', exact: true }).click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(600);
@@ -2615,8 +2607,7 @@ await step('a note takes a recording, and the recording gets a player', async ()
 await step('fullscreen keeps the play, scrub, time and volume controls', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
-  await byLabel('Vault').first().click();
-  await byLabel('Notes').first().click();
+  await page.getByRole('tab', { name: 'Notes', exact: true }).click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(600);
@@ -2673,8 +2664,7 @@ await step('fullscreen keeps the play, scrub, time and volume controls', async (
 await step('a linked file can break, says so, and can be copied in instead', async () => {
   await open('screen=progress');
   await page.waitForTimeout(900);
-  await byLabel('Vault').first().click();
-  await byLabel('Notes').first().click();
+  await page.getByRole('tab', { name: 'Notes', exact: true }).click();
   await page.waitForTimeout(800);
   await byLabel('Create a new study note').click();
   await page.waitForTimeout(600);
