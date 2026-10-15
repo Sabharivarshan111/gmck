@@ -86,26 +86,29 @@ def dump_ui() -> ET.Element:
     raise RuntimeError('Pixel Launcher ANR still obstructs the app after dismissal')
 
 
-def find_nodes(needle: str) -> list[tuple[int, int, int, str]]:
-    root = dump_ui()
-    needle_l = needle.lower()
-    found: list[tuple[int, int, int, str]] = []
-    for node in root.iter("node"):
+def reachable_nodes(root):
+    """Intersect real node bounds with enclosing native scroll viewports."""
+    def walk(node, clip=None):
+        rect = list(map(int, re.findall(r'-?\d+', node.get('bounds', ''))))
+        if len(rect) != 4:
+            rect = [0, 0, 0, 0]
+        effective = rect if clip is None else [max(rect[0],clip[0]), max(rect[1],clip[1]), min(rect[2],clip[2]), min(rect[3],clip[3])]
+        if effective[2] > effective[0] and effective[3] > effective[1]:
+            yield node, effective
+        child_clip = effective if any(kind in node.get('class', '') for kind in ['ScrollView', 'WebView']) else clip
+        for child in node:
+            yield from walk(child, child_clip)
+    yield from walk(root)
+
+
+def find_nodes(needle: str, adjustable: bool = False) -> list[tuple[int, int, int, str]]:
+    found = []
+    for node, (x1, y1, x2, y2) in reachable_nodes(dump_ui()):
         label = node_label(node)
-        if needle_l not in label.lower():
+        if needle.lower() not in label.lower() or (adjustable and node.get('range-now') is None):
             continue
-        center = bounds_center(node.attrib.get("bounds", ""))
-        if not center:
-            continue
-        m = re.match(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", node.attrib.get("bounds", ""))
-        assert m
-        x1, y1, x2, y2 = map(int, m.groups())
-        if x2 <= x1 or y2 <= y1:
-            continue
-        area = (x2 - x1) * (y2 - y1)
-        found.append((area, center[0], center[1], label))
-    found.sort(key=lambda row: row[0])
-    return found
+        found.append(((x2-x1)*(y2-y1), (x1+x2)//2, (y1+y2)//2, label))
+    return sorted(found)
 
 
 def visible(needle: str) -> bool:
@@ -113,24 +116,22 @@ def visible(needle: str) -> bool:
 
 
 def tap(needle: str, required: bool = True) -> bool:
-    nodes = find_nodes(needle)
+    nodes = []
     clickable = []
-    for node in dump_ui().iter('node'):
+    for node, (x1,y1,x2,y2) in reachable_nodes(dump_ui()):
         label = node_label(node)
-        if needle.lower() not in label.lower() or node.get('clickable') != 'true' or node.get('enabled') == 'false':
+        if needle.lower() not in label.lower():
             continue
-        center = bounds_center(node.get('bounds', ''))
-        rect = list(map(int, re.findall(r'\d+', node.get('bounds', ''))))
-        if center and len(rect) == 4 and rect[2] > rect[0] and rect[3] > rect[1]:
-            clickable.append(((rect[2]-rect[0])*(rect[3]-rect[1]),center[0],center[1],label))
+        item = ((x2-x1)*(y2-y1),(x1+x2)//2,(y1+y2)//2,label)
+        nodes.append(item)
+        if node.get('clickable') == 'true' and node.get('enabled') != 'false':
+            clickable.append(item)
+    nodes.sort()
     if clickable:
-        # Prefer the actual enabled button to a smaller static caption with the
-        # same words (e.g. the label above the radiology reference picker).
         exact = [node for node in clickable if node[3].lower() == needle.lower()]
-        nodes = sorted(exact or clickable, key=lambda node: node[0])
+        nodes = sorted(exact or clickable)
     if not nodes:
-        if required:
-            raise RuntimeError(f"UI element not found: {needle!r}")
+        if required: raise RuntimeError(f"UI element not found: {needle!r}")
         return False
     _, x, y, label = nodes[0]
     print(f"tap {label!r} at {x},{y}")
@@ -201,16 +202,19 @@ def scroll_until(needle: str, tries: int = 8) -> None:
     raise RuntimeError(f"Could not scroll to UI element: {needle!r}")
 
 
-def scroll_to_tappable(needle: str, tries: int = 18) -> None:
+def scroll_to_tappable(needle: str, tries: int = 18, adjustable: bool = False) -> None:
     # A node can appear in uiautomator while clipped or underneath the fixed
     # bottom assistant bar. Keep the visible body tappable, including controls
     # immediately below the header; a 24% cutoff strands top-of-scroll buttons.
     _, height = screen_size()
     for _ in range(tries + 1):
-        nodes = find_nodes(needle)
+        nodes = find_nodes(needle, adjustable=adjustable)
         if nodes and height * 0.10 <= nodes[0][2] <= height * 0.94:
             return
-        if nodes and nodes[0][2] < height * 0.10:
+        raw = [bounds_center(n.get('bounds', '')) for n in dump_ui().iter('node')
+               if needle.lower() in node_label(n).lower() and (not adjustable or n.get('range-now') is not None)]
+        raw = [point for point in raw if point]
+        if (nodes and nodes[0][2] < height * 0.10) or (not nodes and raw and raw[0][1] < height * .5):
             scroll_up()
         else:
             scroll_down()

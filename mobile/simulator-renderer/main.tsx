@@ -23,6 +23,18 @@ window.addEventListener('unhandledrejection', event => console.error('ORBIT_NATI
 // and delivers the exact, checksum-pinned source geometry from its persistent cache.
 const theme = new URLSearchParams(location.search).get('nativeTheme');
 if (theme === 'dark' || theme === 'light') localStorage.setItem('orbit-simulator-theme', theme);
+let viewportHeight = 0;
+const syncViewportHeight = () => {
+  const height = window.innerHeight;
+  if (height > 0 && height !== viewportHeight) {
+    viewportHeight = height;
+    document.documentElement.style.setProperty('--orbit-native-vh', `${height / 100}px`);
+  }
+};
+syncViewportHeight();
+window.addEventListener('resize', syncViewportHeight);
+window.visualViewport?.addEventListener('resize', syncViewportHeight);
+if (typeof ResizeObserver !== 'undefined') new ResizeObserver(syncViewportHeight).observe(document.documentElement);
 let hostActive = true;
 Object.defineProperty(document, 'hidden', { get: () => !hostActive });
 Object.defineProperty(document, 'visibilityState', { get: () => hostActive ? 'visible' : 'hidden' });

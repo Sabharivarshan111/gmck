@@ -41,6 +41,9 @@ try {
     await page.goto(origin + '/simulator?' + (kind === 'icu' ? 'mode=telemetry' : 'tool=ecg12') + '&native_teaching=' + kind + '&nativeTheme=dark&scenario=normal');
     if (kind === 'icu') {
       await page.getByRole('dialog', { name: 'ECG learning studio' }).waitFor();
+      const bounds = await page.getByRole('dialog', { name: 'ECG learning studio' }).boundingBox();
+      assert.ok(bounds && bounds.height > 600, 'Mobile tutorial collapsed below its usable viewport height');
+      assert.ok(await page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--orbit-native-vh')) > 0), 'Measured native viewport height was not initialized');
       await page.getByRole('button', { name: 'Leads & axis', exact: true }).click();
       await page.getByRole('heading', { name: 'One heart. Twelve views.', exact: true }).waitFor();
       await page.evaluate(() => window.__orbitPatientKernel.applyAction('saline'));
