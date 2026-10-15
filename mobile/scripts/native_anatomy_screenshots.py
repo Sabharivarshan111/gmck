@@ -5,6 +5,9 @@ Debug-only route intents change the actual WebView's URL. They never substitute 
 fixture, inject a fake model or exist in signed release builds.
 """
 import json
+import os
+import subprocess
+import xml.etree.ElementTree as ET
 import shlex
 import re
 import time
@@ -57,19 +60,36 @@ def ready(timeout=180, expected_route=None, reference=False, section=None):
 
 def capture_details(target, path, bounds, reference=False):
     """Use real drawer controls, verifying the selected DOM tab before capture."""
-    if 'organ' not in target['query']:
+    if 'organ' not in target['query'] or target.get('hasTeachingDetails') is False:
         return []
     prefix = 'anatomy-vercel-' if reference else 'anatomy-android-'
     details = []
+    # Read layout before any accessibility service handoff. One hierarchy
+    # snapshot owns the optional selection-strip tap, avoiding a second lookup.
+    if os.environ.get('ORBIT_ANATOMY_LAYOUT_PROBE') == '1':
+        subprocess.run(['node', 'mobile/scripts/read_android_webview.mjs', str(OUT / (prefix + target['id'] + '-before-dom.json'))], check=False, timeout=45)
+    root = dump_ui()
+    ET.ElementTree(root).write(OUT / (prefix + target['id'] + '-before.xml'))
+    for node in root.iter('node'):
+        if 'Open selected structure anatomy details' in node_label(node):
+            center = bounds_center(node.get('bounds', ''))
+            if center:
+                adb('shell', 'input', 'tap', str(center[0]), str(center[1]))
+                time.sleep(2)
+                break
+    if os.environ.get('ORBIT_ANATOMY_LAYOUT_PROBE') == '1':
+        subprocess.run(['node', 'mobile/scripts/read_android_webview.mjs', str(OUT / (prefix + target['id'] + '-after-dom.json'))], check=False, timeout=45)
     for label in ['Supply', 'Relations']:
         name = target['id'] + '-' + label.lower()
         candidates = []
         for node in dump_ui().iter('node'):
-            if node_label(node) == label:
+            if label in [node.get('text', '').strip(), node.get('content-desc', '').strip()]:
                 center = bounds_center(node.attrib.get('bounds', ''))
                 if center: candidates.append(center)
         if not candidates:
-            details.append({'id': name, 'section': label, 'available': False, 'captured': False})
+            ET.ElementTree(dump_ui()).write(OUT / (prefix + name + '-missing.xml'))
+            shot(prefix + 'failure-' + name)
+            details.append({'id': name, 'section': label, 'available': True, 'captured': False, 'error': 'Detail tab could not be reached; availability unverified'})
             continue
         try:
             x, y = candidates[0]
@@ -105,8 +125,11 @@ def main():
     targets = [{"id": "whole-body", "query": {"mode": "anatomy"}},
                {"id": "vessels", "query": {"mode": "anatomy", "layer": "vascular"}},
                {"id": "skeleton", "query": {"mode": "anatomy", "layer": "skeletal"}}]
-    targets += [{"id": organ["id"], "query": {"mode": "anatomy", "organ": organ["id"], "isolate": organ["preferredReference"]}}
+    targets += [{"id": organ["id"], "hasTeachingDetails": organ["hasTeachingDetails"], "query": {"mode": "anatomy", "organ": organ["id"], "isolate": organ["preferredReference"]}}
                 for organ in coverage["organs"]]
+    selected = os.environ.get('ORBIT_ANATOMY_TARGETS')
+    if selected:
+        targets = [t for t in targets if t['id'] in selected.split(',')]
     # The first intent is applied when the real anatomy surface is mounted.
     route("/simulator?" + urlencode(targets[0]["query"]))
     tap("Explore 3D anatomy")
@@ -139,22 +162,23 @@ def main():
         (OUT / "native-anatomy-captures.json").write_text(json.dumps({"status": "NOT_CERTIFIED", "targets": results}, indent=2))
         if missing_metadata >= 3 or (not results[-1]['captured'] and any(message in results[-1].get('error', '') for message in ['renderer startup failed', 'shader failed'])):
             raise RuntimeError('Global native renderer failure; stopping repeated route timeouts. See failure logcat and screenshots.')
-    # The live Vercel reference uses the same Android WebView, fonts, viewport and
-    # software GPU. This avoids desktop font fallback masquerading as mobile QA.
     references = []
-    for target in targets:
-        path = "/simulator?" + urlencode(target["query"])
-        try:
-            route(path, reference=True)
-            metadata = ready(expected_route=path, reference=True)
-            metadata["nativeBounds"] = native_bounds
-            shot("anatomy-vercel-" + target["id"])
-            details = capture_details(target, path, native_bounds, reference=True)
-            references.append({"id": target["id"], "captured": True, "renderer": metadata, "details": details})
-        except Exception as error:
-            shot("anatomy-vercel-failure-" + target["id"])
-            references.append({"id": target["id"], "captured": False, "error": str(error)})
-        (OUT / "vercel-anatomy-captures.json").write_text(json.dumps({"status": "NOT_CERTIFIED", "platform": "same Android WebView", "targets": references}, indent=2))
+    if os.environ.get('ORBIT_ANATOMY_REFERENCE') != 'browser':
+        # The live Vercel reference uses the same Android WebView, fonts, viewport and
+        # software GPU. This avoids desktop font fallback masquerading as mobile QA.
+        for target in targets:
+            path = "/simulator?" + urlencode(target["query"])
+            try:
+                route(path, reference=True)
+                metadata = ready(expected_route=path, reference=True)
+                metadata["nativeBounds"] = native_bounds
+                shot("anatomy-vercel-" + target["id"])
+                details = capture_details(target, path, native_bounds, reference=True)
+                references.append({"id": target["id"], "captured": True, "renderer": metadata, "details": details})
+            except Exception as error:
+                shot("anatomy-vercel-failure-" + target["id"])
+                references.append({"id": target["id"], "captured": False, "error": str(error)})
+            (OUT / "vercel-anatomy-captures.json").write_text(json.dumps({"status": "NOT_CERTIFIED", "platform": "same Android WebView", "targets": references}, indent=2))
     # A new renderer instance, with radios off, must reuse the actual private cache.
     adb("shell", "svc", "wifi", "disable", check=False)
     adb("shell", "svc", "data", "disable", check=False)
