@@ -1,6 +1,6 @@
 """Interact through actual Android UI; inspector reads state without modifying it."""
 import os, json, subprocess, time, xml.etree.ElementTree as ET
-from native_screenshot_driver import OUT, adb, tap, wait_visible, shot, dump_ui, scroll_to_tappable, find_nodes, visible, screen_size, reachable_nodes
+from native_screenshot_driver import OUT, adb, tap, wait_visible, shot, dump_ui, scroll_to_tappable, find_nodes, visible, screen_size, reachable_nodes, launch, first_run
 from native_diagnostic_controls import open_skill, adjust_slider
 
 def edge_scroll(up=False):
@@ -10,27 +10,47 @@ def edge_scroll(up=False):
     adb("shell","input","swipe",str(x),str(round(h*(.30 if up else .74))),str(x),str(round(h*(.76 if up else .28))),"550")
     time.sleep(1)
 
+webview_bounds = None
+
+
 def reach_control(label):
-    _, height = screen_size()
+    global webview_bounds
+    if webview_bounds is None:
+        for node,rect in reachable_nodes(dump_ui()):
+            if node.get('class') == 'android.webkit.WebView':
+                webview_bounds = rect
+                break
+    if webview_bounds is None:
+        raise RuntimeError('Actual Android WebView bounds unavailable')
+    tab_ids = {'Scleral icterus':'ward-tab-icterus','Pallor & cyanosis':'ward-tab-pallor','Ascites & thrill':'ward-tab-ascites'}
     for attempt in range(24):
+        snapshot = state('control-target')
+        controls = snapshot['controls']
         candidates = []
-        for node, rect in reachable_nodes(dump_ui()):
-            if node.get('clickable') != 'true' or node.get('enabled') == 'false':
+        for control in controls:
+            text = control.get('text') or ''
+            stripped = text.lstrip('🔦🧶🪶☝️🖐️ ↺')
+            if control.get('disabled'):
                 continue
-            if label not in [node.get('text', '').strip(), node.get('content-desc', '').strip()]:
-                continue
-            x1, y1, x2, y2 = rect
-            candidates.append(((x2-x1)*(y2-y1), rect))
-        candidates.sort()
-        if candidates:
-            rect = candidates[0][1]
-            center = (rect[1]+rect[3])/2
-            if height*.10 <= center <= height*.94:
-                return rect
-            edge_scroll(center < height*.10)
-        else:
-            edge_scroll(attempt < 5)
-    raise RuntimeError('Could not reach exact enabled advanced control: ' + label)
+            if control.get('label') == label or text == label or stripped == label or control.get('testId') == tab_ids.get(label, '__none__'):
+                candidates.append(control)
+        if not candidates:
+            edge_scroll(attempt < 4)
+            continue
+        control = candidates[0]
+        rect = control['rect'];w,h=snapshot['viewport']
+        cx,cy=rect['x']+rect['width']/2,rect['y']+rect['height']/2
+        sx,sy=(webview_bounds[2]-webview_bounds[0])/w,(webview_bounds[3]-webview_bounds[1])/h
+        if control['hit'] and 0<cx<w and 0<cy<h:
+            return [round(webview_bounds[0]+rect['x']*sx),round(webview_bounds[1]+rect['y']*sy),round(webview_bounds[0]+(rect['x']+rect['width'])*sx),round(webview_bounds[1]+(rect['y']+rect['height'])*sy)]
+        area=control.get('scroller') or {'x':0,'y':0,'width':w,'height':h}
+        x=area['x']+area['width']-4
+        top=area['y']+20;bottom=min(h,area['y']+area['height'])-20
+        up=cy<max(100,top+30)
+        start,end=(top,bottom) if up else (bottom,top)
+        adb('shell','input','swipe',str(round(webview_bounds[0]+x*sx)),str(round(webview_bounds[1]+start*sy)),str(round(webview_bounds[0]+x*sx)),str(round(webview_bounds[1]+end*sy)),'250')
+        time.sleep(.5)
+    raise RuntimeError('Actual advanced control remained occluded: '+label)
 
 
 def press(label):
@@ -52,10 +72,20 @@ def adjust_web_slider(label, fraction):
 
 
 def state(name):
-    path=OUT/(name+'-state.json')
-    subprocess.run(['node','mobile/scripts/read_android_advanced.mjs',str(path)],check=True,timeout=50)
-    candidates=json.loads(path.read_text())['results']
-    return next(r for r in reversed(candidates) if not r.get('error'))
+    path = OUT/(name+'-state.json')
+    failures = []
+    for attempt in range(4):
+        try:
+            subprocess.run(['node','mobile/scripts/read_android_advanced.mjs',str(path)],check=True,timeout=35)
+            candidates = json.loads(path.read_text())['results']
+            valid = [r for r in candidates if not r.get('error')]
+            if valid:
+                return valid[-1]
+            failures.append(candidates)
+        except (subprocess.SubprocessError, ValueError, OSError) as error:
+            failures.append(str(error))
+        time.sleep(.7)
+    raise RuntimeError('Read-only Android inspector did not connect: '+json.dumps(failures))
 
 
 def capture(name):
@@ -88,9 +118,40 @@ def eye():
     return {'gaze':True,'penlightConstrictionAndRecovery':True,'headReady':True,'cottonButtonOnly':True}
 
 
+def ready_thorax():
+    for attempt in range(24):
+        snapshot = state('thorax-ready')
+        if snapshot['thorax']['ready']:
+            return snapshot
+        time.sleep(3)
+    raise AssertionError('Actual 3D thorax did not become ready: '+json.dumps(snapshot))
+
+
+def auscultation_case():
+    launch();first_run();tap('Vault')
+    scroll_to_tappable('Simulator & Anatomy');tap('Simulator & Anatomy')
+    scroll_to_tappable('Practise a case');tap('Practise a case')
+    scroll_to_tappable('Acute Inferior STEMI');tap('Acute Inferior STEMI')
+    wait_visible('Patient Simulator')
+    scroll_to_tappable('Open 🩺 Steth diagnostic tool');tap('Open 🩺 Steth diagnostic tool')
+    wait_visible('Auscultation trainer',tries=30)
+    snapshot = ready_thorax()
+    assert snapshot['patient']['scenario']=='stemi',snapshot
+    capture('auscultation-stemi-case-3d')
+    press('View back');wait_visible('View front');capture('auscultation-stemi-case-back')
+    press('Show organ movement')
+    moving = state('auscultation-stemi-moving')
+    assert any(b['text']=='Show organ movement' and b['pressed']=='true' for b in moving['buttons']),moving
+    time.sleep(.4);next_frame=state('auscultation-stemi-next-frame')
+    assert moving['thorax']['bodyHash'] is not None and moving['thorax']['bodyHash'] != next_frame['thorax']['bodyHash'],(moving,next_frame)
+    capture('auscultation-stemi-case-movement')
+    return {'enteredFromActualNativePatientCase':True,'scenarioPreserved':'stemi','real3DModelReady':True,'backView':True,'actual3DFramesChangeWithMovement':True}
+
+
 def auscultation():
     open_skill('Auscultation')
     wait_visible('Auscultation trainer',tries=30)
+    ready_thorax()
     press('Normal S1 / S2');wait_visible('Stop Stethoscope',tries=15)
     s=capture('auscultation-heart')
     assert not s['audioErrors'],s
@@ -143,7 +204,7 @@ def general():
 
 
 checks=[];failures=[]
-for name,suite in [('eye',eye),('auscultation',auscultation),('pocus',pocus),('general',general)]:
+for name,suite in [('eye',eye),('auscultation',auscultation),('auscultation-case',auscultation_case),('pocus',pocus),('general',general)]:
     if os.environ.get('ORBIT_ADVANCED_SUITE') and name != os.environ['ORBIT_ADVANCED_SUITE']:
         continue
     try:checks.append({'suite':name,'passed':True,'details':suite()})

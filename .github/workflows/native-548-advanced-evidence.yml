@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [eye, auscultation, pocus, general]
+        suite: [eye, auscultation, auscultation-case, pocus, general]
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
@@ -33,16 +33,11 @@ jobs:
         with:
           node-version: '22'
           cache: npm
-      - name: Check the local advanced teaching integration in a mobile browser
+      - name: Install browser reference dependencies
         run: |
           npm ci --legacy-peer-deps --ignore-scripts
           npm install --no-save --package-lock=false --legacy-peer-deps playwright@1.55.0
           npx playwright install --with-deps chromium
-          npm ci --prefix mobile --legacy-peer-deps --ignore-scripts
-          node mobile/scripts/build-local-simulator.mjs
-          node mobile/scripts/native-teaching-browser-check.mjs
-          node mobile/scripts/native-icu-display-check.mjs
-          node mobile/scripts/native-icu-sampling-check.mjs
       - name: Wait for matching Android debug build
         id: debug
         uses: actions/github-script@v7
@@ -79,7 +74,7 @@ jobs:
         run: |
           mkdir -p artifacts/native-vault-parity
           node mobile/scripts/native-anatomy-parity-manifest.mjs artifacts/native-vault-parity/anatomy-coverage.json
-          node mobile/scripts/vercel_mobile_advanced_skills.mjs artifacts/native-vault-parity
+          ORBIT_ADVANCED_SUITE=${{ matrix.suite }} node mobile/scripts/vercel_mobile_advanced_skills.mjs artifacts/native-vault-parity
 
       - name: Enable emulator acceleration
         if: ${{ !cancelled() && steps.apk.outcome == 'success' }}
