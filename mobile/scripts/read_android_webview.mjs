@@ -2,7 +2,8 @@
 import { execFileSync } from 'node:child_process';
 import { writeFile } from 'node:fs/promises';
 const adb = (...args) => execFileSync('adb', args, { encoding: 'utf8' });
-const sockets = [...new Set(adb('shell', 'cat', '/proc/net/unix').match(/webview_devtools_remote[^\s]*/g) || [])];
+const appPids = adb('shell','pidof',process.env.ORBIT_PACKAGE || 'com.aistudio.mbbsqbank.aycxvd.debug').trim().split(/\s+/);
+const sockets = [...new Set(adb('shell', 'cat', '/proc/net/unix').match(/webview_devtools_remote[^\s]*/g) || [])].filter(socket => appPids.some(pid => socket === 'webview_devtools_remote_' + pid));
 const results = [];
 const expression = (() => {
         const describe = el => {
@@ -20,10 +21,11 @@ const expression = (() => {
             };
             for (const sheet of document.styleSheets) { try { walk(sheet.cssRules); } catch { /* Cross-origin sheet. */ } }
           }
-          return { heightRules, text: el.textContent?.trim().slice(0, 160), tag: el.tagName, class: String(el.className).slice(0, 500), label: el.getAttribute('aria-label'), rect: { x:r.x,y:r.y,width:r.width,height:r.height }, style: Object.fromEntries(keys.map(key => [key,s[key]])), centerElement: document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.outerHTML.slice(0,700) };
+          return { heightRules, text: el.textContent?.trim().slice(0, 160), tag: el.tagName, class: String(el.className).slice(0, 500), label: el.getAttribute('aria-label'), title:el.getAttribute('title'), rect: { x:r.x,y:r.y,width:r.width,height:r.height }, style: Object.fromEntries(keys.map(key => [key,s[key]])), centerElement: document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.outerHTML.slice(0,700) };
         };
         const panels = [...document.querySelectorAll('[role="dialog"], [aria-label="Anatomy details"], .ecg-studio-backdrop')];
-        return { url: window.location.href, viewport: [window.innerWidth,window.innerHeight], visualViewport: {width:window.visualViewport?.width,height:window.visualViewport?.height,offsetTop:window.visualViewport?.offsetTop}, rootClass:document.documentElement.className, media: Object.fromEntries(['(min-width: 768px)', '(max-width: 1023px)', '(max-height: 500px)'].map(query => [query, window.matchMedia(query).matches])), clientViewport:[document.documentElement.clientWidth,document.documentElement.clientHeight], measuredHeight:getComputedStyle(document.documentElement).getPropertyValue('--orbit-native-vh'), panels:panels.map(el => ({self:describe(el), ancestors:[el.parentElement,el.parentElement?.parentElement,el.parentElement?.parentElement?.parentElement].filter(Boolean).map(describe), scrollAreas:[...el.querySelectorAll('.overflow-y-auto')].map(area=>({...describe(area),scrollHeight:area.scrollHeight,clientHeight:area.clientHeight})), headings:[...el.querySelectorAll('h2,h3,h4')].map(describe), controls:[...el.querySelectorAll('button,[role="tab"]')].slice(0,18).map(describe)})) };
+        const renderer = document.querySelector('[data-testid="anatomy-renderer"]');
+        return { modelStatus:{loading:/LOADING (?:BODYPARTS3D|Z-ANATOMY|HRA)/.test(renderer?.textContent || ''), error:!!renderer?.querySelector('[role="alert"]'), notices:[...renderer?.querySelectorAll('[role="status"]') || []].map(el=>el.textContent?.trim())}, url: window.location.href, viewport: [window.innerWidth,window.innerHeight], visualViewport: {width:window.visualViewport?.width,height:window.visualViewport?.height,offsetTop:window.visualViewport?.offsetTop}, rootClass:document.documentElement.className, media: Object.fromEntries(['(min-width: 768px)', '(max-width: 1023px)', '(max-height: 500px)'].map(query => [query, window.matchMedia(query).matches])), clientViewport:[document.documentElement.clientWidth,document.documentElement.clientHeight], measuredHeight:getComputedStyle(document.documentElement).getPropertyValue('--orbit-native-vh'), panels:panels.map(el => ({self:describe(el), ancestors:[el.parentElement,el.parentElement?.parentElement,el.parentElement?.parentElement?.parentElement].filter(Boolean).map(describe), scrollAreas:[...el.querySelectorAll('.overflow-y-auto')].map(area=>({...describe(area),scrollHeight:area.scrollHeight,clientHeight:area.clientHeight})), headings:[...el.querySelectorAll('h2,h3,h4')].map(describe), controls:[...el.querySelectorAll('button,[role="tab"]')].slice(0,18).map(describe)})) };
 }).toString();
 for (const socket of sockets) {
   try {

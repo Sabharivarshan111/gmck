@@ -58,19 +58,60 @@ def ready(timeout=180, expected_route=None, reference=False, section=None):
         time.sleep(1)
     raise RuntimeError("Android anatomy geometry never reached a stable loaded state; last metadata=" + json.dumps(last_metadata))
 
+def viewport_state(name):
+    path = OUT/(name+'-dom.json')
+    failures = []
+    for attempt in range(4):
+        try:
+            subprocess.run(['node','mobile/scripts/read_android_webview.mjs',str(path)],check=True,timeout=25)
+            results = json.loads(path.read_text())['results']
+            valid = [r for r in results if not r.get('error') and r.get('viewport')]
+            if valid:
+                return valid[-1]
+            failures.append(results)
+        except (subprocess.SubprocessError,ValueError,OSError) as error:
+            failures.append(str(error))
+        time.sleep(.7)
+    raise RuntimeError('Actual Android layout inspector did not connect: '+json.dumps(failures))
+
+
 def drawer_state(name):
-    path = OUT / (name + '-dom.json')
-    subprocess.run(['node', 'mobile/scripts/read_android_webview.mjs', str(path)], check=True, timeout=25)
-    for result in reversed(json.loads(path.read_text())['results']):
-        for panel in result.get('panels', []):
-            if panel['self'].get('label') == 'Anatomy details':
-                return result, panel
+    result = viewport_state(name)
+    for panel in result.get('panels',[]):
+        if panel['self'].get('label')=='Anatomy details':
+            return result,panel
     raise RuntimeError('Actual anatomy drawer not present in the installed WebView')
 
 
 def device_point(rect, viewport, bounds):
     return (round(bounds[0] + (rect['x'] + rect['width']/2) * (bounds[2]-bounds[0])/viewport[0]),
             round(bounds[1] + (rect['y'] + rect['height']/2) * (bounds[3]-bounds[1])/viewport[1]))
+
+
+def capture_model(target, path, bounds, reference=False):
+    prefix = 'anatomy-vercel-' if reference else 'anatomy-android-'
+    name = prefix + target['id'] + '-model'
+    for attempt in range(36):
+        result = viewport_state(name + '-layout')
+        status = result.get('modelStatus', {})
+        if status.get('error'):
+            raise RuntimeError('Actual anatomy renderer reports an error: ' + json.dumps(status))
+        if status.get('loading'):
+            time.sleep(3)
+            continue
+        panels = [p for p in result.get('panels',[]) if p['self'].get('label') == 'Anatomy details']
+        if panels:
+            close = next(c for c in panels[0]['controls'] if c.get('title') == 'Close Drawer')
+            x,y = device_point(close['rect'],result['viewport'],bounds)
+            adb('shell','input','tap',str(x),str(y))
+            time.sleep(.6)
+            continue
+        metadata = ready(timeout=30,expected_route=path,reference=reference)
+        metadata['nativeBounds'] = bounds
+        metadata['modelStatus'] = status
+        shot(name)
+        return {'id':target['id']+'-model','section':'Uncovered 3D model','available':True,'captured':True,'renderer':metadata}
+    raise RuntimeError('Model remained loading or covered by anatomy details')
 
 
 def capture_details(target, path, bounds, reference=False):
@@ -168,6 +209,8 @@ def main():
             name = "anatomy-android-" + target["id"]
             shot(name)
             details = capture_details(target, path, native_bounds)
+            if os.environ.get('ORBIT_MODEL_CAPTURE') == '1':
+                details.append(capture_model(target,path,native_bounds))
             results.append({**target, "route": path, "screenshot": name + ".png", "renderer": metadata, "captured": True, "details": details})
             missing_metadata = 0
             print("CAPTURED actual Android anatomy:", target["id"], flush=True)

@@ -57,7 +57,8 @@ if anatomy_file.exists():
     reference_targets={item['id']:item for item in json.loads(reference_path.read_text()).get('targets',[])} if reference_path.exists() else {}
     native_targets={item['id']:item for item in anatomy['targets']}
     coverage_path=folder/'anatomy-coverage.json'
-    expected=['whole-body','vessels','skeleton']+[item['id'] for item in json.loads(coverage_path.read_text())['organs']] if coverage_path.exists() else list(native_targets)
+    coverage=json.loads(coverage_path.read_text()) if coverage_path.exists() else {}
+    expected=coverage.get('auditTargetIds') or (['whole-body','vessels','skeleton']+[item['id'] for item in coverage['organs']] if coverage else list(native_targets))
     review_targets=[]
     availability=[]
     for target_id in expected:
