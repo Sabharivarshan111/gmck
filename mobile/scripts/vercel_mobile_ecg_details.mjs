@@ -18,7 +18,8 @@ try{
  await page.getByLabel('Static synthetic ECG with calibrated grid').waitFor();
  for(const segment of ['P','PR','QRS','ST','T','QT']){
   await page.getByRole('button',{name:segment,exact:true}).click();
-  await page.getByText(/Single-Lead Magnified Cut-Out:/).scrollIntoViewIfNeeded();
+  const cutout=page.getByText(/Single-Lead Magnified Cut-Out:/).locator('xpath=../../..').locator('canvas');
+  await cutout.evaluate(el=>el.scrollIntoView({block:'center',inline:'start'}));
   await shot('vercel-ecg-cutout-'+segment.toLowerCase());
  }
 }catch(e){errors.push(e.message);await shot('failure').catch(()=>{});process.exitCode=1;}
