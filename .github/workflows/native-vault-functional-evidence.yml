@@ -39,6 +39,7 @@ jobs:
           npm ci --legacy-peer-deps --ignore-scripts
           npm install --no-save --package-lock=false --legacy-peer-deps playwright@1.55.0
           npx playwright install --with-deps chromium
+          npm ci --prefix mobile --legacy-peer-deps --ignore-scripts
           node mobile/scripts/build-local-simulator.mjs
           node mobile/scripts/native-teaching-browser-check.mjs
       - name: Wait for matching Android debug build
