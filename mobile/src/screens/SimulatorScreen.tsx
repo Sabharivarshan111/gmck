@@ -102,7 +102,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   if (nativeMode?.kind === 'radiology') return wrap(<NativeRadiologyViewer theme={studioTheme} onBack={returnToNativeStudio} />);
 
   // The canonical clubbing sheet is white in both studio themes.
-  if (nativeMode?.kind === 'clubbing') return wrap(<NativeClubbingTrainer theme="light" onBack={returnToNativeStudio} />);
+  if (nativeMode?.kind === 'clubbing') return wrap(<NativeClubbingTrainer onBack={returnToNativeStudio} />);
 
   if (!url) {
     return wrap(<NativeClinicalStudio onExit={onExit} scenarioId={studioScenarioId} onScenarioChange={setStudioScenarioId} theme={studioTheme} onToggleTheme={onToggleStudioTheme} onOpen={destination => {

@@ -1,37 +1,119 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, Linking, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import Radiology from '@/native/NativeOrbitRadiology';
 
-/** Same independent teaching skill as the Vercel ClubbingTrainer. */
-export default function NativeClubbingTrainer({ onBack, theme = 'dark' }: { onBack: () => void; theme?: 'dark' | 'light' }) {
-  const insets=useSafeAreaInsets();
-  const palette= useMemo(() => (theme==='dark'?{bg:'#0e0e11',raised:'#1b1b21',ink:'#f5f5f7',muted:'#a6a6af',border:'#34343a',accent:'#e784fb',onAccent:'#171019'}:{bg:'#fff',raised:'#f8fafc',ink:'#0f172a',muted:'#475569',border:'#e2e8f0',accent:'#0f766e',onAccent:'#fff'}),[theme]);
-  const styles=useMemo(() => makeStyles(palette),[palette]);
-  const [mode,setMode]=useState<'normal'|'clubbing'>('normal');
-  const [answer,setAnswer]=useState(false), [steps,setSteps]=useState(false);
-  const [image,setImage]=useState(''), [error,setError]=useState('');
+const normalFindings = [
+  'No bulbous enlargement of the fingertips.',
+  'The nail folds form an angle below 180°; the nail bed feels firm.',
+  'A diamond-shaped window remains when corresponding fingernails are opposed.',
+];
+const clubbingFindings = [
+  'Increased nail curvature and bulbous terminal phalanges.',
+  'Loss of the normal nail-fold angle, progressing beyond 180°.',
+  'Nail-bed sponginess may be an early finding.',
+  'Schamroth window may be lost. Interpret with the full examination.',
+];
+const examinationSteps = [
+  'Inspect fingers from the side for the nail-fold angle and distal enlargement.',
+  'Gently palpate the nail bed for fluctuation or sponginess.',
+  'Ask the patient to oppose corresponding nails; look for the diamond window (Schamroth test).',
+  'Compare both hands and examine the toes. Ask about duration and family history.',
+  'Investigate the clinical context, including pulmonary, cardiac and gastrointestinal disease. Clubbing itself does not diagnose a cause.',
+];
+type Frame = { uri: string; width: number; height: number };
+
+/** Canonical ClubbingTrainer's fixed white teaching sheet, rendered natively. */
+export default function NativeClubbingTrainer({ onBack }: { onBack: () => void }) {
+  const insets = useSafeAreaInsets();
+  const [mode, setMode] = useState<'normal' | 'clubbing'>('normal');
+  const [answer, setAnswer] = useState(false);
+  const [steps, setSteps] = useState(false);
+  const [image, setImage] = useState<Frame | null>(null);
+  const [error, setError] = useState('');
   useEffect(() => {
-    if (mode!=='clubbing'||image) return;
-    let cancelled=false;
+    if (mode !== 'clubbing' || image) return;
+    let cancelled = false;
     if (!Radiology) { setError('Native image renderer unavailable.'); return; }
-    Radiology.renderXray('clinical-reference/clubbing.jpg',1,1).then(json => { if(!cancelled) setImage(JSON.parse(json).uri); }).catch(e => {if(!cancelled) setError(String(e.message||e));});
-    return () => {cancelled=true;};
-  },[mode,image]);
-  const button=(label: string,onPress: () => void,selected=false) => <Touchable key={label} label={label} onPress={onPress} state={{selected}} style={[styles.button,{backgroundColor:selected?palette.accent:palette.raised}]}><Text style={{color:selected?palette.onAccent:palette.ink,fontWeight:'700'}}>{label}</Text></Touchable>;
-  return <View style={[styles.screen,{paddingTop:insets.top,paddingBottom:insets.bottom}]}>
-    <View style={styles.header}><Text style={[styles.title,{flex:1}]}>Clubbing examination</Text><Touchable label="Close clubbing skill" onPress={onBack} style={{minWidth:44,minHeight:44,alignItems:'center',justifyContent:'center'}}><Text style={{color:palette.ink,fontSize:20}}>✕</Text></Touchable></View>
-    <ScrollView contentContainerStyle={{padding:16,paddingBottom:16,gap:16}}>
-      <Text style={styles.muted}>Independent teaching skill. These examples do not assign clubbing to the selected patient case.</Text>
-      <View style={{flexDirection:'row',gap:8}}>{(['normal','clubbing'] as const).map(v => button(v==='normal'?'Normal findings':'Clubbing findings',() => {setMode(v);setAnswer(false);},mode===v))}</View>
-      {mode==='clubbing' && <View>{image?<Image source={{uri:image}} style={{height:288,width:'100%',backgroundColor:palette.raised,borderRadius:12}} resizeMode="contain" accessibilityLabel="Clinical reference photograph of enlarged distal fingers with convex nails"/>:error?<Text accessibilityRole="alert" style={styles.muted}>{error}</Text>:<ActivityIndicator color="#0f766e"/>}<Text style={styles.muted}>Inspect the terminal phalanges and nail curvature; a photograph alone cannot assess nail-bed fluctuation.</Text></View>}
-      <View style={[styles.card,{backgroundColor:theme==='dark'?palette.raised:'#f0fdfa'}]}><Text style={styles.title}>{mode==='normal'?'What should I find normally?':'What changes in clubbing?'}</Text>{(mode==='normal'?['No bulbous enlargement of the fingertips.','The nail folds form an angle below 180°; the nail bed feels firm.','A diamond-shaped window remains when corresponding fingernails are opposed.']:['Increased nail curvature and bulbous terminal phalanges.','Loss of the normal nail-fold angle, progressing beyond 180°.','Nail-bed sponginess may be an early finding.','Schamroth window may be lost. Interpret with the full examination.']).map(t => <Text style={styles.ink} key={t}>• {t}</Text>)}</View>
-      <View style={styles.card}>{button('How to examine & why',() => setSteps(x => !x),steps)}{steps && ['Inspect fingers from the side for the nail-fold angle and distal enlargement.','Gently palpate the nail bed for fluctuation or sponginess.','Ask the patient to oppose corresponding nails; look for the diamond window (Schamroth test).','Compare both hands and examine the toes. Ask about duration and family history.','Investigate the clinical context, including pulmonary, cardiac and gastrointestinal disease. Clubbing itself does not diagnose a cause.'].map((t,i) => <Text style={styles.ink} key={t}>{i+1}. {t}</Text>)}</View>
-      <View style={styles.card}><Text style={styles.title}>Viva: does asthma usually cause clubbing?</Text>{button(answer?'Hide answer':'Reveal answer',() => setAnswer(x => !x))}{answer && <Text style={styles.ink}>No. Look for another cause, such as bronchiectasis, if a patient labelled as having asthma has clubbing.</Text>}</View>
-      {button('Nail clubbing examination',() => {void Linking.openURL('https://www.ncbi.nlm.nih.gov/books/NBK539713/').catch(() => setError('Unable to open reference.'));})}
+    Radiology.renderXray('clinical-reference/clubbing.jpg', 1, 1)
+      .then(json => { if (!cancelled) setImage(JSON.parse(json)); })
+      .catch(e => { if (!cancelled) setError(String(e.message || e)); });
+    return () => { cancelled = true; };
+  }, [mode, image]);
+
+  return <View style={[styles.screen, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+    <View style={styles.header}>
+      <Text style={styles.headerTitle}>Clubbing examination</Text>
+      <Touchable label="Close clubbing skill" onPress={onBack} style={styles.close}><Text style={styles.closeLabel}>✕</Text></Touchable>
+    </View>
+    <ScrollView contentContainerStyle={styles.content}>
+      <Text style={styles.intro}>Independent teaching skill. These examples do not assign clubbing to the selected patient case.</Text>
+      <View style={styles.modeRow}>{(['normal', 'clubbing'] as const).map(value => {
+        const selected = value === mode;
+        const label = value === 'normal' ? 'Normal findings' : 'Clubbing findings';
+        return <Touchable key={value} label={label} state={{ selected }} onPress={() => { setMode(value); setAnswer(false); }} style={[styles.modeButton, selected && styles.modeSelected]}>
+          <Text style={[styles.modeLabel, selected && styles.modeLabelSelected]}>{label}</Text>
+        </Touchable>;
+      })}</View>
+      {mode === 'clubbing' && <View>
+        {image ? <Image source={{ uri: image.uri }} style={[styles.photo, { aspectRatio: image.width / image.height }]} resizeMode="contain" accessibilityLabel="Clinical reference photograph of enlarged distal fingers with convex nails" />
+          : error ? <Text accessibilityRole="alert" style={styles.caption}>{error}</Text> : <ActivityIndicator color="#0f766e" />}
+        <Text style={[styles.caption, styles.photoCaption]}>Inspect the terminal phalanges and nail curvature; a photograph alone cannot assess nail-bed fluctuation.</Text>
+      </View>}
+      <View style={[styles.card, styles.findings]}>
+        <Text style={styles.cardTitle}>{mode === 'normal' ? 'What should I find normally?' : 'What changes in clubbing?'}</Text>
+        {(mode === 'normal' ? normalFindings : clubbingFindings).map(text => <View style={styles.bulletRow} key={text}>
+          <Text style={[styles.body, styles.bullet]}>•</Text><Text style={[styles.body, styles.listText]}>{text}</Text>
+        </View>)}
+      </View>
+      <View style={[styles.card, styles.examination]}>
+        <Touchable label="How to examine & why" state={{ expanded: steps }} onPress={() => setSteps(value => !value)} style={styles.summary}><Text style={styles.summaryLabel}>How to examine &amp; why</Text></Touchable>
+        {steps && <View style={styles.list}>{examinationSteps.map((text, index) => <View style={styles.numberRow} key={text}>
+          <Text style={[styles.body, styles.number]}>{index + 1}.</Text><Text style={[styles.body, styles.listText]}>{text}</Text>
+        </View>)}</View>}
+      </View>
+      <View style={[styles.card, styles.viva]}>
+        <Text style={styles.cardTitle}>Viva: does asthma usually cause clubbing?</Text>
+        <Touchable label={answer ? 'Hide answer' : 'Reveal answer'} state={{ expanded: answer }} onPress={() => setAnswer(value => !value)} style={styles.reveal}><Text style={styles.revealLabel}>{answer ? 'Hide answer' : 'Reveal answer'}</Text></Touchable>
+        {answer && <Text style={styles.body}>No. Look for another cause, such as bronchiectasis, if a patient labelled as having asthma has clubbing.</Text>}
+      </View>
+      <Text style={styles.caption}>Clinical reference: <Text accessibilityRole="link" accessibilityLabel="Nail clubbing examination" style={styles.link} onPress={() => { Linking.openURL('https://www.ncbi.nlm.nih.gov/books/NBK539713/').catch(() => setError('Unable to open reference.')); }}>Nail clubbing examination</Text></Text>
     </ScrollView>
   </View>;
 }
-const makeStyles=(palette:{bg:string;raised:string;ink:string;muted:string;border:string})=>StyleSheet.create({screen:{flex:1,backgroundColor:palette.bg},header:{paddingHorizontal:16,paddingVertical:12,flexDirection:'row',alignItems:'center',borderBottomWidth:1,borderColor:palette.border,gap:8},title:{color:palette.ink,fontWeight:'700',fontSize:16},ink:{color:palette.ink,lineHeight:22},muted:{color:palette.muted,fontSize:13,lineHeight:20},button:{minHeight:48,padding:12,borderRadius:12,borderWidth:1,borderColor:palette.border,justifyContent:'center',flexShrink:1},card:{padding:16,borderRadius:12,borderWidth:1,borderColor:palette.border,gap:10}});
+const styles = StyleSheet.create({
+  screen: { flex: 1, backgroundColor: '#fff' },
+  header: { paddingHorizontal: 16, paddingVertical: 12, flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderColor: '#e5e7eb', gap: 8 },
+  headerTitle: { flex: 1, color: '#0f172a', fontWeight: '700', fontSize: 16, lineHeight: 24 },
+  close: { minWidth: 44, minHeight: 44, alignItems: 'center', justifyContent: 'center' },
+  closeLabel: { color: '#0f172a', fontSize: 16 },
+  content: { padding: 16, gap: 16 },
+  cardTitle: { color: '#0f172a', fontWeight: '700', fontSize: 14, lineHeight: 22.75 },
+  intro: { color: '#475569', fontSize: 14, lineHeight: 20 },
+  body: { color: '#0f172a', fontSize: 14, lineHeight: 22.75 },
+  caption: { color: '#64748b', fontSize: 12, lineHeight: 16 },
+  photoCaption: { marginTop: 8 },
+  modeRow: { flexDirection: 'row', gap: 8 },
+  modeButton: { flex: 1, minHeight: 48, paddingHorizontal: 8, borderRadius: 12, borderWidth: 1, borderColor: '#e5e7eb', backgroundColor: '#f8fafc', justifyContent: 'center', alignItems: 'center' },
+  modeSelected: { backgroundColor: '#0f766e' },
+  modeLabel: { color: '#0f172a', fontSize: 16, lineHeight: 24, fontWeight: '600', textAlign: 'center' },
+  modeLabelSelected: { color: '#fff' },
+  photo: { width: '100%', maxHeight: 288, backgroundColor: '#f1f5f9', borderRadius: 12 },
+  card: { padding: 16, borderRadius: 12, borderWidth: 1, borderColor: '#e5e7eb', gap: 8 },
+  findings: { backgroundColor: '#f0fdfa', borderWidth: 0 },
+  bulletRow: { flexDirection: 'row', paddingLeft: 4, gap: 8 },
+  bullet: { width: 8 },
+  listText: { flex: 1 },
+  list: { gap: 8 },
+  numberRow: { flexDirection: 'row', gap: 8 },
+  number: { width: 12 },
+  examination: { padding: 12, gap: 0 },
+  summary: { minHeight: 44, justifyContent: 'center' },
+  summaryLabel: { color: '#0f172a', fontSize: 16, lineHeight: 24, fontWeight: '700' },
+  viva: { gap: 0 },
+  reveal: { minHeight: 48, justifyContent: 'center' },
+  revealLabel: { color: '#0f766e', fontSize: 14, lineHeight: 20, fontWeight: '700' },
+  link: { textDecorationLine: 'underline' },
+});
