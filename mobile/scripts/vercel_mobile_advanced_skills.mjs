@@ -1,0 +1,19 @@
+import {chromium} from 'playwright';
+import {mkdir,writeFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+const out=resolve(process.argv[2]||'artifacts/native-vault-parity');await mkdir(out,{recursive:true});
+const browser=await chromium.launch({headless:true,args:['--enable-webgl','--ignore-gpu-blocklist','--use-angle=swiftshader']});
+const page=await browser.newPage({viewport:{width:393,height:800},deviceScaleFactor:3,isMobile:true,hasTouch:true,colorScheme:'dark'});
+page.setDefaultTimeout(30000);const checks=[],failures=[];
+const click=async(name)=>page.getByRole('button',{name,exact:true}).click();
+const shot=async(name)=>{await page.waitForTimeout(700);await page.screenshot({path:resolve(out,'advanced-vercel-'+name+'.png')});};
+const open=async(tool)=>{await page.goto('https://orbitmbbs.vercel.app/simulator?tool='+tool,{waitUntil:'domcontentloaded'});await page.locator('[data-simulator-root]').waitFor();};
+const state=()=>page.getByTestId('eye-response-state').evaluate(x=>({...x.dataset}));
+const suites={
+ eye:async()=>{await open('pupil');await page.waitForFunction(()=>document.querySelector('[data-testid="eye-head-view"]')?.getAttribute('data-render-state')==='ready',undefined,{timeout:180000});await click('Patient’s right');let s=await state();if(Number(s.rightX)>-.5)throw Error('Gaze did not change');await shot('eye-gaze-right');await click('Centre');await click('🔦 Penlight');await click('Right eye penlight');s=await state();if(Number(s.rightPupil)>=3)throw Error('Pupil did not constrict');await shot('eye-penlight');await click('Turn penlight off');if(Number((await state()).rightPupil)<=Number(s.rightPupil))throw Error('Pupil did not recover');await click('🪶 Cotton');await click('Touch right cornea');await click('Reset examination');await shot('eye-reset');},
+ auscultation:async()=>{await open('stethoscope');await click('Normal S1 / S2');await page.getByRole('button',{name:'Stop Stethoscope',exact:true}).waitFor();await shot('auscultation-heart');if(await page.locator('.ausc-error').count())throw Error('Sound error');await click('Bell · low pitch');await click('View back');await shot('auscultation-back');await click('X-ray view');await shot('auscultation-xray');await click('Normal breath sounds');await shot('auscultation-lung');await click('Stop Stethoscope');await page.getByRole('button',{name:'Place Stethoscope & Listen Live',exact:true}).waitFor();},
+ pocus:async()=>{await open('ultrasound');await page.getByLabel('Synthetic ultrasound teaching scan').waitFor();await shot('pocus-live');await click('Freeze');await page.getByRole('button',{name:'Unfreeze',exact:true}).waitFor();await shot('pocus-frozen');await click('Unfreeze');await click('M-Mode');await shot('pocus-mmode');await click('Reference scans');await shot('pocus-reference');await click('Case simulation');},
+ general:async()=>{await open('piccled');await page.getByLabel('Press shin',{exact:true}).waitFor();await shot('general-edema');await page.getByTestId('ward-tab-icterus').click();await click('Look down');await click('Elevate upper lids');await shot('general-icterus');await page.getByTestId('ward-tab-pallor').click();await shot('general-pallor');await page.getByTestId('ward-tab-ascites').click();await page.getByRole('button',{name:/Roll Patient to 45° Lateral Decubitus/}).click();await shot('general-ascites-tilted');}
+};
+try{for(const [name,suite]of Object.entries(suites)){try{await suite();checks.push({suite:name,passed:true});}catch(e){failures.push({suite:name,error:e.message});await shot('failure-'+name).catch(()=>{});}await writeFile(resolve(out,'vercel-advanced-checks.json'),JSON.stringify({status:'NOT_CERTIFIED',viewport:[393,800],checks,failures},null,2));}}finally{await browser.close();}
+if(failures.length)process.exitCode=1;
