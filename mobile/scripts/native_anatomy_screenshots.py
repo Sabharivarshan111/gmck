@@ -9,14 +9,14 @@ import shlex
 import re
 import time
 from urllib.parse import urlencode, parse_qs, urlsplit
-from native_screenshot_driver import OUT, PACKAGE, adb, launch, first_run, tap, scroll_to_tappable, shot, dump_ui
+from native_screenshot_driver import OUT, PACKAGE, adb, launch, first_run, tap, scroll_to_tappable, shot, dump_ui, node_label, bounds_center
 
 def route(path, reference=False):
     adb("logcat", "-c")
     adb("shell", "am", "start", "-n", PACKAGE + "/com.aistudio.mbbsqbank.aycxvd.MainActivity",
         "--es", "orbit_anatomy_qa_route", shlex.quote(path), "--ez", "orbit_anatomy_qa_reference", "true" if reference else "false")
 
-def ready(timeout=180, expected_route=None):
+def ready(timeout=180, expected_route=None, reference=False, section=None):
     start = time.monotonic()
     previous = None
     last_metadata = None
@@ -32,10 +32,15 @@ def ready(timeout=180, expected_route=None):
                 continue
             value = json.loads(line.split("ORBIT_NATIVE_GEOMETRY:", 1)[1])
             last_metadata = value
+            if bool(value.get('reference')) != reference:
+                continue
+            if section is not None and value.get('section') != section:
+                break
             if expected_route:
                 wanted=parse_qs(urlsplit(expected_route).query)
                 actual=parse_qs(value.get('route','').lstrip('?'))
-                if any(actual.get(key)!=values for key,values in wanted.items()):
+                keys = set(wanted) | {'mode', 'organ', 'layer', 'isolate', 'scenario', 'tool', 'offline_test'}
+                if any(actual.get(key)!=wanted.get(key) for key in keys):
                     break
             if value.get("graphicsError"):
                 raise RuntimeError("Android WebGL error: " + json.dumps(value))
@@ -49,6 +54,43 @@ def ready(timeout=180, expected_route=None):
             break
         time.sleep(1)
     raise RuntimeError("Android anatomy geometry never reached a stable loaded state; last metadata=" + json.dumps(last_metadata))
+
+def capture_details(target, path, bounds, reference=False):
+    """Use real drawer controls, verifying the selected DOM tab before capture."""
+    if 'organ' not in target['query']:
+        return []
+    prefix = 'anatomy-vercel-' if reference else 'anatomy-android-'
+    details = []
+    for label in ['Supply', 'Relations']:
+        name = target['id'] + '-' + label.lower()
+        candidates = []
+        for node in dump_ui().iter('node'):
+            if node_label(node) == label:
+                center = bounds_center(node.attrib.get('bounds', ''))
+                if center: candidates.append(center)
+        if not candidates:
+            details.append({'id': name, 'section': label, 'available': False, 'captured': False})
+            continue
+        try:
+            x, y = candidates[0]
+            adb('shell', 'input', 'tap', str(x), str(y))
+            metadata = ready(timeout=45, expected_route=path, reference=reference, section=label)
+            metadata['nativeBounds'] = bounds
+            shot(prefix + name)
+            details.append({'id': name, 'section': label, 'available': True, 'captured': True, 'renderer': metadata})
+            if label == 'Supply':
+                venous = {'id': target['id'] + '-venous-drainage', 'section': 'Venous drainage', 'available': True}
+                try:
+                    scroll_to_tappable('Venous Drainage & Return', tries=8)
+                    shot(prefix + venous['id'])
+                    venous.update(captured=True, renderer=metadata)
+                except Exception as error:
+                    venous.update(captured=False, error=str(error))
+                details.append(venous)
+        except Exception as error:
+            shot(prefix + 'failure-' + name)
+            details.append({'id': name, 'section': label, 'available': True, 'captured': False, 'error': str(error)})
+    return details
 
 def main():
     coverage = json.loads((OUT / "anatomy-coverage.json").read_text())
@@ -69,6 +111,7 @@ def main():
     route("/simulator?" + urlencode(targets[0]["query"]))
     tap("Explore 3D anatomy")
     native_bounds = None
+    missing_metadata = 0
     for index, target in enumerate(targets):
         path = "/simulator?" + urlencode(target["query"])
         try:
@@ -83,14 +126,19 @@ def main():
             metadata["nativeBounds"] = native_bounds
             name = "anatomy-android-" + target["id"]
             shot(name)
-            results.append({**target, "route": path, "screenshot": name + ".png", "renderer": metadata, "captured": True})
+            details = capture_details(target, path, native_bounds)
+            results.append({**target, "route": path, "screenshot": name + ".png", "renderer": metadata, "captured": True, "details": details})
+            missing_metadata = 0
             print("CAPTURED actual Android anatomy:", target["id"], flush=True)
         except Exception as error:
             shot("anatomy-android-failure-" + target["id"])
             results.append({**target, "route": path, "captured": False, "error": str(error)})
             print("FAILED actual Android anatomy:", target["id"], str(error), flush=True)
             (OUT / ("anatomy-logcat-" + target["id"] + ".txt")).write_text(adb("logcat", "-d", capture=True).stdout[-100000:])
+            missing_metadata += int('last metadata=null' in str(error))
         (OUT / "native-anatomy-captures.json").write_text(json.dumps({"status": "NOT_CERTIFIED", "targets": results}, indent=2))
+        if missing_metadata >= 3 or (not results[-1]['captured'] and any(message in results[-1].get('error', '') for message in ['renderer startup failed', 'shader failed'])):
+            raise RuntimeError('Global native renderer failure; stopping repeated route timeouts. See failure logcat and screenshots.')
     # The live Vercel reference uses the same Android WebView, fonts, viewport and
     # software GPU. This avoids desktop font fallback masquerading as mobile QA.
     references = []
@@ -98,10 +146,11 @@ def main():
         path = "/simulator?" + urlencode(target["query"])
         try:
             route(path, reference=True)
-            metadata = ready(expected_route=path)
+            metadata = ready(expected_route=path, reference=True)
             metadata["nativeBounds"] = native_bounds
             shot("anatomy-vercel-" + target["id"])
-            references.append({"id": target["id"], "captured": True, "renderer": metadata})
+            details = capture_details(target, path, native_bounds, reference=True)
+            references.append({"id": target["id"], "captured": True, "renderer": metadata, "details": details})
         except Exception as error:
             shot("anatomy-vercel-failure-" + target["id"])
             references.append({"id": target["id"], "captured": False, "error": str(error)})
@@ -116,7 +165,7 @@ def main():
     finally:
         adb("shell", "svc", "wifi", "enable", check=False)
         adb("shell", "svc", "data", "enable", check=False)
-    if not all(target["captured"] for target in results + references):
+    if not all(target["captured"] and all(not item['available'] or item['captured'] for item in target.get('details', [])) for target in results + references):
         raise RuntimeError("Some organ captures failed; see native-anatomy-captures.json")
 
 if __name__ == "__main__":

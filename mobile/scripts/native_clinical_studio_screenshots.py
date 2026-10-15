@@ -76,6 +76,14 @@ def main():
         for _ in range(4):
             if visible("Pause monitor"): break
             scroll_up()
+        tap("Open ICU tutorial")
+        expect("ECG learning studio", tries=15)
+        screenshot("05c-android-full-icu-tutorial")
+        tap("Leads & axis")
+        expect("One heart. Twelve views.")
+        screenshot("05d-android-icu-lead-axis-lesson")
+        tap("Close ECG tutorial")
+        expect("SWEEP 25 mm/s")
         tap("Pause monitor")
         expect("Resume")
         screenshot("06-android-native-icu-paused")
@@ -108,6 +116,17 @@ def main():
         scroll_to_tappable("Electrophysiological")
         screenshot("10-android-native-ecg-qrs-teaching")
         results.append("ECG lead groups and QRS teaching")
+
+        for _ in range(6):
+            if visible("Open full ECG teaching studio"): break
+            scroll_up()
+        scroll_to_tappable("Open full ECG teaching studio")
+        tap("Open full ECG teaching studio")
+        expect("Static synthetic ECG with calibrated grid", tries=15)
+        screenshot("10b-android-full-ecg-teaching-studio")
+        tap("Close diagnostic tool")
+        expect("WAVE GUIDE")
+        results.append("Full canonical ICU lessons, lead-axis interaction and ECG teaching module return")
 
         # Cold offline check: native ICU/case/ECG use the embedded physiology.
         # Verify that they load after network is disabled (deep 3D is still online).
