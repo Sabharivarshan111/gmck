@@ -6,7 +6,11 @@ const browser=await chromium.launch({headless:true});const page=await browser.ne
 const captures=[],errors=[];
 async function shot(name){await page.waitForTimeout(1000);await page.screenshot({path:resolve(out,name+'.png')});captures.push(name);}
 try{
- await page.goto('https://orbitmbbs.vercel.app/simulator?mode=telemetry&scenario=stemi',{waitUntil:'domcontentloaded'});
+ await page.goto('https://orbitmbbs.vercel.app/simulator',{waitUntil:'domcontentloaded'});
+ await page.getByRole('button',{name:'Practise a case',exact:true}).click();
+ await page.getByRole('button',{name:/Acute Inferior STEMI/}).click();
+ await page.getByTestId('simulator-tab-monitor').click();
+ await page.locator('[data-active-tab="telemetry"]').waitFor();
  await page.getByRole('button',{name:'🎓 Tutorial',exact:true}).click();
  await page.getByRole('dialog',{name:'ECG learning studio'}).waitFor();await shot('vercel-icu-tutorial');
  await page.getByRole('button',{name:'Leads & axis',exact:true}).click();await shot('vercel-icu-leads-axis');
