@@ -8,10 +8,22 @@ const expression = (() => {
         const describe = el => {
           const r = el.getBoundingClientRect(), s = getComputedStyle(el);
           const keys = ['display','position','zIndex','opacity','visibility','transform','filter','backdropFilter','contain','contentVisibility','overflow','height','maxHeight','pointerEvents','backgroundColor'];
-          return { tag: el.tagName, class: String(el.className).slice(0, 500), label: el.getAttribute('aria-label'), rect: { x:r.x,y:r.y,width:r.width,height:r.height }, style: Object.fromEntries(keys.map(key => [key,s[key]])), centerElement: document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.outerHTML.slice(0,700) };
+          const heightRules = [];
+          if (el.matches('.anatomy-detail-sheet')) {
+            const walk = (rules, conditions = []) => {
+              for (const rule of rules) {
+                if (rule.cssRules) walk(rule.cssRules, rule.conditionText ? [...conditions, { query:rule.conditionText, matches:window.matchMedia(rule.conditionText).matches }] : conditions);
+                else if (rule.selectorText && rule.style?.height) {
+                  try { if (el.matches(rule.selectorText)) heightRules.push({selector:rule.selectorText,height:rule.style.height,conditions}); } catch { /* Unsupported selector. */ }
+                }
+              }
+            };
+            for (const sheet of document.styleSheets) { try { walk(sheet.cssRules); } catch { /* Cross-origin sheet. */ } }
+          }
+          return { heightRules, tag: el.tagName, class: String(el.className).slice(0, 500), label: el.getAttribute('aria-label'), rect: { x:r.x,y:r.y,width:r.width,height:r.height }, style: Object.fromEntries(keys.map(key => [key,s[key]])), centerElement: document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.outerHTML.slice(0,700) };
         };
         const panels = [...document.querySelectorAll('[role="dialog"], [aria-label="Anatomy details"], .ecg-studio-backdrop')];
-        return { url: window.location.href, viewport: [window.innerWidth,window.innerHeight], visualViewport: {width:window.visualViewport?.width,height:window.visualViewport?.height,offsetTop:window.visualViewport?.offsetTop}, rootClass:document.documentElement.className, media: Object.fromEntries(['(min-width: 768px)', '(max-width: 1023px)', '(max-height: 500px)'].map(query => [query, matchMedia(query).matches])), clientViewport:[document.documentElement.clientWidth,document.documentElement.clientHeight], measuredHeight:getComputedStyle(document.documentElement).getPropertyValue('--orbit-native-vh'), panels:panels.map(el => ({self:describe(el), ancestors:[el.parentElement,el.parentElement?.parentElement,el.parentElement?.parentElement?.parentElement].filter(Boolean).map(describe), controls:[...el.querySelectorAll('button,[role="tab"]')].slice(0,18).map(describe)})) };
+        return { url: window.location.href, viewport: [window.innerWidth,window.innerHeight], visualViewport: {width:window.visualViewport?.width,height:window.visualViewport?.height,offsetTop:window.visualViewport?.offsetTop}, rootClass:document.documentElement.className, media: Object.fromEntries(['(min-width: 768px)', '(max-width: 1023px)', '(max-height: 500px)'].map(query => [query, window.matchMedia(query).matches])), clientViewport:[document.documentElement.clientWidth,document.documentElement.clientHeight], measuredHeight:getComputedStyle(document.documentElement).getPropertyValue('--orbit-native-vh'), panels:panels.map(el => ({self:describe(el), ancestors:[el.parentElement,el.parentElement?.parentElement,el.parentElement?.parentElement?.parentElement].filter(Boolean).map(describe), controls:[...el.querySelectorAll('button,[role="tab"]')].slice(0,18).map(describe)})) };
 }).toString();
 for (const socket of sockets) {
   try {
