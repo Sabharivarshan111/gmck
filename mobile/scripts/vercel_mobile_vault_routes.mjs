@@ -77,7 +77,7 @@ const suites = {
     await page.waitForTimeout(500);
     const source = new URL(page.url()).pathname === '/simulator' ? page : await popup;
     if (!source) throw Error('Simulator did not open in the current tab or a popup');
-    await source.getByRole('button', { name: 'Explore 3D anatomy', exact: true }).waitFor();
+    await source.getByRole('button', { name: /Explore 3D anatomy/ }).waitFor();
     if (new URL(source.url()).hostname !== 'orbitmbbs.vercel.app') throw Error('Simulator link did not open Vercel');
     await source.screenshot({ path: resolve(out, 'vault-vercel-simulator-studio.png') });
     captures.push('simulator-studio');
@@ -92,3 +92,4 @@ try {
   }
   if (failures.length) throw Error('Actual Vercel Vault route failures: ' + JSON.stringify(failures));
 } finally { await browser.close(); }
+
