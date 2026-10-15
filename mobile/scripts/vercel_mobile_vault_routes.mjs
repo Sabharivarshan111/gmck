@@ -8,7 +8,7 @@ const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({ viewport: { width: 393, height: 852 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true, colorScheme: 'dark' });
 const page = await context.newPage();
 const passed = [], failures = [], captures = [];
-const label = name => page.getByLabel(name, { exact: true });
+const label = name => page.getByLabel(name, { exact: true }).first();
 async function tap(name) { await label(name).scrollIntoViewIfNeeded(); await label(name).click(); }
 async function expect(text) { await page.getByText(text, { exact: false }).first().waitFor({ state: 'visible' }); }
 async function shot(name) {
@@ -65,7 +65,9 @@ const suites = {
     await expect('Native QA question'); await shot('flashcard-written'); await tap('Go back');
     await tap('Android QA parity, 1 cards, study'); await expect('Native QA question'); await shot('flashcard-study');
     await tap('Show answer'); await expect('Native QA answer'); await shot('flashcard-answer');
-    await page.getByRole('button', { name: /^Good, next in/ }).click(); await expect('Nothing due right now'); await shot('flashcard-scheduled');
+    await page.getByRole('button', { name: /^Good, next in/ }).click(); await expect('0 new · 1 learning · 0 to review'); await expect('Native QA question');
+    await tap('Show answer'); await page.getByRole('button', { name: /^Easy, next in/ }).click();
+    await expect('Nothing due right now'); await shot('flashcard-scheduled');
     await tap('Go back'); await tap('Delete Android QA parity'); await expect('No decks yet');
   },
   simulator: async () => {
