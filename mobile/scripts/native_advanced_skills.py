@@ -101,8 +101,8 @@ def pocus():
 def general():
     open_skill('General examination')
     wait_visible('Press shin',tries=30);capture('general-edema')
-    press('Scleral icterus');press('Look down');wait_visible('Look straight')
-    press('Elevate upper lids');wait_visible('Release upper lids');capture('general-icterus')
+    press('Scleral icterus');press('Look straight');wait_visible('Look down');press('Look down');wait_visible('Look straight')
+    press('Release upper lids');wait_visible('Elevate upper lids');press('Elevate upper lids');wait_visible('Release upper lids');capture('general-icterus')
     press('Pallor & cyanosis');wait_visible('Estimated Hemoglobin:');capture('general-pallor')
     press('Ascites & thrill');press('Roll Patient to 45° Lateral Decubitus')
     wait_visible('Patient in 45° Lateral Tilt');capture('general-ascites-tilted')
@@ -115,8 +115,15 @@ for name,suite in [('eye',eye),('auscultation',auscultation),('pocus',pocus),('g
     try:checks.append({'suite':name,'passed':True,'details':suite()})
     except Exception as e:
         failures.append({'suite':name,'error':repr(e)})
-        shot('advanced-android-failure-'+name)
-        (OUT/('advanced-'+name+'-failure.xml')).write_text(ET.tostring(dump_ui(),encoding='unicode'))
+        try:
+            shot('advanced-android-failure-'+name)
+            (OUT/('advanced-'+name+'-failure.xml')).write_text(ET.tostring(dump_ui(),encoding='unicode'))
+        except Exception as capture_error:
+            failures[-1]['captureError']=repr(capture_error)
+        try:
+            log=subprocess.run(['adb','logcat','-d','-s','AndroidRuntime:E','chromium:E','libc:F','*:S'],capture_output=True,text=True,timeout=15)
+            (OUT/('advanced-'+name+'-device-errors.txt')).write_text(log.stdout[-100000:]+log.stderr)
+        except Exception:pass
         try:state('advanced-'+name+'-failure')
         except Exception:pass
     finally:
