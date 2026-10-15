@@ -6,12 +6,35 @@ const appPids = adb('shell','pidof',process.env.ORBIT_PACKAGE || 'com.aistudio.m
 const sockets = [...new Set(adb('shell', 'cat', '/proc/net/unix').match(/webview_devtools_remote[^\s]*/g) || [])].filter(socket => appPids.some(pid => socket === 'webview_devtools_remote_' + pid));
 const results = [];
 const expression = (async()=>{
+const drags=new WeakMap();
 const geometry=el=>{
  const r=el.getBoundingClientRect(),hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);
  let parent=el.parentElement;
  while(parent && !(parent.scrollHeight>parent.clientHeight+1 && /auto|scroll/.test(getComputedStyle(parent).overflowY))) parent=parent.parentElement;
  const s=parent?.getBoundingClientRect();
- return {rect:{x:r.x,y:r.y,width:r.width,height:r.height},hit:!!hit && el.contains(hit),scroller:s?{x:s.x,y:s.y,width:s.width,height:s.height}:null};
+ if(parent && !drags.has(parent)){
+  const top=Math.max(80,s.y+16),bottom=Math.min(window.innerHeight-16,s.y+s.height-16);
+  const xs=[Math.max(32,s.x+32),Math.min(window.innerWidth-32,s.x+s.width-32),s.x+s.width/2];
+  const usable=(x,y)=>{
+   let p=document.elementFromPoint(x,y);
+   if(!p || !parent.contains(p))return false;
+   while(p && p!==parent){
+    const style=getComputedStyle(p);
+    if(style.position==='fixed' || style.touchAction==='none' || ['INPUT','SELECT','TEXTAREA'].includes(p.tagName))return false;
+    p=p.parentElement;
+   }
+   return true;
+  };
+  const find=up=>{
+   for(const f of up?[.85,.7,.55,.4]:[.15,.3,.45,.6])for(const x of xs){
+    const y=top+(bottom-top)*f,end=up?Math.max(top,y-(bottom-top)*.5):Math.min(bottom,y+(bottom-top)*.5);
+    if(Math.abs(y-end)>40 && usable(x,y))return {x,start:y,end};
+   }
+   return null;
+  };
+  drags.set(parent,{up:find(true),down:find(false)});
+ }
+ return {rect:{x:r.x,y:r.y,width:r.width,height:r.height},hit:!!hit && el.contains(hit),scroller:s?{x:s.x,y:s.y,width:s.width,height:s.height,scrollTop:parent.scrollTop,...drags.get(parent)}:null};
 };const scan=document.querySelector('[data-testid="pocus-canvas"]');let scanHash=null;if(scan){const bytes=scan.getContext('2d')?.getImageData(0,0,scan.width,scan.height).data;if(bytes){let hash=2166136261;for(let i=0;i<bytes.length;i+=4)hash=Math.imul(hash^bytes[i]^bytes[i+1]^bytes[i+2],16777619);scanHash=hash>>>0;}}const thorax=document.querySelector('.ausc-webgl');
 const body=thorax?.querySelector('canvas');let bodyHash=null;
 if(body && getComputedStyle(thorax).visibility==='visible'){
@@ -21,7 +44,7 @@ if(body && getComputedStyle(thorax).visibility==='visible'){
   bodyHash=hash>>>0;
 }
 return ({
-  thorax:{ready:!!body && getComputedStyle(thorax).visibility==='visible',status:document.querySelector('.ausc-model-status')?.textContent,bodyHash},
+  thorax:{rect:body?geometry(body).rect:null,ready:!!body && getComputedStyle(thorax).visibility==='visible',status:document.querySelector('.ausc-model-status')?.textContent,bodyHash},
   patient:window.__orbitPatientKernel?{scenario:window.__orbitPatientKernel.currentScenario?.id,vitals:window.__orbitPatientKernel.vitals}:null,
   url:window.location.href,
   viewport:[window.innerWidth,window.innerHeight],

@@ -1,12 +1,12 @@
 """Interact through actual Android UI; inspector reads state without modifying it."""
-import os, json, subprocess, time, xml.etree.ElementTree as ET
+import os, json, re, subprocess, time, xml.etree.ElementTree as ET
 from native_screenshot_driver import OUT, adb, tap, wait_visible, shot, dump_ui, scroll_to_tappable, find_nodes, visible, screen_size, reachable_nodes, launch, first_run
 from native_diagnostic_controls import open_skill, adjust_slider
 
 def edge_scroll(up=False):
     # Eye stage deliberately consumes drags (touch-action:none). Scroll in the
     # real outer 6px gutter, outside that examination target.
-    w,h=screen_size();x=round(w*.985)
+    w,h=screen_size();x=round(w*.5)
     adb("shell","input","swipe",str(x),str(round(h*(.30 if up else .74))),str(x),str(round(h*(.76 if up else .28))),"550")
     time.sleep(1)
 
@@ -29,7 +29,7 @@ def reach_control(label):
         candidates = []
         for control in controls:
             text = control.get('text') or ''
-            stripped = text.lstrip('🔦🧶🪶☝️🖐️ ↺')
+            stripped = re.sub(r'^[^\w]+', '', text)
             if control.get('disabled'):
                 continue
             if control.get('label') == label or text == label or stripped == label or control.get('testId') == tab_ids.get(label, '__none__'):
@@ -44,10 +44,14 @@ def reach_control(label):
         if control['hit'] and 0<cx<w and 0<cy<h:
             return [round(webview_bounds[0]+rect['x']*sx),round(webview_bounds[1]+rect['y']*sy),round(webview_bounds[0]+(rect['x']+rect['width'])*sx),round(webview_bounds[1]+(rect['y']+rect['height'])*sy)]
         area=control.get('scroller') or {'x':0,'y':0,'width':w,'height':h}
-        x=area['x']+area['width']-4
         top=area['y']+20;bottom=min(h,area['y']+area['height'])-20
         up=cy<max(100,top+30)
-        start,end=(top,bottom) if up else (bottom,top)
+        drag=area.get('down' if up else 'up')
+        if drag:
+            x,start,end=drag['x'],drag['start'],drag['end']
+        else:
+            x=area['x']+area['width']/2
+            start,end=(top,bottom) if up else (bottom,top)
         adb('shell','input','swipe',str(round(webview_bounds[0]+x*sx)),str(round(webview_bounds[1]+start*sy)),str(round(webview_bounds[0]+x*sx)),str(round(webview_bounds[1]+end*sy)),'250')
         time.sleep(.5)
     raise RuntimeError('Actual advanced control remained occluded: '+label)
@@ -127,6 +131,24 @@ def ready_thorax():
     raise AssertionError('Actual 3D thorax did not become ready: '+json.dumps(snapshot))
 
 
+def thorax_frame():
+    import hashlib, io
+    from PIL import Image
+    for attempt in range(8):
+        snapshot = state('thorax-frame-target')
+        rect=snapshot['thorax']['rect'];width,height=snapshot['viewport']
+        if rect and rect['y']>=75 and rect['y']+rect['height']<=height-130:
+            break
+        edge_scroll(True)
+    else:
+        raise RuntimeError('Actual 3D chest could not be brought fully into view')
+    sx=(webview_bounds[2]-webview_bounds[0])/width
+    sy=(webview_bounds[3]-webview_bounds[1])/height
+    bounds=(round(webview_bounds[0]+rect['x']*sx),round(webview_bounds[1]+rect['y']*sy),round(webview_bounds[0]+(rect['x']+rect['width'])*sx),round(webview_bounds[1]+(rect['y']+rect['height'])*sy))
+    raw=subprocess.check_output(['adb','exec-out','screencap','-p'])
+    return hashlib.sha256(Image.open(io.BytesIO(raw)).crop(bounds).tobytes()).hexdigest()
+
+
 def auscultation_case():
     launch();first_run();tap('Vault')
     scroll_to_tappable('Simulator & Anatomy');tap('Simulator & Anatomy')
@@ -139,11 +161,20 @@ def auscultation_case():
     assert snapshot['patient']['scenario']=='stemi',snapshot
     capture('auscultation-stemi-case-3d')
     press('View back');wait_visible('View front');capture('auscultation-stemi-case-back')
+    press('Place Stethoscope & Listen Live');wait_visible('Stop Stethoscope')
+    snapshot=state('auscultation-stemi-listening')
+    if not any(b['text']=='X-ray view' and b['pressed']=='true' for b in snapshot['buttons']):
+        press('X-ray view')
+    baseline=[thorax_frame(),thorax_frame()]
+    assert baseline[0]==baseline[1],baseline
     press('Show organ movement')
-    moving = state('auscultation-stemi-moving')
-    assert any(b['text']=='Show organ movement' and b['pressed']=='true' for b in moving['buttons']),moving
-    time.sleep(.4);next_frame=state('auscultation-stemi-next-frame')
-    assert moving['thorax']['bodyHash'] is not None and moving['thorax']['bodyHash'] != next_frame['thorax']['bodyHash'],(moving,next_frame)
+    moving=state('auscultation-stemi-moving')
+    assert any(b['text'] in ['Show organ movement','Pause organ movement'] and b['pressed']=='true' for b in moving['buttons']),moving
+    frames=[]
+    for attempt in range(8):
+        frames.append(thorax_frame());time.sleep(.12)
+    (OUT/'actual-native-thorax-frame-hashes.json').write_text(json.dumps({'stationary':baseline,'moving':frames},indent=2))
+    assert len(set(frames))>1,frames
     capture('auscultation-stemi-case-movement')
     return {'enteredFromActualNativePatientCase':True,'scenarioPreserved':'stemi','real3DModelReady':True,'backView':True,'actual3DFramesChangeWithMovement':True}
 
