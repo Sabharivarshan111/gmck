@@ -7,11 +7,14 @@ await mkdir(out, { recursive: true });
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({ viewport: { width: 393, height: 852 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true, colorScheme: 'dark' });
 const page = await context.newPage();
-const passed = [], failures = [], captures = [];
+const passed = [], failures = [], captures = [], imageStates = [];
 const label = name => page.getByLabel(name, { exact: true }).first();
 async function tap(name) { await label(name).scrollIntoViewIfNeeded(); await label(name).click(); }
 async function expect(text) { await page.getByText(text, { exact: false }).first().waitFor({ state: 'visible' }); }
 async function shot(name) {
+  // Wait beyond the 250 ms RN-web modal slide; capture the settled UI.
+  await page.waitForTimeout(1000);
+  imageStates.push({name,images:await page.evaluate(()=>[...document.images].map(i=>({src:i.currentSrc||i.src,complete:i.complete,naturalWidth:i.naturalWidth,naturalHeight:i.naturalHeight}))) });
   const viewport = await page.evaluate(() => [window.innerWidth, window.innerHeight]);
   if (viewport[0] !== 393 || viewport[1] !== 852 || new URL(page.url()).hostname !== 'orbitmbbs.vercel.app') throw Error('Reference is not the actual mobile Vercel page');
   await page.screenshot({ path: resolve(out, 'vault-vercel-' + name + '.png') });
@@ -88,7 +91,7 @@ try {
   for (const [name, run] of Object.entries(suites)) {
     try { await setup(); await run(); passed.push(name); }
     catch (error) { failures.push({ suite: name, error: error.message }); await page.screenshot({ path: resolve(out, 'vault-vercel-failure-' + name + '.png') }).catch(() => {}); }
-    await writeFile(resolve(out, 'vault-vercel-route-checks.json'), JSON.stringify({ status: 'NOT_CERTIFIED', viewport: [393, 852], passed, failures, captures }, null, 2));
+    await writeFile(resolve(out, 'vault-vercel-route-checks.json'), JSON.stringify({ status: 'NOT_CERTIFIED', viewport: [393, 852], passed, failures, captures, imageStates, settledCaptureDelayMs:1000 }, null, 2));
   }
   if (failures.length) throw Error('Actual Vercel Vault route failures: ' + JSON.stringify(failures));
 } finally { await browser.close(); }
