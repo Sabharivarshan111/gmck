@@ -71,13 +71,17 @@ const suites = {
     await tap('Go back'); await tap('Delete Android QA parity'); await expect('No decks yet');
   },
   simulator: async () => {
-    const popup = page.waitForEvent('popup');
+    const popup = page.waitForEvent('popup', { timeout: 5000 }).catch(() => null);
     await tap('Simulator & Anatomy');
-    const source = await popup;
+    // Linking may navigate the current tab or open a new tab on the platform.
+    await page.waitForTimeout(500);
+    const source = new URL(page.url()).pathname === '/simulator' ? page : await popup;
+    if (!source) throw Error('Simulator did not open in the current tab or a popup');
     await source.getByRole('button', { name: 'Explore 3D anatomy', exact: true }).waitFor();
     if (new URL(source.url()).hostname !== 'orbitmbbs.vercel.app') throw Error('Simulator link did not open Vercel');
     await source.screenshot({ path: resolve(out, 'vault-vercel-simulator-studio.png') });
-    captures.push('simulator-studio'); await source.close();
+    captures.push('simulator-studio');
+    if (source !== page) await source.close();
   },
 };
 try {
