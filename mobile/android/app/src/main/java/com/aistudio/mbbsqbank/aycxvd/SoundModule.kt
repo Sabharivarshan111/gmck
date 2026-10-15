@@ -5,6 +5,10 @@ import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.SoundPool
+import android.media.AudioTrack
+import android.media.AudioFormat
+import android.os.Handler
+import android.os.Looper
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.annotations.ReactModule
 
@@ -36,6 +40,58 @@ import com.facebook.react.module.annotations.ReactModule
 @ReactModule(name = NativeOrbitSoundSpec.NAME)
 class SoundModule(reactContext: ReactApplicationContext) :
   NativeOrbitSoundSpec(reactContext) {
+
+  private val monitorHandler = Handler(Looper.getMainLooper())
+  private val monitorTracks = mutableSetOf<AudioTrack>()
+  @Volatile private var disposed = false
+
+  /** Same 90ms sine, 0.08→0.001 exponential gain and pitch as IcuMonitor.tsx.
+   * Media audio is opt-in; it never borrows the focus timer's alarm stream.
+   */
+  override fun monitorBeep(frequency: Double) {
+    if (disposed || !frequency.isFinite()) return
+    val sampleRate = 22050
+    val pitch = frequency.coerceIn(300.0, 2000.0)
+    val samples = ShortArray((sampleRate * 0.09).toInt()) { index ->
+      val time = index.toDouble() / sampleRate
+      val gain = 0.08 * kotlin.math.exp(kotlin.math.ln(0.001 / 0.08) * time.coerceAtMost(0.08) / 0.08)
+      (32767 * gain * kotlin.math.sin(2 * Math.PI * pitch * time)).toInt().toShort()
+    }
+    var track: AudioTrack? = null
+    try {
+      val pulse = AudioTrack.Builder()
+        .setAudioAttributes(AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build())
+        .setAudioFormat(AudioFormat.Builder().setSampleRate(sampleRate).setEncoding(AudioFormat.ENCODING_PCM_16BIT).setChannelMask(AudioFormat.CHANNEL_OUT_MONO).build())
+        .setBufferSizeInBytes(samples.size * 2).setTransferMode(AudioTrack.MODE_STATIC).build()
+      track = pulse
+      synchronized(monitorTracks) {
+        if (disposed) { pulse.release(); return }
+        monitorTracks.add(pulse)
+        pulse.write(samples, 0, samples.size)
+        pulse.play()
+      }
+      monitorHandler.postDelayed({ releaseMonitorTrack(pulse) }, 300)
+    } catch (_: Throwable) {
+      track?.let { releaseMonitorTrack(it) }
+    }
+  }
+
+  private fun releaseMonitorTrack(track: AudioTrack) {
+    synchronized(monitorTracks) {
+      if (!monitorTracks.remove(track)) return
+      if (BuildConfig.DEBUG || BuildConfig.BUILD_TYPE == "preview") {
+        try { android.util.Log.i("ORBIT_MONITOR_TONE", "PCM_RENDERED frames=" + track.playbackHeadPosition) } catch (_: Throwable) { }
+      }
+      try { track.stop() } catch (_: Throwable) { }
+      try { track.release() } catch (_: Throwable) { }
+    }
+  }
+
+  override fun stopMonitorTone() {
+    synchronized(monitorTracks) {
+      monitorTracks.toList().forEach { releaseMonitorTrack(it) }
+    }
+  }
 
   /**
    * Two pools, because the two sounds mean different things to the system.
@@ -204,6 +260,9 @@ class SoundModule(reactContext: ReactApplicationContext) :
   }
 
   override fun invalidate() {
+    disposed = true
+    monitorHandler.removeCallbacksAndMessages(null)
+    stopMonitorTone()
     super.invalidate()
     try {
       uiPool.release()
