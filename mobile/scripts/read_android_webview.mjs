@@ -1,18 +1,10 @@
-// Read actual installed WebView layout after an ADB interaction. No DOM writes.
+// Read actual installed WebView layout. Disconnect only the inspector socket.
 import { execFileSync } from 'node:child_process';
 import { writeFile } from 'node:fs/promises';
-import { chromium } from 'playwright';
 const adb = (...args) => execFileSync('adb', args, { encoding: 'utf8' });
 const sockets = [...new Set(adb('shell', 'cat', '/proc/net/unix').match(/webview_devtools_remote[^\s]*/g) || [])];
 const results = [];
-for (const socket of sockets) {
-  let browser;
-  try {
-    adb('forward', 'tcp:9222', 'localabstract:' + socket);
-    browser = await chromium.connectOverCDP('http://127.0.0.1:9222');
-    for (const page of browser.contexts().flatMap(context => context.pages())) {
-      if (!/\/simulator(?:\?|$)/.test(page.url())) continue;
-      results.push(await page.evaluate(() => {
+const expression = (() => {
         const describe = el => {
           const r = el.getBoundingClientRect(), s = getComputedStyle(el);
           const keys = ['display','position','zIndex','opacity','visibility','transform','filter','backdropFilter','contain','contentVisibility','overflow','height','maxHeight','pointerEvents','backgroundColor'];
@@ -20,10 +12,29 @@ for (const socket of sockets) {
         };
         const panels = [...document.querySelectorAll('[role="dialog"], [aria-label="Anatomy details"], .ecg-studio-backdrop')];
         return { url: window.location.href, viewport: [window.innerWidth,window.innerHeight], visualViewport: {width:window.visualViewport?.width,height:window.visualViewport?.height,offsetTop:window.visualViewport?.offsetTop}, rootClass:document.documentElement.className, panels:panels.map(el => ({self:describe(el), ancestors:[el.parentElement,el.parentElement?.parentElement,el.parentElement?.parentElement?.parentElement].filter(Boolean).map(describe), controls:[...el.querySelectorAll('button,[role="tab"]')].slice(0,18).map(describe)})) };
-      }));
+}).toString();
+for (const socket of sockets) {
+  try {
+    adb('forward', 'tcp:9222', 'localabstract:' + socket);
+    const targets = await (await fetch('http://127.0.0.1:9222/json/list')).json();
+    for (const target of targets.filter(target => /\/simulator(?:\?|$)/.test(target.url))) {
+      const ws = new WebSocket(target.webSocketDebuggerUrl);
+      const value = await new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => { ws.close(); reject(Error('Read-only layout probe timed out')); }, 10000);
+        ws.onopen = () => ws.send(JSON.stringify({id:1,method:'Runtime.evaluate',params:{expression:'('+expression+')()',returnByValue:true}}));
+        ws.onerror = () => { clearTimeout(timeout); reject(Error('Inspector socket failed')); };
+        ws.onmessage = event => {
+          const message = JSON.parse(String(event.data));
+          if (message.id !== 1) return;
+          clearTimeout(timeout);
+          ws.close();
+          if (message.error || message.result?.exceptionDetails) reject(Error(JSON.stringify(message)));
+          else resolve(message.result.result.value);
+        };
+      });
+      results.push(value);
     }
-  } catch (error) { results.push({ socket, error: error.message }); }
-  finally { await browser?.close(); }
+  } catch (error) { results.push({socket,error:error.message}); }
 }
-await writeFile(process.argv[2], JSON.stringify({ sockets, results }, null, 2));
-if (!results.length) console.warn('No debuggable Android WebView found; native screenshots remain authoritative.');
+await writeFile(process.argv[2], JSON.stringify({sockets,results}, null, 2));
+if (!results.length) console.warn('No debuggable Android WebView found.');
