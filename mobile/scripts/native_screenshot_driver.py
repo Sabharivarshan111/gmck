@@ -29,7 +29,18 @@ def adb(*args: str, check: bool = True, capture: bool = False) -> subprocess.Com
     return run("adb", *args, check=check, capture=capture)
 
 
-def dump_ui() -> ET.Element:
+def _read_ui() -> ET.Element:
+    if os.environ.get("ORBIT_UI_HELPER") == "1":
+        for attempt in range(3):
+            result = adb("shell", "am", "instrument", "-w", "com.orbit.qa/com.orbit.qa.UiDump", capture=True)
+            for line in result.stdout.splitlines():
+                if line.startswith("INSTRUMENTATION_RESULT: orbit_ui="):
+                    xml = line.split("=", 1)[1]
+                    Path("/tmp/window.xml").write_text(xml)
+                    return ET.fromstring(xml)
+            # Each run reconnects UiAutomation after a transient window handoff.
+            time.sleep(0.5)
+        raise RuntimeError("Live Android hierarchy dump failed: " + result.stdout[-800:])
     adb("shell", "uiautomator", "dump", "/sdcard/window.xml", check=False)
     adb("pull", "/sdcard/window.xml", "/tmp/window.xml", check=False)
     for _ in range(5):
@@ -56,26 +67,48 @@ def bounds_center(bounds: str) -> tuple[int, int] | None:
     return (x1 + x2) // 2, (y1 + y2) // 2
 
 
-def find_nodes(needle: str) -> list[tuple[int, int, int, str]]:
-    root = dump_ui()
-    needle_l = needle.lower()
-    found: list[tuple[int, int, int, str]] = []
-    for node in root.iter("node"):
+def dump_ui() -> ET.Element:
+    for _ in range(3):
+        root = _read_ui()
+        text = ' '.join(node_label(n) for n in root.iter('node'))
+        # A system launcher ANR is unrelated to ORBIT. Dismiss only this named
+        # launcher dialog; an ORBIT ANR must remain visible as an app failure.
+        if 'Pixel Launcher' in text and 'responding' in text:
+            for node in root.iter('node'):
+                if node_label(node).strip().lower() == 'close app':
+                    center = bounds_center(node.get('bounds', ''))
+                    if center:
+                        adb('shell', 'input', 'tap', str(center[0]), str(center[1]))
+                        time.sleep(1)
+                        break
+            continue
+        return root
+    raise RuntimeError('Pixel Launcher ANR still obstructs the app after dismissal')
+
+
+def reachable_nodes(root):
+    """Intersect real node bounds with enclosing native scroll viewports."""
+    def walk(node, clip=None):
+        rect = list(map(int, re.findall(r'-?\d+', node.get('bounds', ''))))
+        if len(rect) != 4:
+            rect = [0, 0, 0, 0]
+        effective = rect if clip is None else [max(rect[0],clip[0]), max(rect[1],clip[1]), min(rect[2],clip[2]), min(rect[3],clip[3])]
+        if effective[2] > effective[0] and effective[3] > effective[1]:
+            yield node, effective
+        child_clip = effective if any(kind in node.get('class', '') for kind in ['ScrollView', 'WebView']) else clip
+        for child in node:
+            yield from walk(child, child_clip)
+    yield from walk(root)
+
+
+def find_nodes(needle: str, adjustable: bool = False) -> list[tuple[int, int, int, str]]:
+    found = []
+    for node, (x1, y1, x2, y2) in reachable_nodes(dump_ui()):
         label = node_label(node)
-        if needle_l not in label.lower():
+        if needle.lower() not in label.lower() or (adjustable and node.get('range-now') is None):
             continue
-        center = bounds_center(node.attrib.get("bounds", ""))
-        if not center:
-            continue
-        m = re.match(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", node.attrib.get("bounds", ""))
-        assert m
-        x1, y1, x2, y2 = map(int, m.groups())
-        if x2 <= x1 or y2 <= y1:
-            continue
-        area = (x2 - x1) * (y2 - y1)
-        found.append((area, center[0], center[1], label))
-    found.sort(key=lambda row: row[0])
-    return found
+        found.append(((x2-x1)*(y2-y1), (x1+x2)//2, (y1+y2)//2, label))
+    return sorted(found)
 
 
 def visible(needle: str) -> bool:
@@ -83,10 +116,22 @@ def visible(needle: str) -> bool:
 
 
 def tap(needle: str, required: bool = True) -> bool:
-    nodes = find_nodes(needle)
+    nodes = []
+    clickable = []
+    for node, (x1,y1,x2,y2) in reachable_nodes(dump_ui()):
+        label = node_label(node)
+        if needle.lower() not in label.lower():
+            continue
+        item = ((x2-x1)*(y2-y1),(x1+x2)//2,(y1+y2)//2,label)
+        nodes.append(item)
+        if node.get('clickable') == 'true' and node.get('enabled') != 'false':
+            clickable.append(item)
+    nodes.sort()
+    if clickable:
+        exact = [node for node in clickable if node[3].lower() == needle.lower()]
+        nodes = sorted(exact or clickable)
     if not nodes:
-        if required:
-            raise RuntimeError(f"UI element not found: {needle!r}")
+        if required: raise RuntimeError(f"UI element not found: {needle!r}")
         return False
     _, x, y, label = nodes[0]
     print(f"tap {label!r} at {x},{y}")
@@ -105,10 +150,13 @@ def wait_visible(needle: str, tries: int = 6) -> None:
 
 def screen_size() -> tuple[int, int]:
     out = adb("shell", "wm", "size", capture=True).stdout or ""
-    m = re.search(r"(\d+)x(\d+)", out)
-    if not m:
+    sizes = re.findall(r"(\d+)x(\d+)", out)
+    if not sizes:
         return (1080, 2400)
-    return int(m.group(1)), int(m.group(2))
+    # wm reports physical size before an optional override. Input coordinates
+    # use the override; using the physical panel swipes outside the viewport.
+    width, height = sizes[-1]
+    return int(width), int(height)
 
 
 def scroll_down() -> None:
@@ -154,15 +202,19 @@ def scroll_until(needle: str, tries: int = 8) -> None:
     raise RuntimeError(f"Could not scroll to UI element: {needle!r}")
 
 
-def scroll_to_tappable(needle: str, tries: int = 18) -> None:
+def scroll_to_tappable(needle: str, tries: int = 18, adjustable: bool = False) -> None:
     # A node can appear in uiautomator while clipped or underneath the fixed
-    # bottom assistant bar. Bring its centre into the unobstructed form first.
+    # bottom assistant bar. Keep the visible body tappable, including controls
+    # immediately below the header; a 24% cutoff strands top-of-scroll buttons.
     _, height = screen_size()
     for _ in range(tries + 1):
-        nodes = find_nodes(needle)
-        if nodes and height * 0.24 <= nodes[0][2] <= height * 0.70:
+        nodes = find_nodes(needle, adjustable=adjustable)
+        if nodes and height * 0.10 <= nodes[0][2] <= height * 0.94:
             return
-        if nodes and nodes[0][2] < height * 0.24:
+        raw = [bounds_center(n.get('bounds', '')) for n in dump_ui().iter('node')
+               if needle.lower() in node_label(n).lower() and (not adjustable or n.get('range-now') is not None)]
+        raw = [point for point in raw if point]
+        if (nodes and nodes[0][2] < height * 0.10) or (not nodes and raw and raw[0][1] < height * .5):
             scroll_up()
         else:
             scroll_down()
@@ -192,11 +244,26 @@ def first_run() -> None:
 
     # The screenshot-only dev Hermes bundle sets __DEV__ true, so the app's own
     # testing bypass unlocks setup. Production builds are not modified.
-    tap("Display name")
+    editable = []
+    deadline = time.monotonic() + 60
+    while time.monotonic() < deadline:
+        root = dump_ui()
+        editable = [n for n in root.iter("node") if "EditText" in n.attrib.get("class", "") and "display name" in node_label(n).lower()]
+        if editable:
+            break
+        time.sleep(1)
+    if not editable:
+        raise RuntimeError("Display name input not found during native onboarding")
+    center = bounds_center(editable[0].attrib.get("bounds", ""))
+    if center is None:
+        raise RuntimeError("Display name input has no usable bounds")
+    adb("shell", "input", "tap", str(center[0]), str(center[1]))
     adb("shell", "input", "text", "NativePreview")
     adb("shell", "input", "keyevent", "4")
     time.sleep(0.8)
     tap("Final Year", required=False)
+    scroll_to_tappable("Tamil Nadu")
+    tap("Tamil Nadu")
     if not visible("Start studying"):
         # Some devices expose only the visible text, not the accessibility label.
         tap("YEAR", required=False)

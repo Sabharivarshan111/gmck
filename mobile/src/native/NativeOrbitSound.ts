@@ -27,6 +27,10 @@ export interface Spec extends TurboModule {
    */
   play(name: string, volume: number): void;
 
+  /** ICU sine pulse: the source monitor supplies its SpO2-dependent pitch. */
+  monitorBeep(frequency: number): void;
+  stopMonitorTone(): void;
+
   /**
    * Why Android is currently silencing tap sounds, or '' if it is not.
    *

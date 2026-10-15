@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import {mkdtemp,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
@@ -22,7 +23,7 @@ assert.equal(leads.length,12);
 assert.deepEqual(leads.map(l=>l.id),['I','II','III','aVR','aVL','aVF','V1','V2','V3','V4','V5','V6']);
 assert.equal(segments.length,6);
 for(const item of segments){
-  for(const key of ['name','normalDurationMs','physioOrigin','vectorExplanation','leadsAnalysis','clinicalPearls']){
+  for(const key of ['bandColor','name','normalDurationMs','physioOrigin','vectorExplanation','leadsAnalysis','clinicalPearls']){
     assert.ok(web.includes(item[key]),item.id+' '+key+' no longer agrees with Vercel ECG');
   }
 }
@@ -51,5 +52,19 @@ try{
   assert.notEqual(iiNormal,iiSTEMI,'STEMI morphology must be different');
   const v1=leadById('V1'),v5=leadById('V5');
   assert.ok(v1.s>v1.r && v5.r>v5.s,'Chest lead R wave progression lost');
+  const canonicalCutout=readFileSync(join(mobile,'../src/simulator/instruments/EcgMagnifiedCutoutCanvas.tsx'),'utf8');
+  const nativeCutout=readFileSync(join(mobile,'src/lib/nativeEcgCutoutDrawing.ts'),'utf8');
+  assert.ok(nativeCutout.includes(createHash('sha256').update(canonicalCutout).digest('hex')),'Canonical cutout changed; regenerate and review the native drawing');
+  const cutoutFile=join(dir,'cutout.mjs');
+  await build({entryPoints:[join(mobile,'src/lib/nativeEcgCutoutDrawing.ts')],bundle:true,platform:'node',format:'esm',outfile:cutoutFile,logLevel:'silent'});
+  const {nativeEcgCutoutSvg,NATIVE_CUTOUT_CONFIGS}=await import(pathToFileURL(cutoutFile).href);
+  const drawings=segments.map(segment=>{
+    const svg=nativeEcgCutoutSvg(segment.id);
+    assert.ok(svg.includes('viewBox="0 0 760 210"') && !/NaN|Infinity/.test(svg),segment.id+' cutout has invalid geometry');
+    assert.ok(svg.includes(NATIVE_CUTOUT_CONFIGS[segment.id].caliperText.replaceAll('<','&lt;')),segment.id+' duration caliper missing');
+    return svg;
+  });
+  assert.equal(new Set(drawings).size,6,'Each teaching segment must have its own cutout');
+  console.log('PASS: six source-pinned native magnified cutouts with calibration, duration/voltage calipers, landmarks and vector compass.');
   console.log('PASS: Native offline 12-lead ECG: 12 leads, 6 web teaching segments, 5 rhythm types, waveform and screenshot controls.');
 }finally{await rm(dir,{recursive:true,force:true});}
