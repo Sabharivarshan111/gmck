@@ -1,7 +1,29 @@
 """Interact through actual Android UI; inspector reads state without modifying it."""
 import json, subprocess, time, xml.etree.ElementTree as ET
-from native_screenshot_driver import OUT, adb, tap, wait_visible, shot, dump_ui, scroll_to_tappable
-from native_diagnostic_controls import open_skill, press, adjust_slider
+from native_screenshot_driver import OUT, adb, tap, wait_visible, shot, dump_ui, scroll_to_tappable, find_nodes, visible, screen_size
+from native_diagnostic_controls import open_skill, adjust_slider
+
+def edge_scroll(up=False):
+    # Eye stage deliberately consumes drags (touch-action:none). Scroll in the
+    # real outer 6px gutter, outside that examination target.
+    w,h=screen_size();x=round(w*.985)
+    adb("shell","input","swipe",str(x),str(round(h*(.30 if up else .74))),str(x),str(round(h*(.76 if up else .28))),"550")
+    time.sleep(1)
+
+def press(label):
+    if not visible(label):
+        for _ in range(10):
+            edge_scroll(True)
+            if visible(label):break
+    for _ in range(20):
+        nodes=find_nodes(label)
+        if nodes:
+            _,h=screen_size()
+            if h*.10<=nodes[0][2]<=h*.94:
+                tap(label);return
+            edge_scroll(nodes[0][2]<h*.10)
+        else:edge_scroll()
+    raise RuntimeError("Could not reach actual advanced control: "+label)
 
 
 def state(name):

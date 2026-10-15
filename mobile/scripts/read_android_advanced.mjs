@@ -5,8 +5,8 @@ const adb = (...args) => execFileSync('adb', args, { encoding: 'utf8' });
 const sockets = [...new Set(adb('shell', 'cat', '/proc/net/unix').match(/webview_devtools_remote[^\s]*/g) || [])];
 const results = [];
 const expression = (()=>{const scan=document.querySelector('[data-testid="pocus-canvas"]');let scanHash=null;if(scan){const bytes=scan.getContext('2d')?.getImageData(0,0,scan.width,scan.height).data;if(bytes){let hash=2166136261;for(let i=0;i<bytes.length;i+=4)hash=Math.imul(hash^bytes[i]^bytes[i+1]^bytes[i+2],16777619);scanHash=hash>>>0;}}return ({
-  url:location.href,
-  viewport:[innerWidth,innerHeight],
+  url:window.location.href,
+  viewport:[window.innerWidth,window.innerHeight],
   scanHash,
   nativeVh:getComputedStyle(document.documentElement).getPropertyValue('--orbit-native-vh'),
   eye:{render:document.querySelector('[data-testid="eye-head-view"]')?.getAttribute('data-render-state'),response:{...document.querySelector('[data-testid="eye-response-state"]')?.dataset}},
@@ -17,7 +17,7 @@ const expression = (()=>{const scan=document.querySelector('[data-testid="pocus-
 for (const socket of sockets) {
   try {
     adb('forward', 'tcp:9222', 'localabstract:' + socket);
-    const targets = await (await fetch('http://127.0.0.1:9222/json/list')).json();
+    const targets = await (await fetch('http://127.0.0.1:9222/json/list', {signal:AbortSignal.timeout(5000)})).json();
     for (const target of targets.filter(target => /\/simulator(?:\?|$)/.test(target.url))) {
       const ws = new WebSocket(target.webSocketDebuggerUrl);
       const value = await new Promise((resolve, reject) => {
@@ -39,3 +39,7 @@ for (const socket of sockets) {
 }
 await writeFile(process.argv[2], JSON.stringify({sockets,results}, null, 2));
 if (!results.length) console.warn('No debuggable Android WebView found.');
+
+// All requested reads and the evidence file write are complete. Do not keep
+// the CLI alive for an inspector or HTTP keep-alive close handshake.
+process.exit(0);

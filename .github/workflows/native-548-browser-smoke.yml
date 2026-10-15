@@ -1,0 +1,39 @@
+name: Native 548 Browser Smoke
+on:
+  push:
+    branches: [codex/native-548-browser-smoke-20261015]
+    paths: ['.github/workflows/native-548-browser-smoke.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install mobile browser dependencies
+        run: |
+          npm ci --legacy-peer-deps --ignore-scripts
+          npm ci --prefix mobile --legacy-peer-deps --ignore-scripts
+          PLAYWRIGHT_VERSION=$(node -p "require('./mobile/node_modules/playwright-core/package.json').version")
+          npm install --no-save --package-lock=false --legacy-peer-deps "playwright@$PLAYWRIGHT_VERSION"
+          npx playwright install --with-deps chromium
+      - name: Exercise the complete native browser smoke suite
+        run: |
+          export CHROME_PATH=$(node --input-type=module -e "import {chromium} from 'playwright';process.stdout.write(chromium.executablePath())")
+          mkdir -p artifacts/native-browser-smoke
+          set -o pipefail
+          npm --prefix mobile run check:smoke 2>&1 | tee artifacts/native-browser-smoke/output.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-548-browser-smoke-${{ github.sha }}
+          path: |
+            artifacts/native-browser-smoke/
+            mobile/preview/artifacts/
+          retention-days: 14

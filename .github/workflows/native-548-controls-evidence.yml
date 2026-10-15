@@ -46,7 +46,7 @@ jobs:
           script: |
             const sourceSha='8a0bf81c9f471beb37344dc70715736b7aedff85';
             const {data:comparison}=await github.rest.repos.compareCommits({...context.repo,base:sourceSha,head:context.sha});
-            const allowed=new Set(['.github/workflows/native-548-controls-evidence.yml','mobile/scripts/native_clinical_studio_screenshots.py','mobile/scripts/native_diagnostic_controls.py']);
+            const allowed=new Set(['.github/workflows/native-548-controls-evidence.yml','mobile/scripts/native_clinical_studio_screenshots.py','mobile/scripts/native_diagnostic_controls.py','mobile/scripts/read_android_webview.mjs']);
             if(comparison.status!=='ahead'||!comparison.files?.length||comparison.files.some(file=>!allowed.has(file.filename))) throw Error('APK reuse rejected: runtime changes outside the evidence files');
             const fs=require('fs');
             fs.mkdirSync('artifacts/native-vault-parity',{recursive:true});
