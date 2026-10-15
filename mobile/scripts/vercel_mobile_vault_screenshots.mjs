@@ -27,6 +27,11 @@ try {
   await page.getByTestId('intervention-saline').click();
   await page.getByTestId('simulator-tab-monitor').click();
   await page.locator('[data-active-tab="telemetry"]').waitFor({state:'visible'});await shot('00-vercel-icu-393x852');
+  await open('?tool=ecg12&scenario=stemi');
+  await page.getByLabel('Static synthetic ECG with calibrated grid').waitFor({state:'visible'});
+  await shot('00-vercel-ecg-393x852');
+  await page.getByRole('button',{name:'All 12',exact:true}).click();
+  await shot('00-vercel-ecg-all-leads-393x852');
   await open('?tool=radiology');
   await page.locator('.radio-stage img').waitFor({state:'visible',timeout:60000});
   await page.waitForFunction(()=>{const image=document.querySelector('.radio-stage img');return image?.complete&&image.naturalWidth>0;});

@@ -1,6 +1,6 @@
 // Compare the native display against the actual frozen canonical canvas helper.
 import assert from 'node:assert/strict';
-import { readFile, mkdtemp, rm } from 'node:fs/promises';
+import { readFile, writeFile, mkdtemp, rm } from 'node:fs/promises';
 import { build } from 'esbuild';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -10,7 +10,9 @@ const work = await mkdtemp(join(tmpdir(), 'orbit-icu-display-'));
 try {
   const source = await readFile(join(root, 'src/simulator/instruments/IcuMonitor.tsx'), 'utf8');
   const body = source.split('const calculatePoint = (t: number) => {')[1].split('\n    };')[0];
-  const canonical = new Function('t', 'liveRef', 'c1Y', 'c2Y', 'c3Y', 'c4Y', body);
+  const canonicalFile = join(work, 'canonical.mjs');
+  await writeFile(canonicalFile, `export function canonical(t, liveRef, c1Y, c2Y, c3Y, c4Y) {${body}\n}`);
+  const { canonical } = await import(pathToFileURL(canonicalFile).href);
   const output = join(work, 'display.mjs');
   await build({ stdin: { contents: `export * from './mobile/src/lib/nativeIcuDisplay'; export { PhysiologyKernel, SCENARIOS } from './src/simulator/engine/PhysiologyKernel';`, resolveDir: root, loader: 'ts' }, outfile: output, bundle: true, platform: 'node', format: 'esm' });
   const { calculateIcuPoint, createIcuSweep, advanceIcuSweep, icuChannelPath, PhysiologyKernel, SCENARIOS } = await import(pathToFileURL(output).href);

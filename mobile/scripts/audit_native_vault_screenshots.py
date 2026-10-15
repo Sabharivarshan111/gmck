@@ -12,6 +12,8 @@ pairs=[
  ('icu','00-vercel-icu-393x852.png','05-android-native-icu-waveforms.png'),
  ('studio-light','00-vercel-studio-light-393x852.png','01b-native-clinical-studio-light.png'),
  ('case-choices','00-vercel-case-choices-393x852.png','02-android-native-case-choices.png'),
+ ('ecg','00-vercel-ecg-393x852.png','08-android-native-12lead-ecg.png'),
+ ('ecg-all-leads','00-vercel-ecg-all-leads-393x852.png','09-android-native-ecg-all-leads.png'),
  ('xray','00-vercel-xray-393x852.png','12-android-offline-native-xray.png'),
  ('xray-case','00-vercel-xray-case-393x852.png','13-android-native-xray-case.png'),
  ('mri-axial','00-vercel-mri-axial-393x852.png','14-android-offline-native-mri-axial.png'),
