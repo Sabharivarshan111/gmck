@@ -28,6 +28,7 @@ on:
       - main
       - claude/native-app-sync
       - codex/native-web-parity
+      - codex/native-v27-candidate-20261015
     # Documentation-only handoff commits must not cancel an AAB/APK that is
     # already building. Rebuild only when code/assets that can reach the
     # native artifact (or this workflow itself) change.
@@ -249,7 +250,7 @@ jobs:
           body: |
             Signed release build of the Orbit MBBS native app.
 
-            IMPORTANT: Native Vault 1:1 Vercel parity is WORK IN PROGRESS. Native clinical studio, patient cases, ICU telemetry and 12-lead ECG are included, but 3D anatomy, POCUS, radiology, auscultation and other deep tools still rely on the website. This prerelease is NOT a fully offline, native, or pixel-identical Vault.
+            Version 27 parity candidate — final Android device review is still in progress. Clinical studio, cases, ICU, 12-lead ECG with magnified cutouts, radiology bitmaps and clubbing are native. Anatomy and advanced teaching use the locally bundled canonical WebGL/HTML renderer. Large reference geometry needs an initial download and is then checksum-verified and cached. All 39 anatomy overview pairs have been captured against Vercel mobile; Supply, Relations and advanced overlay checks are unfinished. Complete offline or pixel-identical parity is NOT certified. This GitHub prerelease is not a Play Store publication.
 
             - `app-release.aab` — upload this to Google Play.
             - `app-release.apk` — install this directly to test the real thing.

@@ -47,6 +47,7 @@ on:
       - claude/native-app-sync
       # Shared Android/iPhone web UI changes also get an ad-free APK.
       - codex/native-web-parity
+      - codex/native-v27-candidate-20261015
     # Only when something that reaches the APK changes.
     #
     # This used to fire on every push. Three Android builds ran per push, per
@@ -223,14 +224,11 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: internal-${{ github.run_number }}
-          name: Internal APK (build ${{ github.run_number }})
+          name: Internal APK — v27 parity candidate (build ${{ github.run_number }})
           body: |
-            Real package name, real upload key — **Google Sign-In works in
-            this build**, once its SHA-1 is registered in Google Cloud.
+            Version 27 parity candidate. Final Android device review is still in progress; complete Vault parity is not certified.
 
-            **Uninstall the Play Store copy of Orbit MBBS before installing
-            this.** Same package name with a different signature, so Android
-            will refuse the install otherwise.
+            Uses the production package and upload key. Sign-in requires the correct OAuth certificate registration and is not certified by this build. A Play-installed copy may reject this upload-key signature; use the separate-package debug APK to test alongside an existing installation.
 
             **No ads at all** — not live ones and not Google's test ones
             either. This build sets `ADS_ENABLED = false`, so the AdMob SDK
