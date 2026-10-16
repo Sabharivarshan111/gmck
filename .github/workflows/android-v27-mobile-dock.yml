@@ -1,7 +1,7 @@
 name: Mobile anatomy dock geometry
 on:
   push:
-    branches: [codex/v27-mobile-controls-20261016]
+    branches: [codex/v27-mobile-dock-qa-20261016]
 permissions:
   contents: read
 jobs:
@@ -10,6 +10,8 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: dd404cb12c85942ce8ded76e1e5f1f4b919e8a51
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -17,7 +19,11 @@ jobs:
       - run: npm ci --legacy-peer-deps --ignore-scripts --no-audit --no-fund
       - run: npm ci --prefix mobile --legacy-peer-deps --ignore-scripts --no-audit --no-fund
       - run: npx tsc --noEmit && node scripts/simulator-mobile-ui-check.mjs
-      - run: npm install --no-save --package-lock=false --legacy-peer-deps playwright@1.55.0 && npx playwright install --with-deps chromium
+      - name: Install browser runner without changing locked application dependencies
+        run: |
+          npm install --prefix /tmp/orbit-browser --no-audit --no-fund playwright@1.55.0
+          ln -s /tmp/orbit-browser/node_modules/playwright node_modules/playwright
+          /tmp/orbit-browser/node_modules/.bin/playwright install --with-deps chromium
       - name: Build native renderer and exercise phone controls
         env:
           NODE_OPTIONS: --max-old-space-size=6144
