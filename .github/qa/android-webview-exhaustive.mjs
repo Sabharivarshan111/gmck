@@ -15,7 +15,7 @@ const checks=[],failures=[],errors=[];page.on('pageerror',e=>errors.push(e.messa
 const suite=process.env.ORBIT_EXHAUSTIVE_SUITE||'anatomy-0';let reference=false;
 const button=name=>page.getByRole('button',{name,exact:true});
 const click=async name=>{await button(name).click();};
-const read=async()=>page.evaluate(()=>({url:window.location.href,viewport:[window.innerWidth,window.innerHeight],theme:document.querySelector('[data-simulator-root]')?.getAttribute('data-simulator-theme'),isolated:document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-isolated'),systems:document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-visible-atlas-systems'),eye:{...document.querySelector('[data-testid="eye-response-state"]')?.dataset},thorax:{...document.querySelector('.ausc-webgl')?.dataset},audioErrors:[...document.querySelectorAll('.ausc-error')].map(e=>e.textContent)}));
+const read=async()=>page.evaluate(()=>({url:window.location.href,patientScenario:window.__orbitPatientKernel?.currentScenario?.id,viewport:[window.innerWidth,window.innerHeight],theme:document.querySelector('[data-simulator-root]')?.getAttribute('data-simulator-theme'),isolated:document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-isolated'),systems:document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-visible-atlas-systems'),eye:{...document.querySelector('[data-testid="eye-response-state"]')?.dataset},thorax:{...document.querySelector('.ausc-webgl')?.dataset},audioErrors:[...document.querySelectorAll('.ausc-error')].map(e=>e.textContent)}));
 const shot=async name=>{console.log('Capture',reference?'vercel':'android',name);await page.screenshot({timeout:60000,path:resolve(out,(reference?'vercel-':'android-')+name+'.png')});return read();};
 const route=async(query,ref=false)=>{
  reference=ref;const path='/simulator?'+new URLSearchParams({...query,nativeTheme:'dark',native_audit:'1'});
@@ -115,8 +115,8 @@ async function advanced(kind,ref){
   await shot('eye-penlight');const lit=Number((await read()).eye.rightPupil);await click('Turn penlight off');assert(Number((await read()).eye.rightPupil)>lit);await click('🪶 Cotton');await click('Touch right cornea');await click('Reset examination');await shot('eye-reset');
  }else if(kind==='auscultation'||kind==='auscultation-case'){
   await page.waitForFunction(()=>getComputedStyle(document.querySelector('.ausc-webgl')).visibility==='visible',undefined,{timeout:180000});
-  if(kind==='auscultation')await click('Normal S1 / S2');else await click('Place Stethoscope & Listen Live');await button('Stop Stethoscope').waitFor();
-  assert.deepEqual((await read()).audioErrors,[]);await shot(kind+'-heart');await click('Bell · low pitch');await setPressed('X-ray view',true);
+  if(kind==='auscultation-case'&&!ref)assert.equal((await read()).patientScenario,'stemi','Native selected case must reach the bedside renderer');if(kind==='auscultation')await click('Normal S1 / S2');else await click('Place Stethoscope & Listen Live');await button('Stop Stethoscope').waitFor();
+  assert.deepEqual((await read()).audioErrors,[]);if(kind==='auscultation-case'){const footer=await page.locator('.ausc-footer').innerText();const hr=Number(footer.match(/(\d+) bpm/)?.[1]);assert(hr>0&&hr<65,'STEMI patient bradycardia must reach auscultation: '+footer);}await shot(kind+'-heart');await click('Bell · low pitch');await setPressed('X-ray view',true);
   const motion=page.getByRole('button',{name:/^(Show|Pause) organ movement$/});if(await motion.getAttribute('aria-pressed')!=='false')await motion.click();
   const canvas=page.locator('.ausc-webgl canvas');await canvas.scrollIntoViewIfNeeded();await page.waitForTimeout(500);
   const still=[await hash(canvas),await hash(canvas)];assert.equal(still[0],still[1],'Paused thorax must hold its image');
