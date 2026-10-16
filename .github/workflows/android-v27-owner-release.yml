@@ -29,13 +29,13 @@ jobs:
         with:
           script: |
             const source='dd404cb12c85942ce8ded76e1e5f1f4b919e8a51';
-            const ids={debug:38946314404,internal:38946314407,release:38946314402,layout:38946886241};
+            const ids={debug:38946314404,internal:38946314407,release:38946314402,layout:38947606723};
             const paths={debug:'.github/workflows/android-debug.yml',internal:'.github/workflows/android-internal.yml',release:'.github/workflows/android-release.yml',layout:'.github/workflows/android-v27-mobile-dock.yml'};
             let runs={};
             for(let attempt=0;attempt<55;attempt++){
               for(const [key,id] of Object.entries(ids)){
                 const {data:r}=await github.rest.actions.getWorkflowRun({...context.repo,run_id:id});
-                if(r.head_sha!==(key==='layout'?'b7485beaf9045343df949e560e8ebfb8c0a1a10c':source)||r.path!==paths[key])throw Error('Wrong source/workflow: '+key);
+                if(r.head_sha!==(key==='layout'?'084e96fa9ca43e781b5d007cbc93e77487223b44':source)||r.path!==paths[key])throw Error('Wrong source/workflow: '+key);
                 if(r.status==='completed'&&r.conclusion!=='success')throw Error(key+' compilation failed; cannot publish');
                 runs[key]=r;
               }
@@ -45,7 +45,7 @@ jobs:
             }
             require('fs').mkdirSync('release-assets',{recursive:true});
             require('fs').writeFileSync('release-assets/review-scope.json',JSON.stringify({
-              source,layoutSource:'dd404cb12c85942ce8ded76e1e5f1f4b919e8a51',layoutWorkflow:'b7485beaf9045343df949e560e8ebfb8c0a1a10c',status:'ADDITIONAL_DEVICE_QA_PENDING',
+              source,layoutSource:'dd404cb12c85942ce8ded76e1e5f1f4b919e8a51',layoutWorkflow:'084e96fa9ca43e781b5d007cbc93e77487223b44',status:'ADDITIONAL_DEVICE_QA_PENDING',
               authorization:'Owner requested mobile anatomy overlap repair and fresh debug/internal/release APK and AAB publication.',
               builds:Object.fromEntries(Object.entries(runs).map(([k,r])=>[k,{run:r.id,source:r.head_sha,conclusion:r.conclusion,url:r.html_url}])),
               pendingDeviceRun:38901147361,pendingDeviceScope:'85 registered vascular selections, four repaired liver relations and26 source-reference targets in8 parts.',
