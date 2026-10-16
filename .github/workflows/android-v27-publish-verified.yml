@@ -31,6 +31,7 @@ jobs:
           script: |
             const fs=require('fs');
             const config=JSON.parse(fs.readFileSync('.github/qa/v27-publication.json','utf8'));
+            if(config.visualReviewBlocker)throw Error('Visual review blocks publication: '+config.visualReviewBlocker);
             const allowed=new Set(['.github/qa/native_remaining_checks.py','.github/workflows/android-v27-native-recheck.yml','.github/qa/android-eye-findings.mjs','.github/qa/android-webview-exhaustive.mjs','.github/workflows/android-v27-exhaustive.yml','.github/workflows/android-v27-ausc-capture.yml','.github/workflows/android-v27-eye-capture.yml','.github/workflows/android-internal.yml','.github/workflows/android-v27-anatomy1-audit.yml','.github/workflows/android-v27-anatomy3-audit.yml','.github/qa/reference-page-errors.mjs','.github/workflows/android-v27-anatomy-partitions.yml']);
             const workflowPaths={debug:'.github/workflows/android-debug.yml',internal:'.github/workflows/android-internal.yml',release:'.github/workflows/android-release.yml',qa:'.github/workflows/android-v27-exhaustive.yml',motion:'.github/workflows/android-v27-ausc-capture.yml',eye:'.github/workflows/android-v27-eye-capture.yml',native:'.github/workflows/android-v27-native-recheck.yml',anatomy1:'.github/workflows/android-v27-anatomy1-audit.yml',anatomy3:'.github/workflows/android-v27-anatomy3-audit.yml',partitions:'.github/workflows/android-v27-anatomy-partitions.yml'};
             let runs;

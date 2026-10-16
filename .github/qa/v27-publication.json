@@ -19,8 +19,9 @@
     "partitions": "67f2dc2b63fe8d30e5f19a595f3467e201f51dc0"
   },
   "native": 38862537293,
-  "supersededPublicationRun": 38872771647,
+  "supersededPublicationRun": 38893151315,
   "anatomy1": 38872622681,
   "anatomy3": 38873046013,
-  "partitions": 38892788662
+  "partitions": 38892788662,
+  "visualReviewBlocker": "Standalone Z-Anatomy brain overview is offscreen in reviewed Android and Vercel captures; correct framing and verify rebuilt artifacts before release."
 }
