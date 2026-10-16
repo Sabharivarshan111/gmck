@@ -38,6 +38,7 @@ def main():
         scroll_to_tappable("Open live monitor")
         tap("Open live monitor")
         expect("SWEEP 25 mm/s")
+        time.sleep(11)
         screenshot("11-android-offline-icu-monitor")
         results.append("Offline native ICU")
         tap("Back to clinical studio")

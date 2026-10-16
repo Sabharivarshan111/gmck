@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 suite=$1
-if [ "$suite" = calendar ]; then
+if [ "$suite" = native-remaining ]; then
+  python3 .github/qa/native_remaining_checks.py
+elif [ "$suite" = calendar ]; then
   python3 .github/qa/android_attendance.py
 else
   if [ "$suite" = auscultation-case ]; then

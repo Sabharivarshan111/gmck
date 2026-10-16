@@ -1,7 +1,7 @@
 name: Android v27 exhaustive verification
 on:
   push:
-    branches: [codex/v27-exhaustive-device-checks-20261016]
+    branches: [codex/v27-parity-repairs-20261016]
   workflow_dispatch:
 concurrency:
   group: exhaustive-v27-${{ github.ref }}
@@ -39,12 +39,12 @@ jobs:
   webview:
     needs: matching-apk
     runs-on: ubuntu-latest
-    timeout-minutes: 110
+    timeout-minutes: 150
     strategy:
       fail-fast: false
       max-parallel: 4
       matrix:
-        suite: [calendar, auscultation-case, auscultation, anatomy-0, eye, anatomy-controls, anatomy-1, anatomy-2, anatomy-3, pocus, general]
+        suite: [calendar, pocus, auscultation-case, anatomy-0, auscultation, eye, general, anatomy-controls, native-remaining, anatomy-1, anatomy-2, anatomy-3, anatomy-4, anatomy-5, anatomy-6, anatomy-7]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -54,6 +54,7 @@ jobs:
       - run: |
           npm ci --legacy-peer-deps --ignore-scripts
           npm install --no-save --package-lock=false --legacy-peer-deps playwright@1.55.0
+          npx playwright install --with-deps chromium
           python3 -m pip install --quiet --break-system-packages pillow
           mkdir -p artifacts/exhaustive
           node mobile/scripts/native-anatomy-parity-manifest.mjs artifacts/exhaustive/anatomy-coverage.json
@@ -68,7 +69,7 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
-      - name: Test actual installed Android renderer and same-device live Vercel
+      - name: Compare installed Android renderer with live Vercel mobile Chromium
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35

@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path('mobile/scripts').resolve()))
 from native_screenshot_driver import (PACKAGE, OUT, adb, launch, first_run, tap,
-    scroll_to_tappable, wait_visible, visible, shot, dump_ui, node_label)
+    scroll_to_tappable, wait_visible, visible, shot, dump_ui, node_label, bounds_center, scroll_up)
 
 checks = []
 
@@ -39,7 +39,16 @@ try:
     wait_visible('Enter a posting name')
     shot('android-calendar-blank-name-validation')
     checks.append('Selected date range and target; Add displays missing-name error')
-    reach('Posting name')
+    # Match the editable field exactly; the validation text also says posting name.
+    for _ in range(20):
+        inputs=[n for n in dump_ui().iter('node') if 'EditText' in n.get('class','') and n.get('content-desc')=='Posting name']
+        if inputs:
+            point=bounds_center(inputs[0].get('bounds',''))
+            if point and point[1]>200:
+                adb('shell','input','tap',str(point[0]),str(point[1]));break
+        scroll_up()
+    else:
+        raise RuntimeError('Posting name input was not reachable')
     adb('shell', 'input', 'text', 'CalendarQA')
     adb('shell', 'input', 'keyevent', '4')
     reach('Add this posting')

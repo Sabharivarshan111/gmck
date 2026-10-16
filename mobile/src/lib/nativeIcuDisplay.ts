@@ -90,16 +90,20 @@ export function advanceIcuSweep(sweep: IcuSweep, dt: number, vitals: PatientVita
   if (!Number.isFinite(dt) || dt <= 0) return;
   const curX = sweep.x;
   const nextX = (curX + 150 * dt) % ICU_WIDTH;
+  const frameStart = sweep.time;
   sweep.time += dt;
   // As with canvas.fillRect, only pixels within the screen are erased.
   for (let x = Math.floor(nextX); x < Math.min(ICU_WIDTH, Math.ceil(nextX + 20)); x++) sweep.points[x] = null;
-  const draw = (start: number, end: number) => {
+  const draw = (start: number, end: number, wrapOffset = 0) => {
     for (let x = start; x <= end && x < ICU_WIDTH; x++) {
-      sweep.points[x] = calculateIcuPoint(sweep.time + (x / ICU_WIDTH) * 0.1, vitals, rhythm);
+      // Sample the time represented by each pixel, even after a delayed frame.
+      // Quantization keeps breath boundaries independent of floating-point drift.
+      const sampleTime = Math.round(frameStart * 150 + x + wrapOffset - curX) / 150;
+      sweep.points[x] = calculateIcuPoint(sampleTime, vitals, rhythm);
     }
   };
   draw(Math.floor(curX), nextX > curX ? Math.floor(nextX) : ICU_WIDTH - 1);
-  if (nextX < curX) draw(0, Math.floor(nextX));
+  if (nextX < curX) draw(0, Math.floor(nextX), ICU_WIDTH);
   sweep.x = nextX;
 }
 export function icuChannelPath(sweep: IcuSweep, key: 'ecgY' | 'artY' | 'plethY' | 'capnoY') {

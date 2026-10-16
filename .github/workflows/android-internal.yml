@@ -35,6 +35,7 @@ name: Internal APK (real package, real key)
 
 on:
   workflow_dispatch:
+    # Candidate builds are held as artifacts until device checks are reviewed.
   push:
     branches:
       # main is included so that merging or pushing here builds and releases
@@ -44,6 +45,7 @@ on:
       # The paths filter below is what keeps this affordable — a commit that
       # only moves documentation still burns no runner.
       - main
+      - codex/v27-parity-repairs-20261016
       - claude/native-app-sync
       # Shared Android/iPhone web UI changes also get an ad-free APK.
       - codex/native-web-parity
@@ -223,6 +225,7 @@ jobs:
             | grep -iE "SHA-1|SHA-256" || echo "(apksigner could not read the APK)"
 
       - name: Publish the APK where a phone can download it
+        if: github.ref_name != 'codex/v27-parity-repairs-20261016'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: internal-${{ github.run_number }}

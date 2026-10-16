@@ -26,6 +26,17 @@ export default defineConfig({
         return source.replace(initial, "const [isTutorialOpen, setIsTutorialOpen] = useState<boolean>(new URLSearchParams(location.search).get('native_teaching') === 'icu');")
           .replace(close, `onClose={() => { setIsTutorialOpen(false); ${closeTeaching('icu')} }}`);
       }
+      if (id.endsWith('/src/simulator/instruments/pocus/PocusCanvas.tsx')) {
+        const marker = '  const timeRef = useRef(0);';
+        const render = 'engineRef.current.render(ctx, w, h, timeRef.current, vitals, pathology, settings);';
+        const deps = '[vitals, pathology, settings, referenceMode]';
+        if (![marker, render, deps].every(part => source.includes(part))) throw Error('Canonical POCUS animation changed; review native loop');
+        // The patient updates on animation frames. Replacing its effect on every
+        // update can cancel the scan frame before Android gets to draw it.
+        return source.replace(marker, '  const nativeLive = useRef({ vitals, pathology });\n  nativeLive.current = { vitals, pathology };\n' + marker)
+          .replace(render, 'engineRef.current.render(ctx, w, h, timeRef.current, nativeLive.current.vitals, nativeLive.current.pathology, settings);')
+          .replace(deps, '[settings, referenceMode]');
+      }
       if (!id.endsWith('/src/pages/Simulator.tsx')) return;
       const needle = '  const kernel = kernelRef.current;';
       if (!source.includes(needle)) throw Error('Canonical kernel initialization changed; review the native patient bridge');

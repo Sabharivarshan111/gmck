@@ -1,5 +1,33 @@
 # Handoff — Orbit MBBS native Android app
 
+## Active verification checkpoint — 2026-10-16
+
+The historical introduction below describes the initial port. The current
+simulator combines native RN studio/cases/ICU/ECG/radiology/clubbing with a
+locally bundled canonical WebGL renderer for anatomy and advanced tools.
+Geometry downloads into a checksum-pinned private cache; first use needs a
+connection. Do not describe every simulator screen as native RN.
+
+Coronary selection now starts with heart context visible; hiding is optional.
+Calendar Add now reports a missing posting name instead of silently returning.
+Published repair APK: internal-518. Candidate f321bf8 was subsequently tested
+on Android 35 emulators. Native remaining-controls run 38841822674 passed;
+exhaustive run 38841390672 did not pass in full. It captured native coronary
+context, 15 systems, cached offline anatomy and partial tool/connection checks,
+but stopped on reference WebView layout and automation failures. Full parity
+is unconfirmed. Screenshots prove emulator behavior, not physical-phone audio.
+
+Next candidate branch: codex/v27-parity-repairs-20261016. It corrects ICU
+pixel-time sampling (stairs at lower frame rates) and keeps the native POCUS
+draw effect alive across patient updates (blank scan evidence). It also repairs
+calendar input targeting, moving-canvas captures and onboarding automation.
+Vercel comparisons now use normal mobile Chromium with the measured Android
+viewport; loading the live site inside a WebView produced invalid dvh layouts.
+Sixteen installed-Android suites and debug/internal/release builds are scheduled
+on that branch. Candidate publication is suppressed until results are reviewed.
+Do not publish or certify full parity from source guards alone. After all checks
+pass, the user has authorized publishing debug/internal/release APKs and AAB.
+
 **Last updated:** 2026-09-02
 
 Written so a fresh session (or a different person) can pick this up without the

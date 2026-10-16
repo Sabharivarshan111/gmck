@@ -60,6 +60,7 @@ on:
       # The paths filter below is what keeps this affordable — a commit that
       # only moves documentation still burns no runner.
       - main
+      - codex/v27-parity-repairs-20261016
       - codex/v27-exhaustive-device-checks-20261016
       - claude/android-react-native-app-o54cjj
       - claude/native-app-sync
@@ -172,6 +173,7 @@ jobs:
           npm run check:payments
           npm run check:native-sound
           node scripts/native-icu-sampling-check.mjs
+          node scripts/native-icu-display-check.mjs
           npm run check:subject-cards
           npm run check:anki
           npm run check:textbooks
@@ -328,7 +330,7 @@ jobs:
       # phone's browser, signed in or not, and Android opens it directly.
       # Same APK, reachable.
       - name: Publish the APK where a phone can download it
-        if: github.ref_name != 'codex/v27-exhaustive-device-checks-20261016' || inputs.publish_verified == true
+        if: (github.ref_name != 'codex/v27-exhaustive-device-checks-20261016' && github.ref_name != 'codex/v27-parity-repairs-20261016') || inputs.publish_verified == true
         uses: softprops/action-gh-release@v2
         with:
           tag_name: debug-${{ github.run_number }}

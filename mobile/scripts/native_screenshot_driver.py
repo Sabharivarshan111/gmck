@@ -264,9 +264,7 @@ def first_run() -> None:
     tap("Final Year", required=False)
     scroll_to_tappable("Tamil Nadu")
     tap("Tamil Nadu")
-    if not visible("Start studying"):
-        # Some devices expose only the visible text, not the accessibility label.
-        tap("YEAR", required=False)
+    scroll_to_tappable("Start studying")
     tap("Start studying")
     time.sleep(3)
 

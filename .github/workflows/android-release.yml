@@ -16,6 +16,7 @@ name: Android release build
 # a push is the only way to start it.
 on:
   workflow_dispatch:
+    # Candidate builds are held as artifacts until device checks are reviewed.
     inputs:
       build_apk:
         description: 'Also build an APK for direct install'
@@ -26,6 +27,7 @@ on:
       # main included so a merge here cuts a release with no API access
       # needed — see the note in android-debug.yml.
       - main
+      - codex/v27-parity-repairs-20261016
       - claude/native-app-sync
       - codex/native-web-parity
     # Documentation-only handoff commits must not cancel an AAB/APK that is
@@ -241,6 +243,7 @@ jobs:
       # Artifacts need a desktop browser and expire; a release asset can be
       # downloaded from the phone that is going to install it.
       - name: Publish the AAB and APK where a phone can reach them
+        if: github.ref_name != 'codex/v27-parity-repairs-20261016'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: release-${{ github.run_number }}

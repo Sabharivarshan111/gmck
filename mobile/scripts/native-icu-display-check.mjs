@@ -38,5 +38,25 @@ try {
     for (const key of ['ecgY', 'artY', 'plethY', 'capnoY']) assert.ok(!/NaN|Infinity/.test(icuChannelPath(sweep, key)));
     assert.equal(JSON.stringify(patient), before, 'Analytical prefill or animation advanced the patient clock');
   }
+  for (const id of ['normal', 'stemi']) {
+    const patient = new PhysiologyKernel(id), vitals = patient.getLiveVitals(), rhythm = patient.pathology.ecgRhythm;
+    const sweeps = [.05, 1 / 60, .18].map(step => {
+      const sweep = createIcuSweep(vitals, rhythm); let elapsed = 0;
+      while (elapsed < 10.1 - 1e-10) {
+        const dt = Math.min(step, 10.1 - elapsed); advanceIcuSweep(sweep, dt, vitals, rhythm); elapsed += dt;
+      }
+      return sweep;
+    });
+    for (const candidate of sweeps.slice(1)) {
+      let compared = 0;
+      for (let x = 0; x < 720; x++) {
+        const expected = sweeps[0].points[x], actual = candidate.points[x];
+        if (!expected || !actual) continue;
+        for (const key of ['ecgY', 'artY', 'plethY', 'capnoY']) assert.ok(Math.abs(actual[key] - expected[key]) < 1e-7, `${id} ${key} x=${x}: frame-dependent trace`);
+        compared++;
+      }
+      assert.ok(compared > 650, 'Most of each live sweep must be compared');
+    }
+  }
   console.log(`PASS: ${coordinates} native waveform coordinates match canonical Vercel calculations across ${SCENARIOS.length} scenarios; sweep wrap, erase band and patient clock verified.`);
 } finally { await rm(work, { recursive: true, force: true }); }
