@@ -1,0 +1,90 @@
+name: Publish verified Android v27 artifacts
+on:
+  push:
+    branches: [codex/v27-publish-verified-20261016]
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require successful exact-source builds and all device suites
+        id: qualify
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs=require('fs');
+            const config=JSON.parse(fs.readFileSync('.github/qa/v27-publication.json','utf8'));
+            const allowed=new Set(['.github/qa/android-eye-findings.mjs','.github/qa/android-webview-exhaustive.mjs','.github/qa/android_attendance.py','.github/qa/native_remaining_checks.py','.github/qa/run-android-suite.sh','.github/workflows/android-v27-exhaustive.yml','.github/workflows/android-internal.yml']);
+            for(const [key,expectedPath] of Object.entries({debug:'.github/workflows/android-debug.yml',internal:'.github/workflows/android-internal.yml',release:'.github/workflows/android-release.yml',qa:'.github/workflows/android-v27-exhaustive.yml'})){
+              const {data:run}=await github.rest.actions.getWorkflowRun({...context.repo,run_id:config[key]});
+              if(run.conclusion!=='success'||run.path!==expectedPath)throw Error(key+' workflow did not pass');
+              if(run.head_sha!==config.source){
+                const {data:diff}=await github.rest.repos.compareCommits({...context.repo,base:config.source,head:run.head_sha});
+                if(diff.status!=='ahead'||!diff.files?.length||diff.files.length>=300||diff.files.some(f=>!allowed.has(f.filename)))throw Error(key+' source is not the qualified runtime');
+              }
+              core.setOutput(key,run.id);
+            }
+            const {data:jobs}=await github.rest.actions.listJobsForWorkflowRun({...context.repo,run_id:config.qa,per_page:100});
+            const suites=jobs.jobs.filter(j=>j.name.startsWith('webview ('));
+            if(suites.length!==16||suites.some(j=>j.conclusion!=='success'))throw Error('All sixteen installed Android suites are required');
+            core.setOutput('source',config.source);
+      - uses: actions/download-artifact@v4
+        with:
+          name: orbit-debug-apk
+          path: build/debug
+          run-id: ${{ steps.qualify.outputs.debug }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: orbit-internal-apk
+          path: build/internal
+          run-id: ${{ steps.qualify.outputs.internal }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: orbit-mbbs-apk
+          path: build/release
+          run-id: ${{ steps.qualify.outputs.release }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: orbit-mbbs-aab
+          path: build/aab
+          run-id: ${{ steps.qualify.outputs.release }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          path: evidence
+          run-id: ${{ steps.qualify.outputs.qa }}
+          github-token: ${{ github.token }}
+      - name: Package exact checked artifacts
+        run: |
+          mkdir release-assets
+          cp build/debug/app-preview.apk release-assets/app-debug.apk
+          cp build/internal/app-internal.apk release-assets/app-internal.apk
+          cp build/release/app-release.apk release-assets/app-release.apk
+          cp build/aab/app-release.aab release-assets/app-release.aab
+          zip -qr release-assets/orbit-v27-android-verification.zip evidence
+          cd release-assets
+          sha256sum *.apk *.aab *.zip > SHA256SUMS.txt
+      - name: Publish the verified APKs, AAB and evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_SHA: ${{ steps.qualify.outputs.source }}
+        run: |
+          cat > /tmp/release-notes.md <<'NOTES'
+          Android v27 simulator and calendar repairs, with all sixteen installed Android emulator verification suites passed. Includes coronary heart context by default, visible calendar Add validation, POCUS drawing continuity and frame-rate-independent native ICU sampling.
+
+          - app-debug.apk: separate .debug package, ads disabled.
+          - app-internal.apk: production package and upload key, ads disabled.
+          - app-release.apk: signed production package, live ads enabled.
+          - app-release.aab: signed bundle for Google Play.
+          - orbit-v27-android-verification.zip: device screenshots, mobile Vercel references and check reports.
+
+          Studio, cases, ICU, ECG, radiology and clubbing use native RN screens. Anatomy and advanced bedside tools use the locally bundled canonical WebGL renderer; geometry downloads into a checksum-pinned private cache on first use. Comparisons use an Android 35 emulator and live Vercel mobile Chromium. Physical-phone speaker playback and universal pixel-identical behavior are not certified.
+          NOTES
+          gh release create v27-verified-20261016 release-assets/* --repo "$GITHUB_REPOSITORY" --target "$SOURCE_SHA" --title 'ORBIT v27 — verified Android simulator repairs' --notes-file /tmp/release-notes.md --prerelease
