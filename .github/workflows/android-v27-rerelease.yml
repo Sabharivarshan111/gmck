@@ -1,0 +1,38 @@
+name: Republish completed Android v27 builds
+on:
+  push:
+    branches: [codex/v27-rerelease-20261016]
+permissions:
+  contents: write
+jobs:
+  republish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Download completed builds and verify exact checksums
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release download v27-20261016 --repo "$GITHUB_REPOSITORY" --dir release-assets
+          cd release-assets
+          sha256sum -c SHA256SUMS.txt
+          echo 'bd308a568c7b0b53c686fa9af6590757460017d171781060a22c1a8fe126c89e  app-debug.apk' | sha256sum -c
+          echo '5a807819e166e0e86e3a512cdc173787ae92600a6cad839f270d94fe17478ae6  app-internal.apk' | sha256sum -c
+          echo '11f57bcbe5658506abfbabc5e7dc9e9b760ecabdef9ad4e41ab7ce5311eaf8a9  app-release.apk' | sha256sum -c
+          echo '2450dea3ddf2e3fe735e1915442441ddccb36721c22d88ce6f0b86c0e7064aa6  app-release.aab' | sha256sum -c
+      - name: Publish again as requested
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          cat > /tmp/notes.md <<'NOTES'
+          Re-published at the owner's request: all completed work through source a90b0b5bf9b8f41d640d960263765085262cf839.
+
+          Contains debug, internal and release APKs plus the release AAB. These are the same latest completed binaries as v27-20261016; their checksums were verified before re-publication. No new code changes were added since that build.
+
+          Includes coronary heart context by default, calendar Add repair, POCUS/ICU repairs, corrected brain and vessel-context framing, and complete liver-parenchyma relation selections.
+
+          Build/signature/package checks passed in the original publication. Exhaustive latest-build device verification remains pending and will continue later. See review-scope.json. No Google Play upload.
+          NOTES
+          gh release create v27-20261016-r2 release-assets/* --repo "$GITHUB_REPOSITORY" --target a90b0b5bf9b8f41d640d960263765085262cf839 --title 'ORBIT v27 — completed builds re-released' --notes-file /tmp/notes.md --prerelease
