@@ -1,5 +1,13 @@
 # Handoff — Orbit MBBS native Android app
 
+## Latest — all non-anatomy gates passed
+
+Focused compositor audit38859629926 PASSED both normal and selected-case auscultation, including exact paused-image equality and resumed visible movement, posterior view and lung-sound switching. Matched eye run38861326594 and full offline native recheck38862537293 PASSED. Baseline anatomy-controls passed all15 systems and cached offline loading. All other required bedside/control scopes passed.
+
+Remaining: eight organ/connection-arrow groups in38857739650 (0–3 active,4–7 queued at the last check). Conditional publisher38862704503 at18c608e95904adb0c7cf0a1c4dfcc68921c467b0 is active and waiting for all eight to pass. No new public verified release exists yet. It will stop without publishing if a required group fails or times out. Do not claim complete parity until those results and publication are complete. Do not create duplicate publication runs.
+
+The local command environment stopped responding late in the session; GitHub checks and publisher continue independently. The saved progress screenshot ZIP predates the final eye/general/offline/audit results; current full captures remain in the corresponding workflow artifacts and will be collected by the gated publication. This distinction must remain explicit.
+
 ## Live checkpoint — 2026-10-16, latest verified results
 
 All three candidate APK builds and the release AAB succeeded (runtime97ee4579b4b2a6230c06f7616b7486c5be4f51d4). All20 packaged renderer files match the reviewed build and110 asset pins match source. No new public verified release exists yet.
