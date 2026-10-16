@@ -79,7 +79,7 @@ async function anatomyControls(ref){
  }
  await click('Reset');await loaded();const canvas=page.getByTestId('anatomy-renderer').locator('canvas');await canvas.scrollIntoViewIfNeeded();const before=await hash(canvas);
  await click('Zoom anatomy in');await page.waitForTimeout(700);await canvas.scrollIntoViewIfNeeded();assert.notEqual(await hash(canvas),before,'Zoom must change the rendered anatomy');await click('Zoom anatomy out');
- const spread=page.getByTestId('anatomy-spread');await spread.focus();await spread.press('End');assert.equal(await spread.inputValue(),'1');await page.waitForTimeout(700);await shot('spread-full');await click('Reassemble anatomy');assert.equal(await spread.inputValue(),'0');
+ const spread=page.locator('[data-testid="anatomy-spread"]:visible');await spread.focus();await spread.press('End');assert.equal(await spread.inputValue(),'1');await page.waitForTimeout(700);await shot('spread-full');await click('Reassemble anatomy');assert.equal(await spread.inputValue(),'0');
  await click('Layers');const toolbar=page.locator('[data-testid="dissection-toolbar"]:visible');
  for(const name of ['left','up','down','right'])await click('Pan anatomy '+name);
  const quality=page.getByLabel('Anatomy image quality',{exact:true});await quality.selectOption('smooth');assert.equal(await quality.inputValue(),'smooth');await quality.selectOption('crisp');
@@ -91,7 +91,17 @@ async function anatomyControls(ref){
  await click('Browse');await page.getByLabel('Filter regional anatomy by system',{exact:true}).selectOption('skeletal');await page.locator('[aria-label="Regional structures"] button').first().click();
  await click('Open selected structure anatomy details');const drawer=page.getByTestId('organ-detail-drawer');await drawer.getByRole('button',{name:'Dissect',exact:true}).click();await drawerClose();await click('Layers');
  const tray=page.locator('[data-testid="dissection-tray"]:visible');assert.match(await tray.innerText(),/Cut \(1\)/);await page.locator('[title="Undo last dissected structure (Ctrl+Z)"]:visible').click();assert.match(await tray.innerText(),/Cut \(0\)/);
- await click('Close anatomy tools');await click('Reset');await shot('controls-restored');checks.push({type:'anatomy-controls',reference:ref,zoom:true,spread:true,pan:true,quality:true,xray:true,peel:true,modes:true,dissectAndUndo:true});await persist();
+ await click('Close anatomy tools');await click('Reset');await shot('controls-restored');
+ if(!ref){
+  try{
+   execFileSync('adb',['shell','svc','wifi','disable']);execFileSync('adb',['shell','svc','data','disable']);
+   await page.waitForFunction(()=>!navigator.onLine,undefined,{timeout:30000});
+   await route({mode:'anatomy',offline_test:'1'});await loaded();await shot('cached-anatomy-offline');checks.push({type:'cached-anatomy-offline',passed:true,state:await read()});
+  }finally{
+   execFileSync('adb',['shell','svc','wifi','enable']);execFileSync('adb',['shell','svc','data','enable']);await page.waitForFunction(()=>navigator.onLine,undefined,{timeout:60000});
+  }
+ }
+ checks.push({type:'anatomy-controls',reference:ref,zoom:true,spread:true,pan:true,quality:true,xray:true,peel:true,modes:true,dissectAndUndo:true});await persist();
 }
 async function setPressed(name,value){const b=button(name);if((await b.getAttribute('aria-pressed')==='true')!==value)await b.click();}
 async function hash(locator){return (await locator.screenshot()).toString('base64');}

@@ -6,9 +6,16 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path('mobile/scripts').resolve()))
 from native_screenshot_driver import (PACKAGE, OUT, adb, launch, first_run, tap,
-    scroll_to_tappable, scroll_up, wait_visible, visible, shot)
+    scroll_to_tappable, wait_visible, visible, shot, dump_ui, node_label)
 
 checks = []
+
+
+def confirm_saved_range(stage):
+    root = dump_ui()
+    labels = ' '.join(node_label(n) for n in root.iter('node'))
+    assert '2026-10-16' in labels and '2026-11-12' in labels, 'Saved rotation date range is incorrect'
+    (OUT / ('calendar-' + stage + '-labels.txt')).write_text(labels)
 
 
 def reach(label):
@@ -39,6 +46,7 @@ try:
     # The form is replaced by the saved rotation, possibly above the viewport.
     scroll_to_tappable('CalendarQA')
     assert not visible('Could not save'), 'Saving reported an error'
+    confirm_saved_range('saved')
     shot('android-calendar-saved')
     checks.append('Named rotation saves after selecting dates')
     adb('shell', 'am', 'force-stop', PACKAGE)
@@ -48,6 +56,7 @@ try:
     reach('Attendance')
     reach('Clinical postings')
     scroll_to_tappable('CalendarQA')
+    confirm_saved_range('persisted')
     shot('android-calendar-persisted-after-restart')
     checks.append('Saved rotation persists through force-stop and relaunch')
     (OUT / 'CALENDAR-PASSED.json').write_text(json.dumps({'passed': True, 'checks': checks}, indent=2))
