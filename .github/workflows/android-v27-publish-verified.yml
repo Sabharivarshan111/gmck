@@ -31,8 +31,8 @@ jobs:
           script: |
             const fs=require('fs');
             const config=JSON.parse(fs.readFileSync('.github/qa/v27-publication.json','utf8'));
-            const allowed=new Set(['.github/qa/native_remaining_checks.py','.github/workflows/android-v27-native-recheck.yml','.github/qa/android-eye-findings.mjs','.github/qa/android-webview-exhaustive.mjs','.github/workflows/android-v27-exhaustive.yml','.github/workflows/android-v27-ausc-capture.yml','.github/workflows/android-v27-eye-capture.yml','.github/workflows/android-internal.yml']);
-            const workflowPaths={debug:'.github/workflows/android-debug.yml',internal:'.github/workflows/android-internal.yml',release:'.github/workflows/android-release.yml',qa:'.github/workflows/android-v27-exhaustive.yml',motion:'.github/workflows/android-v27-ausc-capture.yml',eye:'.github/workflows/android-v27-eye-capture.yml',native:'.github/workflows/android-v27-native-recheck.yml'};
+            const allowed=new Set(['.github/qa/native_remaining_checks.py','.github/workflows/android-v27-native-recheck.yml','.github/qa/android-eye-findings.mjs','.github/qa/android-webview-exhaustive.mjs','.github/workflows/android-v27-exhaustive.yml','.github/workflows/android-v27-ausc-capture.yml','.github/workflows/android-v27-eye-capture.yml','.github/workflows/android-internal.yml','.github/workflows/android-v27-anatomy1-audit.yml']);
+            const workflowPaths={debug:'.github/workflows/android-debug.yml',internal:'.github/workflows/android-internal.yml',release:'.github/workflows/android-release.yml',qa:'.github/workflows/android-v27-exhaustive.yml',motion:'.github/workflows/android-v27-ausc-capture.yml',eye:'.github/workflows/android-v27-eye-capture.yml',native:'.github/workflows/android-v27-native-recheck.yml',anatomy1:'.github/workflows/android-v27-anatomy1-audit.yml'};
             let runs;
             for(let attempt=0;attempt<300;attempt++){
               runs={};for(const key of Object.keys(workflowPaths)){const {data}=await github.rest.actions.getWorkflowRun({...context.repo,run_id:config[key]});runs[key]=data;}
@@ -52,14 +52,15 @@ jobs:
               }
               core.setOutput(key,run.id);
             }
-            const jobs={};for(const key of ['qa','motion','eye','native']){const {data}=await github.rest.actions.listJobsForWorkflowRun({...context.repo,run_id:config[key],per_page:100});jobs[key]=data.jobs;}
-            const baseline=['calendar','pocus','eye','general','anatomy-controls',...Array.from({length:8},(_,i)=>'anatomy-'+i)];
+            const jobs={};for(const key of ['qa','motion','eye','native','anatomy1']){const {data}=await github.rest.actions.listJobsForWorkflowRun({...context.repo,run_id:config[key],per_page:100});jobs[key]=data.jobs;}
+            const baseline=['calendar','pocus','eye','general','anatomy-controls',...Array.from({length:8},(_,i)=>'anatomy-'+i).filter(s=>s!=='anatomy-1')];
             for(const suite of baseline){const job=jobs.qa.find(j=>j.name==='webview ('+suite+')');if(job?.conclusion!=='success')throw Error('Required baseline suite failed or missing: '+suite);}
             for(const suite of ['auscultation','auscultation-case']){const job=jobs.motion.find(j=>j.name==='webview ('+suite+')');if(job?.conclusion!=='success')throw Error('Required compositor-qualified suite failed or missing: '+suite);}
+            if(jobs.anatomy1.find(j=>j.name==='webview (anatomy-1)')?.conclusion!=='success')throw Error('Full anatomy group 1 error-attributed recheck did not pass');
             if(jobs.eye.find(j=>j.name==='webview (eye)')?.conclusion!=='success')throw Error('Matched eye capture did not pass');
             if(jobs.native.find(j=>j.name==='remaining')?.conclusion!=='success')throw Error('Full native offline recheck did not pass');
             fs.mkdirSync('release-assets',{recursive:true});
-            fs.writeFileSync('release-assets/verification-scope.json',JSON.stringify({source:config.source,runs:Object.fromEntries(Object.entries(runs).map(([k,r])=>[k,{id:r.id,sha:r.head_sha,conclusion:r.conclusion,url:r.html_url}])),requiredBaselineSuites:baseline,requiredReplacementSuites:['auscultation','auscultation-case'],additionalMatchedEyeCapture:true,requiredNativeOfflineRecheck:true,jobs},null,2));
+            fs.writeFileSync('release-assets/verification-scope.json',JSON.stringify({source:config.source,runs:Object.fromEntries(Object.entries(runs).map(([k,r])=>[k,{id:r.id,sha:r.head_sha,conclusion:r.conclusion,url:r.html_url}])),requiredBaselineSuites:baseline,requiredReplacementSuites:['auscultation','auscultation-case'],additionalMatchedEyeCapture:true,requiredNativeOfflineRecheck:true,requiredAnatomyGroup1Recheck:true,jobs},null,2));
             core.setOutput('source',config.source);
       - uses: actions/download-artifact@v4
         with:
@@ -105,6 +106,11 @@ jobs:
           path: evidence/native-offline-recheck
           run-id: ${{ steps.qualify.outputs.native }}
           github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          path: evidence/anatomy-group1-error-audit
+          run-id: ${{ steps.qualify.outputs.anatomy1 }}
+          github-token: ${{ github.token }}
       - name: Package exact checked artifacts
         run: |
           mkdir -p release-assets
@@ -131,6 +137,8 @@ jobs:
           - app-release.aab: signed bundle for Google Play.
           - orbit-v27-android-verification.zip: device screenshots, mobile Vercel references and check reports.
           - verification-scope.json: exact source/build provenance and required suite results.
+
+          The baseline anatomy group 1 completed its organ/connection interactions but failed the final uncaught-error check with an unattributed `int64` message. Its complete replacement suite passed with source-page and stack attribution enabled; no error filter or assertion relaxation was used. The original failure remains in the baseline evidence.
 
           The initial case-auscultation paused-image comparison was rerun using screen-bounded compositor crops; both normal and selected-case replacement suites passed. Baseline failures remain visible in the evidence and are explicitly replaced by the qualified reruns. Eye captures additionally synchronize instrument, gaze and framing. The complete native offline flow was rerun with exact MRI-count scrolling after the earlier script stopped at an offscreen label.
 
