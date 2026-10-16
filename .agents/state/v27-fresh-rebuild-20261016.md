@@ -1,0 +1,3 @@
+# Fresh rebuild requested
+
+Owner clarified that re-publication of existing binaries is insufficient and explicitly requested fresh GitHub compilation of debug/internal/release APKs and release AAB. Run all three original build workflows from this branch, preserve no-ads settings for debug/internal and upload-key signing, and publish ONLY artifacts produced by these new runs. The application source is unchanged from a90b0b5bf9b8f41d640d960263765085262cf839. Exhaustive device verification is still pending; do not misrepresent its completion. Earlier r2/r3 merely re-published old binaries. This request requires fresh compilation and a distinct new release with exact new build provenance.
