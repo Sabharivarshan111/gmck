@@ -42,6 +42,12 @@ jobs:
           ThreadingHTTPServer(('127.0.0.1',4180),Handler).serve_forever()
           PY
           python /tmp/serve-renderer.py > /tmp/dock-server.log 2>&1 &
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('scripts/simulator-mobile-dock-e2e.mjs')
+          s=p.read_text().replace("    assert(p.y >= 0", "    console.log(label,name,JSON.stringify({panel:p,spread,current:await box('anatomy-spread-control'),viewport:await page.evaluate(()=>({h:innerHeight,vh:document.documentElement.style.getPropertyValue('--orbit-native-vh'),dock:getComputedStyle(document.querySelector('[data-simulator-root]')).getPropertyValue('--anatomy-dock-height')}))}));\\n    assert(p.y >= 0")
+          p.write_text(s)
+          PY
           node scripts/simulator-mobile-dock-e2e.mjs
       - uses: actions/upload-artifact@v4
         if: always()
