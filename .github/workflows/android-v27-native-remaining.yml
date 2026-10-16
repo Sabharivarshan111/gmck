@@ -1,0 +1,54 @@
+name: Android v27 native remaining checks
+on:
+  push:
+    branches: [codex/v27-native-remaining-20261016]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  remaining:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Qualify the exact candidate runtime
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {data:diff}=await github.rest.repos.compareCommits({...context.repo,base:'f321bf845a9359a6d6b04e874d7d4f346a8fb9c8',head:context.sha});
+            if(diff.status!=='ahead'||!diff.files?.length||diff.files.length>=300||diff.files.some(f=>!f.filename.startsWith('.github/qa/')&&!['.github/workflows/android-v27-exhaustive.yml','.github/workflows/android-v27-native-remaining.yml'].includes(f.filename)))throw Error('Candidate app source differs');
+      - uses: actions/download-artifact@v4
+        with:
+          name: orbit-debug-apk
+          path: downloaded-apk
+          run-id: 38838403672
+          github-token: ${{ github.token }}
+      - name: Enable acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+          mkdir -p artifacts/native-remaining
+      - name: Verify installed native navigation and cold offline screens
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_7_pro
+          emulator-boot-timeout: 300
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          script: |
+            adb shell wm size 1179x2556
+            adb shell wm density 480
+            adb install -r downloaded-apk/app-preview.apk
+            bash mobile/scripts/build-ui-dump.sh
+            ORBIT_UI_HELPER=1 ORBIT_SCREENSHOT_OUT=artifacts/native-remaining python3 .github/qa/native_remaining_checks.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-v27-remaining-${{ github.sha }}
+          path: artifacts/native-remaining
+          retention-days: 14
