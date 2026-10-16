@@ -4,23 +4,32 @@ on:
     branches: [codex/v27-publish-mobile-controls-20261016]
 permissions:
   contents: write
-  actions: read
+  actions: write
 concurrency:
   group: mobile-controls-release-v27-20261016
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   publish:
     runs-on: ubuntu-latest
     timeout-minutes: 70
     steps:
+      - name: Stop superseded mobile UI compilations
+        uses: actions/github-script@v7
+        with:
+          script: |
+            for(const id of [38945941105,38945941006,38945941073]){
+              const {data:r}=await github.rest.actions.getWorkflowRun({...context.repo,run_id:id});
+              if(r.head_sha!=='13c07715a2ea270521e417eacc9ad38d1004e679')throw Error('Unexpected superseded source');
+              if(r.status!=='completed')await github.rest.actions.cancelWorkflowRun({...context.repo,run_id:id});
+            }
       - uses: actions/checkout@v4
       - name: Wait for exact-source builds and mobile dock regression checks
         id: builds
         uses: actions/github-script@v7
         with:
           script: |
-            const source='13c07715a2ea270521e417eacc9ad38d1004e679';
-            const ids={debug:38945941105,internal:38945941006,release:38945941073,layout:38945941095};
+            const source='dd404cb12c85942ce8ded76e1e5f1f4b919e8a51';
+            const ids={debug:38946314404,internal:38946314407,release:38946314402,layout:38946314606};
             const paths={debug:'.github/workflows/android-debug.yml',internal:'.github/workflows/android-internal.yml',release:'.github/workflows/android-release.yml',layout:'.github/workflows/android-v27-mobile-dock.yml'};
             let runs={};
             for(let attempt=0;attempt<55;attempt++){
@@ -48,25 +57,25 @@ jobs:
         with:
           name: orbit-debug-apk
           path: build/debug
-          run-id: 38945941105
+          run-id: 38946314404
           github-token: ${{ github.token }}
       - uses: actions/download-artifact@v4
         with:
           name: orbit-internal-apk
           path: build/internal
-          run-id: 38945941006
+          run-id: 38946314407
           github-token: ${{ github.token }}
       - uses: actions/download-artifact@v4
         with:
           name: orbit-mbbs-apk
           path: build/release
-          run-id: 38945941073
+          run-id: 38946314402
           github-token: ${{ github.token }}
       - uses: actions/download-artifact@v4
         with:
           name: orbit-mbbs-aab
           path: build/aab
-          run-id: 38945941073
+          run-id: 38946314402
           github-token: ${{ github.token }}
       - uses: actions/setup-java@v4
         with:
@@ -97,7 +106,7 @@ jobs:
           import json,zipfile,hashlib
           items=[('debug','app-preview.apk','app-debug.apk','assets/simulator/'),('internal','app-internal.apk','app-internal.apk','assets/simulator/'),('release','app-release.apk','app-release.apk','assets/simulator/'),('aab','app-release.aab','app-release.aab','base/assets/simulator/')]
           baseline=None
-          result={'source':'13c07715a2ea270521e417eacc9ad38d1004e679','files':{}}
+          result={'source':'dd404cb12c85942ce8ded76e1e5f1f4b919e8a51','files':{}}
           for folder,name,outname,prefix in items:
             p=Path('build')/folder/name
             with zipfile.ZipFile(p) as z:
@@ -130,7 +139,7 @@ jobs:
 
           Includes coronary heart context by default, calendar Add validation/persistence repair, POCUS drawing continuity, native ICU trace sampling, corrected brain-reference framing, visible vascular context camera fitting, and complete liver-parenchyma relation selections.
 
-          Source: 13c07715a2ea270521e417eacc9ad38d1004e679. Compilation, APK signatures/package identifiers, matching renderer files and110 source asset pins are checked before publication. Exact hashes are included.
+          Source: dd404cb12c85942ce8ded76e1e5f1f4b919e8a51. Compilation, APK signatures/package identifiers, matching renderer files and110 source asset pins are checked before publication. Exact hashes are included.
 
           Full exhaustive verification remains deferred by owner request. Focused packaged-renderer mobile dock geometry, panel opening and actual slider dragging are checked at 320x640,393x789,412x915,844x390 and with extra safe-area padding before publication. This release does not claim complete latest-build exhaustive parity or physical-phone speaker verification. Earlier baseline checks and original observed failures remain separate evidence. See review-scope.json for exact status.
 
@@ -139,7 +148,7 @@ jobs:
           cd release-assets
           sha256sum *.apk *.aab *.json > SHA256SUMS.txt
           cd ..
-          gh release create v27-20261016-mobile-ui release-assets/* --repo "$GITHUB_REPOSITORY" --target 13c07715a2ea270521e417eacc9ad38d1004e679 --title 'ORBIT v27 — mobile anatomy controls fixed' --notes-file /tmp/release-notes.md --prerelease
+          gh release create v27-20261016-mobile-ui release-assets/* --repo "$GITHUB_REPOSITORY" --target dd404cb12c85942ce8ded76e1e5f1f4b919e8a51 --title 'ORBIT v27 — mobile anatomy controls fixed' --notes-file /tmp/release-notes.md --prerelease
       - name: Verify freshly published downloads
         env:
           GH_TOKEN: ${{ github.token }}

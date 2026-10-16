@@ -1124,7 +1124,7 @@ export const Simulator: React.FC = () => {
                 was taller than the space it had. The floor keeps it usable on a
                 small screen and in landscape. */}
             <div
-              className="w-full relative"
+              className="w-full relative isolate"
               style={{
                 height: 'max(260px, calc(100dvh - 208px - var(--anatomy-dock-height)))',
               }}
@@ -1180,7 +1180,7 @@ export const Simulator: React.FC = () => {
                 data-testid="mobile-gesture-hint"
                 aria-hidden={explodeAmount > 0.02 || !!isolatedPartId}
                 style={{ display: explodeAmount > 0.02 || isolatedPartId ? 'none' : undefined }}
-                className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 md:hidden pointer-events-none max-w-[calc(100%-24px)] px-3 py-1.5 rounded-full bg-slate-950/75 text-white/95 backdrop-blur-md text-[9px] font-semibold tracking-wide text-center shadow-lg"
+                className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 md:hidden pointer-events-none w-max max-w-[calc(100%-24px)] px-3 py-1.5 rounded-full bg-slate-950/75 text-white/95 backdrop-blur-md text-[9px] font-semibold tracking-wide text-center shadow-lg"
               >
                 1-finger drag: rotate · pinch: zoom · 2 fingers: pan
               </div>
