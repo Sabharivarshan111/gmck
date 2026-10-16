@@ -1,5 +1,6 @@
 /** Additional eye findings and actual rendered corneal-reflex checks. */
 import { _android, chromium } from 'playwright';
+import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
@@ -15,6 +16,28 @@ const viewport=await nativePage.evaluate(()=>({width:window.innerWidth,height:wi
 page.setDefaultTimeout(30000);
 const button=name=>page.getByRole('button',{name,exact:true});
 const state=()=>page.getByTestId('eye-response-state').evaluate(e=>({...e.dataset}));
+async function capture(name,reference){await page.screenshot({path:resolve(out,(reference?'vercel-':'cdp-android-')+name+'.png')});if(!reference)await writeFile(resolve(out,'android-'+name+'.png'),execFileSync('adb',['exec-out','screencap','-p'],{maxBuffer:20*1024*1024}));}
+async function hash(locator,reference){
+ await locator.scrollIntoViewIfNeeded();const box=await locator.boundingBox();const viewport=await page.evaluate(()=>({width:innerWidth,height:innerHeight}));
+ if(!reference){
+  // CDP captures can omit Android WebGL surfaces. Measure the compositor image
+  // using the observed native WebView bounds, including system-bar offsets.
+  return execFileSync('python3',['-c',`import sys,json,subprocess,xml.etree.ElementTree as ET,re,io,hashlib
+from PIL import Image
+d=json.loads(sys.argv[1]); text=subprocess.check_output(['adb','shell','am','instrument','-w','com.orbit.qa/com.orbit.qa.UiDump'],text=True)
+xml=next(s.split('=',1)[1] for s in text.splitlines() if s.startswith('INSTRUMENTATION_RESULT: orbit_ui='))
+nodes=[n for n in ET.fromstring(xml).iter('node') if n.get('class')=='android.webkit.WebView']
+rects=[list(map(int,re.findall(r'-?\\d+',n.get('bounds','')))) for n in nodes];rects=[r for r in rects if len(r)==4 and r[2]>r[0] and r[3]>r[1]]
+assert rects,'Observed native WebView bounds required'
+l,t,r,b=max(rects,key=lambda r:(r[2]-r[0])*(r[3]-r[1]));x=d['box'];v=d['viewport'];sx=(r-l)/v['width'];sy=(b-t)/v['height']
+crop=(max(l,round(l+x['x']*sx)),max(t,round(t+x['y']*sy)),min(r,round(l+(x['x']+x['width'])*sx)),min(b,round(t+(x['y']+x['height'])*sy)))
+assert crop[2]>crop[0] and crop[3]>crop[1],'Canvas must be visible'
+im=Image.open(io.BytesIO(subprocess.check_output(['adb','exec-out','screencap','-p']))).crop(crop).convert('RGB')
+print(hashlib.sha256(im.tobytes()).hexdigest())`,JSON.stringify({box,viewport})],{encoding:'utf8',maxBuffer:1024*1024}).trim();
+ }
+ const x=Math.max(0,box.x),y=Math.max(0,box.y),width=Math.min(box.x+box.width,viewport.width)-x,height=Math.min(box.y+box.height,viewport.height)-y;
+ assert(width>0&&height>0,'Canvas must be visible');return createHash('sha256').update(await page.screenshot({clip:{x,y,width,height},timeout:60000})).digest('hex');
+}
 const checks=[];
 try {
   for(const reference of [false,true]){
@@ -37,7 +60,7 @@ try {
         if(finding.id==='iii')assert(Number(s[side+'Pupil'])>6&&Number(s[side+'Lid'])>.8,'Pupil-involved III findings');
         if(finding.id==='iii_spared')assert.equal(Number(s[side+'Pupil']),4,'Pupil-spared III finding');
         if(finding.id==='horner')assert(Number(s[side+'Pupil'])<3&&Number(s[side+'Lid'])>0,'Horner findings');
-        samples.push({side,...s});
+        samples.push({side,...s});await capture('eye-finding-'+finding.id+'-'+side,reference);
       }
       checks.push({reference,finding:finding.id,samples});
     }
@@ -49,14 +72,14 @@ try {
     const stage=page.getByRole('group',{name:'Move examination target',exact:true});
     await stage.scrollIntoViewIfNeeded();await page.waitForTimeout(700);
     const canvas=page.getByTestId('eye-head-view').locator('canvas');
-    const before=(await page.screenshot({clip:await canvas.boundingBox(),timeout:60000})).toString('base64');
+    const before=await hash(canvas,reference);
     const box=await stage.boundingBox();
     await page.mouse.move(box.x+box.width*anchor.x,box.y+box.height*anchor.y);await page.mouse.down();
     await page.waitForFunction(()=>Number(document.querySelector('[data-testid="eye-response-state"]')?.dataset.rightLid)>.9&&Number(document.querySelector('[data-testid="eye-response-state"]')?.dataset.leftLid)>.9);
     await page.waitForTimeout(700);
-    const blink=(await page.screenshot({clip:await canvas.boundingBox(),timeout:60000})).toString('base64');
+    const blink=await hash(canvas,reference);
     assert.notEqual(blink,before,'Cotton contact must change the actual 3D eyelids');
-    await page.screenshot({path:resolve(out,(reference?'vercel':'android')+'-eye-corneal-blink.png')});
+    await capture('eye-corneal-blink',reference);
     await page.mouse.up();
     await page.waitForFunction(()=>Number(document.querySelector('[data-testid="eye-response-state"]')?.dataset.rightLid)<.1&&Number(document.querySelector('[data-testid="eye-response-state"]')?.dataset.leftLid)<.1);
     checks.push({reference,cornealBlinkAndRelease:true,consensualPupilResponse:true});
