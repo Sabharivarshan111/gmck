@@ -44,7 +44,7 @@ jobs:
       fail-fast: false
       max-parallel: 4
       matrix:
-        suite: [calendar, auscultation-case, auscultation, anatomy-0, eye, anatomy-1, anatomy-2, anatomy-3, pocus, general]
+        suite: [calendar, auscultation-case, auscultation, anatomy-0, eye, anatomy-controls, anatomy-1, anatomy-2, anatomy-3, pocus, general]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

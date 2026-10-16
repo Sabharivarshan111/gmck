@@ -68,6 +68,31 @@ async function anatomy(group){
   }
  }
 }
+async function anatomyControls(ref){
+ await route({mode:'anatomy'},ref);await loaded();await drawerClose();
+ for(const system of coverage.systems){
+  await click('Browse');await page.getByLabel('Filter regional anatomy by system',{exact:true}).selectOption(system.id);
+  const first=page.locator('[aria-label="Regional structures"] button').first();await first.waitFor();const label=await first.innerText();await first.click();await loaded();
+  await page.waitForFunction(()=>!!document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-isolated'));
+  const observed=await read();assert(system.structures.some(p=>p.id===observed.isolated||'atlas:'+p.id===observed.isolated),'Browser selection must belong to '+system.id+': '+observed.isolated);
+  await shot('system-'+system.id);checks.push({type:'system-browser-selection',system:system.id,label,reference:ref,state:observed});await persist();
+ }
+ await click('Reset');await loaded();const canvas=page.getByTestId('anatomy-renderer').locator('canvas');await canvas.scrollIntoViewIfNeeded();const before=await hash(canvas);
+ await click('Zoom anatomy in');await page.waitForTimeout(700);await canvas.scrollIntoViewIfNeeded();assert.notEqual(await hash(canvas),before,'Zoom must change the rendered anatomy');await click('Zoom anatomy out');
+ const spread=page.getByTestId('anatomy-spread');await spread.focus();await spread.press('End');assert.equal(await spread.inputValue(),'1');await page.waitForTimeout(700);await shot('spread-full');await click('Reassemble anatomy');assert.equal(await spread.inputValue(),'0');
+ await click('Layers');const toolbar=page.locator('[data-testid="dissection-toolbar"]:visible');
+ for(const name of ['left','up','down','right'])await click('Pan anatomy '+name);
+ const quality=page.getByLabel('Anatomy image quality',{exact:true});await quality.selectOption('smooth');assert.equal(await quality.inputValue(),'smooth');await quality.selectOption('crisp');
+ const xray=toolbar.getByTestId('dissection-xray');const prior=await xray.getAttribute('aria-pressed');await xray.click();assert.notEqual(await xray.getAttribute('aria-pressed'),prior);await xray.click();
+ const peel=toolbar.getByTestId('dissection-depth');await peel.focus();await peel.press('End');assert.equal(await peel.inputValue(),'1');await page.waitForTimeout(700);await shot('depth-peel-skeleton');await peel.press('Home');assert.equal(await peel.inputValue(),'0');
+ for(const mode of ['scalpel','isolate','inspect']){const control=toolbar.getByTestId('dissection-mode-'+mode);await control.click();assert.equal(await control.getAttribute('aria-pressed'),'true');}
+ await click('Close anatomy tools');await click('Reset');
+ // Remove a named source mesh using the real dossier action, then restore it.
+ await click('Browse');await page.getByLabel('Filter regional anatomy by system',{exact:true}).selectOption('skeletal');await page.locator('[aria-label="Regional structures"] button').first().click();
+ await click('Open selected structure anatomy details');const drawer=page.getByTestId('organ-detail-drawer');await drawer.getByRole('button',{name:'Dissect',exact:true}).click();await drawerClose();await click('Layers');
+ const tray=page.locator('[data-testid="dissection-tray"]:visible');assert.match(await tray.innerText(),/Cut \(1\)/);await page.locator('[title="Undo last dissected structure (Ctrl+Z)"]:visible').click();assert.match(await tray.innerText(),/Cut \(0\)/);
+ await click('Close anatomy tools');await click('Reset');await shot('controls-restored');checks.push({type:'anatomy-controls',reference:ref,zoom:true,spread:true,pan:true,quality:true,xray:true,peel:true,modes:true,dissectAndUndo:true});await persist();
+}
 async function setPressed(name,value){const b=button(name);if((await b.getAttribute('aria-pressed')==='true')!==value)await b.click();}
 async function hash(locator){return (await locator.screenshot()).toString('base64');}
 async function advanced(kind,ref){
@@ -101,7 +126,7 @@ async function advanced(kind,ref){
 }
 async function persist(){await writeFile(resolve(out,'actual-android-exhaustive.json'),JSON.stringify({status:failures.length?'FAILED':'IN_PROGRESS',suite,platform:'installed Android WebView; same-device live Vercel reference',checks,failures,errors},null,2));}
 try{
- if(suite.startsWith('anatomy-'))await anatomy(Number(suite.split('-')[1]));else for(const ref of [false,true])await advanced(suite,ref);
+ if(suite==='anatomy-controls')for(const ref of [false,true])await anatomyControls(ref);else if(suite.startsWith('anatomy-'))await anatomy(Number(suite.split('-')[1]));else for(const ref of [false,true])await advanced(suite,ref);
  assert.deepEqual(errors,[]);await persist();await writeFile(resolve(out,'PASSED.json'),JSON.stringify({suite,checks:checks.length,passed:true}));
 }catch(e){failures.push({message:e.message,stack:e.stack,state:await read().catch(()=>null)});await shot('FAILURE').catch(()=>{});await persist();throw e;}
 finally{await device.close();}
