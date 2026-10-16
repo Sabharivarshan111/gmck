@@ -4,13 +4,26 @@ on:
     branches: [codex/v27-publish-verified-20261016]
 permissions:
   contents: write
-  actions: read
+  actions: write
+concurrency:
+  group: verified-publication-v27-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   publish:
     runs-on: ubuntu-latest
     timeout-minutes: 350
     steps:
       - uses: actions/checkout@v4
+      - name: Cancel only the superseded publication waiter
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const config=JSON.parse(require('fs').readFileSync('.github/qa/v27-publication.json','utf8'));
+            if(config.supersededPublicationRun&&config.supersededPublicationRun!==context.runId){
+              const {data:old}=await github.rest.actions.getWorkflowRun({...context.repo,run_id:config.supersededPublicationRun});
+              if(old.path!=='.github/workflows/android-v27-publish-verified.yml'||old.head_branch!=='codex/v27-publish-verified-20261016')throw Error('Refusing to cancel an unrelated workflow');
+              if(old.status!=='completed')await github.rest.actions.cancelWorkflowRun({...context.repo,run_id:old.id});
+            }
       - name: Require successful exact-source builds and all device suites
         id: qualify
         uses: actions/github-script@v7
@@ -18,8 +31,8 @@ jobs:
           script: |
             const fs=require('fs');
             const config=JSON.parse(fs.readFileSync('.github/qa/v27-publication.json','utf8'));
-            const allowed=new Set(['.github/qa/android-eye-findings.mjs','.github/qa/android-webview-exhaustive.mjs','.github/workflows/android-v27-exhaustive.yml','.github/workflows/android-v27-ausc-capture.yml','.github/workflows/android-v27-eye-capture.yml','.github/workflows/android-internal.yml']);
-            const workflowPaths={debug:'.github/workflows/android-debug.yml',internal:'.github/workflows/android-internal.yml',release:'.github/workflows/android-release.yml',qa:'.github/workflows/android-v27-exhaustive.yml',motion:'.github/workflows/android-v27-ausc-capture.yml',eye:'.github/workflows/android-v27-eye-capture.yml'};
+            const allowed=new Set(['.github/qa/native_remaining_checks.py','.github/workflows/android-v27-native-recheck.yml','.github/qa/android-eye-findings.mjs','.github/qa/android-webview-exhaustive.mjs','.github/workflows/android-v27-exhaustive.yml','.github/workflows/android-v27-ausc-capture.yml','.github/workflows/android-v27-eye-capture.yml','.github/workflows/android-internal.yml']);
+            const workflowPaths={debug:'.github/workflows/android-debug.yml',internal:'.github/workflows/android-internal.yml',release:'.github/workflows/android-release.yml',qa:'.github/workflows/android-v27-exhaustive.yml',motion:'.github/workflows/android-v27-ausc-capture.yml',eye:'.github/workflows/android-v27-eye-capture.yml',native:'.github/workflows/android-v27-native-recheck.yml'};
             let runs;
             for(let attempt=0;attempt<300;attempt++){
               runs={};for(const key of Object.keys(workflowPaths)){const {data}=await github.rest.actions.getWorkflowRun({...context.repo,run_id:config[key]});runs[key]=data;}
@@ -39,13 +52,14 @@ jobs:
               }
               core.setOutput(key,run.id);
             }
-            const jobs={};for(const key of ['qa','motion','eye']){const {data}=await github.rest.actions.listJobsForWorkflowRun({...context.repo,run_id:config[key],per_page:100});jobs[key]=data.jobs;}
-            const baseline=['calendar','pocus','eye','general','anatomy-controls','native-remaining',...Array.from({length:8},(_,i)=>'anatomy-'+i)];
+            const jobs={};for(const key of ['qa','motion','eye','native']){const {data}=await github.rest.actions.listJobsForWorkflowRun({...context.repo,run_id:config[key],per_page:100});jobs[key]=data.jobs;}
+            const baseline=['calendar','pocus','eye','general','anatomy-controls',...Array.from({length:8},(_,i)=>'anatomy-'+i)];
             for(const suite of baseline){const job=jobs.qa.find(j=>j.name==='webview ('+suite+')');if(job?.conclusion!=='success')throw Error('Required baseline suite failed or missing: '+suite);}
             for(const suite of ['auscultation','auscultation-case']){const job=jobs.motion.find(j=>j.name==='webview ('+suite+')');if(job?.conclusion!=='success')throw Error('Required compositor-qualified suite failed or missing: '+suite);}
             if(jobs.eye.find(j=>j.name==='webview (eye)')?.conclusion!=='success')throw Error('Matched eye capture did not pass');
+            if(jobs.native.find(j=>j.name==='remaining')?.conclusion!=='success')throw Error('Full native offline recheck did not pass');
             fs.mkdirSync('release-assets',{recursive:true});
-            fs.writeFileSync('release-assets/verification-scope.json',JSON.stringify({source:config.source,runs:Object.fromEntries(Object.entries(runs).map(([k,r])=>[k,{id:r.id,sha:r.head_sha,conclusion:r.conclusion,url:r.html_url}])),requiredBaselineSuites:baseline,requiredReplacementSuites:['auscultation','auscultation-case'],additionalMatchedEyeCapture:true,jobs},null,2));
+            fs.writeFileSync('release-assets/verification-scope.json',JSON.stringify({source:config.source,runs:Object.fromEntries(Object.entries(runs).map(([k,r])=>[k,{id:r.id,sha:r.head_sha,conclusion:r.conclusion,url:r.html_url}])),requiredBaselineSuites:baseline,requiredReplacementSuites:['auscultation','auscultation-case'],additionalMatchedEyeCapture:true,requiredNativeOfflineRecheck:true,jobs},null,2));
             core.setOutput('source',config.source);
       - uses: actions/download-artifact@v4
         with:
@@ -86,6 +100,11 @@ jobs:
           path: evidence/matched-eye
           run-id: ${{ steps.qualify.outputs.eye }}
           github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          path: evidence/native-offline-recheck
+          run-id: ${{ steps.qualify.outputs.native }}
+          github-token: ${{ github.token }}
       - name: Package exact checked artifacts
         run: |
           mkdir -p release-assets
@@ -113,7 +132,7 @@ jobs:
           - orbit-v27-android-verification.zip: device screenshots, mobile Vercel references and check reports.
           - verification-scope.json: exact source/build provenance and required suite results.
 
-          The initial case-auscultation paused-image comparison was rerun using screen-bounded compositor crops; both normal and selected-case replacement suites passed. Baseline failures remain visible in the evidence and are explicitly replaced by the qualified reruns. Eye captures additionally synchronize instrument, gaze and framing.
+          The initial case-auscultation paused-image comparison was rerun using screen-bounded compositor crops; both normal and selected-case replacement suites passed. Baseline failures remain visible in the evidence and are explicitly replaced by the qualified reruns. Eye captures additionally synchronize instrument, gaze and framing. The complete native offline flow was rerun with exact MRI-count scrolling after the earlier script stopped at an offscreen label.
 
           Studio, cases, ICU, ECG, radiology and clubbing use native RN screens. Anatomy and advanced bedside tools use the locally bundled canonical WebGL renderer; geometry downloads into a checksum-pinned private cache on first use. Comparisons use an Android 35 emulator and live Vercel mobile Chromium. Physical-phone speaker playback and universal pixel-identical behavior are not certified.
           NOTES
