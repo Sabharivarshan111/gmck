@@ -1,7 +1,7 @@
 name: iOS web setup and attendance
 on:
   push:
-    branches: [main, 'codex/ios-calendar-repair-*']
+    branches: [main, 'codex/ios-calendar-repair-*', 'codex/coronary-calendar-fix-20261016']
     paths: ['mobile/**', 'src/simulator/instruments/**', '.github/workflows/ios-web-regression.yml', 'scripts/build-vercel-native.mjs']
   pull_request:
     paths: ['mobile/**', 'src/simulator/instruments/**', '.github/workflows/ios-web-regression.yml']

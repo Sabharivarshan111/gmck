@@ -24,18 +24,32 @@ try{
   await page.getByRole('button',{name:'Restore whole anatomy from selected structure',exact:true}).click();
   await page.getByRole('button',{name:'Full',exact:true}).click();
  }
+ // Coronary arteries start on the heart; hiding is a reversible explicit action.
+ await page.goto(base+'/simulator?organ=heart&isolate=heart');await loaded();
+ await page.getByTestId('organ-detail-drawer').getByRole('tab',{name:'Supply',exact:true}).click();
+ await page.getByTestId('inspect-connection_19').click();
+ await page.getByTestId('organ-detail-drawer').waitFor({state:'hidden'});
+ await page.getByTestId('connection-leaders').waitFor();
+ await page.waitForFunction(()=>document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-visible-atlas-systems')?.includes('cardiac'));
+ assert.equal(await page.getByRole('button',{name:'Hide organ context',exact:true}).getAttribute('aria-pressed'),'true');
+ const arrows=page.getByTestId('connection-leaders').locator('circle');
+ assert(await arrows.count()>0,'coronary view must have projected arrow endpoints');
+ await page.screenshot({path:out+'/coronary-heart-default.png'});
+ await page.getByRole('button',{name:'Hide organ context',exact:true}).click();
+ await page.waitForFunction(()=>document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-visible-atlas-systems')==='arterial');
+ await page.screenshot({path:out+'/coronary-heart-hidden.png'});
  await page.goto(base+'/simulator?organ=abdomen&isolate=abdomen');await loaded();
  const d=page.getByTestId('organ-detail-drawer');await d.getByRole('tab',{name:'Supply',exact:true}).click();
  await page.getByTestId('inspect-connection_412').click();
  await d.waitFor({state:'hidden'});
  await page.getByTestId('connection-leaders').waitFor({timeout:15000});
- assert.equal(await page.getByTestId('anatomy-renderer').getAttribute('data-visible-atlas-systems'),'arterial','celiac focus must remove occluding organs');
- await page.waitForTimeout(700);await page.screenshot({path:out+'/celiac-focused.png'});
- const toggle=page.getByRole('button',{name:'Show organ context',exact:true});await toggle.click();
  assert.equal(await page.getByRole('button',{name:'Hide organ context',exact:true}).getAttribute('aria-pressed'),'true');
  await page.waitForFunction(()=>document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-visible-atlas-systems')?.includes('digestive'));
+ await page.screenshot({path:out+'/celiac-with-organ.png'});
  await page.getByRole('button',{name:'Hide organ context',exact:true}).click();
  await page.waitForFunction(()=>document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-visible-atlas-systems')==='arterial');
+ await page.getByRole('button',{name:'Show organ context',exact:true}).click();
+ await page.waitForFunction(()=>document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-visible-atlas-systems')?.includes('digestive'));
  for(const width of [360,430]){
   await page.setViewportSize({width,height:844});
   await page.getByTestId('connection-leaders').waitFor();

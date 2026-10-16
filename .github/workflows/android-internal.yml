@@ -49,6 +49,7 @@ on:
       - codex/native-web-parity
       - codex/native-v27-candidate-20261015
       - codex/native-v27-verification-20261016
+      - codex/coronary-calendar-fix-20261016
     # Only when something that reaches the APK changes.
     #
     # This used to fire on every push. Three Android builds ran per push, per
