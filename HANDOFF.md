@@ -1,4 +1,13 @@
 
+## 2026-10-16T18:38:00Z — Focused mobile dock regression passed; Android compilation pending
+
+**DONE:** Exact final app source dd404cb12c85942ce8ded76e1e5f1f4b919e8a51 passed focused native-renderer regression in run38947606723 (QA-only084e96fa9ca43e781b5d007cbc93e77487223b44 checks out dd404cb). Phone/landscape, safe-area padding, Browse/Layers, actual slider drag and occlusion samples pass. CI393x789 and844x390 screenshots downloaded and visually reviewed. Artifact12066163710 contains six screenshots and geometry.json. Earlier38946314606/38946886241 reported landscape panel overlap, while local checks passed; diagnostic QA preserved assertions and added viewport/bounds logging, and passed. Do not claim cause conclusively; this was timing-sensitive, not an app dependency repair. A diagnostic-only run38947313110 had a script escaping mistake, corrected before passing run.
+
+**HALF-DONE:** Debug38946314404, internal38946314407, release38946314402 remain compiling. Active publisher38948015794 at23cf6e768c297314d77f9259c8a3a1ff7e720066 on codex/v27-publish-mobile-controls-20261016 gates these three exact-source compilations plus passing QA38947606723, then signatures/package/renderer/pins and download hashes. Intended tagv27-20261016-mobile-ui is not yet verified published.
+
+**NEXT:** Verify actual completed publisher and release downloads before giving links. Keep exhaustive anatomy/bedside QA deferred per owner6%quota request. **DO NOT:** Offer old13c0771 artifacts or old v27-20261016-fresh as the final UI repair. No Play upload or full native parity claim.
+
+
 ## 2026-10-16T18:20:00Z — Mobile anatomy dock repair, fresh builds underway
 
 **DONE:** Owner screenshot showed Spread anatomy covered by fixed Browse/Layers toolbar. Source dd404cb12c85942ce8ded76e1e5f1f4b919e8a51 on codex/v27-mobile-controls-20261016 stacks Spread and toolbar in one fixed dock, measures dock and bottom tabs with ResizeObserver, reserves panel/main/stage space, contains canvas overlays, wraps gesture help and compacts short landscape. Native renderer uses measured Android viewport. Local renderer build passes (110 asset pins), mobile UI contract check passes; local screenshots reviewed at 393x789 and 844x390. Targeted Playwright checks cover 320x640,393x789,412x915,844x390, safe-area padding, panels and actual slider dragging. Root tsconfig.app check has existing StethoscopeSynthesizer.ts:756 Float32Array generic mismatch unchanged from parent; no new simulator TS diagnostics.

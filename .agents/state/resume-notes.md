@@ -2511,3 +2511,11 @@ Owner clarified that the near-instant r2/r3 releases only re-published existing 
 **NEXT:** Watch final publisher and geometry check. Review screenshots and actual release assets before claiming publication. The owner explicitly deferred exhaustive anatomy/bedside QA because weekly quota is6%; do not restart that audit. Existing v27-20261016-fresh release is real but predates this UI fix.
 
 **DO NOT:** Re-publish old binaries; claim exhaustive Android/Vercel parity; upload to Play; alter signing/app ID; treat screenshot regression check as physical-device certification. Main/Vercel production unchanged. Native anatomy still canonical bundled WebGL with first-download pinned geometry caching.
+
+## 2026-10-16T18:38:00Z — Focused mobile dock regression passed; Android compilation pending
+
+**DONE:** Exact final app source dd404cb12c85942ce8ded76e1e5f1f4b919e8a51 passed focused native-renderer regression in run38947606723 (QA-only084e96fa9ca43e781b5d007cbc93e77487223b44 checks out dd404cb). Phone/landscape, safe-area padding, Browse/Layers, actual slider drag and occlusion samples pass. CI393x789 and844x390 screenshots downloaded and visually reviewed. Artifact12066163710 contains six screenshots and geometry.json. Earlier38946314606/38946886241 reported landscape panel overlap, while local checks passed; diagnostic QA preserved assertions and added viewport/bounds logging, and passed. Do not claim cause conclusively; this was timing-sensitive, not an app dependency repair. A diagnostic-only run38947313110 had a script escaping mistake, corrected before passing run.
+
+**HALF-DONE:** Debug38946314404, internal38946314407, release38946314402 remain compiling. Active publisher38948015794 at23cf6e768c297314d77f9259c8a3a1ff7e720066 on codex/v27-publish-mobile-controls-20261016 gates these three exact-source compilations plus passing QA38947606723, then signatures/package/renderer/pins and download hashes. Intended tagv27-20261016-mobile-ui is not yet verified published.
+
+**NEXT:** Verify actual completed publisher and release downloads before giving links. Keep exhaustive anatomy/bedside QA deferred per owner6%quota request. **DO NOT:** Offer old13c0771 artifacts or old v27-20261016-fresh as the final UI repair. No Play upload or full native parity claim.
