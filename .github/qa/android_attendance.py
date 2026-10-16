@@ -14,7 +14,7 @@ checks = []
 def confirm_saved_range(stage):
     root = dump_ui()
     labels = ' '.join(node_label(n) for n in root.iter('node'))
-    assert '2026-10-16' in labels and '2026-11-12' in labels, 'Saved rotation date range is incorrect'
+    assert '2026-10-17' in labels and '2026-11-14' in labels, 'Saved rotation date range is incorrect'
     (OUT / ('calendar-' + stage + '-labels.txt')).write_text(labels)
 
 
@@ -31,9 +31,9 @@ try:
     reach('Clinical postings')
     reach('Add a posting')
     reach('Posting start date')
-    tap('16 October 2026')
+    tap('17 October 2026')
     reach('Posting end date')
-    tap('12 November 2026')
+    tap('14 November 2026')
     reach('Require 80 percent')
     reach('Add this posting')
     wait_visible('Enter a posting name')

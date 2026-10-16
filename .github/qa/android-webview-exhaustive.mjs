@@ -129,7 +129,16 @@ async function advanced(kind,ref){
   await click('Reference scans');await shot('pocus-reference');await click('Case simulation');
  }else if(kind==='general'){
   await page.getByLabel('Press shin',{exact:true}).waitFor();await page.getByLabel('Edema findings',{exact:true}).selectOption('3');const stage=page.getByLabel('Press shin',{exact:true});await stage.scrollIntoViewIfNeeded();const b=await stage.boundingBox();await page.mouse.move(b.x+b.width/2,b.y+b.height/2);await page.mouse.down();await page.waitForTimeout(5500);await page.mouse.up();await shot('edema-after-hold');assert(Number((await page.getByTestId('edema-depth').innerText()).replace(' mm',''))>4,'Five-second compression must produce a pit in grade 3');const depth=Number((await page.getByTestId('edema-depth').innerText()).replace(' mm',''));await page.waitForTimeout(1000);assert(Number((await page.getByTestId('edema-depth').innerText()).replace(' mm',''))<depth,'Released pit must recover');
-  for(const id of ['ward-tab-icterus','ward-tab-pallor','ward-tab-ascites']){await page.getByTestId(id).click();await shot(id);}
+  for(const id of ['ward-tab-icterus','ward-tab-pallor','ward-tab-ascites']){
+   await page.getByTestId(id).click();
+   if(id==='ward-tab-icterus'){
+    await page.waitForFunction(()=>document.querySelector('[data-testid="eye-head-view"]')?.getAttribute('data-render-state')==='ready',undefined,{timeout:180000});
+    await page.getByLabel('Scleral findings',{exact:true}).selectOption('yellow');await page.waitForFunction(()=>Number(document.querySelector('[data-testid="scleral-stage"]')?.getAttribute('data-tint'))>.5);
+    await click('Look straight');await button('Look down').waitFor();await click('Look down');await click('Release upper lids');await click('Elevate upper lids');
+    await page.getByTestId('scleral-stage').scrollIntoViewIfNeeded();await page.waitForTimeout(700);
+   }
+   await shot(id);
+  }
   const tilt=page.getByRole('button',{name:/Roll Patient to 45° Lateral Decubitus/});await tilt.click();const tilted=page.getByRole('button',{name:/Patient in 45° Lateral Tilt/});await tilted.waitFor();await tilted.click();
  }
  checks.push({suite:kind,reference:ref,passed:true,state:await read()});await persist();
