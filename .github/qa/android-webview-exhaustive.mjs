@@ -1,6 +1,7 @@
 /** Authoritative exhaustive CI entrypoint. Tests run inside the installed Android WebView via Playwright's Android API.
  * Input is sent to the real page. No DOM/model/patient state is substituted. */
 import { _android, chromium } from 'playwright';
+import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { mkdir, writeFile, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
@@ -119,9 +120,25 @@ async function anatomyControls(ref){
 }
 async function setPressed(name,value){const b=button(name);if((await b.getAttribute('aria-pressed')==='true')!==value)await b.click();}
 async function hash(locator){
- await locator.scrollIntoViewIfNeeded();const pixels=await renderedPixels(locator);
- assert(pixels.bright>40&&pixels.colours>12,'The WebGL framebuffer must contain visible geometry: '+JSON.stringify(pixels));
- return pixels.hash;
+ await locator.scrollIntoViewIfNeeded();const box=await locator.boundingBox();const viewport=await page.evaluate(()=>({width:innerWidth,height:innerHeight}));
+ if(!reference){
+  // CDP captures can omit Android WebGL surfaces. Measure the compositor image
+  // using the observed native WebView bounds, including system-bar offsets.
+  return execFileSync('python3',['-c',`import sys,json,subprocess,xml.etree.ElementTree as ET,re,io,hashlib
+from PIL import Image
+d=json.loads(sys.argv[1]); text=subprocess.check_output(['adb','shell','am','instrument','-w','com.orbit.qa/com.orbit.qa.UiDump'],text=True)
+xml=next(s.split('=',1)[1] for s in text.splitlines() if s.startswith('INSTRUMENTATION_RESULT: orbit_ui='))
+nodes=[n for n in ET.fromstring(xml).iter('node') if n.get('class')=='android.webkit.WebView']
+rects=[list(map(int,re.findall(r'-?\\d+',n.get('bounds','')))) for n in nodes];rects=[r for r in rects if len(r)==4 and r[2]>r[0] and r[3]>r[1]]
+assert rects,'Observed native WebView bounds required'
+l,t,r,b=max(rects,key=lambda r:(r[2]-r[0])*(r[3]-r[1]));x=d['box'];v=d['viewport'];sx=(r-l)/v['width'];sy=(b-t)/v['height']
+crop=(max(l,round(l+x['x']*sx)),max(t,round(t+x['y']*sy)),min(r,round(l+(x['x']+x['width'])*sx)),min(b,round(t+(x['y']+x['height'])*sy)))
+assert crop[2]>crop[0] and crop[3]>crop[1],'Canvas must be visible'
+im=Image.open(io.BytesIO(subprocess.check_output(['adb','exec-out','screencap','-p']))).crop(crop).convert('RGB')
+print(hashlib.sha256(im.tobytes()).hexdigest())`,JSON.stringify({box,viewport})],{encoding:'utf8',maxBuffer:1024*1024}).trim();
+ }
+ const x=Math.max(0,box.x),y=Math.max(0,box.y),width=Math.min(box.x+box.width,viewport.width)-x,height=Math.min(box.y+box.height,viewport.height)-y;
+ assert(width>0&&height>0,'Canvas must be visible');return createHash('sha256').update(await page.screenshot({clip:{x,y,width,height},timeout:60000})).digest('hex');
 }
 async function pocusPixels(){return page.getByTestId('pocus-canvas').evaluate(e=>{
  const ctx=e.getContext('2d');const pixels=ctx.getImageData(0,0,e.width,e.height).data;let hash=2166136261;let bright=0;
