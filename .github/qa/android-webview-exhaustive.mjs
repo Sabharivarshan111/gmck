@@ -74,7 +74,9 @@ async function anatomy(group){
      if(c.id==='connection_19'){
       assert.equal(await button('Hide organ context').getAttribute('aria-pressed'),'true');assert((await read()).systems.split(',').includes('cardiac'),'Coronary artery must include heart geometry by default');await click('Hide organ context');await page.waitForFunction(()=>document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-visible-atlas-systems')==='arterial');await click('Show organ context');
      }
-     await route({mode:'anatomy',organ:owner,isolate:c.id},true);await loaded();await drawerClose();await contextOn();const vercel=await arrowEvidence(c);await shot(c.id);
+     // Match the user interaction on both surfaces. A synthetic connection URL
+     // omits the parent context that the real dossier action carries.
+     await route({mode:'anatomy',organ:owner,isolate:owner},true);await loaded();const referenceDrawer=page.getByTestId('organ-detail-drawer');await referenceDrawer.getByRole('tab',{name:section,exact:true}).click();await page.getByTestId('inspect-'+c.id).click();await referenceDrawer.waitFor({state:'hidden'});await loaded();await contextOn();const vercel=await arrowEvidence(c);await shot(c.id);
      checks.push({owner,id:c.id,type:'registered-view',passed:true,native,vercel});
      page=nativePage;reference=false;await click('Open selected structure anatomy details');d=page.getByTestId('organ-detail-drawer');await d.getByRole('tab',{name:section,exact:true}).click();
     }
