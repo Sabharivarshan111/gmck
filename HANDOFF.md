@@ -1,4 +1,18 @@
 
+## 2026-10-16T18:43:00Z — Mobile anatomy overlap repair RELEASED
+
+**DONE:** Fresh debug/internal/release APKs and release AAB published at https://github.com/Sabharivarshan111/gmck/releases/tag/v27-20261016-mobile-ui, target dd404cb12c85942ce8ded76e1e5f1f4b919e8a51, published 2026-10-16T18:42:51Z. Debug38946314404/internal38946314407/release38946314402 all success. Publisher38948015794 success: signed APKs and AAB, version27, production/debug package IDs, same20 renderer files and110 asset pins checked; re-downloaded all4 binaries and JSON reports and verified SHA256SUMS. No Google Play upload. Exact asset hashes:
+
+
+Focused native renderer mobile dock QA38947606723 passed, artifact12066163710, QA-only084e96fa9ca43e781b5d007cbc93e77487223b44 checks out exact app dd404cb. Six screenshot scenarios cover three phone sizes, landscape, extra safe-area/text sizing and real spread drag. CI393x789/844x390 screenshots visually reviewed. Spread and thumb toolbar now share measured stacked dock; panels clear dock, canvas overlays are contained and short landscape is compacted. Earlier timing-sensitive landscape assertions failed before diagnostic run; do not erase that history or imply physical-device exhaustive certification. Shared renderer change included in Android; production Vercel/main not deployed by this task.
+
+**HALF-DONE:** Exhaustive anatomy/auscultation/eye/bedside latest-device comparison remains DEFERRED by owner's explicit6%weekly-quota request. Prior expanded anatomy audit and unresolved speaker/offline limitations remain in earlier entries.
+
+**NEXT:** Give these actual new release links. Next session continue deferred exhaustive verification when owner asks; do not build again merely because chat says continue without checking current release state.
+
+**DO NOT:** Claim all simulator/native parity certified, call this a Play release, or confuse superseded13c0771 builds with final dd404cb. Preserve signing/app ID/version and baseline source-pin disclosures.
+
+
 ## 2026-10-16T18:38:00Z — Focused mobile dock regression passed; Android compilation pending
 
 **DONE:** Exact final app source dd404cb12c85942ce8ded76e1e5f1f4b919e8a51 passed focused native-renderer regression in run38947606723 (QA-only084e96fa9ca43e781b5d007cbc93e77487223b44 checks out dd404cb). Phone/landscape, safe-area padding, Browse/Layers, actual slider drag and occlusion samples pass. CI393x789 and844x390 screenshots downloaded and visually reviewed. Artifact12066163710 contains six screenshots and geometry.json. Earlier38946314606/38946886241 reported landscape panel overlap, while local checks passed; diagnostic QA preserved assertions and added viewport/bounds logging, and passed. Do not claim cause conclusively; this was timing-sensitive, not an app dependency repair. A diagnostic-only run38947313110 had a script escaping mistake, corrected before passing run.

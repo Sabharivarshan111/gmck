@@ -2519,3 +2519,16 @@ Owner clarified that the near-instant r2/r3 releases only re-published existing 
 **HALF-DONE:** Debug38946314404, internal38946314407, release38946314402 remain compiling. Active publisher38948015794 at23cf6e768c297314d77f9259c8a3a1ff7e720066 on codex/v27-publish-mobile-controls-20261016 gates these three exact-source compilations plus passing QA38947606723, then signatures/package/renderer/pins and download hashes. Intended tagv27-20261016-mobile-ui is not yet verified published.
 
 **NEXT:** Verify actual completed publisher and release downloads before giving links. Keep exhaustive anatomy/bedside QA deferred per owner6%quota request. **DO NOT:** Offer old13c0771 artifacts or old v27-20261016-fresh as the final UI repair. No Play upload or full native parity claim.
+
+## 2026-10-16T18:43:00Z — Mobile anatomy overlap repair RELEASED
+
+**DONE:** Fresh debug/internal/release APKs and release AAB published at https://github.com/Sabharivarshan111/gmck/releases/tag/v27-20261016-mobile-ui, target dd404cb12c85942ce8ded76e1e5f1f4b919e8a51, published 2026-10-16T18:42:51Z. Debug38946314404/internal38946314407/release38946314402 all success. Publisher38948015794 success: signed APKs and AAB, version27, production/debug package IDs, same20 renderer files and110 asset pins checked; re-downloaded all4 binaries and JSON reports and verified SHA256SUMS. No Google Play upload. Exact asset hashes:
+
+
+Focused native renderer mobile dock QA38947606723 passed, artifact12066163710, QA-only084e96fa9ca43e781b5d007cbc93e77487223b44 checks out exact app dd404cb. Six screenshot scenarios cover three phone sizes, landscape, extra safe-area/text sizing and real spread drag. CI393x789/844x390 screenshots visually reviewed. Spread and thumb toolbar now share measured stacked dock; panels clear dock, canvas overlays are contained and short landscape is compacted. Earlier timing-sensitive landscape assertions failed before diagnostic run; do not erase that history or imply physical-device exhaustive certification. Shared renderer change included in Android; production Vercel/main not deployed by this task.
+
+**HALF-DONE:** Exhaustive anatomy/auscultation/eye/bedside latest-device comparison remains DEFERRED by owner's explicit6%weekly-quota request. Prior expanded anatomy audit and unresolved speaker/offline limitations remain in earlier entries.
+
+**NEXT:** Give these actual new release links. Next session continue deferred exhaustive verification when owner asks; do not build again merely because chat says continue without checking current release state.
+
+**DO NOT:** Claim all simulator/native parity certified, call this a Play release, or confuse superseded13c0771 builds with final dd404cb. Preserve signing/app ID/version and baseline source-pin disclosures.
