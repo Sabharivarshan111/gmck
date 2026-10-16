@@ -17,6 +17,12 @@ async function verify(label) {
   assert(spread.y >= 0 && spread.y + spread.height <= toolbar.y, label + ': spread overlaps toolbar');
   assert(toolbar.y + toolbar.height <= tabs.y, label + ': toolbar overlaps tabs');
   for (const r of [spread, toolbar, tabs]) assert(r.x >= 0 && r.x + r.width <= page.viewportSize().width + 1, label + ': horizontal overflow');
+  const unobstructed = await page.getByTestId('mobile-anatomy-dock').evaluate(dock => {
+    const card = dock.querySelector('[data-testid="anatomy-spread-control"]');
+    const r = card.getBoundingClientRect();
+    return [.15,.5,.85].every(x => [.2,.5,.8].every(y => dock.contains(document.elementFromPoint(r.x+r.width*x,r.y+r.height*y))));
+  });
+  assert(unobstructed, label + ': anatomy overlays cover spread controls');
   const input = page.getByTestId('mobile-anatomy-dock').getByRole('slider');
   const r = await input.boundingBox();
   const hit = await input.evaluate(el => { const r = el.getBoundingClientRect(); return document.elementFromPoint(r.x+r.width/2,r.y+r.height/2) === el; });
