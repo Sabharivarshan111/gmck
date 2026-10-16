@@ -1,5 +1,16 @@
 # Handoff — Orbit MBBS native Android app
 
+## 2026-10-16T11:47:00Z — corrected Vercel preview ready; direct comparison queued
+
+DONE: Vercel preview dpl_9bQ7yC4ACecz3cw8D1aJkDkHPPgU is READY at https://orbitmbbs-2df8l5j36-sabharivarshan111s-projects.vercel.app, exact app SHA e7cafadc843ac353dc45dc9b139a445c7d5e4f08, target null(preview), project/team confirmed. Public simulator request returns200, so no protection bypass is needed. This does NOT deploy production.
+
+HALF-DONE: Started direct installed-Android versus this exact Vercel preview comparison of all26 Z-Anatomy targets, run38895966590, QA-only branch codex/v27-brain-vercel-preview-20261016 at8cb284fc3928a0ad6e7668afdc7eddb745157be1. It pins debug run38894967710 and verifies its exact e7 head/path before downloading. No app source differs from e7. It uses the same strict corrected-brain source-gap and visible-pixel framing assertions as the local-source check. The local-source check38894967678 also remains active; new build debug/internal/release38894967710/726/679 still compile. Six old-runtime groups2/4 partitions38892788662 also active. Do not duplicate these jobs.
+
+NEXT: Review actual after-repair Android/source-reference PNGs in both corrected-source and Vercel-preview runs. Once all required scope passes, update publisher from explicit visual blocker to the new e7 source/artifacts only, preserving old97ee provenance for unchanged scopes. Verify new APK/AAB checksums and publish authorized builds, then bring the reviewed shared correction to production/main without overwriting concurrent work. Existing full-simulator parity remains NOT_CERTIFIED until this review.
+
+DO NOT: Push documentation onto e7 build branch; exact-head QA would wait for an unbuilt docs head. Scratch repo is now clean on codex/v27-brain-registration-20261016 at e7; previous locally mirrored edits were preserved in git stash brain-registration-source-checkpoint before switching. Report version3 remains the latest saved409496242-byte checkpoint and correctly marks publication blocked.
+
+
 ## 2026-10-16T11:42:00Z — brain visual blocker and rebuilt candidate
 
 **DONE.** Baseline anatomy groups0,5,6,7 and complete error-attributed replacements1(38872622681) and3(38873046013) passed. Downloaded and inspected all136 registered-connection pairs and29 overview pairs from these six groups. Coronary artery has heart context visible by default; source structures and arrow placement correspond between Android and Vercel. However, the standalone Z-Anatomy brain overview is visibly offscreen on BOTH platforms. Functional bright-pixel checks had missed this, so full visual parity remains NOT_CERTIFIED.
