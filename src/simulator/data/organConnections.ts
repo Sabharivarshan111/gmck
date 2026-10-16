@@ -1726,9 +1726,18 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "kind": "relation",
       "direction": "inferior",
       "label": "Liver (Right)",
-      "targetId": "atlas:FJ2816",
+      "targetId": "atlas:FJ1858,FJ2409,FJ2816,FJ2818,FJ2819,FJ2820,FJ2821,FJ2822,FJ2823,FJ2824",
       "partIds": [
-        "FJ2816"
+        "FJ1858",
+        "FJ2409",
+        "FJ2816",
+        "FJ2818",
+        "FJ2819",
+        "FJ2820",
+        "FJ2821",
+        "FJ2822",
+        "FJ2823",
+        "FJ2824"
       ],
       "note": "Structures share the BodyParts3D reference frame."
     },
@@ -3368,9 +3377,18 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "kind": "relation",
       "direction": "anterior",
       "label": "Liver (right kidney)",
-      "targetId": "atlas:FJ2816",
+      "targetId": "atlas:FJ1858,FJ2409,FJ2816,FJ2818,FJ2819,FJ2820,FJ2821,FJ2822,FJ2823,FJ2824",
       "partIds": [
-        "FJ2816"
+        "FJ1858",
+        "FJ2409",
+        "FJ2816",
+        "FJ2818",
+        "FJ2819",
+        "FJ2820",
+        "FJ2821",
+        "FJ2822",
+        "FJ2823",
+        "FJ2824"
       ],
       "note": "Structures share the BodyParts3D reference frame."
     },
@@ -3591,9 +3609,18 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "kind": "relation",
       "direction": "posterior",
       "label": "Liver",
-      "targetId": "atlas:FJ2816",
+      "targetId": "atlas:FJ1858,FJ2409,FJ2816,FJ2818,FJ2819,FJ2820,FJ2821,FJ2822,FJ2823,FJ2824",
       "partIds": [
-        "FJ2816"
+        "FJ1858",
+        "FJ2409",
+        "FJ2816",
+        "FJ2818",
+        "FJ2819",
+        "FJ2820",
+        "FJ2821",
+        "FJ2822",
+        "FJ2823",
+        "FJ2824"
       ],
       "note": "Structures share the BodyParts3D reference frame."
     },
@@ -3758,9 +3785,18 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "kind": "relation",
       "direction": "anterior",
       "label": "Liver",
-      "targetId": "atlas:FJ2816",
+      "targetId": "atlas:FJ1858,FJ2409,FJ2816,FJ2818,FJ2819,FJ2820,FJ2821,FJ2822,FJ2823,FJ2824",
       "partIds": [
-        "FJ2816"
+        "FJ1858",
+        "FJ2409",
+        "FJ2816",
+        "FJ2818",
+        "FJ2819",
+        "FJ2820",
+        "FJ2821",
+        "FJ2822",
+        "FJ2823",
+        "FJ2824"
       ],
       "note": "Structures share the BodyParts3D reference frame."
     },

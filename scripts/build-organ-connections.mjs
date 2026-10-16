@@ -55,6 +55,11 @@ const extra={
  snakebite:{anterior:['Tibialis anterior'],lateral:['Fibularis longus','Fibularis brevis']},
 };
 const aliases={
+ // The source files most liver parenchyma as hepatovenous segments. Matching
+ // only the word "liver" returns the caudate lobe and omits the whole surface.
+ 'Liver':['hepatovenous segment','caudate lobe of liver'],
+ 'Liver (Right)':['hepatovenous segment','caudate lobe of liver'],
+ 'Liver (right kidney)':['hepatovenous segment','caudate lobe of liver'],
  'Interatrial Septum':['interatrial septum'],'Phrenic Nerve (C3-C5)':[],
  'Pericardiophrenic Vessels':['pericardiacophrenic artery','pericardiacophrenic vein'],
  'Epicardium':[],'Visceral Pericardium':[],
