@@ -15,6 +15,10 @@ const viewport=await nativePage.evaluate(()=>({width:window.innerWidth,height:wi
 const browser=await chromium.launch({headless:true,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox']});
 const webContext=await browser.newContext({viewport,userAgent:await nativePage.evaluate(()=>navigator.userAgent.replace('; wv','').replace(' Version/4.0','')),isMobile:true,hasTouch:true,deviceScaleFactor:3});const referencePage=await webContext.newPage();referencePage.setDefaultTimeout(60000);
 const groups=8;
+const partitionCount=Number(process.env.ORBIT_ANATOMY_PARTITIONS||1),partition=Number(process.env.ORBIT_ANATOMY_PARTITION||0);
+assert(Number.isInteger(partitionCount)&&partitionCount>0&&Number.isInteger(partition)&&partition>=0&&partition<partitionCount,'Valid anatomy partition required');
+const connectionOrder=new Map(Object.values(ORGAN_CONNECTIONS).flat().map((c,i)=>[c.id,i]));
+const inPartition=c=>connectionOrder.get(c.id)%partitionCount===partition;
 const coverage=JSON.parse(await readFile(resolve(out,'anatomy-coverage.json'),'utf8'));
 const checks=[],failures=[],errors=[];for(const surface of [nativePage,referencePage])surface.on('pageerror',e=>{const record={surface:surface===nativePage?'android':'vercel',url:surface.url(),at:new Date().toISOString(),name:e.name,message:e.message,stack:e.stack};errors.push(record);console.error('ORBIT_PAGE_ERROR '+JSON.stringify(record));});
 const suite=process.env.ORBIT_EXHAUSTIVE_SUITE||'anatomy-0';let reference=false;
@@ -52,7 +56,7 @@ async function arrowEvidence(connection){
 }
 async function anatomy(group){
  const owners=Object.keys(ORGAN_CONNECTIONS).filter((_,i)=>i%groups===group);
- const views=[{id:'whole-body',query:{mode:'anatomy'}},{id:'vessels',query:{mode:'anatomy',layer:'vascular'}},{id:'skeleton',query:{mode:'anatomy',layer:'skeletal'}},...coverage.organs.map(o=>({id:o.id,query:{mode:'anatomy',organ:o.id,isolate:o.preferredReference}}))].filter((_,i)=>i%groups===group);
+ const views=[{id:'whole-body',query:{mode:'anatomy'}},{id:'vessels',query:{mode:'anatomy',layer:'vascular'}},{id:'skeleton',query:{mode:'anatomy',layer:'skeletal'}},...coverage.organs.map(o=>({id:o.id,query:{mode:'anatomy',organ:o.id,isolate:o.preferredReference}}))].filter((_,i)=>i%groups===group).filter((_,i)=>i%partitionCount===partition);
  for(const view of views){
   const frames=[];for(const ref of [false,true]){await route(view.query,ref);await loaded();await drawerClose();await page.waitForTimeout(700);frames.push(await shot('overview-'+view.id));}
   checks.push({type:'overview',id:view.id,actualAndroidAndMobileChromiumVercel:frames});await persist();
@@ -61,7 +65,7 @@ async function anatomy(group){
   await route({mode:'anatomy',organ:owner,isolate:owner});await loaded();let d=page.getByTestId('organ-detail-drawer');await d.waitFor();
   for(const section of ['Supply','Relations']){
    await d.getByRole('tab',{name:section,exact:true}).click();await shot(owner+'-'+section.toLowerCase());
-   const list=ORGAN_CONNECTIONS[owner].filter(c=>section==='Supply'?c.kind!=='relation':c.kind==='relation');
+   const list=ORGAN_CONNECTIONS[owner].filter(c=>section==='Supply'?c.kind!=='relation':c.kind==='relation').filter(inPartition);
    for(const c of list){
     await page.getByTestId('inspect-'+c.id).click();
     if(!c.targetId){const region=page.getByRole('region',{name:c.label+' teaching diagram',exact:true});await region.waitFor();assert((await region.innerText()).includes('not a registered 3D mesh'));await region.getByRole('button',{name:'Close teaching diagram'}).click();checks.push({owner,id:c.id,type:'explicit-schematic',passed:true});}
@@ -84,6 +88,10 @@ async function anatomy(group){
    }
   }
  }
+ const expectedConnections=owners.flatMap(o=>ORGAN_CONNECTIONS[o]).filter(inPartition).map(c=>c.id).sort();
+ const actualConnections=checks.filter(c=>c.type==='registered-view'||c.type==='explicit-schematic').map(c=>c.id).sort();
+ assert.deepEqual(actualConnections,expectedConnections,'Every assigned registered and schematic connection must be checked exactly once');
+ assert.deepEqual(checks.filter(c=>c.type==='overview').map(c=>c.id).sort(),views.map(v=>v.id).sort(),'Every assigned overview must be checked');
 }
 async function anatomyControls(ref){
  await route({mode:'anatomy'},ref);await loaded();await drawerClose();
@@ -185,9 +193,9 @@ async function advanced(kind,ref){
  }
  checks.push({suite:kind,reference:ref,passed:true,state:await read()});await persist();
 }
-async function persist(){await writeFile(resolve(out,'actual-android-exhaustive.json'),JSON.stringify({status:failures.length?'FAILED':'IN_PROGRESS',suite,platform:'installed Android WebView; live Vercel in mobile Chromium at matching viewport',checks,failures,errors},null,2));}
+async function persist(){await writeFile(resolve(out,'actual-android-exhaustive.json'),JSON.stringify({status:failures.length?'FAILED':'IN_PROGRESS',suite,partition:{index:partition,count:partitionCount},platform:'installed Android WebView; live Vercel in mobile Chromium at matching viewport',checks,failures,errors},null,2));}
 try{
  if(suite==='anatomy-controls')for(const ref of [false,true])await anatomyControls(ref);else if(suite.startsWith('anatomy-'))await anatomy(Number(suite.split('-')[1]));else for(const ref of [false,true])await advanced(suite,ref);
- assert.deepEqual(errors,[]);await persist();await writeFile(resolve(out,'PASSED.json'),JSON.stringify({suite,checks:checks.length,passed:true}));
+ assert.deepEqual(errors,[]);await persist();await writeFile(resolve(out,'PASSED.json'),JSON.stringify({suite,partition:{index:partition,count:partitionCount},checks:checks.length,passed:true}));
 }catch(e){failures.push({message:e.message,stack:e.stack,state:await read().catch(()=>null)});await shot('FAILURE').catch(()=>{});await persist();throw e;}
 finally{await device.close();await browser.close();}
