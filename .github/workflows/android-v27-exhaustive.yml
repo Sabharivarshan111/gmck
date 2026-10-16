@@ -26,7 +26,7 @@ jobs:
               const run=candidates.find(r=>r.head_sha===context.sha)||candidates[0];
               if(run && run.head_sha!==context.sha){
                 const {data:diff}=await github.rest.repos.compareCommits({...context.repo,base:run.head_sha,head:context.sha});
-                const allowed=new Set(['.github/workflows/android-v27-exhaustive.yml','mobile/scripts/android-webview-exhaustive.mjs','mobile/scripts/android_webview_bootstrap.py']);
+                const allowed=new Set(['.github/workflows/android-v27-exhaustive.yml','mobile/scripts/android-webview-exhaustive.mjs','mobile/scripts/android_webview_bootstrap.py','.github/qa/android_attendance.py']);
                 if(diff.status!=='ahead'||!diff.files?.length||diff.files.length>=300||diff.files.some(f=>!allowed.has(f.filename)))throw Error('APK reuse denied: runtime/build/source differs');
               }
               if(run?.status==='completed'){
@@ -44,7 +44,7 @@ jobs:
       fail-fast: false
       max-parallel: 4
       matrix:
-        suite: [auscultation-case, auscultation, anatomy-0, eye, anatomy-1, anatomy-2, anatomy-3, pocus, general]
+        suite: [calendar, auscultation-case, auscultation, anatomy-0, eye, anatomy-1, anatomy-2, anatomy-3, pocus, general]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -83,8 +83,12 @@ jobs:
             adb shell wm density 480
             adb install -r downloaded-apk/app-preview.apk
             bash mobile/scripts/build-ui-dump.sh
-            ORBIT_UI_HELPER=1 ORBIT_SCREENSHOT_OUT=artifacts/exhaustive python3 mobile/scripts/android_webview_bootstrap.py
-            ORBIT_SCREENSHOT_OUT=artifacts/exhaustive ORBIT_EXHAUSTIVE_SUITE=${{ matrix.suite }} node --experimental-strip-types mobile/scripts/android-webview-exhaustive.mjs
+            if [ '${{ matrix.suite }}' = calendar ]; then
+              ORBIT_UI_HELPER=1 ORBIT_SCREENSHOT_OUT=artifacts/exhaustive python3 .github/qa/android_attendance.py
+            else
+              ORBIT_UI_HELPER=1 ORBIT_SCREENSHOT_OUT=artifacts/exhaustive python3 mobile/scripts/android_webview_bootstrap.py
+              ORBIT_SCREENSHOT_OUT=artifacts/exhaustive ORBIT_EXHAUSTIVE_SUITE=${{ matrix.suite }} node --experimental-strip-types mobile/scripts/android-webview-exhaustive.mjs
+            fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
