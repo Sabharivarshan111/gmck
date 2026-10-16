@@ -105,6 +105,7 @@ export default function AuscultationThorax({ back, xray, listening, motion, pulm
     void Promise.all([loadThorax(), loadLungs()]).then(() => {
       if (!disposed) { render(); setStatus('ready'); }
     }).catch(() => { if (!disposed) setStatus('unavailable'); });
+    const auditMotion = new URLSearchParams(location.search).has('native_audit');
     let lastFrame = 0;
     let wasMoving = false;
     const stopMotion = startVisibleFrameLoop(time => {
@@ -114,6 +115,13 @@ export default function AuscultationThorax({ back, xray, listening, motion, pulm
       if (!enabled && !wasMoving) return;
       wasMoving = enabled;
       const trace = enabled ? engineRef.current?.getTrace() : null;
+      // Read-only state for diagnosing real device motion; no substitute geometry.
+      if (auditMotion) {
+        host.dataset.motionEnabled = String(enabled);
+        host.dataset.traceTime = String(trace?.time ?? '');
+        host.dataset.traceEvents = String(trace?.events.length ?? 0);
+        host.dataset.renderTicks = String(Number(host.dataset.renderTicks || 0) + 1);
+      }
       for (const item of moving) {
         let scale = 1;
         if (trace && item.pulmonary === latest.current.pulmonary) {

@@ -2,7 +2,7 @@ name: Native Mobile UI Evidence
 
 on:
   push:
-    branches: [codex/native-vault-mobile-ui-20261015, codex/native-vault-portrait-20261015]
+    branches: [codex/native-vault-mobile-ui-20261015, codex/native-vault-portrait-20261015, codex/v27-exhaustive-device-checks-20261016]
     paths:
       - '.github/workflows/native-vault-mobile-ui-evidence.yml'
       - 'mobile/**'
