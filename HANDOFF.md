@@ -1,5 +1,16 @@
 # Handoff — Orbit MBBS native Android app
 
+## Checkpoint — 2026-10-16 07:16 UTC — reviewed qualified screenshots
+
+Local execution recovered and the prepared branch was cloned cleanly. Downloaded and visually reviewed the successful selected-case auscultation compositor audit (38859629926), all15 system-browser representative captures and cached offline full anatomy (38857739650 controls), native offline MRI planes/ICU (38862537293), and matched eye images (38861326594). Front/back chest geometry and listening points correspond between Android and mobile Chromium references. Exact paused crop equality and resumed changing pixels passed. MRI axial/coronal/sagittal images are visible. This does not establish all organ/arrow mappings.
+
+Eight detailed anatomy groups remain in38857739650: 0–3 in progress,4–7 queued at latest check. Conditional publisher38862704503 remains waiting. No new verified public release yet. Do not duplicate these runs, bypass gates, claim perfect parity or call all tools native RN. Runtime remains97ee4579b4b2a6230c06f7616b7486c5be4f51d4; this checkpoint modifies docs only.
+
+Updated comparison ZIP saved successfully, same Library identity libfile_37a778016a40819197ab47ccf6ebcb18, new current_version_number2, file_id file_0000000094f481f5aa713e239545e914. Filename ORBIT_Android_Vercel_Comparison_20261016.zip, 283390160bytes,361entries,76 screenshot gallery entries plus complete additional qualified workflow ZIPs. Local /workspace/scratch/24a125a27afa/recovered-report/ORBIT_Android_Vercel_Comparison_20261016.zip. Clearly PARTIAL: current bedside/control/native passes plus anatomy gates still pending. Raw artifacts and original failures are preserved. New helpers downloaded completely from current cloud Library skill to /tmp/orbit-library-current. Future replacement must guard version2 or freshly resolved newer version.
+
+Next: inspect completed anatomy artifacts (raw adb PNGs, not CDP blanks), diagnose genuine failures, then verify publisher success and actual release assets/checksums. User already authorized release after checks; no further permission needed. Publication source branch remains18c608e95904adb0c7cf0a1c4dfcc68921c467b0, separate from prepared docs branch to avoid restarting the waiter.
+
+
 ## Latest — all non-anatomy gates passed
 
 Focused compositor audit38859629926 PASSED both normal and selected-case auscultation, including exact paused-image equality and resumed visible movement, posterior view and lung-sound switching. Matched eye run38861326594 and full offline native recheck38862537293 PASSED. Baseline anatomy-controls passed all15 systems and cached offline loading. All other required bedside/control scopes passed.
