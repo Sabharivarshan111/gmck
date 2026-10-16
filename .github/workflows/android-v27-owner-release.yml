@@ -1,0 +1,150 @@
+name: Publish freshly rebuilt Android v27 packages
+on:
+  push:
+    branches: [codex/v27-publish-fresh-20261016]
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: fresh-release-v27-20261016
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@v4
+      - name: Wait only for the three exact-source compilations
+        id: builds
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const source='7565f458b5ee7009c65f91a626e571892b783137';
+            const ids={debug:38905731249,internal:38905731337,release:38905731186};
+            const paths={debug:'.github/workflows/android-debug.yml',internal:'.github/workflows/android-internal.yml',release:'.github/workflows/android-release.yml'};
+            let runs={};
+            for(let attempt=0;attempt<55;attempt++){
+              for(const [key,id] of Object.entries(ids)){
+                const {data:r}=await github.rest.actions.getWorkflowRun({...context.repo,run_id:id});
+                if(r.head_sha!==source||r.path!==paths[key])throw Error('Wrong source/workflow: '+key);
+                if(r.status==='completed'&&r.conclusion!=='success')throw Error(key+' compilation failed; cannot publish');
+                runs[key]=r;
+              }
+              if(Object.values(runs).every(r=>r.status==='completed'))break;
+              if(attempt===54)throw Error('Compilation not complete yet');
+              await new Promise(r=>setTimeout(r,60000));
+            }
+            require('fs').mkdirSync('release-assets',{recursive:true});
+            require('fs').writeFileSync('release-assets/review-scope.json',JSON.stringify({
+              source,status:'ADDITIONAL_DEVICE_QA_PENDING',
+              authorization:'Owner explicitly requested fresh GitHub compilation after earlier releases merely re-published existing files.',
+              builds:Object.fromEntries(Object.entries(runs).map(([k,r])=>[k,{run:r.id,source:r.head_sha,conclusion:r.conclusion,url:r.html_url}])),
+              pendingDeviceRun:38901147361,pendingDeviceScope:'85 registered vascular selections, four repaired liver relations and26 source-reference targets in8 parts.',
+              baselineRuntime:'97ee4579b4b2a6230c06f7616b7486c5be4f51d4',
+              referencePreview:'https://orbitmbbs-9jkt65wmd-sabharivarshan111s-projects.vercel.app',
+              limitations:['Full latest-build exhaustive screenshot review is not complete.','Physical-phone speaker playback is not certified.','Anatomy and advanced tools use bundled canonical WebGL with first-download pinned geometry caching.','No Google Play upload.']
+            },null,2));
+      - uses: actions/download-artifact@v4
+        with:
+          name: orbit-debug-apk
+          path: build/debug
+          run-id: 38905731249
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: orbit-internal-apk
+          path: build/internal
+          run-id: 38905731337
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: orbit-mbbs-apk
+          path: build/release
+          run-id: 38905731186
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: orbit-mbbs-aab
+          path: build/aab
+          run-id: 38905731186
+          github-token: ${{ github.token }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Verify signatures, identifiers and version
+        shell: bash
+        run: |
+          set -euo pipefail
+          sigtool=$(find "${ANDROID_HOME:?}/build-tools" -mindepth 2 -maxdepth 2 -name apksigner | sort -V | tail -1)
+          aapt=$(find "$ANDROID_HOME/build-tools" -mindepth 2 -maxdepth 2 -name aapt | sort -V | tail -1)
+          test -x "$sigtool"
+          test -x "$aapt"
+          for apk in build/debug/app-preview.apk build/internal/app-internal.apk build/release/app-release.apk; do
+            "$sigtool" verify --verbose --print-certs "$apk" > /tmp/apk-signing.txt
+            grep -qi 'certificate SHA-1 digest: ceea8a41bb0778c47826d88fcce02cc9eb294068' /tmp/apk-signing.txt
+            "$aapt" dump badging "$apk" > /tmp/apk-package.txt
+            grep -q "versionCode='27'" /tmp/apk-package.txt
+            if [[ "$apk" == build/debug/* ]]; then expected=com.aistudio.mbbsqbank.aycxvd.debug; else expected=com.aistudio.mbbsqbank.aycxvd; fi
+            grep -q "package: name='$expected'" /tmp/apk-package.txt
+          done
+          jarsigner -verify build/aab/app-release.aab > /tmp/aab-signature.txt 2>&1
+          grep -q 'jar verified' /tmp/aab-signature.txt
+      - name: Verify identical packaged renderers and pinned source assets
+        shell: python
+        run: |
+          from pathlib import Path
+          import json,zipfile,hashlib
+          items=[('debug','app-preview.apk','app-debug.apk','assets/simulator/'),('internal','app-internal.apk','app-internal.apk','assets/simulator/'),('release','app-release.apk','app-release.apk','assets/simulator/'),('aab','app-release.aab','app-release.aab','base/assets/simulator/')]
+          baseline=None
+          result={'source':'7565f458b5ee7009c65f91a626e571892b783137','files':{}}
+          for folder,name,outname,prefix in items:
+            p=Path('build')/folder/name
+            with zipfile.ZipFile(p) as z:
+              renderer={n[len(prefix):]:z.read(n) for n in z.namelist() if n.startswith(prefix) and not n.endswith('/')}
+            assert len(renderer)==20
+            if baseline is None: baseline=renderer
+            else: assert baseline==renderer,(name,'renderer mismatch')
+            pins=json.loads(renderer['asset-manifest.json'])
+            assert len(pins)==110
+            for asset,pin in pins.items():
+              b=(Path('public')/asset.lstrip('/')).read_bytes()
+              assert len(b)==pin['bytes'] and hashlib.sha256(b).hexdigest()==pin['sha256'],asset
+            b=p.read_bytes()
+            (Path('release-assets')/outname).write_bytes(b)
+            result['files'][outname]={'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest(),'packagedRendererFiles':20,'pinnedAssets':110}
+          Path('release-assets/build-integrity.json').write_text(json.dumps(result,indent=2))
+      - name: Publish the requested builds with pending-QA status
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > /tmp/release-notes.md <<'NOTES'
+          Freshly compiled signed Android v27 builds. These files are produced by new GitHub debug/internal/release workflow runs; they are not copied from the earlier releases. Application fixes are unchanged from a90b0b5bf9b8f41d640d960263765085262cf839. Remaining exhaustive device verification is pending.
+
+          - app-debug.apk: separate debug package; ads disabled.
+          - app-internal.apk: production package; ads disabled.
+          - app-release.apk: signed production package; live ads.
+          - app-release.aab: signed Google Play bundle. Not uploaded to Play.
+
+          Includes coronary heart context by default, calendar Add validation/persistence repair, POCUS drawing continuity, native ICU trace sampling, corrected brain-reference framing, visible vascular context camera fitting, and complete liver-parenchyma relation selections.
+
+          Source: 7565f458b5ee7009c65f91a626e571892b783137. Compilation, APK signatures/package identifiers, matching renderer files and110 source asset pins are checked before publication. Exact hashes are included.
+
+          Additional device verification is still running:85 vascular selections,4 repaired liver relations and26 source-reference selections. This release does not claim complete latest-build exhaustive parity or physical-phone speaker verification. Earlier baseline checks and original observed failures remain separate evidence. See review-scope.json for exact status.
+
+          Anatomy and advanced tools use locally bundled canonical WebGL, with checksum-pinned geometry cached after first download. The brain source omits three misregistered meshes with an explicit source-gap notice; no replacement geometry was invented.
+          NOTES
+          cd release-assets
+          sha256sum *.apk *.aab *.json > SHA256SUMS.txt
+          cd ..
+          gh release create v27-20261016-fresh release-assets/* --repo "$GITHUB_REPOSITORY" --target 7565f458b5ee7009c65f91a626e571892b783137 --title 'ORBIT v27 — fresh debug, internal and release builds' --notes-file /tmp/release-notes.md --prerelease
+      - name: Verify freshly published downloads
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release download v27-20261016-fresh --repo "$GITHUB_REPOSITORY" --dir fresh-download-verification
+          cd fresh-download-verification
+          sha256sum -c SHA256SUMS.txt
