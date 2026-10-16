@@ -1,7 +1,6 @@
 /** Authoritative exhaustive CI entrypoint. Tests run inside the installed Android WebView via Playwright's Android API.
  * Input is sent to the real page. No DOM/model/patient state is substituted. */
 import { _android, chromium } from 'playwright';
-import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { mkdir, writeFile, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
@@ -21,7 +20,7 @@ const suite=process.env.ORBIT_EXHAUSTIVE_SUITE||'anatomy-0';let reference=false;
 const button=name=>page.getByRole('button',{name,exact:true});
 const click=async name=>{await button(name).click();};
 const read=async()=>page.evaluate(()=>({url:window.location.href,patientScenario:window.__orbitPatientKernel?.currentScenario?.id,viewport:[window.innerWidth,window.innerHeight],theme:document.querySelector('[data-simulator-root]')?.getAttribute('data-simulator-theme'),isolated:document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-isolated'),systems:document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-visible-atlas-systems'),eye:{...document.querySelector('[data-testid="eye-response-state"]')?.dataset},thorax:{...document.querySelector('.ausc-webgl')?.dataset},audioErrors:[...document.querySelectorAll('.ausc-error')].map(e=>e.textContent)}));
-const shot=async name=>{console.log('Capture',reference?'vercel':'android',name);await page.screenshot({timeout:60000,path:resolve(out,(reference?'vercel-':'android-')+name+'.png')});return read();};
+const shot=async name=>{console.log('Capture',reference?'vercel':'android',name);await page.screenshot({timeout:60000,path:resolve(out,(reference?'vercel-':'cdp-android-')+name+'.png')});if(!reference)await writeFile(resolve(out,'android-'+name+'.png'),execFileSync('adb',['exec-out','screencap','-p'],{maxBuffer:20*1024*1024}));return read();};
 const route=async(query,ref=false)=>{
  reference=ref;const path='/simulator?'+new URLSearchParams({...query,nativeTheme:'dark',native_audit:'1'});
  page=ref?referencePage:nativePage;
@@ -33,7 +32,13 @@ const route=async(query,ref=false)=>{
  await page.locator('[data-simulator-root]').waitFor({timeout:60000});
  if(await button('Switch to dark theme').count())await button('Switch to dark theme').click();
 };
-const loaded=async()=>{await page.getByTestId('anatomy-renderer').waitFor();await page.waitForFunction(()=>{const e=document.querySelector('[data-testid="anatomy-renderer"]');if(e?.querySelector('[role="alert"]'))throw Error(e.querySelector('[role="alert"]').textContent);return !!e?.querySelector('canvas')&&!/LOADING (?:BODYPARTS3D|Z-ANATOMY|HRA)/.test(e.textContent||'');},undefined,{timeout:180000});};
+const loaded=async()=>{await page.getByTestId('anatomy-renderer').waitFor();await page.waitForFunction(()=>{const e=document.querySelector('[data-testid="anatomy-renderer"]');if(e?.querySelector('[role="alert"]'))throw Error(e.querySelector('[role="alert"]').textContent);return !!e?.querySelector('canvas')&&!/LOADING (?:BODYPARTS3D|Z-ANATOMY|HRA)/.test(e.textContent||'');},undefined,{timeout:180000});const canvas=page.getByTestId('anatomy-renderer').locator('canvas');let pixels;for(let i=0;i<30;i++){pixels=await renderedPixels(canvas);if(pixels.bright>40&&pixels.colours>12)return;await page.waitForTimeout(500);}throw Error('Anatomy geometry has no visible rendered pixels: '+JSON.stringify(pixels));};
+async function renderedPixels(canvas){return canvas.evaluate(e=>new Promise(resolve=>requestAnimationFrame(()=>{
+ const gl=e.getContext('webgl2')||e.getContext('webgl');if(!gl){resolve({error:'No WebGL context',bright:0,colours:0});return;}
+ const w=gl.drawingBufferWidth,h=gl.drawingBufferHeight,p=new Uint8Array(w*h*4);gl.readPixels(0,0,w,h,gl.RGBA,gl.UNSIGNED_BYTE,p);let hash=2166136261,bright=0;const colours=new Set();
+ for(let i=0;i<p.length;i+=16){hash=Math.imul(hash^p[i],16777619);hash=Math.imul(hash^p[i+1],16777619);hash=Math.imul(hash^p[i+2],16777619);if(p[i]+p[i+1]+p[i+2]>100&&p[i+3]>0)bright++;colours.add((p[i]>>3)*1024+(p[i+1]>>3)*32+(p[i+2]>>3));}
+ resolve({hash:hash>>>0,bright,colours:colours.size,width:w,height:h,contextLost:gl.isContextLost(),error:gl.getError()});
+ })));}
 async function contextOn(){if(await button('Show organ context').count())await click('Show organ context');}
 async function drawerClose(){const d=page.getByTestId('organ-detail-drawer');if(await d.isVisible().catch(()=>false))await d.getByRole('button',{name:'Close',exact:true}).click();}
 async function arrowEvidence(connection){
@@ -114,10 +119,9 @@ async function anatomyControls(ref){
 }
 async function setPressed(name,value){const b=button(name);if((await b.getAttribute('aria-pressed')==='true')!==value)await b.click();}
 async function hash(locator){
- await locator.scrollIntoViewIfNeeded();const b=await locator.boundingBox();const v=await page.evaluate(()=>({width:window.innerWidth,height:window.innerHeight}));
- const x=Math.max(0,b.x),y=Math.max(0,b.y),width=Math.min(b.x+b.width,v.width)-x,height=Math.min(b.y+b.height,v.height)-y;
- assert(width>0&&height>0,'Canvas must be in the visible viewport');
- return createHash('sha256').update(await page.screenshot({clip:{x,y,width,height},timeout:60000})).digest('hex');
+ await locator.scrollIntoViewIfNeeded();const pixels=await renderedPixels(locator);
+ assert(pixels.bright>40&&pixels.colours>12,'The WebGL framebuffer must contain visible geometry: '+JSON.stringify(pixels));
+ return pixels.hash;
 }
 async function pocusPixels(){return page.getByTestId('pocus-canvas').evaluate(e=>{
  const ctx=e.getContext('2d');const pixels=ctx.getImageData(0,0,e.width,e.height).data;let hash=2166136261;let bright=0;
