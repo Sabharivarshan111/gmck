@@ -25,6 +25,8 @@ const {
   ZANATOMY_REFERENCE_MODELS,
   ZANATOMY_REFERENCE_TARGETS,
   zAnatomyMeshMatchesTarget,
+  zAnatomyReferenceRegistrationIssue,
+  zAnatomyReferenceRegistrationNotice,
 } = await import(zReferencesSourcePath);
 // Keep this audit executable under plain Node. Importing the runtime helper
 // directly would make Node resolve its extensionless TypeScript imports
@@ -264,13 +266,13 @@ for (const target of ZANATOMY_REFERENCE_TARGETS) {
     continue;
   }
   const names = zNamesByModel.get(target.modelKey) || [];
-  const matches = names.filter((name) => zAnatomyMeshMatchesTarget(name, target.id));
-  if (!matches.length) {
+  const matches = names.filter((name) => zAnatomyMeshMatchesTarget(name, target.id) && !zAnatomyReferenceRegistrationIssue(target.modelKey, name));
+  if (!matches.length && !zAnatomyReferenceRegistrationNotice(target.id)) {
     fail(`Z-Anatomy UI target "${target.id}" matches no verified source mesh`);
   }
 }
 console.log(
-  `Selective Z-Anatomy references OK: ${ZANATOMY_REFERENCE_MODELS.length} files, ${ZANATOMY_REFERENCE_TARGETS.length} verified targets.`
+  `Selective Z-Anatomy references OK: ${ZANATOMY_REFERENCE_MODELS.length} files, ${ZANATOMY_REFERENCE_TARGETS.length} declared targets; registration gaps are explicitly labelled.`
 );
 
 // Whole-organ isolation must never silently fall back to a rougher whole-body

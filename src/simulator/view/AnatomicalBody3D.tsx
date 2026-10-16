@@ -37,6 +37,8 @@ import {
   getZAnatomyReferenceTarget,
   isZAnatomyReferenceTarget,
   zAnatomyMeshMatchesTarget,
+  zAnatomyReferenceRegistrationIssue,
+  zAnatomyReferenceRegistrationNotice,
 } from '../data/zanatomyReferences';
 import {
   HRA_HEART_MODEL_URL,
@@ -3413,16 +3415,18 @@ varying float partSelected;
         if (!group.visible) continue;
 
         const meshes = zReferenceMeshesRef.current.get(modelKey) ?? [];
+        group.updateWorldMatrix(true, true);
         for (const mesh of meshes) {
+          const registered = !zAnatomyReferenceRegistrationIssue(modelKey, mesh.name);
           const selected = zAnatomyMeshMatchesTarget(mesh.name, targetKey);
-          mesh.visible = true;
+          mesh.visible = registered;
           mesh.material = zReferenceTarget?.matchAll
             ? zReferenceMaterialsRef.current.overview
             : selected
             ? zReferenceMaterialsRef.current.selected
             : zReferenceMaterialsRef.current.context;
+          if (registered) zReferenceBox.expandByObject(mesh);
         }
-        zReferenceBox.expandByObject(group);
       }
     }
 
@@ -3473,6 +3477,8 @@ varying float partSelected;
         ? peripheralNerveRegistrationIssue(targetKey)
         : isZReferenceTarget && zReferenceFailed
         ? 'The Z-Anatomy reference model failed to load on this device. ORBIT has not substituted unrelated anatomy.'
+        : isZReferenceTarget && zAnatomyReferenceRegistrationNotice(targetKey)
+        ? zAnatomyReferenceRegistrationNotice(targetKey)
         : isHraGenericOrganTarget && genericHraFailed
         ? 'The HRA reference organ failed to load on this device. ORBIT has not substituted unrelated anatomy.'
         : isHraHeartReferenceTarget && hraHeartFailed
@@ -4264,7 +4270,7 @@ varying float partSelected;
         <div className="absolute top-16 left-3 right-3 z-20 flex justify-center pointer-events-none">
           <div
             role="status"
-            className={`pointer-events-auto flex items-start gap-2 max-w-md px-3 py-2 rounded-2xl border backdrop-blur-xl text-xs leading-relaxed ${
+            className={`pointer-events-none flex items-start gap-2 max-w-md px-3 py-2 rounded-2xl border backdrop-blur-xl text-xs leading-relaxed ${
               isLight
                 ? 'bg-amber-50/95 border-amber-300 text-amber-900 shadow-sm'
                 : 'bg-amber-950/80 border-amber-700/70 text-amber-200 shadow-lg'

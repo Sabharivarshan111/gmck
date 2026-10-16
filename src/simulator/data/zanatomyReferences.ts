@@ -118,3 +118,27 @@ export function zAnatomyMeshMatchesTarget(meshName: string, id: string | null | 
   if (target.includes?.some((piece) => lower.includes(piece.toLowerCase()))) return true;
   return false;
 }
+
+// Measured in brain_reference.glb: the right orbital gyrus has a ~943x scale
+// and lies tens of metres from the head; these two commissures sit at the
+// origin instead of the source head frame (~1.6 m). Keep the original asset
+// intact, but do not render or frame these unregistered meshes.
+const UNREGISTERED_BRAIN_MESHES: Readonly<Record<string, string>> = {
+  'Orbital part of  inferior frontal gyrus.r': 'right orbital inferior frontal gyrus',
+  'Corpus callosum': 'corpus callosum',
+  'Hippocampal commissure': 'hippocampal commissure',
+};
+
+export function zAnatomyReferenceRegistrationIssue(modelKey: string, meshName: string): boolean {
+  return modelKey === 'brain_reference' && Object.prototype.hasOwnProperty.call(UNREGISTERED_BRAIN_MESHES, meshName);
+}
+
+export function zAnatomyReferenceRegistrationNotice(targetId: string | null | undefined): string | null {
+  const target = getZAnatomyReferenceTarget(targetId);
+  if (target?.modelKey !== 'brain_reference') return null;
+  const omitted = Object.entries(UNREGISTERED_BRAIN_MESHES)
+    .filter(([name]) => zAnatomyMeshMatchesTarget(name, targetId))
+    .map(([, label]) => label);
+  if (!omitted.length) return null;
+  return `SOURCE REGISTRATION GAP: ${omitted.join(', ')} ${omitted.length === 1 ? 'is' : 'are'} omitted because the source alignment is invalid.`;
+}
