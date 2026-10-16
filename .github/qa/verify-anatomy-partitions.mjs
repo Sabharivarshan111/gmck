@@ -5,7 +5,7 @@ const root=resolve(process.argv[2]||'evidence/anatomy-partitions');
 async function walk(p){const out=[];for(const e of await readdir(p,{withFileTypes:true})){const f=resolve(p,e.name);if(e.isDirectory())out.push(...await walk(f));else out.push(f);}return out;}
 const files=await walk(root),reports=files.filter(f=>f.endsWith('/PASSED.json'));
 assert.equal(reports.length,6,'Exactly six completed partition reports are required');
-const text=await readFile('src/simulator/data/organConnections.ts','utf8');
+const text=await readFile(process.env.ORBIT_BASELINE_CONNECTIONS||'src/simulator/data/organConnections.ts','utf8');
 const connections=JSON.parse(text.slice(text.indexOf(' = {')+3,text.indexOf(';\nconst CONNECTION_BY_ID')));
 const seen=new Set(),byGroup=new Map(),summary=[];
 for(const file of reports){const base=dirname(file),passed=JSON.parse(await readFile(file,'utf8')),report=JSON.parse(await readFile(resolve(base,'actual-android-exhaustive.json'),'utf8'));assert.equal(passed.passed,true);assert(['anatomy-2','anatomy-4'].includes(passed.suite));assert.equal(passed.partition.count,3);assert([0,1,2].includes(passed.partition.index));const key=passed.suite+':'+passed.partition.index;assert(!seen.has(key),'Duplicate partition '+key);seen.add(key);assert.equal(report.suite,passed.suite);assert.deepEqual(report.partition,passed.partition);assert.deepEqual(report.errors,[]);assert.deepEqual(report.failures,[]);assert.equal(passed.checks,report.checks.length);

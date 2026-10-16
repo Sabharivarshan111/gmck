@@ -33,7 +33,7 @@ jobs:
             const config=JSON.parse(fs.readFileSync('.github/qa/v27-publication.json','utf8'));
             if(config.visualReviewBlocker)throw Error('Visual review blocks publication: '+config.visualReviewBlocker);
             const allowed=new Set(['.github/qa/native_remaining_checks.py','.github/workflows/android-v27-native-recheck.yml','.github/qa/android-eye-findings.mjs','.github/qa/android-webview-exhaustive.mjs','.github/workflows/android-v27-exhaustive.yml','.github/workflows/android-v27-ausc-capture.yml','.github/workflows/android-v27-eye-capture.yml','.github/workflows/android-internal.yml','.github/workflows/android-v27-anatomy1-audit.yml','.github/workflows/android-v27-anatomy3-audit.yml','.github/qa/reference-page-errors.mjs','.github/workflows/android-v27-anatomy-partitions.yml']);
-            const workflowPaths={debug:'.github/workflows/android-debug.yml',internal:'.github/workflows/android-internal.yml',release:'.github/workflows/android-release.yml',qa:'.github/workflows/android-v27-exhaustive.yml',motion:'.github/workflows/android-v27-ausc-capture.yml',eye:'.github/workflows/android-v27-eye-capture.yml',native:'.github/workflows/android-v27-native-recheck.yml',anatomy1:'.github/workflows/android-v27-anatomy1-audit.yml',anatomy3:'.github/workflows/android-v27-anatomy3-audit.yml',partitions:'.github/workflows/android-v27-anatomy-partitions.yml',brain:'.github/workflows/android-v27-brain-canonical.yml',preview:'.github/workflows/android-v27-brain-preview.yml',ux:'.github/workflows/simulator-mobile-ux-smoke.yml'};
+            const workflowPaths={debug:'.github/workflows/android-debug.yml',internal:'.github/workflows/android-internal.yml',release:'.github/workflows/android-release.yml',qa:'.github/workflows/android-v27-exhaustive.yml',motion:'.github/workflows/android-v27-ausc-capture.yml',eye:'.github/workflows/android-v27-eye-capture.yml',native:'.github/workflows/android-v27-native-recheck.yml',anatomy1:'.github/workflows/android-v27-anatomy1-audit.yml',anatomy3:'.github/workflows/android-v27-anatomy3-audit.yml',partitions:'.github/workflows/android-v27-anatomy-partitions.yml',context:'.github/workflows/android-v27-context-framing.yml',ux:'.github/workflows/simulator-mobile-ux-smoke.yml'};
             let runs;
             for(let attempt=0;attempt<300;attempt++){
               runs={};for(const key of Object.keys(workflowPaths)){const {data}=await github.rest.actions.getWorkflowRun({...context.repo,run_id:config[key]});runs[key]=data;}
@@ -47,16 +47,16 @@ jobs:
               if(key==='qa'){if(!['success','failure'].includes(run.conclusion))throw Error('Baseline verification was cancelled or incomplete');}
               else if(run.conclusion!=='success')throw Error(key+' workflow did not pass');
               if(config.expectedHeads[key]&&run.head_sha!==config.expectedHeads[key])throw Error(key+' source head differs');
-              const base=['debug','internal','release','brain','preview','ux'].includes(key)?config.source:config.baselineSource;
+              const base=['debug','internal','release','context','ux'].includes(key)?config.source:config.baselineSource;
               if(run.head_sha!==base){
                 const {data:diff}=await github.rest.repos.compareCommits({...context.repo,base,head:run.head_sha});
-                if(diff.status!=='ahead'||!diff.files?.length||diff.files.length>=300||diff.files.some(f=>!(key==='preview'?f.filename==='.github/workflows/android-v27-brain-preview.yml':key==='brain'?f.filename==='.github/workflows/android-v27-brain-canonical.yml':allowed.has(f.filename))))throw Error(key+' source differs from the qualified runtime');
+                if(diff.status!=='ahead'||!diff.files?.length||diff.files.length>=300||diff.files.some(f=>!(key==='context'?['.github/qa/android-context-framing.mjs','.github/workflows/android-v27-context-framing.yml'].includes(f.filename):allowed.has(f.filename))))throw Error(key+' source differs from the qualified runtime');
               }
               core.setOutput(key,run.id);
             }
             const {data:delta}=await github.rest.repos.compareCommits({...context.repo,base:config.baselineSource,head:config.source});
             if(delta.status!=='ahead'||!delta.files||JSON.stringify(delta.files.map(f=>f.filename).sort())!==JSON.stringify([...config.reviewedDeltaFiles].sort()))throw Error('Reviewed source delta differs');
-            const jobs={};for(const key of ['qa','motion','eye','native','anatomy1','anatomy3','partitions','brain','preview','ux']){const {data}=await github.rest.actions.listJobsForWorkflowRun({...context.repo,run_id:config[key],per_page:100});jobs[key]=data.jobs;}
+            const jobs={};for(const key of ['qa','motion','eye','native','anatomy1','anatomy3','partitions','context','ux']){const {data}=await github.rest.actions.listJobsForWorkflowRun({...context.repo,run_id:config[key],per_page:100});jobs[key]=data.jobs;}
             const baseline=['calendar','pocus','eye','general','anatomy-controls',...Array.from({length:8},(_,i)=>'anatomy-'+i).filter(s=>!['anatomy-1','anatomy-2','anatomy-3','anatomy-4'].includes(s))];
             for(const suite of baseline){const job=jobs.qa.find(j=>j.name==='webview ('+suite+')');if(job?.conclusion!=='success')throw Error('Required baseline suite failed or missing: '+suite);}
             for(const suite of ['auscultation','auscultation-case']){const job=jobs.motion.find(j=>j.name==='webview ('+suite+')');if(job?.conclusion!=='success')throw Error('Required compositor-qualified suite failed or missing: '+suite);}
@@ -65,10 +65,10 @@ jobs:
             for(const group of [2,4])for(const part of [0,1,2])if(jobs.partitions.find(j=>j.name==='webview (anatomy-'+group+', '+part+')')?.conclusion!=='success')throw Error('Required anatomy partition did not pass: '+group+'/'+part);
             if(jobs.eye.find(j=>j.name==='webview (eye)')?.conclusion!=='success')throw Error('Matched eye capture did not pass');
             if(jobs.native.find(j=>j.name==='remaining')?.conclusion!=='success')throw Error('Full native offline recheck did not pass');
-            for(const k of ['brain','preview'])if(jobs[k].find(j=>j.name==='webview (brain-registration)')?.conclusion!=='success')throw Error('Rebuilt registration verification failed: '+k);
+            for(let part=0;part<8;part++)if(jobs.context.find(j=>j.name==='webview (context-framing, '+part+')')?.conclusion!=='success')throw Error('Rebuilt context verification failed: '+part);
             for(const name of ['production-mobile-ux','vault-layout'])if(jobs.ux.find(j=>j.name===name)?.conclusion!=='success')throw Error('Rebuilt UI check failed: '+name);
             fs.mkdirSync('release-assets',{recursive:true});
-            fs.writeFileSync('release-assets/verification-scope.json',JSON.stringify({source:config.source,baselineSource:config.baselineSource,carryForward:'Old-runtime exhaustive suites are retained for unchanged simulator branches. All26 Z-Anatomy selections were rerun on the rebuilt APK against corrected canonical source and the exact Vercel preview. This is not a claim that every old suite ran on the new APK.',reviewedDeltaFiles:config.reviewedDeltaFiles,runs:Object.fromEntries(Object.entries(runs).map(([k,r])=>[k,{id:r.id,sha:r.head_sha,conclusion:r.conclusion,url:r.html_url}])),requiredBaselineSuites:baseline,requiredReplacementSuites:['auscultation','auscultation-case'],additionalMatchedEyeCapture:true,requiredNativeOfflineRecheck:true,requiredAnatomyGroup1Recheck:true,requiredAnatomyGroup3Recheck:true,requiredLongGroupPartitions:{groups:[2,4],parts:[0,1,2]},jobs},null,2));
+            fs.writeFileSync('release-assets/verification-scope.json',JSON.stringify({source:config.source,baselineSource:config.baselineSource,originalBrainStartupFailure:config.originalBrainStartupFailure,carryForward:'Old-runtime exhaustive suites are retained for unchanged simulator branches. All85 registered vascular selections, four complete-liver relations and26 Z-Anatomy selections were rerun on the rebuilt APK against its exact Vercel preview. This is not a claim that every old suite ran on the new APK.',reviewedDeltaFiles:config.reviewedDeltaFiles,runs:Object.fromEntries(Object.entries(runs).map(([k,r])=>[k,{id:r.id,sha:r.head_sha,conclusion:r.conclusion,url:r.html_url}])),requiredBaselineSuites:baseline,requiredReplacementSuites:['auscultation','auscultation-case'],additionalMatchedEyeCapture:true,requiredNativeOfflineRecheck:true,requiredAnatomyGroup1Recheck:true,requiredAnatomyGroup3Recheck:true,requiredLongGroupPartitions:{groups:[2,4],parts:[0,1,2]},jobs},null,2));
             core.setOutput('source',config.source);
       - uses: actions/download-artifact@v4
         with:
@@ -134,25 +134,31 @@ jobs:
           node-version: '24'
       - uses: actions/download-artifact@v4
         with:
-          path: evidence/rebuilt-brain-canonical
-          run-id: ${{ steps.qualify.outputs.brain }}
-          github-token: ${{ github.token }}
-      - uses: actions/download-artifact@v4
-        with:
-          path: evidence/rebuilt-brain-vercel
-          run-id: ${{ steps.qualify.outputs.preview }}
+          path: evidence/rebuilt-context
+          run-id: ${{ steps.qualify.outputs.context }}
           github-token: ${{ github.token }}
       - uses: actions/download-artifact@v4
         with:
           path: evidence/rebuilt-ux
           run-id: ${{ steps.qualify.outputs.ux }}
           github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          path: evidence/rebuilt-brain-original-startup-failure
+          run-id: 38894967678
+          github-token: ${{ github.token }}
       - name: Verify rebuilt reference coverage and artifact integrity
         run: |
-          node --experimental-strip-types .github/qa/verify-brain-registration.mjs
+          node --experimental-strip-types .github/qa/verify-context-framing.mjs
           python3 .github/qa/verify-release-integrity.py
-      - name: Verify complete partition coverage and screenshot pairs
-        run: node .github/qa/verify-anatomy-partitions.mjs evidence/anatomy-partitions release-assets/anatomy-partition-coverage.json
+      - name: Verify complete baseline partition coverage and screenshot pairs
+        shell: bash
+        run: |
+          set -euo pipefail
+          baseline=$(node -p "require('./.github/qa/v27-publication.json').baselineSource")
+          git fetch --depth=1 --no-tags origin "$baseline"
+          git show "$baseline:src/simulator/data/organConnections.ts" > evidence/baseline-organ-connections.ts
+          ORBIT_BASELINE_CONNECTIONS=evidence/baseline-organ-connections.ts node .github/qa/verify-anatomy-partitions.mjs evidence/anatomy-partitions release-assets/anatomy-partition-coverage.json
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -186,7 +192,7 @@ jobs:
           cp build/internal/app-internal.apk release-assets/app-internal.apk
           cp build/release/app-release.apk release-assets/app-release.apk
           cp build/aab/app-release.aab release-assets/app-release.aab
-          cp release-assets/build-integrity.json release-assets/rebuilt-reference-coverage.json evidence/
+          cp release-assets/build-integrity.json release-assets/rebuilt-context-coverage.json evidence/
           cp release-assets/verification-scope.json evidence/verification-scope.json
           zip -qr release-assets/orbit-v27-android-verification.zip evidence
           cd release-assets
@@ -197,7 +203,7 @@ jobs:
           SOURCE_SHA: ${{ steps.qualify.outputs.source }}
         run: |
           cat > /tmp/release-notes.md <<'NOTES'
-          Android v27 simulator and calendar repairs, with sixteen required installed Android emulator suite scopes passed across qualified runs and partitioned jobs, plus synchronized eye captures. Includes a corrected brain-reference camera with three explicitly disclosed malformed source meshes omitted, coronary heart context by default, visible calendar Add validation, POCUS drawing continuity and frame-rate-independent native ICU sampling.
+          Android v27 simulator and calendar repairs, with sixteen required installed Android emulator suite scopes passed across qualified runs and partitioned jobs, plus synchronized eye captures. Includes correct owner-context camera fitting, complete liver-parenchyma relation selections, and a corrected brain-reference camera with three explicitly disclosed malformed source meshes omitted, coronary heart context by default, visible calendar Add validation, POCUS drawing continuity and frame-rate-independent native ICU sampling.
 
           - app-debug.apk: separate .debug package, ads disabled.
           - app-internal.apk: production package and upload key, ads disabled.
@@ -206,7 +212,7 @@ jobs:
           - orbit-v27-android-verification.zip: device screenshots, mobile Vercel references and check reports.
           - verification-scope.json: exact source/build provenance and required suite results.
 
-          Builds are from e7cafadc843ac353dc45dc9b139a445c7d5e4f08. Earlier exhaustive suites qualify the prior runtime97ee4579b4b2a6230c06f7616b7486c5be4f51d4 for unchanged branches. All26 Z-Anatomy selections were rerun on this rebuilt APK against corrected canonical source and its exact Vercel preview. See verification-scope.json for this scoped carry-forward; every old suite was not rerun on the new APK. The source-registration gap omits right orbital inferior frontal gyrus, corpus callosum and hippocampal commissure; replacement anatomy was not invented.
+          Builds are from a90b0b5bf9b8f41d640d960263765085262cf839. Earlier exhaustive suites qualify the prior runtime97ee4579b4b2a6230c06f7616b7486c5be4f51d4 for unchanged branches. All85 registered vascular selections, four repaired full-liver relations and26 Z-Anatomy selections were rerun on this rebuilt APK against its exact Vercel preview. See verification-scope.json for this scoped carry-forward; every old suite was not rerun on the new APK. The source-registration gap omits right orbital inferior frontal gyrus, corpus callosum and hippocampal commissure; replacement anatomy was not invented.
 
           The baseline anatomy groups 1 and 3 completed its organ/connection interactions but failed the final uncaught-error check with an unattributed `int64` message. Their complete replacement suites passed with source-page and stack attribution enabled; no error filter or assertion relaxation was used. The original failures remain in the baseline evidence. Groups 2 and 4 exceeded the original runner time limits; their six smaller replacement jobs passed, and a separate coverage check confirms every assigned connection and overview appears exactly once with its required screenshots.
 

@@ -3694,7 +3694,9 @@ varying float partSelected;
           isolationBox.expandByPoint(new THREE.Vector3(...p.bounds[1]));
         } else if (contextElements && contextElements.has(p.id)) {
           visible = 0.35;
-          if (connection?.kind === 'relation') {
+          // The visible owner must fit alongside its selected vessel. Fitting
+          // only a tiny branch can put the camera inside the context organ.
+          if (connection && (connection.kind === 'relation' || showVesselContext)) {
             isolationBox.expandByPoint(new THREE.Vector3(...p.bounds[0]));
             isolationBox.expandByPoint(new THREE.Vector3(...p.bounds[1]));
           }
