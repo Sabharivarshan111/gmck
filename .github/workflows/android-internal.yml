@@ -224,6 +224,13 @@ jobs:
           "$SDK"/build-tools/37.0.0/apksigner verify --print-certs "$APK" \
             | grep -iE "SHA-1|SHA-256" || echo "(apksigner could not read the APK)"
 
+      - name: Retain the signed internal candidate APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: orbit-internal-apk
+          path: mobile/android/app/build/outputs/apk/internal/*.apk
+          if-no-files-found: error
+
       - name: Publish the APK where a phone can download it
         if: github.ref_name != 'codex/v27-parity-repairs-20261016'
         uses: softprops/action-gh-release@v2

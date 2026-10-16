@@ -26,7 +26,7 @@ jobs:
               const run=candidates.find(r=>r.head_sha===context.sha)||candidates[0];
               if(run && run.head_sha!==context.sha){
                 const {data:diff}=await github.rest.repos.compareCommits({...context.repo,base:run.head_sha,head:context.sha});
-                const allowed=new Set(['.github/workflows/android-v27-exhaustive.yml','mobile/scripts/android-webview-exhaustive.mjs','mobile/scripts/android_webview_bootstrap.py','.github/qa/android_attendance.py','.github/qa/android-eye-findings.mjs','.github/qa/android-webview-exhaustive.mjs','.github/qa/android_case_bootstrap.py','.github/qa/run-android-suite.sh']);
+                const allowed=new Set(['.github/workflows/android-internal.yml','.github/workflows/android-v27-exhaustive.yml','mobile/scripts/android-webview-exhaustive.mjs','mobile/scripts/android_webview_bootstrap.py','.github/qa/android_attendance.py','.github/qa/android-eye-findings.mjs','.github/qa/android-webview-exhaustive.mjs','.github/qa/android_case_bootstrap.py','.github/qa/run-android-suite.sh']);
                 if(diff.status!=='ahead'||!diff.files?.length||diff.files.length>=300||diff.files.some(f=>!allowed.has(f.filename)))throw Error('APK reuse denied: runtime/build/source differs');
               }
               if(run?.status==='completed'){
