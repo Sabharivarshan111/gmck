@@ -16,7 +16,7 @@ const browser=await chromium.launch({headless:true,args:['--use-angle=swiftshade
 const webContext=await browser.newContext({viewport,userAgent:await nativePage.evaluate(()=>navigator.userAgent.replace('; wv','').replace(' Version/4.0','')),isMobile:true,hasTouch:true,deviceScaleFactor:3});const referencePage=await webContext.newPage();referencePage.setDefaultTimeout(60000);
 const groups=8;
 const coverage=JSON.parse(await readFile(resolve(out,'anatomy-coverage.json'),'utf8'));
-const checks=[],failures=[],errors=[];for(const surface of [nativePage,referencePage])surface.on('pageerror',e=>errors.push(e.message));
+const checks=[],failures=[],errors=[];for(const surface of [nativePage,referencePage])surface.on('pageerror',e=>{const record={surface:surface===nativePage?'android':'vercel',url:surface.url(),at:new Date().toISOString(),name:e.name,message:e.message,stack:e.stack};errors.push(record);console.error('ORBIT_PAGE_ERROR '+JSON.stringify(record));});
 const suite=process.env.ORBIT_EXHAUSTIVE_SUITE||'anatomy-0';let reference=false;
 const button=name=>page.getByRole('button',{name,exact:true});
 const click=async name=>{await button(name).click();};
