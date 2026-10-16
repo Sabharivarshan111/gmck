@@ -1248,8 +1248,9 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   onDissectPart,
   onAtlasLoaded,
 }) => {
-  const [showVesselContext, setShowVesselContext] = useState(false);
-  useEffect(() => { setShowVesselContext(false); }, [isolatedPartId]);
+  // Keep the supplying/draining vessel on its parent organ until explicitly hidden.
+  const [showVesselContext, setShowVesselContext] = useState(true);
+  useEffect(() => { setShowVesselContext(true); }, [isolatedPartId]);
   const selectedConnection = getOrganConnection(isolatedPartId);
   const isVesselConnection = !!selectedConnection && selectedConnection.kind !== 'relation';
   const mountRef = useRef<HTMLDivElement>(null);
