@@ -92,6 +92,23 @@ export const Simulator: React.FC = () => {
   // Selected Organ for Deep Anatomical Sheet
   const [selectedOrganId, setSelectedOrganId] = useState<string | null>(searchParams.get('organ') || null);
 
+  const isDesktopLayout = useIsDesktopLayout();
+  const mobileDockRef = useRef<HTMLDivElement>(null);
+  const mobileTabsRef = useRef<HTMLDivElement>(null);
+  const [mobileControlSizes, setMobileControlSizes] = useState({ dock: 136, tabs: 70 });
+  useEffect(() => {
+    const measure = () => setMobileControlSizes({
+      dock: mobileDockRef.current?.getBoundingClientRect().height || 0,
+      tabs: mobileTabsRef.current?.getBoundingClientRect().height || 70,
+    });
+    const observer = new ResizeObserver(measure);
+    for (const element of [mobileDockRef.current, mobileTabsRef.current]) {
+      if (element) observer.observe(element);
+    }
+    measure();
+    return () => observer.disconnect();
+  }, [mobileTab, selectedOrganId, isDesktopLayout]);
+
   // Active Camera Preset
   const [atlasCatalog, setAtlasCatalog] = useState<Atlas | null>(null);
   useEffect(() => {
@@ -113,7 +130,6 @@ export const Simulator: React.FC = () => {
   const [explodeAmount, setExplodeAmount] = useState<number>(0.0);
   const [hiddenPartIds, setHiddenPartIds] = useState<string[]>([]);
   // Only one of the two layouts may hold a 3D view; see use-desktop-layout.ts.
-  const isDesktopLayout = useIsDesktopLayout();
   const [dissectedParts, setDissectedParts] = useState<Part[]>([]);
   const [isolatedPartId, setIsolatedPartId] = useState<string | null>(
     getPreferredAnatomyIsolationTarget(searchParams.get('isolate'))
@@ -369,6 +385,7 @@ export const Simulator: React.FC = () => {
   return (
     <div
       data-simulator-root
+      style={{ '--anatomy-dock-height': `${mobileControlSizes.dock}px`, '--simulator-tabs-height': `${mobileControlSizes.tabs}px` } as React.CSSProperties}
       data-active-tab={mobileTab}
       data-simulator-theme={theme}
       className={`min-h-screen flex flex-col font-sans transition-colors duration-300 ${
@@ -479,7 +496,7 @@ export const Simulator: React.FC = () => {
       </header>
 
       {/* 2. Mobile Segmented Tab Bar (Apple HIG Recessed Segmented Control) */}
-      <div data-testid="simulator-bottom-tabs" className={`lg:hidden fixed bottom-0 inset-x-0 z-40 px-3 pt-2 pb-[max(8px,env(safe-area-inset-bottom))] ${isLight ? 'bg-white' : 'bg-slate-900'}`}>
+      <div ref={mobileTabsRef} data-testid="simulator-bottom-tabs" className={`lg:hidden fixed bottom-0 inset-x-0 z-40 px-3 pt-2 pb-[max(8px,env(safe-area-inset-bottom))] ${isLight ? 'bg-white' : 'bg-slate-900'}`}>
         <div
           className={`min-h-[52px] p-1 rounded-2xl border flex items-center justify-between gap-1 backdrop-blur-xl ${
             isLight
@@ -1109,10 +1126,7 @@ export const Simulator: React.FC = () => {
             <div
               className="w-full relative"
               style={{
-                height:
-                  explodeAmount > 0.02
-                    ? 'max(360px, calc(100dvh - 180px))'
-                    : 'max(360px, calc(100dvh - 208px))',
+                height: 'max(260px, calc(100dvh - 208px - var(--anatomy-dock-height)))',
               }}
             >
               {isolatedPartId && (
@@ -1166,16 +1180,11 @@ export const Simulator: React.FC = () => {
                 data-testid="mobile-gesture-hint"
                 aria-hidden={explodeAmount > 0.02 || !!isolatedPartId}
                 style={{ display: explodeAmount > 0.02 || isolatedPartId ? 'none' : undefined }}
-                className="absolute bottom-[112px] left-1/2 -translate-x-1/2 z-20 md:hidden pointer-events-none max-w-[calc(100%-24px)] px-3 py-1.5 rounded-full bg-slate-950/75 text-white/95 backdrop-blur-md text-[9px] font-semibold tracking-wide whitespace-nowrap shadow-lg"
+                className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 md:hidden pointer-events-none max-w-[calc(100%-24px)] px-3 py-1.5 rounded-full bg-slate-950/75 text-white/95 backdrop-blur-md text-[9px] font-semibold tracking-wide text-center shadow-lg"
               >
                 1-finger drag: rotate · pinch: zoom · 2 fingers: pan
               </div>
-              <AnatomySpreadControl
-                value={explodeAmount}
-                onChange={handleSpreadChange}
-                theme={theme}
-                className="absolute bottom-3 left-3 right-3 z-30"
-              />
+
             </div>
           </div>
 
@@ -1215,13 +1224,16 @@ export const Simulator: React.FC = () => {
       </main>
 
       {/* 4. Apple-Style Deep Organ Anatomical Drawer (Slide-up on mobile, slide-in on desktop) */}
-      {mobileTab === '3d' && !selectedOrganId && <nav data-testid="anatomy-thumb-toolbar" aria-label="One-hand anatomy controls" className={`lg:hidden fixed inset-x-3 bottom-[calc(70px+env(safe-area-inset-bottom))] z-40 grid grid-cols-5 gap-1 rounded-2xl border p-1 ${isLight ? 'bg-white border-slate-200 text-slate-800' : 'bg-slate-900 border-slate-700 text-slate-100'}`}>
+      {mobileTab === '3d' && !selectedOrganId && <div ref={mobileDockRef} data-testid="mobile-anatomy-dock" className="mobile-anatomy-dock lg:hidden">
+        <AnatomySpreadControl value={explodeAmount} onChange={handleSpreadChange} theme={theme} />
+        <nav data-testid="anatomy-thumb-toolbar" aria-label="One-hand anatomy controls" className={`grid grid-cols-5 gap-1 rounded-2xl border p-1 ${isLight ? 'bg-white border-slate-200 text-slate-800' : 'bg-slate-900 border-slate-700 text-slate-100'}`}>
         <button aria-expanded={mobilePanel === 'browse'} onClick={() => setMobilePanel(mobilePanel === 'browse' ? null : 'browse')}>Browse</button>
         <button aria-expanded={mobilePanel === 'tools'} onClick={() => setMobilePanel(mobilePanel === 'tools' ? null : 'tools')}>Layers</button>
         <button aria-label="Zoom anatomy in" onClick={() => setCameraAction(a => ({kind:'in',id:a.id+1}))}>Zoom +</button>
         <button aria-label="Zoom anatomy out" onClick={() => setCameraAction(a => ({kind:'out',id:a.id+1}))}>Zoom −</button>
         <button onClick={() => { handleRestoreAll(); handleChangeRegion('anterior'); setMobilePanel(null); setCameraAction(a => ({kind:'reset',id:a.id+1})); }}>Reset</button>
-      </nav>}
+      </nav>
+      </div>}
       <OrganDetailDrawer
         organId={selectedOrganId}
         sourcePart={atlasCatalog?.parts.find(p => p.id === selectedOrganId)}

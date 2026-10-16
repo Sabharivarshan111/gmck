@@ -45,6 +45,7 @@ export default defineConfig({
       // A teaching-only modal has no atlas viewport. Keep its patient clock and
       // canonical lesson UI without allocating an invisible full-body GPU scene.
       const viewportSource = source
+        .replaceAll("'max(260px, calc(100dvh - 208px - var(--anatomy-dock-height)))'", "'max(260px, calc(var(--orbit-native-vh, 1vh) * 100 - 208px - var(--anatomy-dock-height)))'")
         .replaceAll("'max(360px, calc(100dvh - 180px))'", "'max(360px, calc(var(--orbit-native-vh, 1vh) * 100 - 180px))'")
         .replaceAll("'max(360px, calc(100dvh - 208px))'", "'max(360px, calc(var(--orbit-native-vh, 1vh) * 100 - 208px))'")
         .replaceAll("'max(500px, min(72dvh, 620px))'", "'max(500px, min(calc(var(--orbit-native-vh, 1vh) * 72), 620px))'");
