@@ -12,7 +12,7 @@ const device=devices[0], webview=await device.webView({pkg:'com.aistudio.mbbsqba
 const nativePage=await webview.page();let page=nativePage;page.setDefaultTimeout(60000);
 const viewport=await nativePage.evaluate(()=>({width:window.innerWidth,height:window.innerHeight}));
 const browser=await chromium.launch({headless:true,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox']});
-const webContext=await browser.newContext({viewport,isMobile:true,hasTouch:true,deviceScaleFactor:3});const referencePage=await webContext.newPage();referencePage.setDefaultTimeout(60000);
+const webContext=await browser.newContext({viewport,userAgent:await nativePage.evaluate(()=>navigator.userAgent.replace('; wv','').replace(' Version/4.0','')),isMobile:true,hasTouch:true,deviceScaleFactor:3});const referencePage=await webContext.newPage();referencePage.setDefaultTimeout(60000);
 const groups=8;
 const coverage=JSON.parse(await readFile(resolve(out,'anatomy-coverage.json'),'utf8'));
 const checks=[],failures=[],errors=[];for(const surface of [nativePage,referencePage])surface.on('pageerror',e=>errors.push(e.message));

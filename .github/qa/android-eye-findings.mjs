@@ -11,7 +11,7 @@ await mkdir(out,{recursive:true});
 const [device]=await _android.devices({omitDriverInstall:true});
 assert(device,'Installed Android device required');
 const nativePage=await (await device.webView({pkg:'com.aistudio.mbbsqbank.aycxvd.debug'},{timeout:90000})).page();let page=nativePage;
-const viewport=await nativePage.evaluate(()=>({width:window.innerWidth,height:window.innerHeight}));const browser=await chromium.launch({headless:true,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});const context=await browser.newContext({viewport,isMobile:true,hasTouch:true,deviceScaleFactor:3});const referencePage=await context.newPage();
+const viewport=await nativePage.evaluate(()=>({width:window.innerWidth,height:window.innerHeight}));const browser=await chromium.launch({headless:true,args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});const context=await browser.newContext({viewport,userAgent:await nativePage.evaluate(()=>navigator.userAgent.replace('; wv','').replace(' Version/4.0','')),isMobile:true,hasTouch:true,deviceScaleFactor:3});const referencePage=await context.newPage();
 page.setDefaultTimeout(30000);
 const button=name=>page.getByRole('button',{name,exact:true});
 const state=()=>page.getByTestId('eye-response-state').evaluate(e=>({...e.dataset}));
