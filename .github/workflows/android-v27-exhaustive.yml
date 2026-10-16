@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 concurrency:
   group: exhaustive-v27-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 permissions:
   contents: read
   actions: read
@@ -21,8 +21,14 @@ jobs:
         with:
           script: |
             for(let i=0;i<240;i++){
-              const {data}=await github.rest.actions.listWorkflowRuns({...context.repo,workflow_id:'android-debug.yml',head_sha:context.sha,per_page:10});
-              const run=data.workflow_runs.find(r=>r.head_sha===context.sha&&r.conclusion!=='cancelled');
+              const {data}=await github.rest.actions.listWorkflowRuns({...context.repo,workflow_id:'android-debug.yml',branch:context.ref.replace('refs/heads/',''),per_page:20});
+              const candidates=data.workflow_runs.filter(r=>r.conclusion!=='cancelled');
+              const run=candidates.find(r=>r.head_sha===context.sha)||candidates[0];
+              if(run && run.head_sha!==context.sha){
+                const {data:diff}=await github.rest.repos.compareCommits({...context.repo,base:run.head_sha,head:context.sha});
+                const allowed=new Set(['.github/workflows/android-v27-exhaustive.yml','mobile/scripts/android-webview-exhaustive.mjs','mobile/scripts/android_webview_bootstrap.py']);
+                if(diff.status!=='ahead'||!diff.files?.length||diff.files.length>=300||diff.files.some(f=>!allowed.has(f.filename)))throw Error('APK reuse denied: runtime/build/source differs');
+              }
               if(run?.status==='completed'){
                 if(run.conclusion!=='success')throw Error('Matching debug candidate failed: '+run.conclusion);
                 core.setOutput('run',run.id);return;
@@ -38,7 +44,7 @@ jobs:
       fail-fast: false
       max-parallel: 4
       matrix:
-        suite: [anatomy-0, anatomy-1, anatomy-2, anatomy-3, auscultation-case, auscultation, eye, pocus, general]
+        suite: [auscultation-case, auscultation, anatomy-0, eye, anatomy-1, anatomy-2, anatomy-3, pocus, general]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
