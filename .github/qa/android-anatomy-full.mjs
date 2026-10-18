@@ -56,7 +56,7 @@ const partitionCount=Number(process.env.ORBIT_ANATOMY_PARTITIONS||1),partition=N
 assert(Number.isInteger(partitionCount)&&partitionCount>0&&Number.isInteger(partition)&&partition>=0&&partition<partitionCount,'Valid anatomy partition required');
 const connectionOrder=new Map(Object.values(ORGAN_CONNECTIONS).flat().map((c,i)=>[c.id,i]));
 const inPartition=c=>connectionOrder.get(c.id)%partitionCount===partition;
-const blockedExternalRequests=[];
+const blockedExternalRequests=[],interactionRecoveries=[];
 await webContext.route(/https:\/\/(?:[^/]+\.)?(?:googlesyndication\.com|doubleclick\.net|googleadservices\.com)\//,async route=>{blockedExternalRequests.push(route.request().url());await route.abort();});
 const checks=[],failures=[],errors=[];for(const surface of [nativePage,referencePage])surface.on('pageerror',e=>{const record={surface:surface===nativePage?'android':'vercel',url:surface.url(),at:new Date().toISOString(),name:e.name,message:e.message,stack:e.stack};errors.push(record);console.error('ORBIT_PAGE_ERROR '+JSON.stringify(record));});
 let completed=false;
@@ -101,7 +101,20 @@ async function renderedPixels(canvas){return canvas.evaluate(e=>new Promise(reso
  resolve({hash:hash>>>0,bright,colours:colours.size,width:w,height:h,viewport:Array.from(gl.getParameter(gl.VIEWPORT)),contextLost:gl.isContextLost(),error:gl.getError()});
  })));}
 async function contextOn(){if(await button('Show organ context').count())await click('Show organ context');}
-async function drawerClose(){const d=page.getByTestId('organ-detail-drawer');if(await d.isVisible().catch(()=>false))await d.getByRole('button',{name:'Close',exact:true}).click();}
+async function drawerClose(){
+ const d=page.getByTestId('organ-detail-drawer');
+ if(await d.isVisible()){
+  try{await d.getByRole('button',{name:'Close',exact:true}).click();}
+  catch(error){
+   // Android's input acknowledgement can time out after the click reached React.
+   // Accept only the actual closed-drawer postcondition; never force a click.
+   if(error.name!=='TimeoutError'||await d.isVisible())throw error;
+   interactionRecoveries.push({action:'close-drawer',afterInputTimeout:true,...await read()});
+   await shot('drawer-close-recovered-'+interactionRecoveries.length);
+  }
+ }
+ await d.waitFor({state:'hidden'});
+}
 async function arrowEvidence(connection){
  await page.waitForFunction(id=>document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-isolated')===id,connection.id);
  const leaders=page.getByTestId('connection-leaders');await leaders.waitFor({timeout:20000});
@@ -249,7 +262,7 @@ async function brainRegistration(ref){
  }
 }
 
-async function persist(){await writeFile(resolve(out,'actual-android-exhaustive.json'),JSON.stringify({status:failures.length?'FAILED':completed?'PASSED':'IN_PROGRESS',suite,partition:{index:contextPart,count:contextParts},platform:'installed Android WebView; corrected canonical source in mobile Chromium at matching viewport',referenceOrigin,scope:auditSubset?'repair-smoke':'full626',requestedTasks:auditSubset?[...auditSubset]:null,candidateSource:process.env.ORBIT_CANDIDATE_SHA,qaSource:process.env.ORBIT_QA_SOURCE||process.env.GITHUB_SHA||null,blockedExternalRequests,checks,failures,errors},null,2));}
+async function persist(){await writeFile(resolve(out,'actual-android-exhaustive.json'),JSON.stringify({status:failures.length?'FAILED':completed?'PASSED':'IN_PROGRESS',suite,partition:{index:contextPart,count:contextParts},platform:'installed Android WebView; corrected canonical source in mobile Chromium at matching viewport',referenceOrigin,scope:auditSubset?'repair-smoke':'full626',requestedTasks:auditSubset?[...auditSubset]:null,candidateSource:process.env.ORBIT_CANDIDATE_SHA,qaSource:process.env.ORBIT_QA_SOURCE||process.env.GITHUB_SHA||null,blockedExternalRequests,interactionRecoveries,checks,failures,errors},null,2));}
 try{
  assert.equal(suite,'context-framing');await contextFraming();
  assert.deepEqual(errors,[]);completed=true;await persist();await writeFile(resolve(out,'PASSED.json'),JSON.stringify({suite,partition:{index:contextPart,count:contextParts},checks:checks.length,passed:true}));

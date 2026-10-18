@@ -21,7 +21,7 @@ jobs:
       max-parallel: 3
       matrix:
         suite: [context-framing]
-        partition: [3, 4, 8]
+        partition: [11, 16]
     steps:
       - uses: actions/checkout@v4
         with:

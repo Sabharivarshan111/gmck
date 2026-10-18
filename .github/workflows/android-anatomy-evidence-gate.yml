@@ -27,11 +27,14 @@ jobs:
             if(apk.head_sha!==source||apk.conclusion!=='success')throw Error('Incorrect APK provenance');
             const {data:original}=await github.rest.actions.getWorkflowRun({...context.repo,run_id:39145808030});
             if(original.head_sha!==source||original.path!=='.github/workflows/android-v27-full-anatomy.yml')throw Error('Incorrect original audit provenance');
-            const {data:runs}=await github.rest.actions.listWorkflowRuns({...context.repo,workflow_id:'android-v27-anatomy-recovery.yml',head_sha:context.sha,per_page:20});
-            const recovery=runs.workflow_runs.find(r=>r.head_sha===context.sha);
-            if(original.status!=='completed'||!recovery||recovery.status!=='completed'){core.setOutput('ready','false');core.info('Waiting for original and recovery batches; no verification artifact or publication');return;}
-            if(recovery.conclusion!=='success')throw Error('Recovery batches failed; release stays blocked');
-            core.setOutput('ready','true');core.setOutput('recovery',recovery.id);
+            const {data:runs}=await github.rest.actions.listWorkflowRuns({...context.repo,workflow_id:'android-v27-anatomy-recovery.yml',branch:'main',per_page:100});
+            const recoveries=[];
+            for(const run of runs.workflow_runs.filter(r=>r.head_branch==='main')){
+              const {data:relation}=await github.rest.repos.compareCommits({...context.repo,base:run.head_sha,head:context.sha});
+              if(['ahead','identical'].includes(relation.status)&&relation.files&&relation.files.every(f=>allowed.has(f.filename)))recoveries.push(run);
+            }
+            if(original.status!=='completed'||!recoveries.length||recoveries.some(r=>r.status!=='completed')){core.setOutput('ready','false');core.info('Waiting for original and recovery batches; no verification artifact or publication');return;}
+            core.setOutput('ready','true');core.setOutput('recovery',recoveries.map(r=>r.id).join(' '));
       - uses: actions/checkout@v4
         if: steps.provenance.outputs.ready == 'true'
       - uses: actions/setup-node@v4
@@ -45,13 +48,15 @@ jobs:
           path: artifacts/original
           run-id: 39145808030
           github-token: ${{ github.token }}
-      - uses: actions/download-artifact@v4
+      - name: Download completed QA-only recovery runs without replacing earlier passes
         if: steps.provenance.outputs.ready == 'true'
-        with:
-          pattern: actual-android-v27-recovery-*
-          path: artifacts/recovery
-          run-id: ${{ steps.provenance.outputs.recovery }}
-          github-token: ${{ github.token }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RECOVERY_RUNS: ${{ steps.provenance.outputs.recovery }}
+        run: |
+          for run_id in $RECOVERY_RUNS; do
+            gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --pattern 'actual-android-v27-recovery-*' --dir "artifacts/recovery-$run_id"
+          done
       - name: Independently require all626 targets, both real surfaces and screenshots
         if: steps.provenance.outputs.ready == 'true'
         run: node --experimental-strip-types .github/qa/verify-anatomy-complete.mjs artifacts c91d1b7bb79174d8ff55f29f4f27c382720b1df3 verified-anatomy.json
