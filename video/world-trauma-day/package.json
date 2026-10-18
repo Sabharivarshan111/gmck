@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "studio": "remotion studio src/index.tsx",
-    "render": "remotion render src/index.tsx GMCKCrash out/GMCKCrash.mp4 --codec h264"
+    "render": "remotion render src/index.tsx GMCKCrash out/GMCKCrash.mp4 --codec h264",
+    "render:ai": "remotion render src/index.tsx AIEnhanced out/GMCK_AIEnhanced.mp4 --codec h264",
+    "wan:dryrun": "python ai/run_wan.py --scene establish --dry-run"
   },
   "dependencies": {
     "@remotion/cli": "^4.0.0",
