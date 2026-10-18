@@ -1,0 +1,32 @@
+name: Capture current ORBIT mobile screens
+on:
+  push:
+    branches: [codex/marketing-current-screens-20261018]
+    paths: ['.github/workflows/marketing-current-screens.yml', 'scripts/capture-current-marketing.cjs']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install capture runtime
+        run: |
+          mkdir -p /tmp/orbit-marketing-runtime
+          npm install --prefix /tmp/orbit-marketing-runtime playwright
+          /tmp/orbit-marketing-runtime/node_modules/.bin/playwright install --with-deps chromium
+      - name: Capture live app at mobile dimensions
+        env:
+          NODE_PATH: /tmp/orbit-marketing-runtime/node_modules
+        run: node scripts/capture-current-marketing.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: orbit-current-mobile-marketing
+          path: artifacts/marketing-current/
+          if-no-files-found: error
