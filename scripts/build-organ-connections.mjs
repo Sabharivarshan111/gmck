@@ -122,6 +122,36 @@ const displayLabels={
  'Aortic Root':'Aortic root region (ascending aorta)',
  'Bifurcation of Left Main Coronary Artery':'Left coronary artery (bifurcation region)',
 };
+// Exact source names reviewed during the structure audit. Bypass the prose
+// heuristic only for these entries; a child branch is not its parent artery.
+const reviewedSourceNames={
+ 'Aortic Arch':['Arch of aorta'],
+ 'Diagonal Branches (D1, D2)':['Diagonal branch of anterior descending branch of left coronary artery'],
+ 'Subclavius Muscle':['Right subclavius','Left subclavius'],
+ 'Deltoid Muscle':['Acromial part of right deltoid','Acromial part of left deltoid','Clavicular part of right deltoid','Clavicular part of left deltoid','Spinal part of right deltoid','Spinal part of left deltoid'],
+ 'Long Head of Triceps':['Long head of right triceps brachii','Long head of left triceps brachii'],
+ 'Lateral Head of Triceps':['Lateral head of right triceps brachii','Lateral head of left triceps brachii'],
+ 'Sternum (Manubrium & Body)':['Manubrium','Body of sternum'],
+ 'Sternocleidomastoid Muscle':['Left sternocleidomastoid','Right sternocleidomastoid'],
+ 'Longus Colli Muscle':['Inferior oblique part of left longus colli','Superior oblique part of left longus colli','Vertical intermediate part of left longus colli'],
+ 'Scalenus Anterior Muscle':['Left scalenus anterior','Right scalenus anterior'],
+ 'Right & Left Lobar Portal Branches':['Left portal vein','Right portal vein'],
+ 'Celiac Axis':['Celiac trunk'],
+ 'Thoracoabdominal Diaphragm':['Diaphragm'],
+};
+const reviewedSupplyNames={
+ 'lad_artery:anterior interventricular artery':['Trunk of anterior interventricular branch of left coronary artery'],
+};
+const exactSourceIds=names=>{
+ const ids=[];for(const name of names){const matches=atlas.parts.filter(p=>p.name===name);if(!matches.length)throw Error('Reviewed source name missing: '+name);ids.push(...matches.map(p=>p.id));}return ids;
+};
+Object.assign(displayLabels,{
+ 'Diagonal Branches (D1, D2)':'Diagonal branch (D1/D2 not separately captured)',
+ 'Longus Colli Muscle':'Longus colli (left reference; right mesh unavailable)',
+ 'Psoas Major & Quadratus Lumborum':'Psoas major (quadratus lumborum mesh unavailable)',
+ 'Urinary Bladder & Sigmoid Colon':'Urinary bladder (sigmoid colon mesh unavailable)',
+ 'Internal & External Oblique Muscles':'External oblique (internal oblique mesh unavailable)',
+});
 const output={};let serial=0;
 for(const [owner,o] of Object.entries(db)){
  const links=[];
@@ -131,11 +161,12 @@ for(const [owner,o] of Object.entries(db)){
   const names=aliases[label]||[label.replace(/\([^)]*\)/g,'').trim()];
   let ids=find(names);
   if(!/arter|vein|vessel|nerve|duct|ligament|cavity/i.test(label))ids=ids.filter(id=>!/artery|vein|nerve|duct|branch|ligament|cavity/i.test(byId.get(id).name));
+  if(reviewedSourceNames[label])ids=exactSourceIds(reviewedSourceNames[label]);
   add('relation',direction,displayLabels[label]||label,ids,ids.length?'Structures share the BodyParts3D reference frame.':'This exact relation has no mesh in the registered atlas; the diagram is a teaching schematic.');
  }
  for(const [index,kind,system,field,nodes] of [[0,'arterial','arterial','arterialSupply','arterialNodes'],[1,'venous','venous','venousDrainage','venousNodes']]){
   const names=supply[owner]?.[index]||[];
-  if(names.length)for(const name of names)add(kind,kind,name[0].toUpperCase()+name.slice(1),find([name],system),o[field].join(' '));
+  if(names.length)for(const name of names)add(kind,kind,name[0].toUpperCase()+name.slice(1),reviewedSupplyNames[owner+':'+name]?exactSourceIds(reviewedSupplyNames[owner+':'+name]):find([name],system),o[field].join(' '));
   else for(const paragraph of o[field])add(kind,kind,paragraph.split(':')[0].split('.')[0].slice(0,95),[],paragraph);
   for(const node of o[nodes]||[]){
    let ids=[...describeAtlasTarget(node.id,atlas).ids].filter(id=>byId.get(id)?.system===system);

@@ -28,3 +28,14 @@ assert(view.includes('mat.customProgramCacheKey = () => `orbit-atlas-v2-${sys.id
 assert(view.includes('partSurfaceAnchorsRef.current.set(p.id'),'leaders must anchor to source surface vertices');
 
 assert(view.includes('mesh.visible = visibleSystems.has(system)'), 'hidden atlas systems must skip draw calls');
+
+// A source branch must not stand in for its parent artery, and a composite
+// caption must either include both pieces or disclose the uncaptured one.
+assert.deepEqual(getOrganConnection('connection_42').partIds,['FJ2631'],'LAD trunk entry must select the main anterior interventricular artery, not septal branches');
+assert.deepEqual(new Set(getOrganConnection('connection_61').partIds),new Set(['FJ3178','FJ3290']),'Manubrium and sternal body must both be selected');
+for(const [id,missing] of [['connection_399','quadratus lumborum'],['connection_405','sigmoid colon'],['connection_410','internal oblique']])assert(getOrganConnection(id).label.toLowerCase().includes(missing+' mesh unavailable'),'Partial source selection must disclose its missing component: '+id);
+for(const id of [9,41,56,63,75,80,158,159,178,216,220,400])assert(getOrganConnection('connection_'+id).targetId,'Existing reviewed source geometry must not be called unavailable: '+id);
+assert.deepEqual(getOrganConnection('connection_9').partIds,['FJ3411'],'Aortic arch must exclude its bronchial branch');
+assert.equal(getOrganConnection('connection_63').partIds.length,6,'Deltoid must preserve all bilateral acromial, clavicular and spinal pieces');
+assert(getOrganConnection('connection_159').label.includes('left reference; right mesh unavailable'),'Unilateral longus colli source must not imply captured bilateral anatomy');
+console.log('Source-label regressions passed: main LAD, complete sternum, explicit partial-source gaps and12 existing source targets.');
