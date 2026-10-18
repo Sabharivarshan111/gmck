@@ -684,6 +684,11 @@ function selectAbdomen(p: Part): boolean {
   }
 
   const name = p.name;
+  // Digestive-system membership also includes oral glands, gingiva and the
+  // thoracic esophagus. They are not abdominal contents and stretch this
+  // selection's camera up to the head. Preserve every abdominal bowel/liver
+  // piece rather than applying a height cutoff across source organs.
+  if (anyTerm(name, ['gingiva', 'tongue', 'sublingual gland', 'submandibular gland', 'esophagus'])) return false;
 
   const isViscus =
     p.system === 'digestive' ||
