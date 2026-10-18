@@ -1,0 +1,92 @@
+name: Actual Android joint focus regression
+on:
+  push:
+    branches: [codex/v27-anatomy-joints-qa-20261018]
+  workflow_dispatch:
+concurrency:
+  group: joint-focus-v27-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+  actions: read
+jobs:
+  matching-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    outputs:
+      run: ${{ steps.apk.outputs.run }}
+    steps:
+      - id: apk
+        uses: actions/github-script@v7
+        with:
+          script: |
+            for(let i=0;i<240;i++){
+              const {data:run}=await github.rest.actions.getWorkflowRun({...context.repo,run_id:39094892581});
+              if(run.head_sha!=='47da0be01a482456d1907f7d3a1f3c9e733cd045'||run.path!=='.github/workflows/android-debug.yml')throw Error('Wrong candidate APK source');
+              if(run.status==='completed'){if(run.conclusion!=='success')throw Error('Exact-source debug build failed');core.setOutput('run',run.id);return;}
+              await new Promise(r=>setTimeout(r,15000));
+            }
+            throw Error('No successful exact-source debug APK');
+  webview:
+    needs: matching-apk
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        suite: [context-framing]
+        partition: [0]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: |
+          npm ci --legacy-peer-deps --ignore-scripts
+          npm install --prefix /tmp/orbit-audit-browser --no-audit --no-fund playwright@1.55.0
+          ln -s /tmp/orbit-audit-browser/node_modules/playwright node_modules/playwright
+          /tmp/orbit-audit-browser/node_modules/.bin/playwright install --with-deps chromium
+          python3 -m pip install --quiet --break-system-packages pillow
+          mkdir -p artifacts/exhaustive
+          node mobile/scripts/native-anatomy-parity-manifest.mjs artifacts/exhaustive/anatomy-coverage.json
+      - name: Validate task plan before booting Android
+        run: ORBIT_AUDIT_PLAN_ONLY=1 ORBIT_CONTEXT_PARTS=1 ORBIT_SCREENSHOT_OUT=artifacts/exhaustive node --experimental-strip-types .github/qa/android-joint-focus.mjs
+      - uses: actions/download-artifact@v4
+        with:
+          name: orbit-debug-apk
+          path: downloaded-apk
+          run-id: ${{ needs.matching-apk.outputs.run }}
+          github-token: ${{ github.token }}
+      - name: Enable acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Compare installed Android renderer with live Vercel mobile Chromium
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_7_pro
+          emulator-boot-timeout: 300
+          disable-animations: false
+          emulator-options: -no-window -gpu ${{ matrix.suite == 'eye' && 'lavapipe' || 'swiftshader_indirect' }} -memory 3072 -cores 2 -noaudio -no-boot-anim
+          script: |
+            adb shell wm size 1179x2556
+            adb shell wm density 480
+            adb install -r downloaded-apk/app-preview.apk
+            bash mobile/scripts/build-ui-dump.sh
+            ORBIT_UI_HELPER=1 ORBIT_SCREENSHOT_OUT=artifacts/exhaustive python3 mobile/scripts/android_webview_bootstrap.py
+            ORBIT_REFERENCE_ORIGIN=https://orbitmbbs-qs1f2dr09-sabharivarshan111s-projects.vercel.app ORBIT_EXHAUSTIVE_SUITE=context-framing ORBIT_CONTEXT_PARTS=1 ORBIT_CONTEXT_PARTITION=${{ matrix.partition }} ORBIT_SCREENSHOT_OUT=artifacts/exhaustive node --experimental-strip-types .github/qa/android-joint-focus.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: actual-android-v27-joint-focus-${{ matrix.suite }}-part${{ matrix.partition }}-${{ github.sha }}
+          path: artifacts/exhaustive
+          retention-days: 14
+  # Publishing remains a separate explicit final step after these results and
+  # native RN controls are reviewed. Candidate build is an artifact only.
+
