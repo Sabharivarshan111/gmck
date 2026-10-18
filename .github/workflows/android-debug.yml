@@ -68,6 +68,7 @@ on:
       - codex/v27-anatomy-visibility-20261018
       - codex/v27-anatomy-joints-20261018
       - codex/v27-anatomy-final-20261018
+      - codex/v27-anatomy-complete-20261018
       - codex/v27-exhaustive-device-checks-20261016
       - claude/android-react-native-app-o54cjj
       - claude/native-app-sync

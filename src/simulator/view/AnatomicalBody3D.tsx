@@ -3349,11 +3349,15 @@ varying float partSelected;
     const celiacBranches = targetKey === 'atlas:FJ3421'
       ? new Set(['FJ3078', 'FJ2562', 'FJ3420', 'FJ3499', 'FJ3544', 'FJ3640'])
       : null;
-    const contextKey = contextOrganId || resolveContextOrganId(targetKey, selectedOrganId);
+    const contextHint = contextOrganId || resolveContextOrganId(targetKey, selectedOrganId);
+    // The coronary dossiers are vessels, not the supporting organ. Their
+    // supply/drainage and relation selections still belong on the same heart.
+    const contextKey = contextHint === 'lad_artery' || contextHint === 'rca_artery'
+      ? 'heart' : contextHint;
     const contextElements = (contextKey && contextKey !== targetKey &&
       (!connection || connection.kind === 'relation' || showVesselContext))
       ? resolveAtlasElementIds(contextKey, atlas) : null;
-    if (connection?.owner === 'heart' && contextElements) {
+    if (connection && contextKey === 'heart' && contextElements) {
       const shell = new Set(['FJ2428','FJ2438','FJ2439','FJ3413','FJ3411','FJ3417','FJ2966','FJ2924','FJ3019','FJ3645']);
       for (const id of contextElements) if (!shell.has(id)) contextElements.delete(id);
     }
