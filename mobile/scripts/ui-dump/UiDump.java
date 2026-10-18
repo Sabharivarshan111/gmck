@@ -43,6 +43,16 @@ public final class UiDump extends Instrumentation {
       XmlSerializer xml = Xml.newSerializer();
       xml.setOutput(writer);
       xml.startTag(null, "hierarchy");
+      // Read current on-screen windows, not InputMethodManager dump history.
+      boolean imeVisible = false;
+      for (AccessibilityWindowInfo window : automation.getWindows()) {
+        if (window.getType() == AccessibilityWindowInfo.TYPE_INPUT_METHOD) {
+          Rect bounds = new Rect(); window.getBoundsInScreen(bounds);
+          AccessibilityNodeInfo keyboard = window.getRoot();
+          if (!bounds.isEmpty() && (keyboard == null || keyboard.isVisibleToUser())) imeVisible = true;
+        }
+      }
+      xml.attribute(null, "ime-visible", Boolean.toString(imeVisible));
       node(xml, root, 0);
       xml.endTag(null, "hierarchy");
       xml.flush();

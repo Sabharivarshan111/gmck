@@ -236,15 +236,38 @@ def launch() -> None:
     time.sleep(4)
 
 
+def keyboard_visible() -> bool:
+    """Observe the current IME window; historical show requests are not visibility."""
+    if os.environ.get('ORBIT_UI_HELPER') == '1':
+        root = dump_ui()
+        visible = root.get('ime-visible')
+        if visible not in ('true', 'false'):
+            raise RuntimeError('UI helper lacks current IME window metadata; rebuild it')
+        return visible == 'true'
+    state = adb('shell', 'dumpsys', 'input_method', capture=True).stdout or ''
+    (OUT / 'onboarding-input-method.txt').write_text(state)
+    # AOSP IME_VISIBLE is bit 0x2. Active/ready alone does not mean visible.
+    current = re.search(r'\bmImeWindowVis=(0x[0-9a-fA-F]+|[0-9]+)\b', state)
+    if current:
+        value = current.group(1)
+        return bool(int(value, 16 if value.startswith('0x') else 10) & 0x2)
+    service = state.split('Input method service state for ', 1)[-1]
+    decor = re.search(r'\bmDecorViewVisible=(true|false)\b', service)
+    window = re.search(r'\bmWindowVisible=(true|false)\b', service)
+    if decor and window:
+        return decor.group(1) == 'true' and window.group(1) == 'true'
+    raise RuntimeError('Cannot determine current Android IME window visibility')
+
+
 def dismiss_keyboard() -> None:
     """Verify the IME is closed before scrolling the onboarding form."""
-    for _ in range(3):
-        state = adb('shell', 'dumpsys', 'input_method', capture=True).stdout or ''
-        if not re.search(r'\b(?:mInputShown|mIsInputViewShown|isInputViewShown)=true\b', state):
+    for attempt in range(4):
+        if not keyboard_visible():
             return
-        adb('shell', 'input', 'keyevent', '4')
-        time.sleep(0.5)
-    raise RuntimeError('Android keyboard still open; cannot safely scroll onboarding')
+        if attempt < 3:
+            adb('shell', 'input', 'keyevent', '4')
+            time.sleep(0.8)
+    raise RuntimeError('Android keyboard still visible; cannot safely scroll onboarding')
 
 
 def first_run() -> None:

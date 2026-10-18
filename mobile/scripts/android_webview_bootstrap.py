@@ -16,6 +16,8 @@ except Exception:
     shot('actual-android-bootstrap-FAILURE')
     try:
         (OUT / 'bootstrap-failure-ui.xml').write_text(ET.tostring(dump_ui(), encoding='unicode'))
+        (OUT / 'bootstrap-failure-input-method.txt').write_text(adb('shell','dumpsys','input_method',capture=True).stdout)
+        (OUT / 'bootstrap-failure-windows.txt').write_text(adb('shell','dumpsys','window','windows',capture=True).stdout)
         (OUT / 'bootstrap-failure-logcat.txt').write_text(adb('logcat','-d','-t','300',capture=True).stdout)
     except Exception as diagnostic_error:
         (OUT / 'bootstrap-diagnostic-error.txt').write_text(str(diagnostic_error))

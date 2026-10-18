@@ -27,8 +27,59 @@ jobs:
               await new Promise(r=>setTimeout(r,15000));
             }
             throw Error('No successful exact-source debug APK');
+  bootstrap-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify the existing APK used only for onboarding diagnostics
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {data:run}=await github.rest.actions.getWorkflowRun({...context.repo,run_id:39142509495});
+            if(run.head_sha!=='1c565726da734683d542060750ad8646c6721382'||run.conclusion!=='success'||run.path!=='.github/workflows/android-debug.yml')throw Error('Unexpected diagnostic APK');
+      - uses: actions/download-artifact@v4
+        with:
+          name: orbit-debug-apk
+          path: downloaded-apk
+          run-id: 39142509495
+          github-token: ${{ github.token }}
+      - name: Enable acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Verify real onboarding before starting the 626-target matrix
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_7_pro
+          emulator-boot-timeout: 300
+          disable-animations: false
+          emulator-options: -no-window -gpu swiftshader_indirect -memory 3072 -cores 2 -noaudio -no-boot-anim
+          script: |
+            adb shell wm size 1179x2556
+            adb shell wm density 480
+            adb install -r downloaded-apk/app-preview.apk
+            bash mobile/scripts/build-ui-dump.sh
+            ORBIT_UI_HELPER=1 ORBIT_SCREENSHOT_OUT=artifacts/bootstrap-probe python3 mobile/scripts/android_webview_bootstrap.py
+      - name: Record diagnostic provenance separately from anatomy certification
+        if: always()
+        env:
+          QA_SOURCE: ${{ github.sha }}
+        run: |
+          mkdir -p artifacts/bootstrap-probe
+          python3 -c 'import json,os;json.dump({"scope":"onboarding diagnostics only; does not certify anatomy targets","apkSource":"1c565726da734683d542060750ad8646c6721382","qaSource":os.environ["QA_SOURCE"]},open("artifacts/bootstrap-probe/provenance.json","w"),indent=2)'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: actual-onboarding-probe-${{ github.sha }}
+          path: artifacts/bootstrap-probe
+          retention-days: 14
   webview:
-    needs: matching-apk
+    needs: [matching-apk, bootstrap-probe]
     runs-on: ubuntu-latest
     timeout-minutes: 180
     strategy:
@@ -94,7 +145,7 @@ jobs:
           path: artifacts/exhaustive
           retention-days: 14
   repair-smoke:
-    needs: matching-apk
+    needs: [matching-apk, bootstrap-probe]
     runs-on: ubuntu-latest
     timeout-minutes: 180
     strategy:
