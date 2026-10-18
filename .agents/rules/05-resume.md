@@ -1,140 +1,2549 @@
+# Where I stopped — the hand-written half
+
+`mobile/scripts/resume-status.mjs` derives everything it can: the branch, the
+dirty tree, the last commits, the Supabase queue, the open notes under
+`.agents/queue/`, and whether the repo still holds its load-bearing paths.
+This file is the part no script can derive — **what you were in the middle of,
+and what you were about to do next.**
+
+## How to write an entry
+
+Append at the **bottom**, newest last. The heading must be
+
+    ## YYYY-MM-DD — <tool> — <one line>
+
+because the report parses that date and prints the entry's age. It also
+compares that date against the last commit: an entry older than HEAD is
+printed as *history*, not as status, which is the honest answer for prose that
+the code has since overtaken.
+
+Keep an entry to about fifteen lines. It is read cold, by someone with no
+context and no chat history, on a different account. Four headings earn their
+place:
+
+- **DONE** — what is finished and verified. Say *how* it was verified;
+  "bundle builds" and "seen on a device" are different claims and this project
+  keeps them apart (`.agents/rules/92-verify.md`).
+- **HALF-DONE** — what is written but not finished, and where the seam is.
+  This is the expensive one to omit; it is what gets rebuilt from scratch.
+- **NEXT** — the single next action, concretely enough to start on.
+- **DO NOT** — anything you tried that was wrong. HANDOFF §14.2 is the model:
+  a cleanup that would have deleted 220 correct diagram rows, written down so
+  the next session does not have the same good idea.
+
+Anything blocked on a **person** goes in `blocked.json` instead, with the
+owner named. Anything blocked on **Supabase** goes in the queue
+(`node scripts/supabase-queue.mjs add`). This file is for work in flight.
+
+`HANDOFF.md` stays what it is: the long, curated, per-session record. This file
+is the short volatile one that is rewritten constantly. If an entry here is
+still true a week later, it has become history — move it into `HANDOFF.md`.
+
 ---
-description: Picking work up where a dead session left it — the one command that says where things stopped, and why the answer lives in the repo rather than in a chat
----
 
-# Resuming — the repo is the only thing that survives
+## 2026-09-04 — Claude Code — built the resume mechanism itself
 
-A session here ends four ways and they are indistinguishable from the next one:
-the connection drops, somebody deletes the session, the account signs out, or
-the container is simply thrown away. In every case **the conversation is gone**.
-It is also gone across tools — Claude Code cannot read an Antigravity thread and
-Antigravity cannot read a Claude Code one — and across accounts, which is the
-case the app's owner actually hits: a fresh install of this repository on a new
-account, expected to continue from where the last one stopped.
+**DONE**
 
-So nothing about the state of the work may exist only in a chat message. It has
-cost this project twice already: flashcards were built from scratch in both apps
-because neither session could see the other (`HANDOFF.md` §8f), and a blocked
-Supabase deploy was announced once, in a message, and forgotten for weeks — long
-enough that the repo's copy of `generate-handwritten-notes` and the deployed one
-had silently diverged (§8j).
+- `mobile/scripts/resume-status.mjs` + `npm run resume` (mobile and root).
+  Derives git state, ages the hand-written files against HEAD, reads the
+  Supabase queue and `.agents/queue/`, and runs the three integrity checks.
+  Offline by design — it must work on a fresh clone behind the agent proxy.
+- `mobile/scripts/repo-intact-check.mjs` + `npm run check:repo-intact`. Floors,
+  not exact counts; fires on a missing, emptied or shrunk load-bearing path,
+  and on a *staged* deletion under `src/data/`, `.agents/`, `.claude/`,
+  `.github/workflows/` or `supabase/migrations/`.
+- `.claude/skills/session-resume/` for Claude Code,
+  `.agents/rules/05-resume.md` for Antigravity/Cursor/Codex, and a row in
+  `AGENTS.md`. `CLAUDE.md`'s table is generated — `npm run sync:agent-docs`.
+- `.agents/REPO-PROTECTION.md`: what actually protects the repository, with
+  click paths, and honest about which half is the owner's alone.
+- Fixed a **pre-existing** `check:agent-docs` failure:
+  `.agents/rules/63-anki-import.md` pointed at `mobile/src/lib/apkgFormat.ts`
+  and `mobile/src/lib/apkgExport.ts`. Both live at `src/lib/` (shared, the
+  root tree) which is what `CLAUDE.md` says. Three dead pointers, so the check
+  had been failing on this branch before this session touched it.
 
-## Start here
+**NEXT** — nothing outstanding in this lane. The next session's first command
+is `npm run resume`.
 
-```sh
-npm run resume            # from the repo root
-cd mobile && npm run resume
-```
+**DO NOT** — do not make the resume report exit non-zero when an integrity
+check fails. It is wired into a `SessionStart` hook and into `&&` chains; a
+report that fails is read as a broken tool and gets removed. The *check* fails
+the build, in CI, which is where a failure belongs.
 
-`mobile/scripts/resume-status.mjs`. It runs **offline** — no Supabase, no
-GitHub API, no network at all — because the report has to work in the case it
-exists for, which is a fresh clone in a sandbox behind an egress proxy.
+## 2026-09-04 — Claude Code — merged to main; builds and the first ad render in flight
 
-It prints, in order:
+**DONE** (all on `main` at `a8ca2713`, verified against the live systems, not locally)
+- **The Vercel site was serving a build from before web flashcards existed.**
+  Three production deploys had failed on `failed to resolve
+  "extends":"@react-native/typescript-config"` — `src/lib/flashcards.ts`
+  imported the Anki scheduler across the tree, and esbuild resolves the nearest
+  tsconfig to every file it compiles. `anki.ts` moved to `src/lib/`. Production
+  is READY on the merge; Web build workflow green for the first time in three
+  commits.
+- **Physiology flowcharts: 14 of 14 cached notes.** Live function is **v56**.
+  The queued payload was not enough — the repair path had two bugs, the real one
+  being that `callModel` sent `SYSTEM_PROMPT` on every call, so a request for one
+  flowchart section came back as a whole note every time. Three of those 14 were
+  written by real readers after the deploy and arrived with a flowchart, which is
+  the guarantee working unattended.
+- **The cardiac cycle question was showing a baroreceptor reflex plate.** Fixed
+  at the data layer to `cardiac_cycle_wiggers_diagram.jpg`; three other plainly
+  wrong attachments on that plate cleared. Backup: `question_diagrams_fix_20260904`.
+- Textbook chip icon moved to the trailing edge; screenshot captured and sent.
+- Skills: `session-resume`, `rate-limit-resume`, and the "show the screenshot"
+  rule in `92-verify.md` + `show-it-works`.
 
-1. **Git** — branch, whether the tree is dirty and with what, the last eight
-   commits, and how this branch compares to each remote. That comparison is
-   against the **last fetched** ref and says how old the ref is; it never
-   fetches. `git fetch --all` first if you need it current, and remember that
-   `origin` and `gmck` can be at different commits.
-2. **What the last session said** — the newest entry in
-   `.agents/state/resume-notes.md`, with its age. An entry older than HEAD is
-   flagged as *history*, not status.
-3. **What is blocked, and on whom** — from `.agents/state/blocked.json`.
-4. **The Supabase queue** — `.agents/tasks/supabase-pending.json`.
-5. **Open notes** under `.agents/queue/`.
-6. **Whether the repo still coheres** — it runs `check:repo-intact`,
-   `check:agent-docs` and `check:supabase-queue`, and lists the other checks
-   rather than running them.
+**IN FLIGHT — check these first**
+- Android **debug / internal / release** runs on `a8ca2713`. They had been red
+  since `8d8841ab` on `check:agent-docs` (dead pointers to
+  `mobile/src/lib/apkgFormat.ts`), which this merge fixes. If one fails, read the
+  log and fix it — do not stop at "it failed".
+- **Ad videos** run 33887390781 — the first time that workflow has ever run.
+  9 render targets: 3 × 90s ads and 3 × 60s reels in voiced + silent cuts.
 
-## Derived, because a hand-written status file rots
+**NEXT**
+- The owner's ad brief is NOT met yet, and the gap is specific: they want
+  (1) one 60s voiced ad where the **mascot presents** — `BotAvatar.tsx` exists
+  but is only used inside the AI-chat screen mock, never as a presenter; and
+  (2) two 60s subtitle-only cuts on a **black** background, beat-synced to a
+  bed they can swap. The `-silent` cuts already exist; the black ground and the
+  beat sync do not.
+- 56 plates still sit on >5 questions each (555 rows). Read them, never bulk-fix.
+- `check:smoke` has one pre-existing failure on HEAD: "a note filed under a
+  chapter shows up on that chapter" (locator timeout). Not caused by this work.
 
-`HANDOFF.md` is the long, curated record and it stays. But prose is only true on
-the day it is written, and a stale status file is the same disease as a lost
-chat message wearing a shirt. So almost everything above is **derived from the
-repo at the moment you ask**: git is asked about git, the queue file is read,
-the directory is listed.
+**DO NOT**
+- Do not respawn a killed agent without checking what it already did. One died
+  one call after "Deploying v56" — the deploy had succeeded.
+- Do not bulk-fix `question_diagrams` by any text rule, in either direction.
 
-Two things cannot be derived, and only those two are hand-written:
+## 2026-09-04 (later) — Claude Code — three builds out, two agents salvaged after a rate limit
 
-| File | What it holds | Who writes it |
+**DONE — the builds the owner asked for are published.**
+- **Internal APK** — run 33890078552, release `internal-144`, `app-internal.apk`.
+  Every step green.
+- **Release AAB + APK** — run 33888281335, all 33 steps success, both uploaded
+  and published. (Its overall label reads "cancelled" only because a later push
+  superseded it after the steps had finished — read the steps, not the label.)
+- The unblocker was `resolver.nodeModulesPaths` in `mobile/metro.config.js`.
+  Every Android bundle had failed since `8d8841ab` on
+  `@babel/runtime/helpers/interopRequireDefault` unresolvable from
+  `src/lib/apkgFormat.ts`.
+
+**The APK's real SHA-1, read with apksigner rather than from a doc:**
+`com.aistudio.mbbsqbank.aycxvd` / `CE:EA:8A:41:BB:07:78:C4:78:26:D8:8F:CC:E0:2C:C9:EB:29:40:68`
+— matches OAUTH-SETUP.md client #2 exactly. Google sign-in's DEVELOPER_ERROR is
+therefore purely the missing Android OAuth client; `auth.identities` has 322
+working google identities, so the Supabase half is proven fine.
+
+**Two agents were killed by the account limit (resets 19:40 UTC) and BOTH were
+salvaged** — because they wrote real files and checkpointed, which is the rule
+added earlier today. Their work is committed at `014d614e` (first-year pathway
+flashcards) and `635c7217` (three 60s ads: mascot presenter + beat-grid).
+
+**NEXT — what those two did NOT finish:**
+- **Screenshots of the pathway cards.** The flashcards agent died right before
+  capturing them; `mobile/preview/pathway-card-shots.mjs` exists and is unrun.
+  This repo's rule says a visible change is not done until it is shown.
+- **`generate-flashcards` is still v10 live.** The first-year/textbook/pathway
+  source is in the repo, undeployed on purpose. Deploy needs the Supabase
+  connector, then generate one first-year chapter and read the cards back.
+- **No frame of any ad has been rendered.** preflight's only complaints are the
+  72 missing voiceover mp3s + manifest, which is edge-tts (egress-denied here,
+  CI runs `voice` before preflight). Trigger **Ad videos** to see them.
+
+## 2026-09-04 — (later) — Claude Code — a bad deploy of generate-flashcards, and its repair
+
+**INCIDENT, read this before touching `generate-flashcards`.** I deployed
+`generate-flashcards` **v12** with a body of the literal string
+`__PLACEHOLDER__` and no `textbook.ts`. That is a dead function in production:
+every first-year deck generation would have failed while it stood. It was my
+error — I called the deploy tool with a stub payload instead of the repo's real
+file contents.
+
+Repair dispatched immediately: a courier agent redeploys BOTH files verbatim
+(`index.ts` + `textbook.ts`), keeps `verify_jwt: true`, and proves it by
+fetching the deployed source back and `diff`ing it against the repo — the same
+byte-identity check that took v10 -> v11. If you are reading this and
+`get_edge_function` still shows a placeholder, that repair did not land: redeploy
+from `supabase/functions/generate-flashcards/` and diff.
+
+**The lesson, so it is a rule rather than a memory:** `deploy_edge_function`
+takes the file bodies inline, and a stub payload is accepted silently — the tool
+reports `status: ACTIVE` and a fresh version number for a function that cannot
+run. Never call it without the real contents in the `files` array, and always
+`get_edge_function` + `diff` afterwards. A version number is not proof.
+
+**What was being deployed, and why:** the `applied` card mode was asked for and
+never produced (`.agents/queue/flashcards-applied-cards-2026-09-04.md`). Two live
+runs of v11 returned 32 cards across `recall`, `reasoning` and `pathway` and
+**zero** `applied`. The prompt asked for them as a fraction ("a quarter") in the
+tail of a long system prompt; the model followed the taxonomy and ignored the
+quota. Commit `9060209a` moves the quota into the **user** prompt as explicit
+integers, beside "Write AT LEAST N theory flashcards" — the one numeric demand
+this function has ever reliably obeyed. First year only.
+
+Whether that worked is measured, not assumed: invoke with `noCache: true` and
+count `mode = 'applied'`. If it is still zero, the next step is structural
+rather than persuasive — `appliedCards` as its own array, the way `diagramCards`
+already is. **Do not close the gap by relabelling recall cards**; a card with no
+vignette is not an applied card, and mislabelling would make the measurement
+stop working as a check.
+
+**Ads:** run 33927028250 still in progress, **0 failed jobs of 14**. Ten of the
+thirteen renders are done and green, including all three of the new 60-second
+reels — the first time any reel has ever rendered. The three 90-second ads are
+the ones still going.
+
+## 2026-09-05 — Claude Code — the web app's Anki import, and three things finished
+
+### DONE: the Vercel web app imports Anki packages
+
+**The owner reported this four times and the root cause was not a missing
+feature.** `src/lib/apkgWeb.ts` was already written, already correct and
+already passing `check:apkg-web` — fflate for the zip, sql.js for the
+collection, fzstd for v3, and it takes the real collection rather than the
+decoy. **Nothing imported it.** `FlashcardsHub` still rendered a panel saying
+"Importing your own .apkg is on the Android app", written back when that was
+true, and `apkgWeb.ts`'s own header even says that belief was wrong.
+
+Now wired, with `src/lib/importedDecksWeb.ts` (deck list in localStorage, cards
+and media in IndexedDB — the phone's split, for the phone's reason) and
+`ImportedStudyView` (same `dueQueue`/`answer`/schedule as a generated deck).
+
+**Two production bugs found by driving it rather than reading it:**
+1. sql.js fetched its WASM **over the network** in the built app. `apkgWeb.ts`
+   refuses to guess that URL and says why; the hub now passes the one Vite
+   emits, so 658KB of WASM ships with the app and no request leaves the origin.
+2. The WASM only becomes a build asset because of the `?url` import.
+
+`npm run check:apkg-web-import` is new and is the check that would have caught
+the original bug: it serves the built `dist`, walks a first-time reader **past
+the tour** to the hub, hands a real v3 package to the real file input, and
+asserts on what a reader sees — ten cards not one, an answer on reveal, grading
+moving on, the deck surviving a reload, deletion working. `check:apkg-web`
+proved the reader; nothing drove the screen, which is exactly where this fell
+through. Screenshots in `screenshots/web-anki/`.
+
+**NOT VERIFIED, and it is the next thing to do:** whether this reached
+production. The sandbox cannot reach `orbitmbbs.vercel.app` (the agent proxy
+403s it) and the Vercel connector returns **no teams** for this account, so
+neither route works from here. `npm run build` at the repo root is clean, which
+is the strongest signal available. Somebody with the Vercel dashboard should
+confirm the deploy for commit `9e77a07c` went green.
+
+### DONE: generate-flashcards applied cards, at v15
+
+Closed. `.agents/queue/flashcards-applied-cards-2026-09-04.md` has the full
+three-attempt table. Two findings worth not re-learning: **the ordering
+instruction is load-bearing** ("write the applied cards FIRST…" — removing it
+dropped applied AND reasoning to zero in 2 of 3 runs), and **never name an
+integer for recall** (the model satisfied it and stopped 8 cards short).
+Measured live: applied 5/5/4, reasoning 5/5/4, recall 2/1/1, decks full.
+
+### DONE: all 56 over-attached diagram plates read
+
+48 rows corrected, `.agents/queue/diagram-overattachment-2026-09-05.md`.
+Verified against the database: rows with a picture went 967 -> 922. The finding
+underneath is that **the lookup was never the problem** — every stray was one
+bad row, and thirty of the fifty-six plates were completely clean.
+
+### DONE: the ads
+
+Run 33927028250 completed **success**, 14 of 14 jobs. Release `ads-2` carries
+**13 MP4s**: the three 90-second ads and ten 60-second reels, including the
+three the owner asked for — `orbit-reel-guide` (mascot presents, voiced) and
+`orbit-reel-functions` / `orbit-reel-one-question` (no voice, captions, black,
+beat-synced). `.agents/video/BEAT-SYNC.md` now exists; the release body had
+been pointing readers at a file that was not in the repo.
+
+### The deploy incident from earlier is repaired
+
+`generate-flashcards` is at **v15**, `verify_jwt: true`, both files diffed
+byte-identical against this tree, and proved alive by a live invocation
+returning 200 with real cards. The v12 placeholder is gone.
+
+### A rule for the next courier
+
+Verifying a deploy by diffing the read-back: extract the returned file contents
+with `jq -j`, **not** `jq -r`. `-r` appends its own newline to a file that
+already ends in one and reports a spurious one-line difference on every file.
+
+## 2026-09-05 — Claude Code — the ads showed a broken app, and there were four causes
+
+The owner watched the published reels and reported three things: a "this
+diagram could not be loaded" placeholder, a white box captioned "Types of
+synovial joint", and a home screen showing "Welcome to Orbit … CREATED BY
+Sabharivarshan S" with **no motivational quote**. All three were real. Chasing
+them found a fourth.
+
+### 1. The hero blanks to an empty card — a real app bug, not just an ad bug
+
+`HomeScreen`'s headline and quote are inside the slide cross-fade; the CREATED
+BY chip is not. The fade started at `opacity 0`, so for its duration the hero
+is a large empty card with a credit chip floating in it — **every reader, every
+six seconds**. The committed `glass-home.png` the ads used is exactly that
+frame. Fixed with `HERO_FADE_FLOOR = 0.35`: the same rule as "nothing scales
+from 0", applied to opacity.
+
+### 2 and 3. The two diagram screens
+
+`screenshots/single-note-diagram.png` held the failure placeholder (the fixture
+points at the plate's Supabase URL, which no sandbox can reach) and
+`chapter-diagrams.png` held the harness's **drawn stand-in** — a white
+rectangle with the diagram's name over "plane - hinge - pivot - saddle - ball
+and socket". Both were captured by hand months ago and the ad pipeline copied
+the committed files in.
+
+Now: `fetch-plates.mjs` downloads the plates those screens name (including the
+real `types_of_synovial_joints` and `tca_cycle_amphibolic_anaplerosis`), the
+workflow runs **plates before screens**, `capture-screens.mjs` stages them
+where Vite serves them, and the harness draws them under `?plates=real`. Both
+screens are captured fresh every render.
+
+### 4. Seven more assets were named by shots and produced by nothing
+
+Found while checking the above. `staticFile()` on a missing file is a broken
+image in a finished ad. Two were plates never downloaded
+(`calots_triangle_anatomy.jpg`, `stomach_lymphatics_anatomy.jpg` — both exist
+in the bucket); five were screens nothing captured.
+
+**Preflight could not see any of them.** It read `file:` entries out of the
+SCREENS registry and stopped; an asset named by an `imageName=` or
+`plateImage=` prop was invisible. It scans the props now — 21 assets are named
+that way.
+
+**And 100 generated screens were committed** to `remotion-ad/public/app_screens/`
+despite `.gitignore` forbidding it since it was written. That is why three
+files no step produces still passed preflight: the checkout supplied them. They
+are untracked now, which is what makes the capture list load-bearing.
+
+`public/audio/` is still tracked, deliberately: preflight compares every
+recorded line against the script text, so a stale clip is caught. A stale
+screen is not.
+
+### The guard that was missing everywhere
+
+Every one of these rendered perfectly — right layout, right caption, right
+section — with a stand-in, a failure or nothing at all inside. **Nothing looked
+at the DOM, so nothing noticed.** `shoot.mjs` now asserts each diagram screen
+decoded its plates (`naturalWidth > 0`, src under `/plates/`) and exits
+non-zero otherwise.
+
+Captures are also taken under `prefers-reduced-motion` now, which this app
+supports properly and which pins every screen in its settled state. A
+screenshot of a moving screen is a coin toss, and cause 1 is what losing it
+costs.
+
+### Verified by walking the graph, not by eye
+
+All **38** assets named anywhere in the ad code are produced by fetch-plates,
+capture-screens or the shooter, and the shooter really produces all 26 screens
+the capture list asks for. Re-check with the node one-liner in the commit
+`471eaacb` message if any of these lists change.
+
+### Where it is
+
+Ads re-dispatched as **ads-3** after `471eaacb`; the earlier ads-3 dispatch was
+cancelled because it predated causes 2-4. A check-in is scheduled. **Preflight
+has never had teeth before — this is the first run where a missing asset can
+actually fail the build**, so expect it to find things.
+
+74 app screens re-captured into `screenshots/all/`.
+
+## 2026-09-05 — Claude Code — the captions never matched the voice, and three of the ads' four numbers were wrong
+
+The owner watched the published `ads-3` reels and reported four things: the
+mascot ad's writing is bad and ungrammatical, "what the hell is 2025" appears
+in the ads, a "diagram could not be loaded" frame is *still* there, and
+"nothing audio syncs with subtitles". All four were real, and none of them had
+the cause the wording suggests.
+
+### The "2025" is a count, and it was also wrong
+
+`reelFunctions` shot 2 read **"2,025 show the years asked"**. It is the number
+of questions carrying a list of years — written with a thousands separator,
+beside the words "the years asked", at two seconds a shot. It reads as the
+year. The same figure was in `reelRepeats` and `thePattern`.
+
+Measuring the bank settled the rest of it. **Three of the four numbers every ad
+repeats were false:**
+
+| Claim | In the ads | Measured |
 |---|---|---|
-| `.agents/state/resume-notes.md` | what you were in the middle of; the next action | every session, before it stops |
-| `.agents/state/blocked.json` | what is stopped, and **who can unstop it** | whoever hits the blocker |
+| questions in the bank | 5,545 | **5,634** |
+| carrying a repeat marker | "2,025" | **3,463** (2,013 carry a year list) |
+| hand-drawn plates | 915 | **250**, attached to 922 questions |
 
-Both are stamped, and the report **ages both against the last commit**, so an
-entry the code has overtaken announces itself instead of being believed.
+915 was `question_diagrams` rows carrying a picture — the *question* count
+wearing the drawings' name. One plate answers many questions, so it overstated
+the artwork by nearly four times. It was also on the outro card of every ad
+(`CustomAppScreens.tsx`), next to "100% Offline", which is true of the bundled
+question bank and not of the notes, the plates or Ask AI.
 
-`.agents/state/session-state.json` is a generated snapshot of the same facts,
-refreshed with `npm run resume:write`. It is for a reader who cannot run
-anything — a tool browsing files, a person on github.com. It carries
-`generatedAt` beside the HEAD commit date it was taken at; if the snapshot is
-older, it has been overtaken and the script is the answer.
+`preflight` now refuses any `text`, `vo` or `kicker` containing a bare
+19xx/20xx or a "1,xxx"/"2,xxx". The rule is shape, not accuracy: a number
+nobody can sanity-check by looking at it is a number that rots quietly.
 
-## "Blocked" without an owner is not a status
+### "Nothing syncs" was three separate bugs
 
-Half the outstanding work here is stopped on something **no agent can do**: a
-GitHub Actions secret only a human can paste, a Supabase connector that is
-switched off in the chat's settings, a Lovable workspace out of credits, a real
-payment through Razorpay, an OAuth client in Google Cloud. An agent that reports
-"blocked on Supabase" has said "try again later", and every future session tries
-again later. An agent that reports "blocked until the owner enables the Supabase
-connector for this chat — no tool can flip that toggle" has written an
-instruction somebody can act on in ten seconds.
+1. **A voiced reel's caption was not the spoken line.** `ReelHeadline` drew
+   `shot.text` while `<Audio>` played `shot.vo`, and they were written
+   independently — "2,025 already asked" on screen over "Your university
+   repeats its questions" in the ear. Nothing can be timed against that. The
+   scripts now write the headline as a **verbatim span of the spoken line**,
+   `preflight` fails a render where that stops being true, and `ReelHeadline`
+   lights each word as it is said. The words still all arrive within ten
+   frames: the muted cut is the one that gets watched, so the sync is carried
+   by colour rather than by entrance.
+2. **The karaoke caption divided each clip into equal slices per word.**
+   `interpolate(frame, [2, audioFrames - 4], [0, n - 1])`. "a" and
+   "twenty-five" got the same time, so the highlight drifted a word or two off
+   the voice by the middle of every line, in all three long-form ads, for their
+   whole ninety seconds. edge-tts already emits a WordBoundary per word;
+   `synthesize.py` now keeps them and the caption highlights against them.
+3. **`dynamicScriptTimings.ts` was committed and nothing regenerated it.** CI
+   re-recorded every line from the current script on every run, then laid those
+   new recordings out on shot boundaries measured from an older one. The shots
+   run end to end, so one line that grew pushed every later shot out of step,
+   and the error accumulated. Two rows had already drifted. It is generated by
+   `scripts/measure-audio.mjs` now, in the same run that makes the recordings,
+   and `preflight` fails when a row describes a line the script no longer has.
 
-So every entry in `blocked.json` carries `owner`, and the report prints it in
-capitals. Follow `.claude/skills/supabase-resume/SKILL.md`'s distinction
-wherever a connector is involved: `connected: false` needs a reconnect,
-`connected: true, enabledInChat: false` needs a toggle in the conversation's
-connector settings, and those are completely different remedies. Say which.
+### The remaining "diagram could not be loaded" was in the fixture
 
-Each entry may also carry `clearsWhen`, a cheap offline probe of something that
-would be observably different once it is unblocked — a queue job going `done`, a
-file appearing or disappearing. The report prints **MAY BE CLEAR** when the
-probe fires. It never edits the file: a probe can be right about the filesystem
-and wrong about the world, so clearing an entry stays a person's decision.
+`preview/notesSample.ts` embedded a `supabase.co/storage/...` URL. No sandbox
+can reach that host and the object was gone from the bucket anyway, so
+`DiagramCard` fell to its error branch. `notes-renderer.png` is captured from
+that fixture, and it backs `noteHero` and `noteBody` — **every note shot in
+every one of the nine ads**.
 
-## Before you stop
+The earlier fix guarded `chapter-diagrams` and `single-note-diagram` only.
+`notes-renderer` was captured with no `plates=real` and no plate assertion, so
+nothing was looking. The fixture takes its picture as a parameter now, defaults
+to a drawn stand-in that cannot fail, and both note captures assert a real
+plate. `check:notes-schema` was *requiring* the storage URL — it was holding
+the bug in place — and now forbids it.
 
-1. Append an entry to `.agents/state/resume-notes.md`. The format is at the top
-   of that file; the heading must carry an ISO date or it cannot be aged. Four
-   headings: **DONE** (and how it was verified), **HALF-DONE** (and where the
-   seam is), **NEXT**, **DO NOT** (what you tried that was wrong — §14.2 is the
-   model).
-2. Anything stopped on a person goes in `.agents/state/blocked.json` with the
-   owner named. Anything stopped on Supabase goes in the queue:
-   `node scripts/supabase-queue.mjs add <job.json>`.
-3. Something worth a whole session's record goes in `HANDOFF.md`, at the end.
-4. **Push.** Uncommitted work on a container that is about to be destroyed is
-   work the next session will redo.
+### Publishing
 
-The order matters: a report is only as good as the last thing written into it,
-and the moment you are least likely to write it is the moment a session is cut
-short. Write the entry when you start being unsure, not when you finish.
+Each render job uploads its own MP4 as soon as it passes its checks, instead of
+thirteen renders waiting on the slowest. One failed matrix entry no longer
+means nothing is published at all.
 
-## Nothing here may be deleted
+### What is not verified
 
-`npm run check:repo-intact` (`mobile/scripts/repo-intact-check.mjs`) fails if a
-load-bearing path has gone missing, been emptied, or shrunk below a floor: the
-question bank in `src/data/` — hand-transcribed, no upstream, unrebuildable —
-`mobile/src/`, the Kotlin, `mobile/scripts/` (the checks are this repo's memory
-of its own bugs), `.agents/rules/`, `.claude/skills/`, `supabase/`, the
-workflows, and `CLAUDE.md` / `AGENTS.md` / `HANDOFF.md`. It also fails on a
-**staged deletion** under a guarded path, which is the cheapest moment to catch
-one. It runs in all three Android workflows and in the web build.
+No render has run. The sandbox cannot reach edge-tts or the plate bucket, so
+the word timings and the ads themselves are CI's first look — and the committed
+mp3s still speak the OLD lines, which is exactly what preflight now fails on.
 
-It cannot stop the repository itself being deleted on github.com — that is an
-owner-only setting, and the GitHub admin API is denied by the agent proxy in any
-case. `.agents/REPO-PROTECTION.md` is the honest other half: what actually
-protects a repo, with the click paths, and which of it only the owner can do.
+## 2026-09-05 — Claude Code — the security advisors, and a revoke that silently did nothing
 
-## Claude Code runs this automatically
+Ran the Supabase security advisors after the diagrams fix. **81 findings, 3 of
+them ERROR.** All three are closed; the remaining 69 were each read and are
+by design (documented in the two migration headers). Zero ERRORs now.
 
-`.claude/settings.json` registers a `SessionStart` hook,
-`.claude/hooks/session-start.sh`, which prints the report into the start of
-every Claude Code session — including a resumed one, which is exactly the case
-where the context has been lost. It is synchronous, offline and never fails the
-session: it installs nothing and touches no network, so it costs a second.
+| Was open | Now |
+|---|---|
+| `handwritten_notes_pre_flowchart_backup` — RLS disabled, 11 rows, readable by anyone with the anon key | RLS on, no policy: service role only |
+| `question_diagrams_fix_20260904` — same, 4 rows | RLS on, no policy |
+| `weekly_leaders` — a view running with its OWNER's rights, so it returned rows the caller's RLS would refuse | `security_invoker = on` |
 
-Antigravity, Cursor and Codex have no equivalent, which is why this file exists
-and why the first line of it is a command to run.
+Neither table is referenced by either app or any edge function; they are
+migration backups. Proved the fix by `set role anon` and re-counting: the
+flowchart backup returns **0 of its 11 rows**.
+
+### The lesson worth keeping: `revoke ... from anon` did nothing
+
+The first migration revoked EXECUTE on the admin RPCs from `anon`, reported
+success, and left them exactly as reachable as before. Postgres grants EXECUTE
+on a new function to PUBLIC by default, and `anon` was inheriting **PUBLIC's**
+grant, not one of its own:
+
+    admin_revoke_user_access  {=X/postgres,postgres=X/postgres,authenticated=X/postgres,...}
+                               ^^^ this is PUBLIC
+
+The only reason it was caught is that the change was verified afterwards with
+`has_function_privilege('anon', ...)` rather than trusted. It still answered
+true. The second migration revokes from PUBLIC and grants back to
+`authenticated`. **Verify a grant change by asking the database, never by the
+statement succeeding.**
+
+Also: `grant_admin_for_owner_email()` — SECURITY DEFINER, writes `user_roles` —
+was exposed at `/rest/v1/rpc/`. It is a trigger function so calling it raised
+rather than doing anything, but nothing that grants a role should be an HTTP
+endpoint. Revoked from everyone; the trigger still fires, because Postgres
+checks EXECUTE at trigger CREATE time, not at fire time.
+
+### Two things confirmed rather than changed
+
+* **The admin dashboard already exists in the native app** and is already
+  granted. `AdminPanel` is mounted at `ProgressScreen.tsx:771`, gated by
+  `useIsAdmin` -> `is_admin()`, and `sabharivarshan111@gmail.com`
+  (`1c0f5bac-…`) holds the `admin` role in `user_roles`. Every `admin_*`
+  function self-gates too — checked each body.
+* **The Supabase half of Google Sign-In is working**: 323 google identities,
+  most recent 2026-09-04. The owner's own account has a google identity. The
+  only gap is the three Android OAuth clients in Google Cloud, which is
+  `oauth-sha1-deployment` in blocked.json and is the owner's to do.
+
+## 2026-09-05 — Claude Code — first run asks, an old build learns about a new one, and two XP bugs
+
+Nine things from the owner's list. The two worth reading about are the ones
+that were each a single symptom hiding two different bugs.
+
+### "If I untap any question it shows as XP gained" was two bugs
+
+**Web.** `use-xp-stream` takes an XP number from three places and they count
+different populations: `cloudXp` and the realtime `profiles` row are the
+server's count for the ACCOUNT (`profiles.xp` is `COUNT(*) FROM
+question_progress WHERE user_id` — global), while `readLocalXp()` counts the
+`question-` keys in THIS BROWSER. Sign in on a second browser and the two are
+300 and 4. All three handlers wrote into one `prevXp` ref, so un-ticking ran
+the local one first (4 → 3, no toast, ref := 3) and then the realtime one read
+299 against a baseline of 3 and toasted **"+296 XP"**. One baseline per source
+now; realtime shares the cloud's because it *is* `profiles.xp`.
+
+**Native.** `pullProgressFromCloud` merges and never deletes — correct, a tick
+from another device has to arrive — but a row un-ticked HERE comes back if
+`record_question_undone` never landed, and that RPC returns silently with no
+session, no profile year, or offline. `XpToast` reads the rise as a tick.
+`pendingUndo` parks the id until the server confirms the delete; the pull skips
+a parked id **and retries its undo**, and the push filters them or the two
+fight every launch.
+
+### The year was never asked for
+
+Onboarding lived only on My Progress, behind a tab. A fresh install opened on
+Home having been asked nothing, and `useProfile` falls back to `'second'` — so
+a first year got second year's bank with the chip agreeing. `FirstRun` is now a
+gate at the app root (icon, "Welcome to Orbit", "Made by the community",
+optional Google, name, and four years with **none** pre-selected).
+
+`readLocalProfile` also stopped coercing an unreadable year to `'second'`,
+which silently turned a stored `'third-year'` into second year.
+
+### Traps hit on the way, worth not hitting again
+
+* **`state={{ disabled: true }}` on a `Touchable` really disables it** —
+  `isDisabled = disabled || state?.disabled` feeds the Pressable. A button that
+  is meant to stay pressable and explain what is missing must not use it.
+* **The workflow's release notes had `versionCode 14` typed into them** and
+  stayed 14 through the bump to 15, so a correct v15 build told the owner it
+  was the number Play rejected. Read from gradle now — and the step's path is
+  relative to `mobile`, because the job sets `defaults.run.working-directory`.
+  Getting that wrong fails **after** a 19-minute build has succeeded.
+* **`revoke ... from public` on a new function does not stick.** Supabase's
+  template grants EXECUTE to `anon` by name. Second time on this project.
+  Proved with `has_function_privilege` afterwards, which is the only way to
+  know.
+* **The repo's copy of `razorpay-verify-payment` was three plans behind the
+  deployed one.** Reading it would have said a 6-month purchase grants a month.
+  Synced, and `check:payments` now pins the tiers from both sides.
+* **A mouse drag is not a touch drag.** The subject-card reorder test used
+  `page.mouse` and had been failing for weeks while the gesture worked by hand.
+  And a step that failed inside home's edit mode left `ReorderLock` on, so the
+  year-picker step after it timed out on a control that was present, visible
+  and deliberately unresponsive — one broken step reporting as two.
+
+### Open
+
+* `app_releases` has rows for 13 (live) and 15 (`live_on_play` **false**). The
+  update prompt stays silent until somebody sets that true, which is right —
+  set it when the listing actually serves v15, not when the build lands.
+* The search-result triple tap is correct in the repo and has been since
+  2026-09-01. Play is on versionCode 13, so what the owner is running predates
+  it; shipping v15 is the fix, and there is now a smoke step so it cannot
+  regress.
+* `.agents/queue/play-billing-migration.md` — what moving off Razorpay
+  involves. Not optional; about a working week; none of it doable from a
+  sandbox.
+
+## 2026-09-06 — Claude Code — Play's own update API, a green smoke suite, and v15 built
+
+Picks up from the 2026-09-05 entry above. **v15 is built and signed and has not
+been uploaded yet** — that is where this stopped.
+
+### The update prompt is Google Play's now, not a row in our table
+
+Yesterday's entry describes an `app_releases` table with a `live_on_play`
+boolean. **That flag is gone**, and so is `mandatory`. Do not add them back.
+
+The flag was a person promising, by hand, that the Play listing had caught up
+with an upload. A row appears the moment a build is cut — days before Play
+serves it — and it failed in both directions: set late and nobody hears about
+the update, set early and every phone is sent to a listing still showing the
+version it is running.
+
+`com.google.android.play:app-update:2.1.0`, wrapped as the **`OrbitUpdate`
+TurboModule** (`src/native/NativeOrbitUpdate.ts`, `UpdateModule.kt`,
+`UpdatePackage.kt`, registered in `MainApplication.kt`). Play knows the answer
+for a given reader on their track without being told.
+
+**The table survives for the one thing Play cannot do: it hands no release
+notes to a client, in any shape.** `app_releases` is now a lookup by the
+versionCode Play names, holding the words for the update card and the what's-new
+card. A version with no row still prompts, without a list.
+
+Flexible, never immediate by default. Immediate takes the screen and will not
+give it back — for a question bank that is a student locked out the evening
+before an exam. It is reached only at Play priority >= 4, which nothing sets.
+`check:native-update` fails if that flips.
+
+**None of it can be exercised here.** Play reports no update for a build it did
+not install — every APK from CI, every debug build, and the preview where the
+module is absent. So "no card" and "completely broken" look identical, which is
+the sound module's failure exactly. The check asserts the four TurboModule
+pieces, the Gradle dependency, flexible-by-default, the install stage, a
+dismissable dialog, and that the preview shim reports the module ABSENT rather
+than faking one. First real proof is **internal app sharing on a phone**.
+
+### The smoke suite is green — 120 pass, 0 fail — and four "failures" were the test
+
+It had been 110/5 and every one of the five was the test accusing the app.
+Worth knowing because the same shapes will recur:
+
+* **A stale string is worth three red steps.** The attach chooser was reworded
+  in August (1fdbf17c). `check:note-media` and three smoke steps still asserted
+  the old sentences — including the sheet TITLE, which is the first assertion,
+  so the step died four seconds in and left its sheet open. The two steps after
+  it then timed out at thirty seconds each against that scrim. One sentence,
+  three broken flows, two of them entirely healthy.
+* **A selector for a control that does not exist accuses the app.** The
+  search-result note step looked for `[aria-label*="Regenerate"]`. There is no
+  such label — `SingleQuestionNote` says "Write this note again from the top" —
+  so it reported "no handwritten note opened" about a note that had opened.
+* **Wrong labels can make an assertion pass while testing nothing.** The
+  first-run step checked `aria-checked` on "First Year"/"Third Year". The labels
+  are "1st Year"/"3rd Year", so it matched no elements and concluded nothing was
+  pre-selected. It now counts the four cards before asking which is checked.
+* **A mouse drag is not a touch drag.** The subject-card reorder used
+  `page.mouse` while `dragArm` reads touch; it had been failing for weeks while
+  the gesture worked by hand. And that step throwing left home in edit mode, so
+  the year-picker step after it timed out on a control that was present and
+  deliberately unresponsive — `ReorderLock`. One broken step, two red.
+
+`finishRearrangingIfOpen()` is now part of every step's cleanup, alongside
+closing a sheet and a modal, for the same reason those are.
+
+### Three new checks, and why each exists
+
+| Check | Catches |
+|---|---|
+| `check:version` | `build.gradle` and `src/lib/appVersion.ts` disagreeing, and PLAY_PACKAGE not matching the applicationId |
+| `check:preview-parity` | a root overlay in `App.tsx` that was never mounted in `preview/main.tsx` — it caught `FirstRun`, absent from every screenshot and smoke run |
+| `check:native-update` | the four TurboModule pieces, flexible-by-default, the install stage, and a preview shim that admits the module is absent |
+
+All three run in the Checks step of all three Android workflows.
+
+**Two of `check:native-update`'s assertions passed on deliberately broken files
+before I caught it**, both the same way: the doc comment explaining a rule
+contains the words the check greps for, so the prose satisfied the check for the
+rule. Both now read comment-stripped source. `native-sound-check.mjs` documents
+this trap in its header and I still wrote it wrong twice.
+
+### 14 is live on Play, not 13
+
+Corrected by the owner from their own console. Four files said 13 and
+`app_releases` had 13 flagged live. The error came from one refused upload of 14
+being written down as "14 was rejected, 13 is live" and never re-checked. **A
+refused upload is not proof of what the listing serves.**
+
+### New: the Play Console form is part of the release
+
+`.agents/rules/41-play-release-notes.md` and
+`.claude/skills/play-release-notes/`. A build is not delivered until the owner
+has the Release name and Release notes pasted in the chat — they upload from a
+phone, and v15 was built, signed and linked before anyone noticed nobody had
+written them. Covers the 500-char cap and the two things that may never appear:
+a Razorpay price (Play requires Play Billing for digital goods, and the notes
+are where a reviewer looks) and anything that has never worked once.
+
+### Where it stands
+
+* **Release 192** — `.aab` and `.apk` published, versionCode 15, built from
+  `ee3ffcec` which has the Play update API. Not uploaded.
+* The owner was mid-upload in the Play Console when this session ended.
+* `live_on_play` no longer exists, so **nothing needs flipping after upload**.
+  That was the whole point of the change.
+
+## 2026-09-06 — Claude Code — Play Billing, built and switched off
+
+Picks up from the entry above (Play's update API, green smoke, v15 built). Two
+things happened since: **v16 was built and is signed** (release run 193, AD_ID
+declared in the manifest), and **Google Play Billing was built end to end**.
+
+### v16
+
+`release-193` on GitHub carries `app-release.aab` and `app-release.apk` for
+versionCode 16 / 0.0.0.16. It contains the Play in-app update API — so once 16
+is live on Play, a phone on 16 gets the update card for 17 without anything
+being flipped by hand.
+
+**The AD_ID rejection has two halves and only one was code.** The manifest half
+is done. The other half is the **Advertising ID declaration form** in Play
+Console → Policy → App content, which is the owner's, and the owner reports it
+still showing "You can't rollout releases with artifacts targeting Android 13
+until you have completed this declaration" with the Save button greyed out. The
+answers are correct on screen (Yes; Advertising or marketing; "turn off release
+errors" left UNTICKED, which is right now that the permission is really there).
+Greyed Save means the form is not dirty — changing any answer and changing it
+back re-enables Save and re-submits the declaration. **Do not tick "turn off
+release errors":** that declares the app ships WITHOUT the permission, which is
+no longer true, and it would be trading targeted ad revenue for a form that goes
+away.
+
+### Play Billing
+
+`.agents/rules/42-play-billing.md` is the rule; `mobile/PLAY-BILLING-SETUP.md`
+is the owner's eight steps; `.agents/queue/play-billing-migration.md` is the
+status page it used to be a proposal in.
+
+**It is off.** `PLAY_BILLING_ENABLED = false` and Razorpay is still what ships.
+`check:billing` FAILS if that flag is true — that is deliberate, not a bug to
+work around: this path has never taken a real payment, and the flag is flipped
+after a licence tester has bought each of the five products on a phone.
+
+What was built, all committed and all green under `check:billing`:
+
+* `OrbitBilling` TurboModule — spec, `BillingModule.kt`, `BillingPackage.kt`,
+  registered in `MainApplication.kt`, `com.android.billingclient:billing:9.1.0`.
+  Hand-written because `react-native-iap` was archived in April 2026 and its
+  successor is an Expo module.
+* `mobile/src/lib/playBilling.ts` — the one door to the module and to the
+  verification function.
+* `supabase/functions/play-verify-purchase/` and `supabase/functions/play-rtdn/`
+  — **both deployed to production** (project `pmtgeydtqypwrypshhsx`).
+* `premium_subscriptions` grew `source`, `play_purchase_token` (UNIQUE),
+  `play_product_id`, `play_order_id`, `play_state`, `auto_renewing` —
+  **applied to production**. Play rows land in the SAME table Razorpay writes,
+  so no reader of the entitlement changed.
+
+**Neither function has been invoked.** This sandbox's proxy refuses
+`pmtgeydtqypwrypshhsx.supabase.co` outright (`Host not in allowlist`), so the
+deploy succeeded and nothing beyond that was exercised. Both return 500 with
+"PLAY_SERVICE_ACCOUNT_JSON is not set on this project" until the owner does
+step 3, which is the correct failure.
+
+The five things `check:billing` catches were each verified by breaking the repo
+on purpose and watching it fail: the flag flipped on, a price written into the
+client, the client and server disagreeing about base plans, the two
+`googlePlayAuth.ts` copies drifting, and acknowledgement moved before the grant.
+
+### The one non-obvious thing in there
+
+**A subscription keeps ONE purchase token for its whole life.** Every renewal
+reports the same token, which is why the row is upserted on
+`play_purchase_token` rather than inserted, and why `restore()` can safely post
+every token Play knows about on every launch. The unique index had to be made
+non-partial for that: `ON CONFLICT` cannot infer a partial index and PostgREST
+has nowhere to put its WHERE clause. Migration `20260906020100` is that fix and
+explains itself.
+
+## 2026-09-06 — Claude Code — pinch-to-zoom on every picture, and v17
+
+### Two bugs, both of which looked like features that were merely absent
+
+**The lightbox never zoomed on Android.** `DiagramCard` opened a full-screen
+`<ScrollView maximumZoomScale={3} minimumZoomScale={1} centerContent>` — and
+all three of those props are **iOS-only**. On Android, the only platform this
+app ships to, they are silently ignored. The code read as a zoomable lightbox,
+reviewed as one, and had been a static picture on every phone that ever ran it.
+
+`components/ZoomableImage.tsx` is the replacement: a hand-written PanResponder
+pinch (two touches is a distance and a midpoint), one-finger pan, double-tap to
+zoom towards the tap, bounds computed from the **drawn** picture rather than the
+window, and an elastic under-1 pinch that springs back. No new dependency —
+`react-native-gesture-handler` is not installed and pinch is the only thing that
+would justify it, and there is nothing to arbitrate with inside a `<Modal>`.
+
+`TappableImage` is the wrapper that makes a picture one tap from full screen.
+Wired into: the triple-tap / handwritten-notes diagram (`DiagramCard`),
+flashcard and imported-Anki card faces on both sides (`FlashcardsScreen`), a
+note's attached pictures and its handwritten pages (`ProgressNotesTab`, via
+`InkedImage zoomable`). `InkedImage`'s SVG was extracted as `Ink` so the viewer
+draws **the same** marks over the same picture rather than a second copy that
+could sit a few pixels off.
+
+**Replaying a chapter from Settings replayed the farewell instead.**
+`farewell` is local state in `TourOverlay`, which is mounted for the life of the
+app, and nothing reset it when the tour ended. So after one press of Skip, every
+later `startTour(chapter)` rendered `SKIP_FAREWELL` over step one: tapping
+"Focus timer" showed "It lives in here" pointing at the Settings button the
+reader had just used, and the chapter never played. Reset on `index === null`.
+
+### Both were proved by breaking them, not by reasoning
+
+The full smoke suite is very slow under this sandbox's throttled clock, so each
+flow was also driven on its own through a temporary harness (deleted):
+
+* Walkthrough replay, fix reverted: `FAIL: replaying a chapter showed the skip
+  farewell again — the chapter never played`. Fix restored: `PASS`.
+* The picture viewer opens on a tap, says how to use it, and closes —
+  screenshotted at `/tmp/viewer-open.png` before the harness was removed.
+
+Both are now steps in `preview/smoke.mjs`: *'a chapter replayed from Settings
+plays the chapter, not the farewell'* and *'a picture in a note opens full
+screen'*.
+
+**The pinch itself is not proved anywhere.** It is a two-finger gesture against
+a PanResponder; a browser standing in for that would be a test agreeing with its
+own assumptions. First real proof is a phone.
+
+The viewer step drives a **note's** picture rather than the diagram card,
+because the note's is a data URI that loads in a browser while the card's comes
+from Supabase Storage, which the sandbox cannot reach — and the card correctly
+disables Enlarge while its picture has failed to load.
+
+### v17
+
+versionCode 17 / 0.0.0.17 in `build.gradle` and `appVersion.ts`, with an
+`app_releases` row. **v16 never reached a reader** — Play blocked it on the
+Advertising ID declaration — so from a phone on 14, v17 is the update carrying
+everything since 14, and its notes say so.
+
+### The AD_ID error is NOT the manifest, and that is now measured
+
+The v16 `.aab` from GitHub release `release-193` was downloaded and unzipped:
+`com.google.android.gms.permission.AD_ID` appears in
+`base/manifest/AndroidManifest.xml`. The manifest half has been correct since
+commit `0ef51eec`.
+
+What is still outstanding is the **Advertising ID declaration form** in Play
+Console (Policy → App content → Advertising ID) and the other **active
+artifacts** in the release. Play's wording is "a manifest file in one of your
+**active artifacts**", and v14 and v15 predate the fix — so a release that
+retains one of them still errors however correct the new bundle is.
+
+**Never tick "I understand the ramifications… turn off release errors".** That
+declares the app ships WITHOUT the permission, which is no longer true, and it
+trades targeted-ad revenue for making a form go away.
+
+## 2026-09-10 — Claude Code — Razorpay is out of the app, and v18
+
+The app owner's decision, and the right one: **billing for in-app digital
+content outside Google Play Billing is grounds for removal of the app.** Ad-free
+and the notes unlocks are both digital content consumed in the app. ₹50 is not
+worth the listing, the reviews and the install base.
+
+### What was removed
+
+Deleted outright rather than switched off — a payment SDK that is merely
+unreferenced is one import away from being live again, and it is a native
+module and bytes in a shipped APK for nothing:
+
+* `mobile/src/lib/razorpay.ts`
+* `mobile/src/types/react-native-razorpay.d.ts`
+* `mobile/preview/shims/razorpay.ts` and its Vite alias and tsconfig path
+* the `react-native-razorpay` dependency
+
+`DailyAdConsent` was the app's ONLY purchase entry point, and it now shows a
+locked "Ad-free is coming soon — we are moving payments to Google Play. Nothing
+is for sale in the app until that is ready." A dialog that silently loses its
+offer reads as a bug, so it says why.
+
+### What was deliberately NOT removed
+
+**The entitlement.** `premium.ts`, `premium_subscriptions` and the admin
+panel's purchase history are untouched, so anyone who paid through Razorpay
+keeps their ad-free until it expires. `isPremiumCached()` still hides the
+locked card from them.
+
+An entitlement is orphaned by deleting the thing that READS it, not the thing
+that sold it. `check:billing`'s old section 8 said the opposite — "leave
+razorpay.ts for one release after Play Billing goes live" — and that reasoning
+was wrong; it has been replaced and the correction is written into the file.
+
+### Play Billing stays off
+
+`PLAY_BILLING_ENABLED = false`, which is what the owner asked for: the backend
+exists, and it must not work, because no Play Console product exists and no
+card has been set up. `check:billing` fails if that flag is ever true.
+**So the app currently sells nothing at all, on purpose.**
+
+### `check:payments` was inverted
+
+It used to guard the Razorpay flow (price on the server, HMAC verified before a
+row). It now enforces that flow's absence, which is a stronger rule. Verified
+by breaking the repo four ways and watching each fail: the dependency coming
+back, a file importing the SDK, `PLAY_BILLING_ENABLED` flipped true, and the
+"coming soon" explanation being dropped.
+
+Screenshotted the shipped dialog by forcing `ADS_ENABLED` true for one run —
+the prompt is unreachable in the preview otherwise, because `requestDailyAd`
+returns early when ads are off. The gate was restored immediately after.
+
+### v18
+
+versionCode 18 / 0.0.0.18, with its `app_releases` row saying plainly that
+ad-free is not for sale for now and that existing purchases are unaffected.
+
+### One pre-existing failure, not caused by this
+
+`npm run check:music` times out waiting for "Show the music player" to become
+stable. **It fails on a clean tree too** — confirmed by stashing this work and
+re-running. It looks like Playwright's stability wait never settling under this
+sandbox's heavily throttled clock rather than an app fault, but it has not been
+run to ground.
+
+## 2026-09-10 — Claude Code — four reported layout bugs, and the card cap
+
+All four came with screenshots, and three of them were the same class of
+mistake: a fixed size meeting a string nobody measured.
+
+### The topic header was clipped at BOTH ends
+
+`GradientText` draws SVG text, and **SVG text does not wrap and does not
+shrink**. At a fixed 24px, "Obstetrics & Gynaecology" is wider than the header,
+and because it is centred it overflowed both edges — the first letter under the
+back button, the last off the right of the screen. It read as broken text and
+was drawn exactly as asked.
+
+`width: '100%'` on the wrapper is why no layout check ever saw it: the wrapper
+was always the right size, and only the glyphs overflowed.
+
+It now measures its box and steps the size down; `textLength` with
+`lengthAdjust="spacing"` is a last resort once the size has bottomed out, and
+**only then** — the first attempt applied it whenever the title did not fit at
+full size, which stretched an already-shrunk title back out to the full width
+of the header. Caught by measuring, not by reading.
+
+**The browser cannot reproduce the original clipping** — Chrome's fallback font
+is narrower than the phone's Roboto, so it fit there before and after. The
+shrink is driven by character count rather than font metrics, so it applies the
+same on a device; the phone is still the real proof.
+
+### The My Progress subject row sat crooked
+
+"General Surgery and Orthopaedics" is the only subject long enough to wrap
+there, and `subjectTop` centred its two children — so on that one row the `0%`
+dropped half a line below where it sits on every other row. Measured: the
+name-to-percent offsets were `2, 12, 2, 2` and are now `0, 0, 0, 0`.
+
+### Home's subject tiles
+
+Names now get a fixed two-line box, so a one-line name starts at the same
+height as the two-line name beside it (measured: an 18px spread, now 0), and
+names over twenty characters spend their letter-spacing to stay inside two
+lines. **My first hypothesis here was wrong** and my own probe disproved it: I
+measured "% Complete", which is bottom-anchored and was already aligned. The
+names were the ragged part.
+
+### 50 new cards a day was sized for the wrong deck
+
+`NEW_PER_DAY_MAX` was reasoned from `MAX_DECK_CARDS` — the biggest deck the
+generator builds. That was true of a generated deck and false from the day Anki
+import shipped: a shared `.apkg` is two or three thousand cards, and fifty a
+day means meeting the last of them next year. Now 200, with detents at 20/50/100
+so a forty-step slider still lands on the round numbers.
+
+### Spaced revision moved above the tabs
+
+Asked for, and the right shape: what is due today does not belong to one tab's
+worth of the screen. It was below the year ring inside Stats, so a reader on
+Calendar or heading to Notes never saw that anything was due.
+
+### Still open from the same message
+
+Not started: the chat mascot reacting to right/wrong MCQ answers; the first
+generated Anki deck not reaching Supabase; a YouTube link and player in notes;
+linked note files not playing; the Anki/attendance/feature ad scripts; verifying
+the "studying now" count; the Liquid Glass audit and the black circle behind the
+music player; and the Calendar → attendance tracker rebuild with a bunk
+calculator (reference: AlphaLearn's "Smart Bunk Calculator" — Theory and
+Postings tracked separately).
+
+## 2026-09-10 (later) — Claude Code — attendance, a reactive mascot, and a dead deck parser
+
+### Attendance replaced the Calendar tab
+
+`src/lib/attendance.ts` + `components/AttendanceTab.tsx`, Theory and Clinical
+postings as two lists. Local only, in `check:cloud-ids`' LOCAL_ONLY list — a
+record of which days somebody turned up is a record of their movements.
+
+`npm run check:attendance` walks eighteen worked examples. **Floor, never
+round**: four of five is 80%, above the 75 line, and yet nothing is spare
+(4/0.75 = 5.33 → 5, which is the five already held). Verified by switching it
+to round and watching that example fail. Two more breakages caught: dropping
+the rotation cap, and unclamping `attended` from `held`.
+
+`ProgressCalendarTab` and `useCalendarEvents` are deleted.
+
+### The bot reacts
+
+New `dismay` state — **deliberately not `exclaim`**, which means the app
+failed. A wrong answer is not a failure of the app or of the reader, and
+reusing the alarmed face would teach that getting one wrong is the same event
+as the app breaking.
+
+`McqCard` gained `onAnswer`; `AskAiScreen` turns it into a transient face and
+the avatar is now tappable. Poking it alternates wide/wink and it gets fed up
+on the fourth in a run. Driven in the harness: wrong → `dismay`, right →
+`wink`, four pokes → `["wide","wink","wide","dismay"]`.
+
+### generate-flashcards has been throwing since August, and nobody could see it
+
+**This is the big one.** `flashcards` has four rows, none newer than 27 August,
+while the logs show decks being generated all day. Every run dies in
+`parseJson` with `Unexpected non-whitespace character after JSON at position
+6975`, which is long before the upsert — so readers pay the full Gemini cost on
+every open and get an error.
+
+The `[flashcards] subject=…` line that reads like a success is at line 749 and
+`callGemini` is at 836. **It is a pre-flight log.** That is why the feature
+looked alive in the logs while the table stood still, and it is worth
+remembering the next time a log seems to prove something.
+
+Fixed with `extractJson` — outermost bracket pair, scanned with string/escape
+tracking — which is what `parseMcqs` has done in the client since day one.
+Eight shapes checked; the shipped parser fails six.
+
+**It is committed and NOT deployed.** Queued as `sb-flashcards-json-parse`.
+The sandbox cannot reach Supabase, and the MCP connector takes each file's full
+text as a parameter — `index.ts` is 43 KB, and retyping that has one silent typo
+between it and breaking the flagship feature for everyone. So
+`.github/workflows/supabase-deploy-functions.yml` now deploys from the repo
+instead. **It cannot be dispatched until it is on `main`**: GitHub only
+registers `workflow_dispatch` from the default branch. That is the only thing
+standing between the fix and production.
+
+### Still not started
+
+YouTube links and an inline player in notes; linked note files not playing;
+verifying the "studying now" count; the Liquid Glass audit and the black circle
+behind the music player; and the ad scripts.
+
+### YouTube links in notes, and the linked-file bug underneath them
+
+**`kindOf` trusted the MIME type and nothing else.** A LINKED file is described
+by whatever provider the reader picked it from, and plenty report
+`application/octet-stream` for an ordinary `.m4a`, `.mp4` or `.pdf` — so the
+kind fell through to `'file'`, the reader drew a plain row with a name and a
+"tap to save a copy" footer, and no player at all. Reported as "if I link any
+file it doesn't show or play anything".
+
+`music.ts` already carries this exact lesson — *"the MIME type is a hint and the
+extension is the second opinion"* — and it had never been applied here. The
+extension is consulted **only** when the MIME says nothing (`''`,
+`application/octet-stream`), so a provider that does know stays authoritative.
+
+**Links are a new kind of attachment**, not a third mode of "Add file": a file
+is bytes to copy or point at, a link is a URL, and the copy/link question makes
+no sense for one. `lib/noteLinks.ts` + `components/NoteLinkCard.tsx`.
+
+`react-native-webview` is a **real new dependency** and the only one this
+needed. It is not optional: putting a YouTube video into the ExoPlayer already
+in the APK means extracting the stream, which breaches YouTube's terms. The
+IFrame player is the sanctioned route and it needs a browser.
+
+Three things worth keeping:
+
+* **The still comes first and the WebView mounts on tap.** A note with four
+  lectures would otherwise mount four browsers on open. It also means the
+  reader decides when anything reaches YouTube at all.
+* **`youtube-nocookie.com`**, and no fetch anywhere — the thumbnail is a static
+  URL, so nothing tells YouTube which videos a student is studying from beyond
+  the images requested.
+* **`hqdefault`, never `maxresdefault`** — the latter is missing for a great
+  many older videos, which is exactly the lectures students get sent.
+
+`npm run check:note-links` covers the six YouTube URL shapes, four look-alikes
+that must NOT match, `javascript:`/`file:` being refused, and timestamps. Its
+first version passed for the wrong reason: the "nothing is fetched" assertion
+matched this file's own comment saying "no fetch, no oEmbed lookup". Stripped
+comments, same as `check:native-update` had to.
+
+### The black circle in the music player
+
+Reported as "what the fuck is black circle behind music player". It is the
+transport's own play button with no track loaded: it filled with
+`withAlpha(colors.text, 0.12)` and kept `colors.primaryText` for the icon —
+on a dark theme, a near-black disc with a black triangle on it, sitting between
+two outlined circles. The play mark was invisible inside its own button.
+
+The rule it broke is one the theme already states: **`primaryText` is the ink
+for `primary`**, and painting it on anything else is a pairing nobody checked.
+The two states are now two controls rather than one control with a swapped
+background — filled and legible when there is something to play, the same glass
+circle as its neighbours when there is not. A filled button that does nothing is
+also a lie about what it will do.
+
+`check:glass-radius` caught the first attempt: `styles.playControl` already
+carried `borderRadius: 22` and I passed the prop as well. A glass surface draws
+its fill, rim, counter-rim and shader on ONE curve, and two copies of the number
+is how a corner ends up looking cut. Separate style for the glass variant.
+
+**The wider Liquid Glass audit is NOT done** — that is the rest of what was
+asked ("read articles and open-source projects, fix it if our implementation is
+shit"), and it is a bigger piece than one control.
+
+### Two checks fail on a clean tree, and both look like the harness
+
+`check:music` and `check:page-refs` both time out waiting for a control to
+become "visible, enabled and stable". Confirmed by stashing all work and
+re-running: they fail without any of it. It looks like Playwright's stability
+wait never settling against the app's continuous animations (the subject-card
+foil, the gradient heading) under this sandbox's heavily throttled clock —
+`force: true` is what every probe written today needed. Not run to ground.
+
+### The Supabase connector expired mid-session
+
+Token expired while verifying the presence table, so the "studying now" count
+could NOT be checked against live data and the `generate-flashcards` deploy
+could not be attempted through the connector either. Both need it back.
+
+---
+
+## 2026-09-11 — Claude Code — glass where the surfaces actually are, the unlock link, attendance working days
+
+Eleven changes landed on `main` this session, each as its own PR because a
+direct push is blocked on this branch. What follows is the part worth reading
+before touching any of it again.
+
+### The Liquid Glass audit was looking at the wrong file
+
+The owner's verdict on the screenshots was blunt and correct: it did not look
+like Apple's material. I had spent the audit inside `GlassSurface.tsx`,
+improving a component that **is rendered in ten places**, while **98 surfaces
+hand-roll `colors.card` and `colors.border` directly**. Every fix I made was
+real and reached almost nothing.
+
+The fix that mattered was three lines in `theme/presets.ts`: under the glass
+material, `cardElevated` lifts 0.14 towards the text instead of 0.08 and
+`border` lifts 0.42 instead of 0.18. A palette reaches every surface in the app
+whether or not that surface knows what material it is. **Audit where a thing is
+used before auditing how it is drawn** — that is the whole lesson, and it cost
+most of a session.
+
+Four real shader bugs were also fixed in `GlassView.kt`, and one of them was
+mine: `Shader.FILTER_MODE_LINEAR` does not exist, the constant is on
+`BitmapShader`, and it failed all three Android builds. `check:glass-shader`
+now pins it — with comments stripped, because my own warning comment about the
+constant matched the assertion looking for it.
+
+### The wallpaper is Home-only on purpose
+
+I read the single mount point as a bug and was ready to fix it. It is the
+owner's decision: a wallpaper behind the question bank "coz distraction". The
+reasoning is now a long comment at the top of `WallpaperBackground.tsx` so the
+next reader does not re-open it.
+
+### Ad-free is bought on a website now
+
+`lib/unlock.ts`, `components/UnlockCard.tsx`. The Play Billing button is gone;
+the card links out to `mbbsqbank-questor.lovable.app/unlock` and the app only
+**honours** an entitlement it reads back. Nothing is priced, granted or
+acknowledged on the client, which is what `check:billing` and `check:payments`
+hold.
+
+This was researched badly first and then properly, and the difference matters:
+Google's **external payment links programme is Japan only**. India has *user
+choice billing*, which is a different thing — an alternative processor shown
+**beside** Play's, not a link out of the app. The "India by September 2027"
+date I first gave was not in any primary source I could reach. What settled it
+for the owner was a competitor doing exactly this and still being listed. That
+is evidence about enforcement, **not** a reading of the policy, and the file
+says so in both directions rather than pretending the risk is zero.
+
+### Attendance counts working days
+
+Taken from the competitor's tracker the owner sent — one idea, not the screen:
+*holidays reduce total working days count*. `remaining` was
+`totalDays - held`, so a 28-day block from a Monday claimed **eight days left
+where four is right**, and the "how many can I still miss" cap reads straight
+off that number. `workingDays()` counts Sundays rather than dividing by seven,
+because a 28-day block holds four or five depending on the weekday it starts.
+`dayOfRotation()` answers "Day 5 of 24" off the calendar, so it survives a week
+of not marking anything. The toggle is **off by default**: plenty of postings
+run through the weekend.
+
+Deliberately not taken: Timetable, Calendar tab, Logbook, semester filter. The
+Calendar tab was *replaced* by this feature; bringing it back undoes a decision.
+
+### One invented column gated an entire queue
+
+`sb-release-18` carried `insert into app_releases (..., live_on_play, ...)`.
+There is no such column — it was removed when the update prompt started asking
+Google Play directly, which is a better design for the reason
+`lib/appUpdate.ts` explains at length. The insert died `42703`, and because the
+queue step exits 1 on any failed job, **one wrong column name would have gated
+every job queued behind it**. `CLAUDE.md` and `40-releases.md` both still told
+you to set that flag, which is where I got it from. Both corrected.
+
+That rules file sits *hard* against Antigravity's 12,000-char cap and was
+already 54 over at HEAD, so `check:agent-docs` was failing before I touched it.
+Its own last section warns that adding a paragraph to it breaks the APK. If you
+add to it, take something out.
+
+### versionCode: ask the console, twice bitten
+
+**17 is what Play serves; the repo carries 18 and is pinned there** until the
+owner uploads. The repo had drifted to 23 because CI built 19-23 and none was
+ever uploaded. A green build is not a published one and the repo cannot tell
+the difference. This is the second time this number has been wrong in the same
+way.
+
+### Where things stand
+
+* All nine workflows are on `main`. `supabase-tasks` is green with zero pending
+  jobs. `ad-videos` run 16 finished green (45 videos); `ads-5` was dispatched
+  after the attendance reel's copy changed.
+* The `app_releases` row for 18 carries **17 notes** — the union of the drafts
+  written for 18, 19 and 20, since those were cumulative and only one is being
+  uploaded.
+* **The Patient Simulator must stay out of the native app** until the owner
+  says otherwise. `scripts/no-simulator-check.mjs` holds that, wired into all
+  three Android workflows.
+* The OpenAI key from commit `f50c8e8` is still live. **Only the owner can
+  revoke it** — never hand an agent a login there.
+
+---
+
+## 2026-09-16 — Antigravity — Release v21: monthly vs overall attendance, theory total classes, clinical holiday calendar, 50k anki, ads fix
+
+**DONE**
+- **Rewarded Ads Only**: Verified AdMob configuration uses strictly `RewardedAd` (`ca-app-pub-3177287525203129/6765465304`). Decoupled GDPR consent with 3.5s timeout race; `showRewardedAd()` awaits loaded ad up to 8s; daily cooldown slot preserved on playback failure.
+- **Theory Attendance Overhaul**:
+  - Medical college 1-hour lecture alignment: removed "+2" 2-hour block buttons.
+  - Total planned classes: configurable during Add Subject and via quick preset chips (`[60] [80] [100] [120] [150]`) on subject cards. Drives live "remaining classes" and target calculations.
+  - Monthly vs Overall Attendance: added monthly bucket storage (`monthly[YYYY-MM]`) to `mobile/src/lib/attendance.ts`. UI displays dual percentage badges (`OVERALL: 86%` and `SEP: 88%`) and distinct subtitle counters per subject, plus month vs overall projection in the Bunk & Target Simulator.
+- **Clinical Postings Attendance**:
+  - Interactive rotation calendar with weekday headers (Mon-Sun), official gazetted holidays, and tap-to-toggle rain/event holidays that dynamically reduce working days.
+- **Anki Deck Import**:
+  - Increased limit to 50,000 cards using chunked SQLite storage (`setMany`, `getMany`, `removeMany`) at 250 cards/chunk.
+- **Browse & Media Fixes**:
+  - Always-visible search bar in leaf question screen.
+  - InkedImage and PDF modal white backing prevents black screen rendering.
+- **Version 21 Bump**:
+  - Bumped to `versionCode: 21` / `versionName: "0.0.0.21"` in `mobile/android/app/build.gradle`, `appVersion.ts`, and `version-check.mjs`.
+  - Supabase `app_releases` table row 21 created with full changelog.
+  - Verified via `npm run check:version`, `npm run check:attendance` (all 18 worked examples pass), and `npm run typecheck`.
+
+**NEXT**
+- Monitor GitHub Actions release workflow for `main` build cutting production APK/AAB for versionCode 21.
+
+**DO NOT**
+- Do not re-add 2-hour theory block buttons; MBBS lectures in Indian medical colleges are scheduled strictly in 1-hour slots.
+- Do not modify `attendance.ts` above the `// ------` storage line without checking `scripts/attendance-check.mjs` regex stripper.
+
+
+---
+
+## 2026-09-18 — Claude Code — 40 case sheets, the general examination in photographs, the rewarded ad, and 39 broken pictures
+
+**DONE**
+
+### 39 diagrams were pointing at files that did not exist
+
+25 plates behind 39 `question_diagrams` rows carried a `public_url` for a file
+the `diagrams` bucket did not hold. Every one of the files was already in
+`public/diagrams/` in this repo.
+
+The cause is structural and will recur unless the shape is understood: writing
+a row and uploading the plate go by **two different routes, and only one works
+from a sandbox**. The Supabase MCP connector hands an agent SQL; the egress
+gateway answers 403 to the CONNECT for the project host before any credential
+is offered, so nobody can PUT a JPEG from here. A session generates a plate,
+commits it, writes the row with the URL it is *going* to have — and the upload
+never happens.
+
+`supabase-tasks.yml` grew a step that uploads any plate in `public/diagrams/`
+the bucket lacks. Generic rather than a list of paths, idempotent, POSTs rather
+than PUTs so the no-overwrite rule is the server's too, and it prints the
+referenced-but-missing table whether or not it uploads anything. **Run it after
+any session that adds plates.** Verified: 310 → 351 objects, and the
+referenced-but-missing count went 25 → **0**.
+
+A missing row shows nothing, which is the designed answer. A row pointing at
+nothing shows a failure. Those are not the same bug.
+
+### The rewarded ad did not play when the reader tapped OK
+
+Reported as "ads not playing immediately or after sometime only playing". Four
+defects in `lib/ads.ts`, each of which typechecks, lints and bundles:
+
+1. Readiness was a module-level `rewardedLoaded` boolean beside a module-level
+   `rewarded` instance, and the two could describe **different ads**.
+   `showRewardedAd` replaced the instance mid-preload; the orphan's LOADED
+   listener then set the flag, so the flag said "ready" about an ad nobody held.
+2. A failed preload was **never retried** — one transient failure at launch and
+   the whole session paid a cold load on every tap.
+3. The 8s wait **tore down the LOADED listener**, so an ad arriving at 8.1s was
+   discarded *and* the module still believed none existed. Slow for ever.
+4. The first preload raced the consent flow and nothing re-preloaded after it.
+
+The loaded ad is held **by identity** now (`readyAd` / `pendingAd`), there is a
+bounded retry (5s, 20s, 60s), the late arrival becomes the next preload, and
+consent stays decoupled behind its 3.5s race — it is simply asked again
+afterwards. `npm run check:ads` pins all of it and says plainly that it reads
+the source, because nothing in a sandbox can reach AdMob.
+
+### The general examination now shows a photograph of every sign
+
+`lib/generalExamSigns.ts` (19 signs), `components/GeneralExamSigns.tsx`, and
+`.github/workflows/exam-sign-images.yml`. Rendered collapsed inside the Guide
+tab of **every** proforma — one shared block, because there is one general
+examination, and because every source sheet recites the same PICCKLE line.
+
+**The first fetch run was wrong for five of nineteen signs, and badly wrong.**
+"Clubbing" returned a portrait of a real, identifiable film-maker.
+"Platonychia" returned a Roman bronze nail cleaner. "Palmar erythema" returned
+chemotherapy hand-foot syndrome. Commons full-text search matches the file
+*page*, so any page mentioning the word ranks for it.
+
+This repo had already learned that lesson on the question diagrams — a keyword
+search cannot choose a clinical picture, and a plausible wrong one is worse
+than a blank. The fix is the same one: **the filename must corroborate**. Every
+sign carries `titleMustContain`, at least one word of which must be in the
+Commons file title, and the gate runs *before* the licence check because a
+wrong picture with a perfect licence is still wrong. All thirteen images from
+the ungated run were deleted, including the ones that happened to be right.
+
+10 of 19 signs now have a verified-correct photograph, in the bucket under
+`signs/`. The other 9 render as text that says so, which is correct. **Only
+public domain and commercial-use CC**; NC and ND refused; attribution stored
+and displayed under the picture.
+
+### 12 case sheets → 40
+
+`lib/proformas/{ent,ophthalmology,surgeryShort,surgeryLong,paediatrics,orthoObg,medicine}.ts`,
+spread into `CLINICAL_PROFORMAS`. General Surgery 14, General Medicine 10,
+ENT 5, Paediatrics 4, OBG 3, Orthopaedics 2, Ophthalmology 2.
+
+Built from the fifteen proforma PDFs the owner sent. A department per file
+because `clinicalProformas.ts` had passed 290 KB in one array and was becoming
+the only file anybody could edit at a time.
+
+Two structural decisions worth keeping:
+
+- **The general examination is not repeated per case.** Every source sheet
+  recites the same PICCKLE line; the app draws it once, with photographs.
+  Fourteen copies would be fourteen things to keep in step.
+- **`swelling_proforma` holds the lump framework once.** Eight short cases are
+  the same examination applied to a different site, and the source sheets
+  recite the identical thirty-line sequence each time.
+
+All 27 `diagramPath` values were checked against `storage.objects` directly.
+None is broken.
+
+The picker is grouped by department now with an empty state — forty flat rows
+was the congestion the owner reported.
+
+**BLOCKED / NOT DONE — read this before assuming it works**
+
+- **Nothing was typechecked, linted or screenshotted this session.** `npm ci`
+  fails: the proxy returns 403 for registry tarballs (`zod-validation-error`
+  and `zod` genuinely, then everything alphabetically once a throttle kicked
+  in). So `node_modules` does not exist, and `tsc`, `eslint`, `check:smoke` and
+  `preview/shoot.mjs` could not run. The checks that DID run are the
+  dependency-free ones: `check:ads`, `check:exam-signs`, `check:proformas`,
+  `check:supabase-queue`. **Run `npx tsc --noEmit` and `npx eslint . --quiet`
+  on a machine with a working registry before cutting a build.** The ads
+  rewrite and the picker grouping are the two changes most worth a real
+  typecheck.
+- `ortho_casesheets-1.pdf` and `proforma_medicine.pdf` are **CamScanner scans
+  with no text layer** and could not be read. The orthopaedic proforma is
+  written from the standard sequence (Apley, Maheshwari) rather than from the
+  owner's sheet. If his sheet differs, his sheet wins.
+- 47 plates sit in the bucket with **no `question_diagrams` row**, so they are
+  invisible in all three apps. Same class as the 2026-09-02 fix. Each needs
+  matching to its bank question by hand — never blind, never by keyword.
+- 9 signs still have no photograph because nothing passed the title gate.
+  That is the correct outcome. Do **not** loosen the gate.
+
+**DO NOT**
+
+- Do not loosen `titleMustContain`, and never put a generic word ("nail",
+  "hand", "eye") in one. `check:exam-signs` fails if you do. Every one of the
+  five wrong images would have passed a generic gate.
+- Do not write a `question_diagrams` row from a sandbox without queueing the
+  upload. The row will point at a 404 and nobody will notice for weeks.
+- Do not put `rewardedLoaded`-style module flags back beside an ad instance.
+  Readiness belongs to the instance.
+- Do not repeat the general examination inside a proforma's `sections`.
+
+### Later the same day — the scanned sheets, the two reference pages, 45 cases
+
+**The ortho scan was read after all, and the technique generalises.**
+`ortho_casesheets-1.pdf` is a CamScanner scan with no text layer, and OCR is
+unavailable here (tesseract, poppler-utils, pypdf, pip — all refused by the
+proxy). But a scanner embeds each page as a `/DCTDecode` image XObject, and **a
+DCTDecode stream is a JPEG byte for byte**, so the 22 pages come out verbatim
+and can simply be read as images.
+`.agents/sources/proformas/extract-page-images.py` does it and is committed.
+
+Six ortho cases came out: CTEV, chronic osteomyelitis, non-union + malunion,
+peripheral nerve injuries, OA knee. Orthopaedics went 2 → 7, total 40 → 45.
+The transcription is **by eye, not machine** — where a proforma disagrees with
+the owner's sheet, the sheet wins.
+
+**Four PDFs are still unread and they are NOT scans.**
+`CLINICAL_CASES_GYNAECOLOGY`, `CLINICAL_CASES_OBSTETRICS_1`, `OG_cases`,
+`OG_cases-1` all returned 0 bytes because `extract-pdf-text.py` does not handle
+**PDF 1.5 object streams** (`/ObjStm`) — the objects are inside a compressed
+stream and the regex never sees them. Teaching it to inflate `/ObjStm` first
+unlocks all four, and all four are OBG, the thinnest department at 3 cases.
+**That is the highest-yield small task left in this repo.**
+`proforma_medicine.pdf` is the one true scan still unread; use
+`extract-page-images.py`.
+
+**Two reference pages, under the search in the case picker** (the owner moved
+them there from above it): `GeneralExamSheet` mounts the SAME `GeneralExamSigns`
+component the Guide tab does — not a copy — and `LabValuesSheet` over the new
+`lib/labValues.ts`, ~100 values with conventional AND SI units, age variants,
+and critical values marked separately.
+
+**`check:edges` caught a real bug in ChatGPT's v23 `NoteLinkCard`** once the new
+modals made me run it: its full-screen modal padded by a hardcoded 48, so the
+title and close button sat under the clock on any cutout phone. Fixed.
+
+**The depth gap is measured and is the main remaining quality problem.**
+ChatGPT's four v23 system proformas: median 539 lines. The other 41: median 136.
+The eight commonest long cases are listed in deepening order in
+`CHATGPT_HANDOVER.md` §8.2.
+
+**Still nothing typechecked.** `npm ci` is blocked. See the
+`node-modules-unreachable` blocker in `blocked.json`.
+
+## 2026-09-18 — v23 proforma expansion, unpublished
+
+76 cases (23 added), three licensed clinical photos, corrected teaching points, normal-lab sheet access and drawer/sign rendering fixes. See `PROFORMA_V23_AUDIT.md` for source mapping, validation and remaining PDF audit gaps. TypeScript, ESLint, targeted checks and Android JS bundle pass. No fresh native screenshots, APK or AAB. Automatic approval review blocked direct push to public main/release side effects; obtain explicit approval before publishing, and do not bypass through another API. A recovery patch is saved outside the ephemeral checkout. User requests main only; older branch instructions are superseded for this task.
+
+2026-09-18 follow-up: User explicitly approved pushing to public main and v23 release/screenshot workflows. Terminal push lacks credentials; connected GitHub publication follows. Duplicate audit confirms 76 entries with unique IDs/titles but overlapping general frameworks and focused cases; do not claim 76 unrelated conditions. See PROFORMA_V23_AUDIT.md.
+
+## 2026-09-18 — debug-only Google sign-in policy
+
+Standing user instruction: no Google login at startup or in My Progress for the debug APK only. Internal and normal releases retain authentication. `mobile/src/lib/authMode.ts` is explicitly disabled by android-debug.yml because its optimized preview bundle has __DEV__ false. Both UI locations hide Google controls and bypass the gate; the Google service refuses SDK sign-in when disabled and does not save fake verification. Runtime auth-mode tests cover default production, local dev and optimized debug; TypeScript, ESLint, keyboard and edge checks pass. Device verification remains pending. Preserve this build distinction in future releases.
+
+2026-09-18 verification: ef09a62 passed release 276, internal 202 and debug 192 workflows. Previous proforma screenshot run failed after tapping the Normal Values text near the bottom overlay; no laboratory screenshot verified. Driver now targets the actual Show/Hide accessibility control, moves it into an unobstructed viewport region, checks expansion, and removes stale output PNGs before capture. Re-run remains required; do not present old 07/08 images from the failed run as fresh.
+
+## 2026-09-19 — screenshot-driven clinical UI fixes
+
+User requests: expand laboratory abbreviations; add grading references; compact the bedside AI suggestions; put underlined ask/examine/record prompts before guide theory with larger type; brighten My Progress; use PICCLE consistently; publish updated builds.
+
+Implemented: differential count has full cell names, ranges and roles; lab test names and units are expanded; shared clinical references cover New York Heart Association classes, clubbing, pitting oedema and Glasgow Coma Scale. Clubbing/oedema grades render as separate rows in General Examination. Clinical grading conventions and recording limitations are stated; primary reference links remain in the app. Guide checklist prompts precede explanation, use 16/24 type and underline the action; semicolon splitting respects parentheses and retains source text. AI chips use a non-growing horizontal row with 44dp targets. Progress ring is a static View rather than a disabled Touchable that applied 0.45 opacity. PICCLE has six headings; koilonychia is in Nails.
+
+Twelve attributed original photographs are bundled unchanged for offline use (nine existing repository photos plus the three already reviewed Commons originals); captions and attribution stay visible. Seven signs still lack a verified photograph: no fabricated substitutes were added. Missing-photo UI is a compact text line.
+
+Verification: TypeScript, ESLint, sign/keyboard/edge/version checks, guide parsing/unit expansion checks and production Android bundling passed during implementation. Screenshot workflow now waits for the exact commit's real debug APK instead of patching an older native shell: bundled image resources must match the APK. Driver additionally captures compact AI controls and My Progress. CI/device screenshots and final build outcomes must be checked after publishing. Debug-only Google exemption is preserved; internal/release retain sign-in. Version remains 23.
+
+Sources for added grading material: American Heart Association classes-of-heart-failure page; NCBI Bookshelf NBK539713 and NBK554452; glasgowcomascale.org/what-is-gcs/; MedlinePlus blood-differential page. This update does not claim an exhaustive revalidation of all older laboratory interpretation advice or of every PDF line.
+
+
+## 2026-09-19 — v23 clinical UI release verified
+
+DONE: Clinical UI update c4c90c0 and screenshot assertion follow-up 403675e are published on main. Latest successful builds: debug-196 (35414415713), internal-206 (35414415653), release-280 APK/AAB (35414415656). Native screenshot run 35414415658 passed against the matching debug APK and committed captures as 64ac0e2. The first run's screenshot 09 captured the underlying form too early; the driver now waits for "Normal Values & Grading", searches differential count and requires "Neutrophils" before capture. The stronger run passed. Compact AI buttons and normal-opacity Progress card were visually verified. Saved screenshots are supplied in chat.
+
+HALF-DONE: No new implementation remains for this clinical UI request. Earlier full-PDF line-by-line auditing and unverified-photo gaps remain as documented; this update does not claim to close them.
+
+NEXT: Use release-280 for normal APK/AAB, internal-206 for signed internal testing, debug-196 for login-free preview. Keep version 23 until the next Play upload requires a bump. The same app changes were also successfully built as debug-194/internal-204/release-278 before the stricter screenshot assertions.
+
+DO NOT: Treat the old screenshot 09 as proof the lab sheet opened. Call the proformas 76 unique entries, not 76 unrelated diseases: master frameworks overlap focused cases. Keep Google sign-in disabled only in debug; internal/release retain it. Preserve main-only publication and the separately merged simulator/deployment work from fb8fbce. Twelve real attributed photos are bundled; seven signs still have no verified photo.
+
+
+## 2026-09-19 — ChatGPT/Codex — v23 clinical UI release, screenshots, and display preference
+
+### DONE
+
+- Published the v23 clinical UI improvements on `main`: expanded laboratory names and differential-count explanations; New York Heart Association, clubbing, pitting oedema and Glasgow Coma Scale grading; larger guide text with the ask/examine/record prompt underlined before its explanation; PICCLE spelling throughout; koilonychia under Nails; compact Bedside Clinical AI suggestion buttons; brighter My Progress card; and twelve attributed real clinical photographs bundled for offline use.
+- Preserved the authentication rule: **debug only** bypasses Google sign-in at startup and in My Progress. Internal and normal release builds retain Google sign-in.
+- Verified 76 proforma entries have unique IDs and titles. Some master frameworks overlap focused cases, so describe them as 76 unique entries, not 76 unrelated diseases.
+- Successful build releases: `debug-196`, `internal-206`, and `release-280` (APK and AAB). Native Android run `35414415658` passed using the matching debug APK.
+- Strengthened the native screenshot driver: it must see “Normal Values & Grading”, search for “differential”, and find “Neutrophils” before capturing. This fixed the earlier false-positive screenshot that showed the clerking page beneath the unopened sheet.
+- Visually verified and saved four user-facing screenshots: expanded differential count, clinical grading/NYHA, compact bedside AI controls, and the brighter My Progress card.
+
+### USER DISPLAY PREFERENCE — KEEP FOR CLAUDE CODE, ANTIGRAVITY, AND CODEX
+
+When Sabari asks for screenshots, **show the actual images inline inside the chat as visible image cards**, the same way Claude Code shows rendered previews. Do not provide only filenames, download links, sandbox links as prose, or say that screenshots exist elsewhere. Use rendered Markdown image embeds in the final response, with a short label above each image. Links may be included additionally for downloads.
+
+### NEXT / LIMITS
+
+- No further implementation remains for this v23 clinical UI request.
+- The earlier complete line-by-line PDF audit and seven signs without a verified photograph remain separate documented work. Do not claim those are complete.
+- Keep release publication on `main`, preserve the concurrent simulator/deployment work, and update both this handoff and `.agents/state/resume-notes.md` after future sessions.
+
+
+## 2026-09-19 — Play Console advertising ID declaration checked
+
+Sabari supplied the Play Console Advertising ID screen. ORBIT already declares `com.google.android.gms.permission.AD_ID` directly in `mobile/android/app/src/main/AndroidManifest.xml`. Version 23 targets Android 36, and the release build serves live AdMob ads. All release, internal and debug workflows run `check:version`, which fails if the permission is absent or explicitly removed. Release `release-280` built successfully from commit `403675e` after that gate passed.
+
+Play Console action: keep “Does your app use advertising ID?” set to **Yes**. Leave the “I understand the ramifications … turn off release errors” checkbox **unchecked**; that checkbox is a waiver for apps that intentionally omit the permission. Save the declaration and send the pending change for review through Publishing overview. No app-code correction or new binary is required for this screen.
+
+## 2026-09-22 — ChatGPT — notes autosave/fullscreen + native Anki media fix
+
+Product commit: `e2103260a933a51ac4d8e6567bad0c05b4d46ad6`.
+
+### Notes
+- The green ORBIT video controls remain unchanged.
+- YouTube's own iframe/native fullscreen path is disabled (`fs=0`, no iframe
+  `allowfullscreen`, and all note WebViews use `allowsFullscreenVideo={false}`).
+  ORBIT's dedicated fullscreen modal is now the only fullscreen path.
+- Notes keep a device-only crash/recreation draft under
+  `orbit:user-note-draft:v1:<noteId>`. Drafts debounce while typing, flush when
+  Android backgrounds/closes the editor, recover when reopened, and are cleared
+  after an intentional Save. They do not sync to a server.
+
+### Imported Anki media
+- `ApkgModule.extractMedia` now returns the exact filename Android wrote for
+  each media zip index.
+- `importedDecks.ts` consumes that index→filename map instead of reconstructing
+  the filename independently in JavaScript. This removes URL-decoding,
+  Unicode/case, and sanitisation disagreements that could leave cards pointing
+  at nonexistent local image paths.
+- The renderer already supported front/back Anki images and tap-to-zoom; this
+  fix is at the native extraction→stored URI boundary.
+- Existing decks imported before this fix may retain old saved URIs. Re-import
+  an affected deck with this build to regenerate its cards/media paths.
+- No image-bearing affected APKG was available in the connected files for a
+  real-device reproduction. CI proves compilation/checks; the specific media
+  behavior still needs confirmation by re-importing a real affected deck on
+  Android.
+
+### Published builds from the product commit
+- Signed Play/direct release: `release-515`, versionCode 23 / 0.0.0.23.
+  Assets: `app-release.aab`, `app-release.apk`. Live ads enabled.
+- Internal: `internal-316`, asset `app-internal.apk`. No ads.
+- Debug/preview: `debug-322`, asset `app-preview.apk`. No ads.
+- Android release run `35747164272`, internal run `35747164383`, and debug
+  run `35747164269` all completed successfully. Web run `35747164326` also
+  completed successfully.
+
+## 2026-09-25 — ChatGPT follow-up for Claude and Antigravity
+
+- Fixes: imported media fallback filename/URI, schema 18/v3 SQLite unicase
+  temporary-copy compatibility, and note Save failure/draft write ordering.
+- `npm run check:apkg` now covers real v1/v2/v3 APKG fixtures; all pass.
+- Re-import older affected APKGs to restore saved card image references. Do
+  not silently delete existing cards or study progress.
+- Native image appearance still needs device verification with a real deck.
+- Retain pinned versionCode 23 until the owner confirms Play upload.
+
+Builds from `f612990f0cd0b124cc55b13494e61a415781eee6` all passed:
+release `release-522` (AAB + APK), internal `internal-323` (APK), debug
+`debug-329` (APK); web CI passed too. The real MF5429 deck was not supplied,
+so a physical-device re-import/photo check is still outstanding.
+
+## 2026-09-25 — external file entry handoff
+
+- Samsung My Files screenshots: PDF chooser already offers Orbit, APKG file
+  manager entry requested. Added MIME-only VIEW filters for opaque content URIs
+  (binary, ZIP, Anki) and SEND filters for APKG/PDF. Generic binary MIME may
+  surface Orbit for unrelated files; filename is checked during import.
+- Native launch handler now consumes VIEW/SEND with read grant, captures PDF
+  MIME, ignores OAuth callback schemes, and emits foreground incoming-file
+  event. MainActivity updates its intent before notifying native listeners.
+- App Shell owns staging; ready navigator routes to Notes; incoming APKG auto
+  imports all included decks and starts studying; PDF opens the Notes viewer.
+  In-app APKG picker still permits selection. Follow up with on-device tests of
+  Samsung My Files and shared APKG/PDF, including warm launch.
+- Earlier v3 import/media and note draft fixes are included in this source tree;
+  `check:apkg` passes all v1/v2/v3 fixtures. Previously imported image decks
+  require re-import, and appearance of a real affected deck is not device
+  verified. VersionCode remains 23.
+- Product commit `2b6258e39c019c7bc27ad93352cee34e523da3f5` built cleanly:
+  release `release-523` (AAB + APK; run 36096381296), internal `internal-324`
+  (APK; run 36096381267), debug `debug-330` (APK; run 36096381253), and web
+  run 36096381287. All three Android tags resolve to the same product commit.
+  Physical Samsung chooser / PDF viewer / imported image deck remain to check.
+
+## 2026-09-25 — Home and PDF customization follow-up
+
+- Implemented draggable PDF editing palette with three-line 40dp handle,
+  normalized persisted placement, bottom navigation clearance, and bounds on
+  orientation/layout changes. The attached screenshot's single mark was never
+  attached to a drag handler before this change.
+- `Reorderable` now keeps its drag responder stable through per-frame horizontal
+  alignment updates, releases scroll lock on termination, and continues a long
+  press into the same-finger move. Subject tile touch ownership no longer gets
+  overwritten by its parent; interrupted grid drags reset their offsets.
+- `?screen=pdf-tools-demo` mounts the actual PDF reader under the preview's
+  native-files shim. `.github/workflows/customization-visual.yml` captures
+  before/after screenshots and checks touch movement/persistence. Device gesture
+  feel remains unverified until installed on Android.
+
+## 2026-09-25 — version 24 for Claude and Antigravity
+
+- Owner says version 23 was uploaded; requested versionCode 24. Gradle,
+  appVersion and version-check are 24 / 0.0.0.24. Supabase app_releases row 24
+  exists with four notes; no Play Console upload was performed here.
+- CI touch run 36111594836 found the actual Home reorder save race. The card
+  moved but the position setter wrote the previous order to storage afterward.
+  `useHomeOrder` now reads a synchronously updated order ref in that setter.
+- Ignore builds from commit 82441c46 (release 36111594805, internal
+  36111594830, debug 36111594851): they do not include the persistence fix.
+  Use only a subsequent v24 build from the follow-up commit after its visual
+  workflow passes, and capture its exact release tags here.
+
+## 2026-09-25 — Version 24 verified customization (current handoff)
+
+- Product commit `6c80453bb232999070aeeb45338c41c6aef0eff0` includes
+  versionCode 24 and its live app_releases row with four notes, Home order
+  persistence fix, PDF toolbar initial-position fix and visual check.
+- Browser touch workflow 36112331283 passed on that commit and has four
+  before/after screenshots. It verifies saved Home order, PDF move and PDF
+  position after reopening. Still check an Android phone's gesture feel.
+- Only use Android artifacts from release run 36112331297, internal run
+  36112331268 and debug run 36112331244 (verify successful tags/assets).
+  Previous v24 runs predate the final PDF fix. App has not been uploaded to
+  Play Console by this task.
+
+### Final v24 build links
+
+- `release-527`: AAB https://github.com/Sabharivarshan111/gmck/releases/download/release-527/app-release.aab ; APK https://github.com/Sabharivarshan111/gmck/releases/download/release-527/app-release.apk
+- `internal-328`: https://github.com/Sabharivarshan111/gmck/releases/download/internal-328/app-internal.apk
+- `debug-334`: https://github.com/Sabharivarshan111/gmck/releases/download/debug-334/app-preview.apk
+- Runs 36112331297 / 36112331268 / 36112331244 all completed green and
+  all tags point to product commit `6c80453bb232999070aeeb45338c41c6aef0eff0`.
+  Web and visual checks also passed. AAB is ready for owner Play upload; this
+  task did not submit it to Play.
+
+## 2026-09-25 — v24 Home widgets (newer product commit)
+
+- `b9fb2359551777b26665134a0b2ec2470d1ba0cd` adds a five-page swipeable
+  Home card for Welcome, question progress, resume/note, focus time/sessions,
+  and posting attendance/reminders, plus a second quick-action page. Previous
+  and next buttons work alongside swipes; Home refreshes focus data on focus.
+- Completed focus sessions are newly counted starting v24. Existing recorded
+  total minutes are retained; time spent outside completed Pomodoro sessions
+  is not counted. Last question is saved only on deliberate interaction.
+- Daily attendance reminder is opt-in under the existing notification master
+  switch, defaults off, uses the chosen hour, and is capped at one per day.
+  The v24 `app_releases` row now has five notes covering Home and prior fixes.
+- Visual run `36169940679` and release/internal/debug runs
+  `36169940786 / 36169940683 / 36169940717` target this commit. Confirm
+  success and capture final asset links; prior `release-527`, `internal-328`,
+  `debug-334` do not contain the Home widget follow-up. No Play upload done.
+
+### Verified latest v24 artifacts
+
+- Release `release-530` (run `36169940786`) succeeded:
+  https://github.com/Sabharivarshan111/gmck/releases/download/release-530/app-release.aab
+  and https://github.com/Sabharivarshan111/gmck/releases/download/release-530/app-release.apk
+- Internal `internal-331` (run `36169940683`) succeeded:
+  https://github.com/Sabharivarshan111/gmck/releases/download/internal-331/app-internal.apk
+- Debug `debug-337` (run `36169940717`) succeeded:
+  https://github.com/Sabharivarshan111/gmck/releases/download/debug-337/app-preview.apk
+- All tags resolve to `b9fb2359551777b26665134a0b2ec2470d1ba0cd`.
+  Visual `36169940679` and web `36169940725` passed. AAB not uploaded to Play.
+
+### Daily Home card continuation (2026-09-26)
+
+Current product commit `fe03a978bfa2f4c88cd8f850fffc46c08bc4d5bb`. Shared Supabase 42-slot/year/kind cache deployed (private `daily_study_cards`, Edge `daily-study-card` v2). Home carousel includes MCQ, picture, Resume (year validation fixed), progress, study, attendance; small Bank tile replaces duplicate Resume. First live Second Year cards generated; latest visual and Android builds still require verification. See HANDOFF.md.
+
+### Final daily Home visual and builds
+
+Native source `d4e0dd2d3fedfa1b9fde7553dcae4e867660ebd4`, Edge v3, screenshots commit `7458277e6a50a43e4f7bfe6c93183e625d369e92`; visual run `36213138445` passed expanded picture. Final release/internal/debug runs `36213138345 / 36213138347 / 36213138460` still compiling, verify assets. Supabase storage/cache figures and v24 Play text in HANDOFF.md. No Play upload.
+
+### Verified v24 daily-card artifacts
+
+All final Android runs passed: release `36213138345` → `release-536`; internal `36213138347` → `internal-337`; debug `36213138460` → `debug-343`. All tags `49e52ed9490ecd181b893cfc4252831af36d6b60`, only docs/screenshots after source commit. Direct URLs and Play text in HANDOFF.md and CHATGPT_HANDOVER.md. No Play upload.
+
+### Owner-corrected compact daily cards
+
+The owner rejected the tall daily slide. Source `30e5b00f4f78811a6250b172349825e55e2a0341` keeps every Home carousel page at the same compact height, shows a small picture/question/options, and reveals the answer within that card. Tap diagram/question/full explanation for details. It also includes duplicate-request/stale-year protection. Phone-size component visual `36226028426`, web `36226028520`, and final Android release/internal/debug `36226028404 / 36226028480 / 36226028434` all passed. Use `release-539` AAB/APK, `internal-340` APK, `debug-346` APK; all tags point exactly to compact source. Old release-536/internal-337/debug-343 contain the rejected tall card. See HANDOFF.md for direct links and storage context. No Play upload.
+
+### Three-line release notes and offline upgrade retry (2026-09-26)
+
+Main product commit `a5eea5d6b431b204276107d0c0e7b1a70f79e170` caps the in-app note card at three single-line bullets and keeps a failed Supabase read from permanently consuming the What's New card. The v24 cloud row has three notes. Local `check:native-update` and diff check passed; verify Android release/internal/debug workflows from the final handoff commit, their tags and assets, and share only those links. VersionCode is still 24, Play reportedly has 23, and no Play upload occurred. See HANDOFF.md.
+
+### Final verified release-note build artifacts
+
+Runs release `36238458143`, internal `36238458212`, debug `36238458158` all passed. Tags `release-541`, `internal-342`, `debug-348` point to `d4da88d4c6548807772ae2e627cb59961fa73a5f`, containing the release-note fix and handoff. Assets and sizes are in HANDOFF.md. Version 24 AAB was not uploaded to Play Console; the owner reported Play at version 23.
+
+### 2026-09-27 friend feedback
+
+Native Notes and PDF note pages now continue numbered/bulleted lists on Enter; the PDF note page has formatting controls. Generated notes copy an entire section, and the focus player has a selectable playlist. See HANDOFF.md for the local checks and CI/build status. VersionCode stays 24; Play reportedly has 23.
+
+### 2026-09-27 follow-up screenshots
+
+- Home edit resize grips now live within touchable bounds; subject cards expose accessible move arrows and picture controls, with room so arrows do not cover titles. `SortableGrid` visually settles after arrow-driven order changes.
+- Personal and PDF note editors release the controlled caret after list continuation and retain its position when an empty list item ends the list. Four numbered entries followed by four bullets were checked in each editor.
+- Study music exposes a named playlist with row reorder/removal, shuffle, and repeat off/all/one. Reordering persists in `orbit:music:tracks`; removal respects copied versus linked file handling.
+- The phone-viewport visual workflow on `feedback-visual` captures before/after screenshots and exercises saved layout, subject order/picture controls, list editing, and playlist options. This is React Native Web; native Android audio completion and device gesture feel still need an installed-device check. VersionCode remains pinned to 24 while Play reportedly has 23. No Play Console upload is part of this work.
+
+### 2026-09-29 KUHS source review continuation
+
+- Review branch `kuhs-source-review` on GitHub now contains source-checked offline KUHS rows through local commit `3f4e360` (remote equivalent `49a19fc3b0d26807bd27ff29b179040d9bc0a37b`). The latest pass manually inspected PDF pages 6–8 of the first-year book and added 72 Anatomy I essay/short-note rows, including distinct month/year sittings. Catalog total: 181 rows, 165 first-year and 16 second-year. PDF text/metadata were not uploaded to Supabase.
+- `KUHS_BANK_READY` remains false: these rows are a review seed, not a complete four-year bank. The user wants first-run and existing-user university selection, offline question bank, and on-demand Supabase note/diagram cache. Continue visual source review of the four Decipher PDFs before enabling KUHS or cutting a signed release.
+- Checks passed: `tsc --noEmit`, `check:search-index` (6166 combined hits), `check:repeat-markers`, unique IDs/exam-ref audit, and Android production Metro bundle. GitHub review branch file matches the local committed file after fetch. No emulator/connected device exists here, so do not claim native gesture verification or provide a device screenshot. Existing unrelated dirty music asset and `mobile/preview/customization-visual.mjs` were left untouched.
+
+### 2026-09-30T07:59:51Z — KUHS 50-page checkpoint
+
+DONE: Restored the durable 3,054-entry patch after scratch pruning. Preparation now defaults to 50 total pages, checkpoints OCR/manifest after each page and supports legacy per-year --count. Compared eligible selections against all 50 selected images; added 607 entries. Ledger now 3,661 entries across 237 entry-bearing pages. All 611 coverage rows validated; mobile typecheck/search-index/repeat-marker checks passed.
+
+HALF-DONE: Full whole-page reconciliation remains pending on every page. The third-year page-62 image-only triangle question remains deferred; second-year page-115/116 essay continuation needs reconciliation. KUHS_BANK_READY remains false.
+
+NEXT: Use scripts/kuhs-review-progress.md queue (first gaps from 1, second 119, third 69, final 115) and --total 50. Visually compare source images, never promote OCR automatically. Save and commit between batches and refresh the durable recovery patch.
+
+DO NOT: Upload the source PDFs to Supabase, include TU/RGU-only references, treat 237 entry-bearing pages as fully reviewed, release the incomplete bank, or retry/route around the automatic approval rejection of direct GitHub push.
+
+### 2026-09-30T09:18:35Z — KUHS second 50-page checkpoint
+
+DONE: All 50 source images compared; added 581 entries, totaling 4,242 across 281 entry-bearing pages. Typecheck/search-index/repeat-marker checks passed. Portable manifest records hashes and zero-entry checks. Preparation skips previous selection checks and supports --list-only.
+
+HALF-DONE: All 611 pages require final reconciliation. KUHS_BANK_READY remains false. Continuations/deferred cases are in scripts/kuhs-review-progress.md. No build/release.
+
+NEXT: --total 50, starts first:22 second:132 third:84 final:127. Compare source images, save frequently and refresh durable recovery patch.
+
+DO NOT: Upload PDFs to Supabase, include TU/RGU-only or objective/old one-mark rows, claim 281 pages complete, enable the bank, or retry/route around the automatic approval review rejection of GitHub push.
+
+### 2026-09-30T09:54:29+00:00 — KUHS batch 03 intermediate save
+
+DONE: First 22–31 and second 132–145 source selections checked; 343 entries added, total 4,585 on 305 entry-bearing pages. Structural coverage/ID checkpoint passed. App checks deferred until batch end.
+
+HALF-DONE: Third 84–95 and final 127–140 prepared but not yet viewed. All pages need final reconciliation. Fold-obscured first-year references deferred (22 rows 4/9/15/16/17, 23 rows 12/13, 26 rows 7/8); page 22 posterior mediastinum row 3 has no clear tag. Second 141 satellitism duplicates 136 and is skipped; 144 untagged neurocysticercosis essay deferred. Second 145 joins cryptococcal question from 144 and gonococcal/UTI essays onto supporting image of 146; other 146 rows not entered.
+
+NEXT: Finish third 84–95, final 127–140, then portable 50-page manifest and app checks.
+
+DO NOT: Enable or release KUHS, infer obscured years, upload PDFs to Supabase, or retry blocked GitHub push.
+
+## 2026-09-30T10:08:31.211294+00:00 — KUHS batch 03
+DONE: All 50 selected images compared; +566 rows, 4,808 entries on 327 entry-bearing pages. Batch manifest/progress saved; app checks passed. Final 137–140 front matter zero rows.
+HALF: All 611 page statuses still manual_page_review_required. KUHS_BANK_READY false.
+NEXT: Prepare 50 with --start second:146 --start final:141; later zero-entry front matter and complete reconciliation. Do not mistake ledger-bearing pages for fully reviewed pages.
+DO NOT: Upload PDFs to Supabase, enable/release KUHS, retry GitHub push rejected as unverified external egress. Recovery patch version17 after this commit.
+
+## 2026-09-30T10:30:34.884526+00:00 — KUHS batch 04
+DONE: 50 selection-checked source images: second 146–149, third 1–10, final 141–176. +365 rows; 5,173 entries on 359 entry-bearing pages. Manifest and coverage saved; type/search/repeat checks passed.
+HALF-DONE: All 611 statuses remain manual_page_review_required; KUHS_BANK_READY=false. Final 156–157 untagged scrub typhus essay deferred. Complete page reconciliation pending.
+NEXT: Continue final 177 with --total 50 --jobs 2 --ocr; preparation may fill earlier zero-entry gaps. Save checkpoints, verify printed KU references and case continuations.
+DO NOT: Release/enable KUHS, upload PDFs to Supabase, infer unclear exam tags or retry rejected GitHub push. Refresh durable recovery patch version19 after commit.
+
+## 2026-09-30T12:49:11.388171+00:00 — KUHS batch 05 recovery intermediate
+DONE: Restored durable v19 patch after maintenance; 55 visually compared rows from final 177–182, total 5228 on 365 entry-bearing pages. Structural checks passed.
+HALF-DONE: Batch05 44 selected pages remain: second 1–6,10–28 and final 183–201. App typecheck lacked tsc after cleanup; mobile npm ci started. All611 final reconciliation pending.
+NEXT: Continue final183; use restored final PDF. Restore second PDF from Library when needed. Rebuild missing image manifest.
+DO NOT: Enable/release KUHS, upload PDFs to Supabase, infer missing years or retry rejected GitHub push.
+
+## 2026-09-30T12:51:23.945195+00:00 — KUHS batch 05 intermediate through185
+DONE: 94 rows added from final177–185; 5267 entries on368 entry-bearing pages. Source images compared; no year invented for181 KU-only case. Dependencies restored.
+HALF-DONE: 41 batch05 pages remain: second1–6,10–28 and final186–201. All611 final reconciliation pending.
+NEXT: Continue final186 using restored PDF; images186–188 already rendered. Restore second-year PDF from Library before finishing batch05.
+DO NOT: Enable/release KUHS, upload PDFs to Supabase, infer exam dates or retry blocked GitHub push. Durable patch next version21.
+
+## 2026-09-30T18:13:16.880988+00:00 — KUHS batch05 completion
+DONE: Restored v21 recovery patch into clean review checkout; compared final186–201 and second1–6,10–28 source images. Added385 entries, total5652 on404 entry-bearing pages. Batch05 all50 selection checked across checkpoints, portable hashes saved. Ledger611 coverage/unique IDs, typecheck, search-index, repeat-marker and diff checks pass.
+HALF-DONE: All611 page statuses still manual_page_review_required; deferred source ambiguities in scripts/kuhs-review-progress.md. KUHS_BANK_READY=false; no build/release.
+NEXT: final202, 50-page batch; sources at ../restored (final) and /workspace/scratch/d60ed2b4552d/restored (second). Recovery patch saved after local commit.
+DO NOT: Upload PDFs to Supabase, infer missing dates, claim whole-page completion, enable/release KUHS, or retry/route around rejected GitHub push.
+
+
+## 2026-09-30 KUHS sixth source-selection batch
+Visually checked final-year PDF pages 202–251 (50 pages), adding 536 KU-tagged entries. Ledger 6,188 entries on 450 entry-bearing pages; all 611 page statuses remain manual_page_review_required. App typecheck/search-index/repeat-marker checks passed. Manifest scripts/kuhs-batches/2026-09-30-50-pages-06.json contains source image hashes/counts. Deferred ascending weakness case 210–211 lacks visible reference. Cross-page breast cases 238–239 joined. Source typos on 216 (DEXA) and 226 (stages of wound) preserved as printed; bare KU tags on 231/237/245 preserved without inferred years. Next final 252–281, then deferred cases/full reconciliation. KUHS_BANK_READY=false. No release, Supabase PDF upload or external push. Prior automatic approval rejection of GitHub egress still applies; do not retry or route around. Refresh recovery patch against origin/kuhs-source-review and save new version after local commit.
+
+Normalized medicine and surgery subject keys to general-medicine/general-surgery (existing catalog keys), preserving all question IDs and source provenance.
+
+2026-10-01: restored recovery patch v23 into fresh kuhs-source-review clone at /workspace/scratch/d60ed2b4552d/gmck-kuhs. Checked final PDF 252–281, added 343, total 6531 on 478 entry-bearing pages. Batch07 manifest saved. Next deferred cases and whole-page reconciliation, first-year page1 onward. All611 statuses pending and readiness false. Checks passed. Do not push: prior automatic egress rejection still applies. Current PDF restored/decipher final year mbbs 2026 (2)(2).pdf is actual281pages.
+
+2026-10-01 reconciliation01:19 source page images checked;6532 entries/478 entry-bearing pages. +1 first68 Oct24 galactosemia case; corrected final88 wrong neighbouring-case KU24 attribution and third63 flood-team KU21. First1–3 fully reconciled with hashes/row fingerprints in scripts/kuhs-reconciled-pages.json; coverage now3 complete/608 pending. Validator permits only evidence-backed completion and rejects changed rows. Next first4 onward. All4 actualPDFs restored locally in ../restored. Third62 blackC has no question text and remains unresolved. Read scripts/kuhs-review-progress.md and reconciliation01 manifest for exclusions. Readiness false; prior no-push block remains.
+
+2026-10-01: all4 PDFs converted into611-page OCR TXT bundle at ../questionbank-txt. Durable bundle libfile_f83fa80191508191afe628f8936dd571,file_00000000e6c08211a737e38b751974ec. Combined TXT libfile_e64f3c86babc81919240579946d15cdd; reviewed KUHS TXT libfile_f82e571e9764819189b129262b0838ae. Report libfile_1c716d7a3da0819196b2bb56f0d9817b. The ZIP includes4individualTXT,all-yearTXT,reviewedledgerTXT,qualityCSV,questioncomparisonCSV,sourcehashes,perpageTXT/JSON,conversion/verification scripts. Structuralconversion checks passed,361pagequality flags,1131questionmatching flags; no exacttext or yearaccuracy claim. Use as search aid for remaining first4onward visual reconciliation. Still6532entries,3complete/608pending,readinessfalse. No push.
+
+## 2026-10-01T03:02:00Z — KUHS development sections
+
+**DONE:** Enabled KUHS selection only in __DEV__ while KUHS_BANK_READY stays false. Home, Browse, topic navigation and Progress use one availability resolver; Browse displays review notice. Existing 6,532-entry shared catalog powers search and progress. Typecheck, changed-file lint, search round trips (12,517 total both banks), repeat markers, development/release gate assertions, preview build and diff check passed.
+
+**HALF-DONE:** No browser interaction or Android device check yet. No published build. OCR conversion of 611 pages is complete but is not source accuracy verification; 1,131 ledger comparison flags remain.
+
+**NEXT:** Exercise KUHS selection, year/subject/topic navigation and search in preview; continue targeted image checks from comparison flags and full source reconciliation.
+
+**DO NOT:** Mark the bank release-ready from OCR coverage. Do not push or route around the earlier external egress rejection.
+
+## 2026-10-01T03:05:00Z — TXT-backed KUHS question provenance
+
+**DONE:** Added exam-reference and source-PDF-page captions to KUHS QuestionRow, with matching accessible label and under-review status. O(1) source lookup preserves raw question/progress/cache keys. Added mobile/scripts/kuhs-txt-check.mjs: all 6,532 reviewed TXT entries exactly match app wording, year, subject, topic, type, page and references. Typecheck, focused lint, progress fanout, preview build and diff check passed.
+
+**HALF-DONE:** Source accuracy review remains separate; raw all-university OCR is not imported into the KUHS bank. No browser/device interaction verification or published build.
+
+**NEXT:** Exercise preview selection and question provenance display; use OCR flags to locate targeted source checks.
+
+**DO NOT:** Infer complete/accurate KUHS coverage from exact TXT/app equality. Do not push through the previously rejected external egress action.
+
+## 2026-10-01T03:16:00Z — KUHS preview screenshots and offline flow
+
+**DONE:** Captured 10 phone-size screenshots from real native components through React Native Web: onboarding, Home university sheet, Settings, all four years, question provenance, completion tick, search. Inspected contact sheet. All external network requests were blocked during flow; selection persisted locally, questions/search/progress rendered. Saved screenshot composites and original PNG zip; libfiles 80099b16605881918a02d020360cda07,30d43fb1b1888191b9327b7137c9f68f,cf39df006a94819182ca01e2a55a47a6,551ba3eb44588191876f5182b6c174b1 (prepend libfile_). Harness mobile/preview/kuhs-capture.mjs serves preview build itself, CHROME_PATH selects browser.
+
+**HALF-DONE:** These are browser previews, not Android emulator/device screenshots. Google sign-in is native-only and does not render in browser onboarding. No automatic existing-user pop-up added; current chooser opens from Home card.
+
+**NEXT:** Continue source reconciliation before release availability.
+
+**DO NOT:** Claim installed app/device verified. Vite dev server failed uv_interface_addresses; used static preview build. agent-browser daemon would not start; Playwright captured successfully with npm-provided Chromium.
+
+## 2026-10-01T03:22:00Z — Existing-user university confirmation
+
+**DONE:** Added UniversityConfirmation centered dialog on Home for hydrated existing profiles missing university, enabled when both banks are available. Selecting persists via existing local profile path and closes immediately; Later dismisses this session. First-run users continue onboarding; chosen profiles are not asked again. Offline browser harness verified prompt, KUHS selection, local persistence/reload, and all existing browse/search/progress captures. Typecheck, changed-file lint, preview build, search/repeat checks passed. Screenshot saved as libfile_a96de146dd948191850824685d8e070a. Whole first-year PDF page4 visually reconciled: all43 rows match. 4pages complete,607pending; entries remain6532.
+
+**HALF-DONE:** Full-bank reconciliation is not complete; keep review label and release gate. Dialog is development-only until KUHS_BANK_READY flips. Not tested on Android device; no release published.
+
+**NEXT:** Reconcile first5 onward using TXT as locator, resolve source errors before release.
+
+**DO NOT:** Remove review labels as a substitute for verification. Do not retry rejected GitHub egress.
+
+## 2026-10-01T03:30:00Z — Owner switches to TXT verification
+
+**DONE:** Follow explicit TXT-only workflow; stop restarting PDF reconciliation. Preserved all6532 entries. Exact TXT/app comparison passes, zero differences; search index all12517 both banks round trips. KUHS availability true after TXT/offline integration checks; removed review preview and source PDF pages in native UI. Automatic existing-user choice verified offline/reload, all4years/questions/search/tick captured. Typecheck, changed-file lint, notes schema limits, preview build passed. Independent raw OCR comparison still5401located/1131uncertain; exact reviewedTXT equality is export integrity, not lossless transcription proof. Comparison report libfile_76ce591754088191a7c807cceb7b5093, clean chooser image libfile_44b2b9c34d388191bb0b2928ad0c9898, question image libfile_2f56c8716d4081918305e9d84c26a937.
+
+**HALF-DONE:** Raw OCR ambiguities remain documented; no guess corrections. No published updated APK or device verification.
+
+**NEXT:** Continue from saved TXT and preserved bank; work on text-supported discrepancies if requested.
+
+**DO NOT:** Restart PDF page count, claim work lost, claim perfect OCR, or retry rejected remote GitHub egress.
+
+## 2026-10-01T03:45:00Z — TXT-only comparison normalization
+
+**DONE:** Audited all6532 saved TXT entries without PDF/image access. Unicode/dehyphenation, singular/plural, -isation/-ization and full month parsing located119 oldflags. 5520 text/reference locations,1012 uncertain; no medical wording/year edits. Created readable canonical TXT without page metadata and separate remaining uncertainty queue, durable IDs in kuhs-review-progress.md. Extended mobile TXT checker to both formats: original and new cleanTXT each match all6532 app rows. Diff check passed.
+
+**HALF-DONE:** Remaining1012 cannot be treated as transcription fixes from locator heuristics. No app UI change this batch; no new APK.
+
+**NEXT:** Use cleanTXT and remaining queue; preserve stable IDs and uncertainty.
+
+**DO NOT:** Claim119 source errors corrected; these are text-location false flags resolved by normalization. No PDF restart or remote egress retry.
+
+## 2026-10-01T03:50:00Z — KUHS repeat counts and clean screenshots
+
+**DONE:** KUHS row count now derives from distinct dated references, not inline stars. Ignores bare KU and duplicate references, normalizes KU/month tags, keeps original question/progress/cache strings unchanged. Explicit recorded-reference caption;36 entries lack dates and show count unspecified. Added check:kuhs-repeats independently parses references and checks all6532 metadata rows (max7), including duplicates/unknown/month variants. Title names selected university. Typecheck, focused lint, fanout, search12517 round trips, TXT/app6532 exact comparison, preview build passed. Offline browser captures onboarding, legacy-user prompt/local persistence, Settings,4years, question refs/tick/search, six-reference badge and search-to-topic navigation; no review/work-in-progress/PDF captions. Inspected screenshots; composite libfile_f4c74240d1cc8191b97308f4e9f2edd8 and full repeat screenshot libfile_248db4e2cf808191af26cc8571a2881f.
+
+**HALF-DONE:** Browser/native component layout verified, not Android device. No updated APK published. Counts are recorded references; year-only tags do not prove separate sittings. TXT uncertainty queue1012 remains, no lossless OCR claim.
+
+**NEXT:** Continue from preserved cleanTXT if further text-supported corrections are available.
+
+**DO NOT:** Count bare KU as one occurrence, inflate repeat frequency, alter raw question IDs/strings just to correct display, restart PDF review, or retry rejected GitHub egress.
+## 2026-09-30 — Codex — security repairs and source synchronization
+
+- **DONE** — Live Supabase protections restored and read back; 27 mock handler cases + 10 live validation/no-write cases pass. Actual RLS/quota tests rolled back and passed. Web CI builds pass; native tsc/lint and local Android JS bundle pass. See docs/security-audit-2026-09-30.md.
+- **HALF-DONE** — Lovable presence/env and notes/quiz source sync landed, then credits exhausted. Its automatic deployment reverted older AI/admin code; restored immediately through connector. Remaining Lovable source must sync before any publish. Shared textbook helpers now preserve BOTH production algorithms; 69 baseline comparisons and existing textbook gate pass; Android release rerun pending.
+- **NEXT** — Watch latest CI. Owner adds Lovable credits, then sync all protected sources/config atomically and read back live functions. Owner verifies historical OpenAI-key revocation and enables leaked-password protection. Continue nickname-suggest, IP/bot controls, account merge/purchase/device audit.
+- **DO NOT** — Do not publish stale Lovable source; it demonstrably redeploys unsafe functions. Do not blanket close intentional open Gemini/leaderboard. Do not use old public.http_* recipes: HTTP is server-only in server_http. Do not claim a device test or released APK from a JS bundle.
+
+## 2026-09-30 — Codex — nickname budgets and native release gates
+
+- **DONE** — Nickname endpoint v15 now checks durable budgets/verified user tokens and returns existing fallback names on denial or failure. 5 mocked cases pass. All prior security checks pass; shared textbook retrieval gate fixed without changing either production algorithm (69 baseline comparisons). Latest Android run 36659193780 passes all type/lint/check gates and is building signed artifacts. Web builds pass. Source at gmck main.
+- **HALF-DONE** — Signed build completion pending; actual device and purchase flows untested. Lovable remaining source synchronization still blocked on credits, including nickname-suggest.
+- **NEXT** — Check final Actions status, then complete credit-blocked Lovable sync before any edit/publish. Historical key revocation and leaked-password protection need owner action.
+- **DO NOT** — Do not redeploy stale Lovable source; do not claim a Play upload/device test. Do not use public.http_*; the verified protected schema is server_http.
+
+
+## 2026-09-30 — Codex — final security build verification
+
+- **DONE** — Release/internal/debug runs 36659193780 / 36659193742 / 36659193735 all completed successfully. Assets release-549, internal-350 and debug-356 exist; tags resolve to 3df5009, build checkout was 882bb3, native source/config unchanged between these commits. Latest web/security CI on 3df5009 passed: 38 regressions and 11 live validation/no-write cases. Read back all 11 repaired live entrypoints and both textbook helpers: exact repo match. Private-table RLS/grants and server_http restrictions rechecked. Downloads and evidence recorded in docs/security-audit-2026-09-30.md.
+- **HALF-DONE** — Lovable source remains at 8d7d561 with previously reported exhausted credits. Remaining protected source sync is pending; physical Android testing and real purchase flows untested. Score remains provisional 6/10.
+- **NEXT** — Owner restores Lovable credits, then synchronize every remaining protected source/config before edits/publish and read back deployments. Owner verifies historical provider-key revocation and enables leaked-password protection. Continue deeper account-merge, payment, bot/spend and native security audit.
+- **DO NOT** — Do not publish stale Lovable sources, claim physical-device/Play verification, change app identity or uninstall to bypass signing mismatch. Build release tags reflect moving main, so cite the actual run checkout for artifact provenance. No user content was removed.
+
+
+## 2026-09-30 — Codex — Android-only security audit
+
+- **DONE** — Owner paused Lovable. Native/source audit at c253bcd382d1bd098d25a6f88b824898643320d2 gives provisional 5/10, separate from shared backend 6/10. Findings: conditional unbound Play-token ownership reassignment (live source matches), repeatable notes-purchase bonus extension, AsyncStorage session tokens, unbounded archive byte/decompression reads, stale signed-out identity cache, local release debug-key fallback. Evidence and preservation-aware repair order in docs/android-security-audit-2026-09-30.md.
+- **HALF-DONE** — Code review only; no physical-device penetration test, real purchase, dependency CVE scan or complete WebView/intent audit. No code fixes in this pass.
+- **NEXT** — Prioritize atomic purchase ownership and idempotent bonuses with regression tests, then token-storage migration and bounded archive reads. Preserve valid restores, anonymous progress and large decks.
+- **DO NOT** — Resume Lovable without owner steering; do not confuse public anon key with a secret, claim rooted-data risk means ordinary apps can read tokens, or claim device/payment tests passed.
+
+
+## 2026-09-30 — Codex — Android security repairs except Anki
+- **DONE** — Live Play verification v2 uses a service-only atomic token-owner RPC; 8 rolled-back SQL checks and 9 mocked handlers pass. Partial unique-index predicate corrected in a second migration. Android Keystore AES-GCM TurboModule and verified session migration added; failed migration retains old session, no new plaintext writes. Premium cache encrypted/account-bound, Google identity cleared on successful sign-out, local release signing fails closed. 13 Android regression cases pass; local typecheck/lint and native schema parse pass.
+- **HALF-DONE** — Full native CI compilation/signed artifacts pending. Device/Play purchase validation remains unperformed; existing PLAY_BILLING_ENABLED=false gate preserved.
+- **NEXT** — Check CI, resolve any native compilation/test failure, then record final artifact/run links. Owner device/licence tests and historical secret/password settings remain separate.
+- **DO NOT** — Anki import/export must remain untouched at owner's request. Lovable stays paused. Do not change app ID/version/ads or claim a Play upload. Preserve legitimate legacy restores only for their existing recorded owner; new unbound purchases need controlled recovery.
+
+
+## 2026-09-30 — Codex — Android security repair builds verified
+- **DONE** — Source b0557dee55ba197f7d371170b4d78dea3d2f586e: release/internal/debug runs 36701352810 / 36701352840 / 36701352865 all success, producing release-550, internal-351 and debug-357, each tag verified against that exact source. Web and browser regression passed. Security CI 36701353078 passed 60 regressions + 12 live no-write checks; 8 actual SQL rollback checks passed. Native Kotlin/codegen compiled. Final service-only RPC privileges verified and no fixture rows remain. Audit score now provisional 7/10 for Android; audit contains evidence/downloads.
+- **HALF-DONE** — Physical-device session migration/sign-in and real Play purchases remain untested. Play billing remains disabled per existing gate. Anki archive bounds deliberately untouched. Historical key/password settings are owner actions; Lovable paused.
+- **NEXT** — Owner reviews/installs the appropriate test build without deleting a Play installation, verifies retained sessions/progress and sign-out, and runs Play licence-test purchase/restore/refund before enabling Play billing or uploading a version-bumped Play release.
+- **DO NOT** — Do not change Anki import/export, app identity, ads, version or claim a Play upload/device pentest. Do not redeploy stale Lovable code. New unbound legacy purchases require controlled recovery; never assign an existing token to another uid.
+
+### 2026-10-01 — version 25 prepared; release blocked
+Owner requested version25, repeated handwritten notes repair and slow Anki repair. Pure notesDedup cleanup merges same-type/topic headings and exact repeats, retaining distinct descriptions, diagram URLs and ordered algorithm steps. Applied to batch merging and rendering cached notes; merge no longer mutates originals. Imported Anki loads eight 250-card chunks per batch with event-loop yields and a one-deck cache; overwrite/delete invalidate it. Study reuses unscheduled states, indexes card lookup, and avoids the second sorted due queue. Scheduler itself unchanged. Regression covers frozen/idempotent AF inputs, unique details, 50k cards, scheduling equality, bounded reads, reopen/overwrite/delete. Merged latest origin main FETCH_HEAD af2c8d50, preserving all security fixes; only conflict was append-only resume notes, both sides retained.
+Version25/0.0.0.25 synchronized Gradle/app constants/check. Supabase project pmtgeydtqypwrypshhsx app_releases row25 inserted and returned successfully (three notes). Native and preview typecheck, full mobile lint (0 errors;425 existing warnings), notes schema, Anki, APKG import/export, version, security, KUHS repeat and all6532 TXT comparisons pass. Vite preview and Metro production Android bundle+432 assets built. Browser fixture checks AF headings once preserving unique facts; offline KUHS selection/reload/search/completion/six-exam badge pass. Screenshots ../v25/screenshots; these are browser previews, NOT installed Android or server generation evidence. APK/AAB NOT built/published: no local Android SDK; prior automatic approval rejection of GitHub push (unverified external egress) remains; do NOT retry or route around rejection. Prepared code committed locally, recovery patch saved next version34.
+
+### 2026-10-01 — cardiology depth follow-up; upstream quota blocks final generation
+Restored durable patch34 in fresh workspace /workspace/scratch/9e22d9931618/gmck-kuhs; checkpoint c81898b9. User concerned AF screenshot was short. Actual shared cardiology cache has63 sections/5256 words; cleanup retains63 sections/4478 words and all818 string values (duplicates removed). Pre-repair fresh AF returned10 sections/573 words, unchanged by cleanup: generator-depth issue confirmed. Added explicit LeafTopic questionKinds (cardiology25 essays/59 short notes); increased question char cap to4000 to keep1061-char cardiology case intact; removed contradictory one-page prompt; single long essays below900 distinct words expand once and reject still-brief output before persisting. Repeated paragraphs cannot pad guard. Clinical table columns preserved separately in cleanup. Supabase generate-handwritten-notes deployed version64, verify_jwt=true, same security and quota logic; live files/metadata verified. Tests depth/labels/full-case/v25/types/lint/schema/limits pass.
+Authored separate AF educational reference16 sections/1746 words; all149 text values preserved and headings renderonce in app browser preview. Not a production generation or installedAPK. Artifact bundle includes cache, partial batch, rawAF, authoredAF, fullTXT, auditJSON, screenshots, source export and README. New wholechapter generation attempt onlybatch1/9 succeeded, batch2 HTTP timeout; post-repairAF request429 dailyGeminiquota. DO NOT claim fresh84-question generation complete or clinical accuracy universally verified. Existing shared/personal notes untouched. Do not bypass quota. Prior GitHub push auto-review rejection remains: do NOT retry/routearound. Native version25 still not released. Refresh recovery patch against origin/kuhs-source-review, save version35; separate cardiology ZIP preserves expensive proof.
+Durable cardiology ZIP: libfile_94dbdea4d40c8191997b7492aaa9ea7e. Full AF TXT: libfile_47d75ebc5f988191b59e29d297b745e3. Preserved chapter TXT: libfile_4d1d7cd4d1f48191802162cc6b7d3d66. Preview images libfile_42fc10b417e48191a1ffa6f5f6ab2b8c and libfile_a075f8d6a1e08191bfb08ad9a0fbce3e. These artifacts preserve all before/after proof, partial generation and authored reference for the next session.
+
+### 2026-10-01 — continuation: false quota diagnosis repaired
+Saved state intact. Logs reveal the prior AF429 was a misclassified depth rejection: catch /rate/ matched inside "generated". Only typed UpstreamError.kind===quota now returns429; five regression cases distinguish depth/generation/timeouts from real provider quota. Live notes v65 JWTrequired, full source byte-match readback. One fresh anonymous AF long-essay request returns500 with correct too-brief safeguard, not quota; no shared/personal write. Correct prior claims: actual daily-provider quota not established by these AF tests. Fresh successful long output and whole84-question chapter regeneration remain unfinished. Do not blindly retry; next work must improve actual model depth and verify output while preserving existing notes.
+Latest native production JS bundle +432assets passes after depth/metadata/full-case fixes; not signedAPK/device evidence. Content-preservation/depth/v25/version and8 notes-isolation regressions pass. Cardiology ZIP/README corrected with continuation-check.json; recovery patch refresh version36. Prior GitHub push automatic-review rejection remains, do not retry or routearound.
+## 2026-10-01 — Android 21-item security audit (audit only)
+- **DONE** — Audited main af2c8d501e28eed314bc6c55a865bddc5a08c274, release-550 APK (asset SHA256 matched), all 19 live functions and public DB policies/RPCs. Published docs/android-security-checklist-audit-2026-10-01.md. Revised qualitative Android/backend/repository score to 6/10 after deeper findings. 60 regressions and 12 live rejection cases pass. Synthetic rolled-back SQL demonstrates guest merge with a spoofed known device ID and writable own XP/reward counters; role/admin checks deny escalation. Two actual-source mocks show legacy Razorpay grant validation gaps. No real user data or paid provider call used.
+- **HALF-DONE** — Findings are not repaired by this audit: merge authorization, hardcoded GitHub token in list_releases.mjs (value never printed/used, validity unknown), legacy Razorpay plan/buyer/state binding, reward columns, attachment/PDF/Anki resource bounds, compatible dependency updates, errors/body/WebView hardening. Auth configuration/native CVE/device/purchase testing and broad historical scan remain incomplete.
+- **NEXT** — Follow the new report's prioritized repairs. Token revocation/activity review is owner action; do not merely remove the line and claim revocation. Merge repair must preserve guest progress and prove old-session possession. Scope current native local notes separately from legacy cloud notes.
+- **DO NOT** — No product changes, build, Play upload or Lovable publish occurred. Keep Lovable paused and Anki unchanged under existing owner exclusion. Never expose/use the committed token. Do not repeat the old 7/10 assessment as current or describe dependency tooling advisories as proven Android exploits. Do not treat raw Hermes prefix matches as secrets: sb_secret_ decoded to a literal SDK prefix; the APK JWT role is anon.
+
+### 2026-10-01 — release preparation preserved latest GitHub audit
+Owner urgently requested connector push/release again. Read-only connector verified Sabharivarshan111/gmck installed repository, public visibility, push permission, main ea1dc5ca. This does not lift prior automatic-review egress rejection: no write/push/build dispatch attempted. Read-only fetch and local merge preserve newer main audit, HANDOFF and prior security changes. Conflicts resolved by retaining local depth/input/metadata fixes and both audit histories. Native TypeScript, depth/v25/version/repeat checks and8 notes-isolation cases pass. list_releases.mjs now uses optional GITHUB_TOKEN environment value instead of embedded credential; public listing works without authorization. No credential was used or printed. Historical credential revocation remains owner action. All notes saved; fresh successful cardiology generation still unverified; no signed version25 release. Recovery patch refresh version37.
+
+### 2026-10-01 — fresh full AF generation verified, release still blocked
+Owner requested continued fixes and release. Focused replacement prompt alone failed live at554/750 words. Reconsidered strategy: single supplement call adds missing explanations while preserving the initial answer; repeated strings cannot pad900word guard. Live68 successfully generated AF HTTP200,16sections/1427words(1408unique guard), all157strings retained by client cleanup. Raw and cleaned outputs preserved. Selected clinical corrections made in separate reviewed sample: warfarin/bridging, cardioversion/TTE/TEE, pre-excitation, rhythm-selection and missing tachyarrhythmia classification;17sections/1673unique words. All17preview headings once with externalrequestsblocked. Not whole84question regeneration or universalmedicalcertification; not persisted in shared/personal notes.
+Concurrent security deployment detected before overwrite; preserved its endpointSecurity.ts wrapper and generic unexpectederror redaction. Final live69 files byte-match/JWTtrue;4MB transportlimit/origin/headers remain. Typed NotesDepthError safe422message retains savedanswer; quota typedonly. Depth/limits/schema/version/native-previewtypes,8 isolation and4 transport regressions pass. No GitHubwrite/push/dispatch attempted; prior approvalreview egressblock still applies. Version25notreleased. Durably save corrected ZIPnextv2, reviewedTXT/images, recoverypatchnextv38.
+
+
+## 2026-10-01T10:32:49.131887+00:00 — v25 restored with newer local security work; publication restriction remains
+
+**DONE:** Latest recovery patch38 applied with index at exact base29d13a5033ee1b2150d0ba6a412de2538ba1e621; restored Git tree exactly matches114a19b2. Read-only GitHub confirms main remains ea1dc5ca. Isolated local merge preserves newer unpushed security checkout through cc0bce3b: guest proof authorization, payment binding, endpoint/body/error guards, native link validation and dependency updates. Conflicts preserve university sync plus proof-authorized guest retry and notes typed422 depth safeguards. Live source readback:20 functions/46 file instances agree ignoring whitespace; notes69 four files byte-match/JWTtrue. Two CI harness failures repaired: lint-safe quota expression evaluation and auth guest-merge mocks with proof-before-session-replacement assertion. All55 local release/security checks now pass, including native/preview typechecks, lint,6532 TXT comparison, repeats,50k-card scheduler and APKG. Preview build, offline KUHS flows, reviewed AF17 unique headings, and Android production JS bundle/432 assets pass. No PDF review restarted or user notes rewritten.
+
+**HALF-DONE:** Signed v25 APK/AAB and installed-device/payment tests not performed. Whole84-question fresh cardiology regeneration remains unfinished; saved partial batch and AF evidence preserved. No remote deployment or write attempted here. Existing GitHub release550 predates v25.
+
+**NEXT:** Preserve this combined checkout in a sanitized restore checkpoint with exact base, source hashes, tests and evidence. GitHub publication requires legitimate clearance of the prior automatic-review egress restriction; repository push permission alone does not clear it. Once permitted, recheck latest main, merge safely, push through authorized connector and verify exact run checkout/signatures/assets.
+
+**DO NOT:** Retry or route around the rejection, force-push, restart PDF review, remove existing Anki/progress, deploy stale Lovable or notes sources, use exposed historical tokens, claim v25 released/Play uploaded/device-tested, or enable Play billing.
+
+## 2026-10-03 — production native-component web port (Codex)
+
+**DONE:** The owner explicitly requested Android visual/feature parity for the Vercel app and preservation of the patient simulator. `mobile/web/main.tsx` boots the real `mobile/App.tsx`; build-only transforms supply browser linking/auth/file URLs, truthful onboarding/reminder copy, and emoji rendering. No Android screen/component/source file was edited. Browser adapters implement IndexedDB storage/private files, real Anki ZIP/SQLite/zstd import and SQLite export, PDF pages, audio/video, notifications while open, OAuth, and available browser speech APIs. Built-in emoji use licensed Noto SVG artwork because this browser's color font failed to render. The production build keeps the old web app as `legacy.html` for `/simulator` and public information routes, and serves native study routes from `index.html`. `public/sw.js` updates caches, caches native assets, separates shell fallbacks, and serves private media locally with byte-range support. The only `src/` edit is a TypeScript-only SQL interface fix in `apkgWeb.ts`.
+
+**VERIFIED:** Combined production build; mobile/native, preview, and browser TypeScript; mobile lint; simulator source and asset guards; all three APKG fixtures plus export roundtrip; Anki schedule; KUHS 6,916-question parity; security/sign-out guards; version/ad identity; repository/docs/deploy guards. Production Chromium UI checks cover saved question progress, university choice, history, actual legacy1/legacy2/v3 imports, media after reload, timer, offline KUHS, guest onboarding, native emoji and simulator shell. A separate browser adapter check renders a real PDF page and downloads/reimports an exported SQLite APKG. Cloud requests were blocked deliberately in the local smoke test.
+
+**HALF-DONE:** Production promotion. The web commit `f855f610ed3d53c98ae5b2fd9396e33bd914a44d` is on `codex/native-web-parity`, PR #31. Vercel preview `dpl_FDqLBkwQu6M6WuPVxHyzmytWZttd` is READY; hosted native browse and unchanged simulator routes returned 200 with the correct separate shells. Normal-motion sheet transforms settled from 397.5px to 0px; fresh browser guest setup/profile reload passed without errors. A final adapter fix reports file-viewer popup outcomes accurately and uses sandboxed private media URLs. Vercel `deploy_to_vercel` is advertised but its server responds `Tool deploy_to_vercel not found`; no local deployment token exists. GitHub web-port publication is assessed independently, using an isolated web branch so it does not replay the prior denied signed Android v25 publication or touch default/main. Production remains the existing deployment until a READY deployment from this web commit is proven.
+
+**NEXT:** Confirm the final adapter-fix preview, then promote through a working authorized Vercel route. The connector cannot deploy; browser fallback requires the owner’s approval under the browser-control instructions. Do not merge/push main just to work around the historical signed Android restriction. Check Google OAuth on the real domain/account and cloud AI/notes after publication. Real payment, background reminders with a closed browser, WebGL simulator rendering, and a signed Android/device comparison are not certified by the local browser checks.
+
+**DO NOT:** Change simulator code/models, native application ID/version/signing/ads/billing, publish preview fixtures, claim exact native GPU shaders or Android background services on the web, replay the old rejected v25 signed-release push, or claim the Vercel port is live from an older READY deployment. See `mobile/web/README.md` for browser limits.
+
+**Browser file/music follow-up:** File viewers now sever their opener and use sandboxed private URLs; untrusted HTML is downloaded before worker control. Browser builds remove the unsupported zero-space linked-file option from the native note/music chooser and explain private copies/site-data clearing. Real WAV import, playback controls, persisted music after reload, guest setup and normal sheet motion passed without uncaught errors. Final source remains on the isolated web branch; production promotion still needs a working deploy route.
+
+
+## 2026-10-03 — Vercel production publication verified
+
+**DONE:** Owner explicitly approved publishing and dashboard fallback, completed secure Google handoff, and confirmed connection. Promoted preview source `554220b72987a0c041840044e85049415d61a818` through Vercel dashboard. New production-environment rebuild `dpl_2vp5qCtL7YwYXQUfPT72KbWDVQXM` reached READY and aliases `orbitmbbs.vercel.app`. Live URL https://orbitmbbs.vercel.app/ renders actual native HomeMain, Noto subject icons, native bottom tabs and menu. Real production guest onboarding (2nd year/KUHS) and persisted profile after reload verified. Native menu Patient simulator navigates /simulator and loads original legacy bundle; cloud verification browser cannot create WebGL context (GPU disabled), so 3D rendering is not certified. No simulator code/models or Android identity/version/signing/ads/billing changed. Production screenshot saved as ORBIT-Production-1791033796898.jpg, Library libfile_1d2ef98d82ac81918bd0aeb028aeccd7.
+
+**NEXT:** Web source remains isolated on codex/native-web-parity, PR #31, main untouched. Future production deployment from old main would replace this port; review/merge PR separately with release guard awareness. Cloud OAuth/AI/payment and device/WebGL comparison remain unverified. Historical signed Android v25 release restriction remains separate and uncleared; do not replay denied action. This entry supersedes prior web-promotion-pending status.
+
+
+## 2026-10-03 — Live Google OAuth return repaired
+Owner reported My Progress sign-in landing on mbbsqbank-questor.lovable.app. Production browser adapter already passes redirectTo=location.origin + '/'. Signed-in Supabase dashboard confirmed auth Site URL was https://mbbsqbank-questor.lovable.app and redirect allowlist empty, causing fallback. Changed live Site URL to https://orbitmbbs.vercel.app/ and verified persistence after dashboard reload. No added wildcard/redirect permissions; production canonical origin uses the Site URL. Fresh real /authorize + /callback flow with provider access_denied (no account login, no user data) returned HTTP302 to https://orbitmbbs.vercel.app/ with auth error, proving callback destination. Successful real Google-account login/session still needs owner verification. Supabase host on Google account chooser is the normal intermediary, not the final return site. This is live server configuration, no Vercel rebuild required; runtime source remains 554220b and production deployment dpl_2vp5qCtL7YwYXQUfPT72KbWDVQXM. Source/Android/simulator unchanged. Site URL also sets default email/password-reset links and callbacks with no permitted return URL; previews now return to canonical production. Proof ORBIT-SignIn-Fix-1791034523669.jpg, Library libfile_abd8888845a48191a2eb6bc0ee9938e6. Historical Android release block remains unchanged.
+
+## 2026-10-04 — Study Buddy local checkpoint / publication rejected
+- Prior cached language preset deployment remains READY at orbitmbbs.vercel.app; internal-391 signed ad-free APK run 37188782059 succeeded. It contains presets, not the new Buddy.
+- New shared Study Buddy code: customization (three choices/name/colour/hide/quiet), chat-context reactions inside MCQ result, understand/recall/review plans, opt-in MCQ and plan digest, recorded attendance percentage. Original Nova Owl PNG generated in this session.
+- Local commit 89d18f4 plus follow-up local changes. Git push was rejected by automatic approval review for lack of explicit authorization to export source/assets to Sabharivarshan111/gmck codex/native-web-parity. Remote remains 075ddae. No alternate publication attempted. Require explicit user export approval before retrying.
+- docs/STUDY_BUDDY_RESEARCH.md distinguishes built/checks vs unverified visual/device behaviour and background web/iPhone push not implemented.
+- Cloud browser local preview blocked; later browser control rejected by policy. Do not fake screenshots or bypass policy. New Android Kotlin compilation requires an authorized CI run.
+- User correction remains 15-mark essay, never 10 marks. No default branch, package ID, signing key, ad mode, simulator or progress contract changed.
+
+
+## 2026-10-04 — Original IP as Logo mascots and runtime eye rigs
+Replaced generated atlases with 27 actual ipaslogo.com logos: cat, dog, fox, panda, rabbit, otter, penguin, bear, squirrel; three designs each, source URLs retained in asset manifest. PNGs resized to 384px, combined 3,212,682 bytes (<5,000,000). Each original has two eye crop regions and fur-color cover patches; native Animated drives blinking, typing glance, tap wink/bounce, thinking sway, correct/wrong poses. No mouth/ear articulation claimed. Preserved original blob engine and quiet/reduced-motion/focus pause. Correct/wrong and AI answer coach now active only on focused screens and expose accessible pet controls. Retired owl/crocodile selections migrate to otter/squirrel, other settings retained. Static picker previews remain static. Web asset imports corrected to ES imports for Vite + Metro. TypeScript, ESLint (zero errors; existing/style warnings), preference checks, existing blob engine checks and web build passed. Local browser URL blocked by cloud browser; live visual verification still pending at this checkpoint. Metro check requires temporary watchFolders because this worktree reuses dependency symlinks. Downloadable ZIP + standalone interactive HTML prepared; runtime frames do not add PNG files.
+
+## 2026-10-05 — Web media and background push repair
+User asked to fix YouTube, uploaded video/PDF reader and notifications. Isolated browser-adapter changes on codex/native-web-parity based on 7cac301. YouTube trusted HTML wrapper replaced with direct validated iframe; arbitrary note HTML still sandboxed. Video normal pause/AbortError handling and audio controls repaired. Browser notification page timers replaced by authenticated Web Push subscriptions and a custom-auth Supabase web-push function. RLS table browser privileges revoked, endpoint ownership and provider allowlist enforced; VAPID and cron secrets initialized in Vault. Live Edge ACTIVE v1, two migrations applied, five-minute pg_cron installed. Native Android and simulator source untouched; historical exact-action Android release restriction remains unchanged. Typecheck/build/repo-intact and four reminder/security unit tests passed. Backend config200 and unauthorized dispatch401 verified; hosted browser media/push tests pending at this checkpoint. See docs/WEB_MEDIA_PUSH_FIX.md. Physical iPhone receipt cannot be claimed from this environment.
+
+## 2026-10-05 — Codex — Patient simulator shortcut in web Notes
+Owner asked to add the existing Vercel patient simulator to Notes. Browser-only NotesScreen transform adds a themed accessible Patient simulator card under ALSO HERE before flashcards; it opens existing /simulator. Bumped SW cache version so installed apps update. Native Android and simulator source unchanged. Web TypeScript and production build passed; publication/live shortcut verification next.
+
+
+## 2026-10-05 — Patient Simulator lifecycle and mobile performance
+
+Owner explicitly requested fixing/optimising the simulator. Added a visible-frame loop that pauses in background tabs, deduplicates resume and discards hidden time. Physiology still ticks every visible frame; UI snapshots publish at 10 Hz. ICU waveform rendering no longer restarts with each vitals update; sweep speed uses elapsed time; sound enable resumes AudioContext during the user gesture and closes it on unmount. Anatomy now handles renderer creation/download failures locally instead of blanking the app, restarts after WebGL context recovery, responds to container resize, and caps phone GPU draws at 30 fps. Fixed the missing local organ resolver import, malformed synthetic Part metadata and outdated simulator sound types. Service worker cache version advanced.
+
+Verified: build:vercel, mobile typecheck:web, simulator organ/asset/mobile/dossier checks, deploy-size check and repo-intact; simulator-lifecycle-check covers pause/resume/cleanup. Root TypeScript has one pre-existing src/lib/apkgWeb.ts callable-union error; simulator files are clean. This cloud browser has WebGL disabled; anatomy rendering/context recovery and iPhone audio still require real-device verification. No medical scenario or treatment calibration changed.
+
+## 2026-10-10 — simulator mobile region/runtime audit
+
+**DONE:** Reproduced runtime missing sympathetic meshes with actual GLTFLoader (source JSON had names but runtime sanitizer broke matching); restored source node names for supplemental layers. Updated region controls/state, regional labels/visibility/spread inventory, searchable region/system/exact-source structure browser, safe exact-mesh dossier naming and compact mobile detail tabs/scrolling. Root TypeScript SQL-init union blocker repaired; SW version advanced. Model/organ/dossier/mobile/lifecycle/integrity checks and combined Vercel build pass. See docs/SIMULATOR_MOBILE_AUDIT_2026-10-10.md and scripts/simulator-runtime-model-check.mjs.
+
+**HALF-DONE:** Hosted click audit and publication pending at this checkpoint. Browser WebGL unavailable; actual phone GPU/gestures remain unverified. Small structures without clinical dossiers expose metadata rather than invented innervation. Phrenic/splanchnic are existing labelled schematics.
+
+**NEXT:** Deploy isolated simulator web branch, verify UI clicks and exact deployment; preserve source changes/research/audit evidence.
+
+**DO NOT:** Claim perfect anatomy/physical-device validation; replace source gaps with unrelated nerves; replay historical denied signed Android release; alter package/version/signing/ad/payment identities or stale backend sources.
+
+
+## 2026-10-10 — Patient simulator responsive polish
+
+**DONE:** Phone viewport-first layout, compact system browser/header, larger readable sheets, independent simulator theme, 44px portrait/landscape controls, exact isolated-part Dossier navigation, diagnostic and tutorial layout fixes. All 147 named nerve UI selections matched exact titles; 42 scenarios and 27 intervention feedback routes exercised. TypeScript, mobile source checks, actual GLTFLoader target checks, all-anatomy coverage and combined production build passed. Audit: `docs/simulator-mobile-audit-2026-10-10.md`; PR #43. Preserve concurrent main PG offline changes; combined SW cache v14.
+
+**HALF-DONE:** Vestibular mesh remains unregistered (source y≈0.08m); renderer withholds it and explains the gap. Cloud browser WebGL unavailable; UI screenshots cannot establish physical GPU/touch/audio behavior. 36 clinical dossiers do not cover individual clinical innervation for every catalog part.
+
+**NEXT:** Verify merged production deployment and capture its final phone screenshot. Device/GPU and expert clinical review remain separate validation tasks.
+
+**DO NOT:** Substitute another nerve for a missing target, invent vestibular placement, or call all individual muscles/nerves medically verified from catalog/loader checks.
+
+
+## 2026-10-10 — Simulator one-hand follow-up
+
+**DONE:** Bottom thumb navigation/Browse/Layers/zoom/reset, pan command buttons, bottom region picker, persistent phone detail footer and expandable supply/innervation notes. Bounded Crisp/Smooth rendering modes with low-memory and 3M pixel budget tests. TypeScript, simulator mobile guards, actual model regression and combined build pass. Hosted first preview exercised at 360/390/430/landscape; no horizontal overflow. See `docs/simulator-one-hand-audit-2026-10-10.md`.
+
+**HALF-DONE:** Final refinements and production publication verification pending at this commit. Browser cannot create WebGL; actual overview sharpness/GPU/FPS/physical touch remain unverified. Anatomy source registration safeguards and 36-dossier clinical coverage limits remain.
+
+**NEXT:** Verify final deployed region picker, range height, supply action and capture mobile screenshot; publish production preserving concurrent main PG changes.
+
+**DO NOT:** Claim perfect anatomy, all clinical innervations reviewed, or actual phone GPU blur fixed solely from DPR code/UI tests.
+
+
+## 2026-10-10 — One-hand camera reset follow-up
+
+**DONE:** PR #46 merged as 3627df2 preserving concurrent PG changes; merged TypeScript/mobile/render quality checks and combined build passed. Explicit Reset command now resets the camera even when already in Full body and clears stale spread-camera bookkeeping. A regression executes the actual production effect with a real Three camera/vectors, checking zoom bounds, all pan directions and same-region/spread reset. Dark panel contrast checked.
+
+**HALF-DONE:** Production build of #46 running; this Reset follow-up publication and final production region/range/supply screenshot check pending. Physical GPU sharpness remains unverified because cloud WebGL cannot initialize.
+
+**NEXT:** Verify final production deployment and capture screenshot; core simulator UI audit and research report are in docs/simulator-one-hand-audit-2026-10-10.md.
+
+**DO NOT:** Claim headless camera arithmetic tests demonstrate rendered sharpness/FPS or complete clinical innervation validation.
+
+
+## 2026-10-10 — Final head grouping and compact sheet
+
+**DONE:** #47 production READY e558afe/dpl_9ar7t8ATEn8wLJHFtEMLqbUYhqis. Hosted region picker verified Head→Skeleton→Frontal bone; range measured 44px; LAD Inspect in 3D closed the sheet and selected LAD. Source head filter exposed four skeletal misfiles (bilateral levator scapulae and gingiva): fixed systems without changing mesh identities, with actual-atlas assertions. Redundant phone expand pill hidden; full accessible structure names accompany compact 3D buttons. SW v16.
+
+**HALF-DONE:** Final grouping/compact-sheet release and screenshot check pending at this checkpoint. Device GPU/FPS/overview clarity remains physically unverified; complete individual clinical dossiers still absent for many source parts.
+
+**NEXT:** Verify final production head systems/compact sheet and save its screenshot.
+
+**DO NOT:** Substitute structures, invent missing models/innervation, or equate browser UI/headless arithmetic checks with physical GPU or clinical certification.
+
+
+## 2026-10-10 — Source-detail fallback and quality guard
+
+**DONE:** Legacy DPR=1 source assertion replaced with actual bounded render-quality tests. Actual source classification/dossier tests, camera regression, GLTFLoader targets, TypeScript and combined build passed. Gingiva retains exact source metadata; muscles without individual dossiers no longer open skeletal notes just because an attachment name contains a bone. Mobile compact cards retain full accessible names. SW v17.
+
+**HALF-DONE:** Final source fallback release and browser screenshot pending at this checkpoint. Physical-phone GPU/blur/FPS remains unverified.
+
+**NEXT:** Verify corrected head filters and exact source dossiers on final production; capture compact mobile sheet. Preserve concurrent PG changes.
+
+
+## 2026-10-10 — One-hand simulator final checkpoint / quota block
+
+**DONE:** PRs #46/#47 production e558afe READY: bottom thumb controls/navigation, bottom region picker, quality modes, progressive notes/footer and explicit camera reset. Actual 360/390/430/landscape browser checks, head→Skeleton→Frontal bone, 44px spread control and LAD Inspect→isolated model state. Live screenshot ORBIT_One_Hand_Mobile_UI.jpg saved. PRs #48/#49 merged through e2cc0289: four source grouping repairs, compact cards with full accessible labels, exact metadata fallback and updated bounded-quality organ guard. Final TypeScript, actual-atlas 57-target resolution, actual GLTFLoader, real Three camera effect, quality tests and combined build pass.
+
+**BLOCKED:** Final refinements are NOT live. Vercel HTTP 402 api-deployments-free-per-day (>100), retryAfter 86400s, around 12:52 UTC. No installed CLI fallback. See new blocker in blocked.json. Live remains e558afe. Cancelled only our superseded builds/previews; unrelated PG builds untouched. Do not alter billing/security.
+
+**NEXT:** After quota reset deploy CURRENT main containing e2cc0289, preserving later PG changes. Verify corrected head counts/grouping, gingiva/levator exact metadata and compact phone supply controls, then capture final-release screenshot.
+
+**LIMITS:** Cloud WebGL unavailable; physical GPU blur/sharpness/FPS/gestures/audio remain unverified. 36 clinical dossiers do not individually certify every muscle/nerve innervation. Vestibular registration quarantine and other source gaps retained.
+
+## 2026-10-10 — Codex — simulator rotation/framing and auscultation follow-up
+
+**DONE:** Moved mobile isolated identity toward thumb controls, kept full source display names, compacted spread panel, added aspect/depth/viewport-aware isolated framing. Corrected ms_afib sound routing, absent atrial accentuation, cyanosis/stridor and shock/tamponade false inference, cardiac-arrest minimum-rate audio, expired async playback and scheduled-source stop/disposal. Dark-mode live mobile controls exercised (8 presets, 6 sites, 2 filters, volume/start/stop/close/reopen); actual screenshot saved. TypeScript, mobile UI/organ/camera checks, 42x7 source case/site routing, 30 actual offline DSP combinations and Three.js projection checks pass. Production build passes with NODE_OPTIONS=--max-old-space-size=6144; ordinary runtime default heap failed during the unrelated native-web build. Detailed limits and clinical references appended to docs/simulator-one-hand-audit-2026-10-10.md.
+
+**HALF-DONE:** New fixes not live; existing simulator-vercel-daily-quota-20261010 blocker remains. No captured/audible physical-device sound or GPU rotation/clarity claim. Offline compressor implementation is passthrough, not actual browser output validation.
+
+**NEXT:** After Vercel daily limit resets, deploy current main containing this follow-up and prior PR48/49, preserving PG changes. Capture real-phone model rotation/fit in both themes and check headphones/speaker sounds against clinician-reviewed recordings.
+
+**DO NOT:** Convert anatomical right to camera-relative left; infer stridor from cyanosis or tamponade from CVP alone; report queued fixes as published; change billing/security settings to bypass quota; claim every nerve/muscle's clinical innervation is certified.
+
+## 2026-10-10 — Codex — Mobile auscultation trainer
+
+**DONE:** Implemented mobile chest listening points, lazy attributed 3D organs with labeled fallback, moving stethoscope, real output waveform/scheduler labels, exploration/training, nine cardiac and six lung demos, fixed thumb player, both themes. TypeScript, 32 offline DSP renders, source-model bounds/targets and mobile guard passed; production build checked. See docs/simulator-auscultation-trainer-2026-10-10.md.
+**HALF-DONE:** Browser UI audit follows deployment of this branch. Physical-device sound and GPU realism are not certified; cloud WebGL may show fallback.
+**NEXT:** Publish branch preview, exercise phone-size UI, then merge and verify production revision.
+**DO NOT:** Import normal/abnormal datasets as named valve-disease clips; copy GPL hardware simulator code; infer clinically registered chest/valve locations from illustrative placement; alter Android releases or concurrent PG work. Prior PR51 production deployment is now READY (e689045); old quota-block status is superseded.
+
+
+### 2026-10-10 — Auscultation realism correction (PR52 follow-up)
+- DONE: Removed schematic capsule/ribs and SVG chest; registered BodyParts3D 587-part chest plus Z-Anatomy lungs, explicit static source-model reference fallback, source attribution, valid triangle/source-coordinate checks. Fixed initial frozen/reduced-motion trace startup. Root TypeScript and model checks passed; browser actions exercised the heart/lung library and training controls on PR52 preview; dark mode opened.
+- HALF-DONE: Corrected preview/production deployment and final screenshot verification pending at this checkpoint. Cloud browser lacks WebGL; real meshes inspected with an offline EGL renderer, never represented as a live GPU browser test. Physical acoustic/clinical certification remains unverified.
+- NEXT: Verify corrected preview 360/390/430 and dark theme, record screenshots and publish PR52 when checks pass.
+- DO NOT: Restore procedural anatomy; claim every anatomy structure or headphone sound clinically certified; touch Android releases, PG data, billing or security settings.
+
+
+### 2026-10-10 — Realistic auscultation preview audit completed
+- DONE: PR52 merged at a82b8a4a33d31ee4a76d50beaeedfa4c69b1c489; corrected preview fdf5b016 READY. Actual browser source-model reference inspected in light/dark. Front/back and X-ray/surface images switched correctly. 360/390/430 and landscape have no horizontal overflow; every trainer button measured at least 44 px, dark theme now propagates, 155 px player scroll clearance verified. Source image decoded at 720 px.
+- HALF-DONE: Final production deployment is building. Follow-up fixes Freeze losing the plotted history while retaining timing labels: history now persists across freeze/unfreeze and resets for stop or a different trace. TypeScript passed; final deployed follow-up trace screenshot check pending. GPU live render and physical headphone/clinical sound fidelity remain unverified.
+- NEXT: Verify final deployment and Freeze waveform; save mobile screenshots. Physical-device GPU/audio review is the remaining evidence gap.
+- DO NOT: Restore drawn anatomical substitutes, substitute unrelated missing nerves, claim all structures or acoustics clinically certified, alter Android releases/PG/billing/security.
+
+
+## Final deployed browser verification — 2026-10-10 18:28 UTC
+
+DONE: PR #52 and #53 merged; production main 91c3c7194bf7a3ecb7185558d384460cfa0da435 READY (dpl_5DM3oiP4Zn6gcKLgzcxF75amZQv6). Refreshed orbitmbbs.vercel.app responsive harness, verified full 2.5-second S3 waveform survives Freeze, remains stable, Animate resumes and Stop resets. All 42 case selections matched rendered headings. Mitral/apex button and selector work; dark-mode mobile screenshot inspected. Two screenshots saved: orbit-mitral-dark-20261010.jpg and orbit-frozen-s3-trace-20261010.jpg.
+
+HALF-DONE: Cloud browser lacks WebGL; verified labelled source-geometry static references, not live device GPU. Synthesized teaching audio routing/timing tested, but clinical acoustic fidelity and physical headphone output are not certified.
+
+NEXT: Physical mobile WebGL rendering and clinical listening review; evaluate the new cranial-nerve trainer references separately before adding a new feature scope.
+
+DO NOT: Claim perfect clinical accuracy, live GPU verification from static screenshots, or exhaustive intervention correctness from case-selection tests. Do not replace registered anatomy with drawings or copy competitor assets.
+
+
+## Competitor-inspired mobile UI — final checkpoint 2026-10-10 15:57 UTC
+
+DONE: PR #54, #55 and #56 merged. Production main 36fcad128c164d5d1335374601f0c772db3669f4 is READY (dpl_6hjfJ9fMHYEfHEZ52V3SNHeBEoiS). Compact mobile selection name/info opens anatomy details; Restore clears selection. Pupil results precede penlight controls and clinical explanation is collapsed. WebGL-unavailable notice no longer blocks selection/spread controls. At 360px, selection width and scroll width are both 299px, dark background is rgb(15,23,42), selection/spread gap is 8px and buttons meet 44px targets. Details/Restore and pupil left/right/both/off plus disclosure verified in browser. TypeScript, mobile guard and web build passed. Final screenshots: orbit-pupil-mobile-inspired-20261011.jpg and orbit-selection-gap-fixed-20261011.jpg.
+
+HALF-DONE: Cloud browser lacks WebGL, so live GPU anatomy rendering on a physical mobile device remains unverified. Clinical audio fidelity remains unverified. Current pupil tool is schematic; animated facial patient and complete cranial-nerve examination trainer are not implemented.
+
+NEXT: Physical-device GPU/audio verification. If requested, design and clinically validate the separate facial/cranial-nerve examination feature.
+
+DO NOT: Claim an animated facial trainer, perfect clinical fidelity or live GPU verification from these screenshots. Do not import competitor assets or replace registered anatomy with drawings. Do not alter Android releases, PG, billing or security.
+
+
+## Auscultation playback and training follow-up — 2026-10-11
+
+DONE: New sound presets cancel queued old sources and schedule the replacement at currentTime + 40ms; routine rate updates retain cycle timing. Absent lung sounds stop sources and idle scheduler. Preset setters use the same transition path. Added regression assertions for these transitions; all 32 bell/diaphragm offline sound renders remain finite, audible (except intended silence), with routing/timing/stop checks passed. Training hides timing labels until Check answer; frozen trace keeps its original time/events when revealing labels. TypeScript, targeted ESLint, mobile UI guard, source-model check and web build passed.
+
+HALF-DONE: Publishing and deployed browser verification of answer reveal/frozen trace remain pending. Physical phone GPU and clinical acoustic fidelity remain unverified.
+
+NEXT: Verify training and reveal on the deployed 360px phone harness, save screenshot, record deployment result.
+
+DO NOT: Claim physical headphone output or clinically certified recordings; do not substitute drawn anatomy or add the separate facial trainer in this patch.
+
+
+## Auscultation follow-up — deployed verification 2026-10-11
+
+DONE: PR #57 merged at main d4b38d0856d71fd4fc986394a1f485d94f50d46c. Production dpl_3dGVJcF7zuaL5E2BzAcJDBWakUHo READY. Real 360x800 browser: training initially hides timing labels and findings; selecting an answer and Check answer reveals S4 feedback and S1/S2/S4 timing labels on the visually preserved frozen trace. Next sound clears answer, disables Check answer and hides labels/findings again. Explore restores labels; Stop switches trace to Stopped. Trainer clientWidth equals scrollWidth (310px). BodyParts3D reference decoded at 720px and Mitral/apex is available. Screenshot orbit-training-reveal-20261011.jpg saved and inspected. Audio preset-transition regression checks, 32 offline audio renders, TypeScript, targeted ESLint, source model check, mobile guard and web build passed.
+
+HALF-DONE: No physical device WebGL or headphone/clinical acoustic fidelity verification. Schematic pupil tool remains; no animated facial trainer implemented.
+
+NEXT: Physical phone rendering/listening review. Check narrow chest point hit-target separation against actual rendered body width (288–303px), rather than the model check's assumed 336px.
+
+DO NOT: Infer a live 3D GPU from the labelled static reference, claim clinical certification, or claim exhaustive intervention correctness. Keep competitor assets out and native releases/PG/billing/security untouched.
+
+
+## POCUS / pupil screenshot follow-up — 2026-10-11
+
+DONE: POCUS Freeze retains last live inputs and cine phase, including when vitals subsequently change; M-mode history stops advancing. Scan gain changes brightness, depth zooms the field, calipers use display-depth calibration and reject taps outside the field. Gain/depth rows fit narrow phones, scan captions sit outside the acoustic clip and depth labels stay in bounds. Synthetic tissue now renders grayscale with cached correlated texture; removed unsupported 60 FPS and diagnostic certainty claims. Lactate alone no longer produces free abdominal fluid. Added separate attributed archived reference scans (external Wikimedia images/loops), expressly independent of patient case. Pupil orientation is examiner-facing, pupil diameter proportional to iris, and small pupils never enlarge under the teaching light response.
+
+HALF-DONE: These synthetic images remain schematic appearance models, not accurate acquired sonograms or a Blender acoustic model. Blender is not installed. Full animated facial/cranial-nerve trainer remains absent. Reference images and mobile controls still need deployed browser verification at this checkpoint; command-line image downloads were denied by the network.
+
+NEXT: Verify reference image loading, all four view selectors, caliper/mobile controls, pupil light controls and production deployment. Physical-device performance/GPU/audio and clinical fidelity remain unverified. No amniotic-fluid module found; owner’s attached fluid screenshot is abdominal Morison’s pouch.
+
+DO NOT: Describe texture as validated ultrasound physics, claim all requested features fixed, call the fibrosis lung reference normal, infer diagnoses solely from CVP/SpO2/lactate, copy competitor assets, alter Android releases/PG/billing/security.
+
+## 2026-10-11 PG corpus quarantine and evidence review
+PR #60 publishes all 186,930-row audit, 1,293 withheld records / 185,637 structurally eligible, 92 external references including FirstRanker. Supabase pg-answer-review v3 is ACTIVE with JWT enforcement; only index/review/retrieval in that function changed, not shared notes retrieval. No annual coverage/clinical verification promised. Before declaring live: inspect PR60 checks and exact Vercel commit; focused browser smoke produces mobile/preview/pg-bank-evidence. See docs/PG_BANK_IMPLEMENTATION_20261011.md and corpus/source reports. Do not relabel undated MedMCQA or links as verified PYQs.
+## 2026-10-11 — Vault and independent simulator skills
+- User explicitly authorized patient simulator UI redesign and the Notes→Vault four-card layout.
+- Implemented native/shared Vault entry with Notes, Simulator & Anatomy, Case proformas, Anki flashcards. Existing Notes routes and PG/case library tools retained.
+- Browser opens simulator on a studio with a healthy adult baseline, independent diagnostics, case comparison and a separate anatomy entry. Android Vault opens hosted simulator through Linking; this is not a native 3D port or new APK release.
+- Source anatomy heartbeat/breathing animations use scheduled audio events, pause when hidden, and support reduced motion. Exact bone mesh selection retained; attachment teaching derives from the existing muscle graph and explicitly describes incomplete coverage.
+- Added independent clubbing teaching and removed visual pallor→exact Hb and cyanosis→capillary-refill conflation.
+- Checks: root/mobile TypeScript, changed-component ESLint, combined Vercel build, source chest mesh integrity, simulator UI regression, 645 case/action regression, Notes schema. Browser visual verification pending preview deployment; local Chromium download failed in the current environment.
+- The source-reconstructed POCUS pilot is on separate branch codex/pocus-source-physics-20261011 and is not silently overwritten or claimed integrated by this work.
+- Final combined production build and rendered Web Audio tests passed. Public GitHub push was rejected twice by automatic review, even after the connector confirmed the exact repo is public and user-administered; explicit publishing approval is required. Do not retry through another API.
+- Review: docs/VAULT_SIMULATOR_UI_REVIEW_20261011.md. Browser-width regression prepared in scripts/simulator-studio-e2e.mjs, not run. Older mobile smoke navigation updated for Vault→Notes.
+- Android production JavaScript bundle also passed with temporary Metro config for symlinked dependency watch folders; no APK/device verification claimed.
+
+
+## 2026-10-12 — approved Vault release
+User explicitly approved public publishing/deployment (“Yes live it”), then asked to continue. PR #61 published through connected GitHub because shell git has no credentials. Initial preview READY at dpl_Dy9vMzV333FNFsGaW1EQdidNgv48. Cloud browser verified six independent skills, normal breath playback and heart shortcut, ECG sinus, case search and normal reset, 360/390/430 layouts, and four Vault destinations. Corrected missing WardExam dialog semantics and changed Back to Vault links to reloadDocument (legacy simulator router cannot render native Notes). Git retrieval failed on automatic follow-up deployment; exact commit d440e8c0e118d64465f2292886544ca48bb6d93c retried at dpl_7UH65HY8zphvLDkYscScaboTErQq. Await rebuilt preview then merge and production verification. No APK or GPU movement verification claimed.
+
+
+## 2026-10-12 — calendar columns and Android simulator authorization
+User explicitly requested all Vercel changes in Android, including Vault and Patient Simulator; this lifts the previous native simulator hold. Vault and educational icons (Anki index cards, no joker) are merged through PRs #61–63. Main 43ee2b4418312153c2b5fb5b117e89669859819a is deployed READY.
+Calendar bug: seven percentage-width cells plus gaps overflow narrow rows; rotation starts were also not padded to their actual weekday. Changed shared RN calendar to seven flex slots per explicit week with Monday-first padding, shared aligned headers, weekday accessibility labels, wrapping title/summary. New pure tests cover 54 rotations, all seven starts, month/year boundaries and leap days.
+Android now opens the hosted current simulator inside a dedicated WebView from Vault, with native safe-area header, Back to Vault, network/crash retry and blur/background unmount to stop audio/GPU. It requires internet; this is not an offline native 3D port. Replaced the now-obsolete simulator hold check with URL navigation tests and updated three Android workflows. Existing application ID, version code, ads and signing remain unchanged.
+Passed: native TypeScript, changed-file ESLint, attendance arithmetic/holiday rules, 54 calendar rotations, 14 simulator navigation cases, production Android JS bundle (459 assets), native-browser build with 6GB Node heap, version/edges/Kotlin/Notes schema, restored full documentation paths, repo-intact and preview parity. Full lint and deployed phone calendar verification pending at this checkpoint. Next: publish isolated feature PR, verify 360/390/430 calendar columns, merge, verify production and exact-commit Android APK build/release. No physical phone/WebGL or Play upload claim.
+
+
+## 2026-10-12 — simulator theme matches Vault
+PR #64 merged at main 1678421a9f0150ae984e68aa38d19dd692145382; production dpl_8611mQuFxeo1cvUyYVaWkV13daxn READY. Browser preview verified Sundays aligned with Sun at 360/390/430px, no horizontal overflow, and Wednesday-start padding; adjusted empty slots to match bordered cell geometry before merge. Exact-commit Android workflows started (internal 38221585542, debug 38221585642, release 38221585578).
+Owner supplied current Vault screenshot and asked for the same whole simulator theme and Android inclusion. Implemented dark-by-default black/charcoal/purple palette, colorful medical skill icons, a persisted accessible light/dark toggle, and shared skin for bedside/anatomy/case surfaces. Clinical plot/anatomy colors and physiology are retained. Android uses this same hosted simulator inside the new native screen.
+Caught own earlier clubbing image deployment defect in Web CI: public/diagrams is trimmed from dist. Copied the existing unmodified 323688-byte clinical hand photograph to public/clinical-reference/clubbing.jpg and updated the trainer URL. Source image SHA is 3ae3e3d79776ea5c6fa989a465fb9a4ddf5e328b. Asset placement guard must pass on full GitHub checkout; local sparse public assets prevent full packing guard validation. Root TypeScript and new Studio/Clubbing lint passed; two pre-existing explicit-any lint errors in Simulator.tsx remain outside the theme edits. Native full lint was clean. Theme build, preview screenshots, final production and signed APK verification pending. No physical-device test, offline anatomy port or Play upload claimed.
+
+## 2026-10-12 — Codex — recovered and verified simulator anatomy mobile flow
+
+**DONE** — Workspace recovered. Fixed floating camera-control overlap during mobile spread. Updated tests to open Layers, use accessible selection/restore actions and the named thoracoacromial action. Studio check scopes anatomy canvases instead of the global mascot canvas. Workflow builds/serves the exact checked-out commit.
+- Source commit `1d929982d376011a66602384192e6159f27b1155`: TypeScript, Web build, simulator integrity, studio checks at 360/390/430px and all seven focused anatomy checks passed. Browser run `38229914664`, job `114746580144`. All isolation render targets passed in the separate broader job; its legacy full-flow assertions have not been updated here.
+- Preview `dpl_Fcrq32RYGAuX4QuSdAMevDDXrY4s` READY. Vault theme production `6aa7d07` already live; Android `debug-466` and internal APK builds passed for that exact SHA. Vault/calendar are native; simulator uses the current hosted page in a dedicated in-app WebView and requires internet. Play Store upload not performed.
+**HALF-DONE** — PR66 ready to merge; watch its production deployment after merge.
+**NEXT** — Verify production deployment for PR66 and report the live link. No new native build needed for this hosted simulator-only visual fix.
+**DO NOT** — Do not mistake a browser check for physical-device testing. Do not run old anatomy tests against the Skills landing screen, or count the mascot canvas as an anatomy renderer. Preserve the separate PG import work on `claude/native-app-sync`.
+
+
+## 12 October 2026 — original-only distribution hold (supersedes archive release claims)
+
+The owner requires conservative risk reduction without assuming legal clearance. The released PG feature now includes only ten ORBIT original, undated practice samples and three official exam-information links. MedMCQA packs, unofficial recalls, source catalogs and historical question-year overlays are excluded from the active web/native import graph. Existing corpus counts describe research inventory, not released content. No answer has independent clinical approval; textbook AI remains provisional.
+
+Web and Android build gates reject withheld PG corpus imports; web output is checked for dataset payloads. Manual dataset-seeding and expansion workflows fail before downloading or publishing data. The PWA cache version is advanced. Subscriptions are unchanged. No GPL trainer code was incorporated in this PG implementation.
+
+Future third-party material requires documented permission covering the underlying questions, images and explanations, not just a public URL or dataset licence. Original questions must be independently authored; rewriting confidential recalls is not a permission workaround. Private textbook access does not establish excerpt redistribution rights.
+
+Outstanding exposure: the GitHub API confirms gmck is PUBLIC. Import exclusions do not remove raw files from repository/history, public forks, previously published APKs or old deployment URLs. The current connector cannot change repository visibility or revoke prior copies. The owner should make the repository private via GitHub Settings; existing public forks remain public. No legal immunity or completed whole-app legal audit is claimed.
+
+
+### Chapter organisation and latest request
+
+The ten released original practice records now have explicit chapter metadata, grouped under nine subjects and ten chapters. The PG screen groups cards by subject/chapter and supports subject and chapter filters, per-group counts and chapter search. It displays the released count and zero imported PYQs. Browser regression checks Anatomy (two questions), Cranial nerves (one question), and resetting to all subjects (ten).
+
+The owner requested modifying the 186,930 research records for publication without legal problems. Cosmetic paraphrasing, changing choices or suppressing sources/years does not establish underlying reuse permission. This request does not resolve the original confidentiality/licensing uncertainty. The bank remains withheld; no bulk rewriting or covert reattribution is performed. MedMCQA's Hugging Face card declares Apache-2.0, but the inspected material includes exam-derived questions and textbook-referencing explanations; this declaration alone is not a verified clearance of every underlying item. Future expansion requires documented reuse rights or independent original authorship and medical review. No guarantee against claims is offered.
+
+
+## 12 October 2026 — collected practice-bank integration
+
+The latest owner instruction is to add the bank to the app as practice questions. Release uses the MedMCQA maintainer's explicit dataset MIT clarification (28 November 2022, https://github.com/medmcqa/medmcqa/issues/2#issuecomment-1329300257), with full notices and attribution. This supersedes the earlier original-only runtime policy for this publisher-declared dataset. Unofficial additional recall collection/import workflows remain paused. This is not independent confirmation of every underlying rights chain and no legal immunity is claimed.
+
+The source inventory has 186,930 records. The existing structural quarantine excludes 1,293 from practice, leaving 185,637 dataset questions plus ten ORBIT originals. The eligible dataset contains 51,132 supplied explanations and 134,505 empty explanations. All eligible records retain supplied answer indices; no key is silently replaced and no bulk AI output is promoted to verified. Supabase textbook checks remain private, metered and provisional. No provider call was made by the import.
+
+Build-time Zstandard compression creates 21 subject packs, source chapter indices and licence/NOTICE files under a 10,000,000-byte gate. Assets are content-hashed and checksum checked. Android's new OrbitPgBank TurboModule reuses existing zstd-jni; browser decoding uses pinned fzstd 0.1.1 with its MIT notice. Both read the same compressed packs. The runtime caches at most two subjects and returns at most forty question objects per page; source chapter labels are not independently validated. Source UUIDs are not carried into the shipped bank: internal IDs use deterministic subject-pack/row positions, which are not official question numbers. The ten original IDs are preserved.
+
+Public web assets are prioritised in the PWA cache and served offline; Android assets are generated before build/codegen. Legacy uncompressed packs, external recall catalogs and historical attribution overlays remain excluded from the runtime import graph. The budget is question-bank data, not the entire APK/app. Existing billing, patient-simulator changes and private textbook OCR are not changed by this feature.
+
+Local validation: all 185,637 records decode identically through Node/native-compatible Zstandard and browser fzstd; subject/chapter filters, search, pagination and absent-year filtering pass. Native TypeScript, preview TypeScript, lint, Kotlin/spec checks, keyboard checks and Android release JS bundle pass. Browser CI, signed Android builds and exact production deployment require their own results before claiming those are complete.
+
+
+## 2026-10-12 — direct Vault PG card and About credits
+Owner requested a separate NEET-PG practice card in Vault and publisher attribution only in About. NotesScreen now opens the existing practice modal directly from Vault; NEET-PG is the initial filter. Practice-screen publisher labels and source link moved to Settings → About → Third-party licences. Both complete MIT copyright/permission notices are embedded offline and checked byte-for-byte against docs/licenses. Bank files, answer keys, counts and provisional-review labels unchanged. Native/web TypeScript and targeted lint pass; CI browser harness now tests the Vault shortcut and About notices. Device rendering and Play upload are not claimed.
+
+
+## 2026-10-13 — no-provider PG explanation preparation
+User rejected Gemini generation. No new model endpoint was deployed, and the temporary model endpoint source was removed before commit. Added stdlib Python private TXT download/SQLite retrieval and a ten-question runner. Private evidence staging migration private_pg_evidence_preparation applied; RLS enabled, all client roles denied. 42 TXT files total 41,441,912 bytes. Authoring is done by assistant from retrieved evidence, not by script/model APIs. Four failure/index/identity tests passed; no full-bank medical verification or completed explanation coverage is claimed. Source name/source link in expanded licensed practice cards hidden; attribution stays About. See docs/PG_EXPLANATION_PREPARATION_20261013.md.
+
+Pilot run 38296147380 succeeded: downloaded all 42 TXT, processed ten question/evidence sets, zero model calls. Evidence batch 6d923b147f8da31e9ee5660a648d43e44b375b34 is private. Assistant read it; TIVA retrieval exposed unrelated generic matches, so primary-concept anchoring was added and regression tested. Five authored provisional explanations now in docs/PG_PREPARED_EXPLANATIONS.json; build validates exact question/options/key before applying them. Four previously missing explanations filled and one existing explanation replaced. Counts: 51,136 with explanation; 134,501 missing. Data 8,734,881 bytes. PG live Textbook AI tab/button removed by owner instruction; no provider call on reveal. Full-bank work remains unfinished. Five Python tests plus 185,637-record codec/filter/runtime checks passed.
+
+## 2026-10-13 — PG explanation continuation and medical hold
+
+### DONE
+Nine more source-checked provisional authored explanations (s00-0,1,3,7,11,13,15,16,19), fourteen authored total. Six missing filled, three existing replaced. Ketamine-route s00-6 held from practice because trials contradict absolute SC exclusion. Holds validate exact identity; optional original ordinal preserves later question IDs. Batch offset/missing-only selection and unique run-attempt private evidence IDs added; no model calls. Current 185,636 practice records, 51,141 explanations, 134,495 missing; 8,744,604 bytes. Python six tests and full codec/search/filter/pagination runtime verification passed. Publication/CI outcomes should be checked against final commit.
+
+### HALF-DONE
+Full-bank explanation coverage and independent clinical review remain incomplete. Script retrieves evidence; assistant must reason and author supported explanations. Existing supplied answers/explanations are not all verified. Next pilot eligible offset 9 includes the post-MI abdominal pain vignette, which needs modern imaging context, not blind endorsement of an older key.
+
+### NEXT
+Read new private evidence batch after successful CI pilot; continue supported authoring. Check remaining ambiguous/outdated questions before publishing. Verify exact production deployment and Android build separately.
+
+### DO NOT
+Use Gemini/model APIs for this job; claim perfect medical answers or legal immunity; publish private TXT/passages; reset remaining IDs when holding a row; claim all historic NEET-PG/FMGE/INI-CET years are verified. Attribution remains About. Frozen root src is unchanged.
+
+Final publication checkpoint: PR75 merged at 756a66682ad8d039a71ef4f0e1f5f7f44bfe9480; production dpl_CxHZsCfZ3umTaeQDop36Gq4yBJSV READY with orbitmbbs.vercel.app alias. Feature head 69613f344f305a9ab16c4bbf85679d3ce9e25cd0 passed web/content/offline/browser CI. Browser answer reveal made zero PG review calls. Android JS bundle and required native guards passed locally; no device/Play upload claim. Private pilot run 38339003334 succeeded (42 TXT, ten evidence sets, zero provider calls), batch 69613f344f305a9ab16c4bbf85679d3ce9e25cd0-38339003334-1; next original IDs s00-10 through19. Inspect malformed numeric distractors in s00-14 before authoring it. Full explanation and clinical-review work remains unfinished.
+
+
+## ECG redesign — final live verification, 2026-10-13
+
+PR77 merged as 7526d8f46893d30dfabd7e16bf146cd4ef978eb6. Production deployment dpl_Coha5amibtrS68pMPxsPuV2eFczQ is READY and serves orbitmbbs.vercel.app. Live /simulator?tool=ecg12 opened and new ORBIT ECG LAB tutorial verified: shaded SVG heart, synchronized beat cursor actually advanced and paused, phase selection, lead/axis diagram, interval/QTc/action-potential sections and pattern lessons present. Browser source-code QA covered360/390/430px, light/dark, reduced motion, calibration, QT formulas, diagnostic captures, territory controls and advanced heart.
+
+Exact head085c81d2898cc9597b721518143439a8dc7ffa33: web build, Vercel-style build, simulator integrity, Vault layout and focused production-mobile-ux all SUCCESS. The older exhaustive mobile-browser-e2e failed: old anatomy/monitor/case/pupil/auscultation/bedside/drawer expectations and a horizontal-scroll ECG assertion against the unchanged captured-sheet implementation. Do not claim every legacy test passed. No physical Android testing, APK build or Play upload for this patch. Android's existing online simulator WebView uses the same URL.
+
+Preview image preserved as ORBIT_ECG_Redesign_Preview.png, Library ID libfile_8ea562d33860819191dc1c73e960b779. The SVG is an original schematic teaching cutaway, not a rotatable3D scan or clinically validated activation map. No further ECG publishing step remains. Preserve unrelated app, PG, security, billing and release changes.
+
+
+## 2026-10-13 — Codex — chest X-ray gallery live, 23 real films
+- **DONE** — PR #79 merged cce8aa68eabe380b29edaa87315e7cc882af8fb2; production dpl_7EjoBQTdxmUKw2sTFMQGAMuCVHdo READY. Live gallery/pleural effusion/pneumothorax and MRI checked.
+- **DONE** — 22 licensed bundled pathology films plus existing normal; matching captions, notes, comparisons, credits, searchable categories and case navigation. Actual image dimensions used for pixel calipers; reset on case changes; MRI retained.
+- **DONE** — All source images visually audited; 2.56 MiB total new images, loaded one at a time. Original licences/metadata in public/clinical-reference/radiology/cases/sources.json; no synthetic radiographs.
+- **DONE** — Radiology CI passed all 23 films at 390px, interaction/caliper and real MRI-plane checks at 360/390/430px; assembled production/native build and simulator/source integrity passed. Local TypeScript/build passed too.
+- **DONE** — Screenshot ORBIT_Xray_Gallery_Preview.png saved as libfile_bc1a8b50a1d88191a21ddd89a742aa0d and delivered. No physical-device or newly installed APK claim.
+- **HALF-DONE** — None in this gallery scope. Wider legacy simulator tests remain distinct from focused verified flows.
+- **NEXT** — No remaining gallery action. Preserve this implementation when continuing other tasks.
+- **DO NOT** — Apply normal PA labels or orientation assumptions to other views. Early miliary TB film is interstitial; emphysema is lateral. A film alone does not confirm TB, malignancy, effusion aetiology or tension physiology.
+- **DO NOT** — Use plain Vite SPA fallback to check /simulator after build:vercel; use radiology-gallery-preview.mjs to mirror the production legacy.html rewrite. Do not redo ECG redesign or touch PG/native/security work.
+
+## 2026-10-13 — connected anatomy recovery checkpoint
+Owner requested professional heart/kidney rendering, clickable Supply/Relations for all organs, and tracked arrows. Recovered pruned local work onto codex/anatomy-relation-audit from main 6c5cb13. Catalog: 36 dossiers / 430 links / 225 registered atlas views / 205 labelled schematics. No raw relation sentences go through broad resolver. New connection UI, owner-aware routes, union framing, tracked SVG callouts; heart/kidney default registered BodyParts3D instead of purple HRA cutaways. Explicit HRA cutaways retained with tissue materials. TypeScript and web build pass. Dedicated CI/e2e added; visual QA and production publication pending. Do not claim device verification. Keep unrelated ECG/radiology/PG changes.
+
+### 2026-10-13 — shader root cause fixed
+PR81 is a draft recovery checkpoint, head9f7eaf3. Tracked leaders now use real source surface vertices rather than empty bounding-box centres. Heart patching traced to Three.js shader cache: system-specific onBeforeCompile GLSL closures shared the default function-text cache key. Explicit per-system customProgramCacheKey removes accidental translucent shader reuse. Heart screenshot now smooth; source tissue colours/opaque context distinguish vessels. Expanded e2e to all225 registered links; it awaits the throttled caption update instead of racing an earlier SVG. Final all-route QA/CI and production publication pending. Preserve labelled205 schematic gaps and do not claim native-device verification.
+
+### 2026-10-13 — exhaustive check time limit addressed
+Latest remote head5fdc486. Dedicated exhaustive CI reached heart/LAD/pectoralis/deltoid/liver/lungs/RCA/vagus/phrenic successfully then hit25min limit; no target failure. Legacy whole-simulator tests still fail older Bell/ECG/peek expectations (unrelated baseline); focused checks stay distinct. Added isolation/dissection optimization: whole hidden atlas systems now skip draw calls instead of processing every hidden vertex. Exhaustive connection QA split into4 deterministic batches, all225 IDs still covered; only batch0 repeats phone gallery/rotation checks. Dedicated workflow runs only PR or main push to avoid duplicate branch runs. Legacy nerve tests open the newly collapsed details accordion. TypeScript/checks pass; final CI and publication remain pending.
+
+## 2026-10-13 — connected anatomy delivered
+- **DONE** — Runtime PR81 merged (d4adea057ddd825166159b9ab7a1d866a7431a73). Production deployment dpl_41eA2KCdZby7Y5tPpWS3sJkPaWsD READY; published kidney Supply/Relations and renal-pelvis diagram verified at https://orbitmbbs.vercel.app/simulator?organ=kidney&isolate=kidney.
+- **DONE** — 36 dossiers /430 controls /225 registered views /205 explicitly labelled schematics. Exact atlas IDs replace raw-prose routes; composite/region labels disclose missing components. Named vagus/phrenic dossiers no longer fall through to the generic nerve dossier.
+- **DONE** — Registered heart/kidney external views, tissue-coloured HRA cutaways, distinct per-system shader cache keys (heart patching root cause), projected surface-vertex leaders, mobile panel expansion, and hidden-system draw-call skipping.
+- **DONE** — Focused CI38393246612 passed4 batches: registered routes66+50+71+38=225, all36 control sets and diagram fallbacks; phone widths360/390/430;5 drainage/relation rotation and parent-reopening cases. TypeScript/build/routing/mobile/source/assets/regression checks passed. Label-only013cdd0 changes preserve every ID and were rebuilt/inspected.
+- **DONE** — Inspected previews saved: ORBIT_Heart_Vessels.png (libfile_d7a2a6fef91c8191b56dc2430efe095f), ORBIT_Renal_Vessels.png (libfile_21e83218d7588191bdb010b1573668dd), ORBIT_Kidney_Supply.png (libfile_8a4fdeec26588191a53db1e7119382bd).
+- **HALF-DONE** — None in this interaction/rendering scope.205 atlas gaps remain labelled diagrams; additional meshes are not silently substituted. No physical Android or TalkBack validation. Cloud browser lacks WebGL; live controls were checked there and actual3D was checked in the Playwright harness.
+- **NEXT** — Preserve current anatomy, ECG and radiology implementations. Do not redo the source audit or claim unrelated legacy Bell/ECG/peek tests are green. Detailed delivery record: docs/connected-anatomy-audit-2026-10-13.md.
+
+2026-10-13 follow-up: owner requested Heart tap open its model immediately and celiac trunk visibility. Implemented direct model selection, explicit info dossier, vessel-only default/context toggle, small-vessel camera clipping fix and registered celiac branch scaffold. New real-label/context regression scripts/direct-organ-open-e2e.mjs; local checks and 390px browser flow pass. Runtime PR/deployment pending at this checkpoint; no physical Android verification.
+
+2026-10-13 publication complete: PR #83 merged as 6b8fff793d46cac08e29d447b814c259703e4e9c. Production deployment dpl_7Fgmc13yZ61hYaUAQmLCCog8aDJr READY and aliased to orbitmbbs.vercel.app. Live Celiac supply control selects connection_412 and exposes Show organ context; public simulator route verified. This cloud browser lacks WebGL, so 3D graphics evidence is from local/CI Chromium, not the live cloud browser. Connected Anatomy run 38402555238: all 4 groups SUCCESS after retrying group 0 (initial run reported one unexplained page error 'int64' after every route passed; unchanged runtime retry passed). Covers all 36 dossiers/225 registered views, relation/drainage/rotation, and new Heart/Kidney/Liver/Lungs tap, explicit info reopening, celiac/context-toggle regression. Phone screenshots inspected at 360/390/430px; delivered combined preview ORBIT_Direct_Heart_Celiac.png. Local TypeScript/build/simulator/mobile/assets/catalog/small-vessel framing pass. Production smoke expectation aligned to direct-model Heart tapping in test-only follow-up 1ba433b; legacy simulator E2E failures remain recorded in prior audit, not claimed green. Physical Android gestures and TalkBack remain unverified.
+
+
+## 2026-10-14 — completed iOS calendar/setup/murmur release
+
+PR86 merged to main39ac7296eac5fbae2a6d332667265e4aabd6f5c0 and deployed to orbitmbbs.site / www.orbitmbbs.site (READY deployment dpl_6uRw8wbAryieQ9SGvFfXB9sLa7Rh). Live HTTP200, SWv23 and client bundle SHA2560c9922e9bc6d643f76888d8837c7d0d763fa00e6d0f983ef6026dceba8f33344 match tested local output. Home university card removed; Settings unchanged for selection. Validated durable setup + own-account recovery; date pickers and saved posting date repair; nine synthetic murmurs with timing notes and normal comparison. Chromium+Safari/WebKit touch setup/reopen/calendar/date edit/holiday persistence and full mobile simulator UX passed.
+
+Native offline branch source0e2f0231ff2feb737d8d3be7c11537204497e898 released successfully:
+- debug-490 app-preview.apk 150705326 bytes SHA256f24b5ee562746788786870e5ba3e8f45b049a2715b276a02109a21cfd7436cda — ad-free, separate .debug package, guest setup.
+- internal-509 app-internal.apk 150705314 bytes SHA256a3a2a80d0e31580e762a99bd1a65047b03eb60cb3aa4549dc112acd730d21214 — ad-free production package/upload certificate.
+- release-693 app-release.apk 143053642 bytes SHA256dfbdf7cff9225521a9287c1656470618eb37d819ccb261d6bc3a012d9769b4eb; app-release.aab 120596495 bytes SHA2563edd4a756a61b9f64d709fbc376f246c5d141765ba09837c2b6d97c719a79d0a. Release has live ads.
+
+Every asset has its .json package verification report attached. GitHub asset digests match CI reports; all four packages verified 21 PG packs /185636 questions, 260 native audio clips and36770768 offline asset bytes. Three runs38575373005/38575372996/38575373010 succeeded; native offline verification38575373008 succeeded. Workflow-only5f580ec uses matching browser and validates existing clips before audio regeneration. These native offline releases are distinct from automatic builds on main (main still has the hosted simulator). No Play upload or version bump was performed.
+
+Updated 32-second iPhone guide for orbitmbbs.site saved to existing Library libfile_ec8bf93f297c81918c78464cfe36ddc4; MP4 H264/AAC1080x1920@60fps, 1920frames,4216223 bytes SHA2563be02cdece74d71a57c909d9cbfc16c53053711e24f2b9a97c36191ef86cee3e. Editable ORBIT_Continuous_Source_and_Audit.zip saved to existing libfile_6f0e7e7916288191979cb2b40fa812c9 version5; unrelated original reel contents preserved. Full media decode and selected final visual scenes passed; six startup geometry reads rechecked after layout passed. Both replacement saves and metadata application succeeded.
+
+Material limits: no physical iPhone or real Google OAuth handshake tested; no claim of perfect behavior on every physical device. User explicitly authorized gmck pushes and build releases. Task is completed.
+
+
+## 2026-10-14 — install instructions play the iPhone guide
+
+User requested the previously created Remotion video directly inside website install instructions. PR87 merged d903f8936e7d9be0d2aa9f5cad1272bc8a1760fb (feature441b2ab and visible-close follow-up66f152f). mobile/web/install.tsx now includes Watch how to install on iPhone: direct user-gesture play(), controls and playsInline, hidden until requested, with closing pausing/resetting playback. Added English VTT captions, direct video fallback, and a sticky close button. Public asset /installation/iphone-guide-20261014.mp4 is the original updated guide (4216223 bytes, SHA2563be02cdece74d71a57c909d9cbfc16c53053711e24f2b9a97c36191ef86cee3e). Service worker v24 bypasses /installation/ to preserve native byte-range handling; video is not precached. Focused Chromium/WebKit media playback CI38586415888 passed including32-second actual decoded duration and close/reset. Local web TS/lint/build and viewport inspection passed. Production target deployment dpl_GkLM1DY3bWvVpM2d1YuNp3UN5fPg; verify READY and live MP4 MIME/range/checksum before final handoff. No further Android release requested in this follow-up.
+
+Publication verified: production deployment dpl_GkLM1DY3bWvVpM2d1YuNp3UN5fPg READY at main d903f8936e7d9be0d2aa9f5cad1272bc8a1760fb, aliases orbitmbbs.site and www.orbitmbbs.site. Live MP4 returned 206 video/mp4, Content-Range bytes 0-1/4216223; full HTTP200 asset SHA256 matches 3be02cdece74d71a57c909d9cbfc16c53053711e24f2b9a97c36191ef86cee3e. Captions HTTP200 text/vtt. Main media CI38586664738 also completed success for Chromium and WebKit. Task complete.
+
+## 2026-10-14 — Codex — custom domain Google sign-in fixed
+
+DONE: Reproduced a real Google authorize/cancel callback requested from https://orbitmbbs.site/ returning to https://orbitmbbs.vercel.app/. Browser adapter already sends location.origin + '/'; live Supabase Site URL was still the older Vercel origin and redirect allowlist empty. Maintenance workflow .github/workflows/custom-domain-auth.yml uses the existing GitHub Actions Supabase token, changes only site_url and uri_allow_list, and never logs full config/provider secrets. Set live Site URL https://orbitmbbs.site/; exact allowed callbacks https://orbitmbbs.site/, https://www.orbitmbbs.site/, https://orbitmbbs.vercel.app/ and https://orbitmbbs.vercel.app. Existing permissions are preserved. No wildcard added.
+
+Verified: run38588872602 job115938098015 SUCCESS, persisted management config and five genuine Google authorize/cancel callbacks: both custom domains and prior Vercel domain return to their requested origins; missing/untrusted redirect targets return to orbitmbbs.site. Independent local public callback checks for both custom domains also passed HTTP302. No Google account login/session was automated; successful account completion remains untested by agent. Auth configuration takes effect immediately; no website rebuild or new Android build required. PR88 records maintenance workflow. NEXT: no remaining action in redirect scope. DO NOT change OAuth provider credentials, native id-token login or duplicate the already correct browser adapter.
+
+
+## 2026-10-14 — mobile anatomy cache audit in progress (Codex)
+
+User explicitly authorized fixes, pushes, builds and releases; use Vercel MOBILE UI, never desktop browser previews as Android evidence. Audit branch 530a42b fixes ICU pre-advance, nested Back, duplicate timers, hidden app navbar and makes emulator capture independent of Vercel failure. Debug run 38631518367 and screenshot run 38631518741 were still running.
+
+New anatomy work is isolated on codex/native-vault-anatomy-cache-20261014 so the prior device capture can finish. It builds a local canonical simulator from unmodified src/pages/Simulator.tsx (~3.63 MB). Dedicated native WebView surface serves APK JS/CSS and exact checksum-pinned persistent model files via virtual HTTPS. This is embedded WebGL, not a native OpenGL rewrite. First access to each model requires a connection; atlas compressed geometry alone ~31.4 MiB. RN studio/case/ICU/ECG/native-bitmap radiology/clubbing remain RN. All screenshot audits are NOT_CERTIFIED until reviewed. 2381 structures, 15 systems, 36 organ/teaching targets inventoried. Debug-only route intents capture actual Android renderer for each target; matching Vercel mobile captures use its actual viewport. See mobile/docs/vault-anatomy-parity-20261014.md. No final parity merge/release yet.
+
+
+## 2026-10-14 — revised mobile patient / anatomy audit (Codex)
+
+User authorized fixes, pushes, builds/releases; MOBILE Vercel UI only. Debug531 and c897 anatomy debug built. Actual baseline screenshots at /workspace/scratch/9722bfb4a6c4/ORBIT_Android_Mobile_Audit_531. Case DID open; hierarchy CLI failed because continuous vitals prevented idle. New separate com.orbit.qa helper reads live Android accessibility without restarting/freezing target app; excluded from user APK.
+
+RN mobile case now source-style header/HUD,43-case search/departments,badges,layers,diagnostics,bottomtabs. Patient snapshot bridge preserves private targets/phases/vitals/pathology/logs across native case and canonical local anatomy/tools. All43 treated scenarios pass forward/back continuity tests; department data matches source. Latest6 logs, theme/insets/statusbars, themed clubbing/radiology and WebChrome full-screen host corrected.
+
+Core local renderer ~3.64MB; exact SHA-pinned private persistent model cache. Dedicated embedded WebGL, NOT a native OpenGL rewrite. Debug-only Vercel reference runs on same Android WebView/fonts/GPU, blocks third parties/live ads/POSTs. HRA-only views legitimately have empty visible BodyParts3D system lists; corrected readiness waits model downloads and checks model/shader errors. Previous c897 screenshot run superseded. Latest Kotlin/helper compile and device captures pending. PR92 remains NOT_CERTIFIED; no final parity merge/signed production release yet. See mobile/docs/vault-anatomy-parity-20261014.md.
+
+
+## 2026-10-15 — optimized preview device audit repair (Codex)
+
+### DONE
+- Retrieved run38642609848 artifact11936757228. APK debug535 built, and actual emulator screenshot shows real canonical whole-body geometry rendering. All organ route switches/metadata failed because SimulatorViewManager gated QA on BuildConfig.DEBUG, but assemblePreview deliberately sets debuggable=false. Replaced with test-only QA_ENABLED (debug OR preview), leaving internal/release disabled.
+- PR93 browser adapter merged into anatomy branch at389a97d; browser compatibility fix preserved.
+- UI helper had transient No active Android window during onboarding. It now polls10seconds, retrieves interactive application windows, and driver retries reconnects. Added full device logcat to each failed anatomy target and last metadata to readiness errors.
+
+### HALF-DONE
+- No complete paired organ audit yet; old535 captures remain NOT_CERTIFIED. No production merge or signed final release. Dedicated embedded WebGL remains disclosed, not native OpenGL.
+
+### NEXT
+- Build/test updated preview; inspect actual Android/Vercel organ captures and native patient flow. Fix observed UI/function gaps, then production merge/release after verification.
+
+### DO NOT
+- Do not gate preview audit on BuildConfig.DEBUG or label failed captures as passed. Original535 all organs showed unchanged whole-body screen because QA routing was compiled out.
+
+
+## 2026-10-15 — native ICU tone and secondary readings (Codex)
+
+### DONE
+- Anatomy QA branch87d4e662 Android build537 succeeded (run38667824033), installable debug-537 APK127285354 bytes. Vercel/browser CI38667829738 passed. Anatomy/mobile capture run38667824198 is still running against that exact APK; do not cancel by pushing runtime changes to its branch.
+- ICU follow-up adds actual native AudioTrack pulse using canonical90ms sine and0.08→0.001 gain, oxygen-dependent pitch, opt-in muted default, immediate tone cleanup on pause/mute/background/exit, CVP/temp/lactate, and one persistent kernel instead of constructing discarded engines each render. Device/audio proof is pending. Speaker audibility is not verified by headless emulator.
+- Local TypeScript/lint, sound TurboModule/codegen, Kotlin override checks and source-contract checks passed. Updated source-symbol pin from kernel.current to persistent patient variable; shared physiology remains unchanged.
+
+### HALF-DONE
+- Separate codex/native-vault-icu-20261015 branch builds these changes; dedicated ICU device workflow captures clinical UI/PCM playback without restarting the current anatomy capture. No complete parity or final production release claimed.
+
+### NEXT
+- Inspect run38667824198 artifacts/logs, especially all actual organ routes and same-device Vercel refs. Inspect ICU branch build and its separate clinical/PCM capture. Merge verified follow-up into anatomy branch after captures complete, then address any remaining UI/tutorial/function gaps.
+
+### DO NOT
+- Do not call PCM playback proof speaker-audibility proof. Do not claim current debug-537 contains the follow-up ICU changes. Do not cancel the active anatomy audit by pushing follow-up runtime changes to its branch.
+
+ICU follow-up regression found during phase sweep: original~83Hz sampling missed all R peaks for18% normal and22% STEMI initial phases. New pure advanceNativeTelemetry samples at250Hz, preserves the~1.97s display window and exact elapsed patient time; regression across100 starting phases per normal/STEMI now passes. Added to Android CI. ec122b89 was the initial ICU commit; use the newer sampling follow-up build, not its superseded build538.
+
+
+## 2026-10-15 native Vault teaching and mobile evidence checkpoint
+- User authorizes fixes/build publication and wants all comparisons against MOBILE Vercel, including organs, Supply, Relations, venous drainage, and simulator. Still NOT_CERTIFIED.
+- ICU build 540 (e247dfbf1940d1f65b92d061203d15df7817e2ff), run38671319356, compiled and published successfully. Its actual Android capture38671319288 reached native studio/theme/case catalog/STEMI, then stopped before saline. Artifact11945177722.
+- Confirmed capture-driver bug from artifact: wm size reports physical1440x3120 BEFORE override1179x2556. Driver used physical coordinates, placing swipe outside actual viewport. Fixed to use final/effective size; regression checked both override and physical-only responses. This was not evidence that the intervention itself failed.
+- Anatomy baseline537 capture38667824198 remains in progress; do not cancel by pushing its anatomy branch.
+- New teaching branch based on remote ICU e247: native ECG and ICU remain native, with dedicated locally bundled canonical advanced teaching modal and patient snapshot handoff; native timers pause while source teaching owns the patient. Canonical src remains unchanged. No claim of native OpenGL anatomy.
+- Expanded actual Android vs same-device Vercel captures to each available Supply/Relations tab and venous drainage, selected-tab and exact-route provenance; live Vercel references wait for actual page-ready marker. Stop repeated global renderer failures early.
+- Full web build, optimized native JS bundle and typed integration passed locally; canonical renderer and final lint/phase checks rerun before publication. Hardware/emulator evidence still required.
+
+
+## 2026-10-15 03:22 UTC / 08:52 IST — build541 and independent mobile evidence
+- Teaching runtime published as cbb1d6a7d5910ca934b85fb82717e949856dfb04, PR95 on ICU branch. Local equivalent8d49765. Android build541 SUCCESS run38674058961, job116223508965. Published https://github.com/Sabharivarshan111/gmck/releases/download/debug-541/app-preview.apk (127,291,830 bytes). No claim of certified parity.
+- Matching full anatomy/clinical/mobile-reference capture38674058901, job116223508998 is now in the actual Android emulator stage. It includes every available Supply/Relations/venous detail. Old baseline537capture38667824198 remains running >1h with no artifacts yet; never cancel it by pushing anatomy branch.
+- Build540actual artifact11945177722 retrieved: genuine native studio dark/light, case catalog, STEMI; failed before saline due to physical-vs-override swipe coordinates. We visually reviewed comparison-case and comparison-studio: mobile layout but different wrapping/spacing/typography. Source studio uses Roboto; Linux Playwright references may fall back to another font. Need same-device WebView references to distinguish genuine UI gaps.
+- Saved evidence to user-accessible persistent files: /workspace/scratch/9722bfb4a6c4/orbit-mobile-android-evidence-build540.zip, /workspace/scratch/9722bfb4a6c4/build540-comparison-case.png, /workspace/scratch/9722bfb4a6c4/build540-comparison-studio.png. Library writes all succeeded with identity metadata. ZIP includes offline index.html, raw images/JSON/XML and honest REVIEW.md, only four captured pairs, no anatomy or later clinical proof.
+- Independent evidence-only branch codex/native-vault-functional-20261015, PR96 based on teaching branch. Latest test code e5fcfb9f79c7632838c45871b9b592e9e88e1366, workflow38675850268 (may still be queued). Native runtime remains EXACTLY cbb/build541. CI compare guard only permits listed evidence scripts/workflow/docs to differ before reuse. APK/capture SHAs are recorded in artifact apk-provenance.json. No Android rebuild triggered on this branch.
+- Independent suite adds real accessibility range/selected-state introspection via separate UiDump QA APK, radiology sliders/reset, picker/previous/next, labels/move/two-point X-ray and MRI measurements, MRI planes/slice/crosshair, notes/differential/credits, clubbing findings/steps/reveal/hide/return. Then captures live Vercel UI in same Android WebView independent of long body pass. Clinical suite still runs first, but later independent suites run even if earlier fail.
+- Capture driver follow-up: fixed overly strict 24%-70% tapping region, which would strand new buttons at top of a ScrollView even when visible. Now10%-82%, regression verified actual top-content position350/2556 is accepted. This helper change is in PR96 only; full541capture still uses older24% cutoff and can fail at full-ECG teaching button. No app runtime bug inferred solely from that automation failure.
+- Browser integration smoke in PR96 builds local canonical renderer, opens mobile ICU lesson, clicks lead-axis lesson, exports patient, opens full ECG with hydrated treatment log, closes with handshake and asserts zero hidden-atlas downloads. First run38675165080 failed due missing mobile TypeScript config dependency, fixed with npm ci --prefix mobile --ignore-scripts. Subsequent superseded runs canceled as capture checks expanded; e5 latest should run to completion. Local browser attempt could not run due native socket permission denial; do not claim browser smoke passed locally or retry bypass flags. Actual CI runtime browser/device results pending.
+- Keep source src/ frozen. Do not claim all organs/functions perfect. Renderer architecture remains dedicated locally bundled canonical HTML/WebGL; native RN studio/case/ICU/ECG/radiology/clubbing. No native OpenGL rewrite. No new native geometry modifications.
+- All local programming changes are git backed; no need library duplicate. Local git remote-equivalent SHAs differ due Git-data publish; file contents correct. Active local branch functional, local head6160845, all runtime commits predate tests.
+
+
+## 2026-10-15 03:26 UTC — anatomy route hook root cause found
+- Full541 capture38674058901 attempt1 never booted Android: SDK Google APIs35x86_64 image download was corrupt (ZipFile unknown archive). Artifact11946026256 contains Vercel references only, NOT Android evidence. Re-ran failed job using newly discovered GitHub rerun_failed_workflow_run_jobs tool. Do not claim a functional Android failure from this infrastructure error.
+- Newly callable rerun tools exist (previous summary said absent): github_rerun_failed_workflow_run_jobs and github_rerun_workflow_job. No cancel tool found.
+- Superseded browser CI9d8 (run38675525814, job116228124838) logs prove BOTH ICU and ECG browser integration checks PASSED at03:20:02/03. The job was then canceled for later capture-only updates; this is browser-step evidence, not an overall green device run. Latest functional e5run38675850268 still running, preserve it.
+- Confirmed RN activity-listener bug by reading installed RN0.87 source: ThemedReactContext delegates lifecycle but NOT addActivityEventListener; ReactContext adds to its own collection, while hosting onNewIntent dispatches to ReactApplicationContext. SimulatorViewManager registered listeners on ThemedReactContext, so subsequent QA route intents could not reach the WebView. This explains old537 stuck with repeated organ-route mismatches. Initial route works via currentActivity.intent. End-user React prop navigation is a separate working path.
+- New route-proof branch codex/native-vault-route-proof-20261015 based on functional docs66b0291d3eb82f193e019bbad4a01f18fb6b052b: register/remove listener on context.reactApplicationContext; log actual route reception. Android and full evidence workflow triggers include the new branch. Full workflow also preinstalls system image with3 retries and preserves later diagnostic suites. Runtime change requires new APK542. Existing541/functional captures continue independently.
+
+- Before route-proof build542 finished, source review confirmed a real mobile UI mismatch: canonical src/simulator/controls/ClubbingTrainer.tsx always uses a white sheet, while native passed studioTheme. The route-proof follow-up forces only this sheet light and dark status icons, preserving studio theme on return. TypeScript and lint zero errors passed. New build543 supersedes542; never call canceled542 published.
+
+
+## 2026-10-15 07:00 UTC — independent build543 evidence retry
+- User continues with full authorization to fix, merge main and release after verifying MOBILE Vercel vs real Android. No approvals needed again. NOT_CERTIFIED until actual complete evidence.
+- Workspace wiped after hours; re-cloned route-proof branch at678fdad7447bfbc76a083fb8213509c4947aea34. Build543 completed SUCCESS (run38676712590, job116231942951), published debug-543. Build542 canceled. Source543 has QA listener on application context and clubbing Root forced light + dark status icons.
+- Full543capture38676712817 job116231907526 FAILED before app interactions: actual PNG shows Pixel Launcher ANR dialog over correct native onboarding. It was not an ORBIT ANR. Artifact11947217682 downloaded/extracted /workspace/scratch/9722bfb4a6c4/audit543. Old537capture38667824198 canceled by timeout, still no organ certification.
+- Functional541run38675850268 artifact11946408235 contains positive real native IV saline feedback, ICU waveforms, native PCM playback head frames and mute. It stopped at CVP because helper rejected y2203/2556 (86%) with an82% cutoff although visible; clubbing Reveal answer similarly visible at83%. Radiology picker tap hit a smaller static Choose a reference caption above the real clickable button. These are evidence-driver bugs, not proof the app controls failed.
+- New evidence-only branch codex/native-vault-543-evidence-20261015 based on678: source-pinned build543 reused after strict evidence-files-only compare. Two independent jobs (controls and anatomy) prevent earlier clinical failures blocking organ screenshots. New helper dismisses ONLY a named Pixel Launcher ANR, preserves ORBIT ANRs as app failures, prioritizes enabled clickable buttons over static captions and permits visible controls through90% height. Mocked regressions pass. Vercel bootstrap tries actual close buttons and saves a failure screenshot. Anatomy-only audit requires actual body capture data and pairs. SDK installer retries preserved.
+- Prior LOCAL UNPUBLISHED clubbing detail styling work was lost in wipe: it had passed TypeScript/lint but was not in543. It changed NativeClubbingTrainer to canonical static light styles, removed theme prop, equal-width16pt mode buttons,14pt card titles/body,12pt captions, no nested borders for summary/reveal, source-sized photo using returned frame width/height aspect ratio with maxHeight288 instead of forced288, inline underlined12pt source link. Root removes theme prop. Need reapply after actual543 white-sheet screenshots if useful. Do not claim543 contains those details; it only forces existing component light. No native544 build yet.
+- Saved older540 user deliverable files were already persisted successfully; local scratch copies wiped. Refer to Library identity in prior conversation if user asks. Current instructions forbid pretending partial/failed organ captures are proof. Canonical src/ stays frozen.
+
+## 2026-10-15 07:21 UTC — canonical native ICU mobile UI correction
+- Worktree gmck-clubbing now follows remote mobile-UI branch a5c9089d18778a00f04eee81576dd7249a09d1f6 (includes7541 evidence helpers). New clubbing sheet details already committed in a5; native build still543 until next Android run succeeds.
+- Visually reviewed actual build541 comparison-icu.png: confirmed real native mismatch, ~1.97s rolling kernel trace vs Vercel4.8s analytical canvas, wrong waveform shapes/amplitudes, extra header/pause/reset and missing source bottom tabs. Native monitor now ports exact canonical calculatePoint math into nativeIcuDisplay.ts,720x360 coordinates,150px/s sweep,20px erase band,4.8s analytical prefill WITHOUT ticking patient; remains RN/SVG, native sound, shared PhysiologyKernel. Source src/ untouched.
+- Shared NativeSimulatorChrome matches mobile header, quick-vitals ICU action, Vault exit and recessed Skills/3D/Monitor/Case tabs. Both case and monitor use it; patient instance retained for monitor→case/anatomy handoffs. Monitor theme now follows studio preference. Source does not have pause/reset controls; removed extras and updated real-device tests to check source controls/themes/tutorial instead.
+- Meaningful local validation PASSED:154800 display coordinates match frozen source across43 scenarios; source sweep/erase wrap and no patient mutation;250Hz kernel pulse tests100phases normal/STEMI;1161 clinical actions(27×43) with feedback+finite vitals; native clinical/layout/renderer contracts; entire mobile TypeScript; changed TSX/lib ESLint zeroerrors; Python syntax and YAML parse; gitdiff whitespace. Inline-style warnings remain (preexisting convention), no new packages/assets or source geometry changes.
+- Build543 controls retry38695769887 job116291877855 finishedfailure, artifact11954391497 downloaded /audit543-controls. First clinical suite raced onboarding before EditText appeared; later native radiology slider/reset/picker/labels/move/two-point pixel measure and clubbing examination/reveal/hide/return passed. Credits button fully visible at~92% was rejected by90% cutoff; updated94%. Onboarding now waits max60sec for actual EditText. Do not infer native app failure from these helper issues.
+- Same-device Vercel radiology WebView captured a dark blurred backdrop instead of painted modal and then Axial never opened. Those overwrote valid browser refs. New controls job keeps actual Playwright MOBILE393x852 references and does not overwrite with failed WebView modal captures. No fabricated source screenshot, no source CSS changed to force success. Anatomy same-device references remain separately required.
+- Anatomy job116291878127/run38695769887 still running against exact543; do not cancel or push its evidence branch. Its pre-SDK stepfailed because sdkmanager was not onPATH; real emulator action theninstalled/booted. New UI evidence workflow resolves explicitANDROID_HOME/cmdline-tools/latest/bin/sdkmanager or lets actioninstall ifabsent.
+- Next mobile UI commit triggers Android debug build and independent controls evidence with EXACT context.sha/APK match (no ancestor reuse). It includes clubbing UI+a real native ICU mobile port. Await actual screenshot/functional evidence, inspectallbodyresults, then fixremaininggaps andmerge/release peruserauthorization. Still NOT_CERTIFIED; nofinalproductionrelease claimed.
+
+## 2026-10-15 07:29 UTC — build544 lint failure repaired; radiology mobile parity
+- Mobile UI branch f254b6502dca68bfe3869fab05328159f527fc07 opened consolidated ready PR98 to main (32commits74files; source src/ unchanged). Android544 run38698124423 job116299457662 FAILED before Gradle/APK at full-appLint: new waveform comparison script used Function constructor (no-new-func). Changed source-helper comparison to a temporary ES module imported from the frozen canonical body, no eval/Function and no lint suppression. Same154800-coordinate regression PASSED afterrepair. Native parityCI38698124336 SUCCESS, UIevidence38698124549 correctlyfailedonmissingmatchingAPK. Never call544 released.
+- Follow-up NativeRadiologyViewer now ports canonical mobile10pxbody/12pxgaps/64pxheader, case-cardgradient, categorybadge/divider, equalwidthprevious-next andMRIplanecontrols,13ptbody/19ptcaseheading,18pximageborder,properpercentcentered10ptlandmarks,11ptorientationchips, notesheadingwithadjacent12pttoggle, takeawaycard, real disclosurecards andinlinecreditslinks. Native image renderer/data unchanged, retains frame while rerendering contrast. Added native category picker rather than always-expandedcategorychips. Extradevicechecks nowexerciseactualtypedsearch/category/filterselection/clear.
+- Added actual MOBILE Vercel ECG andAll12 reference captures+requiredAndroidpairs; previousauditomittedthosepairs. Do not certify ECGappearance from sourceformulasalone.
+- Local follow-up entiremobileTypeScript and entiremobileESLint(. --quiet) PASSED;23sourcefilms+1605632MRIvoxels/hash/spacing check PASSED;changedPython/JSsyntax PASSED. No sourcewebchanges,newpackagesorassets. Need newAPK545+actualscreens afterpublication.
+- Build543body/anatomy job116291878127/run38695769887 stillrunning independently; preserveit. Native/source imagecomparison isstillNOT_CERTIFIED; mainnotmerged,productionnotreleased.
+
+## 2026-10-16 — coronary context and silent calendar Add repair
+Continues v27 internal verification head 9703014. Owner explicitly requested coronary vessels with heart shown by default, Hide organ context as an optional action, and calendar Add repair while continuing Android/Vercel anatomy/arrow verification.
+Changed shared canonical renderer default/reset to show parent context for vessel connections. Add form previously returned silently for blank name and displayed date errors above the long form; now validates next to Add, reports save failure without losing inputs, and prevents repeat submission while saving. Browser regression now reproduces date selection plus blank-name Add then valid save/reload/date edits. Coronary/celiac tests check default context, explicit hide/show and projected arrow endpoints. Renal context assertion updated to match owner requirement.
+Local mobile TS/full ESLint, root TS, anatomy connections/assets/source regression, attendance/calendar/version/repo guards, full Vercel build, local canonical renderer build and release JS bundle passed. Chromium touch calendar regression passed including blank-name visible error and persisted holiday/date edits; screenshot inspected. Coronary WebGL visual test in progress; no physical Android or whole-anatomy visual certification claimed. Version remains27. Internal build workflow includes this repair branch; publication/build result still pending.
+
+## 2026-10-16 — native parity repair candidate
+- Exhaustive run38841390672 was not fully green. Actual native coronary heart default, 15 systems, cached offline anatomy and partial tools passed; reference WebView dvh layout and automation targets blocked remaining comparisons. Native follow-up run38841822674 passed ECG teaching return plus offline ICU/ECG/X-ray/MRI/fullscreen/clubbing.
+- Candidate branch codex/v27-parity-repairs-20261016 fixes ICU frame-dependent staircase sampling and native POCUS effect cancellation on patient updates. Canonical web source remains unchanged in this candidate. Full mobile tsc and ESLint passed; 154800 analytical ICU coordinates/43scenarios + three-frame-rate sweep comparison passed; 100-phase native R-wave audio sampling guard passed; native renderer build passed. Browser POCUS preflight passed nonblank/freeze/unfreeze and 8x CPU slowdown. Android candidate checks still pending.
+- QA now compares installed Android WebView to actual live Vercel in normal mobile Chromium using measured viewport. Corrected calendar EditText target (old helper tapped missing-name error text), onboarding scrolling, moving canvas captures. Sixteen Android suites scheduled; candidate debug/internal/release publication disabled until review. User has authorized final APK/AAB publication after verification, no permission prompt needed.
+
+
+## Live checkpoint — 2026-10-16, latest verified results
+
+All three candidate APK builds and the release AAB succeeded (runtime97ee4579b4b2a6230c06f7616b7486c5be4f51d4). All20 packaged renderer files match the reviewed build and110 asset pins match source. No new public verified release exists yet.
+
+Passed installed Android/Vercel scopes: calendar save/reload, POCUS, general examination, main eye tests and all15-system anatomy controls including cached offline loading. Normal auscultation baseline also passed pause/resume, actual pixel motion, posterior view and lung-sound switching. Matched eye capture run38861326594 atd4cf61308c5807130d9e957d4735c73387429ebf passed all10 findings on both sides and normal corneal blink/release; raw matched pictures were inspected. Initial eye captures had different tool/scroll state, so use the matched run for comparisons.
+
+Complete native offline recheck38862537293 atadfb1ac739457c8b222c1710e2a65944520019a0 PASSED. Earlier baseline native-remaining failed because generic Slice scrolling matched the MRI image label while the exact count was offscreen; raw image was already axial slice57. The corrected script scrolls exact counts for all three planes. It also passed ECG teaching return, live offline ICU/ECG, X-ray, fullscreen and clubbing.
+
+Original exhaustive run38857739650 atacb26e2edc004172455704517fbed2a080e5e314 is still running its eight organ/arrow groups. Its selected-case auscultation paused-image hash failed. Focused normal+case compositor audit38859629926 at87ceaa574741a4446cfcf20b76b24c7b9704fbbc is still running; it saves exact crop images and observed coordinate metadata. Do not claim selected-case animation or full anatomy parity until those gates pass.
+
+ACTIVE CONDITIONAL PUBLICATION: run38862704503, branch codex/v27-publish-verified-20261016, source18c608e95904adb0c7cf0a1c4dfcc68921c467b0. It waits up to five hours, then requires13 complete baseline suites (five bedside/control suites plus all8 anatomy groups), both complete focused auscultation suites, the complete native offline recheck, synchronized eye capture, all signed builds, exact expected heads and QA-only source differences. It downloads the existing exact artifacts and publishes debug/internal/release APKs,AAB,evidence ZIP and provenance only if every required gate passes. Otherwise it stops without publishing. Original failure reports remain in evidence, with explicit required replacement runs.
+
+The older waiter38861907458 was cancelled by the replacement workflow. Do not start duplicate publication runs or bypass failed scope. The active workflow has a concurrency group; its config identifies superseded waiters. The prepared branch can receive docs without restarting the active publisher. Read the actual current statuses before altering any config. The user has already authorized release after verification; do not ask again.
+
+Build/artifact hashes and source details remain in .agents/state/v27-parity-20261016.md. Anatomy/advanced tools use locally bundled canonical WebGL with checksum-pinned geometry caching; studio/cases/ICU/ECG/radiology/clubbing are native RN. Physical-phone speakers and universal pixel identity remain unverified. Full parity is still NOT_CERTIFIED.
+
+
+
+## Latest — all non-anatomy gates passed
+
+Focused compositor audit38859629926 PASSED both normal and selected-case auscultation, including exact paused-image equality and resumed visible movement, posterior view and lung-sound switching. Matched eye run38861326594 and full offline native recheck38862537293 PASSED. Baseline anatomy-controls passed all15 systems and cached offline loading. All other required bedside/control scopes passed.
+
+Remaining: eight organ/connection-arrow groups in38857739650 (0–3 active,4–7 queued at the last check). Conditional publisher38862704503 at18c608e95904adb0c7cf0a1c4dfcc68921c467b0 is active and waiting for all eight to pass. No new public verified release exists yet. It will stop without publishing if a required group fails or times out. Do not claim complete parity until those results and publication are complete. Do not create duplicate publication runs.
+
+The local command environment stopped responding late in the session; GitHub checks and publisher continue independently. The saved progress screenshot ZIP predates the final eye/general/offline/audit results; current full captures remain in the corresponding workflow artifacts and will be collected by the gated publication. This distinction must remain explicit.
+
+## Checkpoint — 2026-10-16 07:16 UTC — reviewed qualified screenshots
+
+Local execution recovered and the prepared branch was cloned cleanly. Downloaded and visually reviewed the successful selected-case auscultation compositor audit (38859629926), all15 system-browser representative captures and cached offline full anatomy (38857739650 controls), native offline MRI planes/ICU (38862537293), and matched eye images (38861326594). Front/back chest geometry and listening points correspond between Android and mobile Chromium references. Exact paused crop equality and resumed changing pixels passed. MRI axial/coronal/sagittal images are visible. This does not establish all organ/arrow mappings.
+
+Eight detailed anatomy groups remain in38857739650: 0–3 in progress,4–7 queued at latest check. Conditional publisher38862704503 remains waiting. No new verified public release yet. Do not duplicate these runs, bypass gates, claim perfect parity or call all tools native RN. Runtime remains97ee4579b4b2a6230c06f7616b7486c5be4f51d4; this checkpoint modifies docs only.
+
+Updated comparison ZIP saved successfully, same Library identity libfile_37a778016a40819197ab47ccf6ebcb18, new current_version_number2, file_id file_0000000094f481f5aa713e239545e914. Filename ORBIT_Android_Vercel_Comparison_20261016.zip, 283390160bytes,361entries,76 screenshot gallery entries plus complete additional qualified workflow ZIPs. Local /workspace/scratch/24a125a27afa/recovered-report/ORBIT_Android_Vercel_Comparison_20261016.zip. Clearly PARTIAL: current bedside/control/native passes plus anatomy gates still pending. Raw artifacts and original failures are preserved. New helpers downloaded completely from current cloud Library skill to /tmp/orbit-library-current. Future replacement must guard version2 or freshly resolved newer version.
+
+Next: inspect completed anatomy artifacts (raw adb PNGs, not CDP blanks), diagnose genuine failures, then verify publisher success and actual release assets/checksums. User already authorized release after checks; no further permission needed. Publication source branch remains18c608e95904adb0c7cf0a1c4dfcc68921c467b0, separate from prepared docs branch to avoid restarting the waiter.
+
+## 2026-10-16T11:42:00Z — brain visual blocker and rebuilt candidate
+
+**DONE.** Baseline anatomy groups0,5,6,7 and complete error-attributed replacements1(38872622681) and3(38873046013) passed. Downloaded and inspected all136 registered-connection pairs and29 overview pairs from these six groups. Coronary artery has heart context visible by default; source structures and arrow placement correspond between Android and Vercel. However, the standalone Z-Anatomy brain overview is visibly offscreen on BOTH platforms. Functional bright-pixel checks had missed this, so full visual parity remains NOT_CERTIFIED.
+
+Measured brain_reference.glb has104 source meshes: right orbital inferior frontal gyrus has ~943x scale and metre-scale translation; corpus callosum and hippocampal commissure are at the origin rather than the head frame. Repair e7cafadc843ac353dc45dc9b139a445c7d5e4f08 on codex/v27-brain-registration-20261016 quarantines these3 from display and bounds, retains101 source meshes, and shows a source registration notice. No asset vertices/registration positions were invented, mirrored or rewritten. Other anatomy sources unchanged. Source resolver/assets, actual-GLB regression with portrait/landscape projections, root/mobile TypeScript, mobile ESLint and local renderer build passed. Root renderer lint has5 PRE-EXISTING errors, verified against old source, and is not reported clean.
+
+**HALF-DONE.** New exact-source builds are running: debug38894967710, internal38894967726, releaseAPK/AAB38894967679; device QA38894967678 waits for the exact debug APK then tests all26 Z-Anatomy reference targets, source-gap notices and central visible brain pixels against the corrected canonical source browser on localhost. This is NOT a live Vercel reference. Additional automatic UX smoke38894967569 is running. No new verified APK is public, no Play upload. Existing97ee457 APKs lack this repair.
+
+Baseline groups2/4 hit original runner time limits. Six balanced partition jobs38892788662 at67f2dc2b63fe8d30e5f19a595f3467e201f51dc0 preserve all140 assigned connections (89+51), without duplicates or omissions; all6 running at last check. Do not duplicate/cancel them. They remain old-runtime evidence. Coverage verifier .github/qa/verify-anatomy-partitions.mjs on publisher c43c2c169abc2510b4da8fa4c3491493d3a46445 checks all reports, source connections/overview IDs and screenshot pairs; complete fixture accepted, missing-connection fixture rejected.
+
+PUBLICATION IS EXPLICITLY BLOCKED: active publish branch c47bcc567b08a4478ce3f4710e28c9ad91251afb, run38893519962 FAILED intentionally on visualReviewBlocker. Earlier c43 waiter38893151315 was cancelled by scoped successor;89 waiter38872771647 failed on missing anatomy2. Do not remove blocker or reuse97ee APK hashes until the e7 repair is verified and its new build artifacts are selected. The user already authorized all APKs/releaseAAB publication AFTER review, no more permission is needed.
+
+The Git-linked Vercel preview for e7 is automatically building: deployment dpl_9bQ7yC4ACecz3cw8D1aJkDkHPPgU, project prj_NJgXie5Ni1SjwT9xcWuRSliJNxq4, team team_vRtZ6J1kJKujJsNgK3AcXmTj, URL https://orbitmbbs-2df8l5j36-sabharivarshan111s-projects.vercel.app. Verified metadata points to e7 and the brain-registration branch; target null (preview), BUILDING at last inspection. Production Vercel still has the brain issue. Do not claim production deployed or promote unreviewed preview/overwrite later main work.
+
+Updated screenshot report saved successfully: same Library libfile_37a778016a40819197ab47ccf6ebcb18, version3, file_000000007e9082068a896a353a1eb093,409496242bytes,780entries,295gallery entries. Filename ORBIT_Android_Vercel_Comparison_20261016.zip; local /workspace/scratch/24a125a27afa/recovered-report/ORBIT_Android_Vercel_Comparison_20261016.zip. Contains the visible brain failure and explicit pending repair provenance; old successes do not certify the new repair. Helpers refreshed completely in /workspace/scratch/24a125a27afa/library-current-1125. Next replacement must guard version3 or freshly resolved newer version.
+
+**NEXT.** Inspect new build/device/UX results and actual Android brain PNG; ensure all26 source targets and real controls work. Investigate any failures without relaxing image or error assertions. Inspect six partition results and validate complete coverage. Get successful Vercel preview details; protected preview requires the access-protected skill. Requalify new source/builds with transparent unchanged-scope evidence, review corrected screenshots, publish debug/internal/release APKs and releaseAAB with new hashes and precise scope. Preserve all old failures. Deploy shared brain correction to production only from reviewed intended source while preserving concurrent main work.
+
+**DO NOT.** Do not describe all components as native RN (anatomy/advanced tools are locally bundled WebGL with first-use geometry caching), claim physical phone speakers, certify universal pixel identity, publish old97ee as containing this fix, duplicate active jobs, or push docs onto the brain candidate branch: its QA requires exact-source build head and a docs-only push can cancel/wait for a nonexistent rebuild. Use this separate prepared docs branch.
+
+## 2026-10-16T11:47:00Z — corrected Vercel preview ready; direct comparison queued
+
+DONE: Vercel preview dpl_9bQ7yC4ACecz3cw8D1aJkDkHPPgU is READY at https://orbitmbbs-2df8l5j36-sabharivarshan111s-projects.vercel.app, exact app SHA e7cafadc843ac353dc45dc9b139a445c7d5e4f08, target null(preview), project/team confirmed. Public simulator request returns200, so no protection bypass is needed. This does NOT deploy production.
+
+HALF-DONE: Started direct installed-Android versus this exact Vercel preview comparison of all26 Z-Anatomy targets, run38895966590, QA-only branch codex/v27-brain-vercel-preview-20261016 at8cb284fc3928a0ad6e7668afdc7eddb745157be1. It pins debug run38894967710 and verifies its exact e7 head/path before downloading. No app source differs from e7. It uses the same strict corrected-brain source-gap and visible-pixel framing assertions as the local-source check. The local-source check38894967678 also remains active; new build debug/internal/release38894967710/726/679 still compile. Six old-runtime groups2/4 partitions38892788662 also active. Do not duplicate these jobs.
+
+NEXT: Review actual after-repair Android/source-reference PNGs in both corrected-source and Vercel-preview runs. Once all required scope passes, update publisher from explicit visual blocker to the new e7 source/artifacts only, preserving old97ee provenance for unchanged scopes. Verify new APK/AAB checksums and publish authorized builds, then bring the reviewed shared correction to production/main without overwriting concurrent work. Existing full-simulator parity remains NOT_CERTIFIED until this review.
+
+DO NOT: Push documentation onto e7 build branch; exact-head QA would wait for an unbuilt docs head. Scratch repo is now clean on codex/v27-brain-registration-20261016 at e7; previous locally mirrored edits were preserved in git stash brain-registration-source-checkpoint before switching. Report version3 remains the latest saved409496242-byte checkpoint and correctly marks publication blocked.
+
+## 2026-10-16 12:15 UTC — candidate builds complete, final device review active
+
+User reiterated “review it and then release it”; publication authorization persists. Do not ask again. Candidate runtime e7cafadc843ac353dc45dc9b139a445c7d5e4f08 is clean locally. Debug38894967710, internal38894967726, release38894967679 and mobile UX38894967569 passed. All20 packaged renderer files match across all4 artifacts and local generated source;110 source pins match. SHA256: debug0e8f9982e944448fe7ec7c0a9e57f92c1360534b2ca9c199474d14c78a658f8d; internalc8023d0eab377a4ee9ea2e90963899929f217937762f2ae0c70926ec6e3d7fd2; releaseAPKa6d5fc1c410c52b8fbf6d2ee7537a9440449cd5985fd0a47affe3cb65605b7c8; AAB8a3dd92552321ba459c37d20db6af11d8ef03bc4fb732e4e235f9c431fbbb01e. APK v2 certificate extraction matches expected upload cert; debug/internal CI apksigner logs verified it. A stricter publisher signature/package gate is prepared but not run.
+
+Brain canonical run38894967678 FAILED BEFORE Android: Vite development MCP integration refused to overwrite a user-authored Supabase function. Application/APK unchanged. QA-only replacement branch codex/v27-brain-canonical-recheck-20261016 at75f1463f215f9c0cd45dbfa44cbfe636c6cdfd45, run38898204381, uses --mode production to exclude development integrations and exact debug build38894967710. It and direct Vercel preview check38895966590 remain active. Interactive cloud browser lacks WebGL, so it cannot supply additional 3D proof; preview tab closed, no bot block.
+
+Partition run38892788662 has group4 part1 PASS (artifact12044775753), reviewed13 screenshot pairs (11registered+2overviews), zero errors/failures. Other5 parts still active; do not duplicate/cancel. All136 earlier registered pairs remain reviewed; final complete target is225 registered+205 explicit schematic source entries,39overviews with corrected brain replacement. Do not claim completed yet.
+
+Publication branch remains at explicit visual blocker c47bcc567b08a4478ce3f4710e28c9ad91251afb. Prepared local updated publisher/config/integrity/brain/coverage gates are under qa-current/publication-prep; NOT yet pushed. They distinguish baseline97ee runtime checks carried forward from the all26Z-reference reruns on e7, require exact build hashes and complete6partition coverage, and remain blocked pending actual visual review. Final-report builder is prepared but guarded. Library report version3 remains partial, not final.
+
+Fetched enough history to prove main9a5c0698d3f919843c53d097da0d8326b8f9b59c is an ancestor of e7; safe fast-forward can preserve current main after review. Main and production Vercel have NOT been updated. No new public release or Play upload. Continue until real screenshots and gates pass, publish checked4assets, verify public hashes, update main/production only after qualification, save final report and final handoff.
+
+## 2026-10-16 12:40 UTC — SECOND visual repair; e7 packages superseded, do not publish
+User still authorizes release after review; task is actively continuing, not blocked on permission. No new release, main update, production deployment or Play upload has happened.
+
+Review of actual group4 part0/1 screenshots exposed two additional shared Android/Vercel defects: tiny ileal artery/vein camera framing put the camera inside visible bowel context (309/313; also311/314/abdomen vessels), and generic liver relations showed only the caudate lobe. Actual atlas provides nine hepatovenous segments plus caudate. NEW runtime a90b0b5bf9b8f41d640d960263765085262cf839 on codex/v27-context-camera-20261016 includes visible owner context in vascular camera bounds and binds generic liver relations122/246/262/274 to all10 source parenchyma pieces. Exact caudate relation197 stays unchanged. No source geometry was changed. Source note .agents/state/context-camera-review-20261016.md explains. Previous e7 APK/AAB hashes and builds are NOT the final candidates now.
+
+NEW builds: debug38900826559 (job116972363086), internal38900826481 (job116972362568), release38900826482 (job116972362784), UX38900826537; all active12:39, vault-layout already passed. New canonical renderer local build passed:20files,110pins,3447071bytes. Root TypeScript and organ/model/brain regression checks pass. Real-bounds diagnosis reproduces309 old horizontal projected range -4.47..16.55 versus fixed0.206..0.794, saved qa-current/context-framing-diagnosis.json; this is mathematical evidence, not device screenshots.
+
+NEW QA branch codex/v27-context-framing-qa-20261016 at2f21e4466384f8d9499790782ecd35fdd17fe33d adds ONLY .github/qa/android-context-framing.mjs and .github/workflows/android-v27-context-framing.yml over a90. Run38901147361 waits exact debug38900826559 then8 parallel parts. It covers ALL85registered vascular connections +4 repaired liver relations +26Z-reference targets,115 unique tasks. Each connection uses real dossier UI on both surfaces, strict arrow/source-ID checks, source-colour pixel bounds with margins (camera cannot be inside context), default context and key hide/show toggles. Every new Ztarget is checked on both surfaces including brain visible-pixel/framing assertions and explicit registration-gap text. Zero uncaught errors required. Coverage union checker prepared.
+
+NEW exact Vercel preview a90: https://orbitmbbs-9jkt65wmd-sabharivarshan111s-projects.vercel.app, deploymentdpl_9kmUXYTnXQJsswMwphbDG5nhAPHj, projectprj_NJgXie5Ni1SjwT9xcWuRSliJNxq4, teamteam_vRtZ6J1kJKujJsNgK3AcXmTj. READY confirmed; targetnull preview. Production remains unchanged. Its SHA was verified in deployment-list metadata.
+
+Old full partitions38892788662 now g4parts0/1/2 and g2part1 PASS. Downloaded/reviewed all their raw pairs: artifactsg4p0=12044824430,g4p1=12044775753,g4p2=12045154114,g2p1=12046017324. No other observed issue besides the already-addressed context/liver problems. g2part0(job116946055320) andg2part2(job116946055358) still active. Together with earlier136registered pairs,185registered captures reviewed so far; affected original frames are preserved as failures/replaced evidence. Do not mistake matching Vercel geometry for correct framing or whole-organ source coverage.
+
+Earlier e7 brain canonical38898204381 and preview38895966590 still active; they may finish, but are HISTORICAL and no longer required substitutes for latest a90 all26target tests. Original startup failure38894967678 remains preserved. Do not cancel unrelated running checks.
+
+Durable publisher PREPARATION branch codex/v27-release-review-checkpoint-20261016 now2179228f4e44e11d74e53472aa2f6eb5fe0e9219; NO publication trigger on this checkpoint branch. It overlays exact a90 application source plus strict new .github/qa/verify-context-framing.mjs, old6partition coverage verifier (reads97ee baseline source snapshot), signature/package/AAB gate, config/provenance and new workflow. visualReviewBlocker remains set and expectedHashes={} until NEW four artifacts are downloaded/verified. Config qualifies old baseline97ee suites only for unchanged branches; latest85vascular+4liver+26reference scopes require all8 a90 parts. Old brain/preview runs are historical only. All source heads and workflow paths pinned. Publisher live branch remains c47bcc567b08a4478ce3f4710e28c9ad91251afb, explicitly blocked. Later create final reviewed checkpoint commit, remove blocker ONLY after all screenshots pass, populate exact new hashes, and fast-forward live publisher branch with expected c47 lease. Do not publish old97/e7 binaries.
+
+Local files qa-current/publication-prep contain latest workflow/config/verifiers; finalize-report.py now guarded for8new context artifacts context-part0..7.zip, all6 oldparts, actual final status, release URL and new package hashes. Must revise/add any newly found failures honestly. Existing Library comparison ZIP identity libfile_37a778016a40819197ab47ccf6ebcb18 remains version3 PARTIAL (409496242bytes). Final save needs latest version guard3 or refreshed metadata. Prepared upload helpers library-current-1125; current skill aliases changed to executor e10/skills/library (same instructions). Do not re-download stale v3 over current locally edited archive; version3 report itself remains unchanged now.
+
+Local runtime branch a90 is clean except2 QA-only untracked files that are safely committed on2f21 QA branch. Safe stashes preserve our oldsource edits. No user changes touched. Main9a5c0698d3f919843c53d097da0d8326b8f9b59c was proven ancestor before a90; re-read main before final authorized fast-forward and preserve concurrent work. No subagents permitted.
+
+NEXT: finish new builds; download four artifacts and compute NEW hashes, compare20locala90rendererfiles/110pins, verify certs; finish remaining old2parts and8newparts; inspect authoritative adb screenshots (CDP Android misses WebGL); run both coverage verifiers; update/check guarded publisher and publish all4files+scope+evidence; verify public assets/digests, update main/production after qualification, save final comparison report and final handoff. Persist to actual completion.
+
+## 2026-10-16 12:48 UTC — OWNER REQUESTS IMMEDIATE PUBLICATION, do not wait for exhaustive QA
+User explicitly said remaining ChatGPT quota is low and to release now. This supersedes waiting for all device suites. Dedicated owner-authorized release branch codex/v27-owner-release-20261016 at76296255ae569739685395f0d87ecec29b9d99eb, workflow android-v27-owner-release.yml, run38902764249 is active. It waits ONLY for exact-source a90 debug38900826559, internal38900826481, release38900826482 compilation success, then checks all APK signatures/package IDs/version27, AAB signature, equality of20renderer files across4packages and110asset pins. It automatically publishes GitHub PRE-RELEASE v27-20261016 with app-debug.apk/app-internal.apk/app-release.apk/app-release.aab plus hashes and review-scope.json clearly ADDITIONAL_DEVICE_QA_PENDING. Do not claim complete parity or full latest-build screenshot verification. No Play upload or main/production update requested in this immediate publication step. Internal build has passed, artifact12046398410; debug/release still compiling12:47. Do not start more development or delay this owner-requested publication for exhaustive checks. Existing device QA may finish independently. Next: confirm release job and public assets, give actual links. Do not ask approval again. Old verified-publisher c47 remains blocked, distinct from this candid pending-QA release.
+
+## 2026-10-16 — owner-requested v27 publication COMPLETE, exhaustive device QA still pending
+Public GitHub PRE-RELEASE https://github.com/Sabharivarshan111/gmck/releases/tag/v27-20261016 is published from a90b0b5bf9b8f41d640d960263765085262cf839. Owner explicitly requested immediate release without waiting for remaining exhaustive checks. Publication run38902764249 passed; all3 source compilations passed; APK signatures/package IDs/version27, AAB signature, identical20rendererfiles across4packages and110pins passed. Public assets verified in GitHub release metadata: app-debug.apk127319826bytes SHA256bd308a568c7b0b53c686fa9af6590757460017d171781060a22c1a8fe126c89e; app-internal.apk127319810bytes SHA2565a807819e166e0e86e3a512cdc173787ae92600a6cad839f270d94fe17478ae6; app-release.apk119684530bytes SHA25611f57bcbe5658506abfbabc5e7dc9e9b760ecabdef9ad4e41ab7ce5311eaf8a9; app-release.aab97843125bytes SHA2562450dea3ddf2e3fe735e1915442441ddccb36721c22d88ce6f0b86c0e7064aa6. Release includes build-integrity.json, review-scope.json andSHA256SUMS.txt. Review status is ADDITIONAL_DEVICE_QA_PENDING, not full parity certification. Existing QA38901147361/remaining oldpartitions may finish independently; do not falsify completion. No Play upload, main update or production Vercel update. Library comparison ZIP remains version3 partial and predates the second context/liver repair; no final evidence archive has been claimed or saved. Original strict verified-publisher remains blocked; do not confuse its unused tag with this published candid prerelease. Latest user priority was conserving remaining quota and immediate delivery; no more development or checks required before providing actual download links.
+
+## 2026-10-16 — explicit FRESH compilation requested; active
+Owner clarified that the near-instant r2/r3 releases only re-published existing binaries and explicitly requested actual fresh GitHub builds. Started source7565f458b5ee7009c65f91a626e571892b783137 on codex/v27-fresh-rebuild-20261016: debug38905731249, internal38905731337, release APK/AAB38905731186. Application source is unchanged from a90b0b5bf9b8f41d640d960263765085262cf839; only build triggers/publication guards and a state note changed. All three runs are actively building. Fresh publisher38905836407, branch codex/v27-publish-fresh-20261016 atf89997392343372c8b1dffd6513e8d6d2b105e10, waits only for successful exact fresh-source builds, verifies APK/AAB signatures, IDs/version27,20 matching rendererfiles and110pins, publishes v27-20261016-fresh, then re-downloads and verifies published checksums. Must give actual fresh release links only after success; do not describe old r1/r2/r3 binaries as fresh builds. Exhaustive device review remains pending per owner’s earlier instruction to continue later. No Play upload or main/production update. Continue monitoring these new runs until actual new artifacts are published.
+
+## 2026-10-16T18:20:00Z — Mobile anatomy dock repair, fresh builds underway
+
+**DONE:** Owner screenshot showed Spread anatomy covered by fixed Browse/Layers toolbar. Source dd404cb12c85942ce8ded76e1e5f1f4b919e8a51 on codex/v27-mobile-controls-20261016 stacks Spread and toolbar in one fixed dock, measures dock and bottom tabs with ResizeObserver, reserves panel/main/stage space, contains canvas overlays, wraps gesture help and compacts short landscape. Native renderer uses measured Android viewport. Local renderer build passes (110 asset pins), mobile UI contract check passes; local screenshots reviewed at 393x789 and 844x390. Targeted Playwright checks cover 320x640,393x789,412x915,844x390, safe-area padding, panels and actual slider dragging. Root tsconfig.app check has existing StethoscopeSynthesizer.ts:756 Float32Array generic mismatch unchanged from parent; no new simulator TS diagnostics.
+
+**HALF-DONE:** Exact final-source CI debug38946314404, internal38946314407, release38946314402; dock geometry38946314606. Publisher38946424783 on codex/v27-publish-mobile-controls-20261016 at 9f3d5b7244dfab4a063fa3ccaf7c5e8d4b1d080d waits for all four exact-source runs, verifies signing/package IDs/20 matching renderer files/110 pins, publishes v27-20261016-mobile-ui, then downloads and checks hashes. Superseded 13c0771 builds and publisher are being cancelled; never offer them as final landscape repair.
+
+**NEXT:** Watch final publisher and geometry check. Review screenshots and actual release assets before claiming publication. The owner explicitly deferred exhaustive anatomy/bedside QA because weekly quota is6%; do not restart that audit. Existing v27-20261016-fresh release is real but predates this UI fix.
+
+**DO NOT:** Re-publish old binaries; claim exhaustive Android/Vercel parity; upload to Play; alter signing/app ID; treat screenshot regression check as physical-device certification. Main/Vercel production unchanged. Native anatomy still canonical bundled WebGL with first-download pinned geometry caching.
+
+## 2026-10-16T18:38:00Z — Focused mobile dock regression passed; Android compilation pending
+
+**DONE:** Exact final app source dd404cb12c85942ce8ded76e1e5f1f4b919e8a51 passed focused native-renderer regression in run38947606723 (QA-only084e96fa9ca43e781b5d007cbc93e77487223b44 checks out dd404cb). Phone/landscape, safe-area padding, Browse/Layers, actual slider drag and occlusion samples pass. CI393x789 and844x390 screenshots downloaded and visually reviewed. Artifact12066163710 contains six screenshots and geometry.json. Earlier38946314606/38946886241 reported landscape panel overlap, while local checks passed; diagnostic QA preserved assertions and added viewport/bounds logging, and passed. Do not claim cause conclusively; this was timing-sensitive, not an app dependency repair. A diagnostic-only run38947313110 had a script escaping mistake, corrected before passing run.
+
+**HALF-DONE:** Debug38946314404, internal38946314407, release38946314402 remain compiling. Active publisher38948015794 at23cf6e768c297314d77f9259c8a3a1ff7e720066 on codex/v27-publish-mobile-controls-20261016 gates these three exact-source compilations plus passing QA38947606723, then signatures/package/renderer/pins and download hashes. Intended tagv27-20261016-mobile-ui is not yet verified published.
+
+**NEXT:** Verify actual completed publisher and release downloads before giving links. Keep exhaustive anatomy/bedside QA deferred per owner6%quota request. **DO NOT:** Offer old13c0771 artifacts or old v27-20261016-fresh as the final UI repair. No Play upload or full native parity claim.
+
+## 2026-10-16T18:43:00Z — Mobile anatomy overlap repair RELEASED
+
+**DONE:** Fresh debug/internal/release APKs and release AAB published at https://github.com/Sabharivarshan111/gmck/releases/tag/v27-20261016-mobile-ui, target dd404cb12c85942ce8ded76e1e5f1f4b919e8a51, published 2026-10-16T18:42:51Z. Debug38946314404/internal38946314407/release38946314402 all success. Publisher38948015794 success: signed APKs and AAB, version27, production/debug package IDs, same20 renderer files and110 asset pins checked; re-downloaded all4 binaries and JSON reports and verified SHA256SUMS. No Google Play upload. Exact asset hashes:
+
+
+Focused native renderer mobile dock QA38947606723 passed, artifact12066163710, QA-only084e96fa9ca43e781b5d007cbc93e77487223b44 checks out exact app dd404cb. Six screenshot scenarios cover three phone sizes, landscape, extra safe-area/text sizing and real spread drag. CI393x789/844x390 screenshots visually reviewed. Spread and thumb toolbar now share measured stacked dock; panels clear dock, canvas overlays are contained and short landscape is compacted. Earlier timing-sensitive landscape assertions failed before diagnostic run; do not erase that history or imply physical-device exhaustive certification. Shared renderer change included in Android; production Vercel/main not deployed by this task.
+
+**HALF-DONE:** Exhaustive anatomy/auscultation/eye/bedside latest-device comparison remains DEFERRED by owner's explicit6%weekly-quota request. Prior expanded anatomy audit and unresolved speaker/offline limitations remain in earlier entries.
+
+**NEXT:** Give these actual new release links. Next session continue deferred exhaustive verification when owner asks; do not build again merely because chat says continue without checking current release state.
+
+**DO NOT:** Claim all simulator/native parity certified, call this a Play release, or confuse superseded13c0771 builds with final dd404cb. Preserve signing/app ID/version and baseline source-pin disclosures.
+
+## 2026-10-18T04:06Z — remaining anatomy audit active; do not certify parity yet
+
+Owner resumed deferred audit after quota reset. Recovered/reviewed all remaining historical images: all225 registered connection pairs have now been visually examined, including43 formerly unreviewed old pairs and115 corrected-context/reference pairs. This is review coverage, NOT225 accepted passes.
+
+Four confirmed shared renderer/resolver defects repaired on app candidate fb79170bcf6fdb42311555021c10f7857cbccd81 (codex/v27-anatomy-final-20261018): selected supply vessels occluded by translucent context depth writes; ignored named-layer prop; focused Z joints framing entire source collection plus false HRA banner; abdomen including8 oral/thoracic digestive meshes. Source geometry/transforms unchanged. Local15-vessel/4-layer,3-joint actual-compositor crops, hepatic419 context on/off/restored and source/static/TypeScript/canonical build checks pass.2234 binary source parts independently validated; not2381 individual visual certifications. See .agents/state/anatomy-visibility-20261018.md on final branch.
+
+LIVE exact-source audit tracks:
+- Released dd404cb / debug38946314404 versus matching preview nhdo99cku: QA1d1148c341db3060dcf366a3cc2f86a9f081bfbc, run39093390312,495 tasks/16parts. Parts4(job117574920104/artifact12123834134) and6(job117574920023/artifact12123434106) fail real clipped geometry at connections68/86 after prior drag/selection. Native ADB PNG confirms severe clipping, not just GL readback. Cause unresolved. Latest local same52->68 drag sequence on final candidate renders correctly at393x789. Investigate Android resize/controls/performance, preserve failures. Part9 job117574920069 fails onboarding bootstrap: Start studying never tappable (infrastructure/setup, no structure verdict). Initial run39092915659 had obsolete task-count startup assertion; corrected before valid run.
+- Intermediate06c42a861641b1796a973bd10dd1b05c5e332e88 debug39093774146 SUCCESS versus matching preview9939ahupp: QA690924df1cfe14f41eb788fcb4ce8cf581fd9312/run39094300343,245tasks(85supply+155source refs+5layers)/12parts active. Does not include later3joint/16abdomen repairs.
+- Finalfb79170 debug39095299555 building; UX39095299481; preview https://orbitmbbs-onoq9o3w2-sabharivarshan111s-projects.vercel.app. QA9a2729f91e18947006af13493f9cba2b4e57a0c6/run39095407334 waits final APK:27tasks/3parts (18registered inc16abdomen+coronary19+ileal313,3focusedZjoints,6overviews). Real joint source-strip clicks and native ADB PNG crops, not CDP PNG. No main/production/Play/release publication.
+- Superseded joint-only47da0be debug39094892581 and QA59eaaad/run39095022197 safely cancelled by final workflow expected-head guard; preserve06/broad audit.
+
+NEXT: finish live CI, download/review evidence, investigate68/86 clipping without weakening fit assertions, repair/retest confirmed bugs, retry bootstrap-only part9, summarize qualified coverage. Keep v27-20261016-mobile-ui release distinct from unverified candidate. Scratch gmck restored with npm dependencies; each exec network namespace isolated, run devserver+browser same exec. Scripts .github/qa/local-rotation-sequence.mjs and /tmp/rotation-68-settled.png reproduce good final-browser view. Full log /tmp/orbit-rotation-sequence.log. Large source files read individually to avoid tool truncation. Git push unauthenticated; connector tree/commit/update_ref works. LocalHEADdd404cb with final source edits; do not reset/delete. Preserve unrelated5.5MiB lungs candidate at ../preserved-assets/lungs_candidate_bodyparts3d.glb.kuR570. All runtime changes authorized by owner; no subagents used.
+
