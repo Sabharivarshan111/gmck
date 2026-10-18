@@ -25,7 +25,7 @@ const ORIGIN='https://www.orbitmbbs.site';
  await step('anatomy',async()=>{await open('/simulator?mode=anatomy');await page.waitForTimeout(18000);await shot('anatomy');});
  await step('icu',async()=>{const btn=page.getByRole('button',{name:'Open ICU monitor',exact:true});if(await btn.count())await btn.click();else await page.getByRole('button',{name:/ICU Monitor/}).first().click();await page.waitForTimeout(2000);await shot('icu');});
  await step('flashcards',async()=>{await open('/notes');await page.getByRole('button',{name:/Anki flashcards/i}).click();await page.waitForTimeout(2000);await shot('flashcards');});
- await step('attendance',async()=>{await open('/progress');await page.getByRole('button',{name:'Attendance',exact:true}).click();await page.waitForTimeout(1500);await shot('attendance');});
+ await step('attendance',async()=>{await open('/progress');await page.getByRole('tab',{name:'Attendance',exact:true}).click();await page.waitForTimeout(1500);await shot('attendance');});
  await step('timer',async()=>{await open('/timer');await shot('timer');});
  await step('askai',async()=>{await open('/ask-ai');await shot('askai');});
  await fs.writeFile(path.join(OUT,'capture-manifest.json'),JSON.stringify(manifest,null,2));
