@@ -1,0 +1,29 @@
+name: GMCK Wan2.2 supporting footage
+on:
+  workflow_dispatch:
+    inputs:
+      scene:
+        type: choice
+        options: [establish, rescue]
+        default: establish
+        required: true
+jobs:
+  generate:
+    runs-on: [self-hosted, linux, x64, gpu]
+    timeout-minutes: 180
+    defaults:
+      run:
+        working-directory: video/world-trauma-day
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check GPU
+        run: nvidia-smi
+      - name: Install Wan2.2 and models
+        run: bash ai/setup_wan.sh
+      - name: Generate
+        run: python ai/run_wan.py --scene '${{ inputs.scene }}'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gmck-wan-${{ inputs.scene }}
+          path: video/world-trauma-day/public/generated/${{ inputs.scene }}.mp4
+          if-no-files-found: error
