@@ -66,6 +66,7 @@ on:
       - codex/v27-fresh-rebuild-20261016
       - codex/v27-mobile-controls-20261016
       - codex/v27-anatomy-visibility-20261018
+      - codex/v27-anatomy-joints-20261018
       - codex/v27-exhaustive-device-checks-20261016
       - claude/android-react-native-app-o54cjj
       - claude/native-app-sync
@@ -336,7 +337,7 @@ jobs:
       # phone's browser, signed in or not, and Android opens it directly.
       # Same APK, reachable.
       - name: Publish the APK where a phone can download it
-        if: (github.ref_name != 'codex/v27-exhaustive-device-checks-20261016' && github.ref_name != 'codex/v27-parity-repairs-20261016' && github.ref_name != 'codex/v27-brain-registration-20261016' && github.ref_name != 'codex/v27-context-camera-20261016' && github.ref_name != 'codex/v27-fresh-rebuild-20261016' && github.ref_name != 'codex/v27-mobile-controls-20261016' && github.ref_name != 'codex/v27-anatomy-visibility-20261018') || inputs.publish_verified == true
+        if: (github.ref_name != 'codex/v27-exhaustive-device-checks-20261016' && github.ref_name != 'codex/v27-parity-repairs-20261016' && github.ref_name != 'codex/v27-brain-registration-20261016' && github.ref_name != 'codex/v27-context-camera-20261016' && github.ref_name != 'codex/v27-fresh-rebuild-20261016' && github.ref_name != 'codex/v27-mobile-controls-20261016' && github.ref_name != 'codex/v27-anatomy-visibility-20261018' && github.ref_name != 'codex/v27-anatomy-joints-20261018') || inputs.publish_verified == true
         uses: softprops/action-gh-release@v2
         with:
           tag_name: debug-${{ github.run_number }}

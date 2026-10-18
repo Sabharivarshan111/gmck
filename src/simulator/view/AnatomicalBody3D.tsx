@@ -3437,13 +3437,14 @@ varying float partSelected;
         for (const mesh of meshes) {
           const registered = !zAnatomyReferenceRegistrationIssue(modelKey, mesh.name);
           const selected = zAnatomyMeshMatchesTarget(mesh.name, targetKey);
-          mesh.visible = registered;
+          const focusedJoint = modelKey === 'major_joints_reference' && !zReferenceTarget?.matchAll;
+          mesh.visible = registered && (!focusedJoint || selected);
           mesh.material = zReferenceTarget?.matchAll
             ? zReferenceMaterialsRef.current.overview
             : selected
             ? zReferenceMaterialsRef.current.selected
             : zReferenceMaterialsRef.current.context;
-          if (registered) zReferenceBox.expandByObject(mesh);
+          if (mesh.visible) zReferenceBox.expandByObject(mesh);
         }
       }
     }
@@ -3513,7 +3514,7 @@ varying float partSelected;
         ? 'The official Z-Anatomy NervousSystem100 source has no named splanchnic-nerve mesh. ORBIT is showing its existing schematic autonomic overlay here; it is not presented as source-derived anatomy.'
         : peripheralNervesReady && isSupplementalNerveTarget && !hasRealNerveMesh
         ? 'This named nerve is not present in the vetted Z-Anatomy peripheral-nerve source used by ORBIT. No unrelated structure has been substituted.'
-        : isolatedTarget && isolatedTarget.status === 'absent' && !isAutonomicTarget && !isSupplementalNerveTarget
+        : isolatedTarget && isolatedTarget.status === 'absent' && !isZReferenceTarget && !isAutonomicTarget && !isSupplementalNerveTarget
         ? isolatedTarget.reason ?? null
         : null
     );
