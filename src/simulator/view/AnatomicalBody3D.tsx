@@ -8,7 +8,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { isolationCameraDistance } from './isolationFraming';
 import { anatomyPixelRatio } from '../data/renderQuality';
 import { partBelongsToRegion, restoreSourceNodeNames } from '../data/anatomyRegions';
-import { PatientVitals, PatientPathologyState } from '../types';
+import { PatientVitals, PatientPathologyState, AnatomicalLayer } from '../types';
 import {
   Atlas,
   Part,
@@ -71,6 +71,23 @@ interface AnatomicalBody3DProps {
   isolatedPartId?: string | null;
   onDissectPart?: (part: Part) => void;
   onAtlasLoaded?: (atlas: Atlas) => void;
+}
+
+// A translucent context must not write a solid occluder in front of a selected
+// supply vessel. Keep depth testing/writes on the selected vessel itself.
+function atlasDepthWrite(system: SystemId, isXray: boolean, isolatedId?: string | null, layer: AnatomicalLayer = 'glass'): boolean {
+  if (isXray) return system === 'skeletal';
+  const connection = getOrganConnection(isolatedId);
+  if (connection && connection.kind !== 'relation') return system === connection.kind;
+  return system !== 'integumentary' || layer === 'skin';
+}
+
+function systemInAnatomicalLayer(system: SystemId, layer: AnatomicalLayer): boolean {
+  if (layer === 'skeletal') return system === 'skeletal';
+  if (layer === 'vascular') return ['arterial', 'venous', 'cardiac'].includes(system);
+  if (layer === 'skin') return system === 'integumentary';
+  if (layer === 'viscera') return !['integumentary', 'muscular', 'skeletal', 'connective', 'arterial', 'venous'].includes(system);
+  return true;
 }
 
 /**
@@ -1230,6 +1247,7 @@ function createHraChordaeOverlay(meshes: THREE.Mesh[]): {
 }
 
 export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
+  layer = 'glass',
   renderQuality = 'crisp',
   cameraAction,
   vitals,
@@ -3708,7 +3726,7 @@ varying float partSelected;
         }
       } else {
         // Standard Mode: Respect manual dissection and depth peeling
-        if (peeledSystems.has(p.system)) {
+        if (!systemInAnatomicalLayer(p.system, layer) || peeledSystems.has(p.system)) {
           visible = 0.0;
         } else if (isToothOrGingiva && layerPeel < 0.28) {
           // Hide exposed bare teeth poking through the lips when superficial muscular layers are on
@@ -3734,18 +3752,10 @@ varying float partSelected;
 
     partTexture.needsUpdate = true;
 
-    // Adjust depthWrite for context organ materials so overlay vessels/nerves render without occlusion
-    const materials = systemMaterialsRef.current;
-    if (materials) {
-      const cardiacMat = materials.get('cardiac');
-      if (cardiacMat) {
-        cardiacMat.depthWrite = true;
-      }
-      const arterialMat = materials.get('arterial');
-      if (arterialMat) {
-        arterialMat.depthWrite = true;
-      }
-    }
+    // Reapply on every context toggle as well as selection/visibility changes.
+    systemMaterialsRef.current.forEach((material, system) => {
+      material.depthWrite = atlasDepthWrite(system, isXray, isolatedPartId, layer);
+    });
 
     // Automatic Camera Framing onto Isolated Organ / Vessel / Nerve
     if (
@@ -3871,8 +3881,10 @@ varying float partSelected;
     isolatedPartId,
     contextOrganId,
     showVesselContext,
+    isXray,
     selectedOrganId,
     layerPeel,
+    layer,
     modelsReady,
     peripheralNervesReady,
     peripheralNervesFailed,
@@ -3964,7 +3976,7 @@ varying float partSelected;
           mat.depthWrite = false;
         }
       } else {
-        mat.opacity = sysId === 'integumentary' ? 0.12 : 1.0;
+        mat.opacity = sysId === 'integumentary' && layer !== 'skin' ? 0.12 : 1.0;
         mat.depthWrite = sysId !== 'integumentary';
         if (sysId === 'skeletal' && isLight && spreadActive) {
           // Warm teaching-atlas bone keeps individual ribs/vertebrae visible
@@ -3979,9 +3991,10 @@ varying float partSelected;
           if (origSys) mat.color.setHex(parseInt(origSys.color.replace('#', '0x')));
         }
       }
+      mat.depthWrite = atlasDepthWrite(sysId, isXray, isolatedPartId, layer);
       mat.needsUpdate = true;
     });
-  }, [isXray, isLight, explodeAmount, isolatedPartId]);
+  }, [isXray, isLight, explodeAmount, isolatedPartId, layer]);
 
   const setCameraDirection = (direction: 'front' | 'back' | 'side') => {
     const camera = cameraRef.current;
