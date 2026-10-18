@@ -1,0 +1,189 @@
+{
+  "scope": "14 regional HRA source-strip views; browser only",
+  "baseSource": "9a89f4bb25f2a23a19fdc4d637c982def7f322bb",
+  "viewport": {
+    "width": 393,
+    "height": 800
+  },
+  "before": {
+    "checks": [
+      {
+        "id": "hra_aorta",
+        "count": 66,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_coronary_arteries",
+        "count": 9,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_cardiac_veins",
+        "count": 14,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_portal_vein",
+        "count": 15,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_celiac_trunk",
+        "count": 8,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_hepatic_vessels",
+        "count": 16,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_splenic_vessels",
+        "count": 16,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_renal_vessels",
+        "count": 15,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_mesenteric_vessels",
+        "count": 28,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_pulmonary_vessels",
+        "count": 31,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_knee_menisci",
+        "count": 8,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_knee_cartilage",
+        "count": 24,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_knee_bones",
+        "count": 534,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_knee_cruciate_entheses",
+        "count": 15,
+        "w": 371,
+        "h": 443
+      }
+    ],
+    "errors": [],
+    "status": "PASSED"
+  },
+  "after": {
+    "checks": [
+      {
+        "id": "hra_aorta",
+        "count": 347,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_coronary_arteries",
+        "count": 1007,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_cardiac_veins",
+        "count": 1239,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_portal_vein",
+        "count": 2911,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_celiac_trunk",
+        "count": 7259,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_hepatic_vessels",
+        "count": 1175,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_splenic_vessels",
+        "count": 1565,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_renal_vessels",
+        "count": 4229,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_mesenteric_vessels",
+        "count": 422,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_pulmonary_vessels",
+        "count": 3541,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_knee_menisci",
+        "count": 319,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_knee_cartilage",
+        "count": 805,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_knee_bones",
+        "count": 534,
+        "w": 371,
+        "h": 443
+      },
+      {
+        "id": "hra_knee_cruciate_entheses",
+        "count": 572,
+        "w": 371,
+        "h": 443
+      }
+    ],
+    "errors": [],
+    "status": "PASSED"
+  },
+  "limitation": "Selected-color pixel counts supplement screenshot review; not clinical certification or Android verification."
+}

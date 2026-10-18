@@ -1,0 +1,2643 @@
+{
+  "source": "9a89f4bb25f2a23a19fdc4d637c982def7f322bb",
+  "scope": "Real mobile browser UI only; installed Android audit remains separate",
+  "checks": [
+    {
+      "id": "za_brain_overview",
+      "label": "Brain reference · Z-Anatomy",
+      "kind": "source",
+      "notice": "SOURCE REGISTRATION GAP: right orbital inferior frontal gyrus, corpus callosum, hippocampal commissure are omitted because the source alignment is invalid.",
+      "frame": {
+        "count": 8326,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_brain_cortex",
+      "label": "Cortical gyri · Z-Anatomy",
+      "kind": "source",
+      "notice": "SOURCE REGISTRATION GAP: right orbital inferior frontal gyrus is omitted because the source alignment is invalid.",
+      "frame": {
+        "count": 8326,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_brain_basal_ganglia",
+      "label": "Basal ganglia · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8326,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_brain_limbic",
+      "label": "Hippocampus & amygdala · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8326,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_brain_diencephalon",
+      "label": "Thalamus & hypothalamus · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8326,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_brain_brainstem",
+      "label": "Brainstem · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8326,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_brain_ventricles",
+      "label": "Ventricular system · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8326,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_brain_cerebellar",
+      "label": "Cerebellar structures · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8326,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_brain_corpus_callosum",
+      "label": "Corpus callosum · Z-Anatomy",
+      "kind": "source",
+      "notice": "SOURCE REGISTRATION GAP: corpus callosum is omitted because the source alignment is invalid.",
+      "frame": {
+        "count": 8326,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_stomach_overview",
+      "label": "Stomach & proximal GI · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 7290,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_stomach",
+      "label": "Stomach · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 7290,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_stomach_duodenum",
+      "label": "Duodenum · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 7284,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_stomach_greater_omentum",
+      "label": "Greater omentum · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 7284,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_stomach_lesser_omentum",
+      "label": "Lesser omentum · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 7284,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_pectoralis_overview",
+      "label": "Pectoralis major · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 15216,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_pectoralis_clavicular",
+      "label": "Clavicular head · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 14268,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_pectoralis_sternocostal",
+      "label": "Sternocostal head · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 14268,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_pectoralis_abdominal",
+      "label": "Abdominal part · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 14268,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_deltoid_overview",
+      "label": "Deltoid · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 5379,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_deltoid_clavicular",
+      "label": "Clavicular part · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 9404,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_deltoid_acromial",
+      "label": "Acromial part · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 9404,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_deltoid_spinal",
+      "label": "Spinal part · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 9404,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_joints_overview",
+      "label": "Major joints · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 697,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_knee_joint",
+      "label": "Knee ligaments & menisci · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12963,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_hip_joint",
+      "label": "Hip capsule & labrum · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 6018,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "za_shoulder_joint",
+      "label": "Glenohumeral capsule & ligaments · Z-Anatomy",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 2297,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_heart_overview",
+      "label": "HRA heart overview",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12598,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_right_atrium",
+      "label": "Right atrium · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12598,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_left_atrium",
+      "label": "Left atrium · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12598,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_right_ventricle",
+      "label": "Right ventricle · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12598,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_left_ventricle",
+      "label": "Left ventricle · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12598,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_interventricular_septum",
+      "label": "Interventricular septum · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12598,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_mitral_valve",
+      "label": "Mitral valve · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12598,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_tricuspid_valve",
+      "label": "Tricuspid valve · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12598,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_aortic_valve",
+      "label": "Aortic valve · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12598,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_pulmonary_valve",
+      "label": "Pulmonary valve · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12598,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_papillary_muscles",
+      "label": "Papillary muscles · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12598,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_papillary_anterior",
+      "label": "Anterior papillary muscle · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12598,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_papillary_anterolateral",
+      "label": "Anterolateral papillary muscle · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12598,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_papillary_medial",
+      "label": "Medial papillary muscle · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12598,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_papillary_posterior",
+      "label": "Posterior papillary muscle · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12598,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_papillary_posteromedial",
+      "label": "Posteromedial papillary muscle · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12598,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_conduction_schematic",
+      "label": "Cardiac conduction · schematic",
+      "kind": "schematic",
+      "notice": null,
+      "frame": {
+        "count": 12598,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_chordae_schematic",
+      "label": "Chordae tendineae · schematic",
+      "kind": "schematic",
+      "notice": null,
+      "frame": {
+        "count": 12598,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_kidney_overview",
+      "label": "Kidneys · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 9738,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_kidney_capsule",
+      "label": "Renal capsule · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 9738,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_kidney_cortex",
+      "label": "Renal cortex · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 9738,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_kidney_columns",
+      "label": "Renal columns · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 9738,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_kidney_pyramids",
+      "label": "Renal pyramids · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 9738,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_kidney_papillae",
+      "label": "Renal papillae · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 9738,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_kidney_hilum",
+      "label": "Renal hila · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 9738,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_liver_overview",
+      "label": "Liver · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8682,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_liver_segments",
+      "label": "Liver segments · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8682,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_liver_porta",
+      "label": "Porta hepatis · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8682,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_liver_caudate",
+      "label": "Caudate lobe · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8682,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_liver_quadrate",
+      "label": "Quadrate lobe · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8682,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_liver_ligaments",
+      "label": "Liver ligaments · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8682,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_liver_impressions",
+      "label": "Visceral impressions · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8682,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_liver_bare_area",
+      "label": "Bare area · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8682,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_lung_overview",
+      "label": "Lungs · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 7443,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_lung_segments",
+      "label": "Bronchopulmonary segments · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 7443,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_lung_bronchi",
+      "label": "Bronchial tree · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 7443,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_lung_trachea",
+      "label": "Trachea · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 7443,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_lung_carina",
+      "label": "Carina · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 7443,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_lung_hila",
+      "label": "Lung hila · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 7443,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_pancreas_overview",
+      "label": "Pancreas · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 9541,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_pancreas_head",
+      "label": "Head of pancreas · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 9541,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_pancreas_neck",
+      "label": "Neck of pancreas · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 9541,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_pancreas_body",
+      "label": "Body of pancreas · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 9541,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_pancreas_tail",
+      "label": "Tail of pancreas · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 9541,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_pancreas_uncinate",
+      "label": "Uncinate process · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 9541,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_spleen_overview",
+      "label": "Spleen · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8239,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_spleen_hilum",
+      "label": "Splenic hilum · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8239,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_spleen_gastric_surface",
+      "label": "Gastric surface · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8239,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_spleen_renal_surface",
+      "label": "Renal surface · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8239,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_spleen_colic_surface",
+      "label": "Colic surface · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8239,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_spleen_diaphragmatic_surface",
+      "label": "Diaphragmatic surface · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8239,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_small_intestine_overview",
+      "label": "Small intestine · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 6607,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_duodenum",
+      "label": "Duodenum · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 6607,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_jejunum",
+      "label": "Jejunum · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 6607,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_ileum",
+      "label": "Ileum · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 6607,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_terminal_ileum",
+      "label": "Terminal ileum · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 6607,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_hepatopancreatic_sphincter",
+      "label": "Hepatopancreatic sphincter · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 6607,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_bladder_overview",
+      "label": "Urinary bladder · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 13084,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_bladder_trigone",
+      "label": "Bladder trigone · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 13084,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_bladder_orifices",
+      "label": "Ureteric orifices · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 13084,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_bladder_neck",
+      "label": "Bladder neck · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 13084,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_bladder_dome",
+      "label": "Bladder dome · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 13084,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_thymus_overview",
+      "label": "Thymus · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 4402,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_thymus_left",
+      "label": "Left thymic lobe · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 4402,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_thymus_right",
+      "label": "Right thymic lobe · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 4402,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_vessels_overview",
+      "label": "Major vasculature · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 705,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_aorta",
+      "label": "Aorta · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 705,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_coronary_arteries",
+      "label": "Coronary arteries · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 705,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_cardiac_veins",
+      "label": "Cardiac veins · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 705,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_portal_vein",
+      "label": "Portal venous system · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 705,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_celiac_trunk",
+      "label": "Celiac trunk · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 705,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_hepatic_vessels",
+      "label": "Hepatic vessels · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 705,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_splenic_vessels",
+      "label": "Splenic vessels · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 705,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_renal_vessels",
+      "label": "Renal vessels · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 705,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_mesenteric_vessels",
+      "label": "Mesenteric vessels · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 705,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_pulmonary_vessels",
+      "label": "Pulmonary vessels · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 1867,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_eye_overview",
+      "label": "Eyes · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8142,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_eye_cornea",
+      "label": "Cornea · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8142,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_eye_lens",
+      "label": "Lens · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8142,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_eye_retina",
+      "label": "Retina · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8142,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_eye_iris",
+      "label": "Iris · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8142,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_eye_sclera",
+      "label": "Sclera · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8142,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_eye_ciliary",
+      "label": "Ciliary body/muscle · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8142,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_eye_fovea",
+      "label": "Fovea · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8142,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_eye_humors",
+      "label": "Aqueous/vitreous humors · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8142,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_ureter_overview",
+      "label": "Ureters & collecting systems · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 617,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_ureter",
+      "label": "Ureters · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 617,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_renal_pelvis",
+      "label": "Renal pelvis · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 617,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_major_calyces",
+      "label": "Major calyces · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 617,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_minor_calyces",
+      "label": "Minor calyces · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 617,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_spinal_cord_overview",
+      "label": "Spinal cord · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 323,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_spinal_cord_cervical",
+      "label": "Cervical cord · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 323,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_spinal_cord_thoracic",
+      "label": "Thoracic cord · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 323,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_spinal_cord_lumbar",
+      "label": "Lumbar cord · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 323,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_spinal_cord_sacral",
+      "label": "Sacral cord · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 323,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_pelvis_overview",
+      "label": "Bony pelvis · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12365,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_pelvis_sacrum",
+      "label": "Sacrum · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12365,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_pelvis_coccyx",
+      "label": "Coccyx · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12365,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_pelvis_ilium",
+      "label": "Ilium · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12365,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_pelvis_ischium",
+      "label": "Ischium · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12365,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_pelvis_pubis",
+      "label": "Pubis · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 12365,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_prostate_overview",
+      "label": "Prostate & ducts · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 5160,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_prostate_zones",
+      "label": "Prostatic zones · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 5160,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_prostate_apex_base",
+      "label": "Prostate apex/base · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 5160,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_seminal_vesicle",
+      "label": "Seminal vesicle · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 5160,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_vas_deferens",
+      "label": "Vas deferens · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 5160,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_ejaculatory_duct",
+      "label": "Ejaculatory duct · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 5160,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_skin_overview",
+      "label": "Skin · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 3349,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_knee_overview",
+      "label": "Knees · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 1684,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_knee_menisci",
+      "label": "Menisci · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 1684,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_knee_cartilage",
+      "label": "Articular cartilage · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 1684,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_knee_bones",
+      "label": "Knee bones · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 1684,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_knee_cruciate_entheses",
+      "label": "Cruciate entheses · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 1684,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_uterus_overview",
+      "label": "Uterus · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8689,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_uterus_body",
+      "label": "Body of uterus · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8688,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_uterus_fundus",
+      "label": "Fundus of uterus · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8688,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_uterus_cervix",
+      "label": "Cervix · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8688,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_uterus_walls",
+      "label": "Uterine walls · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 8688,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_ovary_overview",
+      "label": "Ovaries · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 2097,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_fallopian_overview",
+      "label": "Uterine tubes · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 2188,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_fallopian_ampulla",
+      "label": "Ampulla · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 2188,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_fallopian_isthmus",
+      "label": "Isthmus · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 2188,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_fallopian_fimbriae",
+      "label": "Fimbriae · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 2188,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_fallopian_infundibulum",
+      "label": "Infundibulum · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 2188,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_placenta_overview",
+      "label": "Placenta · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 13661,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_placenta_plates",
+      "label": "Basal/chorionic plates · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 13661,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_placenta_vessels",
+      "label": "Placental vessels · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 13661,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_placenta_cord",
+      "label": "Umbilical cord · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 13661,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    },
+    {
+      "id": "hra_placenta_amnion",
+      "label": "Amnion · HRA",
+      "kind": "source",
+      "notice": null,
+      "frame": {
+        "count": 13661,
+        "w": 371,
+        "h": 443,
+        "viewport": [
+          0,
+          0,
+          371,
+          443
+        ]
+      }
+    }
+  ],
+  "errors": [],
+  "status": "PASSED"
+}
