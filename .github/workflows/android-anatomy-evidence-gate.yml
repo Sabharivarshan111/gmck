@@ -1,0 +1,63 @@
+name: Verified Android anatomy evidence
+on:
+  workflow_run:
+    workflows: [Full Android anatomy source audit, Android anatomy failed-batch recovery]
+    types: [completed]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: anatomy-evidence-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  verify-evidence:
+    if: github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.head_repository.id == github.repository_id
+    runs-on: ubuntu-latest
+    steps:
+      - id: provenance
+        name: Require unchanged application files and completed original/recovery runs
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const source='c91d1b7bb79174d8ff55f29f4f27c382720b1df3';
+            const allowed=new Set(['.github/qa/android-anatomy-full.mjs','.github/qa/verify-anatomy-complete.mjs','.github/workflows/android-v27-full-anatomy.yml','.github/workflows/android-v27-anatomy-recovery.yml','.github/workflows/android-anatomy-evidence-gate.yml','.github/workflows/android-debug.yml','.github/workflows/android-internal.yml','.github/workflows/android-release.yml','.github/workflows/android-after-anatomy-release.yml']);
+            const {data:diff}=await github.rest.repos.compareCommits({...context.repo,base:source,head:context.sha});
+            if(!['ahead','identical'].includes(diff.status)||!diff.files||diff.files.some(f=>!allowed.has(f.filename)))throw Error('Application changed since tested APK; a fresh application audit is required');
+            const {data:apk}=await github.rest.actions.getWorkflowRun({...context.repo,run_id:39145808148});
+            if(apk.head_sha!==source||apk.conclusion!=='success')throw Error('Incorrect APK provenance');
+            const {data:original}=await github.rest.actions.getWorkflowRun({...context.repo,run_id:39145808030});
+            if(original.head_sha!==source||original.path!=='.github/workflows/android-v27-full-anatomy.yml')throw Error('Incorrect original audit provenance');
+            const {data:runs}=await github.rest.actions.listWorkflowRuns({...context.repo,workflow_id:'android-v27-anatomy-recovery.yml',head_sha:context.sha,per_page:20});
+            const recovery=runs.workflow_runs.find(r=>r.head_sha===context.sha);
+            if(original.status!=='completed'||!recovery||recovery.status!=='completed'){core.setOutput('ready','false');core.info('Waiting for original and recovery batches; no verification artifact or publication');return;}
+            if(recovery.conclusion!=='success')throw Error('Recovery batches failed; release stays blocked');
+            core.setOutput('ready','true');core.setOutput('recovery',recovery.id);
+      - uses: actions/checkout@v4
+        if: steps.provenance.outputs.ready == 'true'
+      - uses: actions/setup-node@v4
+        if: steps.provenance.outputs.ready == 'true'
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        if: steps.provenance.outputs.ready == 'true'
+        with:
+          pattern: actual-android-v27-full-*
+          path: artifacts/original
+          run-id: 39145808030
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        if: steps.provenance.outputs.ready == 'true'
+        with:
+          pattern: actual-android-v27-recovery-*
+          path: artifacts/recovery
+          run-id: ${{ steps.provenance.outputs.recovery }}
+          github-token: ${{ github.token }}
+      - name: Independently require all626 targets, both real surfaces and screenshots
+        if: steps.provenance.outputs.ready == 'true'
+        run: node --experimental-strip-types .github/qa/verify-anatomy-complete.mjs artifacts c91d1b7bb79174d8ff55f29f4f27c382720b1df3 verified-anatomy.json
+      - uses: actions/upload-artifact@v4
+        if: success() && steps.provenance.outputs.ready == 'true'
+        with:
+          name: verified-android-anatomy-${{ github.sha }}
+          path: verified-anatomy.json
+          if-no-files-found: error

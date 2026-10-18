@@ -2,6 +2,15 @@ name: Full Android anatomy source audit
 on:
   push:
     branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'mobile/**'
+      - '!mobile/scripts/**'
+      - '!mobile/docs/**'
+      - 'scripts/**'
+      - 'package*.json'
+      - 'vite.config.*'
   workflow_dispatch:
 concurrency:
   group: full-anatomy-v27-${{ github.ref }}

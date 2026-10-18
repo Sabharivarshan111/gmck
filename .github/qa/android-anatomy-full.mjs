@@ -225,7 +225,13 @@ async function brainRegistration(ref){
    await loaded();
   }
   await page.waitForTimeout(800);
-  if(target.kind==='schematic')assert(/schematic/i.test(await page.getByTestId('anatomy-renderer').innerText()),'Derived source overlay must be labelled schematic');
+  if(target.kind==='schematic'){
+   assert(/schematic/i.test(target.label),'Derived source needs a visible schematic label');
+   await page.getByText(target.label,{exact:true}).first().waitFor({state:'visible'});
+   const notice=page.getByTestId('anatomy-source-notice');await notice.locator('summary').click();
+   assert(/schematic/i.test(await notice.innerText()),'Expanded source notice must disclose schematic geometry');
+   await notice.locator('summary').click();
+  }
   let bounds=null;
   if(target.modelKey==='brain_reference'){
    const expected=zAnatomyReferenceRegistrationNotice(target.id);
@@ -243,7 +249,7 @@ async function brainRegistration(ref){
  }
 }
 
-async function persist(){await writeFile(resolve(out,'actual-android-exhaustive.json'),JSON.stringify({status:failures.length?'FAILED':completed?'PASSED':'IN_PROGRESS',suite,partition:{index:contextPart,count:contextParts},platform:'installed Android WebView; corrected canonical source in mobile Chromium at matching viewport',referenceOrigin,scope:auditSubset?'repair-smoke':'full626',requestedTasks:auditSubset?[...auditSubset]:null,candidateSource:process.env.ORBIT_CANDIDATE_SHA,blockedExternalRequests,checks,failures,errors},null,2));}
+async function persist(){await writeFile(resolve(out,'actual-android-exhaustive.json'),JSON.stringify({status:failures.length?'FAILED':completed?'PASSED':'IN_PROGRESS',suite,partition:{index:contextPart,count:contextParts},platform:'installed Android WebView; corrected canonical source in mobile Chromium at matching viewport',referenceOrigin,scope:auditSubset?'repair-smoke':'full626',requestedTasks:auditSubset?[...auditSubset]:null,candidateSource:process.env.ORBIT_CANDIDATE_SHA,qaSource:process.env.ORBIT_QA_SOURCE||process.env.GITHUB_SHA||null,blockedExternalRequests,checks,failures,errors},null,2));}
 try{
  assert.equal(suite,'context-framing');await contextFraming();
  assert.deepEqual(errors,[]);completed=true;await persist();await writeFile(resolve(out,'PASSED.json'),JSON.stringify({suite,partition:{index:contextPart,count:contextParts},checks:checks.length,passed:true}));

@@ -1,0 +1,89 @@
+name: Android anatomy failed-batch recovery
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/qa/android-anatomy-full.mjs'
+      - '.github/workflows/android-v27-anatomy-recovery.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: anatomy-recovery-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        suite: [context-framing]
+        partition: [3, 4, 8]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: c91d1b7bb79174d8ff55f29f4f27c382720b1df3
+      - name: Overlay only the repaired QA harness on the frozen application source
+        env:
+          QA_SOURCE: ${{ github.sha }}
+        run: |
+          git fetch origin "$QA_SOURCE" --depth=1
+          git checkout "$QA_SOURCE" -- .github/qa/android-anatomy-full.mjs
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: |
+          npm ci --legacy-peer-deps --ignore-scripts
+          npm install --prefix /tmp/orbit-audit-browser --no-audit --no-fund playwright@1.55.0
+          ln -s /tmp/orbit-audit-browser/node_modules/playwright node_modules/playwright
+          /tmp/orbit-audit-browser/node_modules/.bin/playwright install --with-deps chromium
+          python3 -m pip install --quiet --break-system-packages pillow
+          mkdir -p artifacts/exhaustive
+          node mobile/scripts/native-anatomy-parity-manifest.mjs artifacts/exhaustive/anatomy-coverage.json
+      - name: Serve the exact canonical web source for mobile reference captures
+        run: |
+          npm run build
+          nohup node node_modules/vite/bin/vite.js preview --host 127.0.0.1 --port 4180 > /tmp/orbit-reference.log 2>&1 &
+          for attempt in $(seq 1 30); do curl --fail --silent http://127.0.0.1:4180/simulator > /dev/null && break; sleep 1; done
+          curl --fail --silent http://127.0.0.1:4180/simulator > /dev/null
+      - name: Validate all assigned repair tasks before booting Android
+        run: ORBIT_AUDIT_PLAN_ONLY=1 ORBIT_CONTEXT_PARTS=32 ORBIT_CONTEXT_PARTITION=${{ matrix.partition }} ORBIT_SCREENSHOT_OUT=artifacts/exhaustive node --experimental-strip-types .github/qa/android-anatomy-full.mjs
+      - uses: actions/download-artifact@v4
+        with:
+          name: orbit-debug-apk
+          path: downloaded-apk
+          run-id: 39145808148
+          github-token: ${{ github.token }}
+      - name: Enable acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Compare installed Android with exact canonical source in mobile Chromium
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_7_pro
+          emulator-boot-timeout: 300
+          disable-animations: false
+          emulator-options: -no-window -gpu ${{ matrix.suite == 'eye' && 'lavapipe' || 'swiftshader_indirect' }} -memory 3072 -cores 2 -noaudio -no-boot-anim
+          script: |
+            adb shell wm size 1179x2556
+            adb shell wm density 480
+            adb shell am force-stop com.google.android.googlesdksetup
+            adb install -r downloaded-apk/app-preview.apk
+            bash mobile/scripts/build-ui-dump.sh
+            ORBIT_UI_HELPER=1 ORBIT_SCREENSHOT_OUT=artifacts/exhaustive python3 mobile/scripts/android_webview_bootstrap.py
+            ORBIT_CANDIDATE_SHA=c91d1b7bb79174d8ff55f29f4f27c382720b1df3 ORBIT_QA_SOURCE=${{ github.sha }} ORBIT_REFERENCE_ORIGIN=http://127.0.0.1:4180 ORBIT_EXHAUSTIVE_SUITE=context-framing ORBIT_CONTEXT_PARTS=32 ORBIT_CONTEXT_PARTITION=${{ matrix.partition }} ORBIT_SCREENSHOT_OUT=artifacts/exhaustive node --experimental-strip-types .github/qa/android-anatomy-full.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: actual-android-v27-recovery-${{ matrix.suite }}-part${{ matrix.partition }}-${{ github.sha }}
+          path: artifacts/exhaustive
+          retention-days: 14

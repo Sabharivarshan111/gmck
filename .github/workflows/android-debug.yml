@@ -342,15 +342,25 @@ jobs:
       # A release asset is a plain file on a plain URL. It downloads in the
       # phone's browser, signed in or not, and Android opens it directly.
       # Same APK, reachable.
-      - name: Require successful 626-target Android audit for this exact main source
+      - name: Require complete 626-target evidence for the application source
         if: github.ref_name == 'main' && inputs.publish_verified == true
         uses: actions/github-script@v7
         with:
           script: |
-            const {data}=await github.rest.actions.listWorkflowRuns({...context.repo,workflow_id:'android-v27-full-anatomy.yml',head_sha:context.sha,status:'success',per_page:20});
-            const verified=data.workflow_runs.find(r=>r.head_sha===context.sha&&r.head_branch==='main'&&r.conclusion==='success');
-            if(!verified)throw Error('No successful full626 Android audit for this exact source; publication is blocked');
-            core.info('Verified exact-source Android audit: '+verified.html_url);
+            let verified=null;
+            for(const workflow_id of ['android-v27-full-anatomy.yml','android-anatomy-evidence-gate.yml']){
+              const {data}=await github.rest.actions.listWorkflowRuns({...context.repo,workflow_id,head_sha:context.sha,status:'success',per_page:20});
+              for(const run of data.workflow_runs.filter(r=>r.head_sha===context.sha&&r.head_branch==='main'&&r.conclusion==='success')){
+                if(workflow_id==='android-anatomy-evidence-gate.yml'){
+                  const {data:artifacts}=await github.rest.actions.listWorkflowRunArtifacts({...context.repo,run_id:run.id});
+                  if(!artifacts.artifacts.some(a=>a.name==='verified-android-anatomy-'+context.sha&&!a.expired))continue;
+                }
+                verified=run;break;
+              }
+              if(verified)break;
+            }
+            if(!verified)throw Error('No complete626 Android evidence for this application source; publication is blocked');
+            core.info('Verified Android evidence: '+verified.html_url);
       - name: Publish the APK where a phone can download it
         if: (github.ref_name != 'main' && !startsWith(github.ref_name, 'codex/v27-anatomy-') && github.ref_name != 'codex/v27-exhaustive-device-checks-20261016' && github.ref_name != 'codex/v27-parity-repairs-20261016' && github.ref_name != 'codex/v27-brain-registration-20261016' && github.ref_name != 'codex/v27-context-camera-20261016' && github.ref_name != 'codex/v27-fresh-rebuild-20261016' && github.ref_name != 'codex/v27-mobile-controls-20261016' && github.ref_name != 'codex/v27-anatomy-visibility-20261018' && github.ref_name != 'codex/v27-anatomy-joints-20261018' && github.ref_name != 'codex/v27-anatomy-final-20261018') || inputs.publish_verified == true
         uses: softprops/action-gh-release@v2
