@@ -1,0 +1,7 @@
+# 2026-10-18 full exact-source anatomy audit
+
+Candidate 9a89f4bb25f2a23a19fdc4d637c982def7f322bb combines prior vessel-depth/layer/joint/abdomen/source-label/coronary-context repairs with actual drawing-buffer viewport synchronization and isolated-source camera protection. Exact debug run 39114612527; matching immutable Vercel preview https://orbitmbbs-6z4r3o05p-sabharivarshan111s-projects.vercel.app.
+
+626 unique UI tasks, assigned once across32 balanced partitions (owners/models remain together):430 connections (237 registered/193 explicitly schematic),155 HRA/Z source references,41 overviews including five named layers and36 organ dossiers. Source references are selected through real source-strip controls, including initial preset changes. Native captures use ADB; reference uses mobile Chromium at measured native viewport. Read-only GL diagnostics preserved on every capture and failures. loaded() asserts actual GL viewport fits its backing buffer; geometry bounds/selected vessel colours/arrows/context toggles remain strict. Three focused joint targets require actual compositor crops. Known brain registration gaps remain explicit.
+
+No mocked patient/scene/model state. This is UI-target coverage, not2381 individually rendered/clinically certified catalog pieces. No automatic release/Play upload. All32 job results and screenshots must be reviewed; failures retain actual evidence. Prior broad/245 failures are preserved in Actions and .agents/state/anatomy-visibility-20261018.md, not reclassified as passes.
