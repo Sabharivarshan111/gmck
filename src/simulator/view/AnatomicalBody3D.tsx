@@ -3415,17 +3415,25 @@ varying float partSelected;
         group.visible = isHraGenericOrganTarget && isRequested;
 
         if (!group.visible) continue;
+        // Regional vessels and knee components occupy only a small part of
+        // their source file. Fit the selection while retaining source context.
+        const focusSelection = !hraGenericTarget?.matchAll &&
+          ['blood_vasculature', 'knee_left', 'knee_right'].includes(modelKey);
+        const selectedBox = new THREE.Box3();
+        group.updateWorldMatrix(true, true);
         const meshes = hraOrganMeshesRef.current.get(modelKey) ?? [];
         for (const mesh of meshes) {
           const selected = hraOrganMeshMatchesTarget(mesh.name, targetKey);
           mesh.visible = true;
+          if (focusSelection && selected) selectedBox.expandByObject(mesh);
           mesh.material = hraGenericTarget?.matchAll
             ? mesh.userData.overviewMaterial || hraOrganMaterialsRef.current.overview
             : selected
             ? hraOrganMaterialsRef.current.selected
             : hraOrganMaterialsRef.current.context;
         }
-        hraGenericBox.expandByObject(group);
+        if (focusSelection && !selectedBox.isEmpty()) hraGenericBox.union(selectedBox);
+        else hraGenericBox.expandByObject(group);
       }
     }
 
