@@ -1,0 +1,2989 @@
+{
+  "scope": "Static geometry and actual GLTFLoader matching; not per-piece visual or clinical certification",
+  "models": [
+    {
+      "key": "kidney_left",
+      "url": "/models/hra/VH_M_Kidney_L.glb",
+      "sha256": "733eef9ec169796196470e538dc248c4397bce0ff7ed679f7b7eb0bb9f185612",
+      "meshes": 22,
+      "vertices": 42256,
+      "triangles": 83692
+    },
+    {
+      "key": "kidney_right",
+      "url": "/models/hra/VH_M_Kidney_R.glb",
+      "sha256": "ff9821e0b8fb7fa6174a07b9cafb9f98bb25feca34ddc0e802beeefb24cd3779",
+      "meshes": 24,
+      "vertices": 42514,
+      "triangles": 84088
+    },
+    {
+      "key": "liver",
+      "url": "/models/hra/VH_M_Liver.glb",
+      "sha256": "e94f18646d1b8f72cc45b92bdd67bbb4eb71d5bf954888bc8b8f8b52b3940b6a",
+      "meshes": 26,
+      "vertices": 31264,
+      "triangles": 60369
+    },
+    {
+      "key": "lung",
+      "url": "/models/hra/VH_M_Lung.glb",
+      "sha256": "e64351b72b0bc5289a4dc32ba2b402b9c974f9ec0b1972bf06b436864f917913",
+      "meshes": 67,
+      "vertices": 149523,
+      "triangles": 288463
+    },
+    {
+      "key": "pancreas",
+      "url": "/models/hra/VH_M_Pancreas.glb",
+      "sha256": "ff05d94c539ec8f6ea4620d2a0128ce9911a2c3674330c8eafdb0c96b9999ea3",
+      "meshes": 5,
+      "vertices": 7305,
+      "triangles": 14170
+    },
+    {
+      "key": "spleen",
+      "url": "/models/hra/VH_M_Spleen.glb",
+      "sha256": "572ca93068f6e7506d5653ca16292ec3048ad52957d34f389cb67c8961a7c8fb",
+      "meshes": 5,
+      "vertices": 9014,
+      "triangles": 16872
+    },
+    {
+      "key": "small_intestine",
+      "url": "/models/hra/VH_M_Small_Intestine.glb",
+      "sha256": "e9d05a22c0132d375f8c242ad491ea68365681904cb391e648187de5247b4570",
+      "meshes": 10,
+      "vertices": 16998,
+      "triangles": 33524
+    },
+    {
+      "key": "urinary_bladder",
+      "url": "/models/hra/VH_M_Urinary_Bladder.glb",
+      "sha256": "43b7f17e3f498d5e494a7757ce86c183ae458f83724ceaf922f6bdd6a35ff339",
+      "meshes": 6,
+      "vertices": 5515,
+      "triangles": 10073
+    },
+    {
+      "key": "thymus",
+      "url": "/models/hra/VH_M_Thymus.glb",
+      "sha256": "fd048515346fce788ade60c618743c875d26dd837815ab83f555c1ee2ff0a10d",
+      "meshes": 2,
+      "vertices": 1398,
+      "triangles": 2730
+    },
+    {
+      "key": "blood_vasculature",
+      "url": "/models/hra/VH_M_Blood_Vasculature.glb",
+      "sha256": "a31ebed6d527b1cff31942e3e50d7c074c30b574337f68c4b89e9c88e4309d0d",
+      "meshes": 104,
+      "vertices": 182788,
+      "triangles": 359598
+    },
+    {
+      "key": "eye_left",
+      "url": "/models/hra/VH_M_Eye_L.glb",
+      "sha256": "052114e9184af6e1f969e45cd39597cb453379472be835851722eaf009daaa52",
+      "meshes": 23,
+      "vertices": 229703,
+      "triangles": 455294
+    },
+    {
+      "key": "eye_right",
+      "url": "/models/hra/VH_M_Eye_R.glb",
+      "sha256": "bea519c0ef230c98899830de74806941c8cf8de857839aee21d00f348783e4a3",
+      "meshes": 23,
+      "vertices": 229603,
+      "triangles": 455086
+    },
+    {
+      "key": "ureter_left",
+      "url": "/models/hra/VH_M_Ureter_L.glb",
+      "sha256": "b6e27766b5e5663fe31d96052caa49cd4fab782eed39367c26fec517b3ba0ebb",
+      "meshes": 14,
+      "vertices": 15941,
+      "triangles": 30618
+    },
+    {
+      "key": "ureter_right",
+      "url": "/models/hra/VH_M_Ureter_R.glb",
+      "sha256": "be2d0331aed637f2f291a342ee760dda41d3418a9e2e9a4070e1e845e3b3e581",
+      "meshes": 13,
+      "vertices": 14929,
+      "triangles": 28410
+    },
+    {
+      "key": "spinal_cord",
+      "url": "/models/hra/VH_M_Spinal_Cord.glb",
+      "sha256": "a7858d88c2237aa7d559c4c1d638923d213d2a9f46c575dea03d6ba67a9975c0",
+      "meshes": 30,
+      "vertices": 8993,
+      "triangles": 16358
+    },
+    {
+      "key": "pelvis_male",
+      "url": "/models/hra/VH_M_Pelvis.glb",
+      "sha256": "06349b8c70a019b3fd36d4e059e02efed915bf305cf15f8e32547732c6865b09",
+      "meshes": 14,
+      "vertices": 37151,
+      "triangles": 73862
+    },
+    {
+      "key": "prostate",
+      "url": "/models/hra/VH_M_Prostate.glb",
+      "sha256": "ec1023e0a1b81f71865872bb720404abc7bb6378a54ac71fa9f24579b097f48a",
+      "meshes": 18,
+      "vertices": 112596,
+      "triangles": 224676
+    },
+    {
+      "key": "skin",
+      "url": "/models/hra/VH_M_Skin.glb",
+      "sha256": "8cab299d04323e6364938a271647df5671138a2177f412e741a0d6bd4536ee1c",
+      "meshes": 1,
+      "vertices": 92659,
+      "triangles": 185314
+    },
+    {
+      "key": "knee_left",
+      "url": "/models/hra/VH_M_Knee_L.glb",
+      "sha256": "f5c95095822db865bbd916d8b0d9e87a61c3fa97bdf53bd4b0dc04b4fffbdf43",
+      "meshes": 20,
+      "vertices": 11840,
+      "triangles": 22892
+    },
+    {
+      "key": "knee_right",
+      "url": "/models/hra/VH_M_Knee_R.glb",
+      "sha256": "8d1153729d32184342bd7cff3cbe83b46395adc910037c2e9d95beb836d61e7d",
+      "meshes": 20,
+      "vertices": 11840,
+      "triangles": 22892
+    },
+    {
+      "key": "uterus",
+      "url": "/models/hra/VH_F_Uterus.glb",
+      "sha256": "a484956788ecc2ab05ca7720d9b33d265677e238f144cc28481aad2f7a0c9a95",
+      "meshes": 10,
+      "vertices": 20151,
+      "triangles": 37184
+    },
+    {
+      "key": "ovary_left",
+      "url": "/models/hra/VH_F_Ovary_L.glb",
+      "sha256": "ed91414a667dec5e4e14aeaa2f8641731f06725dbc914bc0da3dd8b5d77f5062",
+      "meshes": 1,
+      "vertices": 214,
+      "triangles": 424
+    },
+    {
+      "key": "ovary_right",
+      "url": "/models/hra/VH_F_Ovary_R.glb",
+      "sha256": "99cc2b91602feacaee08ec1771b993fc0f8b0e32a08bdd7fd6b990a6736aa53b",
+      "meshes": 1,
+      "vertices": 207,
+      "triangles": 410
+    },
+    {
+      "key": "fallopian_tube_left",
+      "url": "/models/hra/VH_F_Fallopian_Tube_L.glb",
+      "sha256": "5025453048a83c26393b866bc69859a255b4c38816f34ed3a196bfe7d4f33dd1",
+      "meshes": 4,
+      "vertices": 9282,
+      "triangles": 18281
+    },
+    {
+      "key": "fallopian_tube_right",
+      "url": "/models/hra/VH_F_Fallopian_Tube_R.glb",
+      "sha256": "17aef41a430e068705dc21ac8ccf746a74f14f47ffc1a31908198b0b026849df",
+      "meshes": 4,
+      "vertices": 9025,
+      "triangles": 17770
+    },
+    {
+      "key": "placenta",
+      "url": "/models/hra/VH_F_Placenta.glb",
+      "sha256": "6cc1142de48906e4e42bb1cddce901588b256a41b9b3ac300c0a739cb478cbc6",
+      "meshes": 8,
+      "vertices": 94454,
+      "triangles": 188365
+    },
+    {
+      "key": "brain_reference",
+      "url": "/models/zanatomy/brain_reference.glb",
+      "sha256": "d8c84519417dbfa04563010f7f33eb2e4741e64506882943a73d1f43cf4be528",
+      "meshes": 104,
+      "vertices": 137783,
+      "triangles": 272262
+    },
+    {
+      "key": "stomach_reference",
+      "url": "/models/zanatomy/stomach_reference.glb",
+      "sha256": "2be0c80d6f26524f164f8082ecbcf61899219ff0b92ed8920ee665e50059ee35",
+      "meshes": 4,
+      "vertices": 39362,
+      "triangles": 78554
+    },
+    {
+      "key": "pectoralis_major_reference",
+      "url": "/models/zanatomy/pectoralis_major_reference.glb",
+      "sha256": "162a96dd6fdc0eac0d73442f2b07a91fa279f95a9ca17e6a489395b09548965e",
+      "meshes": 6,
+      "vertices": 5584,
+      "triangles": 11160
+    },
+    {
+      "key": "deltoid_reference",
+      "url": "/models/zanatomy/deltoid_reference.glb",
+      "sha256": "cf4f3704e8b146eec208fdfec7d0e662ba03c8957b9a8a6c7e182e8c1eaea67a",
+      "meshes": 6,
+      "vertices": 10248,
+      "triangles": 20488
+    },
+    {
+      "key": "major_joints_reference",
+      "url": "/models/zanatomy/major_joints_reference.glb",
+      "sha256": "838c209eeba0d2f188280326e93b9148378a32dde111cd79bd012e39b2775355",
+      "meshes": 30,
+      "vertices": 14590,
+      "triangles": 26984
+    },
+    {
+      "key": "hra-heart",
+      "url": "/models/hra_heart_male_v1.3.glb",
+      "sha256": "b1237e7e765178e9357fd2ea7ccf19d55d0bf9ca55e187886635febe28244c70",
+      "meshes": 14,
+      "vertices": 82066,
+      "triangles": 164119
+    }
+  ],
+  "targets": [
+    {
+      "id": "hra_kidney_overview",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_kidney_capsule_L",
+        "VH_M_hilum_of_kidney_L",
+        "VH_M_renal_column_L",
+        "VH_M_outer_cortex_of_kidney_L",
+        "VH_M_renal_papilla_L_a",
+        "VH_M_renal_papilla_L_b",
+        "VH_M_renal_papilla_L_c",
+        "VH_M_renal_papilla_L_d",
+        "VH_M_renal_papilla_L_e",
+        "VH_M_renal_papilla_L_f",
+        "VH_M_renal_papilla_L_g",
+        "VH_M_renal_papilla_L_h",
+        "VH_M_renal_papilla_L_i",
+        "VH_M_renal_pyramid_L_a",
+        "VH_M_renal_pyramid_L_b",
+        "VH_M_renal_pyramid_L_c",
+        "VH_M_renal_pyramid_L_d",
+        "VH_M_renal_pyramid_L_e",
+        "VH_M_renal_pyramid_L_f",
+        "VH_M_renal_pyramid_L_g",
+        "VH_M_renal_pyramid_L_h",
+        "VH_M_renal_pyramid_L_i",
+        "VH_M_kidney_capsule_R",
+        "VH_M_hilum_of_kidney_R",
+        "VH_M_renal_papilla_R_j",
+        "VH_M_renal_papilla_R_i",
+        "VH_M_renal_papilla_R_h",
+        "VH_M_renal_papilla_R_g",
+        "VH_M_renal_papilla_R_f",
+        "VH_M_renal_papilla_R_e",
+        "VH_M_renal_papilla_R_d",
+        "VH_M_renal_papilla_R_c",
+        "VH_M_renal_papilla_R_b",
+        "VH_M_renal_papilla_R_a",
+        "VH_M_renal_pyramid_a",
+        "VH_M_renal_pyramid_b",
+        "VH_M_renal_pyramid_c",
+        "VH_M_renal_pyramid_d",
+        "VH_M_renal_pyramid_e",
+        "VH_M_renal_pyramid_f",
+        "VH_M_renal_pyramid_g",
+        "VH_M_renal_pyramid_h",
+        "VH_M_renal_pyramid_i",
+        "VH_M_renal_pyramid_j",
+        "VH_M_renal_column_R",
+        "VH_M_outer_cortex_of_kidney_R"
+      ],
+      "registeredCount": 46,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_kidney_capsule",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_kidney_capsule_L",
+        "VH_M_kidney_capsule_R"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_kidney_cortex",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_outer_cortex_of_kidney_L",
+        "VH_M_outer_cortex_of_kidney_R"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_kidney_columns",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_renal_column_L",
+        "VH_M_renal_column_R"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_kidney_pyramids",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_renal_pyramid_L_a",
+        "VH_M_renal_pyramid_L_b",
+        "VH_M_renal_pyramid_L_c",
+        "VH_M_renal_pyramid_L_d",
+        "VH_M_renal_pyramid_L_e",
+        "VH_M_renal_pyramid_L_f",
+        "VH_M_renal_pyramid_L_g",
+        "VH_M_renal_pyramid_L_h",
+        "VH_M_renal_pyramid_L_i",
+        "VH_M_renal_pyramid_a",
+        "VH_M_renal_pyramid_b",
+        "VH_M_renal_pyramid_c",
+        "VH_M_renal_pyramid_d",
+        "VH_M_renal_pyramid_e",
+        "VH_M_renal_pyramid_f",
+        "VH_M_renal_pyramid_g",
+        "VH_M_renal_pyramid_h",
+        "VH_M_renal_pyramid_i",
+        "VH_M_renal_pyramid_j"
+      ],
+      "registeredCount": 19,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_kidney_papillae",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_renal_papilla_L_a",
+        "VH_M_renal_papilla_L_b",
+        "VH_M_renal_papilla_L_c",
+        "VH_M_renal_papilla_L_d",
+        "VH_M_renal_papilla_L_e",
+        "VH_M_renal_papilla_L_f",
+        "VH_M_renal_papilla_L_g",
+        "VH_M_renal_papilla_L_h",
+        "VH_M_renal_papilla_L_i",
+        "VH_M_renal_papilla_R_j",
+        "VH_M_renal_papilla_R_i",
+        "VH_M_renal_papilla_R_h",
+        "VH_M_renal_papilla_R_g",
+        "VH_M_renal_papilla_R_f",
+        "VH_M_renal_papilla_R_e",
+        "VH_M_renal_papilla_R_d",
+        "VH_M_renal_papilla_R_c",
+        "VH_M_renal_papilla_R_b",
+        "VH_M_renal_papilla_R_a"
+      ],
+      "registeredCount": 19,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_kidney_hilum",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_hilum_of_kidney_L",
+        "VH_M_hilum_of_kidney_R"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_liver_overview",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_bare_area_of_liver",
+        "VH_M_liver_capsule",
+        "VH_M_diaphragmatic_surface",
+        "VH_M_suprarenal_impression_of_liver",
+        "VH_M_renal_impression_of_liver",
+        "VH_M_gastric_impression_of_liver",
+        "VH_M_colic_impression_of_liver",
+        "VH_M_esophageal_impression_of_liver",
+        "VH_M_duodenal_impression_of_liver",
+        "VH_M_porta_hepatis",
+        "VH_M_caudate_lobe_of_liver",
+        "VH_M_right_posteroinferior_segment",
+        "VH_M_right_posterosuperior_segment",
+        "VH_M_right_anterosuperior_segment",
+        "VH_M_right_anteroinferior_segment",
+        "VH_M_left_anterolateral_segment",
+        "VH_M_left_posterolateral_segment",
+        "VH_M_left_superiomedial_segment",
+        "VH_M_left_inferomedial_segment",
+        "VH_M_quadrate_lobe_of_liver",
+        "VH_M_hepataduodenal_ligament",
+        "VH_M_ligamentum_venosum",
+        "VH_M_round_ligament_of_liver",
+        "VH_M_triangular_ligament_of_liver",
+        "VH_M_falciform_ligament",
+        "VH_M_coronary_ligament_of_liver"
+      ],
+      "registeredCount": 26,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_liver_segments",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_caudate_lobe_of_liver",
+        "VH_M_right_posteroinferior_segment",
+        "VH_M_right_posterosuperior_segment",
+        "VH_M_right_anterosuperior_segment",
+        "VH_M_right_anteroinferior_segment",
+        "VH_M_left_anterolateral_segment",
+        "VH_M_left_posterolateral_segment",
+        "VH_M_left_superiomedial_segment",
+        "VH_M_left_inferomedial_segment",
+        "VH_M_quadrate_lobe_of_liver"
+      ],
+      "registeredCount": 10,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_liver_porta",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_porta_hepatis"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_liver_caudate",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_caudate_lobe_of_liver"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_liver_quadrate",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_quadrate_lobe_of_liver"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_liver_ligaments",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_hepataduodenal_ligament",
+        "VH_M_ligamentum_venosum",
+        "VH_M_round_ligament_of_liver",
+        "VH_M_triangular_ligament_of_liver",
+        "VH_M_falciform_ligament",
+        "VH_M_coronary_ligament_of_liver"
+      ],
+      "registeredCount": 6,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_liver_impressions",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_suprarenal_impression_of_liver",
+        "VH_M_renal_impression_of_liver",
+        "VH_M_gastric_impression_of_liver",
+        "VH_M_colic_impression_of_liver",
+        "VH_M_esophageal_impression_of_liver",
+        "VH_M_duodenal_impression_of_liver"
+      ],
+      "registeredCount": 6,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_liver_bare_area",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_bare_area_of_liver"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_lung_overview",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_hilum_L",
+        "VH_M_hilum_upper_L",
+        "VH_M_left_lingula_superior_bronchopulmonary_segment",
+        "VH_M_left_posterior_bronchopulmonary_segment",
+        "VH_M_left_anterior_bronchopulmonary_segment",
+        "VH_M_left_apical_bronchopulmonary_segment",
+        "VH_M_left_lingula_inferior_bronchopulmonary_segment",
+        "VH_M_hilum_lower_L",
+        "VH_M_left_anterior_basal_bronchopulmonary_segment",
+        "VH_M_left_lateral_basal_bronchopulmonary_segment",
+        "VH_M_left_medial_basal_bronchopulmonary_segment",
+        "VH_M_left_posetrior_basal_bronchopulmonary_segment",
+        "VH_M_left_superior_bronchopulmonary_segment",
+        "VH_M_hilum_R",
+        "VH_M_right_lateral_bronchopulmonary_segment",
+        "VH_M_right_medial_bronchopulmonary_segment",
+        "VH_M_hilum_middle_R",
+        "VH_M_hilum_lower_R",
+        "VH_M_right_anterior_basal_bronchopulmonary_segment",
+        "VH_M_right_lateral_basal_bronchopulmonary_segment",
+        "VH_M_right_medial_basal_bronchopulmonary_segment",
+        "VH_M_right_posterior_basal_bronchopulmonary_segment",
+        "VH_M_right_superior_bronchopulmonary_segment",
+        "VH_M_right_apical_bronchopulmonary_segment",
+        "VH_M_right_posterior_bronchopulmonary_segment",
+        "VH_M_right_anterior_bronchopulmonary_segment",
+        "VH_M_hilum_upper_R",
+        "VH_M_trachea",
+        "VH_M_bronchial_cartilage",
+        "VH_M_carina",
+        "VH_M_cricoid_cartilage",
+        "VH_M_epiglottic_cartilage",
+        "VH_M_thyroid_cartilage",
+        "VH_M_arytenoid_cartilage_L",
+        "VH_M_arytenoid_cartilage_R",
+        "VH_M_corniculate_cartilage_L",
+        "VH_M_corniculate_cartilage_R",
+        "VH_M_tracheal_cartilage",
+        "VH_M_left_main_bronchus",
+        "VH_M_left_superior_lobar_bronchus",
+        "VH_M_left_inferior_lobar_bronchus",
+        "VH_M_left_superior_bronchus",
+        "VH_M_left_posterior_basal_bronchus",
+        "VH_M_left_medial_basal_bronchus",
+        "VH_M_left_apical_bronchus",
+        "VH_M_left_anterior_bronchus",
+        "VH_M_left_lingular_bronchus",
+        "VH_M_left_lingula_superior_bronchus",
+        "VH_M_left_lingula_inferior_bronchus",
+        "VH_M_left_lateral_basal_bronchus",
+        "VH_M_left_anterior_basal_bronchus",
+        "VH_M_right_main_bronchus",
+        "VH_M_right_intermediate_bronchus",
+        "VH_M_right_middle_lobar_bronchus",
+        "VH_M_right_superior_lobar_bronchus",
+        "VH_M_right_anterior_bronchus",
+        "VH_M_right_lateral_basal_bronchus",
+        "VH_M_right_lateral_bronchus",
+        "VH_M_right_lower_lobar_bronchus",
+        "VH_M_right_medial_basal_bronchus",
+        "VH_M_right_medial_bronchus",
+        "VH_M_right_posterior_basal",
+        "VH_M_right_posterior_bronchus",
+        "VH_M_right_superior_bronchus",
+        "VH_M_right_apical_bronchus",
+        "VH_M_right_anterior_basal_bronchus",
+        "VH_M_bronchus"
+      ],
+      "registeredCount": 67,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_lung_segments",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_left_lingula_superior_bronchopulmonary_segment",
+        "VH_M_left_posterior_bronchopulmonary_segment",
+        "VH_M_left_anterior_bronchopulmonary_segment",
+        "VH_M_left_apical_bronchopulmonary_segment",
+        "VH_M_left_lingula_inferior_bronchopulmonary_segment",
+        "VH_M_left_anterior_basal_bronchopulmonary_segment",
+        "VH_M_left_lateral_basal_bronchopulmonary_segment",
+        "VH_M_left_medial_basal_bronchopulmonary_segment",
+        "VH_M_left_posetrior_basal_bronchopulmonary_segment",
+        "VH_M_left_superior_bronchopulmonary_segment",
+        "VH_M_right_lateral_bronchopulmonary_segment",
+        "VH_M_right_medial_bronchopulmonary_segment",
+        "VH_M_right_anterior_basal_bronchopulmonary_segment",
+        "VH_M_right_lateral_basal_bronchopulmonary_segment",
+        "VH_M_right_medial_basal_bronchopulmonary_segment",
+        "VH_M_right_posterior_basal_bronchopulmonary_segment",
+        "VH_M_right_superior_bronchopulmonary_segment",
+        "VH_M_right_apical_bronchopulmonary_segment",
+        "VH_M_right_posterior_bronchopulmonary_segment",
+        "VH_M_right_anterior_bronchopulmonary_segment"
+      ],
+      "registeredCount": 20,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_lung_bronchi",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_bronchial_cartilage",
+        "VH_M_left_main_bronchus",
+        "VH_M_left_superior_lobar_bronchus",
+        "VH_M_left_inferior_lobar_bronchus",
+        "VH_M_left_superior_bronchus",
+        "VH_M_left_posterior_basal_bronchus",
+        "VH_M_left_medial_basal_bronchus",
+        "VH_M_left_apical_bronchus",
+        "VH_M_left_anterior_bronchus",
+        "VH_M_left_lingular_bronchus",
+        "VH_M_left_lingula_superior_bronchus",
+        "VH_M_left_lingula_inferior_bronchus",
+        "VH_M_left_lateral_basal_bronchus",
+        "VH_M_left_anterior_basal_bronchus",
+        "VH_M_right_main_bronchus",
+        "VH_M_right_intermediate_bronchus",
+        "VH_M_right_middle_lobar_bronchus",
+        "VH_M_right_superior_lobar_bronchus",
+        "VH_M_right_anterior_bronchus",
+        "VH_M_right_lateral_basal_bronchus",
+        "VH_M_right_lateral_bronchus",
+        "VH_M_right_lower_lobar_bronchus",
+        "VH_M_right_medial_basal_bronchus",
+        "VH_M_right_medial_bronchus",
+        "VH_M_right_posterior_bronchus",
+        "VH_M_right_superior_bronchus",
+        "VH_M_right_apical_bronchus",
+        "VH_M_right_anterior_basal_bronchus",
+        "VH_M_bronchus"
+      ],
+      "registeredCount": 29,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_lung_trachea",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_trachea",
+        "VH_M_tracheal_cartilage"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_lung_carina",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_carina"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_lung_hila",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_hilum_L",
+        "VH_M_hilum_upper_L",
+        "VH_M_hilum_lower_L",
+        "VH_M_hilum_R",
+        "VH_M_hilum_middle_R",
+        "VH_M_hilum_lower_R",
+        "VH_M_hilum_upper_R"
+      ],
+      "registeredCount": 7,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_pancreas_overview",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_body_of_pancreas",
+        "VH_M_tail_of_pancreas",
+        "VH_M_head_of_pancreas",
+        "VH_M_neck_of_pancreas",
+        "VH_M_uncinate_process_of_the_pancreas"
+      ],
+      "registeredCount": 5,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_pancreas_head",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_head_of_pancreas"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_pancreas_neck",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_neck_of_pancreas"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_pancreas_body",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_body_of_pancreas"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_pancreas_tail",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_tail_of_pancreas"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_pancreas_uncinate",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_uncinate_process_of_the_pancreas"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_spleen_overview",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_colic_surface_of_spleen",
+        "VH_M_diaphragmatic_surface_of_spleen",
+        "VH_M_gastric_surface_of_spleen",
+        "VH_M_hilum_of_spleen",
+        "VH_M_renal_surface_of_spleen"
+      ],
+      "registeredCount": 5,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_spleen_hilum",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_hilum_of_spleen"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_spleen_gastric_surface",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_gastric_surface_of_spleen"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_spleen_renal_surface",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_renal_surface_of_spleen"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_spleen_colic_surface",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_colic_surface_of_spleen"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_spleen_diaphragmatic_surface",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_diaphragmatic_surface_of_spleen"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_small_intestine_overview",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_ileum",
+        "VH_M_ileum_terminal",
+        "VH_M_jejunum",
+        "VH_M_duodenum_ascending",
+        "VH_M_duodenum_descending",
+        "VH_M_duodenum_horizonal",
+        "VH_M_duodenum_superior",
+        "VH_M_duodenal_ampulla",
+        "VH_M_sphincter_of_hepatopancreatic_ampulla",
+        "VH_M_papilla_of_santorini"
+      ],
+      "registeredCount": 10,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_duodenum",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_duodenum_ascending",
+        "VH_M_duodenum_descending",
+        "VH_M_duodenum_horizonal",
+        "VH_M_duodenum_superior",
+        "VH_M_duodenal_ampulla"
+      ],
+      "registeredCount": 5,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_jejunum",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_jejunum"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_ileum",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_ileum",
+        "VH_M_ileum_terminal"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_terminal_ileum",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_ileum_terminal"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_hepatopancreatic_sphincter",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_sphincter_of_hepatopancreatic_ampulla"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_bladder_overview",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_urinary_bladder_neck_smooth_muscle",
+        "VH_M_fundus_of_urinary_bladder_dome",
+        "VH_M_ureteral_orifice_R",
+        "VH_M_ureteral_orifice_L",
+        "VH_M_fundus_of_urinary_bladder_base1",
+        "VH_M_trigone_of_urinary_bladder"
+      ],
+      "registeredCount": 6,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_bladder_trigone",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_trigone_of_urinary_bladder"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_bladder_orifices",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_ureteral_orifice_R",
+        "VH_M_ureteral_orifice_L"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_bladder_neck",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_urinary_bladder_neck_smooth_muscle"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_bladder_dome",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_fundus_of_urinary_bladder_dome"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_thymus_overview",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_thymus_lobe_L",
+        "VH_M_thymus_lobe_R"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_thymus_left",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_thymus_lobe_L"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_thymus_right",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_thymus_lobe_R"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_vessels_overview",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_inferior_ophthalmic_vein_L",
+        "VH_M_superior_ophthalmic_vein_L",
+        "VH_M_central_retinal_vein_L",
+        "VH_M_ophthalmic_vein_L",
+        "VH_M_superior_ophthalmic_vein_R",
+        "VH_M_ophthalmic_vein_R",
+        "VH_M_central_retinal_vein_R",
+        "VH_M_inferior_ophthalmic_vein_R",
+        "VH_M_central_retinal_artery_R",
+        "VH_M_opthalmic_artery_R",
+        "VH_M_opthalmic_artery_L",
+        "VH_M_central_retinal_artery_L",
+        "VH_M_inferior_mesenteric_vein",
+        "VH_M_median_sacral_vein",
+        "VH_M_sigmoid_vein",
+        "VH_M_superior_mesenteric_vein",
+        "VH_M_superior_rectal_vein",
+        "VH_M_common_iliac_vein_L",
+        "VH_M_common_iliac_vein_R",
+        "VH_M_inferior_pancreaticoduodenal_vein",
+        "VH_M_external_iliac_vein_L",
+        "VH_M_external_iliac_vein_R",
+        "VH_M_inferior_rectal_vein_L",
+        "VH_M_inferior_rectal_vein_R",
+        "VH_M_internal_pudendal_vein_L",
+        "VH_M_internal_pudendal_vein_R",
+        "VH_M_internal_iliac_vein_L",
+        "VH_M_internal_iliac_vein_R",
+        "VH_M_left_colic_vein",
+        "VH_M_ileocolic_vein",
+        "VH_M_right_colic_vein",
+        "VH_M_middle_colic_vein",
+        "VH_M_middle_rectal_vein_L",
+        "VH_M_middle_rectal_vein_R",
+        "VH_M_right_colic_artery",
+        "VH_M_middle_colic_artery",
+        "VH_M_left_colic_artery",
+        "VH_M_ileocolic_artery",
+        "VH_M_sigmoid_artery_a",
+        "VH_M_sigmoid_artery_b",
+        "VH_M_sigmoid_artery_c",
+        "VH_M_inferior_mesenteric_artery",
+        "VH_M_superior_mesenteric_artery",
+        "VH_M_marginal_artery_of_Drummond",
+        "VH_M_renal_vein_L",
+        "VH_M_renal_vein_R",
+        "VH_M_left_renal_artery",
+        "VH_M_right_renal_artery",
+        "VH_M_aortic_arch",
+        "VH_M_ascending_aorta",
+        "VH_M_brachiocephalic_artery_b",
+        "VH_M_brachiocephalic_artery_a",
+        "VH_M_left_common_carotid_artery_a",
+        "VH_M_left_common_carotid_artery_b",
+        "VH_M_left_subclavian_artery_a",
+        "VH_M_left_subclavian_artery_b",
+        "VH_M_descending_aorta_a",
+        "VH_M_descending_aorta_b",
+        "VH_M_left_anterior_descending_artery",
+        "VH_M_right_marginal_artery",
+        "VH_M_right_posterior_descending_artery",
+        "VH_M_diagonal_branch_of_anterior_descending_branch_of_left_coronary_artery",
+        "VH_M_left_coronary_artery",
+        "VH_M_right_coronary_artery",
+        "VH_M_diagonal_branch_of_left_anterior_descending_artery",
+        "VH_M_left_marginal_branch",
+        "VH_M_pulmonary_artery_L",
+        "VH_M_pulmonary_artery_R",
+        "VH_M_pulmonary_trunk",
+        "VH_M_great_cardiac_vein",
+        "VH_M_middle_cardiac_vein",
+        "VH_M_oblique_vein_of_left_atrium",
+        "VH_M_anterior_cardiac_vein",
+        "VH_M_coronary_sinus",
+        "VH_M_posterior_vein_of_left_ventricle",
+        "VH_M_small_cardiac_vein",
+        "VH_M_pulmonary_vein_R_inf",
+        "VH_M_pulmonary_vein_R_sup",
+        "VH_M_pulmonary_vein_L_inf",
+        "VH_M_pulmonary_vein_L_sup",
+        "VH_M_brachiocephalic_vein_L",
+        "VH_M_brachiocephalic_vein_R",
+        "VH_M_superior_vena_cava",
+        "VH_M_inferior_vena_cava_b",
+        "VH_M_inferior_vena_cava_a",
+        "VH_M_splenic_vein",
+        "VH_M_splenic_artery",
+        "VH_M_cystic_vein",
+        "VH_M_cystic_artery",
+        "VH_M_celiac_trunk",
+        "VH_M_left_hepatic_artery",
+        "VH_M_proper_hepatic_artery",
+        "VH_M_posterior_segmental_right_hepatic_artery",
+        "VH_M_right_hepatic_artery",
+        "VH_M_anterior_segmental_right_hepatic_artery",
+        "VH_M_common_hepatic_artery",
+        "VH_M_middle_hepatic_artery_branch_of_left_hepatic_artery",
+        "VH_M_right_hepatic_vein",
+        "VH_M_left_hepatic_vein",
+        "VH_M_middle_hepatic_vein",
+        "VH_M_left_branch_of_portal_vein",
+        "VH_M_right_branch_of_portal_vein",
+        "VH_M_portal_vein",
+        "VH_M_hepatic_portal_vein"
+      ],
+      "registeredCount": 104,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_aorta",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_ascending_aorta",
+        "VH_M_descending_aorta_a",
+        "VH_M_descending_aorta_b"
+      ],
+      "registeredCount": 3,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_coronary_arteries",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_left_anterior_descending_artery",
+        "VH_M_right_marginal_artery",
+        "VH_M_right_posterior_descending_artery",
+        "VH_M_diagonal_branch_of_anterior_descending_branch_of_left_coronary_artery",
+        "VH_M_left_coronary_artery",
+        "VH_M_right_coronary_artery",
+        "VH_M_diagonal_branch_of_left_anterior_descending_artery",
+        "VH_M_left_marginal_branch"
+      ],
+      "registeredCount": 8,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_cardiac_veins",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_great_cardiac_vein",
+        "VH_M_middle_cardiac_vein",
+        "VH_M_oblique_vein_of_left_atrium",
+        "VH_M_anterior_cardiac_vein",
+        "VH_M_coronary_sinus",
+        "VH_M_posterior_vein_of_left_ventricle",
+        "VH_M_small_cardiac_vein"
+      ],
+      "registeredCount": 7,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_portal_vein",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_left_branch_of_portal_vein",
+        "VH_M_right_branch_of_portal_vein",
+        "VH_M_portal_vein",
+        "VH_M_hepatic_portal_vein"
+      ],
+      "registeredCount": 4,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_celiac_trunk",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_celiac_trunk"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_hepatic_vessels",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_left_hepatic_artery",
+        "VH_M_proper_hepatic_artery",
+        "VH_M_posterior_segmental_right_hepatic_artery",
+        "VH_M_right_hepatic_artery",
+        "VH_M_anterior_segmental_right_hepatic_artery",
+        "VH_M_common_hepatic_artery",
+        "VH_M_middle_hepatic_artery_branch_of_left_hepatic_artery",
+        "VH_M_right_hepatic_vein",
+        "VH_M_left_hepatic_vein",
+        "VH_M_middle_hepatic_vein",
+        "VH_M_left_branch_of_portal_vein",
+        "VH_M_right_branch_of_portal_vein",
+        "VH_M_portal_vein",
+        "VH_M_hepatic_portal_vein"
+      ],
+      "registeredCount": 14,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_splenic_vessels",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_splenic_vein",
+        "VH_M_splenic_artery"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_renal_vessels",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_renal_vein_L",
+        "VH_M_renal_vein_R",
+        "VH_M_left_renal_artery",
+        "VH_M_right_renal_artery"
+      ],
+      "registeredCount": 4,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_mesenteric_vessels",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_inferior_mesenteric_vein",
+        "VH_M_superior_mesenteric_vein",
+        "VH_M_left_colic_vein",
+        "VH_M_ileocolic_vein",
+        "VH_M_right_colic_vein",
+        "VH_M_middle_colic_vein",
+        "VH_M_right_colic_artery",
+        "VH_M_middle_colic_artery",
+        "VH_M_left_colic_artery",
+        "VH_M_ileocolic_artery",
+        "VH_M_inferior_mesenteric_artery",
+        "VH_M_superior_mesenteric_artery"
+      ],
+      "registeredCount": 12,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_pulmonary_vessels",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_pulmonary_artery_L",
+        "VH_M_pulmonary_artery_R",
+        "VH_M_pulmonary_trunk",
+        "VH_M_pulmonary_vein_R_inf",
+        "VH_M_pulmonary_vein_R_sup",
+        "VH_M_pulmonary_vein_L_inf",
+        "VH_M_pulmonary_vein_L_sup"
+      ],
+      "registeredCount": 7,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_eye_overview",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_bulbar_conjunctiva_L",
+        "VH_M_palpebral_conjunctiva_of_upper_eyelid_L",
+        "VH_M_palpebral_conjunctiva_of_lower_eyelid_L",
+        "VH_M_ora_serrata_of_retina_L",
+        "VH_M_corneo_scleral_junction_L",
+        "VH_M_pupil_L",
+        "VH_M_cornea_L",
+        "VH_M_ciliary_body_L",
+        "VH_M_ciliary_muscle_L",
+        "VH_M_trabecular_meshwork_L",
+        "VH_M_aqueous_humor_L",
+        "VH_M_schlemms_canal_L",
+        "VH_M_optic_choroid_L",
+        "VH_M_iris_L",
+        "VH_M_lens_L",
+        "VH_M_vitreous_humor_L",
+        "VH_M_suspensory_ligament_of_lens_L",
+        "VH_M_ciliary_processes_L",
+        "VH_M_retina_L",
+        "VH_M_fovea_L",
+        "VH_M_macula_lutea_L",
+        "VH_M_optic_disc_L",
+        "VH_M_sclera_L",
+        "VH_M_palpebral_conjunctiva_of_upper_eyelid_R",
+        "VH_M_palpebral_conjunctiva_of_lower_eyelid_R",
+        "VH_M_bulbar_conjunctiva_R",
+        "VH_M_sclera_R",
+        "VH_M_iris_R",
+        "VH_M_schlemms_canal_R",
+        "VH_M_trabecular_meshwork_R",
+        "VH_M_optic_choroid_R",
+        "VH_M_ciliary_body_R",
+        "VH_M_ciliary_muscle_R",
+        "VH_M_aqueous_humor_R",
+        "VH_M_cornea_R",
+        "VH_M_lens_R",
+        "VH_M_pupil_R",
+        "VH_M_corneo_scleral_junction_R",
+        "VH_M_ora_serrata_of_retina_R",
+        "VH_M_suspensory_ligament_of_lens_R",
+        "VH_M_ciliary_processes_R",
+        "VH_M_retina_R",
+        "VH_M_fovea_R",
+        "VH_M_macula_lutea_R",
+        "VH_M_optic_disc_R",
+        "VH_M_vitreous_humor_R"
+      ],
+      "registeredCount": 46,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_eye_cornea",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_cornea_L",
+        "VH_M_cornea_R"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_eye_lens",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_lens_L",
+        "VH_M_suspensory_ligament_of_lens_L",
+        "VH_M_lens_R",
+        "VH_M_suspensory_ligament_of_lens_R"
+      ],
+      "registeredCount": 4,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_eye_retina",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_ora_serrata_of_retina_L",
+        "VH_M_retina_L",
+        "VH_M_ora_serrata_of_retina_R",
+        "VH_M_retina_R"
+      ],
+      "registeredCount": 4,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_eye_iris",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_iris_L",
+        "VH_M_iris_R"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_eye_sclera",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_sclera_L",
+        "VH_M_sclera_R"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_eye_ciliary",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_ciliary_body_L",
+        "VH_M_ciliary_muscle_L",
+        "VH_M_ciliary_processes_L",
+        "VH_M_ciliary_body_R",
+        "VH_M_ciliary_muscle_R",
+        "VH_M_ciliary_processes_R"
+      ],
+      "registeredCount": 6,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_eye_fovea",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_fovea_L",
+        "VH_M_fovea_R"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_eye_humors",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_aqueous_humor_L",
+        "VH_M_vitreous_humor_L",
+        "VH_M_aqueous_humor_R",
+        "VH_M_vitreous_humor_R"
+      ],
+      "registeredCount": 4,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_ureter_overview",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_renal_pelvis_L",
+        "VH_M_major_calyx_L_a",
+        "VH_M_major_calyx_L_b",
+        "VH_M_major_calyx_L_c",
+        "VH_M_minor_calyx_L_a",
+        "VH_M_minor_calyx_L_b",
+        "VH_M_minor_calyx_L_c",
+        "VH_M_minor_calyx_L_d",
+        "VH_M_minor_calyx_L_e",
+        "VH_M_minor_calyx_L_f",
+        "VH_M_minor_calyx_L_g",
+        "VH_M_minor_calyx_L_h",
+        "VH_M_minor_calyx_L_i",
+        "VH_M_ureter_L",
+        "VH_M_major_calyx_R_a",
+        "VH_M_major_calyx_R_b",
+        "VH_M_minor_calyx_R_a",
+        "VH_M_minor_calyx_R_b",
+        "VH_M_minor_calyx_R_c",
+        "VH_M_minor_calyx_R_d",
+        "VH_M_minor_calyx_R_e",
+        "VH_M_minor_calyx_R_f",
+        "VH_M_minor_calyx_R_g",
+        "VH_M_minor_calyx_R_h",
+        "VH_M_minor_calyx_R_i",
+        "VH_M_renal_pelvis_R",
+        "VH_M_ureter_R"
+      ],
+      "registeredCount": 27,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_ureter",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_ureter_L",
+        "VH_M_ureter_R"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_renal_pelvis",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_renal_pelvis_L",
+        "VH_M_renal_pelvis_R"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_major_calyces",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_major_calyx_L_a",
+        "VH_M_major_calyx_L_b",
+        "VH_M_major_calyx_L_c",
+        "VH_M_major_calyx_R_a",
+        "VH_M_major_calyx_R_b"
+      ],
+      "registeredCount": 5,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_minor_calyces",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_minor_calyx_L_a",
+        "VH_M_minor_calyx_L_b",
+        "VH_M_minor_calyx_L_c",
+        "VH_M_minor_calyx_L_d",
+        "VH_M_minor_calyx_L_e",
+        "VH_M_minor_calyx_L_f",
+        "VH_M_minor_calyx_L_g",
+        "VH_M_minor_calyx_L_h",
+        "VH_M_minor_calyx_L_i",
+        "VH_M_minor_calyx_R_a",
+        "VH_M_minor_calyx_R_b",
+        "VH_M_minor_calyx_R_c",
+        "VH_M_minor_calyx_R_d",
+        "VH_M_minor_calyx_R_e",
+        "VH_M_minor_calyx_R_f",
+        "VH_M_minor_calyx_R_g",
+        "VH_M_minor_calyx_R_h",
+        "VH_M_minor_calyx_R_i"
+      ],
+      "registeredCount": 18,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_spinal_cord_overview",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_C1_segment_of_cervical_spinal_cord",
+        "VH_M_C2_segment_of_cervical_spinal_cord",
+        "VH_M_C3_segment_of_cervical_spinal_cord",
+        "VH_M_C4_segment_of_cervical_spinal_cord",
+        "VH_M_C5_segment_of_cervical_spinal_cord",
+        "VH_M_C6_segment_of_cervical_spinal_cord",
+        "VH_M_C7_segment_of_cervical_spinal_cord",
+        "VH_M_C8_segment_of_cervical_spinal_cord",
+        "VH_M_first_thoracic_spinal_cord_segment",
+        "VH_M_second_thoracic_spinal_cord_segment",
+        "VH_M_third_thoracic_spinal_cord_segment",
+        "VH_M_fourth_thoracic_spinal_cord_segment",
+        "VH_M_fifth_thoracic_spinal_cord_segment",
+        "VH_M_sixth_thoracic_spinal_cord_segment",
+        "VH_M_seventh_thoracic_spinal_cord_segment",
+        "VH_M_eighth_thoracic_spinal_cord_segment",
+        "VH_M_ninth_thoracic_spinal_cord_segment",
+        "VH_M_tenth_thoracic_spinal_cord_segment",
+        "VH_M_eleventh_thoracic_spinal_cord_segment",
+        "VH_M_twelfth_thoracic_spinal_cord_segment",
+        "VH_M_first_lumbar_spinal_cord_segment",
+        "VH_M_second_lumbar_spinal_cord_segment",
+        "VH_M_third_lumbar_spinal_cord_segment",
+        "VH_M_fourth_lumbar_spinal_cord_segment",
+        "VH_M_fifth_lumbar_spinal_cord_segment",
+        "VH_M_first_sacral_spinal_cord_segment",
+        "VH_M_second_sacral_spinal_cord_segment",
+        "VH_M_third_sacral_spinal_cord_segment",
+        "VH_M_fourth_sacral_spinal_cord_segment",
+        "VH_M_fifth_sacral_spinal_cord_segment"
+      ],
+      "registeredCount": 30,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_spinal_cord_cervical",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_C1_segment_of_cervical_spinal_cord",
+        "VH_M_C2_segment_of_cervical_spinal_cord",
+        "VH_M_C3_segment_of_cervical_spinal_cord",
+        "VH_M_C4_segment_of_cervical_spinal_cord",
+        "VH_M_C5_segment_of_cervical_spinal_cord",
+        "VH_M_C6_segment_of_cervical_spinal_cord",
+        "VH_M_C7_segment_of_cervical_spinal_cord",
+        "VH_M_C8_segment_of_cervical_spinal_cord"
+      ],
+      "registeredCount": 8,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_spinal_cord_thoracic",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_first_thoracic_spinal_cord_segment",
+        "VH_M_second_thoracic_spinal_cord_segment",
+        "VH_M_third_thoracic_spinal_cord_segment",
+        "VH_M_fourth_thoracic_spinal_cord_segment",
+        "VH_M_fifth_thoracic_spinal_cord_segment",
+        "VH_M_sixth_thoracic_spinal_cord_segment",
+        "VH_M_seventh_thoracic_spinal_cord_segment",
+        "VH_M_eighth_thoracic_spinal_cord_segment",
+        "VH_M_ninth_thoracic_spinal_cord_segment",
+        "VH_M_tenth_thoracic_spinal_cord_segment",
+        "VH_M_eleventh_thoracic_spinal_cord_segment",
+        "VH_M_twelfth_thoracic_spinal_cord_segment"
+      ],
+      "registeredCount": 12,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_spinal_cord_lumbar",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_first_lumbar_spinal_cord_segment",
+        "VH_M_second_lumbar_spinal_cord_segment",
+        "VH_M_third_lumbar_spinal_cord_segment",
+        "VH_M_fourth_lumbar_spinal_cord_segment",
+        "VH_M_fifth_lumbar_spinal_cord_segment"
+      ],
+      "registeredCount": 5,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_spinal_cord_sacral",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_first_sacral_spinal_cord_segment",
+        "VH_M_second_sacral_spinal_cord_segment",
+        "VH_M_third_sacral_spinal_cord_segment",
+        "VH_M_fourth_sacral_spinal_cord_segment",
+        "VH_M_fifth_sacral_spinal_cord_segment"
+      ],
+      "registeredCount": 5,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_pelvis_overview",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_sacrum",
+        "VH_M_coccyx",
+        "VH_M_pubis_compact_bone_L",
+        "VH_M_pubis_compact_bone_R",
+        "VH_M_pubis_spongy_bone_L",
+        "VH_M_pubis_spongy_bone_R",
+        "VH_M_ilium_compact_bone_L",
+        "VH_M_ilium_compact_bone_R",
+        "VH_M_ilium_spongy_bone_R",
+        "VH_M_ilium_spongy_bone_L",
+        "VH_M_ischium_compact_bone_L",
+        "VH_M_ischium_compact_bone_R",
+        "VH_M_ischium_spongy_bone_L",
+        "VH_M_ischium_spongy_bone_R"
+      ],
+      "registeredCount": 14,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_pelvis_sacrum",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_sacrum"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_pelvis_coccyx",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_coccyx"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_pelvis_ilium",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_ilium_compact_bone_L",
+        "VH_M_ilium_compact_bone_R",
+        "VH_M_ilium_spongy_bone_R",
+        "VH_M_ilium_spongy_bone_L"
+      ],
+      "registeredCount": 4,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_pelvis_ischium",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_ischium_compact_bone_L",
+        "VH_M_ischium_compact_bone_R",
+        "VH_M_ischium_spongy_bone_L",
+        "VH_M_ischium_spongy_bone_R"
+      ],
+      "registeredCount": 4,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_pelvis_pubis",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_pubis_compact_bone_L",
+        "VH_M_pubis_compact_bone_R",
+        "VH_M_pubis_spongy_bone_L",
+        "VH_M_pubis_spongy_bone_R"
+      ],
+      "registeredCount": 4,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_prostate_overview",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_vas_deferens_L",
+        "VH_M_vas_deferens_R",
+        "VH_M_seminal_vesicle",
+        "VH_M_ejaculatory_duct",
+        "VH_M_prostatic_utricle",
+        "VH_M_seminal_colliculus",
+        "VH_M_prostate_duct_R",
+        "VH_M_prostate_duct_L",
+        "VH_M_apex_of_prostate",
+        "VH_M_base_of_prostate",
+        "VH_M_peripheral_zone_of_prostate_R",
+        "VH_M_peripheral_zone_of_prostate_L",
+        "VH_M_transition_zone__of_prostate_L",
+        "VH_M_transition_zone_of_prostate_R",
+        "VH_M_central_zone_of_prostate_R",
+        "VH_M_central_zone_of_prostate_L",
+        "VH_M_anterior_fibromuscular_stroma_L",
+        "VH_M_anterior_fibromuscular_stroma_R"
+      ],
+      "registeredCount": 18,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_prostate_zones",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_peripheral_zone_of_prostate_R",
+        "VH_M_peripheral_zone_of_prostate_L",
+        "VH_M_transition_zone_of_prostate_R",
+        "VH_M_central_zone_of_prostate_R",
+        "VH_M_central_zone_of_prostate_L"
+      ],
+      "registeredCount": 5,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_prostate_apex_base",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_apex_of_prostate",
+        "VH_M_base_of_prostate"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_seminal_vesicle",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_seminal_vesicle"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_vas_deferens",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_vas_deferens_L",
+        "VH_M_vas_deferens_R"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_ejaculatory_duct",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_ejaculatory_duct"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_skin_overview",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_skin"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_knee_overview",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_meniscus_L",
+        "VH_M_fibula_L",
+        "VH_M_femur_L",
+        "VH_M_articular_cartilage_of_knee_L",
+        "VH_M_intercondylar_fossa_L",
+        "VH_M_anterior_cruciate_enthesis_L",
+        "VH_M_posterior_cruciate_enthesis_L",
+        "VH_M_lateral_condyle_of_femur_frontal_L",
+        "VH_M_lateral_condyle_of_femur_inf_L",
+        "VH_M_lateral_condyle_of_femur_sup_L",
+        "VH_M_lateral_epicondylar_enthesis_L",
+        "VH_M_lateral_perichondular_surface_L",
+        "VH_M_distal_most_point_of_medial_condyle_of_femur_L",
+        "VH_M_medial_condyle_of_left_femur_inf",
+        "VH_M_medial_condyle_of_left_femur_sup",
+        "VH_M_medial_epicondylar_enthesis_L",
+        "VH_M_medial_perichondular_surface_L",
+        "VH_M_patellar_surface_L",
+        "VH_M_tibia_L",
+        "VH_M_patella_L",
+        "VH_M_tibia_R",
+        "VH_M_fibula_R",
+        "VH_M_patella_R",
+        "VH_M_femur_R",
+        "VH_M_articular_cartilage_of_knee_R",
+        "VH_M_intercondylar_fossa_R",
+        "VH_M_anterior_cruciate_enthesis_R",
+        "VH_M_posterior_cruciate_enthesis_R",
+        "VH_M_lateral_condyle_of_femur_frontal_R",
+        "VH_M_lateral_condyle_of_femur_inf_R",
+        "VH_M_lateral_condyle_of_femur_sup_R",
+        "VH_M_lateral_epicondylar_enthesis_R",
+        "VH_M_lateral_perichondular_surface_R",
+        "VH_M_distal_most_point_of_medial_condyle_of_femur_R",
+        "VH_M_medial_condyle_of_right_femur_inf",
+        "VH_M_medial_condyle_of_right_femur_sup",
+        "VH_M_medial_epicondylar_enthesis_R",
+        "VH_M_medial_perichondular_surface_R",
+        "VH_M_patellar_surface_R",
+        "VH_M_meniscus_R"
+      ],
+      "registeredCount": 40,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_knee_menisci",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_meniscus_L",
+        "VH_M_meniscus_R"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_knee_cartilage",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_articular_cartilage_of_knee_L",
+        "VH_M_articular_cartilage_of_knee_R"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_knee_bones",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_fibula_L",
+        "VH_M_femur_L",
+        "VH_M_lateral_condyle_of_femur_frontal_L",
+        "VH_M_lateral_condyle_of_femur_inf_L",
+        "VH_M_lateral_condyle_of_femur_sup_L",
+        "VH_M_distal_most_point_of_medial_condyle_of_femur_L",
+        "VH_M_medial_condyle_of_left_femur_inf",
+        "VH_M_medial_condyle_of_left_femur_sup",
+        "VH_M_tibia_L",
+        "VH_M_patella_L",
+        "VH_M_tibia_R",
+        "VH_M_fibula_R",
+        "VH_M_patella_R",
+        "VH_M_femur_R",
+        "VH_M_lateral_condyle_of_femur_frontal_R",
+        "VH_M_lateral_condyle_of_femur_inf_R",
+        "VH_M_lateral_condyle_of_femur_sup_R",
+        "VH_M_distal_most_point_of_medial_condyle_of_femur_R",
+        "VH_M_medial_condyle_of_right_femur_inf",
+        "VH_M_medial_condyle_of_right_femur_sup"
+      ],
+      "registeredCount": 20,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_knee_cruciate_entheses",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_M_anterior_cruciate_enthesis_L",
+        "VH_M_posterior_cruciate_enthesis_L",
+        "VH_M_anterior_cruciate_enthesis_R",
+        "VH_M_posterior_cruciate_enthesis_R"
+      ],
+      "registeredCount": 4,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_uterus_overview",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_F_abdominal_ostium_of_uterine_tube",
+        "VH_F_body_of_uterus",
+        "VH_F_fundus_of_uterus",
+        "VH_F_cornua",
+        "VH_F_lower_uterine_segment",
+        "VH_F_posterior_wall_of_uterus",
+        "VH_F_anterior_wall_of_uterus",
+        "VH_F_cervix",
+        "VH_F_internal_cervical_os",
+        "VH_F_external_cervical_os"
+      ],
+      "registeredCount": 10,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_uterus_body",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_F_body_of_uterus"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_uterus_fundus",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_F_fundus_of_uterus"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_uterus_cervix",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_F_cervix",
+        "VH_F_internal_cervical_os",
+        "VH_F_external_cervical_os"
+      ],
+      "registeredCount": 3,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_uterus_walls",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_F_posterior_wall_of_uterus",
+        "VH_F_anterior_wall_of_uterus"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_ovary_overview",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_F_left_ovary",
+        "VH_F_right_ovary"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_fallopian_overview",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_F_ampulla_of_uterine_tube_L",
+        "VH_F_isthmus_of_fallopian_tube_L",
+        "VH_F_fibria_of_uterine_tube_L",
+        "VH_F_uterine_tube_infundibulum_L",
+        "VH_F_ampulla_of_uterine_tube_R",
+        "VH_F_isthmus_of_fallopian_tube_R",
+        "VH_F_fibria_of_uterine_tube_R",
+        "VH_F_uterine_tube_infundibulum_R"
+      ],
+      "registeredCount": 8,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_fallopian_ampulla",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_F_ampulla_of_uterine_tube_L",
+        "VH_F_ampulla_of_uterine_tube_R"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_fallopian_isthmus",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_F_isthmus_of_fallopian_tube_L",
+        "VH_F_isthmus_of_fallopian_tube_R"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_fallopian_fimbriae",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_F_fibria_of_uterine_tube_L",
+        "VH_F_fibria_of_uterine_tube_R"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_fallopian_infundibulum",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_F_uterine_tube_infundibulum_L",
+        "VH_F_uterine_tube_infundibulum_R"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_placenta_overview",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_F_basal_plate",
+        "VH_F_chorionic_plate",
+        "VH_F_placenta_vessels",
+        "VH_F_amnion",
+        "VH_F_umbilical_cord",
+        "VH_F_umbilical_artery_1",
+        "VH_F_umbilical_artery_2",
+        "VH_F_umbilical_vein"
+      ],
+      "registeredCount": 8,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_placenta_plates",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_F_basal_plate",
+        "VH_F_chorionic_plate"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_placenta_vessels",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_F_placenta_vessels",
+        "VH_F_umbilical_artery_1",
+        "VH_F_umbilical_artery_2",
+        "VH_F_umbilical_vein"
+      ],
+      "registeredCount": 4,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_placenta_cord",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_F_umbilical_cord"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_placenta_amnion",
+      "family": "hra-organ",
+      "kind": "source",
+      "matched": [
+        "VH_F_amnion"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_heart_overview",
+      "family": "hra-heart",
+      "kind": "source",
+      "matched": [
+        "VH_M_mitral_valve",
+        "VH_M_tricuspid_valve",
+        "VH_M_aortic_valve",
+        "VH_M_pulmonary_valve",
+        "VH_M_papillary_muscle_of_heart_anterior",
+        "VH_M_papillary_muscle_of_heart_anterolateral",
+        "VH_M_papillary_muscle_of_heart_medial",
+        "VH_M_papillary_muscle_of_heart_posterior",
+        "VH_M_papillary_muscle_of_heart_posteromedial",
+        "VH_M_left_cardiac_atrium",
+        "VH_M_right_cardiac_atrium",
+        "VH_M_heart_right_ventricle",
+        "VH_M_interventricular_septum",
+        "VH_M_heart_left_ventricle"
+      ],
+      "registeredCount": 14,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_right_atrium",
+      "family": "hra-heart",
+      "kind": "source",
+      "matched": [
+        "VH_M_right_cardiac_atrium"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_left_atrium",
+      "family": "hra-heart",
+      "kind": "source",
+      "matched": [
+        "VH_M_left_cardiac_atrium"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_right_ventricle",
+      "family": "hra-heart",
+      "kind": "source",
+      "matched": [
+        "VH_M_heart_right_ventricle"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_left_ventricle",
+      "family": "hra-heart",
+      "kind": "source",
+      "matched": [
+        "VH_M_heart_left_ventricle"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_interventricular_septum",
+      "family": "hra-heart",
+      "kind": "source",
+      "matched": [
+        "VH_M_interventricular_septum"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_mitral_valve",
+      "family": "hra-heart",
+      "kind": "source",
+      "matched": [
+        "VH_M_mitral_valve"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_tricuspid_valve",
+      "family": "hra-heart",
+      "kind": "source",
+      "matched": [
+        "VH_M_tricuspid_valve"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_aortic_valve",
+      "family": "hra-heart",
+      "kind": "source",
+      "matched": [
+        "VH_M_aortic_valve"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_pulmonary_valve",
+      "family": "hra-heart",
+      "kind": "source",
+      "matched": [
+        "VH_M_pulmonary_valve"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_papillary_muscles",
+      "family": "hra-heart",
+      "kind": "source",
+      "matched": [
+        "VH_M_papillary_muscle_of_heart_anterior",
+        "VH_M_papillary_muscle_of_heart_anterolateral",
+        "VH_M_papillary_muscle_of_heart_medial",
+        "VH_M_papillary_muscle_of_heart_posterior",
+        "VH_M_papillary_muscle_of_heart_posteromedial"
+      ],
+      "registeredCount": 5,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_papillary_anterior",
+      "family": "hra-heart",
+      "kind": "source",
+      "matched": [
+        "VH_M_papillary_muscle_of_heart_anterior"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_papillary_anterolateral",
+      "family": "hra-heart",
+      "kind": "source",
+      "matched": [
+        "VH_M_papillary_muscle_of_heart_anterolateral"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_papillary_medial",
+      "family": "hra-heart",
+      "kind": "source",
+      "matched": [
+        "VH_M_papillary_muscle_of_heart_medial"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_papillary_posterior",
+      "family": "hra-heart",
+      "kind": "source",
+      "matched": [
+        "VH_M_papillary_muscle_of_heart_posterior"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_papillary_posteromedial",
+      "family": "hra-heart",
+      "kind": "source",
+      "matched": [
+        "VH_M_papillary_muscle_of_heart_posteromedial"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_conduction_schematic",
+      "family": "hra-heart",
+      "kind": "schematic",
+      "matched": [],
+      "registeredCount": 0,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "hra_chordae_schematic",
+      "family": "hra-heart",
+      "kind": "schematic",
+      "matched": [],
+      "registeredCount": 0,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_brain_overview",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Orbital part of  inferior frontal gyrus.r",
+        "Corpus callosum",
+        "Hippocampal commissure",
+        "Fourth ventricle",
+        "Medulla oblongata.l",
+        "Pyramid of medulla oblongata.l",
+        "Medulla oblongata.r",
+        "Pyramid of medulla oblongata.r",
+        "Aqueduct of midbrain",
+        "Midbrain.l",
+        "Midbrain.r",
+        "Pons.l",
+        "Pons.r",
+        "Anterior quadrangular lobule.l",
+        "Anterior quadrangular lobule.r",
+        "Biventral lobule.l",
+        "Biventral lobule.r",
+        "Central lobule",
+        "Gracile lobule.l",
+        "Gracile lobule.r",
+        "Inferior semilunar lobule.l",
+        "Inferior semilunar lobule.r",
+        "Lingula of cerebellum",
+        "Posterior quadrangular lobule.l",
+        "Posterior quadrangular lobule.r",
+        "Superior cerebellar peduncle.l",
+        "Superior cerebellar peduncle.r",
+        "Superior semilunar lobule.l",
+        "Superior semilunar lobule.r",
+        "Tonsil of cerebellum.l",
+        "Tonsil of cerebellum.r",
+        "Wing of central lobule.l",
+        "Wing of central lobule.r",
+        "Hypothalamus",
+        "Thalamus.l",
+        "Thalamus.r",
+        "Third ventricle",
+        "Amygdaloid body.l",
+        "Amygdaloid body.r",
+        "Caudate nucleus.l",
+        "Caudate nucleus.r",
+        "Putamen.l",
+        "Putamen.r",
+        "Globus pallidus.l",
+        "Globus pallidus.r",
+        "Middle frontal gyrus.l",
+        "Middle frontal gyrus.r",
+        "Opercular part of inferior frontal gyrus.l",
+        "Opercular part of inferior frontal gyrus.r",
+        "Orbital gyri (Frontomarginal gyrus and sulcus*).l",
+        "Orbital gyri (Frontomarginal gyrus and sulcus*).r",
+        "Orbital part of  inferior frontal gyrus.l",
+        "Paracentral gyrus and sulcus*.l",
+        "Paracentral gyrus and sulcus*.r",
+        "Precentral gyrus.l",
+        "Precentral gyrus.r",
+        "Straight gyrus (Gyrus rectus).l",
+        "Straight gyrus (Gyrus rectus).r",
+        "Superior frontal gyrus.l",
+        "Superior frontal gyrus.r",
+        "Transverse frontopolar gyrus and sulcus*.l",
+        "Transverse frontopolar gyrus and sulcus*.r",
+        "Triangular part of inferior frontal gyrus.l",
+        "Triangular part of inferior frontal gyrus.r",
+        "Insula (Subcentral gyrus and ant. and post. sulci*).l",
+        "Insula (Subcentral gyrus and ant. and post. sulci*).r",
+        "Circular sulcus of insula.l",
+        "Circular sulcus of insula.r",
+        "Lateral ventricle.l",
+        "Lateral ventricle.r",
+        "Cingulate gyrus (Posteroventral part*).l",
+        "Cingulate gyrus (Posteroventral part*).r",
+        "Cingulate gyrus and sulcus (Middle anterior part).l",
+        "Cingulate gyrus and sulcus (Middle anterior part).r",
+        "Cingulate gyrus and sulcus (Middle posterior part).l",
+        "Cingulate gyrus and sulcus (Middle posterior part).r",
+        "Cingulate gyrus and sulcus (Posterior dorsal part).l",
+        "Cingulate gyrus and sulcus (Posterior dorsal part).r",
+        "Hippocampus.l",
+        "Hippocampus.r",
+        "Inferior occipital gyrus and sulcus*.l",
+        "Inferior occipital gyrus and sulcus*.r",
+        "Lateral occipital gyrus (Middle occipital gyrus*).l",
+        "Lateral occipital gyrus (Middle occipital gyrus*).r",
+        "Lingual gyrus.l",
+        "Lingual gyrus.r",
+        "Angular gyrus.l",
+        "Angular gyrus.r",
+        "Postcentral gyrus.l",
+        "Postcentral gyrus.r",
+        "Superior parietal lobule.l",
+        "Superior parietal lobule.r",
+        "Supramarginal gyrus.l",
+        "Supramarginal gyrus.r",
+        "Inferior temporal gyrus.l",
+        "Inferior temporal gyrus.r",
+        "Lateral occipitotemporal gyrus.l",
+        "Lateral occipitotemporal gyrus.r",
+        "Medial occipitotemporal gyrus (Parahippocampal*).l",
+        "Medial occipitotemporal gyrus (Parahippocampal*).r",
+        "Middle temporal gyrus.l",
+        "Middle temporal gyrus.r",
+        "Superior temporal gyrus (Lateral part).l",
+        "Superior temporal gyrus (Lateral part).r"
+      ],
+      "registeredCount": 101,
+      "omitted": [
+        "Orbital part of  inferior frontal gyrus.r",
+        "Corpus callosum",
+        "Hippocampal commissure"
+      ],
+      "notice": "SOURCE REGISTRATION GAP: right orbital inferior frontal gyrus, corpus callosum, hippocampal commissure are omitted because the source alignment is invalid."
+    },
+    {
+      "id": "za_brain_cortex",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Orbital part of  inferior frontal gyrus.r",
+        "Middle frontal gyrus.l",
+        "Middle frontal gyrus.r",
+        "Opercular part of inferior frontal gyrus.l",
+        "Opercular part of inferior frontal gyrus.r",
+        "Orbital gyri (Frontomarginal gyrus and sulcus*).l",
+        "Orbital gyri (Frontomarginal gyrus and sulcus*).r",
+        "Orbital part of  inferior frontal gyrus.l",
+        "Paracentral gyrus and sulcus*.l",
+        "Paracentral gyrus and sulcus*.r",
+        "Precentral gyrus.l",
+        "Precentral gyrus.r",
+        "Straight gyrus (Gyrus rectus).l",
+        "Straight gyrus (Gyrus rectus).r",
+        "Superior frontal gyrus.l",
+        "Superior frontal gyrus.r",
+        "Transverse frontopolar gyrus and sulcus*.l",
+        "Transverse frontopolar gyrus and sulcus*.r",
+        "Triangular part of inferior frontal gyrus.l",
+        "Triangular part of inferior frontal gyrus.r",
+        "Insula (Subcentral gyrus and ant. and post. sulci*).l",
+        "Insula (Subcentral gyrus and ant. and post. sulci*).r",
+        "Circular sulcus of insula.l",
+        "Circular sulcus of insula.r",
+        "Cingulate gyrus (Posteroventral part*).l",
+        "Cingulate gyrus (Posteroventral part*).r",
+        "Cingulate gyrus and sulcus (Middle anterior part).l",
+        "Cingulate gyrus and sulcus (Middle anterior part).r",
+        "Cingulate gyrus and sulcus (Middle posterior part).l",
+        "Cingulate gyrus and sulcus (Middle posterior part).r",
+        "Cingulate gyrus and sulcus (Posterior dorsal part).l",
+        "Cingulate gyrus and sulcus (Posterior dorsal part).r",
+        "Inferior occipital gyrus and sulcus*.l",
+        "Inferior occipital gyrus and sulcus*.r",
+        "Lateral occipital gyrus (Middle occipital gyrus*).l",
+        "Lateral occipital gyrus (Middle occipital gyrus*).r",
+        "Lingual gyrus.l",
+        "Lingual gyrus.r",
+        "Angular gyrus.l",
+        "Angular gyrus.r",
+        "Postcentral gyrus.l",
+        "Postcentral gyrus.r",
+        "Supramarginal gyrus.l",
+        "Supramarginal gyrus.r",
+        "Inferior temporal gyrus.l",
+        "Inferior temporal gyrus.r",
+        "Lateral occipitotemporal gyrus.l",
+        "Lateral occipitotemporal gyrus.r",
+        "Medial occipitotemporal gyrus (Parahippocampal*).l",
+        "Medial occipitotemporal gyrus (Parahippocampal*).r",
+        "Middle temporal gyrus.l",
+        "Middle temporal gyrus.r",
+        "Superior temporal gyrus (Lateral part).l",
+        "Superior temporal gyrus (Lateral part).r"
+      ],
+      "registeredCount": 53,
+      "omitted": [
+        "Orbital part of  inferior frontal gyrus.r"
+      ],
+      "notice": "SOURCE REGISTRATION GAP: right orbital inferior frontal gyrus is omitted because the source alignment is invalid."
+    },
+    {
+      "id": "za_brain_basal_ganglia",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Caudate nucleus.l",
+        "Caudate nucleus.r",
+        "Putamen.l",
+        "Putamen.r",
+        "Globus pallidus.l",
+        "Globus pallidus.r"
+      ],
+      "registeredCount": 6,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_brain_limbic",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Amygdaloid body.l",
+        "Amygdaloid body.r",
+        "Hippocampus.l",
+        "Hippocampus.r"
+      ],
+      "registeredCount": 4,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_brain_diencephalon",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Hypothalamus",
+        "Thalamus.l",
+        "Thalamus.r"
+      ],
+      "registeredCount": 3,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_brain_brainstem",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Medulla oblongata.l",
+        "Pyramid of medulla oblongata.l",
+        "Medulla oblongata.r",
+        "Pyramid of medulla oblongata.r",
+        "Midbrain.l",
+        "Midbrain.r",
+        "Pons.l",
+        "Pons.r"
+      ],
+      "registeredCount": 8,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_brain_ventricles",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Fourth ventricle",
+        "Aqueduct of midbrain",
+        "Third ventricle",
+        "Lateral ventricle.l",
+        "Lateral ventricle.r"
+      ],
+      "registeredCount": 5,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_brain_cerebellar",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Lingula of cerebellum",
+        "Superior cerebellar peduncle.l",
+        "Superior cerebellar peduncle.r",
+        "Tonsil of cerebellum.l",
+        "Tonsil of cerebellum.r"
+      ],
+      "registeredCount": 5,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_brain_corpus_callosum",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Corpus callosum"
+      ],
+      "registeredCount": 0,
+      "omitted": [
+        "Corpus callosum"
+      ],
+      "notice": "SOURCE REGISTRATION GAP: corpus callosum is omitted because the source alignment is invalid."
+    },
+    {
+      "id": "za_stomach_overview",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Duodenum",
+        "Stomach",
+        "Greater omentum",
+        "Lesser omentum"
+      ],
+      "registeredCount": 4,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_stomach",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Stomach"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_stomach_duodenum",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Duodenum"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_stomach_greater_omentum",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Greater omentum"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_stomach_lesser_omentum",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Lesser omentum"
+      ],
+      "registeredCount": 1,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_pectoralis_overview",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "(Abdominal part of pectoralis major muscle).l",
+        "(Abdominal part of pectoralis major muscle).r",
+        "Clavicular head of pectoralis major muscle.l",
+        "Clavicular head of pectoralis major muscle.r",
+        "Sternocostal head of pectoralis major muscle.l",
+        "Sternocostal head of pectoralis major muscle.r"
+      ],
+      "registeredCount": 6,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_pectoralis_clavicular",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Clavicular head of pectoralis major muscle.l",
+        "Clavicular head of pectoralis major muscle.r"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_pectoralis_sternocostal",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Sternocostal head of pectoralis major muscle.l",
+        "Sternocostal head of pectoralis major muscle.r"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_pectoralis_abdominal",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "(Abdominal part of pectoralis major muscle).l",
+        "(Abdominal part of pectoralis major muscle).r"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_deltoid_overview",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Acromial part of deltoid muscle.l",
+        "Acromial part of deltoid muscle.r",
+        "Clavicular part of deltoid muscle.l",
+        "Clavicular part of deltoid muscle.r",
+        "Scapular spinal part of deltoid muscle.l",
+        "Scapular spinal part of deltoid muscle.r"
+      ],
+      "registeredCount": 6,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_deltoid_clavicular",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Clavicular part of deltoid muscle.l",
+        "Clavicular part of deltoid muscle.r"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_deltoid_acromial",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Acromial part of deltoid muscle.l",
+        "Acromial part of deltoid muscle.r"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_deltoid_spinal",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Scapular spinal part of deltoid muscle.l",
+        "Scapular spinal part of deltoid muscle.r"
+      ],
+      "registeredCount": 2,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_joints_overview",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Articular capsule of glenohumeral joint.l",
+        "Articular capsule of glenohumeral joint.r",
+        "Inferior glenohumeral ligament.l",
+        "Inferior glenohumeral ligament.r",
+        "Middle glenohumeral ligament.l",
+        "Middle glenohumeral ligament.r",
+        "Superior glenohumeral ligament.l",
+        "Superior glenohumeral ligament.r",
+        "Acetabular labrum.l",
+        "Acetabular labrum.r",
+        "Articular capsule of hip joint.l",
+        "Articular capsule of hip joint.r",
+        "Anterior cruciate ligament.l",
+        "Anterior cruciate ligament.r",
+        "Anterior meniscotibial ligament (Lateral meniscus).l",
+        "Anterior meniscotibial ligament (Lateral meniscus).r",
+        "Anterior meniscotibial ligament (Medial meniscus).l",
+        "Anterior meniscotibial ligament (Medial meniscus).r",
+        "Articular capsule of knee joint.l",
+        "Articular capsule of knee joint.r",
+        "Lateral meniscus.l",
+        "Lateral meniscus.r",
+        "Medial meniscus.l",
+        "Medial meniscus.r",
+        "Posterior cruciate ligament.l",
+        "Posterior cruciate ligament.r",
+        "Posterior meniscotibial ligament (Lateral meniscus).l",
+        "Posterior meniscotibial ligament (Lateral meniscus).r",
+        "Posterior meniscotibial ligament (Medial meniscus).l",
+        "Posterior meniscotibial ligament (Medial meniscus).r"
+      ],
+      "registeredCount": 30,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_knee_joint",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Anterior cruciate ligament.l",
+        "Anterior cruciate ligament.r",
+        "Anterior meniscotibial ligament (Lateral meniscus).l",
+        "Anterior meniscotibial ligament (Lateral meniscus).r",
+        "Anterior meniscotibial ligament (Medial meniscus).l",
+        "Anterior meniscotibial ligament (Medial meniscus).r",
+        "Articular capsule of knee joint.l",
+        "Articular capsule of knee joint.r",
+        "Lateral meniscus.l",
+        "Lateral meniscus.r",
+        "Medial meniscus.l",
+        "Medial meniscus.r",
+        "Posterior cruciate ligament.l",
+        "Posterior cruciate ligament.r",
+        "Posterior meniscotibial ligament (Lateral meniscus).l",
+        "Posterior meniscotibial ligament (Lateral meniscus).r",
+        "Posterior meniscotibial ligament (Medial meniscus).l",
+        "Posterior meniscotibial ligament (Medial meniscus).r"
+      ],
+      "registeredCount": 18,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_hip_joint",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Acetabular labrum.l",
+        "Acetabular labrum.r",
+        "Articular capsule of hip joint.l",
+        "Articular capsule of hip joint.r"
+      ],
+      "registeredCount": 4,
+      "omitted": [],
+      "notice": null
+    },
+    {
+      "id": "za_shoulder_joint",
+      "family": "zanatomy",
+      "kind": "source",
+      "matched": [
+        "Articular capsule of glenohumeral joint.l",
+        "Articular capsule of glenohumeral joint.r",
+        "Inferior glenohumeral ligament.l",
+        "Inferior glenohumeral ligament.r",
+        "Middle glenohumeral ligament.l",
+        "Middle glenohumeral ligament.r",
+        "Superior glenohumeral ligament.l",
+        "Superior glenohumeral ligament.r"
+      ],
+      "registeredCount": 8,
+      "omitted": [],
+      "notice": null
+    }
+  ],
+  "status": "PASSED"
+}

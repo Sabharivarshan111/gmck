@@ -1,0 +1,61 @@
+{
+  "beforeSource": "8bd6da24d7a62b3635e334c0438bb51120168a52",
+  "afterSource": "9a89f4bb25f2a23a19fdc4d637c982def7f322bb",
+  "scope": "Real mobile browser source-strip selections; installed Android proof is a separate pending audit",
+  "before": [
+    {
+      "id": "hra_kidney_columns",
+      "before": {
+        "count": 11172,
+        "w": 371,
+        "h": 443
+      },
+      "after": {
+        "count": 0,
+        "w": 371,
+        "h": 443
+      }
+    },
+    {
+      "id": "hra_pulmonary_valve",
+      "before": {
+        "count": 26011,
+        "w": 371,
+        "h": 443
+      },
+      "after": {
+        "count": 0,
+        "w": 371,
+        "h": 443
+      }
+    }
+  ],
+  "after": [
+    {
+      "id": "hra_kidney_columns",
+      "before": {
+        "count": 11172,
+        "w": 371,
+        "h": 443
+      },
+      "after": {
+        "count": 9738,
+        "w": 371,
+        "h": 443
+      }
+    },
+    {
+      "id": "hra_pulmonary_valve",
+      "before": {
+        "count": 26011,
+        "w": 371,
+        "h": 443
+      },
+      "after": {
+        "count": 12598,
+        "w": 371,
+        "h": 443
+      }
+    }
+  ]
+}

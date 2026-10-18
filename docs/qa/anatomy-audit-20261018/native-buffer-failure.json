@@ -1,0 +1,97 @@
+{
+  "run": 39096269688,
+  "artifact": 12125063002,
+  "candidateSource": "fb79170bcf6fdb42311555021c10f7857cbccd81",
+  "failure": {
+    "message": "Visible context and selected structure must fit; the camera cannot sit inside the organ: {\"count\":3318,\"blue\":0,\"red\":0,\"left\":0.7272727272727273,\"right\":0.9956709956709957,\"bottom\":0.7355072463768116,\"top\":0.9963768115942029,\"width\":231,\"height\":276}",
+    "stack": "AssertionError [ERR_ASSERTION]: Visible context and selected structure must fit; the camera cannot sit inside the organ: {\"count\":3318,\"blue\":0,\"red\":0,\"left\":0.7272727272727273,\"right\":0.9956709956709957,\"bottom\":0.7355072463768116,\"top\":0.9963768115942029,\"width\":231,\"height\":276}\n    at geometryFrame (file:///home/runner/work/gmck/gmck/.github/qa/android-joint-focus.mjs:93:2)\n    at async contextFraming (file:///home/runner/work/gmck/gmck/.github/qa/android-joint-focus.mjs:143:46)\n    at async file:///home/runner/work/gmck/gmck/.github/qa/android-joint-focus.mjs:230:31",
+    "state": {
+      "url": "https://appassets.androidplatform.net/simulator?mode=anatomy&organ=abdomen&isolate=abdomen&nativeTheme=dark&native_audit=1&native_audit=1",
+      "patientScenario": "normal",
+      "viewport": [
+        393,
+        800
+      ],
+      "theme": "dark",
+      "isolated": "connection_408",
+      "systems": "arterial,digestive,endocrine,lymphatic,urinary,venous",
+      "eye": {},
+      "thorax": {},
+      "audioErrors": []
+    },
+    "gl": {
+      "canvas": {
+        "width": 463,
+        "height": 553,
+        "clientWidth": 371,
+        "clientHeight": 443,
+        "rect": {
+          "x": 11,
+          "y": 129,
+          "width": 371,
+          "height": 443,
+          "top": 129,
+          "right": 382,
+          "bottom": 572,
+          "left": 11
+        }
+      },
+      "drawingBuffer": [
+        231,
+        276
+      ],
+      "viewport": [
+        0,
+        0,
+        464,
+        554
+      ],
+      "dpr": 3,
+      "visualViewport": {
+        "scale": 1,
+        "width": 393,
+        "height": 800
+      },
+      "contextLost": false,
+      "error": 0,
+      "uniforms": {
+        "projectionMatrix": [
+          3.9056272506713867,
+          0,
+          0,
+          0,
+          0,
+          3.270852565765381,
+          0,
+          0,
+          0,
+          0,
+          -1.000040054321289,
+          -1,
+          0,
+          0,
+          -0.0020000399090349674,
+          0
+        ],
+        "modelViewMatrix": [
+          1,
+          1.8506542132090686e-10,
+          -3.3667767240785906e-08,
+          0,
+          0,
+          0.9999849200248718,
+          0.005496730096638203,
+          0,
+          3.3668275278841975e-08,
+          -0.005496730096638203,
+          0.9999849200248718,
+          0,
+          0.004650499206036329,
+          -1.0238245725631714,
+          -1.7552409172058105,
+          1
+        ]
+      }
+    }
+  }
+}
