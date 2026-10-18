@@ -258,7 +258,7 @@
         {
           "type": "source",
           "source": "BodyParts3D",
-          "meshCount": 296
+          "meshCount": 292
         },
         {
           "type": "source-supplement",
@@ -571,7 +571,7 @@
         {
           "type": "source",
           "source": "BodyParts3D",
-          "meshCount": 236
+          "meshCount": 238
         },
         {
           "type": "source-supplement",
