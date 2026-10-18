@@ -27,8 +27,8 @@ function Motorcycle({x,y,hit}:{x:number,y:number,hit:boolean}){return <g transfo
  </g>}
 export const GMCKCrash:React.FC=()=>{
  const frame=useCurrentFrame(),{fps}=useVideoConfig(),t=frame/fps;
- const bx=-200+140*Math.min(t,impact),ax=1600-160*Math.min(t,impact),ay=448-126*soft((t-2.1)/1.35);
- const cx=-520+140*Math.min(t,rear),mx=-300+125*Math.min(t,side),my=t<6.05?217:217+70*soft((t-6.05)/0.6);
+ const bx=-200+140*Math.min(t,impact),ax=1646-160*Math.min(t,impact),ay=448-126*soft((t-2.1)/1.35);
+ const cx=-552+140*Math.min(t,rear),mx=-300+125*Math.min(t,side),my=t<6.05?217:217+38*soft((t-6.05)/0.6);
  const titles=t<2?['ONE ROAD','One bus. One car. One motorcycle.']:t<4.1?['WRONG-LANE ENTRY','A01 continues west, moving across the centreline.']:t<impact?['HEAD-ON APPROACH','Both original fronts face one another.']:t<rear?['FIRST IMPACT','Bus front physically contacts ambulance front.']:t<side?['SECOND IMPACT','Silver car reaches bus rear.']:t<10?['THIRD IMPACT','Motorcycle contacts bus left side.']:t<13?['CALL 112','All four original vehicles remain at this crash site.']:t<16?['RESCUE ARRIVES','A02 is distinct, green-striped and undamaged.']:t<19?['MASS CASUALTY TRIAGE','RED: immediate    YELLOW: delayed    GREEN: minor']:['WORLD TRAUMA DAY','ONE MOMENT. MANY LIVES.'];
  return <AbsoluteFill style={{backgroundColor:'#20382c'}}><svg width="1280" height="720" viewBox="0 0 1280 720">
  <defs><pattern id="grass" width="34" height="30" patternUnits="userSpaceOnUse"><circle cx="7" cy="10" r="2" fill="#426444" opacity=".6"/></pattern></defs>
