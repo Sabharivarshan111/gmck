@@ -66,12 +66,13 @@ const shot = async (name) => {
   await page.screenshot({ path: path.join(outDir, name + '.png'), fullPage: false, timeout: 30000 });
 };
 const setRangeValue = async (locator, value) => {
-  await locator.evaluate((element, nextValue) => {
-    const descriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
-    descriptor?.set?.call(element, String(nextValue));
-    element.dispatchEvent(new Event('input', { bubbles: true }));
-    element.dispatchEvent(new Event('change', { bubbles: true }));
-  }, value);
+  const min = Number(await locator.getAttribute('min') || 0);
+  const step = Number(await locator.getAttribute('step') || 1);
+  await locator.focus();
+  await locator.press('Home');
+  for (let index = 0; index < Math.round((value - min) / step); index += 1) {
+    await locator.press('ArrowRight');
+  }
 };
 const goto = async (urlPath) => {
   await page.goto(baseURL + urlPath, { waitUntil: 'domcontentloaded', timeout: 60000 });
@@ -121,8 +122,9 @@ await check('compact-toolbar-and-visible-canvas', async () => {
 await check('spread-anatomy-inventory-and-clickable-labels', async () => {
   await goto('/simulator');
   const stage = page.getByTestId('mobile-anatomy-stage');
-  const spreadControl = stage.getByTestId('anatomy-spread-control');
-  const spread = stage.getByTestId('anatomy-spread');
+  const dock = page.getByTestId('mobile-anatomy-dock');
+  const spreadControl = dock.getByTestId('anatomy-spread-control');
+  const spread = dock.getByTestId('anatomy-spread');
   await visible(spreadControl, 'Spread anatomy control');
   await visible(spread, 'Spread anatomy slider');
 
