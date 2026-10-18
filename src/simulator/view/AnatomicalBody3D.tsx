@@ -6,6 +6,7 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { isolationCameraDistance } from './isolationFraming';
+import { syncDrawingBufferViewport } from './drawingBufferViewport';
 import { anatomyPixelRatio } from '../data/renderQuality';
 import { partBelongsToRegion, restoreSourceNodeNames } from '../data/anatomyRegions';
 import { PatientVitals, PatientPathologyState, AnatomicalLayer } from '../types';
@@ -2591,7 +2592,7 @@ varying float partSelected;
         updateConnectionCallout();
         lastLabelUpdate = now;
       }
-      renderer.render(scene, camera);
+      if (syncDrawingBufferViewport(renderer)) renderer.render(scene, camera);
     };
     const resumeRendering = () => {
       cancelAnimationFrame(animationFrameId);
@@ -4040,10 +4041,13 @@ varying float partSelected;
   };
 
   useEffect(() => {
-    if (cameraPreset) {
+    // A source-strip selection also changes its region. The isolation effect
+    // above has already fitted that source's own coordinate frame; a later
+    // whole-body preset must not overwrite it (HRA donors use other origins).
+    if (cameraPreset && !isolatedPartId) {
       resetCamera(cameraPreset);
     }
-  }, [cameraPreset]);
+  }, [cameraPreset, isolatedPartId]);
 
   return (
     <div
