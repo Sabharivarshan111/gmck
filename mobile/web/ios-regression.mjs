@@ -8,6 +8,7 @@ const server=http.createServer(async(req,res)=>{try{let rel=new URL(req.url,'htt
 await new Promise(r=>server.listen(5226,'127.0.0.1',r));
 const engine=process.env.ORBIT_BROWSER==='webkit'?webkit:chromium;
 const browser=await engine.launch({headless:true,...(engine===chromium?{executablePath:process.env.CHROME_PATH,args:['--no-sandbox','--disable-dev-shm-usage']}: {})});
+await fs.mkdir('/tmp/orbit-ios-evidence',{recursive:true});
 const errors=[];const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,reducedMotion:'reduce',timezoneId:'Asia/Kolkata'});
 await context.route('**/*',r=>r.request().url().startsWith('http://127.0.0.1:5226')?r.continue():r.abort());
 await context.addInitScript(()=>localStorage.setItem('orbit:tour-v1',JSON.stringify({seen:1})));
@@ -21,12 +22,19 @@ await label('Display name').fill('Calendar tester');
 await page.getByRole('radio',{name:'Final Year',exact:true}).tap();
 await page.getByRole('radio',{name:'Tamil Nadu Dr. M.G.R. Medical University (TNMGR)',exact:true}).tap();await tap('Start studying');
 await label('Settings').waitFor();await page.reload();await label('Settings').waitFor();assert.equal(await label('Display name').count(),0);assert.ok(!(await page.locator('body').innerText()).includes('Question bank ·'));console.log('PASS fresh setup stays complete after reload');
-await page.goto('http://127.0.0.1:5226/progress');await tap('Attendance');await tap('Clinical postings');await tap('Add a posting');await label('Posting name').fill('Paediatrics');
+await page.goto('http://127.0.0.1:5226/progress');await tap('Attendance');await tap('Clinical postings');await tap('Add a posting');
 await tap('Posting start date');
 // Wait for the modal to mount before addressing a date; do not inspect a stale render.
 await label('5 October 2026').waitFor();
 await tap('5 October 2026');assert.ok((await label('Posting start date').innerText()).includes('2026-10-05'));
 await tap('Posting end date');await page.getByText('November 2026',{exact:true}).waitFor();await tap('Previous month');await tap('31 October 2026');assert.ok((await label('Posting end date').innerText()).includes('2026-10-31'));console.log('PASS touch selects exact local start and end dates');
+// The previously silent failure: valid dates but no posting name.
+await tap('Add this posting');
+const missingName=page.getByRole('alert').filter({hasText:'Enter a posting name'});
+await missingName.waitFor();
+assert(await missingName.isVisible(),'Name validation must be visible beside Add');
+await page.screenshot({path:'/tmp/orbit-ios-evidence/add-name-validation.png'});
+await label('Posting name').fill('Paediatrics');
 await tap('Add this posting');await tap('View Rotation Calendar and Holidays');
 const day=page.getByLabel('Sat, Oct 17 - Working day',{exact:true});await day.scrollIntoViewIfNeeded();await day.tap();await page.getByLabel('Sat, Oct 17 - Holiday',{exact:true}).waitFor();
 await page.reload();await tap('Attendance');await tap('Clinical postings');await tap('View Rotation Calendar and Holidays');await page.getByLabel('Sat, Oct 17 - Holiday',{exact:true}).waitFor();console.log('PASS calendar opens and holiday selection persists');

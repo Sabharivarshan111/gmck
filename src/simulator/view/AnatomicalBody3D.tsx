@@ -6,9 +6,10 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { isolationCameraDistance } from './isolationFraming';
+import { syncDrawingBufferViewport } from './drawingBufferViewport';
 import { anatomyPixelRatio } from '../data/renderQuality';
 import { partBelongsToRegion, restoreSourceNodeNames } from '../data/anatomyRegions';
-import { PatientVitals, PatientPathologyState } from '../types';
+import { PatientVitals, PatientPathologyState, AnatomicalLayer } from '../types';
 import {
   Atlas,
   Part,
@@ -37,6 +38,8 @@ import {
   getZAnatomyReferenceTarget,
   isZAnatomyReferenceTarget,
   zAnatomyMeshMatchesTarget,
+  zAnatomyReferenceRegistrationIssue,
+  zAnatomyReferenceRegistrationNotice,
 } from '../data/zanatomyReferences';
 import {
   HRA_HEART_MODEL_URL,
@@ -69,6 +72,23 @@ interface AnatomicalBody3DProps {
   isolatedPartId?: string | null;
   onDissectPart?: (part: Part) => void;
   onAtlasLoaded?: (atlas: Atlas) => void;
+}
+
+// A translucent context must not write a solid occluder in front of a selected
+// supply vessel. Keep depth testing/writes on the selected vessel itself.
+function atlasDepthWrite(system: SystemId, isXray: boolean, isolatedId?: string | null, layer: AnatomicalLayer = 'glass'): boolean {
+  if (isXray) return system === 'skeletal';
+  const connection = getOrganConnection(isolatedId);
+  if (connection && connection.kind !== 'relation') return system === connection.kind;
+  return system !== 'integumentary' || layer === 'skin';
+}
+
+function systemInAnatomicalLayer(system: SystemId, layer: AnatomicalLayer): boolean {
+  if (layer === 'skeletal') return system === 'skeletal';
+  if (layer === 'vascular') return ['arterial', 'venous', 'cardiac'].includes(system);
+  if (layer === 'skin') return system === 'integumentary';
+  if (layer === 'viscera') return !['integumentary', 'muscular', 'skeletal', 'connective', 'arterial', 'venous'].includes(system);
+  return true;
 }
 
 /**
@@ -1228,6 +1248,7 @@ function createHraChordaeOverlay(meshes: THREE.Mesh[]): {
 }
 
 export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
+  layer = 'glass',
   renderQuality = 'crisp',
   cameraAction,
   vitals,
@@ -1248,8 +1269,9 @@ export const AnatomicalBody3D: React.FC<AnatomicalBody3DProps> = ({
   onDissectPart,
   onAtlasLoaded,
 }) => {
-  const [showVesselContext, setShowVesselContext] = useState(false);
-  useEffect(() => { setShowVesselContext(false); }, [isolatedPartId]);
+  // Keep the supplying/draining vessel on its parent organ until explicitly hidden.
+  const [showVesselContext, setShowVesselContext] = useState(true);
+  useEffect(() => { setShowVesselContext(true); }, [isolatedPartId]);
   const selectedConnection = getOrganConnection(isolatedPartId);
   const isVesselConnection = !!selectedConnection && selectedConnection.kind !== 'relation';
   const mountRef = useRef<HTMLDivElement>(null);
@@ -2570,7 +2592,7 @@ varying float partSelected;
         updateConnectionCallout();
         lastLabelUpdate = now;
       }
-      renderer.render(scene, camera);
+      if (syncDrawingBufferViewport(renderer)) renderer.render(scene, camera);
     };
     const resumeRendering = () => {
       cancelAnimationFrame(animationFrameId);
@@ -3328,11 +3350,15 @@ varying float partSelected;
     const celiacBranches = targetKey === 'atlas:FJ3421'
       ? new Set(['FJ3078', 'FJ2562', 'FJ3420', 'FJ3499', 'FJ3544', 'FJ3640'])
       : null;
-    const contextKey = contextOrganId || resolveContextOrganId(targetKey, selectedOrganId);
+    const contextHint = contextOrganId || resolveContextOrganId(targetKey, selectedOrganId);
+    // The coronary dossiers are vessels, not the supporting organ. Their
+    // supply/drainage and relation selections still belong on the same heart.
+    const contextKey = contextHint === 'lad_artery' || contextHint === 'rca_artery'
+      ? 'heart' : contextHint;
     const contextElements = (contextKey && contextKey !== targetKey &&
       (!connection || connection.kind === 'relation' || showVesselContext))
       ? resolveAtlasElementIds(contextKey, atlas) : null;
-    if (connection?.owner === 'heart' && contextElements) {
+    if (connection && contextKey === 'heart' && contextElements) {
       const shell = new Set(['FJ2428','FJ2438','FJ2439','FJ3413','FJ3411','FJ3417','FJ2966','FJ2924','FJ3019','FJ3645']);
       for (const id of contextElements) if (!shell.has(id)) contextElements.delete(id);
     }
@@ -3389,17 +3415,25 @@ varying float partSelected;
         group.visible = isHraGenericOrganTarget && isRequested;
 
         if (!group.visible) continue;
+        // Regional vessels, cord segments and knee components occupy only a small part of
+        // their source file. Fit the selection while retaining source context.
+        const focusSelection = !hraGenericTarget?.matchAll &&
+          ['blood_vasculature', 'knee_left', 'knee_right', 'spinal_cord'].includes(modelKey);
+        const selectedBox = new THREE.Box3();
+        group.updateWorldMatrix(true, true);
         const meshes = hraOrganMeshesRef.current.get(modelKey) ?? [];
         for (const mesh of meshes) {
           const selected = hraOrganMeshMatchesTarget(mesh.name, targetKey);
           mesh.visible = true;
+          if (focusSelection && selected) selectedBox.expandByObject(mesh);
           mesh.material = hraGenericTarget?.matchAll
             ? mesh.userData.overviewMaterial || hraOrganMaterialsRef.current.overview
             : selected
             ? hraOrganMaterialsRef.current.selected
             : hraOrganMaterialsRef.current.context;
         }
-        hraGenericBox.expandByObject(group);
+        if (focusSelection && !selectedBox.isEmpty()) hraGenericBox.union(selectedBox);
+        else hraGenericBox.expandByObject(group);
       }
     }
 
@@ -3412,16 +3446,19 @@ varying float partSelected;
         if (!group.visible) continue;
 
         const meshes = zReferenceMeshesRef.current.get(modelKey) ?? [];
+        group.updateWorldMatrix(true, true);
         for (const mesh of meshes) {
+          const registered = !zAnatomyReferenceRegistrationIssue(modelKey, mesh.name);
           const selected = zAnatomyMeshMatchesTarget(mesh.name, targetKey);
-          mesh.visible = true;
+          const focusedJoint = modelKey === 'major_joints_reference' && !zReferenceTarget?.matchAll;
+          mesh.visible = registered && (!focusedJoint || selected);
           mesh.material = zReferenceTarget?.matchAll
             ? zReferenceMaterialsRef.current.overview
             : selected
             ? zReferenceMaterialsRef.current.selected
             : zReferenceMaterialsRef.current.context;
+          if (mesh.visible) zReferenceBox.expandByObject(mesh);
         }
-        zReferenceBox.expandByObject(group);
       }
     }
 
@@ -3472,6 +3509,8 @@ varying float partSelected;
         ? peripheralNerveRegistrationIssue(targetKey)
         : isZReferenceTarget && zReferenceFailed
         ? 'The Z-Anatomy reference model failed to load on this device. ORBIT has not substituted unrelated anatomy.'
+        : isZReferenceTarget && zAnatomyReferenceRegistrationNotice(targetKey)
+        ? zAnatomyReferenceRegistrationNotice(targetKey)
         : isHraGenericOrganTarget && genericHraFailed
         ? 'The HRA reference organ failed to load on this device. ORBIT has not substituted unrelated anatomy.'
         : isHraHeartReferenceTarget && hraHeartFailed
@@ -3488,7 +3527,7 @@ varying float partSelected;
         ? 'The official Z-Anatomy NervousSystem100 source has no named splanchnic-nerve mesh. ORBIT is showing its existing schematic autonomic overlay here; it is not presented as source-derived anatomy.'
         : peripheralNervesReady && isSupplementalNerveTarget && !hasRealNerveMesh
         ? 'This named nerve is not present in the vetted Z-Anatomy peripheral-nerve source used by ORBIT. No unrelated structure has been substituted.'
-        : isolatedTarget && isolatedTarget.status === 'absent' && !isAutonomicTarget && !isSupplementalNerveTarget
+        : isolatedTarget && isolatedTarget.status === 'absent' && !isZReferenceTarget && !isAutonomicTarget && !isSupplementalNerveTarget
         ? isolatedTarget.reason ?? null
         : null
     );
@@ -3687,7 +3726,9 @@ varying float partSelected;
           isolationBox.expandByPoint(new THREE.Vector3(...p.bounds[1]));
         } else if (contextElements && contextElements.has(p.id)) {
           visible = 0.35;
-          if (connection?.kind === 'relation') {
+          // The visible owner must fit alongside its selected vessel. Fitting
+          // only a tiny branch can put the camera inside the context organ.
+          if (connection && (connection.kind === 'relation' || showVesselContext)) {
             isolationBox.expandByPoint(new THREE.Vector3(...p.bounds[0]));
             isolationBox.expandByPoint(new THREE.Vector3(...p.bounds[1]));
           }
@@ -3699,7 +3740,7 @@ varying float partSelected;
         }
       } else {
         // Standard Mode: Respect manual dissection and depth peeling
-        if (peeledSystems.has(p.system)) {
+        if (!systemInAnatomicalLayer(p.system, layer) || peeledSystems.has(p.system)) {
           visible = 0.0;
         } else if (isToothOrGingiva && layerPeel < 0.28) {
           // Hide exposed bare teeth poking through the lips when superficial muscular layers are on
@@ -3725,18 +3766,10 @@ varying float partSelected;
 
     partTexture.needsUpdate = true;
 
-    // Adjust depthWrite for context organ materials so overlay vessels/nerves render without occlusion
-    const materials = systemMaterialsRef.current;
-    if (materials) {
-      const cardiacMat = materials.get('cardiac');
-      if (cardiacMat) {
-        cardiacMat.depthWrite = true;
-      }
-      const arterialMat = materials.get('arterial');
-      if (arterialMat) {
-        arterialMat.depthWrite = true;
-      }
-    }
+    // Reapply on every context toggle as well as selection/visibility changes.
+    systemMaterialsRef.current.forEach((material, system) => {
+      material.depthWrite = atlasDepthWrite(system, isXray, isolatedPartId, layer);
+    });
 
     // Automatic Camera Framing onto Isolated Organ / Vessel / Nerve
     if (
@@ -3862,8 +3895,10 @@ varying float partSelected;
     isolatedPartId,
     contextOrganId,
     showVesselContext,
+    isXray,
     selectedOrganId,
     layerPeel,
+    layer,
     modelsReady,
     peripheralNervesReady,
     peripheralNervesFailed,
@@ -3955,7 +3990,7 @@ varying float partSelected;
           mat.depthWrite = false;
         }
       } else {
-        mat.opacity = sysId === 'integumentary' ? 0.12 : 1.0;
+        mat.opacity = sysId === 'integumentary' && layer !== 'skin' ? 0.12 : 1.0;
         mat.depthWrite = sysId !== 'integumentary';
         if (sysId === 'skeletal' && isLight && spreadActive) {
           // Warm teaching-atlas bone keeps individual ribs/vertebrae visible
@@ -3970,9 +4005,10 @@ varying float partSelected;
           if (origSys) mat.color.setHex(parseInt(origSys.color.replace('#', '0x')));
         }
       }
+      mat.depthWrite = atlasDepthWrite(sysId, isXray, isolatedPartId, layer);
       mat.needsUpdate = true;
     });
-  }, [isXray, isLight, explodeAmount, isolatedPartId]);
+  }, [isXray, isLight, explodeAmount, isolatedPartId, layer]);
 
   const setCameraDirection = (direction: 'front' | 'back' | 'side') => {
     const camera = cameraRef.current;
@@ -4013,10 +4049,13 @@ varying float partSelected;
   };
 
   useEffect(() => {
-    if (cameraPreset) {
+    // A source-strip selection also changes its region. The isolation effect
+    // above has already fitted that source's own coordinate frame; a later
+    // whole-body preset must not overwrite it (HRA donors use other origins).
+    if (cameraPreset && !isolatedPartId) {
       resetCamera(cameraPreset);
     }
-  }, [cameraPreset]);
+  }, [cameraPreset, isolatedPartId]);
 
   return (
     <div
@@ -4260,18 +4299,18 @@ varying float partSelected;
       {/* Not in this atlas — said out loud, because a model that does not move
           looks identical to one that is broken. */}
       {absentNotice && (
-        <div className="absolute top-16 left-3 right-3 z-20 flex justify-center pointer-events-none">
-          <div
-            role="status"
-            className={`pointer-events-auto flex items-start gap-2 max-w-md px-3 py-2 rounded-2xl border backdrop-blur-xl text-xs leading-relaxed ${
+        <div className="absolute top-16 left-3 right-20 z-20 flex justify-start pointer-events-none">
+          <details key={absentNotice}
+            data-testid="anatomy-source-notice"
+            className={`pointer-events-auto max-w-md max-h-40 overflow-y-auto px-3 py-2 rounded-2xl border text-xs leading-relaxed ${
               isLight
                 ? 'bg-amber-50/95 border-amber-300 text-amber-900 shadow-sm'
                 : 'bg-amber-950/80 border-amber-700/70 text-amber-200 shadow-lg'
             }`}
           >
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-            <span>{absentNotice}</span>
-          </div>
+            <summary className="min-h-11 flex items-center gap-2 cursor-pointer font-semibold"><AlertCircle className="w-4 h-4 shrink-0" />Source & model limitations</summary>
+            <p className="pt-2">{absentNotice}</p>
+          </details>
         </div>
       )}
 

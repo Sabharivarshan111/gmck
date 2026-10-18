@@ -5,6 +5,8 @@
 // names Roboto, so loading it here is enough.
 import '@fontsource-variable/roboto';
 import React from 'react';
+import NativeRadiologyViewer from '@/components/NativeRadiologyViewer';
+import NativeClubbingTrainer from '@/components/NativeClubbingTrainer';
 import { createRoot } from 'react-dom/client';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
@@ -1362,6 +1364,8 @@ function Shell() {
       </ScrollView>
     );
   }
+  if (screen === 'native-radiology') return <NativeRadiologyViewer onBack={() => {}} />;
+  if (screen === 'native-clubbing') return <NativeClubbingTrainer onBack={() => {}} />;
   if (screen === 'native-update') {
     return <NativeUpdateDemo />;
   }

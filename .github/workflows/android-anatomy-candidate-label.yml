@@ -1,0 +1,19 @@
+name: Label unverified anatomy debug candidates
+on:
+  push:
+    branches: [codex/v27-anatomy-candidate-label-20261018]
+permissions:
+  contents: write
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            for(const [tag,source,number] of [['debug-563','8bd6da24d7a62b3635e334c0438bb51120168a52',563],['debug-564','9a89f4bb25f2a23a19fdc4d637c982def7f322bb',564]]){
+              const {data:r}=await github.rest.repos.getReleaseByTag({...context.repo,tag});
+              if(!r.prerelease||!r.body.includes('Built from `'+source+'`')||!r.assets.some(a=>a.name==='app-preview.apk'))throw Error('Unexpected release provenance: '+tag);
+              const status='\n\n### Verification status\n\nUnverified debug candidate. The anatomy audit has not completed; full Android/Vercel parity is not certified.\n\nAPK build source: ['+source+'](https://github.com/Sabharivarshan111/gmck/commit/'+source+'). Current exact-source audit: https://github.com/Sabharivarshan111/gmck/actions/runs/39115217792.\n\n'+(number===563?'This candidate is superseded by debug-564, which adds the drawing-buffer and isolated-source camera repairs.\n\n':'')+'For source review use the APK build commit above; the automatically created Git tag points to main and is not the APK provenance. No internal/release APK, AAB or Play upload is included in this candidate.\n';
+              await github.rest.repos.updateRelease({...context.repo,release_id:r.id,name:'Unverified anatomy debug candidate '+number,body:r.body.split('\n\n### Verification status')[0]+status,prerelease:true,make_latest:'false'});
+            }

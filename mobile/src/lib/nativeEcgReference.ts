@@ -1,6 +1,6 @@
 /** Metadata mirrored from the Vercel ECG teaching canvas; do not edit independently. */
 export type NativeEcgSegmentId = 'all' | 'p' | 'pr' | 'qrs' | 'st' | 't' | 'qt';
-export interface NativeEcgSegment {id: Exclude<NativeEcgSegmentId, 'all'>;name:string;shortName:string;phaseStart:number;phaseEnd:number;normalDurationMs:string;color:string;physioOrigin:string;vectorExplanation:string;leadsAnalysis:string;clinicalPearls:string}
+export interface NativeEcgSegment {id: Exclude<NativeEcgSegmentId, 'all'>;name:string;shortName:string;phaseStart:number;phaseEnd:number;normalDurationMs:string;color:string;bandColor:string;lightTextColor:string;darkTextColor:string;physioOrigin:string;vectorExplanation:string;leadsAnalysis:string;clinicalPearls:string}
 export const NATIVE_ECG_SEGMENTS: NativeEcgSegment[] = [
   {
     "id": "p",
@@ -13,7 +13,10 @@ export const NATIVE_ECG_SEGMENTS: NativeEcgSegment[] = [
     "physioOrigin": "Atrial Depolarization originating at Sinoatrial (SA) node in high Right Atrium, radiating across Bachmann bundle to Left Atrium.",
     "vectorExplanation": "Mean atrial vector directs down and left (+60°). Points directly toward Lead II (+60°) → upright rounded P wave; away from aVR (-150°) → inverted P wave.",
     "leadsAnalysis": "Positive in Leads I, II, aVF, V4–V6. Biphasic in V1 (initial positive RA component + terminal negative LA component).",
-    "clinicalPearls": "P pulmonale (peaked > 2.5 mm in II): Right Atrial Enlargement (COPD, Cor Pulmonale). P mitrale (notched/bifid > 120 ms): Left Atrial Enlargement (Mitral Stenosis). Absent in Atrial Fibrillation."
+    "clinicalPearls": "P pulmonale (peaked > 2.5 mm in II): Right Atrial Enlargement (COPD, Cor Pulmonale). P mitrale (notched/bifid > 120 ms): Left Atrial Enlargement (Mitral Stenosis). Absent in Atrial Fibrillation.",
+    "bandColor": "rgba(245, 158, 11, 0.22)",
+    "lightTextColor": "#b45309",
+    "darkTextColor": "#fcd34d"
   },
   {
     "id": "pr",
@@ -26,7 +29,10 @@ export const NATIVE_ECG_SEGMENTS: NativeEcgSegment[] = [
     "physioOrigin": "Physiological conduction delay within the Atrioventricular (AV) node, Bundle of His, and bundle branches, allowing ventricular filling before systole.",
     "vectorExplanation": "Small localized potentials cancel out; produces an isoelectric (flat) voltage baseline on all surface limb and precordial leads.",
     "leadsAnalysis": "Isoelectric baseline across all 12 leads under normal conditions.",
-    "clinicalPearls": "PR Prolongation (> 200 ms): 1st Degree AV Block. Short PR (< 120 ms): WPW Syndrome (Delta wave). PR Depression: Acute Pericarditis (hallmark sign in II, aVF with reciprocal PR elevation in aVR)."
+    "clinicalPearls": "PR Prolongation (> 200 ms): 1st Degree AV Block. Short PR (< 120 ms): WPW Syndrome (Delta wave). PR Depression: Acute Pericarditis (hallmark sign in II, aVF with reciprocal PR elevation in aVR).",
+    "bandColor": "rgba(16, 185, 129, 0.22)",
+    "lightTextColor": "#047857",
+    "darkTextColor": "#6ee7b7"
   },
   {
     "id": "qrs",
@@ -39,7 +45,10 @@ export const NATIVE_ECG_SEGMENTS: NativeEcgSegment[] = [
     "physioOrigin": "Ventricular Depolarization: Initial left-to-right septal depolarization (Q wave), dominant apex-to-base LV mass activation (R wave), late posterobasal depolarization (S wave).",
     "vectorExplanation": "Mean QRS axis normally -30° to +90°. Left ventricular mass (3x RV) dominates the vector, pointing inferiorly and to the left (+60°).",
     "leadsAnalysis": "Precordial R-Wave Progression: V1 (small r, deep S) transitioning to equiphasic RS at V3–V4, becoming dominant tall R wave in V5–V6. aVR is deeply negative (QS).",
-    "clinicalPearls": "Wide QRS (> 120 ms): LBBB (WiLLiaM), RBBB (MaRRoW), or Ventricular Pacing. Pathological Q Wave (> 40 ms or > 25% R): Transmural Myocardial Infarction. Low voltage (< 5mm in limb leads): Tamponade, Amyloid, Obesity."
+    "clinicalPearls": "Wide QRS (> 120 ms): LBBB (WiLLiaM), RBBB (MaRRoW), or Ventricular Pacing. Pathological Q Wave (> 40 ms or > 25% R): Transmural Myocardial Infarction. Low voltage (< 5mm in limb leads): Tamponade, Amyloid, Obesity.",
+    "bandColor": "rgba(6, 182, 212, 0.25)",
+    "lightTextColor": "#0e7490",
+    "darkTextColor": "#67e8f9"
   },
   {
     "id": "st",
@@ -52,7 +61,10 @@ export const NATIVE_ECG_SEGMENTS: NativeEcgSegment[] = [
     "physioOrigin": "Plateau phase (Phase 2) of ventricular cardiomyocyte action potential; all ventricular myocytes are uniformly depolarized with zero net trans-myocardial voltage gradient.",
     "vectorExplanation": "In normal myocardium, net dipole is zero → flat isoelectric segment continuous with TP baseline.",
     "leadsAnalysis": "Assess J-point elevation or depression in contiguous leads, using appropriate age and sex thresholds. Normal variants and nonischemic conditions can cause ST changes.",
-    "clinicalPearls": "ST Elevation (STEMI): Acute transmural myocardial injury current pointing toward infarcted zone (Inferior: II, III, aVF; Anterior: V1-V4; Lateral: I, aVL, V5-V6). Reciprocal ST Depression in opposite leads. Diffuse concave elevation: Acute Pericarditis."
+    "clinicalPearls": "ST Elevation (STEMI): Acute transmural myocardial injury current pointing toward infarcted zone (Inferior: II, III, aVF; Anterior: V1-V4; Lateral: I, aVL, V5-V6). Reciprocal ST Depression in opposite leads. Diffuse concave elevation: Acute Pericarditis.",
+    "bandColor": "rgba(239, 68, 68, 0.26)",
+    "lightTextColor": "#be123c",
+    "darkTextColor": "#fda4af"
   },
   {
     "id": "t",
@@ -65,7 +77,10 @@ export const NATIVE_ECG_SEGMENTS: NativeEcgSegment[] = [
     "physioOrigin": "Rapid Ventricular Repolarization (Phase 3 of action potential) via voltage-gated potassium channels (IKr, IKs). Epicardium repolarizes before endocardium!",
     "vectorExplanation": "Because repolarization propagates in reverse direction (epicardium to endocardium), the repolarization dipole has the SAME positive polarity as depolarization! Hence T wave is concordant with QRS.",
     "leadsAnalysis": "Upright in I, II, V3–V6. Inverted in aVR. Variable in III, aVL, V1.",
-    "clinicalPearls": "Tall Peaked T Waves: Hyperkalemia (early, symmetrical, tented). Inverted T Waves: Myocardial Ischemia, Wellens Syndrome (biphasic/deep V2-V3), or LV Strain. Flat T with U wave: Hypokalemia."
+    "clinicalPearls": "Tall Peaked T Waves: Hyperkalemia (early, symmetrical, tented). Inverted T Waves: Myocardial Ischemia, Wellens Syndrome (biphasic/deep V2-V3), or LV Strain. Flat T with U wave: Hypokalemia.",
+    "bandColor": "rgba(139, 92, 246, 0.24)",
+    "lightTextColor": "#7e22ce",
+    "darkTextColor": "#d8b4fe"
   },
   {
     "id": "qt",
@@ -78,7 +93,10 @@ export const NATIVE_ECG_SEGMENTS: NativeEcgSegment[] = [
     "physioOrigin": "Total Ventricular Electrical Systole: encompasses entire duration of ventricular depolarization (QRS) through complete repolarization (T wave).",
     "vectorExplanation": "Spans the complete ventricular activation cycle from septal onset to epicardial recovery.",
     "leadsAnalysis": "Measured in Lead II or V5 from onset of Q wave to point where terminal limb of T wave returns to baseline.",
-    "clinicalPearls": "Long QT Syndrome (QTc > 480 ms): Risk of R-on-T phenomenon degenerating into Torsades de Pointes and VFib. Causes: Drugs (Macrolides, Antipsychotics, Antiarrhythmics), Hypokalemia, Hypocalcemia, Hypomagnesemia."
+    "clinicalPearls": "Long QT Syndrome (QTc > 480 ms): Risk of R-on-T phenomenon degenerating into Torsades de Pointes and VFib. Causes: Drugs (Macrolides, Antipsychotics, Antiarrhythmics), Hypokalemia, Hypocalcemia, Hypomagnesemia.",
+    "bandColor": "rgba(236, 72, 153, 0.20)",
+    "lightTextColor": "#be185d",
+    "darkTextColor": "#f9a8d4"
   }
 ];
 export interface NativeEcgLead {id:string; name:string; r:number; s:number; q:number; t:number;inv:number}

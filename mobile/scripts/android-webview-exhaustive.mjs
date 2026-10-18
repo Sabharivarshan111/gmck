@@ -1,0 +1,107 @@
+/** Tests run inside the installed Android WebView via Playwright's Android API.
+ * Input is sent to the real page. No DOM/model/patient state is substituted. */
+import { _android } from 'playwright';
+import { execFileSync } from 'node:child_process';
+import { mkdir, writeFile, readFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import assert from 'node:assert/strict';
+import { ORGAN_CONNECTIONS } from '../../src/simulator/data/organConnections.ts';
+const out=resolve(process.env.ORBIT_SCREENSHOT_OUT||'artifacts/native-exhaustive');await mkdir(out,{recursive:true});
+const devices=await _android.devices({omitDriverInstall:true});assert.equal(devices.length,1,'Exactly one actual emulator must be connected');
+const device=devices[0], webview=await device.webView({pkg:'com.aistudio.mbbsqbank.aycxvd.debug'},{timeout:90000});
+const page=await webview.page();page.setDefaultTimeout(20000);
+const coverage=JSON.parse(await readFile(resolve(out,'anatomy-coverage.json'),'utf8'));
+const checks=[],failures=[],errors=[];page.on('pageerror',e=>errors.push(e.message));
+const suite=process.env.ORBIT_EXHAUSTIVE_SUITE||'anatomy-0';let reference=false;
+const button=name=>page.getByRole('button',{name,exact:true});
+const click=async name=>{await button(name).click();};
+const read=async()=>page.evaluate(()=>({url:window.location.href,viewport:[window.innerWidth,window.innerHeight],theme:document.querySelector('[data-simulator-root]')?.getAttribute('data-simulator-theme'),isolated:document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-isolated'),systems:document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-visible-atlas-systems'),eye:{...document.querySelector('[data-testid="eye-response-state"]')?.dataset},thorax:{...document.querySelector('.ausc-webgl')?.dataset},audioErrors:[...document.querySelectorAll('.ausc-error')].map(e=>e.textContent)}));
+const shot=async name=>{await page.screenshot({path:resolve(out,(reference?'vercel-':'android-')+name+'.png')});return read();};
+const route=async(query,ref=false)=>{
+ reference=ref;const path='/simulator?'+new URLSearchParams({...query,nativeTheme:'dark',native_audit:'1'});
+ execFileSync('adb',['shell','am','start','-n','com.aistudio.mbbsqbank.aycxvd.debug/com.aistudio.mbbsqbank.aycxvd.MainActivity','--es','orbit_anatomy_qa_route',"'"+path+"'",'--ez','orbit_anatomy_qa_reference',String(ref)],{stdio:'pipe'});
+ await page.waitForURL(url=>url.hostname===(ref?'orbitmbbs.vercel.app':'appassets.androidplatform.net')&&Object.entries(query).every(([k,v])=>url.searchParams.get(k)===String(v)),{timeout:90000});
+ await page.locator('[data-simulator-root]').waitFor({timeout:60000});
+ if(await button('Switch to dark theme').count())await button('Switch to dark theme').click();
+};
+const loaded=async()=>{await page.getByTestId('anatomy-renderer').waitFor();await page.waitForFunction(()=>{const e=document.querySelector('[data-testid="anatomy-renderer"]');if(e?.querySelector('[role="alert"]'))throw Error(e.querySelector('[role="alert"]').textContent);return !!e?.querySelector('canvas')&&!/LOADING BODYPARTS3D/.test(e.textContent||'');},undefined,{timeout:180000});};
+async function contextOn(){if(await button('Show organ context').count())await click('Show organ context');}
+async function drawerClose(){const d=page.getByTestId('organ-detail-drawer');if(await d.isVisible().catch(()=>false))await d.getByRole('button',{name:'Close',exact:true}).click();}
+async function arrowEvidence(connection){
+ await page.waitForFunction(id=>document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-isolated')===id,connection.id);
+ const leaders=page.getByTestId('connection-leaders');await leaders.waitFor({timeout:20000});
+ await page.getByTestId('anatomy-connection-callout').getByText(connection.label,{exact:true}).waitFor();
+ const tips=await leaders.locator('circle').evaluateAll(nodes=>nodes.map(n=>({x:Number(n.getAttribute('cx')),y:Number(n.getAttribute('cy'))})));
+ assert(tips.length>0&&tips.every(p=>Number.isFinite(p.x)&&Number.isFinite(p.y)),'Projected arrow tips must exist');
+ return {id:connection.id,label:connection.label,sourcePartIds:connection.partIds,tips,...await read()};
+}
+async function anatomy(group){
+ const owners=Object.keys(ORGAN_CONNECTIONS).filter((_,i)=>i%4===group);
+ const views=[{id:'whole-body',query:{mode:'anatomy'}},{id:'vessels',query:{mode:'anatomy',layer:'vascular'}},{id:'skeleton',query:{mode:'anatomy',layer:'skeletal'}},...coverage.organs.map(o=>({id:o.id,query:{mode:'anatomy',organ:o.id,isolate:o.preferredReference}}))].filter((_,i)=>i%4===group);
+ for(const view of views){
+  const frames=[];for(const ref of [false,true]){await route(view.query,ref);await loaded();await drawerClose();await page.waitForTimeout(700);frames.push(await shot('overview-'+view.id));}
+  checks.push({type:'overview',id:view.id,actualAndroidAndSameDeviceVercel:frames});await persist();
+ }
+ for(const owner of owners){
+  await route({mode:'anatomy',organ:owner,isolate:owner});await loaded();let d=page.getByTestId('organ-detail-drawer');await d.waitFor();
+  for(const section of ['Supply','Relations']){
+   await d.getByRole('tab',{name:section,exact:true}).click();await shot(owner+'-'+section.toLowerCase());
+   const list=ORGAN_CONNECTIONS[owner].filter(c=>section==='Supply'?c.kind!=='relation':c.kind==='relation');
+   for(const c of list){
+    await page.getByTestId('inspect-'+c.id).click();
+    if(!c.targetId){const region=page.getByRole('region',{name:c.label+' teaching diagram',exact:true});await region.waitFor();assert((await region.innerText()).includes('not a registered 3D mesh'));await region.getByRole('button',{name:'Close teaching diagram'}).click();checks.push({owner,id:c.id,type:'explicit-schematic',passed:true});}
+    else{
+     await d.waitFor({state:'hidden'});await loaded();await contextOn();const native=await arrowEvidence(c);await shot(c.id);
+     // Exercise real camera drag while the selected mesh and its leaders remain.
+     const model=page.getByTestId('anatomy-renderer');const box=await model.boundingBox();
+     await page.mouse.move(box.x+box.width*.45,box.y+box.height*.55);await page.mouse.down();await page.mouse.move(box.x+box.width*.60,box.y+box.height*.58,{steps:6});await page.mouse.up();
+     await arrowEvidence(c);
+     if(c.id==='connection_19'){
+      assert.equal(await button('Hide organ context').getAttribute('aria-pressed'),'true');await click('Hide organ context');await page.waitForFunction(()=>document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-visible-atlas-systems')==='arterial');await click('Show organ context');
+     }
+     await route({mode:'anatomy',organ:owner,isolate:c.id},true);await loaded();await drawerClose();await contextOn();const vercel=await arrowEvidence(c);await shot(c.id);
+     checks.push({owner,id:c.id,type:'registered-view',passed:true,native,vercel});
+     await route({mode:'anatomy',organ:owner,isolate:owner});await loaded();d=page.getByTestId('organ-detail-drawer');await d.getByRole('tab',{name:section,exact:true}).click();
+    }
+    await persist();
+   }
+  }
+ }
+}
+async function setPressed(name,value){const b=button(name);if((await b.getAttribute('aria-pressed')==='true')!==value)await b.click();}
+async function hash(locator){return (await locator.screenshot()).toString('base64');}
+async function advanced(kind,ref){
+ const tool={eye:'pupil',pocus:'ultrasound',general:'piccled',auscultation:'stethoscope','auscultation-case':'stethoscope'}[kind];
+ await route({tool,scenario:kind==='auscultation-case'?'stemi':'normal'},ref);
+ if(kind==='eye'){
+  await page.waitForFunction(()=>document.querySelector('[data-testid="eye-head-view"]')?.getAttribute('data-render-state')==='ready',undefined,{timeout:180000});
+  await click('Patient’s right');assert(Number((await read()).eye.rightX)<-.5);await shot('eye-gaze-right');await click('Centre');await click('🔦 Penlight');await click('Right eye penlight');
+  await page.waitForFunction(()=>Number(document.querySelector('[data-testid="eye-response-state"]')?.dataset.rightPupil)<3);
+  await shot('eye-penlight');const lit=Number((await read()).eye.rightPupil);await click('Turn penlight off');assert(Number((await read()).eye.rightPupil)>lit);await click('🪶 Cotton');await click('Touch right cornea');await click('Reset examination');await shot('eye-reset');
+ }else if(kind==='auscultation'||kind==='auscultation-case'){
+  await page.waitForFunction(()=>getComputedStyle(document.querySelector('.ausc-webgl')).visibility==='visible',undefined,{timeout:180000});
+  if(kind==='auscultation')await click('Normal S1 / S2');else await click('Place Stethoscope & Listen Live');await button('Stop Stethoscope').waitFor();
+  assert.deepEqual((await read()).audioErrors,[]);await shot(kind+'-heart');await click('Bell · low pitch');await setPressed('X-ray view',true);
+  const motion=page.getByRole('button',{name:/^(Show|Pause) organ movement$/});if(await motion.getAttribute('aria-pressed')!=='false')await motion.click();
+  const canvas=page.locator('.ausc-webgl canvas');await canvas.scrollIntoViewIfNeeded();await page.waitForTimeout(500);
+  const still=[await hash(canvas),await hash(canvas)];assert.equal(still[0],still[1],'Paused thorax must hold its image');
+  await motion.click();await canvas.scrollIntoViewIfNeeded();const frames=[];for(let i=0;i<12;i++){frames.push(await hash(canvas));await page.waitForTimeout(180);}
+  assert(new Set(frames).size>1,'Enabled organ motion must change actual Android canvas pixels');await shot(kind+'-motion');
+  await click('View back');await shot(kind+'-back');await click('Normal breath sounds');await shot(kind+'-lungs');await click('Stop Stethoscope');
+ }else if(kind==='pocus'){
+  const canvas=page.getByTestId('pocus-canvas');await canvas.waitFor();await shot('pocus-live');await click('Freeze');const frozen=await hash(canvas);await page.waitForTimeout(1000);assert.equal(await hash(canvas),frozen);await click('Unfreeze');const a=await hash(canvas);await page.waitForTimeout(400);assert.notEqual(await hash(canvas),a);await click('M-Mode');await shot('pocus-mmode');
+  for(const name of ['Ultrasound gain','Ultrasound depth']){const s=page.getByLabel(name,{exact:true});const before=await s.inputValue();await s.focus();await page.keyboard.press('ArrowRight');assert.notEqual(await s.inputValue(),before);}
+  await click('Reference scans');await shot('pocus-reference');await click('Case simulation');
+ }else if(kind==='general'){
+  await page.getByLabel('Press shin',{exact:true}).waitFor();await page.getByLabel('Edema findings',{exact:true}).selectOption('3');const stage=page.getByLabel('Press shin',{exact:true});await stage.scrollIntoViewIfNeeded();const b=await stage.boundingBox();await page.mouse.move(b.x+b.width/2,b.y+b.height/2);await page.mouse.down();await page.waitForTimeout(5500);await page.mouse.up();await shot('edema-after-hold');assert(Number((await page.getByTestId('edema-depth').innerText()).replace(' mm',''))>4,'Five-second compression must produce a pit in grade 3');const depth=Number((await page.getByTestId('edema-depth').innerText()).replace(' mm',''));await page.waitForTimeout(1000);assert(Number((await page.getByTestId('edema-depth').innerText()).replace(' mm',''))<depth,'Released pit must recover');
+  for(const id of ['ward-tab-icterus','ward-tab-pallor','ward-tab-ascites']){await page.getByTestId(id).click();await shot(id);}
+  const tilt=page.getByRole('button',{name:/Roll Patient to 45° Lateral Decubitus/});await tilt.click();await button('Patient in 45° Lateral Tilt').waitFor();await click('Patient in 45° Lateral Tilt');
+ }
+ checks.push({suite:kind,reference:ref,passed:true,state:await read()});await persist();
+}
+async function persist(){await writeFile(resolve(out,'actual-android-exhaustive.json'),JSON.stringify({status:failures.length?'FAILED':'IN_PROGRESS',suite,platform:'installed Android WebView; same-device live Vercel reference',checks,failures,errors},null,2));}
+try{
+ if(suite.startsWith('anatomy-'))await anatomy(Number(suite.split('-')[1]));else for(const ref of [false,true])await advanced(suite,ref);
+ assert.deepEqual(errors,[]);await persist();await writeFile(resolve(out,'PASSED.json'),JSON.stringify({suite,checks:checks.length,passed:true}));
+}catch(e){failures.push({message:e.message,stack:e.stack,state:await read().catch(()=>null)});await shot('FAILURE').catch(()=>{});await persist();throw e;}
+finally{await device.close();}

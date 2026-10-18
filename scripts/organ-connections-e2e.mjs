@@ -15,7 +15,7 @@ async function inspect(c){await page.getByTestId('inspect-'+c.id).click();await 
 try{
  if(group===null||group===0) for(const width of [360,390,430])for(const owner of ['heart','kidney']){
   await page.setViewportSize({width,height:844});const d=await drawer(owner);await d.getByRole('tab',{name:'Supply',exact:true}).click();const c=catalog[owner].find(c=>c.kind==='arterial'&&c.targetId);await inspect(c);await page.waitForTimeout(700);await page.screenshot({path:`${out}/${owner}-arterial-${width}.png`});
-  if(owner==='kidney'){const systems=await page.getByTestId('anatomy-renderer').getAttribute('data-visible-atlas-systems');assert(systems==='arterial','arterial focus must skip occluding organ draw calls');}
+  if(owner==='kidney'){const systems=await page.getByTestId('anatomy-renderer').getAttribute('data-visible-atlas-systems');assert(systems?.includes('arterial') && systems.includes('urinary'),'renal artery must show its kidney context by default');}
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'horizontal overflow');report.push({owner,width,view:c.label,pass:true});
  }
  // Every dossier must expose every audited control; missing meshes open a real

@@ -106,9 +106,11 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "kind": "relation",
       "direction": "superior",
       "label": "Aortic Arch",
-      "targetId": null,
-      "partIds": [],
-      "note": "This exact relation has no mesh in the registered atlas; the diagram is a teaching schematic."
+      "targetId": "atlas:FJ3411",
+      "partIds": [
+        "FJ3411"
+      ],
+      "note": "Structures share the BodyParts3D reference frame."
     },
     {
       "id": "connection_10",
@@ -654,10 +656,21 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "owner": "lad_artery",
       "kind": "relation",
       "direction": "lateral",
-      "label": "Diagonal Branches (D1, D2)",
-      "targetId": null,
-      "partIds": [],
-      "note": "This exact relation has no mesh in the registered atlas; the diagram is a teaching schematic."
+      "label": "Diagonal branch (D1/D2 not separately captured)",
+      "targetId": "atlas:FJ2633,FJ2634,FJ2635,FJ2636,FJ2637,FJ2638,FJ2639,FJ2640,FJ2642,FJ2648",
+      "partIds": [
+        "FJ2633",
+        "FJ2634",
+        "FJ2635",
+        "FJ2636",
+        "FJ2637",
+        "FJ2638",
+        "FJ2639",
+        "FJ2640",
+        "FJ2642",
+        "FJ2648"
+      ],
+      "note": "Structures share the BodyParts3D reference frame."
     },
     {
       "id": "connection_42",
@@ -665,11 +678,9 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "kind": "arterial",
       "direction": "arterial",
       "label": "Anterior interventricular artery",
-      "targetId": "atlas:FJ2732,FJ2733,FJ2734",
+      "targetId": "atlas:FJ2631",
       "partIds": [
-        "FJ2732",
-        "FJ2733",
-        "FJ2734"
+        "FJ2631"
       ],
       "note": "Arises as terminal bifurcation branch of the Left Main Coronary Artery (LMCA)."
     },
@@ -844,9 +855,12 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "kind": "relation",
       "direction": "superior",
       "label": "Subclavius Muscle",
-      "targetId": null,
-      "partIds": [],
-      "note": "This exact relation has no mesh in the registered atlas; the diagram is a teaching schematic."
+      "targetId": "atlas:FJ1460,FJ1460M",
+      "partIds": [
+        "FJ1460",
+        "FJ1460M"
+      ],
+      "note": "Structures share the BodyParts3D reference frame."
     },
     {
       "id": "connection_57",
@@ -900,8 +914,9 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "kind": "relation",
       "direction": "medial",
       "label": "Sternum (Manubrium & Body)",
-      "targetId": "atlas:FJ3178",
+      "targetId": "atlas:FJ3290,FJ3178",
       "partIds": [
+        "FJ3290",
         "FJ3178"
       ],
       "note": "Structures share the BodyParts3D reference frame."
@@ -922,9 +937,16 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "kind": "relation",
       "direction": "lateral",
       "label": "Deltoid Muscle",
-      "targetId": null,
-      "partIds": [],
-      "note": "This exact relation has no mesh in the registered atlas; the diagram is a teaching schematic."
+      "targetId": "atlas:FJ1467,FJ1467M,FJ1468,FJ1468M,FJ1513,FJ1513M",
+      "partIds": [
+        "FJ1467",
+        "FJ1467M",
+        "FJ1468",
+        "FJ1468M",
+        "FJ1513",
+        "FJ1513M"
+      ],
+      "note": "Structures share the BodyParts3D reference frame."
     },
     {
       "id": "connection_64",
@@ -1084,9 +1106,12 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "kind": "relation",
       "direction": "posterior",
       "label": "Long Head of Triceps",
-      "targetId": null,
-      "partIds": [],
-      "note": "This exact relation has no mesh in the registered atlas; the diagram is a teaching schematic."
+      "targetId": "atlas:FJ1479,FJ1479M",
+      "partIds": [
+        "FJ1479",
+        "FJ1479M"
+      ],
+      "note": "Structures share the BodyParts3D reference frame."
     },
     {
       "id": "connection_76",
@@ -1137,9 +1162,12 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "kind": "relation",
       "direction": "inferior",
       "label": "Lateral Head of Triceps",
-      "targetId": null,
-      "partIds": [],
-      "note": "This exact relation has no mesh in the registered atlas; the diagram is a teaching schematic."
+      "targetId": "atlas:FJ1477,FJ1477M",
+      "partIds": [
+        "FJ1477",
+        "FJ1477M"
+      ],
+      "note": "Structures share the BodyParts3D reference frame."
     },
     {
       "id": "connection_81",
@@ -1726,9 +1754,18 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "kind": "relation",
       "direction": "inferior",
       "label": "Liver (Right)",
-      "targetId": "atlas:FJ2816",
+      "targetId": "atlas:FJ1858,FJ2409,FJ2816,FJ2818,FJ2819,FJ2820,FJ2821,FJ2822,FJ2823,FJ2824",
       "partIds": [
-        "FJ2816"
+        "FJ1858",
+        "FJ2409",
+        "FJ2816",
+        "FJ2818",
+        "FJ2819",
+        "FJ2820",
+        "FJ2821",
+        "FJ2822",
+        "FJ2823",
+        "FJ2824"
       ],
       "note": "Structures share the BodyParts3D reference frame."
     },
@@ -2245,19 +2282,26 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "kind": "relation",
       "direction": "anterior",
       "label": "Sternocleidomastoid Muscle",
-      "targetId": null,
-      "partIds": [],
-      "note": "This exact relation has no mesh in the registered atlas; the diagram is a teaching schematic."
+      "targetId": "atlas:FJ1573,FJ1595",
+      "partIds": [
+        "FJ1573",
+        "FJ1595"
+      ],
+      "note": "Structures share the BodyParts3D reference frame."
     },
     {
       "id": "connection_159",
       "owner": "vagus_nerve",
       "kind": "relation",
       "direction": "posterior",
-      "label": "Longus Colli Muscle",
-      "targetId": null,
-      "partIds": [],
-      "note": "This exact relation has no mesh in the registered atlas; the diagram is a teaching schematic."
+      "label": "Longus colli (left reference; right mesh unavailable)",
+      "targetId": "atlas:FJ1557,FJ1600,FJ1601",
+      "partIds": [
+        "FJ1557",
+        "FJ1600",
+        "FJ1601"
+      ],
+      "note": "Structures share the BodyParts3D reference frame."
     },
     {
       "id": "connection_160",
@@ -2463,9 +2507,12 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "kind": "relation",
       "direction": "posterior",
       "label": "Scalenus Anterior Muscle",
-      "targetId": null,
-      "partIds": [],
-      "note": "This exact relation has no mesh in the registered atlas; the diagram is a teaching schematic."
+      "targetId": "atlas:FJ1570,FJ1592",
+      "partIds": [
+        "FJ1570",
+        "FJ1592"
+      ],
+      "note": "Structures share the BodyParts3D reference frame."
     },
     {
       "id": "connection_179",
@@ -2902,9 +2949,14 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "kind": "relation",
       "direction": "superior",
       "label": "Right & Left Lobar Portal Branches",
-      "targetId": null,
-      "partIds": [],
-      "note": "This exact relation has no mesh in the registered atlas; the diagram is a teaching schematic."
+      "targetId": "atlas:FJ1893,FJ2404,FJ1913,FJ2405",
+      "partIds": [
+        "FJ1893",
+        "FJ2404",
+        "FJ1913",
+        "FJ2405"
+      ],
+      "note": "Structures share the BodyParts3D reference frame."
     },
     {
       "id": "connection_217",
@@ -2949,9 +3001,11 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "kind": "relation",
       "direction": "medial",
       "label": "Celiac Axis",
-      "targetId": null,
-      "partIds": [],
-      "note": "This exact relation has no mesh in the registered atlas; the diagram is a teaching schematic."
+      "targetId": "atlas:FJ3421",
+      "partIds": [
+        "FJ3421"
+      ],
+      "note": "Structures share the BodyParts3D reference frame."
     },
     {
       "id": "connection_221",
@@ -3368,9 +3422,18 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "kind": "relation",
       "direction": "anterior",
       "label": "Liver (right kidney)",
-      "targetId": "atlas:FJ2816",
+      "targetId": "atlas:FJ1858,FJ2409,FJ2816,FJ2818,FJ2819,FJ2820,FJ2821,FJ2822,FJ2823,FJ2824",
       "partIds": [
-        "FJ2816"
+        "FJ1858",
+        "FJ2409",
+        "FJ2816",
+        "FJ2818",
+        "FJ2819",
+        "FJ2820",
+        "FJ2821",
+        "FJ2822",
+        "FJ2823",
+        "FJ2824"
       ],
       "note": "Structures share the BodyParts3D reference frame."
     },
@@ -3591,9 +3654,18 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "kind": "relation",
       "direction": "posterior",
       "label": "Liver",
-      "targetId": "atlas:FJ2816",
+      "targetId": "atlas:FJ1858,FJ2409,FJ2816,FJ2818,FJ2819,FJ2820,FJ2821,FJ2822,FJ2823,FJ2824",
       "partIds": [
-        "FJ2816"
+        "FJ1858",
+        "FJ2409",
+        "FJ2816",
+        "FJ2818",
+        "FJ2819",
+        "FJ2820",
+        "FJ2821",
+        "FJ2822",
+        "FJ2823",
+        "FJ2824"
       ],
       "note": "Structures share the BodyParts3D reference frame."
     },
@@ -3758,9 +3830,18 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "kind": "relation",
       "direction": "anterior",
       "label": "Liver",
-      "targetId": "atlas:FJ2816",
+      "targetId": "atlas:FJ1858,FJ2409,FJ2816,FJ2818,FJ2819,FJ2820,FJ2821,FJ2822,FJ2823,FJ2824",
       "partIds": [
-        "FJ2816"
+        "FJ1858",
+        "FJ2409",
+        "FJ2816",
+        "FJ2818",
+        "FJ2819",
+        "FJ2820",
+        "FJ2821",
+        "FJ2822",
+        "FJ2823",
+        "FJ2824"
       ],
       "note": "Structures share the BodyParts3D reference frame."
     },
@@ -5240,7 +5321,7 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "owner": "abdomen",
       "kind": "relation",
       "direction": "posterior",
-      "label": "Psoas Major & Quadratus Lumborum",
+      "label": "Psoas major (quadratus lumborum mesh unavailable)",
       "targetId": "atlas:FJ1431,FJ1431M",
       "partIds": [
         "FJ1431",
@@ -5254,9 +5335,11 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "kind": "relation",
       "direction": "superior",
       "label": "Thoracoabdominal Diaphragm",
-      "targetId": null,
-      "partIds": [],
-      "note": "This exact relation has no mesh in the registered atlas; the diagram is a teaching schematic."
+      "targetId": "atlas:FJ3131",
+      "partIds": [
+        "FJ3131"
+      ],
+      "note": "Structures share the BodyParts3D reference frame."
     },
     {
       "id": "connection_401",
@@ -5330,7 +5413,7 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "owner": "abdomen",
       "kind": "relation",
       "direction": "inferior",
-      "label": "Urinary Bladder & Sigmoid Colon",
+      "label": "Urinary bladder (sigmoid colon mesh unavailable)",
       "targetId": "atlas:FJ3149",
       "partIds": [
         "FJ3149"
@@ -5389,7 +5472,7 @@ export const ORGAN_CONNECTIONS:Record<string,OrganConnection[]> = {
       "owner": "abdomen",
       "kind": "relation",
       "direction": "lateral",
-      "label": "Internal & External Oblique Muscles",
+      "label": "External oblique (internal oblique mesh unavailable)",
       "targetId": "atlas:FJ1452,FJ1452M",
       "partIds": [
         "FJ1452",

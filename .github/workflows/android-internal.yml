@@ -35,6 +35,7 @@ name: Internal APK (real package, real key)
 
 on:
   workflow_dispatch:
+    # Candidate builds are held as artifacts until device checks are reviewed.
   push:
     branches:
       # main is included so that merging or pushing here builds and releases
@@ -44,9 +45,17 @@ on:
       # The paths filter below is what keeps this affordable — a commit that
       # only moves documentation still burns no runner.
       - main
+      - codex/v27-parity-repairs-20261016
+      - codex/v27-brain-registration-20261016
+      - codex/v27-context-camera-20261016
+      - codex/v27-fresh-rebuild-20261016
+      - codex/v27-mobile-controls-20261016
       - claude/native-app-sync
       # Shared Android/iPhone web UI changes also get an ad-free APK.
       - codex/native-web-parity
+      - codex/native-v27-candidate-20261015
+      - codex/native-v27-verification-20261016
+      - codex/coronary-calendar-fix-20261016
     # Only when something that reaches the APK changes.
     #
     # This used to fire on every push. Three Android builds ran per push, per
@@ -80,11 +89,22 @@ concurrency:
 
 permissions:
   contents: write
+  actions: read
 
 jobs:
   internal-apk:
+    if: github.event_name != 'push' || github.ref_name != 'main'
     runs-on: ubuntu-latest
     steps:
+      - name: Require successful 626-target Android audit for this exact main source
+        if: github.ref_name == 'main'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {data}=await github.rest.actions.listWorkflowRuns({...context.repo,workflow_id:'android-v27-full-anatomy.yml',head_sha:context.sha,status:'success',per_page:20});
+            const verified=data.workflow_runs.find(r=>r.head_sha===context.sha&&r.head_branch==='main'&&r.conclusion==='success');
+            if(!verified)throw Error('No successful full626 Android audit for this exact source; publication is blocked');
+            core.info('Verified exact-source Android audit: '+verified.html_url);
       - uses: actions/checkout@v4
 
       - uses: actions/setup-java@v4
@@ -101,6 +121,14 @@ jobs:
       - name: Install dependencies
         working-directory: mobile
         run: npm ci --legacy-peer-deps
+
+      - name: Bundle the local canonical anatomy and diagnostic renderer
+        working-directory: .
+        run: |
+          npm ci --legacy-peer-deps --ignore-scripts
+          node scripts/zanatomy-reference-registration-check.mjs
+          node mobile/scripts/build-local-simulator.mjs
+          node mobile/scripts/clinical-snapshot-check.mjs
 
       - name: Typecheck
         working-directory: mobile
@@ -212,18 +240,23 @@ jobs:
           "$SDK"/build-tools/37.0.0/apksigner verify --print-certs "$APK" \
             | grep -iE "SHA-1|SHA-256" || echo "(apksigner could not read the APK)"
 
+      - name: Retain the signed internal candidate APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: orbit-internal-apk
+          path: mobile/android/app/build/outputs/apk/internal/*.apk
+          if-no-files-found: error
+
       - name: Publish the APK where a phone can download it
+        if: github.ref_name != 'codex/v27-parity-repairs-20261016' && github.ref_name != 'codex/v27-brain-registration-20261016' && github.ref_name != 'codex/v27-context-camera-20261016' && github.ref_name != 'codex/v27-fresh-rebuild-20261016' && github.ref_name != 'codex/v27-mobile-controls-20261016'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: internal-${{ github.run_number }}
-          name: Internal APK (build ${{ github.run_number }})
+          name: Internal APK — v27 parity candidate (build ${{ github.run_number }})
           body: |
-            Real package name, real upload key — **Google Sign-In works in
-            this build**, once its SHA-1 is registered in Google Cloud.
+            Version 27 parity candidate. Final Android device review is still in progress; complete Vault parity is not certified.
 
-            **Uninstall the Play Store copy of Orbit MBBS before installing
-            this.** Same package name with a different signature, so Android
-            will refuse the install otherwise.
+            Uses the production package and upload key. Sign-in requires the correct OAuth certificate registration and is not certified by this build. A Play-installed copy may reject this upload-key signature; use the separate-package debug APK to test alongside an existing installation.
 
             **No ads at all** — not live ones and not Google's test ones
             either. This build sets `ADS_ENABLED = false`, so the AdMob SDK

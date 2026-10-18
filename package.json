@@ -20,6 +20,7 @@
     "check:dossiers": "node scripts/dossier-format-check.mjs",
     "sheets:simulator": "node scripts/render-organ-sheets.mjs",
     "check:simulator-assets": "node scripts/simulator-model-asset-check.mjs",
+    "check:simulator-reference-registration": "node scripts/zanatomy-reference-registration-check.mjs",
     "build:vercel": "node scripts/build-vercel-native.mjs"
   },
   "dependencies": {

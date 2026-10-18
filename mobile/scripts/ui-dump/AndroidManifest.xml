@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.orbit.qa">
+  <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="35" />
+  <application android:label="ORBIT device audit" android:debuggable="true" />
+  <instrumentation android:name="com.orbit.qa.UiDump" android:targetPackage="com.orbit.qa" />
+</manifest>

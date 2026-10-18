@@ -1,0 +1,44 @@
+name: Mobile anatomy dock geometry
+on:
+  push:
+    branches: [codex/v27-mobile-controls-20261016]
+permissions:
+  contents: read
+jobs:
+  dock:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --legacy-peer-deps --ignore-scripts --no-audit --no-fund
+      - run: npm ci --prefix mobile --legacy-peer-deps --ignore-scripts --no-audit --no-fund
+      - run: npx tsc --noEmit && node scripts/simulator-mobile-ui-check.mjs
+      - run: npm install --no-save --package-lock=false --legacy-peer-deps playwright@1.55.0 && npx playwright install --with-deps chromium
+      - name: Build native renderer and exercise phone controls
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: |
+          node mobile/scripts/build-local-simulator.mjs
+          cat > /tmp/serve-renderer.py <<'PY'
+          from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+          from pathlib import Path
+          root=Path.cwd()
+          class Handler(SimpleHTTPRequestHandler):
+            def translate_path(self,path):
+              name=path.split('?')[0].lstrip('/')
+              if not name or name=='simulator': name='index.html'
+              built=root/'mobile/android/app/build/generated/simulatorAssets/simulator'/name
+              return str(built if built.is_file() else root/'public'/name)
+          ThreadingHTTPServer(('127.0.0.1',4180),Handler).serve_forever()
+          PY
+          python /tmp/serve-renderer.py > /tmp/dock-server.log 2>&1 &
+          node scripts/simulator-mobile-dock-e2e.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mobile-dock-geometry
+          path: artifacts/mobile-dock

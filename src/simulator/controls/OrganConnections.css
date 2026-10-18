@@ -13,3 +13,6 @@
 .oc-diagram{border:1px solid var(--oc-border);border-radius:16px;background:var(--oc-bg);padding:14px;margin-top:22px;scroll-margin:12px}.oc-diagram header{display:flex;align-items:center;gap:8px;font-size:14px}.oc-diagram header strong{flex:1}.oc-diagram button{min-width:44px;min-height:44px;display:grid;place-items:center;border-radius:10px;background:transparent;color:var(--oc-ink)}.oc-diagram>small{font-size:11px;color:var(--oc-muted)}
 .oc-diagram svg{width:100%;height:auto;margin-top:10px}.oc-diagram svg rect{fill:var(--oc-bg);stroke:var(--oc-border)}.oc-diagram svg text{fill:var(--oc-ink);font-size:10px;font-family:inherit}.oc-diagram p{margin-bottom:0}
 .oc-legacy-notes{margin-top:24px}.oc-legacy-notes>summary{font-weight:600;color:inherit;min-height:48px}
+.oc-diagram-flow{display:grid;grid-template-columns:minmax(0,1fr) 30px minmax(0,1fr);align-items:center;gap:6px;margin-top:20px}
+.oc-diagram-node{padding:12px 8px;border:1px solid var(--oc-border);border-radius:12px;text-align:center;font-size:12px;line-height:1.5;overflow-wrap:anywhere;white-space:normal}
+.oc-diagram-arrow{text-align:center;font-size:26px}.oc-diagram-direction{text-align:center;color:var(--oc-muted);font-size:11px;margin-top:12px}

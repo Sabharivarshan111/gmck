@@ -23,13 +23,13 @@ export function OrganConnections({organKey,organName,mode,onInspect,light}:Props
     {diagram&&<div ref={diagramRef} className="oc-diagram" role="region" aria-label={`${diagram.label} teaching diagram`}>
       <header><strong>{diagram.label}</strong><button type="button" aria-label="Close teaching diagram" onClick={()=>setDiagram(null)}><X size={18}/></button></header>
       <small>Teaching schematic · not a registered 3D mesh</small>
-      <svg viewBox="0 0 340 145" role="img" aria-label={`${diagram.kind==='arterial'?diagram.label+' supplies '+organName:diagram.kind==='venous'?organName+' drains towards '+diagram.label:diagram.direction+' relation: '+diagram.label}`}>
-        <defs><marker id={`oc-tip-${diagram.id}`} markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke={colour} strokeWidth="1.5"/></marker></defs>
-        <rect x="10" y="48" width="128" height="48" rx="12"/><rect x="202" y="48" width="128" height="48" rx="12"/>
-        <text x="74" y="77" textAnchor="middle">{organName.slice(0,19)}</text><text x="266" y="77" textAnchor="middle">{diagram.label.slice(0,19)}</text>
-        <path d={diagram.kind==='arterial'?'M202 72 H140':'M138 72 H200'} fill="none" stroke={colour} strokeWidth="1.6" markerEnd={`url(#oc-tip-${diagram.id})`}/>
-        <text x="170" y="124" textAnchor="middle">{diagram.kind==='relation'?`${diagram.direction} relation`:diagram.kind==='arterial'?'Arterial supply':'Venous drainage'}</text>
-      </svg><p>{diagram.note}</p>
+      <div className="oc-diagram-flow" role="img" aria-label={`${diagram.kind==='arterial'?diagram.label+' supplies '+organName:diagram.kind==='venous'?organName+' drains towards '+diagram.label:diagram.direction+' relation: '+diagram.label}`}>
+        <span className="oc-diagram-node">{organName}</span>
+        <span className="oc-diagram-arrow" aria-hidden="true" style={{color:colour}}>{diagram.kind==='arterial'?'←':'→'}</span>
+        <span className="oc-diagram-node">{diagram.label}</span>
+      </div>
+      <div className="oc-diagram-direction">{diagram.kind==='relation'?`${diagram.direction} relation`:diagram.kind==='arterial'?'Arterial supply':'Venous drainage'}</div>
+      <p>{diagram.note}</p>
     </div>}
   </section>;
 }

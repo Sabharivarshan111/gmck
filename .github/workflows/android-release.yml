@@ -16,6 +16,7 @@ name: Android release build
 # a push is the only way to start it.
 on:
   workflow_dispatch:
+    # Candidate builds are held as artifacts until device checks are reviewed.
     inputs:
       build_apk:
         description: 'Also build an APK for direct install'
@@ -26,6 +27,11 @@ on:
       # main included so a merge here cuts a release with no API access
       # needed — see the note in android-debug.yml.
       - main
+      - codex/v27-parity-repairs-20261016
+      - codex/v27-brain-registration-20261016
+      - codex/v27-context-camera-20261016
+      - codex/v27-fresh-rebuild-20261016
+      - codex/v27-mobile-controls-20261016
       - claude/native-app-sync
       - codex/native-web-parity
     # Documentation-only handoff commits must not cancel an AAB/APK that is
@@ -58,15 +64,26 @@ concurrency:
 permissions:
   # The release step needs write; the default token is read-only.
   contents: write
+  actions: read
 
 jobs:
   build:
+    if: github.event_name != 'push' || github.ref_name != 'main'
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: mobile
 
     steps:
+      - name: Require successful 626-target Android audit for this exact main source
+        if: github.ref_name == 'main'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {data}=await github.rest.actions.listWorkflowRuns({...context.repo,workflow_id:'android-v27-full-anatomy.yml',head_sha:context.sha,status:'success',per_page:20});
+            const verified=data.workflow_runs.find(r=>r.head_sha===context.sha&&r.head_branch==='main'&&r.conclusion==='success');
+            if(!verified)throw Error('No successful full626 Android audit for this exact source; publication is blocked');
+            core.info('Verified exact-source Android audit: '+verified.html_url);
       - uses: actions/checkout@v4
 
       - uses: actions/setup-java@v4
@@ -82,6 +99,14 @@ jobs:
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
+
+      - name: Bundle the local canonical anatomy and diagnostic renderer
+        working-directory: .
+        run: |
+          npm ci --legacy-peer-deps --ignore-scripts
+          node scripts/zanatomy-reference-registration-check.mjs
+          node mobile/scripts/build-local-simulator.mjs
+          node mobile/scripts/clinical-snapshot-check.mjs
 
       - name: Typecheck
         run: npm run typecheck
@@ -234,6 +259,7 @@ jobs:
       # Artifacts need a desktop browser and expire; a release asset can be
       # downloaded from the phone that is going to install it.
       - name: Publish the AAB and APK where a phone can reach them
+        if: github.ref_name != 'codex/v27-parity-repairs-20261016' && github.ref_name != 'codex/v27-brain-registration-20261016' && github.ref_name != 'codex/v27-context-camera-20261016' && github.ref_name != 'codex/v27-fresh-rebuild-20261016' && github.ref_name != 'codex/v27-mobile-controls-20261016'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: release-${{ github.run_number }}
@@ -242,7 +268,7 @@ jobs:
           body: |
             Signed release build of the Orbit MBBS native app.
 
-            IMPORTANT: Native Vault 1:1 Vercel parity is WORK IN PROGRESS. Native clinical studio, patient cases, ICU telemetry and 12-lead ECG are included, but 3D anatomy, POCUS, radiology, auscultation and other deep tools still rely on the website. This prerelease is NOT a fully offline, native, or pixel-identical Vault.
+            Main releases require a successful 626-target automated Android anatomy audit on this exact source. The audit checks UI selection, source rendering, arrows and explicit schematic disclosures; it is not independent clinical certification or a test of every physical device.
 
             - `app-release.aab` — upload this to Google Play.
             - `app-release.apk` — install this directly to test the real thing.

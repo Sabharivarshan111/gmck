@@ -391,6 +391,7 @@ export function AttendanceTab() {
   const { items, hydrated } = getAttendance();
 
   const [formError,setFormError]=useState<string|null>(null);
+  const [saving, setSaving] = useState(false);
   const [kind, setKind] = useState<AttendanceKind>('theory');
   const [adding, setAdding] = useState(false);
   const [name, setName] = useState('');
@@ -440,8 +441,10 @@ export function AttendanceTab() {
   }, [startDate]);
 
   const submit = useCallback(async () => {
+    if (saving) return;
     const trimmed = name.trim();
     if (!trimmed) {
+      setFormError(kind === 'posting' ? 'Enter a posting name or choose a quick suggestion above.' : 'Enter a subject name or choose a quick suggestion above.');
       return;
     }
     setFormError(null);
@@ -460,29 +463,37 @@ export function AttendanceTab() {
     const calculatedEnd =
       hasTotal && startDate ? postingEndDate(startDate, total) ?? undefined : undefined;
 
-    await addAttendance({
-      name: trimmed,
-      kind,
-      target,
-      totalClasses: totalClassesNum,
-      totalDays: hasTotal ? total : undefined,
-      startDate: kind === 'posting' ? startDate : undefined,
-      endDate: calculatedEnd,
-      skipSundays: kind === 'posting' && skipSundays ? true : undefined,
-      skipSaturdays: kind === 'posting' && skipSaturdays ? true : undefined,
-      prepaidHolidays: kind === 'posting' && prepaidHolidays ? true : undefined,
-      gazettedWorkingDays:
-        kind === 'posting' && gazettedWorkingDays.length > 0 ? gazettedWorkingDays : undefined,
-      holidays: kind === 'posting' && customHolidays.length > 0 ? customHolidays : undefined,
-    });
-    setName('');
-    setTotalClassesStr('');
-    setDays('28');
-    setEndDate(postingEndDate(startDate, 28) ?? endDate);
-    setCustomHolidays([]);
-    setGazettedWorkingDays([]);
-    setAdding(false);
+    setSaving(true);
+    try {
+      await addAttendance({
+        name: trimmed,
+        kind,
+        target,
+        totalClasses: totalClassesNum,
+        totalDays: hasTotal ? total : undefined,
+        startDate: kind === 'posting' ? startDate : undefined,
+        endDate: calculatedEnd,
+        skipSundays: kind === 'posting' && skipSundays ? true : undefined,
+        skipSaturdays: kind === 'posting' && skipSaturdays ? true : undefined,
+        prepaidHolidays: kind === 'posting' && prepaidHolidays ? true : undefined,
+        gazettedWorkingDays:
+          kind === 'posting' && gazettedWorkingDays.length > 0 ? gazettedWorkingDays : undefined,
+        holidays: kind === 'posting' && customHolidays.length > 0 ? customHolidays : undefined,
+      });
+      setName('');
+      setTotalClassesStr('');
+      setDays('28');
+      setEndDate(postingEndDate(startDate, 28) ?? endDate);
+      setCustomHolidays([]);
+      setGazettedWorkingDays([]);
+      setAdding(false);
+    } catch {
+      setFormError('Could not save. Please try Add again. Your entries have been kept.');
+    } finally {
+      setSaving(false);
+    }
   }, [
+    saving,
     name,
     totalClassesStr,
     days,
@@ -573,7 +584,6 @@ export function AttendanceTab() {
           />
         ))}
 
-        {formError&&<Text accessibilityRole="alert" style={{color:colors.danger}}>{formError}</Text>}
         {adding ? (
           <View style={[styles.form, { backgroundColor: colors.card, borderColor: colors.border }]}>
             {/* Quick subject / posting suggestion pills */}
@@ -814,6 +824,7 @@ export function AttendanceTab() {
               })}
             </View>
 
+            {formError ? <Text accessibilityRole="alert" accessibilityLiveRegion="polite" style={{ color: colors.danger }}>{formError}</Text> : null}
             <View style={styles.formRow}>
               <Touchable
                 onPress={() => {
@@ -830,18 +841,19 @@ export function AttendanceTab() {
               </Touchable>
               <Touchable
                 onPress={submit}
+                disabled={saving}
                 label={kind === 'theory' ? 'Add this subject' : 'Add this posting'}
                 style={[
                   styles.formButton,
                   { backgroundColor: colors.primary, borderColor: colors.primary },
                 ]}>
-                <Text style={[styles.formButtonText, { color: colors.primaryText }]}>Add</Text>
+                <Text style={[styles.formButtonText, { color: colors.primaryText }]}>{saving ? 'Saving…' : 'Add'}</Text>
               </Touchable>
             </View>
           </View>
         ) : (
           <Touchable
-            onPress={() => setAdding(true)}
+            onPress={() => { setFormError(null); setAdding(true); }}
             label={kind === 'theory' ? 'Add a subject' : 'Add a posting'}
             style={[styles.add, { borderColor: colors.border }]}>
             <Plus size={16} color={colors.accent} />

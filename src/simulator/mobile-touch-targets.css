@@ -21,8 +21,8 @@ button[title="Center and zoom 3D Viewport"] {
 
 @media (max-width: 1023px) {
   [data-simulator-root] input[type="range"] { min-height: 44px; }
-  [data-simulator-root] main { padding-bottom: calc(140px + env(safe-area-inset-bottom)); }
-  .mobile-anatomy-panel { position: fixed; left: 12px; right: 12px; bottom: calc(130px + env(safe-area-inset-bottom)); z-index: 45; max-height: 64dvh; overflow-y: auto; overscroll-behavior: contain; padding: 12px; border: 1px solid #cbd5e1; border-radius: 20px; background: #fff; color: #0f172a; box-shadow: 0 -8px 24px #0f172a15; }
+  [data-simulator-root] main { padding-bottom: calc(var(--simulator-tabs-height, 70px) + var(--anatomy-dock-height, 136px) + 24px); }
+  .mobile-anatomy-panel { position: fixed; left: 12px; right: 12px; bottom: calc(var(--simulator-tabs-height, 70px) + var(--anatomy-dock-height, 136px) + 16px); z-index: 45; max-height: max(80px, calc(100dvh - var(--simulator-tabs-height, 70px) - var(--anatomy-dock-height, 136px) - 32px)); overflow-y: auto; overscroll-behavior: contain; padding: 12px; border: 1px solid #cbd5e1; border-radius: 20px; background: #fff; color: #0f172a; box-shadow: 0 -8px 24px #0f172a15; }
   [data-simulator-theme="dark"] .mobile-anatomy-panel { background: #0f172a; color: #e2e8f0; border-color: #334155; }
   [data-testid="anatomy-thumb-toolbar"] button { font-size: 12px; font-weight: 600; border-radius: 12px; }
   [data-testid="anatomy-thumb-toolbar"] button[aria-expanded="true"] { background: #0369a1; color: white; }
@@ -61,7 +61,7 @@ button[title="Center and zoom 3D Viewport"] {
 
 /* A compact selection strip keeps the isolated structure in view. */
 @media (max-width: 1023px) {
-  .mobile-selection-card { position: absolute; bottom: 104px; left: 12px; right: 12px; z-index: 30; display: flex; gap: 4px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 16px; background: #fff; color: #0f172a; }
+  .mobile-selection-card { position: absolute; bottom: 12px; left: 12px; right: 12px; z-index: 30; display: flex; gap: 4px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 16px; background: #fff; color: #0f172a; }
   .mobile-selection-details { position: relative; flex: 1; min-width: 0; text-align: left; padding: 6px 38px 6px 10px; border-radius: 12px; }
   .mobile-selection-name { display: block; font-size: 13px; line-height: 1.35; font-weight: 650; overflow-wrap: anywhere; }
   .mobile-selection-hint { display: block; font-size: 11px; line-height: 1.4; color: #64748b; }
@@ -71,4 +71,16 @@ button[title="Center and zoom 3D Viewport"] {
   [data-simulator-theme="dark"] .mobile-selection-hint { color: #94a3b8; }
   [data-simulator-theme="dark"] .mobile-selection-details svg { color: #7dd3fc; }
   [data-simulator-theme="dark"] .mobile-selection-restore { background: #1e293b; }
+}
+
+/* Spread and navigation share normal flow: neither can cover the other.
+   Measured heights also keep panels above this dock after text/viewport changes. */
+@media (max-width: 1023px) {
+  .mobile-anatomy-dock { position: fixed; left: 12px; right: 12px; bottom: calc(var(--simulator-tabs-height, 70px) + 8px); z-index: 40; display: flex; flex-direction: column; gap: 8px; }
+  [data-testid="anatomy-thumb-toolbar"] button { min-width: 0; overflow-wrap: anywhere; }
+}
+
+@media (max-width: 1023px) and (max-height: 500px) {
+  .mobile-anatomy-dock [data-testid="anatomy-spread-control"] { padding-top: 4px; padding-bottom: 4px; }
+  .mobile-anatomy-dock [data-testid="anatomy-spread-control"] .hidden { display: none; }
 }

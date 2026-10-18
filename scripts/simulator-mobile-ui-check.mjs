@@ -84,16 +84,8 @@ requireText(
   "mobileTab === '3d' && explodeAmount <= 0.02 ? 'flex' : 'hidden'",
   'Deep Inspector is no longer scoped to assembled mobile 3D mode.'
 );
-requireText(
-  simulator,
-  "'max(360px, calc(100dvh - 208px))'",
-  '3D anatomy stage lost its assembled-mode adaptive mobile height.'
-);
-requireText(
-  simulator,
-  "'max(360px, calc(100dvh - 180px))'",
-  'Spread anatomy no longer reclaims vertical space for the mobile 3D stage.'
-);
+requireText(simulator, 'var(--anatomy-dock-height)', 'Mobile stage must reserve the measured controls height.');
+requireText(simulator, 'data-testid="mobile-anatomy-dock"', 'Spread and toolbar must share a non-overlapping dock.');
 requireText(
   simulator,
   'data-testid="mobile-dissection-toolbar-shell"',

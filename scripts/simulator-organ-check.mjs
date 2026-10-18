@@ -549,6 +549,11 @@ if (!simulatorSrc.includes('dvh')) {
   fail('Simulator.tsx sizes the mobile stage without dvh — mobile `vh` counts the URL bar that is not there, so the canvas is taller than its space');
 }
 
+// Abdominal context cannot pull in oral/thoracic digestive meshes.
+for (const name of ['gingiva', 'tongue', 'sublingual gland', 'submandibular gland', 'esophagus']) {
+  mustNotContain('abdomen', name, 'mouth/throat structures stretch abdominal framing to the head');
+}
+
 // ---------------------------------------------------------------------------
 // Report
 // ---------------------------------------------------------------------------
