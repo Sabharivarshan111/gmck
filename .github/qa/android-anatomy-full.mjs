@@ -39,7 +39,9 @@ for(const group of taskGroups.sort((a,b)=>b.weight-a.weight||a.key.localeCompare
  const part=weights.indexOf(Math.min(...weights));for(const id of group.ids){assert(!assignments.has(id));assignments.set(id,part);}weights[part]+=group.weight;
 }
 assert.deepEqual([...assignments.keys()].sort(),[...contextTasks].sort());
-const contextAssigned=id=>assignments.get(id)===contextPart;
+const auditSubset=process.env.ORBIT_AUDIT_TASKS?new Set(process.env.ORBIT_AUDIT_TASKS.split(',')):null;
+if(auditSubset)for(const id of auditSubset)assert(contextTasks.includes(id),'Unknown requested smoke target: '+id);
+const contextAssigned=id=>assignments.get(id)===contextPart&&(!auditSubset||auditSubset.has(id));
 assert.equal(contextTasks.length,626);assert.equal(new Set(contextTasks).size,contextTasks.length);
 if(process.env.ORBIT_AUDIT_PLAN_ONLY==='1'){console.log(JSON.stringify({connections:430,registered:237,schematics:193,references:155,overviews:41,total:contextTasks.length,partitions:contextParts,assigned:contextTasks.filter(contextAssigned)}));process.exit(0);}
 const devices=await _android.devices({omitDriverInstall:true});assert.equal(devices.length,1,'Exactly one actual emulator must be connected');
@@ -221,7 +223,7 @@ async function brainRegistration(ref){
  }
 }
 
-async function persist(){await writeFile(resolve(out,'actual-android-exhaustive.json'),JSON.stringify({status:failures.length?'FAILED':completed?'PASSED':'IN_PROGRESS',suite,partition:{index:contextPart,count:contextParts},platform:'installed Android WebView; corrected canonical source in mobile Chromium at matching viewport',referenceOrigin,candidateSource:"9a89f4bb25f2a23a19fdc4d637c982def7f322bb",blockedExternalRequests,checks,failures,errors},null,2));}
+async function persist(){await writeFile(resolve(out,'actual-android-exhaustive.json'),JSON.stringify({status:failures.length?'FAILED':completed?'PASSED':'IN_PROGRESS',suite,partition:{index:contextPart,count:contextParts},platform:'installed Android WebView; corrected canonical source in mobile Chromium at matching viewport',referenceOrigin,scope:auditSubset?'repair-smoke':'full626',requestedTasks:auditSubset?[...auditSubset]:null,candidateSource:"9a89f4bb25f2a23a19fdc4d637c982def7f322bb",blockedExternalRequests,checks,failures,errors},null,2));}
 try{
  assert.equal(suite,'context-framing');await contextFraming();
  assert.deepEqual(errors,[]);completed=true;await persist();await writeFile(resolve(out,'PASSED.json'),JSON.stringify({suite,partition:{index:contextPart,count:contextParts},checks:checks.length,passed:true}));
