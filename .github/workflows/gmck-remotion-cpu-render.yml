@@ -1,0 +1,37 @@
+name: GMCK Trauma Remotion CPU render
+on:
+  push:
+    branches:
+      - world-trauma-day-remotion
+    paths:
+      - 'video/world-trauma-day/**'
+      - '.github/workflows/gmck-remotion-cpu-render.yml'
+  workflow_dispatch:
+jobs:
+  render:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: video/world-trauma-day
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Remotion
+        run: npm install --no-audit --no-fund
+      - name: Verify deterministic timing constraints
+        run: |
+          node -e "const fs=require('fs');const s=fs.readFileSync('src/GMCKCrash.tsx','utf8');for(const marker of ['impact=5.37','rear=6.46','side=6.65','green'])if(!s.includes(marker))throw Error('Missing required marker: '+marker);console.log('Timeline markers present')"
+      - name: Render cloud CPU preview
+        run: npx remotion render src/index.tsx AIEnhanced out/GMCK_World_Trauma_CPU_Cloud.mp4 --codec h264 --crf 23 --concurrency 2
+      - name: Confirm valid movie
+        run: |
+          test -s out/GMCK_World_Trauma_CPU_Cloud.mp4
+          ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1 out/GMCK_World_Trauma_CPU_Cloud.mp4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GMCK_World_Trauma_CPU_Cloud_MP4
+          path: video/world-trauma-day/out/GMCK_World_Trauma_CPU_Cloud.mp4
+          if-no-files-found: error
