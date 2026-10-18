@@ -25,12 +25,13 @@ const overviewTasks=[
 ];
 overviewTasks.push({id:'abdomen',query:{mode:'anatomy',organ:'abdomen',isolate:'abdomen'}});
 assert.equal(contextConnections.length,18);assert.equal(sourceTargets.length,3);
-const contextTasks=[...contextConnections.map(c=>c.id),...sourceTargets.map(t=>t.id),...overviewTasks.map(t=>'overview:'+t.id)];
+const cameraTasks=[{id:'camera:pectoralis',owner:'pectoralis_major',sequence:['connection_52','connection_68']},{id:'camera:deltoid',owner:'deltoid',sequence:['connection_70','connection_86']}];
+const contextTasks=[...contextConnections.map(c=>c.id),...sourceTargets.map(t=>t.id),...overviewTasks.map(t=>'overview:'+t.id),...cameraTasks.map(t=>t.id)];
 const contextPart=Number(process.env.ORBIT_CONTEXT_PARTITION||0),contextParts=Number(process.env.ORBIT_CONTEXT_PARTS||1);
 assert(Number.isInteger(contextPart)&&contextPart>=0&&contextPart<contextParts);
 const contextAssigned=id=>contextTasks.indexOf(id)%contextParts===contextPart;
-assert.equal(contextTasks.length,27);assert.equal(new Set(contextTasks).size,contextTasks.length);
-if(process.env.ORBIT_AUDIT_PLAN_ONLY==='1'){console.log(JSON.stringify({connections:18,registered:18,schematics:0,references:3,overviews:6,total:contextTasks.length,partitions:contextParts,assigned:contextTasks.filter(contextAssigned)}));process.exit(0);}
+assert.equal(contextTasks.length,29);assert.equal(new Set(contextTasks).size,contextTasks.length);
+if(process.env.ORBIT_AUDIT_PLAN_ONLY==='1'){console.log(JSON.stringify({connections:18,registered:18,schematics:0,references:3,overviews:6,cameraSequences:2,total:contextTasks.length,partitions:contextParts,assigned:contextTasks.filter(contextAssigned)}));process.exit(0);}
 const devices=await _android.devices({omitDriverInstall:true});assert.equal(devices.length,1,'Exactly one actual emulator must be connected');
 const device=devices[0], webview=await device.webView({pkg:'com.aistudio.mbbsqbank.aycxvd.debug'},{timeout:90000});
 const nativePage=await webview.page();let page=nativePage;page.setDefaultTimeout(60000);
@@ -97,7 +98,31 @@ async function geometryFrame(connection=null,attempt=0){
  }
  return bounds;
 }
+async function glDiagnostics(){
+ return page.getByTestId('anatomy-renderer').locator('canvas').evaluate(e=>{
+  const gl=e.getContext('webgl2')||e.getContext('webgl'),program=gl.getParameter(gl.CURRENT_PROGRAM);
+  const uniforms={};if(program)for(const name of ['projectionMatrix','modelViewMatrix']){const u=gl.getUniformLocation(program,name);uniforms[name]=u?Array.from(gl.getUniform(program,u)):null;}
+  return {canvas:{width:e.width,height:e.height,clientWidth:e.clientWidth,clientHeight:e.clientHeight,rect:e.getBoundingClientRect().toJSON()},drawingBuffer:[gl.drawingBufferWidth,gl.drawingBufferHeight],viewport:Array.from(gl.getParameter(gl.VIEWPORT)),dpr:devicePixelRatio,visualViewport:visualViewport?{scale:visualViewport.scale,width:visualViewport.width,height:visualViewport.height}:null,contextLost:gl.isContextLost(),error:gl.getError(),uniforms};
+ });
+}
+async function cameraSequences(){
+ for(const task of cameraTasks.filter(t=>contextAssigned(t.id))){
+  const records=[];
+  for(const ref of [false,true]){
+   await route({mode:'anatomy',organ:task.owner,isolate:task.owner},ref);await loaded();
+   for(const id of task.sequence){
+    const c=ORGAN_CONNECTIONS[task.owner].find(c=>c.id===id),d=page.getByTestId('organ-detail-drawer');await d.waitFor();
+    await d.getByRole('tab',{name:c.kind==='relation'?'Relations':'Supply',exact:true}).click();await page.getByTestId('inspect-'+id).click();await d.waitFor({state:'hidden'});await loaded();await arrowEvidence(c);
+    const diagnostic=await glDiagnostics();await writeFile(resolve(out,(ref?'vercel-':'android-')+task.id.replace(':','-')+'-'+id+'-gl.json'),JSON.stringify(diagnostic,null,2));await shot(task.id.replace(':','-')+'-'+id);
+    records.push({id,diagnostic,frame:await geometryFrame(c.kind==='relation'?null:c)});
+    const b=await page.getByTestId('anatomy-renderer').boundingBox();await page.mouse.move(b.x+b.width*.45,b.y+b.height*.55);await page.mouse.down();await page.mouse.move(b.x+b.width*.60,b.y+b.height*.58,{steps:6});await page.mouse.up();await arrowEvidence(c);await click('Open selected structure anatomy details');
+   }
+  }
+  checks.push({type:'camera-sequence',id:task.id,passed:true,records});await persist();
+ }
+}
 async function contextFraming(){
+ await cameraSequences();
  for(const owner of Object.keys(ORGAN_CONNECTIONS)){
   const assigned=contextConnections.filter(c=>c.owner===owner&&contextAssigned(c.id));if(!assigned.length)continue;
   for(const ref of [false,true]){await route({mode:'anatomy',organ:owner,isolate:owner},ref);await loaded();await page.getByTestId('organ-detail-drawer').waitFor();}
@@ -136,7 +161,7 @@ async function contextFraming(){
   checks.push({type:'overview',id:'overview:'+task.id,passed:true,native:frames[0],vercel:frames[1]});await persist();
  }
  const expected=contextTasks.filter(contextAssigned).sort(),actual=[...new Set(checks.map(c=>c.id))].sort();assert.deepEqual(actual,expected,'Every assigned connection/source/overview must be captured');
- assert.equal(checks.length,contextConnections.filter(c=>contextAssigned(c.id)).length+overviewTasks.filter(t=>contextAssigned('overview:'+t.id)).length+sourceTargets.filter(t=>contextAssigned(t.id)).length*2);
+ assert.equal(checks.length,contextConnections.filter(c=>contextAssigned(c.id)).length+overviewTasks.filter(t=>contextAssigned('overview:'+t.id)).length+sourceTargets.filter(t=>contextAssigned(t.id)).length*2+cameraTasks.filter(t=>contextAssigned(t.id)).length);
 }
 
 async function jointImageEvidence(id){
@@ -204,7 +229,7 @@ async function persist(){await writeFile(resolve(out,'actual-android-exhaustive.
 try{
  if(suite==='context-framing')await contextFraming();else if(suite==='brain-registration')for(const ref of [false,true])await brainRegistration(ref);else throw Error('Unsupported joint audit suite');
  assert.deepEqual(errors,[]);completed=true;await persist();await writeFile(resolve(out,'PASSED.json'),JSON.stringify({suite,partition:{index:contextPart,count:contextParts},checks:checks.length,passed:true}));
-}catch(e){failures.push({message:e.message,stack:e.stack,state:await read().catch(()=>null)});await shot('FAILURE').catch(()=>{});await persist();throw e;}
+}catch(e){failures.push({message:e.message,stack:e.stack,state:await read().catch(()=>null),gl:await glDiagnostics().catch(()=>null)});await shot('FAILURE').catch(()=>{});await persist();throw e;}
 finally{await device.close();await browser.close();}
 
 
