@@ -123,6 +123,7 @@ async function cameraSequences(){
 }
 async function contextFraming(){
  await cameraSequences();
+ if(process.env.ORBIT_CAMERA_ONLY==='1'){assert.equal(checks.length,cameraTasks.filter(t=>contextAssigned(t.id)).length);return;}
  for(const owner of Object.keys(ORGAN_CONNECTIONS)){
   const assigned=contextConnections.filter(c=>c.owner===owner&&contextAssigned(c.id));if(!assigned.length)continue;
   for(const ref of [false,true]){await route({mode:'anatomy',organ:owner,isolate:owner},ref);await loaded();await page.getByTestId('organ-detail-drawer').waitFor();}
@@ -225,7 +226,7 @@ async function brainRegistration(ref){
  }
 }
 
-async function persist(){await writeFile(resolve(out,'actual-android-exhaustive.json'),JSON.stringify({status:failures.length?'FAILED':completed?'PASSED':'IN_PROGRESS',suite,partition:{index:contextPart,count:contextParts},platform:'installed Android WebView; corrected canonical source in mobile Chromium at matching viewport',referenceOrigin,candidateSource:'fb79170bcf6fdb42311555021c10f7857cbccd81',blockedExternalRequests,checks,failures,errors},null,2));}
+async function persist(){await writeFile(resolve(out,'actual-android-exhaustive.json'),JSON.stringify({status:failures.length?'FAILED':completed?'PASSED':'IN_PROGRESS',suite,partition:{index:contextPart,count:contextParts},platform:'installed Android WebView; corrected canonical source in mobile Chromium at matching viewport',referenceOrigin,cameraOnly:process.env.ORBIT_CAMERA_ONLY==='1',candidateSource:'fb79170bcf6fdb42311555021c10f7857cbccd81',blockedExternalRequests,checks,failures,errors},null,2));}
 try{
  if(suite==='context-framing')await contextFraming();else if(suite==='brain-registration')for(const ref of [false,true])await brainRegistration(ref);else throw Error('Unsupported joint audit suite');
  assert.deepEqual(errors,[]);completed=true;await persist();await writeFile(resolve(out,'PASSED.json'),JSON.stringify({suite,partition:{index:contextPart,count:contextParts},checks:checks.length,passed:true}));

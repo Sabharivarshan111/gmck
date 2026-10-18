@@ -261,7 +261,10 @@ def first_run() -> None:
     adb("shell", "input", "text", "NativePreview")
     adb("shell", "input", "keyevent", "4")
     time.sleep(0.8)
-    tap("Final Year", required=False)
+    # Required identity choice: a clipped/missed optional tap leaves onboarding
+    # open while the old harness incorrectly proceeds to look for Vault.
+    scroll_to_tappable("Final Year")
+    tap("Final Year")
     scroll_to_tappable("Tamil Nadu")
     tap("Tamil Nadu")
     scroll_to_tappable("Start studying")
