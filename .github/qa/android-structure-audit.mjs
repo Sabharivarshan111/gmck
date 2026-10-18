@@ -10,6 +10,21 @@ import { ORGAN_CONNECTIONS } from '../../src/simulator/data/organConnections.ts'
 import { ZANATOMY_REFERENCE_TARGETS, zAnatomyReferenceRegistrationNotice } from '../../src/simulator/data/zanatomyReferences.ts';
 const referenceOrigin=process.env.ORBIT_REFERENCE_ORIGIN||'https://orbitmbbs.vercel.app';
 const out=resolve(process.env.ORBIT_SCREENSHOT_OUT||'artifacts/native-exhaustive');await mkdir(out,{recursive:true});
+const coverage=JSON.parse(await readFile(resolve(out,'anatomy-coverage.json'),'utf8'));
+const repairedLiverIds=new Set(['connection_122','connection_246','connection_262','connection_274']);
+const contextConnections=Object.values(ORGAN_CONNECTIONS).flat();
+const overviewTasks=[{id:'whole-body',query:{mode:'anatomy'}},{id:'vessels',query:{mode:'anatomy',layer:'vascular'}},{id:'skeleton',query:{mode:'anatomy',layer:'skeletal'}},...coverage.organs.map(o=>({id:o.id,query:{mode:'anatomy',organ:o.id,isolate:o.preferredReference}}))];
+assert.equal(contextConnections.length,430);
+assert.equal(contextConnections.filter(c=>c.targetId).length,225);
+assert.equal(contextConnections.filter(c=>!c.targetId).length,205);
+assert.equal(ZANATOMY_REFERENCE_TARGETS.length,26);
+assert.equal(overviewTasks.length,39);
+const contextTasks=[...contextConnections.map(c=>c.id),...ZANATOMY_REFERENCE_TARGETS.map(t=>t.id),...overviewTasks.map(t=>'overview:'+t.id)];
+const contextPart=Number(process.env.ORBIT_CONTEXT_PARTITION||0),contextParts=Number(process.env.ORBIT_CONTEXT_PARTS||16);
+assert(Number.isInteger(contextPart)&&contextPart>=0&&contextPart<contextParts);
+const contextAssigned=id=>contextTasks.indexOf(id)%contextParts===contextPart;
+assert.equal(contextTasks.length,495);assert.equal(new Set(contextTasks).size,contextTasks.length);
+if(process.env.ORBIT_AUDIT_PLAN_ONLY==='1'){console.log(JSON.stringify({connections:430,registered:225,schematics:205,references:26,overviews:39,total:contextTasks.length,partitions:contextParts,assigned:contextTasks.filter(contextAssigned)}));process.exit(0);}
 const devices=await _android.devices({omitDriverInstall:true});assert.equal(devices.length,1,'Exactly one actual emulator must be connected');
 const device=devices[0], webview=await device.webView({pkg:'com.aistudio.mbbsqbank.aycxvd.debug'},{timeout:90000});
 const nativePage=await webview.page();let page=nativePage;page.setDefaultTimeout(60000);
@@ -21,7 +36,6 @@ const partitionCount=Number(process.env.ORBIT_ANATOMY_PARTITIONS||1),partition=N
 assert(Number.isInteger(partitionCount)&&partitionCount>0&&Number.isInteger(partition)&&partition>=0&&partition<partitionCount,'Valid anatomy partition required');
 const connectionOrder=new Map(Object.values(ORGAN_CONNECTIONS).flat().map((c,i)=>[c.id,i]));
 const inPartition=c=>connectionOrder.get(c.id)%partitionCount===partition;
-const coverage=JSON.parse(await readFile(resolve(out,'anatomy-coverage.json'),'utf8'));
 const blockedExternalRequests=[];
 await webContext.route(/https:\/\/(?:[^/]+\.)?(?:googlesyndication\.com|doubleclick\.net|googleadservices\.com)\//,async route=>{blockedExternalRequests.push(route.request().url());await route.abort();});
 const checks=[],failures=[],errors=[];for(const surface of [nativePage,referencePage])surface.on('pageerror',e=>{const record={surface:surface===nativePage?'android':'vercel',url:surface.url(),at:new Date().toISOString(),name:e.name,message:e.message,stack:e.stack};errors.push(record);console.error('ORBIT_PAGE_ERROR '+JSON.stringify(record));});
@@ -102,15 +116,6 @@ async function anatomy(group){
 }
 
 
-const repairedLiverIds=new Set(['connection_122','connection_246','connection_262','connection_274']);
-const contextConnections=Object.values(ORGAN_CONNECTIONS).flat();
-const overviewTasks=[{id:'whole-body',query:{mode:'anatomy'}},{id:'vessels',query:{mode:'anatomy',layer:'vascular'}},{id:'skeleton',query:{mode:'anatomy',layer:'skeletal'}},...coverage.organs.map(o=>({id:o.id,query:{mode:'anatomy',organ:o.id,isolate:o.preferredReference}}))];
-assert.equal(contextConnections.length,89);
-const contextTasks=[...contextConnections.map(c=>c.id),...ZANATOMY_REFERENCE_TARGETS.map(t=>t.id),...overviewTasks.map(t=>'overview:'+t.id)];
-const contextPart=Number(process.env.ORBIT_CONTEXT_PARTITION||0),contextParts=Number(process.env.ORBIT_CONTEXT_PARTS||16);
-assert(Number.isInteger(contextPart)&&contextPart>=0&&contextPart<contextParts);
-assert(Number.isInteger(contextPart)&&contextPart>=0&&contextPart<contextParts);
-const contextAssigned=id=>contextTasks.indexOf(id)%contextParts===contextPart;
 async function geometryFrame(){
  const bounds=await page.getByTestId('anatomy-renderer').locator('canvas').evaluate(e=>new Promise(resolve=>requestAnimationFrame(()=>{
   const gl=e.getContext('webgl2')||e.getContext('webgl'),w=gl.drawingBufferWidth,h=gl.drawingBufferHeight,p=new Uint8Array(w*h*4);gl.readPixels(0,0,w,h,gl.RGBA,gl.UNSIGNED_BYTE,p);
