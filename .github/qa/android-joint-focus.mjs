@@ -51,7 +51,7 @@ const suite=process.env.ORBIT_EXHAUSTIVE_SUITE||'anatomy-0';let reference=false;
 const button=name=>page.getByRole('button',{name,exact:true});
 const click=async name=>{await button(name).click();};
 const read=async()=>page.evaluate(()=>({url:window.location.href,patientScenario:window.__orbitPatientKernel?.currentScenario?.id,viewport:[window.innerWidth,window.innerHeight],theme:document.querySelector('[data-simulator-root]')?.getAttribute('data-simulator-theme'),isolated:document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-isolated'),systems:document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-visible-atlas-systems'),eye:{...document.querySelector('[data-testid="eye-response-state"]')?.dataset},thorax:{...document.querySelector('.ausc-webgl')?.dataset},audioErrors:[...document.querySelectorAll('.ausc-error')].map(e=>e.textContent)}));
-const shot=async name=>{console.log('Capture',reference?'vercel':'android',name);await page.screenshot({timeout:60000,path:resolve(out,(reference?'source-reference-':'cdp-android-')+name+'.png')});if(!reference)await writeFile(resolve(out,'android-'+name+'.png'),execFileSync('adb',['exec-out','screencap','-p'],{maxBuffer:20*1024*1024}));return read();};
+const shot=async name=>{console.log('Capture',reference?'vercel':'android',name);if(reference)await page.screenshot({timeout:60000,path:resolve(out,'source-reference-'+name+'.png')});if(!reference)await writeFile(resolve(out,'android-'+name+'.png'),execFileSync('adb',['exec-out','screencap','-p'],{maxBuffer:20*1024*1024}));return read();};
 const route=async(query,ref=false)=>{
  reference=ref;const path='/simulator?'+new URLSearchParams({...query,nativeTheme:'dark',native_audit:'1'});
  page=ref?referencePage:nativePage;
@@ -226,7 +226,7 @@ async function brainRegistration(ref){
  }
 }
 
-async function persist(){await writeFile(resolve(out,'actual-android-exhaustive.json'),JSON.stringify({status:failures.length?'FAILED':completed?'PASSED':'IN_PROGRESS',suite,partition:{index:contextPart,count:contextParts},platform:'installed Android WebView; corrected canonical source in mobile Chromium at matching viewport',referenceOrigin,cameraOnly:process.env.ORBIT_CAMERA_ONLY==='1',candidateSource:'fb79170bcf6fdb42311555021c10f7857cbccd81',blockedExternalRequests,checks,failures,errors},null,2));}
+async function persist(){await writeFile(resolve(out,'actual-android-exhaustive.json'),JSON.stringify({status:failures.length?'FAILED':completed?'PASSED':'IN_PROGRESS',suite,partition:{index:contextPart,count:contextParts},platform:'installed Android WebView; corrected canonical source in mobile Chromium at matching viewport',referenceOrigin,nativeCapture:'ADB only; no CDP screenshot viewport overrides',cameraOnly:process.env.ORBIT_CAMERA_ONLY==='1',candidateSource:'fb79170bcf6fdb42311555021c10f7857cbccd81',blockedExternalRequests,checks,failures,errors},null,2));}
 try{
  if(suite==='context-framing')await contextFraming();else if(suite==='brain-registration')for(const ref of [false,true])await brainRegistration(ref);else throw Error('Unsupported joint audit suite');
  assert.deepEqual(errors,[]);completed=true;await persist();await writeFile(resolve(out,'PASSED.json'),JSON.stringify({suite,partition:{index:contextPart,count:contextParts},checks:checks.length,passed:true}));
