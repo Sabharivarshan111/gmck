@@ -104,17 +104,36 @@ async function contextOn(){if(await button('Show organ context').count())await c
 async function drawerClose(){
  const d=page.getByTestId('organ-detail-drawer');
  if(await d.isVisible()){
-  try{await d.getByRole('button',{name:'Close',exact:true}).click();}
-  catch(error){
-   // Android's input acknowledgement can time out after the click reached React.
-   // Accept only the actual closed-drawer postcondition; never force a click.
-   if(error.name!=='TimeoutError'||await d.isVisible())throw error;
-   interactionRecoveries.push({action:'close-drawer',afterInputTimeout:true,...await read()});
-   await shot('drawer-close-recovered-'+interactionRecoveries.length);
+  const close=d.getByTitle('Close Drawer',{exact:true});
+  if(reference)await close.click();
+  else {
+   // Use real Android touch input: CDP mouse acknowledgements can stall in
+   // WebView. Map the visible header button through measured native bounds.
+   const point=await close.evaluate(e=>{
+    const r=e.getBoundingClientRect(),x=r.x+r.width/2,y=r.y+r.height/2;
+    const hit=document.elementFromPoint(x,y);
+    return {x,y,width:innerWidth,height:innerHeight,hit:!!hit&&(hit===e||e.contains(hit))};
+   });
+   assert(point.hit&&point.x>0&&point.x<point.width&&point.y>0&&point.y<point.height,'Drawer close must be visible and unobstructed');
+   const rect=JSON.parse(execFileSync('python3',['-c',`
+import sys,json,re
+sys.path.insert(0,'mobile/scripts')
+from native_screenshot_driver import dump_ui
+nodes=[n for n in dump_ui().iter('node') if n.get('class')=='android.webkit.WebView']
+rects=[list(map(int,re.findall(r'-?\\d+',n.get('bounds','')))) for n in nodes]
+rects=[r for r in rects if len(r)==4 and r[2]>r[0] and r[3]>r[1]]
+assert rects,'Real native WebView bounds required for touch input'
+print(json.dumps(max(rects,key=lambda r:(r[2]-r[0])*(r[3]-r[1]))))
+`],{env:{...process.env,ORBIT_UI_HELPER:'1'}}).toString());
+   const x=Math.round(rect[0]+point.x*(rect[2]-rect[0])/point.width),y=Math.round(rect[1]+point.y*(rect[3]-rect[1])/point.height);
+   execFileSync('adb',['shell','input','tap',String(x),String(y)],{stdio:'pipe'});
+   await d.waitFor({state:'hidden',timeout:20000});
+   interactionRecoveries.push({action:'close-drawer',method:'measured-native-touch',point,webviewBounds:rect,devicePoint:[x,y],...await read()});
   }
  }
  await d.waitFor({state:'hidden'});
 }
+
 async function arrowEvidence(connection){
  await page.waitForFunction(id=>document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-isolated')===id,connection.id);
  const leaders=page.getByTestId('connection-leaders');await leaders.waitFor({timeout:20000});
@@ -240,7 +259,7 @@ async function brainRegistration(ref){
   await page.waitForTimeout(800);
   if(target.kind==='schematic'){
    assert(/schematic/i.test(target.label),'Derived source needs a visible schematic label');
-   await page.getByText(target.label,{exact:true}).first().waitFor({state:'visible'});
+   await page.getByText(target.label,{exact:true}).filter({visible:true}).first().waitFor({state:'visible'});
    const notice=page.getByTestId('anatomy-source-notice');await notice.locator('summary').click();
    assert(/schematic/i.test(await notice.innerText()),'Expanded source notice must disclose schematic geometry');
    await notice.locator('summary').click();
