@@ -195,9 +195,11 @@ print(json.dumps({'count':len(points),'fraction':len(points)/(w*h),'left':min((x
 
 
 async function brainRegistration(ref){
+ let currentOverview=null;
  for(const target of sourceTargets.filter(t=>contextAssigned(t.id))){
   const first=target.family==='hra-heart'?HRA_HEART_TARGETS[0]:target.family==='hra-organ'?HRA_ORGAN_TARGETS.find(t=>t.organKey===target.organKey):ZANATOMY_REFERENCE_TARGETS.find(t=>t.modelKey===target.modelKey&&t.matchAll)||target;
-  await route({mode:'anatomy',organ:target.organKey,isolate:first.id},ref);await loaded();await drawerClose();
+  if(currentOverview!==first.id){await route({mode:'anatomy',organ:target.organKey,isolate:first.id},ref);await loaded();await drawerClose();currentOverview=first.id;}
+  else {page=ref?referencePage:nativePage;reference=ref;}
   {
    await page.getByTitle(target.label,{exact:true}).click();
    await page.getByTestId('anatomy-renderer').locator('canvas').scrollIntoViewIfNeeded();
