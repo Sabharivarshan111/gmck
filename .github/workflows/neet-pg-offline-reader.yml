@@ -3,12 +3,14 @@ on:
   push:
     paths:
       - 'src/lib/neetPgOffline.ts'
+      - 'src/lib/neetPgInstall.ts'
       - 'mobile/src/lib/neetPgStudyData.json'
       - 'scripts/test-neet-pg-offline.mjs'
       - '.github/workflows/neet-pg-offline-reader.yml'
   pull_request:
     paths:
       - 'src/lib/neetPgOffline.ts'
+      - 'src/lib/neetPgInstall.ts'
       - 'mobile/src/lib/neetPgStudyData.json'
       - 'scripts/test-neet-pg-offline.mjs'
       - '.github/workflows/neet-pg-offline-reader.yml'
@@ -24,4 +26,4 @@ jobs:
           node-version: '24'
       - run: npm --prefix mobile ci --legacy-peer-deps
       - run: node scripts/test-neet-pg-offline.mjs
-      - run: mobile/node_modules/.bin/tsc --ignoreConfig --noEmit --target ES2022 --module ESNext --moduleResolution bundler --skipLibCheck src/lib/neetPgOffline.ts
+      - run: mobile/node_modules/.bin/tsc --ignoreConfig --noEmit --target ES2022 --module ESNext --moduleResolution bundler --skipLibCheck src/lib/neetPgOffline.ts src/lib/neetPgInstall.ts

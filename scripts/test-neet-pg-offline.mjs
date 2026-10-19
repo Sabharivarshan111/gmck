@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { build } from '../mobile/node_modules/esbuild/lib/main.js';
 
+const installOutput = await build({ entryPoints: ['src/lib/neetPgInstall.ts'], bundle: true, write: false, format: 'esm', platform: 'node' });
+const { createBankInstaller } = await import('data:text/javascript;base64,' + Buffer.from(installOutput.outputFiles[0].text).toString('base64'));
 const output = await build({ entryPoints: ['src/lib/neetPgOffline.ts'], bundle: true, write: false, format: 'esm', platform: 'node' });
 const { validateOfflineBank, createOfflineReader } = await import('data:text/javascript;base64,' + Buffer.from(output.outputFiles[0].text).toString('base64'));
 const data = JSON.parse(fs.readFileSync('mobile/src/lib/neetPgStudyData.json', 'utf8'));
@@ -49,8 +51,70 @@ try {
   const invalidAnswer = structuredClone(fixture);
   invalidAnswer.records[0].answerIndex = 8;
   assert.throws(() => validateOfflineBank(invalidAnswer), /Incomplete/);
+  const mismatchedKey = structuredClone(fixture);
+  mismatchedKey.records[0].sourceAnswer = 'B';
+  assert.throws(() => validateOfflineBank(mismatchedKey), /disagree/);
+  assert.equal(reader.image('toString'), undefined);
   const duplicates = structuredClone(fixture);
   duplicates.records.push(structuredClone(duplicates.records[0]));
   assert.throws(() => validateOfflineBank(duplicates), /Incomplete/);
 } finally { globalThis.fetch = fetchBefore; }
 console.log('Offline reader passes: no fetch; filters/search; immutable answers; incomplete MCQs and external/missing images rejected. 2209 notes mapped; not a complete MCQ release.');
+
+// Exercise durable installation with a simulated private file store, including
+// storage failures at the commit boundary. A fresh installer models app restart.
+const file = id => ({ fileId: id, name: `${id}.json`, size: 1000 });
+let pointer = null, next = null, failWrite = false, ambiguousWrite = false, failRead = false;
+const stored = new Map();
+const removed = [];
+const port = {
+  async readPointer() { if (failRead) throw Error('storage unavailable'); return pointer; },
+  async writePointer(value) {
+    if (failWrite) throw Error('quota');
+    pointer = value;
+    if (ambiguousWrite) { failRead = true; throw Error('storage unavailable after commit'); }
+  },
+  async pick() { return next; },
+  async read(id) { if (!stored.has(id)) throw Error('missing file'); return stored.get(id); },
+  async remove(id) { removed.push(id); stored.delete(id); },
+};
+const create = (check = () => {}) => createBankInstaller(port, check);
+const prepare = id => { next = file(id); stored.set(id, JSON.stringify(fixture)); };
+const installer = create();
+assert.equal(await installer.load(), null);
+assert.equal(await installer.install(), null); // Picker cancelled.
+prepare('first');
+assert.equal((await installer.install()).reader.total, 1);
+assert.equal((await create().load()).file.fileId, 'first');
+const firstPointer = pointer;
+prepare('incomplete'); stored.set('incomplete', JSON.stringify(data));
+await assert.rejects(installer.install(), /Invalid offline bank/);
+assert.equal(pointer, firstPointer);
+assert.ok(!stored.has('incomplete'));
+prepare('wrong-chapter');
+await assert.rejects(create(() => { throw Error('chapter mismatch'); }).install(), /chapter mismatch/);
+assert.equal(pointer, firstPointer);
+prepare('write-failure'); failWrite = true;
+await assert.rejects(installer.install(), /quota/); failWrite = false;
+assert.equal(pointer, firstPointer);
+assert.equal((await create().load()).file.fileId, 'first');
+prepare('second'); await installer.install();
+assert.deepEqual(JSON.parse(pointer).map(item => item.fileId), ['second', 'first']);
+prepare('third'); await installer.install();
+assert.ok(removed.includes('first'));
+assert.deepEqual(JSON.parse(pointer).map(item => item.fileId), ['third', 'second']);
+stored.set('third', 'corrupted');
+assert.equal((await create().load()).file.fileId, 'second'); // Previous complete bank survives.
+prepare('ambiguous'); ambiguousWrite = true;
+await assert.rejects(installer.install(), /after commit/);
+assert.equal(JSON.parse(pointer)[1].fileId, 'second');
+assert.ok(stored.has('ambiguous')); // Never delete a possibly committed file.
+failRead = false; ambiguousWrite = false;
+assert.equal((await create().load()).file.fileId, 'ambiguous');
+let resumePick;
+const concurrent = createBankInstaller({ ...port, pick: () => new Promise(resolve => { resumePick = resolve; }) }, () => {});
+const pendingInstall = concurrent.install();
+await Promise.resolve(); await Promise.resolve();
+await assert.rejects(concurrent.install(), /already in progress/);
+resumePick(null); await pendingInstall;
+console.log('Offline installer passes: restart persistence, cancellation, invalid imports, failed/ambiguous commits, retained previous bank, and concurrent-install protection.');

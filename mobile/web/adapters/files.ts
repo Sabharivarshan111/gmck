@@ -40,6 +40,11 @@ export function removeFile(id: string) {
   return transaction('files', 'readwrite', store => store.delete(id));
 }
 const files = {
+  async readText(id: string, maxBytes: number) {
+    const record = records.get(id);
+    if (!record || !Number.isFinite(maxBytes) || maxBytes <= 0 || maxBytes > 25_000_000 || record.blob.size > maxBytes) throw new Error('Offline bank is missing or too large.');
+    return record.blob.text();
+  },
   async pick(_mode: string, kinds: string) {
     // Browsers cannot retain arbitrary paths. Both picker modes keep a private copy.
     const file = await pickFile(kinds === 'audio' ? 'audio/*' : kinds || '');

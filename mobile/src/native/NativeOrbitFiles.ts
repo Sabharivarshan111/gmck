@@ -105,6 +105,9 @@ export interface Spec extends TurboModule {
   /** The absolute path for an imported file, or an empty string if it is gone. */
   pathFor(id: string): string;
 
+  /** Read a copied UTF-8 JSON bank locally; rejects files above maxBytes. */
+  readText(id: string, maxBytes: number): Promise<string>;
+
   /** Forget one *copied* file's bytes. Never called for a linked one. */
   remove(id: string): void;
 

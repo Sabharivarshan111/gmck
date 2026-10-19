@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  ActivityIndicator, Linking, Modal, ScrollView, StyleSheet, TextInput, View,
+  ActivityIndicator, Alert, Linking, Modal, ScrollView, StyleSheet, TextInput, View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ArrowLeft, BookOpenCheck, ExternalLink, Search, ShieldCheck, X } from 'lucide-react-native';
@@ -10,6 +10,9 @@ import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
 import { searchOfflinePgQuestions, getPgSubjects, getPgChapters, PG_COMPACT, PG_COMPACT_BYTES } from '@/lib/pgLocalBank';
 import { PG_ORIGINAL_PRACTICE, PG_SOURCES, PG_SOURCE_REVIEW_DATE, type PgExam, type PgQuestion } from '@/lib/pgEntranceBank';
+import { installedNeetBank } from '@/lib/neetPgInstalledBank';
+import { NeetPgOfflineModal } from '@/components/NeetPgOfflineModal';
+import type { InstalledReader } from '@shared/neetPgInstall';
 
 type ExamFilter = 'ALL' | PgExam | 'GENERAL_MEDICAL';
 type Panel = 'sources' | 'practice';
@@ -33,6 +36,36 @@ async function openSource(url: string) {
  * ORIGINAL samples never masquerade as previous-year exam questions.
  */
 export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
+  const { colors } = useTheme();
+  const [installed, setInstalled] = useState<InstalledReader | null>(null);
+  const [checked, setChecked] = useState(false);
+  const [installing, setInstalling] = useState(false);
+  useEffect(() => {
+    if (!visible) return;
+    let cancelled = false;
+    setChecked(false);
+    void installedNeetBank.load().then(value => { if (!cancelled) setInstalled(value); })
+      .catch(error => { if (!cancelled) Alert.alert('Offline bank unavailable', error instanceof Error ? error.message : 'The installed bank could not be opened.'); })
+      .finally(() => { if (!cancelled) setChecked(true); });
+    return () => { cancelled = true; };
+  }, [visible]);
+  const install = async () => {
+    if (installing) return;
+    setInstalling(true);
+    try {
+      const value = await installedNeetBank.install();
+      if (value) setInstalled(value);
+    } catch (error) {
+      Alert.alert('Bank was not replaced', error instanceof Error ? error.message : 'The complete bank could not be installed.');
+    } finally { setInstalling(false); }
+  };
+  if (!visible) return null;
+  if (!checked) return <Modal visible onRequestClose={onClose}><View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background }}><ActivityIndicator color={colors.primary} accessibilityLabel="Opening offline bank" /><Touchable label="Close opening offline bank" onPress={onClose} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}><Text style={{ color: colors.primary }}>Back</Text></Touchable></View></Modal>;
+  if (installed) return <NeetPgOfflineModal key={installed.file.fileId} visible={visible} onClose={onClose} installed={installed} onReplace={() => { void install(); }} installing={installing} />;
+  return <LegacyPgEntranceBankModal visible={visible} onClose={onClose} onImportBank={() => { void install(); }} installing={installing} />;
+}
+
+function LegacyPgEntranceBankModal({ visible, onClose, onImportBank, installing }: { visible: boolean; onClose: () => void; onImportBank: () => void; installing: boolean }) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const [exam, setExam] = useState<ExamFilter>('NEET_PG');
@@ -120,6 +153,9 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           contentContainerStyle={[styles.body, { paddingBottom: insets.bottom + 32 }]}>
+          <Touchable label="Install complete offline NEET PG bank" onPress={onImportBank} disabled={installing} style={[styles.switchButton, { backgroundColor: colors.card, borderColor: colors.primary }]}>
+            <Text style={[styles.switchText, { color: colors.primary }]}>{installing ? 'Installing offline bank…' : 'Install complete offline bank (.json)'}</Text>
+          </Touchable>
           <View style={[styles.notice, { backgroundColor: withAlpha(colors.primary, 0.08), borderColor: colors.border }]}>
             <ShieldCheck size={17} color={colors.primary} />
             <Text style={[styles.noticeText, { color: colors.text }]}>
