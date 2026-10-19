@@ -36,3 +36,10 @@ Validation completed locally: offline reader and installer tests; native, produc
 
 
 A separate existing Web build guard fails on digestive-anatomy dossier coverage (99/108, 92%, below its 95% baseline). The dossier script, complete `src/simulator` tree and `public/models/atlas.json` have identical Git object IDs to the PR base `cd223e9`; no threshold is weakened in this change. Vercel-shaped build and NEET PG reader, content-integrity and offline-pack checks pass. This unrelated red guard is recorded rather than represented as a clean overall pipeline.
+
+
+## Downloaded-source matching pass
+
+The source extracts are present; they are not being requested from the owner again. `scripts/audit-neet-pg-matches.py` matches them to the existing chapter-mapped notes, recognizing uppercase, lowercase and Cyrillic option markers without rewriting option text or supplied keys. It reads the 2025 HTML option lists directly so list boundaries are retained. For question 57 it does not pretend that a key obtained from a second source was printed on the original page.
+
+`docs/NEET_PG_MATCH_AUDIT_20261019.json` records 2,162 source matches across the 2,209 notes: 2,130 have structural text/four-option/key/explanation matches; 47 are unparsed and 32 parsed rows have unresolved option/key correspondence. These are not clinically verified, examination-authenticated or fully illustrated MCQs. Every source page still needs visual review, and extraction can retain page furniture. No missing question, option or answer is invented. No image bytes are embedded by the matching audit. The report publishes identifiers/counts/fingerprints only, not bulk publisher questions/options. Publisher redistribution clearance remains unestablished. No explanation-only replacement, legacy deletion or release was made.

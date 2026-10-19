@@ -2289,3 +2289,10 @@ DO NOT: Treat the 2209 notes as 2209 complete MCQs, release the explanation-only
 
 - Follow-up verification: Android production JS bundle built successfully (6.8 MB, 459 assets; new installer/browser strings present). No APK/compiler/device test claimed. Real production-browser import/filter/reveal/pagination/failed-import/network-disabled-reload test passed on `1a48ba9` (run 39247912901) and again with checksum-verified original PNG fixture on `dfad8d1` (run 39248226219, step 9). Source/runtime unchanged between those two commits.
 - CI limitation: existing Web build dossier guard fails digestive coverage 99/108 (92%) vs baseline95%; script, simulator tree and atlas have identical Git object IDs to PR base `cd223e9`. Do not weaken that guard or claim all CI green. Vercel-shaped build and offline reader/content-integrity/pack checks pass. Complete-source/release blocker remains as above.
+
+
+### 2026-10-19 — Downloaded NEET PG source matching
+- User clarified they require actual stems + unchanged options + source keys + explanations, not an explanation-only substitute. No runtime/legacy-deletion changes were made in this turn.
+- Added reproducible local `scripts/audit-neet-pg-matches.py` and metadata-only `docs/NEET_PG_MATCH_AUDIT_20261019.json`. Local source extracts already exist at sibling `pg_audit/`; do not claim the owner must supply all PDFs again.
+- Result: 2,162/2,209 rows parsed/matched; 2,130 structural stem/4-option/key/note matches. 47 unparsed +32 parsed unresolved =79 require further reconstruction/checking. Not clinical/authenticity/image completeness verification. Extracted question text may contain PDF furniture. 2025 Q57 key is missing on primary page; don't relabel a second-source key as the primary page's own key.
+- No full copyrighted publisher bank was republished. No source options/keys changed. Source permission and image mapping remain blockers; PrepLadder terms explicitly restrict reproduction/distribution. The report contains only counts/IDs/fingerprints. Parser self-tests included in offline CI.
