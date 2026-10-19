@@ -185,6 +185,12 @@ def main():
         if answer:
             add(source, number, re.split(r'Answer\s*:', body, maxsplit=1, flags=re.I)[0], answer[1].upper(), [r'(?m)^\s*([A-D])\.\s*'])
 
+    # Retain the audited webpage's complete option lists and supplied keys.
+    # Clinical illustrations are mapped by the matching question number in its PDF.
+    image_map = {int(parts[index]): list(dict.fromkeys(re.findall(r'\[IMG:([^\]]+)\]', re.split(r'Answer\s*:', parts[index + 1], maxsplit=1, flags=re.I)[0]))) for index in range(1, len(parts), 2)}
+    for item in json.loads((ROOT / 'scripts/neet-pg-2025-records.json').read_text()):
+        rows[(source, item['number'])] = {'question': clean(item['question']), 'options': [clean(value) for value in item['options']], 'answer': item['answer'] or '', 'imageIds': image_map.get(item['number'], [])}
+
     notes = json.loads((ROOT / 'mobile/src/lib/neetPgStudyData.json').read_text())
     policy = json.loads((ROOT / 'scripts/neet-pg-build-policy.json').read_text())
     held, requires_image = set(policy['heldIds']), set(policy['requiresImageIds'])

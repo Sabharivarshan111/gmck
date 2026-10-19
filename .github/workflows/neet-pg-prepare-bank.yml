@@ -6,13 +6,14 @@ on:
       - 'scripts/build-neet-pg-release-bank.py'
       - 'scripts/neet-pg-build-sources.json'
       - 'scripts/neet-pg-build-policy.json'
+      - 'scripts/neet-pg-2025-records.json'
       - '.github/workflows/neet-pg-prepare-bank.yml'
   workflow_dispatch:
 permissions:
   contents: write
 concurrency:
   group: neet-bank-prepare-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   prepare:
     runs-on: ubuntu-latest
@@ -50,6 +51,7 @@ jobs:
           git add mobile/src/lib/neetPgBank.json docs/NEET_PG_RELEASE_BANK.json
           if ! git diff --cached --quiet; then
             git commit -m 'Generate complete offline NEET PG release bank'
+            git pull --rebase origin ${{ github.ref_name }}
             git push origin HEAD:${{ github.ref_name }}
           fi
       - uses: actions/upload-artifact@v4
