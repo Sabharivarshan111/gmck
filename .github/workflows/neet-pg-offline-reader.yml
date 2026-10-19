@@ -24,4 +24,4 @@ jobs:
           node-version: '24'
       - run: npm --prefix mobile ci --legacy-peer-deps
       - run: node scripts/test-neet-pg-offline.mjs
-      - run: mobile/node_modules/.bin/tsc --noEmit --target ES2022 --module ESNext --moduleResolution bundler --skipLibCheck src/lib/neetPgOffline.ts
+      - run: mobile/node_modules/.bin/tsc --ignoreConfig --noEmit --target ES2022 --module ESNext --moduleResolution bundler --skipLibCheck src/lib/neetPgOffline.ts
