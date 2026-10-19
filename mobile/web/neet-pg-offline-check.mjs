@@ -9,7 +9,7 @@ const data = JSON.parse(await fs.readFile(path.join(repo, 'mobile/src/lib/neetPg
 const chapter = data.chapters.find(item => item.subject === 'anatomy');
 const fixture = {
   schema: 1, id: 'original-browser-fixture', chapters: [chapter],
-  images: { pixel: { alt: 'Original test pixel', dataUri: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a7GQAAAAASUVORK5CYII=' } },
+  images: { pixel: { alt: 'Original test pixel', dataUri: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNgYGAAAAAEAAH2FzhVAAAAAElFTkSuQmCC' } },
   records: Array.from({ length: 31 }, (_, index) => ({
     id: `test-${index}`, chapterId: chapter.id,
     question: `Original fixture ${index + 1}: Which nerve supplies lateral rectus?`,
