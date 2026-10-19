@@ -109,7 +109,9 @@ async function drawerClose(){
   else {
    // Use real Android touch input: CDP mouse acknowledgements can stall in
    // WebView. Map the visible header button through measured native bounds.
-   const point=await close.evaluate(e=>{
+   const point=await page.evaluate(()=>{
+    const e=document.querySelector('[data-testid="organ-detail-drawer"] button[title="Close Drawer"]');
+    if(!e)return {hit:false};
     const r=e.getBoundingClientRect(),x=r.x+r.width/2,y=r.y+r.height/2;
     const hit=document.elementFromPoint(x,y);
     return {x,y,width:innerWidth,height:innerHeight,hit:!!hit&&(hit===e||e.contains(hit))};
@@ -126,9 +128,12 @@ assert rects,'Real native WebView bounds required for touch input'
 print(json.dumps(max(rects,key=lambda r:(r[2]-r[0])*(r[3]-r[1]))))
 `],{env:{...process.env,ORBIT_UI_HELPER:'1'}}).toString());
    const x=Math.round(rect[0]+point.x*(rect[2]-rect[0])/point.width),y=Math.round(rect[1]+point.y*(rect[3]-rect[1])/point.height);
+   const attempt={action:'close-drawer',method:'measured-native-touch',point,webviewBounds:rect,devicePoint:[x,y],closed:false,...await read()};
+   interactionRecoveries.push(attempt);await persist();
+   console.log('ORBIT_NATIVE_DRAWER_TAP '+JSON.stringify(attempt));
    execFileSync('adb',['shell','input','tap',String(x),String(y)],{stdio:'pipe'});
    await d.waitFor({state:'hidden',timeout:20000});
-   interactionRecoveries.push({action:'close-drawer',method:'measured-native-touch',point,webviewBounds:rect,devicePoint:[x,y],...await read()});
+   attempt.closed=true;await persist();
   }
  }
  await d.waitFor({state:'hidden'});
@@ -204,7 +209,7 @@ async function contextFraming(){
  for(const ref of [false,true])await brainRegistration(ref);
  for(const task of overviewTasks.filter(t=>contextAssigned('overview:'+t.id))){
   const frames=[];
-  for(const ref of [false,true]){await route(task.query,ref);await page.getByTestId('anatomy-renderer').locator('canvas').waitFor();await drawerClose();await loaded();await page.waitForTimeout(700);const state=await shot('overview-'+task.id);const visible=state.systems.split(',').sort();if(task.systems)assert.deepEqual(visible,[...task.systems].sort(),'Named layer must render its actual systems');if(task.allowed)assert(visible.length>0&&visible.every(s=>task.allowed.includes(s)),'Viscera layer cannot show unrelated body systems');frames.push(state);}
+  for(const ref of [false,true]){await route(task.query,ref);await page.getByTestId('anatomy-renderer').locator('canvas').waitFor();await loaded();await drawerClose();await page.waitForTimeout(700);const state=await shot('overview-'+task.id);const visible=state.systems.split(',').sort();if(task.systems)assert.deepEqual(visible,[...task.systems].sort(),'Named layer must render its actual systems');if(task.allowed)assert(visible.length>0&&visible.every(s=>task.allowed.includes(s)),'Viscera layer cannot show unrelated body systems');frames.push(state);}
   checks.push({type:'overview',id:'overview:'+task.id,passed:true,native:frames[0],vercel:frames[1]});await persist();
  }
  const expected=contextTasks.filter(contextAssigned).sort(),actual=[...new Set(checks.map(c=>c.id))].sort();assert.deepEqual(actual,expected,'Every assigned connection/source/overview must be captured');
@@ -248,7 +253,7 @@ async function brainRegistration(ref){
  let currentOverview=null;
  for(const target of sourceTargets.filter(t=>contextAssigned(t.id))){
   const first=target.family==='hra-heart'?HRA_HEART_TARGETS[0]:target.family==='hra-organ'?HRA_ORGAN_TARGETS.find(t=>t.organKey===target.organKey):ZANATOMY_REFERENCE_TARGETS.find(t=>t.modelKey===target.modelKey&&t.matchAll)||target;
-  if(currentOverview!==first.id){await route({mode:'anatomy',organ:target.organKey,isolate:first.id},ref);await page.getByTestId('anatomy-renderer').locator('canvas').waitFor();await drawerClose();await loaded();currentOverview=first.id;}
+  if(currentOverview!==first.id){await route({mode:'anatomy',organ:target.organKey,isolate:first.id},ref);await page.getByTestId('anatomy-renderer').locator('canvas').waitFor();await loaded();await drawerClose();currentOverview=first.id;}
   else {page=ref?referencePage:nativePage;reference=ref;}
   {
    await page.getByTitle(target.label,{exact:true}).click();
