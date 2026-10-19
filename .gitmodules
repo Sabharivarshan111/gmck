@@ -1,0 +1,3 @@
+[submodule "tools/video-editor/openreel"]
+	path = tools/video-editor/openreel
+	url = https://github.com/Augani/openreel-video.git
