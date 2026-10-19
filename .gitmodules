@@ -1,3 +1,6 @@
 [submodule "tools/video-editor/openreel"]
 	path = tools/video-editor/openreel
 	url = https://github.com/Augani/openreel-video.git
+[submodule "tools/video-editor/opencut-classic"]
+	path = tools/video-editor/opencut-classic
+	url = https://github.com/OpenCut-app/opencut-classic.git
