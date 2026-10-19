@@ -1,0 +1,58 @@
+name: Prepare complete offline NEET PG release bank
+on:
+  push:
+    branches: ['codex/neet-offline-preparation-20261019']
+    paths:
+      - 'scripts/build-neet-pg-release-bank.py'
+      - 'scripts/neet-pg-build-sources.json'
+      - 'scripts/neet-pg-build-policy.json'
+      - '.github/workflows/neet-pg-prepare-bank.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: neet-bank-prepare-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install pymupdf Pillow
+      - name: Rebuild from hash-pinned downloaded sources
+        run: python scripts/build-neet-pg-release-bank.py --sources "$RUNNER_TEMP/neet-sources" --download
+      - name: Check complete payload and offline budget before committing
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('mobile/src/lib/neetPgBank.json'); b=json.loads(p.read_text())
+          assert p.stat().st_size < 25_000_000
+          assert len(b['records']) > 1800
+          assert len({r['id'] for r in b['records']}) == len(b['records'])
+          assert len({c['year'] for c in b['chapters']}) == 4
+          for r in b['records']:
+              assert r['question'] and r['explanation'] and r['sourceAnswer']
+              assert len(r['options']) == 4 and all(r['options'])
+              assert all(i in b['images'] for i in r['imageIds'])
+          print('Prepared', len(b['records']), 'complete records and', len(b['images']), 'embedded images')
+          PY
+      - name: Save the generated bank to the same branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add mobile/src/lib/neetPgBank.json docs/NEET_PG_RELEASE_BANK.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Generate complete offline NEET PG release bank'
+            git push origin HEAD:${{ github.ref_name }}
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: neet-pg-release-bank-summary
+          path: docs/NEET_PG_RELEASE_BANK.json

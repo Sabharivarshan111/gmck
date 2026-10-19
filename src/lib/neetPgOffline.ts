@@ -4,7 +4,7 @@ export type OfflineChapter = {
 };
 export type OfflineMcq = {
   id: string; chapterId: string; question: string; options: string[];
-  answerIndex: number; sourceAnswer: string; explanation: string;
+  answerIndex: number | null; sourceAnswer: string; explanation: string;
   requiresImage: boolean; imageIds: string[];
 };
 export type OfflineBank = {
@@ -35,13 +35,13 @@ export function validateOfflineBank(value: unknown): asserts value is OfflineBan
   const ids = new Set<string>();
   if (!value.records.length) throw new Error('An offline question bank cannot be empty.');
   for (const row of value.records) {
-    if (!object(row) || !nonempty(row.id) || ids.has(row.id) || !chapterIds.has(String(row.chapterId)) || !nonempty(row.question) || !Array.isArray(row.options) || row.options.length < 2 || row.options.length > 8 || !row.options.every(nonempty) || new Set(row.options).size !== row.options.length || !Number.isInteger(row.answerIndex) || Number(row.answerIndex) < 0 || Number(row.answerIndex) >= row.options.length || !nonempty(row.sourceAnswer) || !nonempty(row.explanation) || typeof row.requiresImage !== 'boolean' || !Array.isArray(row.imageIds) || !row.imageIds.every(nonempty) || new Set(row.imageIds).size !== row.imageIds.length) {
+    if (!object(row) || !nonempty(row.id) || ids.has(row.id) || !chapterIds.has(String(row.chapterId)) || !nonempty(row.question) || !Array.isArray(row.options) || row.options.length < 2 || row.options.length > 8 || !row.options.every(nonempty) || new Set(row.options).size !== row.options.length || (row.answerIndex !== null && (!Number.isInteger(row.answerIndex) || Number(row.answerIndex) < 0 || Number(row.answerIndex) >= row.options.length)) || !nonempty(row.sourceAnswer) || !nonempty(row.explanation) || typeof row.requiresImage !== 'boolean' || !Array.isArray(row.imageIds) || !row.imageIds.every(nonempty) || new Set(row.imageIds).size !== row.imageIds.length) {
       throw new Error(`Incomplete or invalid offline question: ${String(object(row) ? row.id : '')}`);
     }
     if (row.requiresImage && row.imageIds.length === 0) throw new Error(`Required image missing: ${row.id}`);
     const label = String(row.sourceAnswer).trim();
     const labelledIndex = /^[A-Ha-h]$/.test(label) ? label.toUpperCase().charCodeAt(0) - 65 : /^[1-8]$/.test(label) ? Number(label) - 1 : row.options.indexOf(label);
-    if (labelledIndex !== row.answerIndex) throw new Error(`Source answer and option index disagree: ${row.id}`);
+    if ((labelledIndex >= 0 && labelledIndex !== row.answerIndex) || (labelledIndex < 0 && (row.answerIndex !== null || /^[A-Ha-h1-8]$/.test(label)))) throw new Error(`Source answer and option index disagree: ${row.id}`);
     if (!row.imageIds.every(id => Object.hasOwn(value.images as object, id))) throw new Error(`Unresolved image reference: ${row.id}`);
     ids.add(row.id);
   }

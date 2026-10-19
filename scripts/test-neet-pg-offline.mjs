@@ -55,6 +55,12 @@ try {
   mismatchedKey.records[0].sourceAnswer = 'B';
   assert.throws(() => validateOfflineBank(mismatchedKey), /disagree/);
   assert.equal(reader.image('toString'), undefined);
+  const freeText = structuredClone(fixture);
+  freeText.records[0].sourceAnswer = 'Supplied free-text answer';
+  freeText.records[0].answerIndex = null;
+  validateOfflineBank(freeText);
+  freeText.records[0].sourceAnswer = 'C';
+  assert.throws(() => validateOfflineBank(freeText), /disagree/);
   const duplicates = structuredClone(fixture);
   duplicates.records.push(structuredClone(duplicates.records[0]));
   assert.throws(() => validateOfflineBank(duplicates), /Incomplete/);
