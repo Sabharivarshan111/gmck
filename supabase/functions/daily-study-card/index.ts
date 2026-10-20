@@ -98,6 +98,15 @@ Use exactly four concise options, one unequivocal correctIndex from 0 to 3, and 
     ...(kind === 'picture' && row.public_url ? { imageUrl: row.public_url } : {}) };
 }
 
+// Reuse a prepared card if a fresh slot cannot be generated. Never replace
+// medical content with an invented answer or expose a different year's card.
+async function readyBackup(university: string, year: string, kind: string) {
+  const { data } = await db.from('daily_study_cards').select('card')
+    .match({ university, year, kind, status: 'ready' })
+    .order('claimed_at', { ascending: false }).limit(1).maybeSingle();
+  return data?.card ?? null;
+}
+
 Deno.serve(secureEndpoint(async req => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers });
   if (req.method !== 'POST') return json({ error: 'Method not allowed.' }, 405);
@@ -125,6 +134,14 @@ Deno.serve(secureEndpoint(async req => {
     const { data: existing, error } = await db.from('daily_study_cards').select('status,card,claim_token,claimed_at').match(identity).maybeSingle();
     if (error) return json({ error: 'Daily cards are temporarily unavailable.' }, 503);
     if (existing?.status === 'ready' && existing.card) return json(existing.card);
+    // The reviewed picture pool is university-neutral. Reuse the same ready
+    // visual question across banks instead of paying to generate it twice.
+    if (!existing && kind === 'picture') {
+      const { data: shared } = await db.from('daily_study_cards').select('card')
+        .eq('year', year).eq('kind', kind).eq('slot', slot).eq('status', 'ready')
+        .neq('university', university).limit(1).maybeSingle();
+      if (shared?.card) return json(shared.card);
+    }
     if (!existing) {
       const token = crypto.randomUUID();
       const { error: insertError } = await db.from('daily_study_cards').insert({ ...identity, claim_token: token, status: 'generating' });
@@ -137,7 +154,10 @@ Deno.serve(secureEndpoint(async req => {
     }
     await sleep(750);
   }
-  if (!claim) return json({ error: 'Today’s question is being prepared. Please retry shortly.' }, 503);
+  if (!claim) {
+    const backup = await readyBackup(university, year, kind);
+    return backup ? json(backup) : json({ error: 'Today’s question is being prepared. Please retry shortly.' }, 503);
+  }
   try {
     const card = await generate(university, year, kind, slot, sourceQuestions);
     const { data: saved, error } = await db.from('daily_study_cards')
@@ -148,6 +168,7 @@ Deno.serve(secureEndpoint(async req => {
   } catch (error) {
     console.error('daily-study-card generation failed', error);
     await db.from('daily_study_cards').delete().match(identity).eq('claim_token', claim);
-    return json({ error: 'Could not prepare today’s question. Please retry later.' }, 503);
+    const backup = await readyBackup(university, year, kind);
+    return backup ? json(backup) : json({ error: 'Could not prepare today’s question. Please retry later.' }, 503);
   }
 }));
