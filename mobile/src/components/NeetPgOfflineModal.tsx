@@ -322,31 +322,10 @@ export function NeetPgOfflineModal({
 
   const libraryHeader = (
     <View style={styles.libraryHeader}>
-      <Touchable
-        label="Open NEET PG study planner"
-        onPress={() => setPlanOpen(true)}
-        style={[
-          styles.discuss,
-          { borderColor: colors.border, backgroundColor: colors.card },
-        ]}
-      >
-        <Sparkles size={20} color={colors.accent} />
-        <View style={styles.flex}>
-          <Text style={[typeScale.bodyStrong, { color: colors.text }]}>
-            {study.state.plan
-              ? 'Your NEET-PG study plan'
-              : 'Build your NEET-PG study plan'}
-          </Text>
-          <Text style={[typeScale.caption, { color: colors.textMuted }]}>
-            Daily practice · priority subjects · scheduled review
-          </Text>
-        </View>
-        <ChevronRight size={18} color={colors.text} />
-      </Touchable>
       <View style={styles.hero}>
         <View style={styles.line}>
           <Text style={[typeScale.overline, { color: colors.textMuted }]}>
-            YOUR QUESTION BANK
+            QUESTION BANK
           </Text>
           <View
             style={[
@@ -362,16 +341,16 @@ export function NeetPgOfflineModal({
         </View>
         <Text
           accessibilityRole="header"
-          style={[typeScale.display, { color: colors.text }]}
+          style={[typeScale.title1, { color: colors.text }]}
         >
           NEET-PG
         </Text>
         <Text style={[typeScale.callout, { color: colors.textMuted }]}>
-          Chapter-wise practice. One concept at a time.
+          Chapter-wise practice
         </Text>
         <View style={[styles.stats, { borderColor: colors.border }]}>
           <View style={styles.flex}>
-            <Text style={[typeScale.title2, { color: colors.text }]}>
+            <Text style={[typeScale.bodyStrong, { color: colors.text }]}>
               {reader.total.toLocaleString()}
             </Text>
             <Text style={[typeScale.caption, { color: colors.textMuted }]}>
@@ -382,7 +361,7 @@ export function NeetPgOfflineModal({
             style={[styles.statDivider, { backgroundColor: colors.border }]}
           />
           <View style={styles.flex}>
-            <Text style={[typeScale.title2, { color: colors.text }]}>
+            <Text style={[typeScale.bodyStrong, { color: colors.text }]}>
               {chapters.length}
             </Text>
             <Text style={[typeScale.caption, { color: colors.textMuted }]}>
@@ -509,22 +488,6 @@ export function NeetPgOfflineModal({
           </Text>
         )}
       </View>
-      {libraryResult.total > 0 ? (
-        <Touchable
-          label="Start NEET PG practice"
-          onPress={() => start()}
-          style={[styles.start, { backgroundColor: colors.primary }]}
-        >
-          <Text style={[typeScale.bodyStrong, { color: colors.primaryText }]}>
-            {savedOnly
-              ? 'Review saved questions'
-              : subject
-              ? 'Practice this subject'
-              : 'Start practice'}
-          </Text>
-          <ArrowRight size={19} color={colors.primaryText} />
-        </Touchable>
-      ) : null}
     </View>
   );
 
@@ -1257,6 +1220,55 @@ export function NeetPgOfflineModal({
                 ) : undefined
               }
             />
+            <View
+              style={[
+                styles.libraryDock,
+                {
+                  backgroundColor: colors.background,
+                  borderColor: colors.border,
+                  paddingBottom: Math.max(insets.bottom, space.sm),
+                },
+              ]}
+            >
+              <Touchable
+                label="Open NEET PG study planner"
+                onPress={() => setPlanOpen(true)}
+                style={[
+                  styles.plannerShortcut,
+                  { borderColor: colors.border, backgroundColor: colors.card },
+                ]}
+              >
+                <Sparkles size={18} color={colors.accent} />
+                <View style={styles.flex}>
+                  <Text style={[typeScale.bodyStrong, { color: colors.text }]}>
+                    {study.state.plan ? 'Study plan' : 'Build study plan'}
+                  </Text>
+                </View>
+                <ChevronRight size={18} color={colors.text} />
+              </Touchable>
+
+              {libraryResult.total > 0 ? (
+                <Touchable
+                  label="Start NEET PG practice"
+                  onPress={() => start()}
+                  style={[styles.start, { backgroundColor: colors.primary }]}
+                >
+                  <Text
+                    style={[
+                      typeScale.bodyStrong,
+                      { color: colors.primaryText },
+                    ]}
+                  >
+                    {savedOnly
+                      ? 'Review saved questions'
+                      : subject
+                      ? 'Practice this subject'
+                      : 'Start practice'}
+                  </Text>
+                  <ArrowRight size={19} color={colors.primaryText} />
+                </Touchable>
+              ) : null}
+            </View>
           </KeyboardSafe>
         )}
         <Sheet
@@ -1382,8 +1394,22 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     paddingHorizontal: space.xl,
   },
-  libraryHeader: { gap: space.lg, paddingBottom: space.sm },
-  hero: { gap: space.sm, paddingTop: space.xxl, paddingBottom: space.sm },
+  libraryDock: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: space.lg,
+    paddingTop: space.sm,
+    gap: space.sm,
+  },
+  plannerShortcut: {
+    minHeight: 44,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.sm,
+    borderRadius: radius.md,
+    paddingHorizontal: space.md,
+  },
+  libraryHeader: { gap: space.md, paddingBottom: space.sm },
+  hero: { gap: space.xs, paddingTop: space.md, paddingBottom: space.xs },
   line: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1402,8 +1428,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: space.lg,
-    paddingTop: space.xl,
-    marginTop: space.sm,
+    paddingTop: space.sm,
+    marginTop: space.xs,
     borderTopWidth: StyleSheet.hairlineWidth,
   },
   statDivider: { width: StyleSheet.hairlineWidth, height: 32 },
@@ -1453,7 +1479,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: space.md,
-    paddingTop: space.md,
+    paddingTop: space.xs,
   },
   start: {
     flexDirection: 'row',

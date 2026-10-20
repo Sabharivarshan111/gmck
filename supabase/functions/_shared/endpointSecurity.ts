@@ -1,6 +1,9 @@
 /** Transport guard only. Each handler still owns authentication and authorization. */
 const ALLOWED_ORIGINS = new Set([
   'https://mbbsqbank-questor.lovable.app',
+  'https://orbitmbbs.vercel.app',
+  'https://orbitmbbs.site',
+  'https://www.orbitmbbs.site',
   ...(Deno.env.get('ORBIT_ALLOWED_ORIGINS') ?? '').split(',').map(x => x.trim()).filter(Boolean),
 ]);
 

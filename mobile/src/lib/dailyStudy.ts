@@ -73,11 +73,13 @@ export async function createDailyCard(
 
   const { data, error } = await supabase.functions.invoke('daily-study-card', {
     body: { kind, university, year, date, sourceQuestions: compact },
+    timeout: 55000,
   });
   if (error) throw new Error((data as { error?: string } | null)?.error ?? 'Could not create today’s question. Please retry.');
   const card: DailyCard = data;
   if (!isCard(card)) throw new Error('The daily question was incomplete. Please retry.');
-  await AsyncStorage.setItem(dailyKey(kind, university, year, date), JSON.stringify(card));
+  // A full browser cache must not hide a successfully loaded question.
+  await AsyncStorage.setItem(dailyKey(kind, university, year, date), JSON.stringify(card)).catch(() => {});
   void import('./reminderSync').then(({ syncReminders }) => syncReminders()).catch(() => {});
   return card;
 }
