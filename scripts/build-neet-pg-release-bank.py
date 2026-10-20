@@ -13,6 +13,8 @@ import json
 from pathlib import Path
 import re
 import urllib.request
+import urllib.parse
+import time
 
 import fitz
 from PIL import Image
@@ -46,14 +48,33 @@ def main():
     def fetch(source):
         target = args.sources / (source['name'] + '.pdf')
         if not target.exists() and args.download:
-            request = urllib.request.Request(source['url'], headers={'User-Agent': 'Mozilla/5.0'})
-            with urllib.request.urlopen(request, timeout=120) as response:
-                body = response.read(120_000_001)
-            if len(body) > 120_000_000:
-                raise ValueError('Source exceeds size limit: ' + source['name'])
-            if not body.startswith(b'%PDF-'):
-                raise ValueError('Expected a public PDF: ' + source['name'])
-            target.write_bytes(body)
+            print('Downloading ' + source['name'], flush=True)
+            urls = [source['url']]
+            parsed = urllib.parse.urlparse(source['url'])
+            if parsed.hostname == 'drive.google.com':
+                file_id = urllib.parse.parse_qs(parsed.query).get('id', [''])[0]
+                urls.append('https://drive.usercontent.google.com/download?' + urllib.parse.urlencode({'id': file_id, 'export': 'download'}))
+            last_error = None
+            for attempt in range(4):
+                try:
+                    request = urllib.request.Request(urls[min(attempt, len(urls)-1)], headers={'User-Agent': 'Mozilla/5.0'})
+                    with urllib.request.urlopen(request, timeout=120) as response:
+                        body = response.read(120_000_001)
+                    if len(body) > 120_000_000:
+                        raise ValueError('Source exceeds size limit')
+                    if not body.startswith(b'%PDF-'):
+                        raise ValueError('Expected a public PDF')
+                    if hashlib.sha256(body).hexdigest() != source['sha256']:
+                        raise ValueError('Source fingerprint changed')
+                    target.write_bytes(body)
+                    print('Verified ' + source['name'], flush=True)
+                    break
+                except Exception as error:
+                    last_error = error
+                    if attempt < 3:
+                        time.sleep(2 * (attempt + 1))
+            else:
+                raise RuntimeError('Could not download ' + source['name'] + ': ' + str(last_error)) from last_error
         if hashlib.sha256(target.read_bytes()).hexdigest() != source['sha256']:
             raise ValueError('Source fingerprint changed: ' + source['name'])
     with ThreadPoolExecutor(max_workers=4) as pool:
