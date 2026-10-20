@@ -11,6 +11,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  actions: write
 concurrency:
   group: neet-bank-prepare-${{ github.ref }}
   cancel-in-progress: true
@@ -18,6 +19,8 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    outputs:
+      bank_sha: ${{ steps.save.outputs.bank_sha }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -48,6 +51,7 @@ jobs:
           print('Prepared', len(b['records']), 'complete records and', len(b['images']), 'embedded images')
           PY
       - name: Save the generated bank to the same branch
+        id: save
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
@@ -57,7 +61,14 @@ jobs:
             git pull --rebase origin ${{ github.ref_name }}
             git push origin HEAD:${{ github.ref_name }}
           fi
+          echo "bank_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@v4
         with:
           name: neet-pg-release-bank-summary
           path: docs/NEET_PG_RELEASE_BANK.json
+
+  verify-and-build:
+    needs: prepare
+    uses: ./.github/workflows/neet-pg-release-candidate.yml
+    with:
+      candidate_ref: ${{ needs.prepare.outputs.bank_sha }}

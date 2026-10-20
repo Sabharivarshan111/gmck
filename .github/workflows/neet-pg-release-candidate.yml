@@ -13,6 +13,11 @@ on:
       - 'scripts/check-neet-pg-artifact.py'
       - '.github/workflows/neet-pg-release-candidate.yml'
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      candidate_ref:
+        required: true
+        type: string
 permissions:
   contents: read
   actions: write
@@ -25,6 +30,8 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.candidate_ref || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -53,15 +60,19 @@ jobs:
         run: node mobile/web/neet-pg-offline-check.mjs
       - name: Start signed, internal and debug builds of this exact verified branch
         uses: actions/github-script@v7
+        env:
+          CANDIDATE_SHA: ${{ inputs.candidate_ref || github.sha }}
         with:
           script: |
+            const expected=process.env.CANDIDATE_SHA;
+            if(!/^[a-f0-9]{40}$/.test(expected)) throw Error('Invalid candidate commit');
             const branch=context.ref.replace('refs/heads/','');
             const {data:ref}=await github.rest.git.getRef({...context.repo,ref:'heads/'+branch});
-            if(ref.object.sha!==context.sha) throw Error('The candidate was superseded; refusing to build another source.');
+            if(ref.object.sha!==expected) throw Error('The candidate was superseded; refusing to build another source.');
             for(const workflow_id of ['android-release.yml','android-internal.yml','android-debug.yml']) {
               const inputs=workflow_id==='android-release.yml'?{build_apk:'true'}:{};
               await github.rest.actions.createWorkflowDispatch({...context.repo,workflow_id,ref:branch,inputs});
-              core.info('Dispatched '+workflow_id+' for '+context.sha);
+              core.info('Dispatched '+workflow_id+' for '+expected);
             }
       - uses: actions/upload-artifact@v4
         if: always()
