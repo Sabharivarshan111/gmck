@@ -2343,3 +2343,13 @@ Full verification run 39370309789 and native runs 39370613024, 39370614555, 3937
 ## 2026-10-20 — NEET-PG UI redesign / version 28
 
 Owner requested full NEET-PG redesign, per-question AI, new Black & White theme and honest Liquid Glass audit. Implemented shared offline chapter library/focused reader, saved questions, immutable supplied keys/explanations, original image zoom, contextual ACEV sheet with retry/history. Added Black & White preset and reduced-transparency solid fallback; softened glass rims/highlights without changing native shader gates. Research, proofs and limits: docs/NEET_PG_UI_REDESIGN.md; inspected screenshots docs/evidence/neetpg-redesign. No bank content changes; 2078/205/467 retained. Version remains28. Local targeted browser/type/lint/content/preflight/bundle checks passed; broad old preview smoke has stale Themes selector. Live ACEV endpoint200 nonempty reply. Branch codex/neet-pg-ui-redesign-20261020; release workflow validates exact commit then dispatches all three Android variants. Continue publication/CI verification; do not label prior release714/internal533/debug573 as containing this redesign.
+
+## 2026-10-20 — Tablet AI paragraph layout and follow-up recovery
+
+**DONE:** Traced the supplied screenshot/recording. Standalone NoteText paragraphs no longer flex vertically; only list-row text flexes horizontally. Shared Ask AI answers cap at 760dp, composer cannot shrink, clipping is disabled for variable-height messages. askAi bounds last-ten history to 48k total and activates context for ordinary follow-ups, uses 90s timeout and preserves service HTTP messages. Failed messages are excluded from history; busy guard prevents duplicate sends. Annotation cleanup during reveal; web cache refreshed. Added deterministic request tests and actual shared-component browser regression at phone, portrait tablet and landscape tablet; all passed. MCQ, NEET discussion, keyboard, note schema and contrast checks passed. Live contextual “Why?” smoke HTTP200/1105 characters. No backend/auth/bank changes.
+
+**HALF-DONE:** Final TypeScript/Android bundle/production build verification and publication pending at this checkpoint; inspect CI and docs/TABLET_AI_CHAT_FIX_20261020.md before claiming published.
+
+**NEXT:** Finish pending verification, publish through a PR and observe web/Android builds. Evidence under docs/evidence/tablet-ai-chat.
+
+**DO NOT:** Claim physical tablet IME behavior or exact network cause from the recording alone. Existing temporary checkout files are unrelated and must not be committed. The new screenshots use a service fixture, not fabricated live replies.
