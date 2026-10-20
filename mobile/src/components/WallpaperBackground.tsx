@@ -37,7 +37,7 @@ import { solveWallpaper } from '@/lib/wallpaper';
 export function useWallpaperText(): string {
   const { colors } = useTheme();
   const { wallpaper } = useWallpaper();
-  if (!wallpaper) {
+  if (!wallpaper || colors.monochrome) {
     return colors.text;
   }
   return solveWallpaper(wallpaper, colors.background, colors.text).text;
@@ -88,7 +88,7 @@ export function WallpaperBackground({ children }: { children: React.ReactNode })
   // A new pick deserves a fresh attempt at loading it.
   useEffect(() => setBroken(false), [wallpaper?.uri]);
 
-  if (!wallpaper || broken) {
+  if (!wallpaper || broken || colors.monochrome) {
     return <View style={styles.root}>{children}</View>;
   }
 

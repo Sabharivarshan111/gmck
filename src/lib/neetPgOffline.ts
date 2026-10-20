@@ -57,11 +57,12 @@ export function createOfflineReader(input: unknown) {
     id: bank.id,
     total: bank.records.length,
     chapters: () => bank.chapters.map(chapter => ({ ...chapter, path: [...chapter.path], names: [...chapter.names], count: bank.records.filter(row => row.chapterId === chapter.id).length })),
-    search: (filter: { year?: string; subject?: string; chapterId?: string; query?: string; offset?: number; limit?: number } = {}) => {
+    search: (filter: { year?: string; subject?: string; chapterId?: string; query?: string; ids?: readonly string[]; offset?: number; limit?: number } = {}) => {
       const terms = (filter.query ?? '').trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
+      const ids = filter.ids ? new Set(filter.ids) : null;
       const matches = indexed.filter(({ row, text }) => {
         const chapter = chapters.get(row.chapterId)!;
-        return (!filter.year || chapter.year === filter.year) && (!filter.subject || chapter.subject === filter.subject) && (!filter.chapterId || row.chapterId === filter.chapterId) && terms.every(term => text.includes(term));
+        return (!ids || ids.has(row.id)) && (!filter.year || chapter.year === filter.year) && (!filter.subject || chapter.subject === filter.subject) && (!filter.chapterId || row.chapterId === filter.chapterId) && terms.every(term => text.includes(term));
       });
       const offset = Number.isFinite(filter.offset) ? Math.max(0, Math.trunc(filter.offset!)) : 0;
       const limit = Number.isFinite(filter.limit) ? Math.max(1, Math.min(40, Math.trunc(filter.limit!))) : 40;

@@ -395,7 +395,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
    */
   const cardGradient = useCallback(
     (subject: { key: string; gradient: [string, string] }): [string, string] =>
-      preference === 'custom'
+      preference === 'custom' || colors.monochrome
         ? themedGradient(colors, subjects.findIndex(item => item.key === subject.key))
         : subject.gradient,
     [preference, colors, subjects],
@@ -843,7 +843,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
                     style={styles.subjectTile}
                     innerStyle={styles.subjectCard}>
                     <View style={styles.subjectHeaderRow}>
-                      <Text style={styles.subjectEmoji}>{subject.icon}</Text>
+                      {colors.monochrome ? <BookOpen size={28} color={colors.text} /> : <Text style={styles.subjectEmoji}>{subject.icon}</Text>}
                       {editing ? (
                         /*
                          * These two buttons only exist in edit mode, and edit
