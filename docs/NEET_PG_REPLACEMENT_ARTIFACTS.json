@@ -1,0 +1,51 @@
+{
+  "applicationCommit": "169d6cc68583f3fc35b240915d669103dd287568",
+  "mergedCommit": "8cd9ff7b27001af065b953b3ca2a6186dc85d033",
+  "versionCode": 27,
+  "bank": {
+    "questions": 2078,
+    "chapters": 205,
+    "images": 467,
+    "packagedJsonBytes": 21864843,
+    "logicalPayloadSha256": "b7798fe3c8b66eab67c85df8ff56841e40974a439a8b9fd14fa00df5a9020e65",
+    "completeOriginalPaperArchive": false
+  },
+  "web": {
+    "verifiedProductionDeployment": "dpl_HtGgfPTpSf2kc5qv7Ue3VCo2DAFP",
+    "url": "https://www.orbitmbbs.site/notes",
+    "state": "READY"
+  },
+  "verificationRun": 39357866551,
+  "androidDeviceTested": false,
+  "playStoreUploaded": false,
+  "artifacts": [
+    {
+      "kind": "release-aab",
+      "run": 39358466873,
+      "url": "https://github.com/Sabharivarshan111/gmck/releases/download/release-711/app-release.aab",
+      "bytes": 105330515,
+      "sha256": "7334206c2b63d07518af6eb5bf1b4bdc30ff3c35bfbae29f0b7ecd5a1bf6662d"
+    },
+    {
+      "kind": "release-apk",
+      "run": 39358466873,
+      "url": "https://github.com/Sabharivarshan111/gmck/releases/download/release-711/app-release.apk",
+      "bytes": 132784415,
+      "sha256": "025750467c5c12709b679ca36e84c1d25349a05015d16193ce9cac9be5d4f8f9"
+    },
+    {
+      "kind": "internal-apk",
+      "run": 39358468511,
+      "url": "https://github.com/Sabharivarshan111/gmck/releases/download/internal-530/app-internal.apk",
+      "bytes": 140419699,
+      "sha256": "8548b1965aeb6c5b80aaa53359af0436850f4bc26c5296d232f3c5dd58b2e2ec"
+    },
+    {
+      "kind": "debug-apk",
+      "run": 39358470035,
+      "url": "https://github.com/Sabharivarshan111/gmck/releases/download/debug-570/app-preview.apk",
+      "bytes": 140419715,
+      "sha256": "ab139c42dd1a168e1b8c94ca12f5140435dd0f5d2b6f6643d3a95493e199d275"
+    }
+  ]
+}

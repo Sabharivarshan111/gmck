@@ -33,7 +33,9 @@ The [public Vault](https://www.orbitmbbs.site/notes) was opened through the brow
 
 Production Vercel deployment: `dpl_HtGgfPTpSf2kc5qv7Ue3VCo2DAFP`, READY, same application commit, serving `www.orbitmbbs.site` and `orbitmbbs.vercel.app`.
 
-Native builds are running: [release APK/AAB](https://github.com/Sabharivarshan111/gmck/actions/runs/39358466873), [internal APK](https://github.com/Sabharivarshan111/gmck/actions/runs/39358468511), [debug APK](https://github.com/Sabharivarshan111/gmck/actions/runs/39358470035). Publication and archive inspection must succeed before these are called released. Version remains 27; no Play Store upload was performed.
+All native builds completed successfully and published their assets: [signed release APK/AAB](https://github.com/Sabharivarshan111/gmck/releases/tag/release-711), [internal APK](https://github.com/Sabharivarshan111/gmck/releases/tag/internal-530), and [debug APK](https://github.com/Sabharivarshan111/gmck/releases/tag/debug-570). Each APK and the AAB passed actual archive inspection for the replacement marker and absence of retired PG assets before publication. Version remains 27; no Play Store upload was performed. Exact artifact URLs and checksums are in `NEET_PG_REPLACEMENT_ARTIFACTS.json`.
+
+PR #103 merged through the ordinary GitHub merge API as `8cd9ff7b27001af065b953b3ca2a6186dc85d033`. Subsequent release-record changes do not alter the verified application payload. Existing main-branch anatomy release gates remain intact.
 
 ![Live production bank](evidence/neetpg-offline/production-bank.jpg)
 
