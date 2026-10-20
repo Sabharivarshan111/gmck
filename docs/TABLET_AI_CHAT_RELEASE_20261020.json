@@ -1,0 +1,89 @@
+{
+  "date": "2026-10-20",
+  "versionCode": 28,
+  "versionName": "0.0.0.28",
+  "android_source": "2090212dfe8f36862143b4559cd07f0b2c8bab70",
+  "source_tree": "399098b9a1bb0eb11617ea1b1d4f482c74b8a9e5",
+  "web_source": "457337c33396b3fd5e8bcd126019cb3dd4cde055",
+  "web": {
+    "url": "https://www.orbitmbbs.site/ask-ai",
+    "deployment": "dpl_EpDXnA7cSYHptWsKMtTfYkKVZt6P",
+    "status": "READY",
+    "cache": "v28-tablet-ai-chat-2026-10-20"
+  },
+  "runs": {
+    "verified_candidate": 39438175953,
+    "signed": 39438652265,
+    "internal": 39438655358,
+    "debug": 39438658336,
+    "chromium_webkit": 39438185333
+  },
+  "releases": [
+    {
+      "tag": "release-725",
+      "prerelease": true,
+      "url": "https://github.com/Sabharivarshan111/gmck/releases/tag/release-725",
+      "assets": [
+        {
+          "name": "app-release.aab",
+          "url": "https://github.com/Sabharivarshan111/gmck/releases/download/release-725/app-release.aab",
+          "bytes": 105352950,
+          "sha256": "sha256:7ab1eee393d47d80f4be5cd710ecf5404823ff494a9fdd01393ae7a706844b76"
+        },
+        {
+          "name": "app-release.apk",
+          "url": "https://github.com/Sabharivarshan111/gmck/releases/download/release-725/app-release.apk",
+          "bytes": 132820727,
+          "sha256": "sha256:c380679c2f2f96ce458b395ab4d91a3b7eb6e7d73fbf738bfa645c050a856f65"
+        }
+      ]
+    },
+    {
+      "tag": "internal-544",
+      "prerelease": true,
+      "url": "https://github.com/Sabharivarshan111/gmck/releases/tag/internal-544",
+      "assets": [
+        {
+          "name": "app-internal.apk",
+          "url": "https://github.com/Sabharivarshan111/gmck/releases/download/internal-544/app-internal.apk",
+          "bytes": 140456007,
+          "sha256": "sha256:a68116ac91ac81712f89f07ed6b69a2c35d8dccc0768f386e7b389dd4145b087"
+        }
+      ]
+    },
+    {
+      "tag": "debug-584",
+      "prerelease": true,
+      "url": "https://github.com/Sabharivarshan111/gmck/releases/tag/debug-584",
+      "assets": [
+        {
+          "name": "app-preview.apk",
+          "url": "https://github.com/Sabharivarshan111/gmck/releases/download/debug-584/app-preview.apk",
+          "bytes": 140456023,
+          "sha256": "sha256:ac6325143d445acde17ece3bf3c04b3c33ae7a0dbd7c2d04d15d762c8521ab91"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "viewport_sizes": [
+      "390x844",
+      "800x1280",
+      "1280x800"
+    ],
+    "live_shared_sdk": {
+      "first_response_characters": 2037,
+      "followup_response_characters": 2110,
+      "followup_retained_topic": true
+    },
+    "live_browser": "Real first answer and short Why? follow-up both completed on deployed /ask-ai; screenshot live-follow-up.jpg.",
+    "bank_payload": "All APKs and AAB: replacement bundled; retired PG assets absent.",
+    "question_bank_changed": false
+  },
+  "limitations": [
+    "Published through existing candidate workflow as GitHub prereleases; no Google Play upload.",
+    "Physical tablet microphone and native IME not tested.",
+    "Recording's red warning is dictation no-match, not proof of an AI-service error.",
+    "Separate existing anatomy dossier coverage check remains 92% against 95%; the main 626-target gate remains intact."
+  ]
+}

@@ -2353,3 +2353,14 @@ Owner requested full NEET-PG redesign, per-question AI, new Black & White theme 
 **NEXT:** Finish pending verification, publish through a PR and observe web/Android builds. Evidence under docs/evidence/tablet-ai-chat.
 
 **DO NOT:** Claim physical tablet IME behavior or exact network cause from the recording alone. Existing temporary checkout files are unrelated and must not be committed. The new screenshots use a service fixture, not fabricated live replies.
+
+
+## 2026-10-20 — Tablet AI repair published
+
+**DONE:** PR108 and PR109 merged; final application tree 399098b9a1bb0eb11617ea1b1d4f482c74b8a9e5. Production web READY at /ask-ai, deployment dpl_EpDXnA7cSYHptWsKMtTfYkKVZt6P, cache v28-tablet-ai-chat-2026-10-20. Actual deployed first turn and Why? follow-up completed with context; unedited live screenshot committed. Real shared SDK two-turn smoke returned 2037/2110 characters and retained the topic. Candidate verifier 39438175953 and Chromium/WebKit 39438185333 passed. Signed release 725, internal 544 and debug 584 all succeeded from 2090212dfe8f36862143b4559cd07f0b2c8bab70, versionCode 28 / versionName 0.0.0.28. Every APK/AAB passed bank-payload inspection. Exact links/digests in docs/TABLET_AI_CHAT_RELEASE_20261020.json.
+
+**HALF-DONE:** None for this chat repair and candidate publication.
+
+**NEXT:** If a tablet-specific voice issue persists, obtain that tablet's speech-service/device details. No microphone or physical IME behavior was certified here.
+
+**DO NOT:** Misread the recording's red dictation no-match warning as proof of an AI service failure. Main signed/internal push jobs intentionally wait for separate anatomy evidence; candidate builds used the existing verified-candidate workflow without weakening that gate. No full 626-target recertification, blanket CI-green claim or Play upload. General Web build still has the unrelated 92%-versus-95% digestive dossier check. Unrelated checkout temporary files were not committed.
