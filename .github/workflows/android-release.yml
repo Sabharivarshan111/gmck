@@ -277,6 +277,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: release-${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
           name: Release build ${{ github.run_number }} — v${{ steps.appversion.outputs.code }}
           prerelease: true
           body: |
