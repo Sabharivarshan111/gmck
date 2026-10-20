@@ -39,6 +39,8 @@ ORBIT's glass is not Apple's native Liquid Glass. Android 13+ can use the existi
 - Browser AI service stub verifies request payload, clarification mode, retries, follow-up history, question isolation and unchanged stored answer. A separate live service smoke returned HTTP 200 and a nonempty response (1,153 characters). This verifies connectivity, not medical correctness of all model responses.
 - Browser material test verifies actual glass surfaces, opaque increased-contrast fallback and restoration.
 - Required release preflights, contrast, glass radius/shader guards and Android production JS bundle passed.
+- CI retained-answer contract now checks the focused reader variable `question` instead of the retired list variable `item`; the guarantee itself remains unchanged.
+- An unrelated Web build dossier check reports digestive coverage 92% versus a 95% floor. Simulator/dossier sources are byte-identical to the base; this UI change does not modify or lower that gate.
 - General preview smoke could not complete reliably: its existing theme-menu selector `Themes` no longer matches the current UI. The production-browser story above exercises the changed feature directly. No global smoke success is claimed.
 
 Screenshots in `docs/evidence/neetpg-redesign/` are inspected captures of the real shared UI at 390×844, not design mockups or Android GPU proof. AI panel screenshots show the empty input state, not a fabricated live reply.
