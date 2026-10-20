@@ -47,16 +47,16 @@ if (gradleCode && tsCode) {
   );
 }
 /*
- * VersionCode 26 was built on 2026-10-14. The owner explicitly requested
- * version 27 as the next Android build. Keep the Gradle version in sync.
+ * The owner explicitly requested a fresh version 28 Android build on
+ * 2026-10-20. Keep the Gradle version in sync.
  * This pin verifies source version only; it does not imply Play publication.
  */
-const PINNED_VERSION_CODE = 27;
+const PINNED_VERSION_CODE = 28;
 if (gradleCode) {
   check(
     Number(gradleCode[1]) === PINNED_VERSION_CODE,
     `versionCode is ${gradleCode[1]}, but ${PINNED_VERSION_CODE} is pinned until the owner ` +
-      'uploads to Play. If that has now happened, lift the pin in scripts/version-check.mjs ' +
+      'requests another version. Update the pin in scripts/version-check.mjs ' +
       'and the note in build.gradle together, rather than editing one of them.',
   );
 }

@@ -140,6 +140,12 @@ jobs:
         working-directory: mobile
         run: npm ci --legacy-peer-deps
 
+      # Clean before generating renderer assets under app/build; cleaning in
+      # the assemble invocation deletes those newly generated required files.
+      - name: Clean Android outputs before generating local assets
+        working-directory: mobile/android
+        run: ./gradlew clean --no-daemon --no-build-cache
+
       - name: Bundle the local canonical anatomy and diagnostic renderer
         working-directory: .
         run: |
@@ -309,7 +315,7 @@ jobs:
         working-directory: mobile/android
         # --stacktrace because the first line of an AGP failure is rarely the
         # useful one, and a re-run costs ten minutes.
-        run: ./gradlew assemblePreview --no-daemon --stacktrace
+        run: ./gradlew assemblePreview --no-daemon --no-build-cache --rerun-tasks --stacktrace
 
       # Google Sign-In identifies an app by **package name + signing
       # certificate**, so this pair is what has to exist as an Android OAuth

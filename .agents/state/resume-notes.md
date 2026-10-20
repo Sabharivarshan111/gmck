@@ -2316,3 +2316,26 @@ Production Vercel `dpl_HtGgfPTpSf2kc5qv7Ue3VCo2DAFP` is READY, serving both publ
 **NEXT** — Use the published APK/AAB links rather than an older release. Extend source coverage only through complete matching records with retained supplied keys and required original images. See the release report for included counts by collection year.
 
 **DO NOT** — Do not regenerate a scratch-only checkpoint: the finished bank is committed on main. Do not claim every original paper, independent clinical certification, a physical Android test, complete 626-target anatomy certification, or a Play upload. Do not invent keys/images or put publisher names/review flags into the study UI. Keep required software licences. Version remains 27 until a real Play upload requires a bump; do not change the package ID or weaken release gates. Future signed/internal release tags are now pinned explicitly to the actual build SHA.
+
+
+## 2026-10-20 — Codex — Owner requests Android version 28 fresh rebuild
+
+**DONE** — Owner explicitly requests version 28 and a rebuild from the start. Updated Gradle and JavaScript version to 28 (0.0.0.28), moved the consistency-check pin to 28, and retained package ID/signing/ad behaviour. Android jobs now run Gradle clean with build cache disabled and tasks rerun, on fresh hosted runners. Existing offline NEET-PG bank remains byte-identical.
+
+**HALF-DONE** — Verification and newly signed APK/AAB publication pending; previous release-711/internal-530/debug-570 remain version 27 and must not be relabelled.
+
+**NEXT** — Run the existing full offline release-candidate verifier on this branch, inspect all three Android jobs and version 28 packages, publish actual new links/checksums and merge the version bump. Add/verify app_releases row 28.
+
+**DO NOT** — Claim Play upload, complete original-paper coverage, physical-device QA or complete anatomy certification. Preserve existing release gates and original supplied answers/options/images. The prior version-27 pin is superseded by this explicit owner request, not evidence of a Play upload.
+
+
+## 2026-10-20 — Codex — Android version 28 rebuilt and published
+
+**DONE** — Owner-authorized versionCode 28 / 0.0.0.28 is built from `ae307b7b9e5d90749661544dd8907f7ee3d4aea5`. All three corrected workflows perform Gradle clean before generating required simulator assets, disable the build cache and force compilation tasks to rerun. Release-714 APK+AAB, internal-533 and debug-573 are published, all pinned to this exact application source.
+Full verification run 39370309789 and native runs 39370613024, 39370614555, 39370615995 succeeded. All four files were downloaded, manifests decoded (APK binary XML/AAB protobuf), version/package IDs checked, SHA-256 compared with published metadata, and archive replacement/retired-bank checks passed. app_releases row 28 was written and read back. See docs/ANDROID_V28_RELEASE.md and docs/ANDROID_V28_ARTIFACTS.json for exact links/digests and Play text. The bank stays 2,078 questions /205 chapters /467 illustrations, byte-identical to the prior release bank.
+
+**HALF-DONE** — Release publication and package verification are complete; PR #104 records this version bump for ordinary merge. Physical device testing, complete original-paper coverage and a Play upload remain unverified. Separate existing web anatomy dossier baseline failure is unchanged; corrected-source iOS web CI passed.
+
+**NEXT** — Complete ordinary PR #104 merge, then use release-714 for version 28 rather than old version-27 builds. Follow the owner for a Play upload or further version increment.
+
+**DO NOT** — Do not bump to 29 without owner direction, change the package/signing/ad configuration, regenerate the unchanged bank, invent answer keys/images, claim Play/device/anatomy certification, or weaken release gates. Initial attempt c119aa3 cleaned after asset generation and failed the required-assets guard; corrected ae307b7 orders clean before generation and all builds succeed.
