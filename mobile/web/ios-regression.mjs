@@ -10,9 +10,22 @@ const engine=process.env.ORBIT_BROWSER==='webkit'?webkit:chromium;
 const browser=await engine.launch({headless:true,...(engine===chromium?{executablePath:process.env.CHROME_PATH,args:['--no-sandbox','--disable-dev-shm-usage']}: {})});
 await fs.mkdir('/tmp/orbit-ios-evidence',{recursive:true});
 const errors=[];const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,reducedMotion:'reduce',timezoneId:'Asia/Kolkata'});
-await context.route('**/*',r=>r.request().url().startsWith('http://127.0.0.1:5226')?r.continue():r.abort());
+const intentionallyBlocked = new Set();
+await context.route('**/*',r=>{
+  const url = new URL(r.request().url());
+  if (url.origin === 'http://127.0.0.1:5226') return r.continue();
+  intentionallyBlocked.add(url.host + url.pathname);
+  return r.abort();
+});
 await context.addInitScript(()=>localStorage.setItem('orbit:tour-v1',JSON.stringify({seen:1})));
-const page=await context.newPage();await page.clock.install({time:new Date('2026-10-14T09:00:00+05:30')});page.on('pageerror',e=>errors.push(e.message));
+const page=await context.newPage();await page.clock.install({time:new Date('2026-10-14T09:00:00+05:30')});page.on('pageerror',e=>{
+  // WebKit reports an intentionally aborted cross-origin fetch as a pageerror.
+  // Ignore only that exact network message for a URL this fixture blocked;
+  // unexpected application errors and real (unblocked) CORS failures still fail.
+  const aborted = e.message.match(/^\/([^\s]+) due to access control checks\.$/);
+  if (aborted && intentionallyBlocked.has(aborted[1])) return;
+  errors.push(e.message);
+});
 const label=s=>page.getByLabel(s,{exact:true});const tap=async s=>{await label(s).scrollIntoViewIfNeeded();await label(s).tap();};
 try{
 await page.goto('http://127.0.0.1:5226');

@@ -41,6 +41,6 @@ ORBIT's glass is not Apple's native Liquid Glass. Android 13+ can use the existi
 - Required release preflights, contrast, glass radius/shader guards and Android production JS bundle passed.
 - CI retained-answer contract now checks the focused reader variable `question` instead of the retired list variable `item`; the guarantee itself remains unchanged.
 - An unrelated Web build dossier check reports digestive coverage 92% versus a 95% floor. Simulator/dossier sources are byte-identical to the base; this UI change does not modify or lower that gate.
-- General preview smoke could not complete reliably: its existing theme-menu selector `Themes` no longer matches the current UI. The production-browser story above exercises the changed feature directly. No global smoke success is claimed.
+- General preview smoke was stopped after timeouts clicking the visible `Themes` control. The production-browser story above exercises the changed feature directly. The WebKit calendar harness also needed to distinguish its own deliberately aborted cross-origin request from an application exception; the check now recognizes that exact error only when the harness recorded blocking the same URL. No global smoke success is claimed.
 
 Screenshots in `docs/evidence/neetpg-redesign/` are inspected captures of the real shared UI at 390×844, not design mockups or Android GPU proof. AI panel screenshots show the empty input state, not a fabricated live reply.
