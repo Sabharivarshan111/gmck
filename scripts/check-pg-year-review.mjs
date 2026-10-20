@@ -20,7 +20,11 @@ for(const source of sources) {
 assert.equal(original.length,10);
 for(const q of original) {assert.equal(q.year,null);assert.equal(q.exam,'ORIGINAL');assert.equal(q.record_type,'original_exam_style');assert.equal(q.options.length,4);}
 const ui=read('mobile/src/components/PgEntranceBankModal.tsx');
-assert.match(ui,/Practice questions with supplied answer keys/);assert.match(ui,/No verified exam-year archive/);
+assert.match(ui,/loadBundledNeetBank/);
+assert.ok(!/pgLocalBank|pgEntranceBank/.test(ui));
+const offlineUi=read('mobile/src/components/NeetPgOfflineModal.tsx');
+assert.match(offlineUi,/Answer: \{item.sourceAnswer\}/);
+assert.match(offlineUi,/item.explanation/);
 assert.ok(!ui.includes('MedMCQA'));
 const licenceModule={exports:{}};
 const licenceCode=ts.transpileModule(read('mobile/src/lib/thirdPartyLicences.ts'),{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText;
@@ -35,4 +39,4 @@ assert.ok(!form.includes('Paste recalled'));
 const server=read('supabase/functions/pg-answer-review/index.ts');
 for(const pattern of [/auth\.auth\.getUser\(token\)/,/consume_edge_quota/,/retrievePassages/,/source_year_verified:false/,/independently_medically_reviewed:false/,/answer:"UNRESOLVED"/])assert.match(server,pattern);
 assert.match(form,/supabase\.functions\.invoke\('pg-answer-review'/);
-console.log('PG practice release: publisher-declared MIT dataset with provisional answers; original samples and official links retained. AI answers remain provisional.');
+console.log('Archived PG provenance and private review contracts retained; released Vault uses the complete offline replacement.');

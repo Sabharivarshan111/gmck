@@ -7,7 +7,7 @@ import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
 const ts=createRequire(import.meta.url)('../mobile/node_modules/typescript');
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
-const forbidden=/\/pgPacks\/|\/(?:pgResearchSources|pgIniResearchSources|pgFmgeResearchSources|pgFirstRankerSources|pgHistoricalClaims|pgQuarantine)\.[tj]sx?$/;
+const forbidden=/\/pgLocalBank\.[tj]sx?$|\/pgCompact\/|\/pgPacks\/|\/(?:pgResearchSources|pgIniResearchSources|pgFmgeResearchSources|pgFirstRankerSources|pgHistoricalClaims|pgQuarantine)\.[tj]sx?$/;
 const seen=new Set();
 function resolveImport(spec,file) {
  const base=spec.startsWith('@/')?path.join(root,'mobile/src',spec.slice(2)):
@@ -30,6 +30,6 @@ function visit(file) {
  }
  walk(source);
 }
-for(const entry of ['mobile/index.js','mobile/App.tsx','mobile/preview/main.tsx','mobile/src/lib/pgLocalBank.ts','mobile/src/lib/pgEntranceBank.ts'])visit(path.join(root,entry));
-assert.ok(seen.has(path.join(root,'mobile/src/lib/pgLocalBank.ts')));
-console.log(`PG release import graph: ${seen.size} reachable modules checked; no legacy raw packs, recall catalog or historical attribution module; compact publisher-declared MIT practice is allowed.`);
+for(const entry of ['mobile/index.js','mobile/App.tsx','mobile/preview/main.tsx'])visit(path.join(root,entry));
+assert.ok(seen.has(path.join(root,'mobile/src/lib/neetPgBundledBank.ts')));
+console.log(`PG release import graph: ${seen.size} reachable modules checked; no legacy raw packs, recall catalog or historical attribution module; only the replacement NEET PG bank is reachable.`);

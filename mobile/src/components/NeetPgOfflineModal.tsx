@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, Image, Modal, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ZoomableImage } from '@/components/ZoomableImage';
 import { Text } from '@/components/Text';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Touchable } from '@/components/Touchable';
@@ -22,6 +23,7 @@ export function NeetPgOfflineModal({ visible, onClose, installed, onReplace, ins
   const [subject, setSubject] = useState<string | null>(null);
   const [chapterId, setChapter] = useState<string | null>(null);
   const [query, setQuery] = useState('');
+  const [activeImage, setActiveImage] = useState<string | null>(null);
   const [page, setPage] = useState(0);
   const [revealed, setRevealed] = useState<string | null>(null);
   const list = useRef<FlatList<OfflineMcq>>(null);
@@ -70,10 +72,10 @@ export function NeetPgOfflineModal({ visible, onClose, installed, onReplace, ins
         renderItem={({ item }) => <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <Text style={[typeScale.caption, { color: colors.textMuted }]}>{chapters.find(c => c.id === item.chapterId)?.name}</Text>
           <Text style={[typeScale.bodyStrong, { color: colors.text }]}>{item.question}</Text>
-          {item.imageIds.map(id => { const image = reader.image(id)!; return <Image key={id} source={{ uri: image.dataUri }} accessibilityLabel={image.alt} resizeMode="contain" style={styles.image} />; })}
+          {item.imageIds.map(id => { const image = reader.image(id)!; return <Touchable key={id} label="Open question illustration" onPress={() => setActiveImage(id)}><Image source={{ uri: image.dataUri }} accessibilityLabel={image.alt} resizeMode="contain" style={styles.image} /></Touchable>; })}
           {item.options.map((option, index) => <Text key={index} style={[typeScale.body, { color: revealed === item.id && index === item.answerIndex ? colors.success : colors.text }]}>{String.fromCharCode(65 + index)}. {option}</Text>)}
           <Touchable label={revealed === item.id ? 'Hide answer and explanation' : 'Show answer and explanation'} onPress={() => setRevealed(revealed === item.id ? null : item.id)} style={[styles.button, { backgroundColor: withAlpha(colors.primary, 0.1) }]}><Text style={{ color: colors.primary }}>{revealed === item.id ? 'Hide answer' : 'Answer + explanation'}</Text></Touchable>
-          {revealed === item.id ? <View style={styles.explanation}><Text style={[typeScale.bodyStrong, { color: colors.text }]}>Source answer: {item.sourceAnswer}</Text><Text style={[typeScale.body, { color: colors.text }]}>{item.explanation}</Text></View> : null}
+          {revealed === item.id ? <View style={styles.explanation}><Text style={[typeScale.bodyStrong, { color: colors.text }]}>Answer: {item.sourceAnswer}</Text><Text style={[typeScale.body, { color: colors.text }]}>{item.explanation}</Text></View> : null}
         </View>}
         ListFooterComponent={result.total > 30 ? <View style={styles.header}>
           <Touchable label="Previous offline question page" onPress={() => { setPage(Math.max(0, page - 1)); setRevealed(null); }} disabled={page === 0} style={styles.button}><Text style={{ color: colors.primary }}>Previous</Text></Touchable>
@@ -81,6 +83,7 @@ export function NeetPgOfflineModal({ visible, onClose, installed, onReplace, ins
           <Touchable label="Next offline question page" onPress={() => { setPage(page + 1); setRevealed(null); }} disabled={(page + 1) * 30 >= result.total} style={styles.button}><Text style={{ color: colors.primary }}>Next</Text></Touchable>
         </View> : undefined}
       /></KeyboardSafe>
+      <ZoomableImage visible={activeImage !== null} onClose={() => setActiveImage(null)} uri={activeImage ? reader.image(activeImage)?.dataUri : null} title="Question illustration" imageLabel="Question illustration" />
     </View>
   </Modal>;
 }

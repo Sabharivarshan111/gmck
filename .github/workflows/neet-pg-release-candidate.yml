@@ -1,0 +1,71 @@
+name: Verify and build offline NEET PG replacement
+on:
+  push:
+    branches: ['codex/neet-offline-preparation-20261019']
+    paths:
+      - 'mobile/src/components/PgEntranceBankModal.tsx'
+      - 'mobile/src/components/NeetPgOfflineModal.tsx'
+      - 'mobile/src/lib/neetPgBundledBank.ts'
+      - 'mobile/src/lib/neetPgBank.json'
+      - 'mobile/web/neet-pg-offline-check.mjs'
+      - 'src/lib/neetPgOffline.ts'
+      - 'scripts/check-neet-pg-artifact.py'
+      - '.github/workflows/neet-pg-release-candidate.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: write
+concurrency:
+  group: neet-pg-release-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci --legacy-peer-deps
+      - run: npm --prefix mobile ci --legacy-peer-deps
+      - name: Validate the actual replacement content and import graph
+        run: |
+          node scripts/test-neet-pg-offline.mjs
+          node scripts/check-pg-content-integrity.mjs
+          node scripts/check-pg-release-content.mjs
+          npm --prefix mobile run typecheck
+          npm --prefix mobile run typecheck:web
+          npm --prefix mobile run typecheck:preview
+      - name: Run every required pre-release check
+        working-directory: mobile
+        run: |
+          npm run lint
+          for check in fanout mcq notes-limits notes-schema sync cloud-ids android-res theme-from-image glass sounds agent-docs payments native-sound subject-cards contrast anki textbooks one-app flashcard-size streak supabase-queue keyboard kotlin version; do
+            npm run "check:$check"
+          done
+      - run: npm run build:vercel
+      - name: Confirm retired web assets are absent
+        run: test ! -e dist/pg
+      - run: node mobile/node_modules/playwright-core/cli.js install --with-deps chromium
+      - name: Exercise the bundled bank and private replacement with networking disabled
+        run: node mobile/web/neet-pg-offline-check.mjs
+      - name: Start signed, internal and debug builds of this exact verified branch
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branch=context.ref.replace('refs/heads/','');
+            const {data:ref}=await github.rest.git.getRef({...context.repo,ref:'heads/'+branch});
+            if(ref.object.sha!==context.sha) throw Error('The candidate was superseded; refusing to build another source.');
+            for(const workflow_id of ['android-release.yml','android-internal.yml','android-debug.yml']) {
+              const inputs=workflow_id==='android-release.yml'?{build_apk:'true'}:{};
+              await github.rest.actions.createWorkflowDispatch({...context.repo,workflow_id,ref:branch,inputs});
+              core.info('Dispatched '+workflow_id+' for '+context.sha);
+            }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: offline-neet-pg-release-evidence
+          path: |
+            docs/NEET_PG_RELEASE_BANK.json
+            /tmp/orbit-neet-offline-evidence

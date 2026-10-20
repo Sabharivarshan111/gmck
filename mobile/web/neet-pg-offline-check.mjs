@@ -1,4 +1,4 @@
-/** Real production browser flow; all test questions are original fixtures. */
+/** Real production flow: bundled bank, then an original private-import fixture. */
 import fs from 'node:fs/promises';
 import http from 'node:http';
 import path from 'node:path';
@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import { chromium } from 'playwright-core';
 const repo = path.resolve(import.meta.dirname, '../..');
 const data = JSON.parse(await fs.readFile(path.join(repo, 'mobile/src/lib/neetPgStudyData.json'), 'utf8'));
+const bundled = JSON.parse(await fs.readFile(path.join(repo, 'mobile/src/lib/neetPgBank.json'), 'utf8'));
 const chapter = data.chapters.find(item => item.subject === 'anatomy');
 const fixture = {
   schema: 1, id: 'original-browser-fixture', chapters: [chapter],
@@ -52,11 +53,27 @@ const open = async () => {
 };
 try {
   await open();
-  await importJson('Install complete offline NEET PG bank', fixture);
+  await label('Search offline NEET PG questions').waitFor();
+  assert.ok(!(await page.locator('body').innerText()).includes('dataset practice'));
+  assert.ok((await page.locator('body').innerText()).includes(bundled.records.length.toLocaleString() + ' questions · stored offline'));
+  await page.waitForFunction(() => !!navigator.serviceWorker.controller, undefined, { timeout: 120000 });
+  await context.setOffline(true);
+  await page.reload();
+  await label('NEET-PG practice questions').click();
+  await label('Search offline NEET PG questions').waitFor();
+  assert.ok((await page.locator('body').innerText()).includes(bundled.records.length.toLocaleString() + ' questions · stored offline'));
+  await label('Show answer and explanation').first().click();
+  await page.getByText('Answer: ' + bundled.records[0].sourceAnswer, { exact: true }).waitFor();
+  await label('Open question illustration').first().click();
+  await label('Close the picture').click();
+  await fs.mkdir('/tmp/orbit-neet-offline-evidence', { recursive: true });
+  await page.screenshot({ path: '/tmp/orbit-neet-offline-evidence/bundled-bank.png' });
+  console.log('PASS bundled replacement bank reopens with networking disabled and its original image opens full screen.');
+  await importJson('Replace offline bank', fixture);
   await label('Search offline NEET PG questions').waitFor();
   assert.ok((await page.locator('body').innerText()).includes('31 questions · stored offline'));
   await label('Show answer and explanation').first().click();
-  await page.getByText('Source answer: C', { exact: true }).waitFor();
+  await page.getByText('Answer: C', { exact: true }).waitFor();
   await page.getByText(fixture.records[0].explanation, { exact: true }).waitFor();
   const search = label('Search offline NEET PG questions');
   await search.fill('abducens rectus');
@@ -82,7 +99,7 @@ try {
   await label('Search offline NEET PG questions').waitFor();
   assert.ok((await page.locator('body').innerText()).includes('31 questions · stored offline'));
   await label('Show answer and explanation').first().click();
-  await page.getByText('Source answer: C', { exact: true }).waitFor();
+  await page.getByText('Answer: C', { exact: true }).waitFor();
   assert.deepEqual(errors, []);
   console.log('PASS real browser: private import, embedded image decoding, source key reveal, chapter filters, pagination, failed replacement, and network-disabled reload.');
 } catch (error) {
