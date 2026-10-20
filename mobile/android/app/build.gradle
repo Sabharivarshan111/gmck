@@ -382,6 +382,8 @@ def clinicalAssets = tasks.register("syncClinicalReferenceAssets", Sync) {
     into(layout.buildDirectory.dir("generated/clinicalAssets/clinical-reference"))
     include("radiology/**", "clubbing.jpg")
 }
+// Retire the legacy PG asset directory in every APK/AAB variant.
+android.androidResources.ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:.*:<dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~:<dir>pg"
 android.sourceSets.main.assets.srcDir(layout.buildDirectory.dir("generated/clinicalAssets").get().asFile)
 tasks.named("preBuild").configure { dependsOn(clinicalAssets) }
 

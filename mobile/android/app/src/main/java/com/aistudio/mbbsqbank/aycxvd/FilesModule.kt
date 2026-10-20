@@ -37,6 +37,34 @@ class FilesModule(reactContext: ReactApplicationContext) :
 
   override fun getName(): String = NAME
 
+  override fun readText(id: String, maxBytes: Double, promise: Promise) {
+    Thread {
+      try {
+        require(id.isNotBlank() && id == sanitise(id) && id != "." && id != "..") { "Invalid file identifier." }
+        require(maxBytes.isFinite() && maxBytes > 0 && maxBytes <= 25_000_000) { "Invalid text read limit." }
+        val file = File(mediaDir(), id)
+        require(file.isFile && file.length() <= maxBytes.toLong()) { "Offline bank is missing or too large." }
+        // Bound the actual read too, rather than trusting a size checked earlier.
+        val bytes = file.inputStream().use { input ->
+          val output = java.io.ByteArrayOutputStream()
+          val buffer = ByteArray(8192)
+          var total = 0
+          while (true) {
+            val count = input.read(buffer)
+            if (count < 0) break
+            total += count
+            require(total <= maxBytes.toInt()) { "Offline bank is too large." }
+            output.write(buffer, 0, count)
+          }
+          output.toByteArray()
+        }
+        promise.resolve(bytes.toString(Charsets.UTF_8))
+      } catch (error: Exception) {
+        promise.reject("offline_text_read", error.message ?: "Cannot read offline bank.", error)
+      }
+    }.start()
+  }
+
   /**
    * The one in-flight pick.
    *

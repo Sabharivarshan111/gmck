@@ -250,6 +250,10 @@ jobs:
           "$SDK"/build-tools/37.0.0/apksigner verify --print-certs "$APK" \
             | grep -iE "SHA-1|SHA-256" || echo "(apksigner could not read the APK)"
 
+      - name: Verify the actual offline question-bank payload
+        working-directory: .
+        run: python3 scripts/check-neet-pg-artifact.py 'mobile/android/app/build/outputs/apk/**/*.apk' 'mobile/android/app/build/outputs/bundle/**/*.aab'
+
       - name: Retain the signed internal candidate APK
         uses: actions/upload-artifact@v4
         with:
@@ -262,6 +266,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: internal-${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
           name: Internal APK — v27 parity candidate (build ${{ github.run_number }})
           body: |
             Version 27 parity candidate. Final Android device review is still in progress; complete Vault parity is not certified.

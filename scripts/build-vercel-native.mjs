@@ -2,12 +2,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 
-execFileSync('node', ['scripts/build-pg-compact.mjs'], { stdio: 'inherit' });
+
 execFileSync('node', ['scripts/check-pg-release-content.mjs'], { stdio: 'inherit' });
 
 // Build the unchanged simulator/document app, then give the homepage to the
 // native browser build. Separate bundles keep React 18 and 19 isolated.
 execFileSync('npm', ['run', 'build'], { stdio: 'inherit' });
+fs.rmSync('dist/pg', { recursive: true, force: true });
 fs.copyFileSync('dist/index.html', 'dist/legacy.html');
 execFileSync('npm', ['--prefix', 'mobile', 'run', 'web:build'], { stdio: 'inherit' });
 fs.cpSync('dist-native', 'dist', { recursive: true });
@@ -29,5 +30,5 @@ const assets = fs.readdirSync('dist-native/assets')
     return rank(a) - rank(b) || a.localeCompare(b);
   })
   .map(name => `/assets/${name}`);
-fs.writeFileSync('dist/orbit-offline-assets.json', JSON.stringify(['/index.html', '/legacy.html', ...fs.readdirSync('public/pg').map(name=>'/pg/'+name), ...assets]));
+fs.writeFileSync('dist/orbit-offline-assets.json', JSON.stringify(['/index.html', '/legacy.html', ...assets]));
 console.log(`Native homepage and unchanged simulator assembled; ${assets.length} native assets prepared for offline use.`);

@@ -227,6 +227,10 @@ jobs:
         if: always()
         run: rm -f "$RUNNER_TEMP/my-upload-key.jks"
 
+      - name: Verify the actual offline question-bank payload
+        working-directory: .
+        run: python3 scripts/check-neet-pg-artifact.py 'mobile/android/app/build/outputs/apk/**/*.apk' 'mobile/android/app/build/outputs/bundle/**/*.aab'
+
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
@@ -273,6 +277,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: release-${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
           name: Release build ${{ github.run_number }} — v${{ steps.appversion.outputs.code }}
           prerelease: true
           body: |

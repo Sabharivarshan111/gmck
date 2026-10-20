@@ -75,6 +75,9 @@ const sizeOf = (want: keyof typeof SAMPLES) =>
   want === 'video' ? 42_000_000 : want === 'pdf' ? 1_400_000 : 6_800;
 
 export default {
+  readText: async (_id: string, _maxBytes: number): Promise<string> => {
+    throw new Error('Use the production browser adapter to import a real offline bank.');
+  },
   pick: async (mode: string, _kinds?: string, _bucket?: string) => {
     const want = globalThis.__orbitPickFile;
     if (!want) {

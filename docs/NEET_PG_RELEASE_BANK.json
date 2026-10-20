@@ -1,0 +1,27 @@
+{
+  "questions": 2078,
+  "chapters": 205,
+  "images": 467,
+  "bytes": 21864834,
+  "sha256": "b7798fe3c8b66eab67c85df8ff56841e40974a439a8b9fd14fa00df5a9020e65",
+  "omitted": 131,
+  "omissionCounts": {
+    "answer_review_incomplete": 73,
+    "required_image_unavailable": 23,
+    "exact_duplicate": 5,
+    "source_options_incomplete": 29,
+    "source_answer_missing": 1
+  },
+  "years": [
+    "2017",
+    "2018",
+    "2019",
+    "2020",
+    "2021",
+    "2022",
+    "2023",
+    "2024",
+    "2025",
+    "2026"
+  ]
+}

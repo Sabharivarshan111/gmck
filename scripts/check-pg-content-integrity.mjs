@@ -1,40 +1,26 @@
-#!/usr/bin/env node
-/** Counts the released feature, never the withheld research corpus. */
+/** Validate the actual bundled replacement rather than the retired dataset. */
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import vm from 'node:vm';
-import {createRequire} from 'node:module';
-const ts=createRequire(import.meta.url)('../mobile/node_modules/typescript');
-function load(file){
- const m={exports:{}};
- const code=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
- vm.runInNewContext(code,{module:m,exports:m.exports},{filename:file});return m.exports;
+import {build} from '../mobile/node_modules/esbuild/lib/main.js';
+const output=await build({entryPoints:['src/lib/neetPgOffline.ts'],bundle:true,write:false,format:'esm',platform:'node'});
+const {validateOfflineBank}=await import('data:text/javascript;base64,'+Buffer.from(output.outputFiles[0].text).toString('base64'));
+const file='mobile/src/lib/neetPgBank.json';
+const bank=JSON.parse(fs.readFileSync(file,'utf8'));
+const imageFiles=Array.from({length:4},(_,i)=>`mobile/src/lib/neetPgImages${i}.json`);
+bank.images=Object.assign({},...imageFiles.map(file=>JSON.parse(fs.readFileSync(file,'utf8'))));
+validateOfflineBank(bank);
+assert.ok(bank.records.length>1800,'Replacement unexpectedly lost year coverage');
+assert.equal(new Set(bank.chapters.map(c=>c.year)).size,4);
+assert.equal(new Set(bank.records.map(r=>r.id.split('-')[1])).size,10);
+assert.ok(fs.statSync(file).size+imageFiles.reduce((n,p)=>n+fs.statSync(p).size,0)<25_000_000,'Offline bank exceeds import/storage budget');
+for(const row of bank.records){
+ assert.match(row.id,/^neet-20(?:1[7-9]|2[0-6])-\d{4}$/);
+ assert.equal(row.options.length,4);
+ assert.ok(row.explanation.trim());
 }
-const {PG_SOURCES,PG_ORIGINAL_PRACTICE}=load('mobile/src/lib/pgEntranceBank.ts');
-const {PG_COMPACT,PG_COMPACT_BYTES}=load('mobile/src/lib/pgCompact/manifest.ts');
-assert.equal(PG_COMPACT.total,185636);assert.equal(PG_COMPACT.quarantined,1293);
-assert.ok(PG_COMPACT_BYTES<10000000);
-assert.equal(PG_COMPACT.packs.length,21);
-for(const pack of PG_COMPACT.packs){assert.equal(pack.chapters.reduce((n,c)=>n+c.count,0),pack.count);assert.ok(pack.rawBytes<=20000000);}
-assert.ok(fs.readFileSync('docs/licenses/MedMCQA-MIT.txt','utf8').includes('Copyright (c) 2022 MedMCQA'));
-assert.equal(PG_ORIGINAL_PRACTICE.length,10);
-assert.equal(new Set(PG_ORIGINAL_PRACTICE.map(q=>q.id)).size,10);
-assert.equal(new Set(PG_ORIGINAL_PRACTICE.map(q=>q.subject)).size,9);
-assert.equal(new Set(PG_ORIGINAL_PRACTICE.map(q=>q.subject+' / '+q.chapter)).size,10);
-for(const q of PG_ORIGINAL_PRACTICE){
- assert.equal(q.exam,'ORIGINAL');assert.equal(q.year,null);assert.equal(q.record_type,'original_exam_style');
- assert.ok(q.chapter?.trim(), 'Every released question must have a chapter');
- assert.equal(q.options.length,4);assert.equal(new Set(q.options).size,4);
- assert.match(q.answer,/^[ABCD]$/);assert.ok(q.explanation.length>=20);
-}
-assert.equal(PG_SOURCES.length,3);
-for(const s of PG_SOURCES){
- assert.equal(s.kind,'Official information');
- assert.ok(['natboard.edu.in','www.aiimsexams.ac.in'].includes(new URL(s.url).hostname));
-}
+assert.ok(!/PrepLadder|Collegedunia|DigiNerve|www\.prepp\.in|Collegehai|medmcqa/i.test(JSON.stringify(bank)),'Study payload contains publisher furniture');
 const screen=fs.readFileSync('mobile/src/components/PgEntranceBankModal.tsx','utf8');
-assert.ok(screen.includes('Credits and third-party licences are available in Settings → About'));assert.ok(screen.includes('not independently medically reviewed'));
-assert.ok(fs.readFileSync('mobile/src/components/AboutLicences.tsx','utf8').includes('THIRD_PARTY_LICENCES'));
-assert.ok(!/source-labelled questions are available offline/.test(screen));
-assert.ok(fs.readFileSync('mobile/src/screens/NotesScreen.tsx','utf8').includes('PG medical practice and official exam information'));
-console.log(JSON.stringify({release_policy:'publisher_declared_mit_practice',third_party_questions_released:PG_COMPACT.total,question_data_bytes:PG_COMPACT_BYTES,original_practice_questions:10,subjects:9,chapters:10,official_information_links:3,verified_exam_years:0,independently_medically_reviewed_answers:0,legal_immunity_guaranteed:false}));
+assert.ok(screen.includes('loadBundledNeetBank'));
+assert.ok(!/LegacyPgEntranceBankModal|pgLocalBank|pgEntranceBank/.test(screen));
+assert.ok(fs.readFileSync('mobile/android/app/build.gradle','utf8').includes('<dir>pg'),'Retired native assets must stay out of APK/AAB');
+console.log(JSON.stringify({questions:bank.records.length,chapters:bank.chapters.length,images:Object.keys(bank.images).length,bytes:fs.statSync(file).size,networkRequired:false}));
