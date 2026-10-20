@@ -1,0 +1,341 @@
+name: Android study-fix signed candidates
+# Signed artifacts only; public releases retain the existing full626 gate.
+on:
+  workflow_dispatch:
+    inputs:
+      build_apk:
+        type: boolean
+        default: true
+  push:
+    branches: [codex/android-study-rebuild-20261021]
+    paths: [mobile/**, .github/workflows/android-study-candidates.yml]
+permissions:
+  contents: read
+concurrency:
+  group: android-study-candidates-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  release-candidate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      # Clean before generating renderer assets under app/build; cleaning in
+      # the assemble invocation deletes those newly generated required files.
+      - name: Clean Android outputs before generating local assets
+        working-directory: mobile/android
+        run: ./gradlew clean --no-daemon --no-build-cache
+
+      - name: Bundle the local canonical anatomy and diagnostic renderer
+        working-directory: .
+        run: |
+          npm ci --legacy-peer-deps --ignore-scripts
+          node scripts/zanatomy-reference-registration-check.mjs
+          node mobile/scripts/build-local-simulator.mjs
+          node mobile/scripts/clinical-snapshot-check.mjs
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      # The same guards the debug build runs. A release is the one build where
+      # shipping a known-broken feature actually reaches people.
+      - name: Checks
+        run: |
+          node ../scripts/build-pg-compact.mjs
+          node ../scripts/check-pg-release-content.mjs
+          npm run check:fanout
+          npm run check:mcq
+          npm run check:notes-limits
+          npm run check:notes-schema
+          npm run check:v25
+          npm run check:kuhs-parity
+          npm run check:notes-depth
+          npm run check:sync
+          npm run check:cloud-ids
+          npm run check:android-res
+          npm run check:theme-from-image
+          npm run check:glass
+          npm run check:sounds
+          # Nothing load-bearing has been deleted. First, because every check
+          # below is meaningless if the thing it checks is gone — and because
+          # the question bank in src/data/ is hand-transcribed with no upstream.
+          npm run check:repo-intact
+          npm run check:agent-docs
+          npm run check:payments
+          npm run check:native-sound
+          npm run check:subject-cards
+          npm run check:contrast
+          npm run check:anki
+          npm run check:textbooks
+          npm run check:one-app
+          npm run check:flashcard-size
+          npm run check:streak
+          npm run check:supabase-queue
+          npm run check:keyboard
+          node scripts/auth-mode-check.mjs
+          npm run check:version
+          npm run check:preview-parity
+          npm run check:native-update
+          npm run check:billing
+          npm run check:security
+          npm run check:attendance
+          npm run check:reminder
+          npm run check:study-buddy
+          npm run check:admin
+          npm run check:simulator
+          node scripts/simulator-parity-contract-check.mjs
+          node scripts/native-clinical-parity-check.mjs
+          node scripts/native-clinical-engine-check.mjs
+          node scripts/native-ecg12-parity-check.mjs
+          npm run check:calendar-columns
+          npm run check:note-links
+
+      # The mirror image of the debug workflow's "Build with no ads at all".
+      # That one overwrites this file; this one refuses to build if anything
+      # has. A release that silently shipped with ads disabled would earn
+      # nothing and give no sign of it.
+      - name: Confirm this build serves live ads
+        run: |
+          set -euo pipefail
+          if grep -q 'ADS_ENABLED = false' src/lib/adsMode.ts; then
+            echo "::error::src/lib/adsMode.ts has ads hard-disabled. A release build must serve live ads."
+            exit 1
+          fi
+          grep -q 'ADS_ENABLED = !__DEV__' src/lib/adsMode.ts \
+            || { echo "::error::src/lib/adsMode.ts is not in its shipped form."; exit 1; }
+          echo "ads: live (ADS_ENABLED = !__DEV__, and a release bundle sets __DEV__ false)"
+
+      - name: Restore the upload keystore
+        # The keystore is stored as base64 in a repository secret. It never
+        # exists in the repo, and is written outside the workspace so it cannot
+        # be picked up by anything that archives the checkout.
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::error::ANDROID_KEYSTORE_BASE64 is not set. Add it in Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/my-upload-key.jks"
+
+      - name: Build AAB (for Google Play)
+        env:
+          KEYSTORE_PATH: ${{ runner.temp }}/my-upload-key.jks
+          STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: ./gradlew bundleRelease --no-daemon --no-build-cache --rerun-tasks
+        working-directory: mobile/android
+
+      - name: Build APK (for direct install)
+        if: ${{ github.event_name == 'push' || inputs.build_apk }}
+        env:
+          KEYSTORE_PATH: ${{ runner.temp }}/my-upload-key.jks
+          STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: ./gradlew assembleRelease --no-daemon --no-build-cache
+        working-directory: mobile/android
+
+      - name: Remove the keystore
+        # Runners are ephemeral, but do not rely on that.
+        if: always()
+        run: rm -f "$RUNNER_TEMP/my-upload-key.jks"
+
+      - name: Verify the actual offline question-bank payload
+        working-directory: .
+        run: python3 scripts/check-neet-pg-artifact.py 'mobile/android/app/build/outputs/apk/**/*.apk' 'mobile/android/app/build/outputs/bundle/**/*.aab'
+
+      - name: Upload AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: orbit-mbbs-aab
+          path: mobile/android/app/build/outputs/bundle/release/*.aab
+          if-no-files-found: error
+
+      - name: Upload APK
+        if: ${{ github.event_name == 'push' || inputs.build_apk }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: orbit-mbbs-apk
+          path: mobile/android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
+
+
+  internal-candidate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Install dependencies
+        working-directory: mobile
+        run: npm ci --legacy-peer-deps
+
+      # Clean before generating renderer assets under app/build; cleaning in
+      # the assemble invocation deletes those newly generated required files.
+      - name: Clean Android outputs before generating local assets
+        working-directory: mobile/android
+        run: ./gradlew clean --no-daemon --no-build-cache
+
+      - name: Bundle the local canonical anatomy and diagnostic renderer
+        working-directory: .
+        run: |
+          npm ci --legacy-peer-deps --ignore-scripts
+          node scripts/zanatomy-reference-registration-check.mjs
+          node mobile/scripts/build-local-simulator.mjs
+          node mobile/scripts/clinical-snapshot-check.mjs
+
+      - name: Typecheck
+        working-directory: mobile
+        run: npx tsc --noEmit
+
+      - name: Checks
+        working-directory: mobile
+        run: |
+          node ../scripts/build-pg-compact.mjs
+          node ../scripts/check-pg-release-content.mjs
+          npm run check:fanout
+          npm run check:mcq
+          npm run check:notes-limits
+          npm run check:notes-schema
+          npm run check:v25
+          npm run check:kuhs-parity
+          npm run check:notes-depth
+          npm run check:sync
+          npm run check:cloud-ids
+          npm run check:android-res
+          npm run check:native-sound
+          npm run check:subject-cards
+          # Nothing load-bearing has been deleted. First, because every check
+          # below is meaningless if the thing it checks is gone — and because
+          # the question bank in src/data/ is hand-transcribed with no upstream.
+          npm run check:repo-intact
+          npm run check:agent-docs
+          npm run check:payments
+          npm run check:anki
+          npm run check:textbooks
+          npm run check:one-app
+          npm run check:flashcard-size
+          npm run check:streak
+          npm run check:supabase-queue
+          npm run check:keyboard
+          node scripts/auth-mode-check.mjs
+          npm run check:version
+          npm run check:preview-parity
+          npm run check:native-update
+          npm run check:billing
+          npm run check:security
+          npm run check:attendance
+          npm run check:reminder
+          npm run check:study-buddy
+          npm run check:admin
+          npm run check:simulator
+          npm run check:calendar-columns
+          npm run check:note-links
+
+      # Test ads come from source, not from the bundler's dev flag — see
+      # mobile/src/lib/adsMode.ts. The Gradle plugin bundles this variant
+      # itself, optimised and minified, which is why there is no hand-rolled
+      # bundle step: forcing `--dev true` to get test ads was what made every
+      # test build several times slower than the shipped app.
+      - name: Build with no ads at all
+        working-directory: mobile
+        run: printf 'export const ADS_ENABLED = false;\n' > src/lib/adsMode.ts
+
+      - name: Install the SDK components the build pins
+        run: |
+          set -euo pipefail
+          SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          SDKM="$SDK/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKM" --licenses > /dev/null 2>&1 || true
+          install_one() {
+            for candidate in "$@"; do
+              if "$SDKM" "$candidate"; then
+                echo "installed $candidate"
+                return 0
+              fi
+            done
+            echo "::error::none of these could be installed: $*"
+            return 1
+          }
+          [ -d "$SDK/platforms/android-37" ] || [ -d "$SDK/platforms/android-37.0" ] \
+            || install_one "platforms;android-37.0" "platforms;android-37"
+          [ -d "$SDK/build-tools/37.0.0" ] || install_one "build-tools;37.0.0"
+          [ -d "$SDK/ndk/27.1.12297006" ] || install_one "ndk;27.1.12297006"
+
+      # Required here, unlike in the debug workflow: without the real key this
+      # build has no reason to exist, and silently falling back to the debug
+      # key would produce an APK that looks right and cannot sign in.
+      - name: Decode the upload keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          set -euo pipefail
+          if [ -z "${ANDROID_KEYSTORE_BASE64:-}" ]; then
+            echo "::error::ANDROID_KEYSTORE_BASE64 is not set. Add the upload keystore under Settings → Secrets and variables → Actions, along with ANDROID_STORE_PASSWORD and ANDROID_KEY_PASSWORD."
+            exit 1
+          fi
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          echo "keystore decoded"
+
+      - name: Build internal APK
+        working-directory: mobile/android
+        env:
+          KEYSTORE_PATH: ${{ runner.temp }}/upload.jks
+          STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: ./gradlew assembleInternal --no-daemon --no-build-cache --rerun-tasks --stacktrace
+
+      - name: Print what Google Sign-In has to be registered against
+        run: |
+          set -euo pipefail
+          SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          APK=$(ls mobile/android/app/build/outputs/apk/internal/*.apk | head -1)
+          echo "package name: com.aistudio.mbbsqbank.aycxvd"
+          "$SDK"/build-tools/37.0.0/apksigner verify --print-certs "$APK" \
+            | grep -iE "SHA-1|SHA-256" || echo "(apksigner could not read the APK)"
+
+      - name: Verify the actual offline question-bank payload
+        working-directory: .
+        run: python3 scripts/check-neet-pg-artifact.py 'mobile/android/app/build/outputs/apk/**/*.apk' 'mobile/android/app/build/outputs/bundle/**/*.aab'
+
+      - name: Retain the signed internal candidate APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: orbit-internal-apk
+          path: mobile/android/app/build/outputs/apk/internal/*.apk
+          if-no-files-found: error
+
+      - name: Remove internal signing key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/upload.jks"
