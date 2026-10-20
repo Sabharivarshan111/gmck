@@ -1,10 +1,16 @@
 name: Verify and build offline NEET PG replacement
 on:
   push:
-    branches: ['codex/neet-offline-preparation-20261019']
+    branches: ['codex/neet-offline-preparation-20261019', 'codex/neet-pg-ui-redesign-20261020']
     paths:
       - 'mobile/src/components/PgEntranceBankModal.tsx'
       - 'mobile/src/components/NeetPgOfflineModal.tsx'
+      - 'mobile/src/components/NeetPgQuestionAi.tsx'
+      - 'mobile/src/lib/neetPgDiscussion.ts'
+      - 'mobile/src/theme/**'
+      - 'mobile/src/hooks/useReducedTransparency.ts'
+      - 'scripts/check-pg-year-review.mjs'
+      - 'scripts/test-neet-pg-discussion.mjs'
       - 'mobile/src/lib/neetPgBundledBank.ts'
       - 'mobile/src/lib/neetPgBank.json'
       - 'mobile/android/app/build.gradle'
@@ -46,6 +52,8 @@ jobs:
       - name: Validate the actual replacement content and import graph
         run: |
           node scripts/test-neet-pg-offline.mjs
+          node scripts/test-neet-pg-discussion.mjs
+          node scripts/check-pg-year-review.mjs
           node scripts/check-pg-content-integrity.mjs
           node scripts/check-pg-release-content.mjs
           npm --prefix mobile run typecheck

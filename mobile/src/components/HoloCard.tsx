@@ -4,6 +4,7 @@ import { useIsFocused } from '@react-navigation/native';
 import Svg, { Defs, LinearGradient, Pattern, Rect, Stop } from 'react-native-svg';
 import { Touchable } from '@/components/Touchable';
 import { EASE, useReducedMotion } from '@/theme/motion';
+import { useTheme } from '@/theme';
 
 let holoSeq = 0;
 
@@ -44,7 +45,10 @@ export function HoloCard({
   disabled?: boolean;
   children: React.ReactNode;
 }) {
-  const reduceMotion = useReducedMotion();
+  const { colors } = useTheme();
+  const systemReduceMotion = useReducedMotion();
+  const reduceMotion = systemReduceMotion || colors.monochrome === true;
+  if (colors.monochrome) { from = '#1B1B1B'; to = '#101010'; bgImageUri = null; }
   const focused = useIsFocused();
   const [width, setWidth] = useState(0);
   /** Reset per picture, so replacing a broken one is enough to try again. */

@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import { ChevronRight, Search } from 'lucide-react-native';
+import { BookOpen, ChevronRight, Search } from 'lucide-react-native';
 import { typeScale } from '@/theme/typography';
 import { useTheme } from '@/theme';
 import { Card, EmptyState, Muted, ProgressBar } from '@/components/ui';
@@ -276,7 +276,7 @@ export default function BrowseHomeScreen() {
                 })
               }>
               <View style={styles.subjectRow}>
-                <Text style={styles.subjectIcon}>{SUBJECT_ICON[item.key] ?? '📘'}</Text>
+                {colors.monochrome ? <BookOpen size={26} color={colors.text} /> : <Text style={styles.subjectIcon}>{SUBJECT_ICON[item.key] ?? '📘'}</Text>}
                 <View style={styles.subjectBody}>
                   <Text style={[styles.subjectName, { color: colors.text }]}>{item.name}</Text>
                   <Muted>

@@ -61,9 +61,10 @@ export const CARD_TINTS: { hue: number; value: number }[] = [
  * subject, which is a stronger claim than matching the palette exactly.
  */
 export function themedGradient(
-  colors: { accent: string; background: string },
+  colors: { accent: string; background: string; monochrome?: boolean },
   index: number,
 ): [string, string] {
+  if (colors.monochrome) return ['#1B1B1B', '#101010'];
   const base = hexToHsv(colors.accent);
   const tint = CARD_TINTS[((index % CARD_TINTS.length) + CARD_TINTS.length) % CARD_TINTS.length];
   const hue = hsvToHex({

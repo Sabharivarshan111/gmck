@@ -61,6 +61,8 @@ export interface TouchableProps {
     busy?: boolean;
   };
   disabled?: boolean;
+  /** Read-only study options remain readable after the answer is revealed. */
+  disabledOpacity?: number;
   style?: StyleProp<ViewStyle>;
   /** How far to shrink on press. Bigger surfaces need less. */
   scaleTo?: number;
@@ -99,6 +101,7 @@ export function Touchable({
   role = 'button',
   state,
   disabled,
+  disabledOpacity = 0.45,
   style,
   scaleTo = 0.97,
   scale = true,
@@ -252,7 +255,7 @@ export function Touchable({
           ? event => onAccessibilityAction(event.nativeEvent.actionName)
           : undefined
       }
-      style={[style, animatedStyle, isDisabled && styles.disabled]}>
+      style={[style, animatedStyle, isDisabled && { opacity: disabledOpacity }]}>
       {children}
     </AnimatedPressable>
   );
@@ -280,8 +283,5 @@ const styles = StyleSheet.create({
   center: {
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  disabled: {
-    opacity: 0.45,
   },
 });

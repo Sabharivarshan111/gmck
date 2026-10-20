@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './install.css';
+import { DeviceEventEmitter } from 'react-native';
 
 interface InstallPrompt extends Event {
   prompt(): Promise<void>;
@@ -23,6 +24,14 @@ function dismissed() {
 }
 
 export function InstallApp() {
+  const [monochrome, setMonochrome] = useState(() => {
+    try { return localStorage.getItem('orbit:theme-preference') === 'blackwhite'; }
+    catch { return false; }
+  });
+  useEffect(() => {
+    const listener = DeviceEventEmitter.addListener('orbit:monochrome', setMonochrome);
+    return () => listener.remove();
+  }, []);
   const [installed, setInstalled] = useState(isStandalone);
   const [hidden, setHidden] = useState(dismissed);
   const [ready, setReady] = useState(!!pendingPrompt);
@@ -79,7 +88,7 @@ export function InstallApp() {
     } finally { pendingPrompt = null; setReady(false); setBusy(false); }
   }
   return <>
-    {!installed && !hidden && <aside className="orbit-install-banner" aria-label="Install ORBIT web app">
+    {!installed && !hidden && <aside className={'orbit-install-banner' + (monochrome ? ' orbit-install-mono' : '')} aria-label="Install ORBIT web app">
       <img src="/icon-192.png" alt="" width="32" height="32" />
       <div><strong>ORBIT on your Home Screen</strong><span>Open it like an app · iPhone & Android</span></div>
       <button className="orbit-install-primary" onClick={ready ? install : openInstallHelp} disabled={busy}>Install</button>
@@ -87,7 +96,7 @@ export function InstallApp() {
         setHidden(true); try { localStorage.setItem('orbit-install-dismissed', String(Date.now())); } catch { /* optional preference */ }
       }}>×</button>
     </aside>}
-    <dialog ref={dialog} className="orbit-install-dialog" aria-labelledby="orbit-install-title" onClose={stopVideo}>
+    <dialog ref={dialog} className={'orbit-install-dialog' + (monochrome ? ' orbit-install-mono' : '')} aria-labelledby="orbit-install-title" onClose={stopVideo}>
       <button type="button" className="orbit-install-x" aria-label="Close installation instructions" onClick={() => dialog.current?.close()}>×</button>
       <header><img src="/icon-192.png" alt="" width="44" height="44" /><div><h2 id="orbit-install-title">{installed ? 'ORBIT is installed' : 'Install ORBIT'}</h2><p>Your studies, one tap away.</p></div></header>
       {installed ? <p>You are already using ORBIT as an app.</p> : <>

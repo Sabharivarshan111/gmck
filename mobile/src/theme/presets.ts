@@ -16,13 +16,13 @@ export interface CustomPalette {
 }
 
 /** The named themes in the picker. `custom` is whatever is saved as My Theme. */
-export type PresetKey = 'dark' | 'light' | 'blackpink' | 'liquidglass' | 'custom' | 'system';
+export type PresetKey = 'dark' | 'light' | 'blackwhite' | 'blackpink' | 'liquidglass' | 'custom' | 'system';
 
 /**
  * How surfaces are drawn, as opposed to what colour they are.
  *
  * `solid` is an opaque card with a hairline border — what every theme here
- * used before. `glass` is Apple's Liquid Glass treatment: a translucent layer
+ * used before. `glass` is ORBIT's glass treatment: a translucent layer
  * that sits *over* the background rather than replacing it, with a specular
  * highlight along its lit edge.
  *
@@ -37,7 +37,7 @@ export interface Preset {
   key: PresetKey;
   name: string;
   /** Absent for `system` and `custom`, which resolve at runtime. */
-  palette?: CustomPalette;
+  palette?: CustomPalette & { monochrome?: boolean };
   /** Defaults to solid. */
   material?: Material;
 }
@@ -61,6 +61,11 @@ export const PRESETS: Preset[] = [
     palette: { background: '#FFFFFF', text: '#0A0A0B', accent: '#C026D3', card: '#F6F6F9' },
   },
   {
+    key: 'blackwhite',
+    name: 'Black & White',
+    palette: { background: '#000000', text: '#FFFFFF', accent: '#FFFFFF', card: '#101010', monochrome: true },
+  },
+  {
     key: 'blackpink',
     name: 'Black Pink',
     palette: { background: '#000000', text: '#FFFFFF', accent: '#FF2D78', card: '#141017' },
@@ -68,54 +73,9 @@ export const PRESETS: Preset[] = [
   {
     key: 'liquidglass',
     name: 'Liquid Glass',
-    /**
-     * Modelled on Apple's Liquid Glass (iOS 26), within what React Native can
-     * honestly draw. What the material actually is, and what survives the
-     * port:
-     *
-     *   • **Translucency over an opaque fill.** Glass shows what is behind it.
-     *     The card is a white wash at partial alpha rather than a solid, so
-     *     the background reads through it and two stacked surfaces visibly
-     *     differ in depth rather than just in lightness.
-     *   • **A specular highlight on the lit edge.** The single most
-     *     identifiable feature: a bright hairline along the top, fading down
-     *     the sides, as if a light source sits above the screen. Drawn as a
-     *     gradient rim in GlassSurface.
-     *   • **Concentric radii and float.** Larger corners and a soft shadow, so
-     *     a panel reads as sitting above the page rather than cut into it.
-     *   • **A deep, cool ground.** Glass has no colour of its own; it takes it
-     *     from what is behind, so it needs something behind it with contrast
-     *     to spare.
-     *
-     * This preset used to be near-white — `#EAEFF6` behind a `#FFFFFF` card —
-     * on the reasoning that a bright ground is what lets translucency read,
-     * because over black a *white wash* at 60% is just a grey card. That
-     * reasoning was sound for the material at the time and is obsolete now:
-     * the wash is the theme's own card colour rather than white, and what
-     * carries the effect is the bevel GlassSurface draws, not the fill.
-     *
-     * What the old palette actually produced was a white card four per cent
-     * lighter than the page it sat on, with a white rim on top of that —
-     * three near-identical whites, which is a surface with nothing to show
-     * through it and no edge you can find. Apple demonstrates this material
-     * over photographs and saturated colour for the same reason.
-     *
-     * So: a near-black with a blue cast, a slate card that is visibly a layer
-     * above it, and an accent bright enough to hold its own against both.
-     * `theme` is derived from the background's luminance, so the status bar,
-     * the navigator and the moon icon follow this without being told.
-     *
-     * What still does NOT survive: real refraction and background blur. Both
-     * need a backdrop filter, which React Native has no equivalent for
-     * without a native module. The Android shader libraries that do it draw
-     * nothing below Android 13 and sample a one-off bitmap snapshot of the
-     * background, which is stale the moment anything scrolls — so this stays
-     * a drawn bevel rather than an imitation of refraction. See
-     * .claude/skills/apple-design/README.md, where "no backdrop blur" is
-     * recorded as a deliberate departure.
-     *
-     * Text stays near-white: "glass" is a surface treatment, never a licence
-     * for grey-on-grey type.
+    /** ORBIT glass: cool ground, translucent controls and restrained rims.
+     * Android 13+ can refract captured wallpaper through OrbitGlass; web and
+     * older Android use SVG highlights. This is not Apple's native material.
      */
     palette: { background: '#080C14', text: '#F2F5FA', accent: '#5B9DFF', card: '#161E2C' },
     material: 'glass',
@@ -203,7 +163,7 @@ export const DEFAULT_TRANSLUCENCY = 0.38;
 export const MAX_TRANSLUCENCY = 0.55;
 
 export function paletteFrom(
-  custom: CustomPalette,
+  custom: CustomPalette & { monochrome?: boolean },
   material: Material = 'solid',
   translucency: number = material === 'glass' ? DEFAULT_TRANSLUCENCY : 0,
   /** Skips the ceiling. Only scripts/glass-check.mjs passes this. */
@@ -211,7 +171,9 @@ export function paletteFrom(
 ) {
   const dark = isDark(custom.background);
   const semantic = dark ? SEMANTIC_DARK : SEMANTIC_LIGHT;
-  const hues = dark ? HUES_DARK : HUES_LIGHT;
+  const hues = custom.monochrome
+    ? { cyan: '#FFFFFF', emerald: '#D4D4D4', green: '#FFFFFF', violet: '#BDBDBD' }
+    : dark ? HUES_DARK : HUES_LIGHT;
 
   /*
    * A material has to be visible in the PALETTE, not only in the component.
@@ -242,9 +204,9 @@ export function paletteFrom(
   return {
     background: custom.background,
     card: custom.card,
-    cardElevated: mix(custom.card, custom.text, glass ? 0.14 : 0.08),
+    cardElevated: mix(custom.card, custom.text, glass ? 0.11 : 0.08),
     muted: mix(custom.card, custom.text, 0.08),
-    border: mix(custom.card, custom.text, glass ? 0.42 : 0.18),
+    border: mix(custom.card, custom.text, glass ? 0.26 : 0.18),
     text: custom.text,
     textMuted: mix(custom.text, custom.background, 0.38),
     primary: custom.text,
@@ -254,6 +216,7 @@ export function paletteFrom(
     accent: custom.accent,
     onAccent: onColor(custom.accent),
     ...semantic,
+    monochrome: custom.monochrome === true,
     material,
     /**
      * Clamped here rather than trusted from the caller, because this value

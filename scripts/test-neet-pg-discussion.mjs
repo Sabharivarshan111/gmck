@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {build} from '../mobile/node_modules/esbuild/lib/main.js';
+async function load(file) {
+  const out = await build({entryPoints:[file],bundle:true,write:false,format:'esm',platform:'node'});
+  return import('data:text/javascript;base64,'+Buffer.from(out.outputFiles[0].text).toString('base64'));
+}
+const {neetPgDiscussionPrompt,neetPgDiscussionHistory,neetPgDiscussionContext} = await load('mobile/src/lib/neetPgDiscussion.ts');
+const {createOfflineReader} = await load('src/lib/neetPgOffline.ts');
+const bank=JSON.parse(fs.readFileSync('mobile/src/lib/neetPgBank.json','utf8'));
+const q=structuredClone(bank.records[0]); const original=JSON.stringify(q);
+const history=Array.from({length:40},(_,i)=>({role:i%2?'assistant':'user',content:'turn '+i+' '+ 'x'.repeat(16000)}));
+const packed=neetPgDiscussionHistory(q,'Anatomy',history);
+assert.equal(packed.length,9);
+assert.ok(packed[0].content.includes(q.question));
+assert.ok(packed[0].content.includes('Stored answer: '+q.sourceAnswer));
+q.options.forEach(o=>assert.ok(packed[0].content.includes(o)));
+assert.ok(packed[1].content.startsWith('turn 32'));
+assert.ok(packed.reduce((n,m)=>n+m.content.length,0)<64000);
+assert.equal(JSON.stringify(q),original);
+assert.ok(neetPgDiscussionPrompt('x'.repeat(3900)).length<=4000);
+assert.match(neetPgDiscussionPrompt('Why?'),/Explain.*medical/);
+assert.throws(()=>neetPgDiscussionPrompt('x'.repeat(3901)),/3,900/);
+assert.throws(()=>neetPgDiscussionContext({...q,question:'x'.repeat(15000)},'Anatomy'),/too long/);
+assert.ok(neetPgDiscussionContext({...q,sourceAnswer:'Supplied free text',answerIndex:null},'Anatomy').content.includes('Stored answer: Supplied free text'));
+const reader=createOfflineReader({...bank, records: bank.records.slice(0,10).map(r=>({...r,requiresImage:false,imageIds:[]})),images:{}});
+assert.equal(reader.search({ids:[]}).total,0);
+const ids=[bank.records[8].id,'unknown',bank.records[2].id];
+assert.deepEqual(reader.search({ids}).records.map(r=>r.id),[bank.records[2].id,bank.records[8].id]);
+assert.equal(reader.search({ids,offset:1,limit:1}).records[0].id,bank.records[8].id);
+console.log('PASS pinned question survives long AI discussions within service bounds; immutable keys and saved-question filtering.');

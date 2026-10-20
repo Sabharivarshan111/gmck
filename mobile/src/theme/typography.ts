@@ -94,6 +94,8 @@ export const typeScale = {
   /** Emphasised body, e.g. a question stem. */
   bodyStrong: step(15, '600'),
   body: step(15, '400'),
+  /** Long-form questions need breathing room, without enlarging every control. */
+  reading: { ...step(17, '500'), lineHeight: 26 } as TextStyle,
   callout: step(14, '400'),
   /** Row subtitles, metadata. */
   footnote: step(13, '400'),

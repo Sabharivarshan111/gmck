@@ -118,6 +118,10 @@ for (const { name, palette } of customs) {
 
     for (const stop of stops) {
       const seen = composite(stop, colors.background);
+      if (colors.monochrome) {
+        const rgb = parse(seen);
+        if (rgb.r !== rgb.g || rgb.g !== rgb.b) failures.push(`${name} card ${index} must stay neutral`);
+      }
       const ratio = contrast(colors.text, seen);
       if (ratio < MIN_CONTRAST) {
         failures.push(`${name} card ${index}: text on ${seen} is ${ratio.toFixed(2)}:1`);
@@ -125,6 +129,9 @@ for (const { name, palette } of customs) {
     }
   }
 
+  // Monochrome deliberately uses neutral cards; subject labels identify them.
+  // Its contrast and neutral-channel checks above remain mandatory.
+  if (colors.monochrome) continue;
   for (let index = 0; index < CARD_TINTS.length; index += 1) {
     const drift = hueGap(accentHue + CARD_TINTS[index].hue, accentHue);
     if (drift > MAX_HUE_FROM_ACCENT) {

@@ -11,56 +11,15 @@ import { useTheme, withAlpha } from '@/theme';
 import { radius } from '@/theme/tokens';
 import { useWallpaper } from '@/hooks/useWallpaper';
 import { GLASS_SHADER_AVAILABLE, OrbitGlass } from '@/native/OrbitGlass';
+import { useReducedTransparency } from '@/hooks/useReducedTransparency';
 
 /**
- * A card surface that knows whether the theme is solid or glass.
- *
- * Under `solid` it is what it always was: an opaque card with a hairline
- * border. Under `glass` it becomes Apple's Liquid Glass treatment, as far as
- * React Native can honestly take it.
- *
- * ## What actually makes it read as glass
- *
- * Not the blur. The reference this was rebuilt against — kokonutui's Liquid
- * Glass card — runs an SVG `feDisplacementMap` through a CSS `backdrop-filter`,
- * and over the flat page it is shown on, **that filter changes almost nothing
- * you can see**. What carries the whole effect is its shadow stack, and every
- * load-bearing entry in it is an *inset*: a faint rim at the top-left, a much
- * brighter one at the bottom-right, a thin bright line all the way round, and
- * a soft white glow spreading inwards from the edge.
- *
- * That is a bevel, and a bevel is drawable. It is what this component now
- * draws, in the order the eye reads it:
- *
- * **1. The rim.** A stroked rounded rect whose gradient runs corner to corner:
- * bright where the light lands, dim across the middle, brightest on the far
- * edge where the pane's thickness catches it. A flat border of one colour is
- * what a piece of glass never looks like, and drawing one is what made this
- * surface read as a pale card before.
- *
- * **2. The specular highlight.** A bright wash along the top edge fading to
- * nothing, as if a light sits above the screen.
- *
- * **3. The inner glow.** White at the rim falling off inwards, elliptical so
- * it follows the surface's own proportions rather than pooling in the middle
- * of a wide card. This is the `inset 0 0 6px 6px` entry, and it is what stops
- * the interior looking like flat paint inside a bright outline.
- *
- * **4. Translucency and float.** The fill is a wash at partial alpha so the
- * page reads through, over a soft shadow so the pane sits above the page
- * rather than being cut into it.
- *
- * Still deliberately missing: the backdrop blur and the edge lensing. Both
- * need a real backdrop filter, React Native has none without a native module,
- * and a lighter rectangle pretending to be a blur is exactly what makes an
- * imitation look cheap. If `react-native-blur` is ever added, this is the one
- * component that changes.
- *
- * The rim is drawn with react-native-svg — already a dependency — and is
- * `pointerEvents="none"`, so it never intercepts a tap meant for the content.
- * It is also **measured**: a stroke has width, and a rect at `100%` would push
- * half of that width past the edge, where the parent's clip would remove
- * precisely the brightest part of the bevel.
+ * ORBIT's custom glass surface, not Apple's native Liquid Glass.
+ * SVG rims and restrained highlights provide the cross-platform treatment.
+ * On Android 13+ with wallpaper, OrbitGlass adds bounded AGSL refraction of
+ * the captured wallpaper. It does not refract arbitrary scrolling content.
+ * Other platforms retain the drawn treatment. Reduced transparency and the
+ * Black & White theme use opaque surfaces without decorative highlights.
  */
 /**
  * A small stable number for a wallpaper's uri.
@@ -139,8 +98,9 @@ export function GlassSurface({
     typeof styleRadius === 'number' ? styleRadius : (radiusProp ?? radius.lg);
 
   const { colors, theme } = useTheme();
-  const glass = colors.material === 'glass';
-  const lit = glass || bevel;
+  const reducedTransparency = useReducedTransparency();
+  const glass = colors.material === 'glass' && !reducedTransparency;
+  const lit = !colors.monochrome && !reducedTransparency && (glass || bevel);
   const [size, setSize] = useState({ width: 0, height: 0 });
 
   /*
@@ -177,7 +137,7 @@ export function GlassSurface({
 
   if (!lit) {
     return (
-      <View
+      <View testID="solid-material"
         style={[
           {
             backgroundColor: elevated ? colors.cardElevated : colors.card,
@@ -218,7 +178,7 @@ export function GlassSurface({
    * around a 34dp button is a ring; the same ring around a full-width card is
    * a hairline nobody sees.
    */
-  const rim = borderRadius >= radius.lg ? 1.6 : 1.2;
+  const rim = borderRadius >= radius.lg ? 1 : 0.8;
   const inset = rim / 2;
   const width = Math.max(size.width - rim, 0);
   const height = Math.max(size.height - rim, 0);
@@ -254,7 +214,7 @@ export function GlassSurface({
    * the same thin line of light, which is what a single light source above the
    * screen would actually put there.
    */
-  const specular = Math.min(size.height * 0.5, 20);
+  const specular = Math.min(size.height * 0.2, 8);
 
   /*
    * One wash, painted twice, and it has to be the same one both times.
@@ -279,7 +239,7 @@ export function GlassSurface({
       : colors.card;
 
   return (
-    <View
+    <View testID="glass-material"
       onLayout={onLayout}
       style={[
         styles.glass,
@@ -333,8 +293,8 @@ export function GlassSurface({
                 gradientUnits="userSpaceOnUse">
                 {/* Bright at the lit edge, gone within a couple of
                     millimetres — light falls off fast on a curved rim. */}
-                <Stop offset="0" stopColor="#FFFFFF" stopOpacity={a(0.5, 0.85)} />
-                <Stop offset="0.45" stopColor="#FFFFFF" stopOpacity={a(0.1, 0.28)} />
+                <Stop offset="0" stopColor="#FFFFFF" stopOpacity={a(0.14, 0.25)} />
+                <Stop offset="0.45" stopColor="#FFFFFF" stopOpacity={a(0.04, 0.1)} />
                 <Stop offset="1" stopColor="#FFFFFF" stopOpacity="0" />
               </LinearGradient>
               {/* The bevel. Dim across the middle and brightest at the far
@@ -342,18 +302,18 @@ export function GlassSurface({
                   *through* the pane's thickness, which is the brighter of the
                   two and the detail that says "this has depth". */}
               <LinearGradient id={`rim${key}`} x1="0" y1="0" x2="1" y2="1">
-                <Stop offset="0" stopColor={ink} stopOpacity={String(+a(0.62, 0.28) * lift)} />
+                <Stop offset="0" stopColor={ink} stopOpacity={String(+a(0.42, 0.22) * lift)} />
                 <Stop offset="0.4" stopColor={ink} stopOpacity={String(+a(0.16, 0.07) * lift)} />
                 <Stop offset="0.72" stopColor={ink} stopOpacity={String(+a(0.24, 0.1) * lift)} />
-                <Stop offset="1" stopColor={ink} stopOpacity={String(+a(0.95, 0.42) * lift)} />
+                <Stop offset="1" stopColor={ink} stopOpacity={String(+a(0.42, 0.24) * lift)} />
               </LinearGradient>
               {/* The counter-rim, lit from the opposite corner: darkest where
                   the bright rim is brightest. Half a step behind it, so the
                   two read as the two faces of one edge. */}
               <LinearGradient id={`ctr${key}`} x1="1" y1="1" x2="0" y2="0">
-                <Stop offset="0" stopColor={shade} stopOpacity={a(0.3, 0.5)} />
+                <Stop offset="0" stopColor={shade} stopOpacity={a(0.16, 0.25)} />
                 <Stop offset="0.45" stopColor={shade} stopOpacity={a(0.06, 0.1)} />
-                <Stop offset="1" stopColor={shade} stopOpacity={a(0.18, 0.28)} />
+                <Stop offset="1" stopColor={shade} stopOpacity={a(0.1, 0.16)} />
               </LinearGradient>
               {/* Inner glow: nothing in the middle, white by the edge. Sized
                   to the surface, so a wide card glows along its long edges
@@ -367,7 +327,7 @@ export function GlassSurface({
                 gradientUnits="userSpaceOnUse">
                 <Stop offset="0.55" stopColor={ink} stopOpacity="0" />
                 <Stop offset="0.88" stopColor={ink} stopOpacity={a(0.03, 0.025)} />
-                <Stop offset="1" stopColor={ink} stopOpacity={a(0.1, 0.07)} />
+                <Stop offset="1" stopColor={ink} stopOpacity={a(0.06, 0.05)} />
               </RadialGradient>
             </Defs>
             <Rect

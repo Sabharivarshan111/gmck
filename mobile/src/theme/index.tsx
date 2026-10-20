@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import { useColorScheme } from 'react-native';
+import { DeviceEventEmitter, useColorScheme } from 'react-native';
 import { isDark } from '@/theme/color';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { requestDailyAd } from '@/lib/dailyAd';
@@ -36,6 +36,7 @@ export type ThemeName = 'light' | 'dark';
 export type ThemePreference = PresetKey;
 
 export interface Palette {
+  monochrome?: boolean;
   background: string;
   card: string;
   cardElevated: string;
@@ -390,6 +391,11 @@ export function ThemeProvider({
     () => paletteFrom(chosen, material, customGlass ? translucency : undefined),
     [chosen, material, customGlass, translucency],
   );
+
+  // Browser shell controls live outside the native tree but share appearance.
+  useEffect(() => {
+    DeviceEventEmitter.emit('orbit:monochrome', colors.monochrome === true);
+  }, [colors.monochrome]);
 
   const value = useMemo(
     () => ({
