@@ -44,3 +44,10 @@ ORBIT's glass is not Apple's native Liquid Glass. Android 13+ can use the existi
 - General preview smoke was stopped after timeouts clicking the visible `Themes` control. The production-browser story above exercises the changed feature directly. The WebKit calendar harness also needed to distinguish its own deliberately aborted cross-origin request from an application exception; the check now recognizes that exact error only when the harness recorded blocking the same URL. No global smoke success is claimed.
 
 Screenshots in `docs/evidence/neetpg-redesign/` are inspected captures of the real shared UI at 390×844, not design mockups or Android GPU proof. AI panel screenshots show the empty input state, not a fabricated live reply.
+
+
+## Published builds
+
+Final application source: `aae1491cc62ae099419444db47419a88cd11fac9`. Production: https://www.orbitmbbs.site/notes. Android versionCode 28 / versionName 0.0.0.28 was rebuilt from scratch. Signed release 720 (APK/AAB), internal 539 and debug 579 all finished successfully; package checks confirmed the replacement bank is bundled and retired PG assets are absent. Exact download URLs and SHA-256 digests are recorded in `NEET_PG_UI_RELEASE_20261020.json`.
+
+The final Chromium/WebKit regression run 39397624928 passed. Live deployed question-scoped AI was also checked after annotation cleanup; stored question and supplied key stayed unchanged. Offline bank operation does not require AI connectivity. These checks do not certify medical correctness or physical-device glass appearance.

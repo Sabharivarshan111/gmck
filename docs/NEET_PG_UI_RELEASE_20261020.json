@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-20",
+  "application_commit": "aae1491cc62ae099419444db47419a88cd11fac9",
+  "versionCode": 28,
+  "versionName": "0.0.0.28",
+  "web": "https://www.orbitmbbs.site/notes",
+  "web_deployment": "dpl_7M9L2Pd1Jh9ZKrSZrehuVUCYz9Rs",
+  "offline_cache": "v28-neet-study-redesign-ai-2026-10-20",
+  "bank": {
+    "questions": 2078,
+    "chapters": 205,
+    "illustrations": 467,
+    "content_changed": false
+  },
+  "releases": [
+    {
+      "tag": "release-720",
+      "commit": "aae1491cc62ae099419444db47419a88cd11fac9",
+      "url": "https://github.com/Sabharivarshan111/gmck/releases/tag/release-720",
+      "assets": [
+        {
+          "name": "app-release.aab",
+          "url": "https://github.com/Sabharivarshan111/gmck/releases/download/release-720/app-release.aab",
+          "bytes": 105353091,
+          "sha256": "sha256:9bd6fc755d8001312568c9487e03f18f24446e7e3762f833198462c0da29c254"
+        },
+        {
+          "name": "app-release.apk",
+          "url": "https://github.com/Sabharivarshan111/gmck/releases/download/release-720/app-release.apk",
+          "bytes": 132820219,
+          "sha256": "sha256:c83a93c31abd0b10650e11a1829e1fb9f0fd95ce2d6e1a6380109daa70e40869"
+        }
+      ]
+    },
+    {
+      "tag": "internal-539",
+      "commit": "aae1491cc62ae099419444db47419a88cd11fac9",
+      "url": "https://github.com/Sabharivarshan111/gmck/releases/tag/internal-539",
+      "assets": [
+        {
+          "name": "app-internal.apk",
+          "url": "https://github.com/Sabharivarshan111/gmck/releases/download/internal-539/app-internal.apk",
+          "bytes": 140455503,
+          "sha256": "sha256:e30beef584c16bb0f424adbf3e15ec1eeb36f75eb117ce75671992726923a924"
+        }
+      ]
+    },
+    {
+      "tag": "debug-579",
+      "commit": "aae1491cc62ae099419444db47419a88cd11fac9",
+      "url": "https://github.com/Sabharivarshan111/gmck/releases/tag/debug-579",
+      "assets": [
+        {
+          "name": "app-preview.apk",
+          "url": "https://github.com/Sabharivarshan111/gmck/releases/download/debug-579/app-preview.apk",
+          "bytes": 140455515,
+          "sha256": "sha256:48b5bd7bbe5d3f1919512bf67b33ba1b0e93a4c4fc3829db78d129ed818f8910"
+        }
+      ]
+    }
+  ],
+  "verification_runs": {
+    "signed": 39396952703,
+    "internal": 39396955371,
+    "debug": 39396958118,
+    "chromium_webkit": 39397624928
+  },
+  "limitations": [
+    "AI requires internet; stored bank remains offline and immutable.",
+    "Custom glass; physical Android optical effects not validated.",
+    "Unrelated simulator dossier coverage gate remains failing; no blanket all-CI-green claim.",
+    "Not uploaded to Google Play."
+  ]
+}
