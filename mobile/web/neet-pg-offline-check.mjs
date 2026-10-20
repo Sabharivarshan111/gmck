@@ -127,6 +127,12 @@ try {
   await label('Ask about this NEET PG question').waitFor();
   await stable(label('Send question to ACEV'));
   await shot('acev-blackwhite-390');
+  await page.setViewportSize({ width: 1365, height: 936 });
+  await stable(label('Ask about this NEET PG question'));
+  const desktopComposer = await label('Ask about this NEET PG question').boundingBox();
+  assert.ok(desktopComposer.x >= 280 && desktopComposer.width <= 760, 'AI discussion stays in a readable centered column on desktop');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await stable(label('Ask about this NEET PG question'));
   await closeSheet('Ask ACEV');
   await label('Return to NEET PG library').click();
   await label('Clear NEET PG search').click();
@@ -165,7 +171,7 @@ try {
   await context.route('**/functions/v1/ask-gemini', async route => {
     if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization,apikey,content-type,x-client-info,x-supabase-client-platform,x-supabase-client-platform-version,x-supabase-client-runtime,x-supabase-client-runtime-version' } });
     aiRequests.push(route.request().postDataJSON());
-    await route.fulfill({ status: 200, headers: { 'Access-Control-Allow-Origin': '*' }, json: failNext ? { error: 'Connection unavailable. Try again.' } : { response: 'Question context received.' } });
+    await route.fulfill({ status: 200, headers: { 'Access-Control-Allow-Origin': '*' }, json: failNext ? { error: 'Connection unavailable. Try again.' } : { response: '[[anat:Question context received.]]' } });
     failNext = false;
   });
   await label('Ask ACEV about this question').click();
@@ -177,6 +183,7 @@ try {
   await label('Send question to ACEV').click();
   await page.getByText('Question context received.', { exact: true }).nth(1).waitFor();
   assert.equal(aiRequests.length, 3);
+  assert.ok(!(await page.locator('body').innerText()).includes('[[anat:'), 'semantic annotations render as readable words');
   for (const request of aiRequests) {
     assert.equal(request.isNeedingClarification, true, 'service includes question context');
     assert.equal(request.isMCQRequest, false);
@@ -184,7 +191,7 @@ try {
     assert.ok(request.conversationHistory[0].content.includes('Stored answer: C'));
     for (const option of fixture.records[0].options) assert.ok(request.conversationHistory[0].content.includes(option));
   }
-  assert.ok(aiRequests[2].conversationHistory.some(entry => entry.role === 'assistant' && entry.content === 'Question context received.'));
+  assert.ok(aiRequests[2].conversationHistory.some(entry => entry.role === 'assistant' && entry.content === '[[anat:Question context received.]]'));
   await closeSheet('Ask ACEV');
   await page.getByText('Answer: C', { exact: true }).waitFor();
   await label('Next NEET PG question').click();
