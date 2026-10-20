@@ -263,7 +263,7 @@ export function NeetPgQuestionAi({
                 {item.role === 'assistant' ? 'ACEV' : 'YOU'}
               </Text>
               {item.role === 'assistant' ? (
-                <NoteText content={item.text} />
+                <NoteText content={item.text.replace(/\[\[(?:dis|drug|anat|inv|val):([^\]]+)\]\]/g, '$1')} />
               ) : (
                 <Text
                   selectable
@@ -361,7 +361,7 @@ export function NeetPgQuestionAi({
   );
 }
 const styles = StyleSheet.create({
-  panel: { flexShrink: 1, gap: space.md },
+  panel: { width: '100%', maxWidth: 760, alignSelf: 'center', flexShrink: 1, gap: space.md },
   flex: { flex: 1 },
   row: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   context: {
