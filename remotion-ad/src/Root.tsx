@@ -1,4 +1,5 @@
 import React from 'react';
+import { NeetPgPlanLaunch } from './compositions/NeetPgPlanLaunch';
 import { Composition } from 'remotion';
 import { OrbitAd_AppleKeynote } from './compositions/OrbitAd_AppleKeynote';
 import { OrbitAd_CollegeHumor } from './compositions/OrbitAd_CollegeHumor';
@@ -47,6 +48,7 @@ const LAUNCH_ADS = ALL_SCRIPTS.filter((s) => s.format !== 'reel').map((script) =
 export const Root: React.FC = () => {
   return (
     <>
+      <Composition id="OrbitNeetPgPlanLaunch" component={NeetPgPlanLaunch} durationInFrames={2250} fps={30} width={1080} height={1920} />
       {/* --- STANDALONE THEMATIC LAUNCH ADS (Calm Audio-Paced & Responsive Focal Camera) ---
 
           These ship in two mixes, exactly as the reels do. They were the three
