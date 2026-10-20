@@ -64,7 +64,7 @@ export const MAX_HISTORY_CONTENT = 15000;
 
 /** The function consumes ten entries and rejects an oversized combined body. */
 export function boundedAiHistory(history: HistoryEntry[]): HistoryEntry[] {
-  let remaining = 48000;
+  let remaining = 56000;
   const recent: HistoryEntry[] = [];
   for (const entry of history.slice(-10).reverse()) {
     const content = entry.content.slice(0, Math.min(MAX_HISTORY_CONTENT, remaining));

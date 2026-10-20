@@ -9,6 +9,10 @@ const bundled = await build({
   }}],
 });
 const {askAi, boundedAiHistory} = await import('data:text/javascript;base64,'+Buffer.from(bundled.outputFiles[0].text).toString('base64'));
+const discussionBundle = await build({entryPoints:['mobile/src/lib/neetPgDiscussion.ts'],bundle:true,format:'esm',write:false});
+const {neetPgDiscussionHistory} = await import('data:text/javascript;base64,'+Buffer.from(discussionBundle.outputFiles[0].text).toString('base64'));
+const pinned = neetPgDiscussionHistory({sourceAnswer:'D',question:'Long question '+ 'q'.repeat(13500),options:['A','B','C','D'],imageIds:[],explanation:'e'.repeat(15000)},'Anatomy',Array.from({length:8},(_,i)=>({role:i%2?'assistant':'user',content:'h'.repeat(i%2?5000:3900)})));
+assert.deepEqual(boundedAiHistory(pinned),pinned,'Bounded shared service must retain the full pinned NEET question/options/key at maximum discussion history');
 const requests = [];
 globalThis.__chatInvoke = async (name, options) => { requests.push({name, ...options}); return {data: {response: 'A contextual reply.'}, error: null}; };
 await askAi('Plasma proteins', []);
@@ -23,7 +27,7 @@ const copy = JSON.stringify(many);
 const bounded = boundedAiHistory(many);
 assert.ok(bounded.length <= 10);
 assert.ok(bounded.every(x => x.content.length <= 15000));
-assert.ok(bounded.reduce((n,x)=>n+x.content.length,4000) <= 52000);
+assert.ok(bounded.reduce((n,x)=>n+x.content.length,4000) <= 60000);
 assert.ok(bounded.at(-1).content.startsWith('99'));
 assert.equal(JSON.stringify(many), copy);
 await askAi('Double-tapped: Blood', history);
