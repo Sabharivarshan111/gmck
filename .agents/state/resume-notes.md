@@ -2316,3 +2316,14 @@ Production Vercel `dpl_HtGgfPTpSf2kc5qv7Ue3VCo2DAFP` is READY, serving both publ
 **NEXT** — Use the published APK/AAB links rather than an older release. Extend source coverage only through complete matching records with retained supplied keys and required original images. See the release report for included counts by collection year.
 
 **DO NOT** — Do not regenerate a scratch-only checkpoint: the finished bank is committed on main. Do not claim every original paper, independent clinical certification, a physical Android test, complete 626-target anatomy certification, or a Play upload. Do not invent keys/images or put publisher names/review flags into the study UI. Keep required software licences. Version remains 27 until a real Play upload requires a bump; do not change the package ID or weaken release gates. Future signed/internal release tags are now pinned explicitly to the actual build SHA.
+
+
+## 2026-10-20 — Codex — Owner requests Android version 28 fresh rebuild
+
+**DONE** — Owner explicitly requests version 28 and a rebuild from the start. Updated Gradle and JavaScript version to 28 (0.0.0.28), moved the consistency-check pin to 28, and retained package ID/signing/ad behaviour. Android jobs now run Gradle clean with build cache disabled and tasks rerun, on fresh hosted runners. Existing offline NEET-PG bank remains byte-identical.
+
+**HALF-DONE** — Verification and newly signed APK/AAB publication pending; previous release-711/internal-530/debug-570 remain version 27 and must not be relabelled.
+
+**NEXT** — Run the existing full offline release-candidate verifier on this branch, inspect all three Android jobs and version 28 packages, publish actual new links/checksums and merge the version bump. Add/verify app_releases row 28.
+
+**DO NOT** — Claim Play upload, complete original-paper coverage, physical-device QA or complete anatomy certification. Preserve existing release gates and original supplied answers/options/images. The prior version-27 pin is superseded by this explicit owner request, not evidence of a Play upload.

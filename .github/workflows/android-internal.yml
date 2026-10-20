@@ -239,7 +239,7 @@ jobs:
           KEYSTORE_PATH: ${{ runner.temp }}/upload.jks
           STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
           KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: ./gradlew assembleInternal --no-daemon --stacktrace
+        run: ./gradlew clean assembleInternal --no-daemon --no-build-cache --rerun-tasks --stacktrace
 
       - name: Print what Google Sign-In has to be registered against
         run: |
