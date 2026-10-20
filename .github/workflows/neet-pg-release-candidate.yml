@@ -21,6 +21,7 @@ on:
       - '.github/workflows/android-debug.yml'
       - 'mobile/src/lib/neetPgImages*.json'
       - 'mobile/web/neet-pg-offline-check.mjs'
+      - 'public/sw.js'
       - 'src/lib/neetPgOffline.ts'
       - 'scripts/check-neet-pg-artifact.py'
       - '.github/workflows/neet-pg-release-candidate.yml'
