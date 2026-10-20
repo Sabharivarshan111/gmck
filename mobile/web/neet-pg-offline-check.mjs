@@ -68,8 +68,11 @@ try {
   await label('Close the picture').click();
   await fs.mkdir('/tmp/orbit-neet-offline-evidence', { recursive: true });
   await page.screenshot({ path: '/tmp/orbit-neet-offline-evidence/bundled-bank.png' });
+  await page.getByText('Answer: ' + bundled.records[0].sourceAnswer, { exact: true }).scrollIntoViewIfNeeded();
+  await page.screenshot({ path: '/tmp/orbit-neet-offline-evidence/answer-explanation.png' });
   console.log('PASS bundled replacement bank reopens with networking disabled and its original image opens full screen.');
   await importJson('Replace offline bank', fixture);
+  await page.getByText('31 questions · stored offline', { exact: true }).waitFor();
   await label('Search offline NEET PG questions').waitFor();
   assert.ok((await page.locator('body').innerText()).includes('31 questions · stored offline'));
   await label('Show answer and explanation').first().click();
