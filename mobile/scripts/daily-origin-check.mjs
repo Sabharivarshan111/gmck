@@ -2,9 +2,14 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import ts from 'typescript';
+import vm from 'node:vm';
+const { Request, Response } = globalThis;
 const source = fs.readFileSync(new URL('../../supabase/functions/_shared/endpointSecurity.ts', import.meta.url), 'utf8');
 const js = ts.transpileModule(source.replace('export function secureEndpoint', 'function secureEndpoint'), {compilerOptions: {target: ts.ScriptTarget.ES2022}}).outputText;
-const secure = new Function('Deno', `${js}; return secureEndpoint;`)({env: {get: () => ''}});
+const secure = vm.runInNewContext(`${js}; secureEndpoint;`, {
+  Deno: {env: {get: () => ''}},
+  Headers: globalThis.Headers, Request, Response, Uint8Array,
+});
 let calls = 0;
 const endpoint = secure(() => { calls++; return Response.json({ok:true}); });
 for (const origin of ['https://orbitmbbs.site', 'https://www.orbitmbbs.site', 'https://orbitmbbs.vercel.app']) {

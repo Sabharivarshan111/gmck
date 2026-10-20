@@ -1395,6 +1395,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: space.xl,
   },
   libraryDock: {
+    width: '100%',
+    maxWidth: 760,
+    alignSelf: 'center',
     borderTopWidth: StyleSheet.hairlineWidth,
     paddingHorizontal: space.lg,
     paddingTop: space.sm,
