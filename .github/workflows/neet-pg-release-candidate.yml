@@ -1,11 +1,16 @@
 name: Verify and build offline NEET PG replacement
 on:
   push:
-    branches: ['codex/neet-offline-preparation-20261019', 'codex/neet-pg-ui-redesign-20261020']
+    branches: ['codex/neet-offline-preparation-20261019', 'codex/neet-pg-ui-redesign-20261020', 'codex/tablet-ai-chat-fix']
     paths:
       - 'mobile/src/components/PgEntranceBankModal.tsx'
       - 'mobile/src/components/NeetPgOfflineModal.tsx'
       - 'mobile/src/components/NeetPgQuestionAi.tsx'
+      - 'mobile/src/components/NoteText.tsx'
+      - 'mobile/src/screens/AskAiScreen.tsx'
+      - 'mobile/src/lib/askAi.ts'
+      - 'scripts/test-ai-chat.mjs'
+      - 'mobile/web/ai-chat-check.mjs'
       - 'mobile/src/lib/neetPgDiscussion.ts'
       - 'mobile/src/theme/**'
       - 'mobile/src/hooks/useReducedTransparency.ts'
@@ -54,6 +59,7 @@ jobs:
         run: |
           node scripts/test-neet-pg-offline.mjs
           node scripts/test-neet-pg-discussion.mjs
+          node scripts/test-ai-chat.mjs
           node scripts/check-pg-year-review.mjs
           node scripts/check-pg-content-integrity.mjs
           node scripts/check-pg-release-content.mjs
@@ -72,7 +78,9 @@ jobs:
         run: test ! -e dist/pg
       - run: node mobile/node_modules/playwright-core/cli.js install --with-deps chromium
       - name: Exercise the bundled bank and private replacement with networking disabled
-        run: node mobile/web/neet-pg-offline-check.mjs
+        run: |
+          node mobile/web/neet-pg-offline-check.mjs
+          node mobile/web/ai-chat-check.mjs
       - name: Start signed, internal and debug builds of this exact verified branch
         uses: actions/github-script@v7
         env:
@@ -96,3 +104,4 @@ jobs:
           path: |
             docs/NEET_PG_RELEASE_BANK.json
             /tmp/orbit-neet-offline-evidence
+            docs/evidence/tablet-ai-chat

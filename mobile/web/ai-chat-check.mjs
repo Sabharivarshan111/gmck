@@ -26,7 +26,7 @@ for(const viewport of [{width:390,height:844},{width:800,height:1280},{width:128
  const second=page.getByText('When blood is allowed to clot, the remaining liquid is serum.',{exact:true}).first();
  const a=await first.boundingBox(),b=await second.boundingBox();assert.ok(b.y-(a.y+a.height)<35,'Paragraph spacing should be compact');
  assert.ok(a.width<=760 && a.width>0);
- assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth),false);
  await page.screenshot({path:path.join(evidence,`chat-${viewport.width}.png`)});
  failNext=true;await input.fill('Why?');await page.getByLabel('Send',{exact:true}).click();
  await page.getByText('Temporary service failure. Try again.',{exact:true}).waitFor();
