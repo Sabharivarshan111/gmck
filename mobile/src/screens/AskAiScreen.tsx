@@ -96,6 +96,7 @@ export default function AskAiScreen() {
   const [input, setInput] = useState('');
   const [buddyOpen, setBuddyOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const busy = useRef(false);
   /*
    * The bot reads the screen rather than being told.
    *
@@ -202,6 +203,7 @@ export default function AskAiScreen() {
    * happened to reuse an id would skip its animation and appear fully written.
    */
   const clearChat = useCallback(() => {
+    if (busy.current) return;
     setMessages([]);
     setRevealed(new Set());
   }, []);
@@ -209,7 +211,7 @@ export default function AskAiScreen() {
   const send = useCallback(
     async (raw: string) => {
       const prompt = raw.trim();
-      if (!prompt || loading) {
+      if (!prompt || busy.current) {
         return;
       }
       if (prompt.length > MAX_PROMPT) {
@@ -251,6 +253,7 @@ export default function AskAiScreen() {
        * the function itself only ever uses the last 10.
        */
       const history = messages
+        .filter(message => !message.failed)
         .slice(-MAX_HISTORY)
         .map(message => ({
           role: message.role,
@@ -260,6 +263,7 @@ export default function AskAiScreen() {
               : message.text,
         }));
       setMessages(prev => [...prev, { id: nextId(), role: 'user', text: shown }]);
+      busy.current = true;
       setLoading(true);
 
       try {
@@ -294,6 +298,7 @@ export default function AskAiScreen() {
           },
         ]);
       } finally {
+        busy.current = false;
         setLoading(false);
         /*
          * One beat of "the answer landed", then back to idle. Long enough to
@@ -305,17 +310,18 @@ export default function AskAiScreen() {
         setTimeout(() => setJustAnswered(false), 1400);
       }
     },
-    [loading, messages],
+    [messages],
   );
 
   const switchLanguage = useCallback(async (item: ChatMessage, language: ChatLanguage) => {
-    if (loading || !item.about || item.failed || item.mcqs || language === item.language) return;
+    if (busy.current || !item.about || item.failed || item.mcqs || language === item.language) return;
     const cached = item.variants?.[language];
     if (cached) {
       setMessages(prev => prev.map(message => message.id === item.id
         ? { ...message, ...cached, language, fresh: false, presetError: undefined } : message));
       return;
     }
+    busy.current = true;
     setLoading(true);
     setMessages(prev => prev.map(message => message.id === item.id ? { ...message, presetError: undefined } : message));
     try {
@@ -335,8 +341,8 @@ export default function AskAiScreen() {
       setMessages(prev => prev.map(message => message.id === item.id ? {
         ...message, presetError: err instanceof Error ? err.message : 'Could not change the answer language. Try again.',
       } : message));
-    } finally { setLoading(false); }
-  }, [loading]);
+    } finally { busy.current = false; setLoading(false); }
+  }, []);
 
   // A question sent over from a browse screen.
   const handledNonce = useRef<number | undefined>(undefined);
@@ -491,6 +497,7 @@ export default function AskAiScreen() {
           {messages.length > 0 ? (
             <Touchable
               onPress={clearChat}
+              disabled={loading}
               label="Clear this conversation"
               hint="Removes every message in this chat"
               scaleTo={0.9}
@@ -537,6 +544,7 @@ export default function AskAiScreen() {
             style={styles.messages}
             contentContainerStyle={styles.messagesContent}
             keyboardShouldPersistTaps="handled"
+            removeClippedSubviews={false}
             renderItem={({ item }) => {
               const mine = item.role === 'user';
               // A quiz is not a chat bubble. Cards get the full width, because
@@ -569,6 +577,7 @@ export default function AskAiScreen() {
                       mine
                         ? { backgroundColor: colors.cardElevated, alignSelf: 'flex-end' }
                         : {
+                            ...styles.answerBubble,
                             backgroundColor: colors.background,
                             borderColor: colors.border,
                             borderWidth: StyleSheet.hairlineWidth,
@@ -581,7 +590,7 @@ export default function AskAiScreen() {
                       <NoteText content={item.text.replace(/\[\[(?:dis|drug|anat|inv|val):([^\]]+)\]\]/g, '$1')} />
                     ) : (
                       <RevealText
-                        text={item.text}
+                        text={item.text.replace(/\[\[(?:dis|drug|anat|inv|val):([^\]]+)\]\]/g, '$1')}
                         animate={item.fresh}
                         onDone={() => markRevealed(item.id)}
                         style={[styles.bubbleText, { color: colors.text }]}
@@ -636,6 +645,7 @@ export default function AskAiScreen() {
               <Sparkles size={16} color={colors.fuchsia} />
             </View>
             <TextInput
+              accessibilityLabel="Medical question"
               value={input}
               onChangeText={setInput}
               onFocus={() => setTyping(true)}
@@ -818,6 +828,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
   },
+  answerBubble: {
+    width: '100%',
+    maxWidth: 760,
+  },
   mcqGroup: {
     gap: 10,
   },
@@ -841,6 +855,7 @@ const styles = StyleSheet.create({
     paddingTop: 6,
   },
   composerWrap: {
+    flexShrink: 0,
     borderTopWidth: StyleSheet.hairlineWidth,
     padding: 12,
   },

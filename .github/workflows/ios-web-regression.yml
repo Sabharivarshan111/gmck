@@ -21,14 +21,18 @@ jobs:
       - run: npm ci --legacy-peer-deps
         working-directory: mobile
       - run: node mobile/scripts/profile-persistence-check.mjs
+      - run: node scripts/test-ai-chat.mjs
       - run: npm run build:vercel
       - run: node node_modules/playwright-core/cli.js install --with-deps chromium webkit
         working-directory: mobile
       - run: node mobile/web/neet-pg-offline-check.mjs
+      - run: node mobile/web/ai-chat-check.mjs
       - run: node mobile/web/ios-regression.mjs
       - run: ORBIT_BROWSER=webkit node mobile/web/ios-regression.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: ios-calendar-evidence
-          path: /tmp/orbit-ios-evidence
+          path: |
+            /tmp/orbit-ios-evidence
+            docs/evidence/tablet-ai-chat

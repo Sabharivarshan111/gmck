@@ -347,7 +347,7 @@ export function NoteText({ content, font }: { content: string; font?: string | n
                 ]}>
                 {block.kind === 'bullet' ? '•' : block.marker}
               </Text>
-              <Inline text={block.text} style={[styles.body, { color: colors.text }, face]} />
+              <Inline text={block.text} style={[styles.body, styles.rowBody, { color: colors.text }, face]} />
             </View>
           );
         }
@@ -366,7 +366,12 @@ export function NoteText({ content, font }: { content: string; font?: string | n
 const styles = StyleSheet.create({
   body: {
     ...typeScale.body,
+  },
+  // Only list text shares horizontal space with a marker. Giving standalone
+  // paragraphs flex: 1 distributes a tall Android container between paragraphs.
+  rowBody: {
     flex: 1,
+    minWidth: 0,
   },
   heading: {
     ...typeScale.title3,

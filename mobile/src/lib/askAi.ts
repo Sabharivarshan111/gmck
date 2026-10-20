@@ -62,6 +62,20 @@ export const MAX_PROMPT = 4000;
 export const MAX_HISTORY = 20;
 export const MAX_HISTORY_CONTENT = 15000;
 
+/** The function consumes ten entries and rejects an oversized combined body. */
+export function boundedAiHistory(history: HistoryEntry[]): HistoryEntry[] {
+  let remaining = 56000;
+  const recent: HistoryEntry[] = [];
+  for (const entry of history.slice(-10).reverse()) {
+    const content = entry.content.slice(0, Math.min(MAX_HISTORY_CONTENT, remaining));
+    if (!content.trim()) continue;
+    recent.push({ role: entry.role, content });
+    remaining -= content.length;
+    if (remaining === 0) break;
+  }
+  return recent.reverse();
+}
+
 /** What a triple tap on a question row sends. */
 export function tripleTapPrompt(question: string): string {
   // "medical" in the wording is doing real work, not padding: the function
@@ -192,20 +206,33 @@ export async function askAi(prompt: string, history: HistoryEntry[]): Promise<As
   const isMCQRequest = isDoubleTap || MCQ_PATTERN.test(prompt);
 
   const outgoing = isMCQRequest ? mcqPrompt(displayText(prompt) || 'high-yield medical topics') : prompt;
+  const conversationHistory = boundedAiHistory(history);
 
   const { data, error } = await supabase.functions.invoke('ask-gemini', {
+    timeout: 90000,
     body: {
       prompt: outgoing,
-      conversationHistory: history,
+      conversationHistory,
       isTripleTap,
       isDoubleTap,
       isMCQRequest,
       isImportantQuestionsRequest: IMPORTANT_PATTERN.test(prompt),
-      isNeedingClarification: CLARIFY_PATTERN.test(prompt),
+      // Short follow-ups such as "why?" still need the previous answer.
+      isNeedingClarification: conversationHistory.length > 0 || CLARIFY_PATTERN.test(prompt),
     },
   });
 
   if (error) {
+    // Keep actionable service errors (auth, quota, etc.) instead of hiding them
+    // behind the SDK's generic "non-2xx" message. Do not retry automatically.
+    if (error.name === 'FunctionsHttpError') {
+      let serviceMessage: string | undefined;
+      try {
+        const detail = await error.context.json();
+        if (typeof detail?.error === 'string') serviceMessage = detail.error;
+      } catch { /* A proxy may return HTML rather than JSON. Keep SDK fallback. */ }
+      if (serviceMessage) throw new Error(serviceMessage);
+    }
     throw new Error(error.message);
   }
   if (data?.error) {
