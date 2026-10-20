@@ -31,6 +31,9 @@ import { Text } from '@/components/Text';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Touchable } from '@/components/Touchable';
 import { Sheet } from '@/components/Sheet';
+import { NeetPgPlanPanel } from '@/components/NeetPgPlanPanel';
+import { useNeetStudy } from '@/lib/useNeetStudy';
+import { planSession, recordNeetAttempt, studyDay } from '@/lib/neetPgPlan';
 import { NeetPgQuestionAi } from '@/components/NeetPgQuestionAi';
 import { useTheme, withAlpha } from '@/theme';
 import { PRESETS } from '@/theme/presets';
@@ -70,17 +73,22 @@ export function NeetPgOfflineModal({
   installed,
   onReplace,
   installing,
+  initialQuestionId,
 }: {
   visible: boolean;
   onClose: () => void;
   installed: InstalledReader;
   onReplace: () => void;
   installing: boolean;
+  initialQuestionId?: string;
 }) {
   const { colors, preference, setPreference } = useTheme();
   const insets = useSafeAreaInsets();
   const reducedMotion = useReducedMotion();
   const { reader } = installed;
+  const study = useNeetStudy(reader.id);
+  const [planOpen, setPlanOpen] = useState(false);
+  const [sessionIds, setSessionIds] = useState<string[] | null>(null);
   const [year, setYear] = useState<string | null>(null);
   const [subject, setSubject] = useState<string | null>(null);
   const [query, setQuery] = useState('');
@@ -194,10 +202,60 @@ export function NeetPgOfflineModal({
         : subjectRows,
     [searching, libraryResult, searchPage, subject, yearChapters, subjectRows],
   );
+  useEffect(() => {
+    if (visible && initialQuestionId) {
+      setPosition(0);
+      setSessionIds(null);
+      setScope({ ids: [initialQuestionId] });
+    }
+  }, [visible, initialQuestionId]);
+  const practiceRecords = useMemo(() => {
+    const chapterSubjects = new Map(chapters.map(c => [c.id, c.subject]));
+    const records: { id: string; subject: string }[] = [];
+    for (let offset = 0; offset < reader.total; offset += 40)
+      for (const q of reader.search({ offset, limit: 40 }).records)
+        records.push({
+          id: q.id,
+          subject: chapterSubjects.get(q.chapterId) ?? '',
+        });
+    return records;
+  }, [reader, chapters]);
+  const startSession = () => {
+    const day = studyDay();
+    const candidate =
+      study.state.session?.day === day
+        ? study.state.session
+        : planSession(practiceRecords, study.state, day);
+    const ids = candidate.ids.filter(id =>
+      practiceRecords.some(q => q.id === id),
+    );
+    if (!ids.length) {
+      setSessionIds(null);
+      setScope(null);
+      return;
+    }
+    const position = Math.min(candidate.position, ids.length - 1);
+    study.setState(current => ({
+      ...current,
+      session: { day, ids, position },
+    }));
+    setAnswers({});
+    setSessionIds(ids);
+    setPosition(position);
+    setScope({ ids });
+  };
   const activeResult = useMemo(
     () =>
-      scope ? reader.search({ ...scope, offset: position, limit: 1 }) : null,
-    [reader, scope, position],
+      scope
+        ? sessionIds
+          ? {
+              total: sessionIds.length,
+              records: reader.search({ ids: [sessionIds[position]], limit: 1 })
+                .records,
+            }
+          : reader.search({ ...scope, offset: position, limit: 1 })
+        : null,
+    [reader, scope, position, sessionIds],
   );
   const question = activeResult?.records[0];
   const questionChapter = question
@@ -218,6 +276,7 @@ export function NeetPgOfflineModal({
   }, [question?.id]);
   const start = (chapterId?: string, index = 0) => {
     Keyboard.dismiss();
+    setSessionIds(null);
     setPosition(index);
     setScope({
       ...filter,
@@ -227,6 +286,7 @@ export function NeetPgOfflineModal({
   };
   const leaveQuestion = () => {
     setScope(null);
+    setSessionIds(null);
     setAiOpen(false);
   };
   const close = () => {
@@ -236,8 +296,15 @@ export function NeetPgOfflineModal({
     onClose();
   };
   const pageQuestion = (next: number) => {
-    if (activeResult)
-      setPosition(Math.max(0, Math.min(activeResult.total - 1, next)));
+    if (activeResult) {
+      const position = Math.max(0, Math.min(activeResult.total - 1, next));
+      setPosition(position);
+      if (sessionIds)
+        study.setState(current => ({
+          ...current,
+          session: current.session ? { ...current.session, position } : null,
+        }));
+    }
   };
   const changeYear = (value: string | null) => {
     setYear(value);
@@ -255,6 +322,27 @@ export function NeetPgOfflineModal({
 
   const libraryHeader = (
     <View style={styles.libraryHeader}>
+      <Touchable
+        label="Open NEET PG study planner"
+        onPress={() => setPlanOpen(true)}
+        style={[
+          styles.discuss,
+          { borderColor: colors.border, backgroundColor: colors.card },
+        ]}
+      >
+        <Sparkles size={20} color={colors.accent} />
+        <View style={styles.flex}>
+          <Text style={[typeScale.bodyStrong, { color: colors.text }]}>
+            {study.state.plan
+              ? 'Your NEET-PG study plan'
+              : 'Build your NEET-PG study plan'}
+          </Text>
+          <Text style={[typeScale.caption, { color: colors.textMuted }]}>
+            Daily practice · priority subjects · scheduled review
+          </Text>
+        </View>
+        <ChevronRight size={18} color={colors.text} />
+      </Touchable>
       <View style={styles.hero}>
         <View style={styles.line}>
           <Text style={[typeScale.overline, { color: colors.textMuted }]}>
@@ -445,7 +533,9 @@ export function NeetPgOfflineModal({
       visible={visible}
       animationType={reducedMotion ? 'none' : 'slide'}
       presentationStyle="fullScreen"
-      onRequestClose={scope ? leaveQuestion : close}
+      onRequestClose={
+        scope ? leaveQuestion : planOpen ? () => setPlanOpen(false) : close
+      }
     >
       <View
         style={[
@@ -456,14 +546,30 @@ export function NeetPgOfflineModal({
         <View style={[styles.topbar, { borderColor: colors.border }]}>
           <Touchable
             label={
-              scope ? 'Return to NEET PG library' : 'Close offline NEET PG bank'
+              scope
+                ? 'Return to NEET PG library'
+                : planOpen
+                ? 'Return to NEET PG library'
+                : 'Close offline NEET PG bank'
             }
-            onPress={scope ? leaveQuestion : close}
+            onPress={
+              scope
+                ? leaveQuestion
+                : planOpen
+                ? () => setPlanOpen(false)
+                : close
+            }
             style={styles.back}
           >
             <ChevronLeft size={22} color={colors.text} />
             <Text style={[typeScale.bodyStrong, { color: colors.text }]}>
-              {scope ? 'Library' : 'Vault'}
+              {scope
+                ? sessionIds
+                  ? 'Today'
+                  : 'Library'
+                : planOpen
+                ? 'Library'
+                : 'Vault'}
             </Text>
           </Touchable>
           <Text
@@ -829,6 +935,19 @@ export function NeetPgOfflineModal({
                     }
                     onPress={() => {
                       revealScroll.current = !answer.revealed;
+                      if (!answer.revealed && study.ready)
+                        study.setState(current => ({
+                          ...current,
+                          attempts: {
+                            ...current.attempts,
+                            [question.id]: recordNeetAttempt(
+                              current.attempts[question.id],
+                              answer.choice,
+                              question.answerIndex,
+                              studyDay(),
+                            ),
+                          },
+                        }));
                       setAnswers(current => ({
                         ...current,
                         [question.id]: {
@@ -877,16 +996,36 @@ export function NeetPgOfflineModal({
                     {position + 1} of {activeResult.total}
                   </Text>
                   <Touchable
-                    label="Next NEET PG question"
-                    disabled={position + 1 >= activeResult.total}
-                    onPress={() => pageQuestion(position + 1)}
+                    label={
+                      sessionIds && position + 1 >= activeResult.total
+                        ? 'Finish NEET PG session'
+                        : 'Next NEET PG question'
+                    }
+                    disabled={!sessionIds && position + 1 >= activeResult.total}
+                    onPress={() => {
+                      if (sessionIds && position + 1 >= activeResult.total) {
+                        study.setState(current => ({
+                          ...current,
+                          session: null,
+                        }));
+                        leaveQuestion();
+                        setPlanOpen(true);
+                      } else pageQuestion(position + 1);
+                    }}
                     style={[
                       styles.navButton,
-                      { opacity: position + 1 >= activeResult.total ? 0.3 : 1 },
+                      {
+                        opacity:
+                          !sessionIds && position + 1 >= activeResult.total
+                            ? 0.3
+                            : 1,
+                      },
                     ]}
                   >
                     <Text style={[typeScale.footnote, { color: colors.text }]}>
-                      Next
+                      {sessionIds && position + 1 >= activeResult.total
+                        ? 'Finish'
+                        : 'Next'}
                     </Text>
                     <ArrowRight size={17} color={colors.text} />
                   </Touchable>
@@ -894,6 +1033,27 @@ export function NeetPgOfflineModal({
               </View>
             </View>
           </>
+        ) : planOpen ? (
+          <NeetPgPlanPanel
+            total={reader.total}
+            key={study.ready ? 'ready' : 'loading'}
+            state={study.state}
+            ready={study.ready}
+            storageError={study.storageError}
+            subjects={Array.from(
+              new Map(
+                chapters.map(c => [
+                  c.subject,
+                  { id: c.subject, name: c.names[0] },
+                ]),
+              ).values(),
+            )}
+            onSave={plan =>
+              study.setState(current => ({ ...current, plan, session: null }))
+            }
+            onStart={startSession}
+            onLibrary={() => setPlanOpen(false)}
+          />
         ) : (
           <KeyboardSafe style={styles.flex}>
             <FlatList

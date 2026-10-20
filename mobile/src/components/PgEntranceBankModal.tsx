@@ -8,7 +8,7 @@ import { loadBundledNeetBank } from '@/lib/neetPgBundledBank';
 import { NeetPgOfflineModal } from '@/components/NeetPgOfflineModal';
 import type { InstalledReader } from '@shared/neetPgInstall';
 
-export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
+export function PgEntranceBankModal({ visible, onClose, initialQuestionId }: { visible: boolean; onClose: () => void; initialQuestionId?: string }) {
   const { colors } = useTheme();
   const [installed, setInstalled] = useState<InstalledReader | null>(null);
   const [checked, setChecked] = useState(false);
@@ -35,5 +35,5 @@ export function PgEntranceBankModal({ visible, onClose }: { visible: boolean; on
   if (!visible) return null;
   if (!checked) return <Modal visible onRequestClose={onClose}><View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background }}><ActivityIndicator color={colors.primary} accessibilityLabel="Opening offline bank" /><Touchable label="Close opening offline bank" onPress={onClose} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}><Text style={{ color: colors.primary }}>Back</Text></Touchable></View></Modal>;
   if (!installed) return <Modal visible onRequestClose={onClose}><View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 16, backgroundColor: colors.background }}><Text style={{ color: colors.text }}>The offline bank could not be opened.</Text><Touchable label="Import complete offline bank" onPress={() => { void install(); }} disabled={installing} style={{ minHeight: 44, justifyContent: 'center' }}><Text style={{ color: colors.primary }}>Import bank</Text></Touchable><Touchable label="Close offline bank" onPress={onClose} style={{ minHeight: 44, justifyContent: 'center' }}><Text style={{ color: colors.primary }}>Back</Text></Touchable></View></Modal>;
-  return <NeetPgOfflineModal key={installed.file.fileId} visible={visible} onClose={onClose} installed={installed} onReplace={() => { void install(); }} installing={installing} />;
+  return <NeetPgOfflineModal key={installed.file.fileId} visible={visible} initialQuestionId={initialQuestionId} onClose={onClose} installed={installed} onReplace={() => { void install(); }} installing={installing} />;
 }

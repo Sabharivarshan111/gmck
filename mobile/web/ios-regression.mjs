@@ -9,7 +9,7 @@ await new Promise(r=>server.listen(5226,'127.0.0.1',r));
 const engine=process.env.ORBIT_BROWSER==='webkit'?webkit:chromium;
 const browser=await engine.launch({headless:true,...(engine===chromium?{executablePath:process.env.CHROME_PATH,args:['--no-sandbox','--disable-dev-shm-usage']}: {})});
 await fs.mkdir('/tmp/orbit-ios-evidence',{recursive:true});
-const errors=[];const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,reducedMotion:'reduce',timezoneId:'Asia/Kolkata'});
+const errors=[];const context=await browser.newContext({serviceWorkers:'block',viewport:{width:390,height:844},isMobile:true,hasTouch:true,reducedMotion:'reduce',timezoneId:'Asia/Kolkata'});
 const intentionallyBlocked = new Set();
 await context.route('**/*',r=>{
   const url = new URL(r.request().url());
