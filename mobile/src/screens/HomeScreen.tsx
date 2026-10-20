@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { Animated, Image, Linking, Modal, PanResponder, ScrollView, StyleSheet, View } from 'react-native';
+import { NeetPgDailyWidget } from '@/components/NeetPgDailyWidget';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { Sheet } from '@/components/Sheet';
@@ -99,7 +100,7 @@ type Nav = NativeStackNavigationProp<HomeStackParamList, 'HomeMain'>;
  */
 const HERO_FADE_FLOOR = 0.35;
 
-const HERO_PAGES = ['Welcome', 'MCQ of the day', 'Picture of the day', 'Resume where you left off', 'Progress', 'Study time', 'Attendance'] as const;
+const HERO_PAGES = ['Welcome', 'MCQ of the day', 'Picture of the day', 'Resume where you left off', 'Progress', 'Study time', 'Attendance', 'NEET-PG question of the day'] as const;
 const QUICK_PAGES = 2;
 const CREATOR_INSTAGRAM_URL = 'https://www.instagram.com/_varshann_s?stkn=MW9wdXozOW5yeDRydA==';
 
@@ -626,6 +627,7 @@ export default function HomeScreen({ initialEditing = false }: { initialEditing?
                       </View>
                     </Touchable>
                   </> : null}
+                  {slide === 7 ? <NeetPgDailyWidget day={dailyDate} /> : null}
                   {slide === 1 ? <>
                     <DailyQuestion kind="mcq" card={dailyCards.mcq} loading={!!dailyLoading.mcq} error={dailyError.mcq} onRetry={() => loadDaily('mcq')} onAnswer={answer => answerDaily('mcq', answer)} colors={colors} />
                   </> : null}
