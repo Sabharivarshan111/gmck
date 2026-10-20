@@ -7,6 +7,7 @@ on:
       - 'mobile/src/components/NeetPgOfflineModal.tsx'
       - 'mobile/src/lib/neetPgBundledBank.ts'
       - 'mobile/src/lib/neetPgBank.json'
+      - 'mobile/src/lib/neetPgImages*.json'
       - 'mobile/web/neet-pg-offline-check.mjs'
       - 'src/lib/neetPgOffline.ts'
       - 'scripts/check-neet-pg-artifact.py'

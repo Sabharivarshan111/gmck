@@ -48,8 +48,8 @@ def main():
         if not target.exists() and args.download:
             request = urllib.request.Request(source['url'], headers={'User-Agent': 'Mozilla/5.0'})
             with urllib.request.urlopen(request, timeout=120) as response:
-                body = response.read(30_000_001)
-            if len(body) > 30_000_000:
+                body = response.read(120_000_001)
+            if len(body) > 120_000_000:
                 raise ValueError('Source exceeds size limit: ' + source['name'])
             if not body.startswith(b'%PDF-'):
                 raise ValueError('Expected a public PDF: ' + source['name'])
@@ -221,8 +221,15 @@ def main():
     chapters = {row['chapterId'] for row in records}
     bank = {'schema': 1, 'id': 'neet-pg-offline-20261019', 'chapters': [chapter for chapter in notes['chapters'] if chapter['id'] in chapters], 'records': records, 'images': {key: images[key] for key in sorted(used_images)}}
     target = ROOT / 'mobile/src/lib/neetPgBank.json'
-    target.write_text(json.dumps(bank, ensure_ascii=False, separators=(',', ':')) + '\n')
-    summary = {'questions': len(records), 'chapters': len(bank['chapters']), 'images': len(used_images), 'bytes': target.stat().st_size, 'sha256': hashlib.sha256(target.read_bytes()).hexdigest(), 'omitted': len(rejected), 'omissionCounts': dict(Counter(row['reason'] for row in rejected)), 'years': sorted({row['id'].split('-')[1] for row in records})}
+    payload = json.dumps(bank, ensure_ascii=False, separators=(',', ':')) + '\n'
+    # Keep individual repository/upload requests small; every image remains bundled.
+    image_parts = [{} for _ in range(4)]
+    for index, (key, value) in enumerate(bank['images'].items()):
+        image_parts[index % 4][key] = value
+    for index, part in enumerate(image_parts):
+        (target.parent / f'neetPgImages{index}.json').write_text(json.dumps(part, separators=(',', ':')) + '\n')
+    target.write_text(json.dumps({**bank, 'images': {}}, ensure_ascii=False, separators=(',', ':')) + '\n')
+    summary = {'questions': len(records), 'chapters': len(bank['chapters']), 'images': len(used_images), 'bytes': len(payload.encode()), 'sha256': hashlib.sha256(payload.encode()).hexdigest(), 'omitted': len(rejected), 'omissionCounts': dict(Counter(row['reason'] for row in rejected)), 'years': sorted({row['id'].split('-')[1] for row in records})}
     (ROOT / 'docs/NEET_PG_RELEASE_BANK.json').write_text(json.dumps(summary, indent=2) + '\n')
     print(json.dumps(summary, indent=2), flush=True)
 
