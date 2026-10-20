@@ -1,0 +1,103 @@
+{
+  "versionCode": 28,
+  "versionName": "0.0.0.28",
+  "sourceCommit": "ae307b7b9e5d90749661544dd8907f7ee3d4aea5",
+  "verificationRun": 39370309789,
+  "releaseRun": 39370613024,
+  "internalRun": 39370614555,
+  "debugRun": 39370615995,
+  "releaseTag": "release-714",
+  "internalTag": "internal-533",
+  "debugTag": "debug-573",
+  "bankQuestions": 2078,
+  "bankChapters": 205,
+  "bankImages": 467,
+  "cleanBuild": true,
+  "gradleBuildCache": false,
+  "playUploaded": false,
+  "physicalDeviceTested": false,
+  "notesRowVerified": true,
+  "baselineFailures": {
+    "webBuild": "digestive dossier 99/108 (92%) below 95% pre-existing baseline",
+    "webkit": "First attempt signup access-control failure; corrected-source iOS workflow run39370313001 passed"
+  },
+  "cleanOrder": "Gradle clean, then generate required simulator assets, then compile without build cache",
+  "correctedAttempt": {
+    "source": "c119aa3a1fc1ef963ea4be5cf0b28bb43d2b86ce",
+    "issue": "Clean ran after generating simulator assets and deleted those required files",
+    "runs": [
+      39369647242,
+      39369648930,
+      39369650522
+    ],
+    "published": false
+  },
+  "completedAt": "2026-10-20T05:04:25.727Z",
+  "status": "published",
+  "artifacts": [
+    {
+      "variant": "release",
+      "name": "app-release.aab",
+      "size": 105330362,
+      "sha256": "a79c4765b7be6fe1ff8c6d2c0c3c36c02f6aaa62a60e468fafbe33f1e636f6ca",
+      "url": "https://github.com/Sabharivarshan111/gmck/releases/download/release-714/app-release.aab",
+      "tag": "release-714",
+      "sourceCommit": "ae307b7b9e5d90749661544dd8907f7ee3d4aea5",
+      "downloadedChecksumVerified": true,
+      "embeddedVersionCode": 28,
+      "embeddedVersionName": "0.0.0.28",
+      "replacementBankVerified": true,
+      "retiredPgAssetsAbsent": true
+    },
+    {
+      "variant": "release",
+      "name": "app-release.apk",
+      "size": 132784895,
+      "sha256": "d8773320b2cf0c6de6f8982291980dea3492de2adbfd373bbccd610b0e76acc7",
+      "url": "https://github.com/Sabharivarshan111/gmck/releases/download/release-714/app-release.apk",
+      "tag": "release-714",
+      "sourceCommit": "ae307b7b9e5d90749661544dd8907f7ee3d4aea5",
+      "downloadedChecksumVerified": true,
+      "embeddedVersionCode": 28,
+      "embeddedVersionName": "0.0.0.28",
+      "replacementBankVerified": true,
+      "retiredPgAssetsAbsent": true
+    },
+    {
+      "variant": "internal",
+      "name": "app-internal.apk",
+      "size": 140420183,
+      "sha256": "128de3645d1c945ba85a88ac73981c70278e390dac90c6fef189b330367de3d8",
+      "url": "https://github.com/Sabharivarshan111/gmck/releases/download/internal-533/app-internal.apk",
+      "tag": "internal-533",
+      "sourceCommit": "ae307b7b9e5d90749661544dd8907f7ee3d4aea5",
+      "downloadedChecksumVerified": true,
+      "embeddedVersionCode": 28,
+      "embeddedVersionName": "0.0.0.28",
+      "replacementBankVerified": true,
+      "retiredPgAssetsAbsent": true
+    },
+    {
+      "variant": "debug",
+      "name": "app-preview.apk",
+      "size": 140420191,
+      "sha256": "7eb6e69332f033e6b25989b32a491a617db38ded6faebe4b925a4c7e6aa76b98",
+      "url": "https://github.com/Sabharivarshan111/gmck/releases/download/debug-573/app-preview.apk",
+      "tag": "debug-573",
+      "sourceCommit": "ae307b7b9e5d90749661544dd8907f7ee3d4aea5",
+      "downloadedChecksumVerified": true,
+      "embeddedVersionCode": 28,
+      "embeddedVersionName": "0.0.0.28",
+      "replacementBankVerified": true,
+      "retiredPgAssetsAbsent": true
+    }
+  ],
+  "packageVerification": "{\"file\": \"app-release.apk\", \"package\": \"com.aistudio.mbbsqbank.aycxvd\", \"versionCode\": 28, \"versionName\": \"0.0.0.28\"}\n{\"file\": \"app-release.aab\", \"package\": \"com.aistudio.mbbsqbank.aycxvd\", \"versionCode\": 28, \"versionName\": \"0.0.0.28\"}\n{\"file\": \"app-internal.apk\", \"package\": \"com.aistudio.mbbsqbank.aycxvd\", \"versionCode\": 28, \"versionName\": \"0.0.0.28\"}\n{\"file\": \"app-preview.apk\", \"package\": \"com.aistudio.mbbsqbank.aycxvd.debug\", \"versionCode\": 28, \"versionName\": \"0.0.0.28\"}\nPASS app-preview.apk : replacement bundled, retired PG assets absent\nPASS app-internal.apk : replacement bundled, retired PG assets absent\nPASS app-release.apk : replacement bundled, retired PG assets absent\nPASS app-release.aab : replacement bundled, retired PG assets absent\n128de3645d1c945ba85a88ac73981c70278e390dac90c6fef189b330367de3d8  app-internal.apk\n7eb6e69332f033e6b25989b32a491a617db38ded6faebe4b925a4c7e6aa76b98  app-preview.apk\nd8773320b2cf0c6de6f8982291980dea3492de2adbfd373bbccd610b0e76acc7  app-release.apk\na79c4765b7be6fe1ff8c6d2c0c3c36c02f6aaa62a60e468fafbe33f1e636f6ca  app-release.aab\n",
+  "releaseName": "28 (0.0.0.28)",
+  "releaseNotes": [
+    "Study 2,078 NEET-PG questions across 205 MBBS chapters.",
+    "Read questions, options, supplied answers and explanations offline.",
+    "View 467 included illustrations offline.",
+    "Find questions by year, subject, chapter or search."
+  ]
+}
