@@ -1688,5 +1688,252 @@
       "Korsakoff syndrome"
     ],
     "key": "A"
+  },
+  {
+    "id": "aiims-2019-may:24",
+    "source": "aiims-2019-may.html",
+    "source_number": 24,
+    "question": "Anatomical dead space measured by –",
+    "options": [
+      "Bohler’s method",
+      "Xenon dilution technique",
+      "Spirometry",
+      "Single breath nitrogen test"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aiims-2019-may:35",
+    "source": "aiims-2019-may.html",
+    "source_number": 35,
+    "question": "Kcat/km is a measure of –",
+    "options": [
+      "Enzyme efficiency",
+      "Speed of enzymatic reaction",
+      "Concentration of substrate",
+      "Enzyme turn over"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2019-may:186",
+    "source": "aiims-2019-may.html",
+    "source_number": 186,
+    "question": "Scaphoid fracture at waist with retrograde blood supply. Which segment is most susceptible to avascular necrosis?",
+    "options": [
+      "Proximal",
+      "Distal",
+      "Middle",
+      "Scaphoid tubercle"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "gmu-2024-72d75f60-243e-4f12-aba9-74a240c6e3a4:1",
+    "source": "gmu-2024-72d75f60-243e-4f12-aba9-74a240c6e3a4.pdf",
+    "source_number": 1,
+    "question": "Which is an intranuclear immunohistochemistry marker for neuroendocrine tumors?",
+    "options": [
+      "Synaptophysin",
+      "Chromogranin",
+      "INSM",
+      "NCAM1/CD65"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "gmu-2024-72d75f60-243e-4f12-aba9-74a240c6e3a4:2",
+    "source": "gmu-2024-72d75f60-243e-4f12-aba9-74a240c6e3a4.pdf",
+    "source_number": 2,
+    "question": "A neck tumor compresses the trachea and esophagus. Histology shows cell nests and pink extracellular amyloid stroma. What is its cell of origin?",
+    "options": [
+      "Parafollicular C cells",
+      "Askanazy cells",
+      "Hurthle cells",
+      "Follicular cells"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "gmu-2024-72d75f60-243e-4f12-aba9-74a240c6e3a4:6",
+    "source": "gmu-2024-72d75f60-243e-4f12-aba9-74a240c6e3a4.pdf",
+    "source_number": 6,
+    "question": "Conventional FISH can detect all of the following except:",
+    "options": [
+      "Amplification",
+      "Deletion",
+      "Translocation",
+      "Point mutation"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "gmu-2024-72d75f60-243e-4f12-aba9-74a240c6e3a4:8",
+    "source": "gmu-2024-72d75f60-243e-4f12-aba9-74a240c6e3a4.pdf",
+    "source_number": 8,
+    "question": "Which listed factor is the exception among growth-promoting proto-oncogene products?",
+    "options": [
+      "FGF",
+      "PDGF",
+      "TGF alpha",
+      "TGF beta"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:1",
+    "source": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c.pdf",
+    "source_number": 1,
+    "question": "Congenital lactic acidosis is associated with a defect of which enzyme?",
+    "options": [
+      "Transketolase",
+      "Branched-chain ketoacid dehydrogenase",
+      "Isocitrate dehydrogenase",
+      "Pyruvate dehydrogenase"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:2",
+    "source": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c.pdf",
+    "source_number": 2,
+    "question": "Which is not a product of heme catabolism?",
+    "options": [
+      "Ferrous ion",
+      "Aminolevulinic acid",
+      "Biliverdin",
+      "Carbon monoxide"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:5",
+    "source": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c.pdf",
+    "source_number": 5,
+    "question": "A boy with hyperpigmentation and precocious puberty also has hypertension. Which listed enzyme deficiency best explains this pattern?",
+    "options": [
+      "21-beta hydroxylase deficiency",
+      "11-beta hydroxylase deficiency",
+      "17-beta hydroxylase deficiency",
+      "17-alpha hydroxylase deficiency"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:9",
+    "source": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c.pdf",
+    "source_number": 9,
+    "question": "Which is not associated with post-transcriptional modification?",
+    "options": [
+      "Methylation",
+      "Endonuclease cleavage",
+      "5-prime capping",
+      "Glycosylation"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:10",
+    "source": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c.pdf",
+    "source_number": 10,
+    "question": "Deficiency of which mineral is associated with impaired sexual maturation and hypogonadism?",
+    "options": [
+      "Selenium",
+      "Zinc",
+      "Copper",
+      "Iron"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:12",
+    "source": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c.pdf",
+    "source_number": 12,
+    "question": "Which listed tool is preferred for screening many inherited metabolic diseases in children?",
+    "options": [
+      "Tandem mass spectrometry",
+      "Complete blood count (CBC)",
+      "Urinalysis",
+      "Genetic testing"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408:1",
+    "source": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408.pdf",
+    "source_number": 1,
+    "question": "Annular lesions are seen in all of the following except:",
+    "options": [
+      "Tinea corporis",
+      "Urticaria pigmentosa",
+      "Pityriasis rosea",
+      "Porokeratosis"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408:2",
+    "source": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408.pdf",
+    "source_number": 2,
+    "question": "Which type of vitiligo usually stabilizes rather than progressing over the long term?",
+    "options": [
+      "Segmental",
+      "Acrofacial",
+      "Focal",
+      "Mucosal"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408:3",
+    "source": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408.pdf",
+    "source_number": 3,
+    "question": "Match tests 1–4 to conditions A–D: 1 Patch test; 2 KOH mount; 3 Biopsy; 4 Slit-skin smear. A Leprosy; B Lupus vulgaris; C Contact dermatitis; D Tinea.",
+    "options": [
+      "1-C, 2-D, 3-B, 4-A",
+      "1-A, 2-D, 3-B, 4-C",
+      "1-D, 2-C, 3-B, 4-A",
+      "1-B, 2-D, 3-C, 4-A"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408:5",
+    "source": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408.pdf",
+    "source_number": 5,
+    "question": "Which antileprosy medicine causes pigmentation?",
+    "options": [
+      "Rifampicin",
+      "Clofazimine",
+      "Dapsone",
+      "Ofloxacin"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "gmu-2024-9674994c-68dc-4adb-bf75-b110e4d8d977:2",
+    "source": "gmu-2024-9674994c-68dc-4adb-bf75-b110e4d8d977.pdf",
+    "source_number": 2,
+    "question": "Which is the most common hernia in females?",
+    "options": [
+      "Direct inguinal hernia",
+      "Indirect inguinal hernia",
+      "Femoral hernia",
+      "Obturator hernia"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "gmu-2024-9674994c-68dc-4adb-bf75-b110e4d8d977:16",
+    "source": "gmu-2024-9674994c-68dc-4adb-bf75-b110e4d8d977.pdf",
+    "source_number": 16,
+    "question": "The Mount Fuji sign on CT is associated with which condition?",
+    "options": [
+      "Pneumocephalus",
+      "Pneumoperitoneum",
+      "Pneumomediastinum",
+      "Pneumothorax"
+    ],
+    "key": "A"
   }
 ]

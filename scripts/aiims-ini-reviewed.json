@@ -1766,5 +1766,167 @@
     "sourceFingerprint": "b4955f03655d1f3fb0656f347814c707c8aa4011f69aeba3918e9a1781844445",
     "explanation": "Minor trauma can tear bridging veins, particularly where cerebral atrophy stretches them. A subdural collection may cause gradually developing headache and neurological symptoms.",
     "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aiims-2019-may:24",
+    "source": "aiims-2019-may.html",
+    "sourceNumber": 24,
+    "sourceFingerprint": "0763084fffc4f65b0e59731e5e302c5fdd0c945681d862ed9f9eb15ab3d08f87",
+    "chapterId": "first-year/physiology/paper-2/respiratory-physiology",
+    "answer": "D",
+    "explanation": "The single-breath nitrogen washout method estimates anatomical dead space from the transition between conducting-airway gas and alveolar gas. The Bohr equation instead estimates physiological dead space using carbon dioxide measurements."
+  },
+  {
+    "id": "aiims-2019-may:35",
+    "source": "aiims-2019-may.html",
+    "sourceNumber": 35,
+    "sourceFingerprint": "4bbaa3d44a715fb001c2a8c31af8a1ceba3bbfd1cff0fb576d99e865b8b26206",
+    "chapterId": "first-year/biochemistry/paper-1/enzymology",
+    "answer": "A",
+    "explanation": "The ratio kcat/Km describes catalytic efficiency at low substrate concentrations. It combines turnover once substrate is bound with the enzyme’s effective ability to process substrate; kcat alone is the turnover number."
+  },
+  {
+    "id": "aiims-2019-may:186",
+    "source": "aiims-2019-may.html",
+    "sourceNumber": 186,
+    "sourceFingerprint": "f2ea087aacb6f2e6443d10409ad69b92cddf1dcc5089eb2a08b5b17a9d6e1029",
+    "chapterId": "final-year/general-surgery/upper-lower-limb",
+    "answer": "A",
+    "explanation": "Most scaphoid blood supply enters distally or at the waist and reaches the proximal pole by retrograde intraosseous flow. A waist fracture can interrupt this supply, making the proximal fragment especially vulnerable to avascular necrosis."
+  },
+  {
+    "id": "gmu-2024-72d75f60-243e-4f12-aba9-74a240c6e3a4:1",
+    "source": "gmu-2024-72d75f60-243e-4f12-aba9-74a240c6e3a4.pdf",
+    "sourceNumber": 1,
+    "sourceFingerprint": "1d126840fc1138c841385e64ac2b3276b32d8eb896e06035b4ab511edee37434",
+    "chapterId": "second-year/pathology/paper-1/neoplasia",
+    "answer": "C",
+    "explanation": "INSM1 is a transcription factor with nuclear staining that supports neuroendocrine differentiation. Synaptophysin is associated with vesicles and chromogranin with secretory granules. The recall abbreviates INSM1 as INSM; its NCAM distractor also contains a CD-number transcription error."
+  },
+  {
+    "id": "gmu-2024-72d75f60-243e-4f12-aba9-74a240c6e3a4:2",
+    "source": "gmu-2024-72d75f60-243e-4f12-aba9-74a240c6e3a4.pdf",
+    "sourceNumber": 2,
+    "sourceFingerprint": "f0e5397c791f96dc7b9ef347f27454f7a7f8569a30dabce31e0c8d272e76ee3a",
+    "chapterId": "second-year/pathology/paper-2/endocrinology",
+    "answer": "A",
+    "explanation": "Medullary thyroid carcinoma arises from parafollicular C cells. Its extracellular amyloid is derived from calcitonin-related material. Askanazy and Hurthle are names used for oncocytic follicular cells, so those distractors do not describe the origin of medullary carcinoma."
+  },
+  {
+    "id": "gmu-2024-72d75f60-243e-4f12-aba9-74a240c6e3a4:6",
+    "source": "gmu-2024-72d75f60-243e-4f12-aba9-74a240c6e3a4.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "449e7b1fde6a00bc33fd4e9eb63683d2cb495b30fce2c4a8d442dad59a1358c9",
+    "chapterId": "first-year/biochemistry/paper-2/molecular-biology",
+    "answer": "D",
+    "explanation": "Conventional fluorescence in situ hybridization detects selected copy-number changes and chromosomal rearrangements using labelled probes. It is not a routine method for detecting individual nucleotide substitutions; sequence-based methods are used for point mutations."
+  },
+  {
+    "id": "gmu-2024-72d75f60-243e-4f12-aba9-74a240c6e3a4:8",
+    "source": "gmu-2024-72d75f60-243e-4f12-aba9-74a240c6e3a4.pdf",
+    "sourceNumber": 8,
+    "sourceFingerprint": "adff2b30cd022b6b289e95146401cd81b8cbe4303ed8cd83fcb19d5a78d5da6c",
+    "chapterId": "second-year/pathology/paper-1/neoplasia",
+    "answer": "D",
+    "explanation": "TGF-beta classically inhibits epithelial cell proliferation and helps enforce growth restraint, unlike the listed mitogenic growth factors. Its role is context-dependent: established tumors can exploit TGF-beta signalling to promote invasion and immune evasion."
+  },
+  {
+    "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:1",
+    "source": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c.pdf",
+    "sourceNumber": 1,
+    "sourceFingerprint": "ffe791defdf8066cb6fad7653a9f11b4fc1271444bb7e6598afc0cc830d3712c",
+    "chapterId": "first-year/biochemistry/paper-1/carbohydrate-metabolism",
+    "answer": "D",
+    "explanation": "Pyruvate dehydrogenase deficiency impairs conversion of pyruvate to acetyl-CoA. Pyruvate is diverted toward lactate, producing lactic acidosis, often with neurologic disease. This is the best listed answer; congenital lactic acidosis also has other causes."
+  },
+  {
+    "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:2",
+    "source": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c.pdf",
+    "sourceNumber": 2,
+    "sourceFingerprint": "915fe7abe9960da1d094bfaa59268eb7be0ac5e20ef1845422a5a3dc28639cc6",
+    "chapterId": "first-year/biochemistry/paper-2/protein-metabolism",
+    "answer": "B",
+    "explanation": "Heme oxygenase opens the heme ring to produce biliverdin, releasing iron and carbon monoxide. Aminolevulinic acid is instead a precursor in heme synthesis, formed from glycine and succinyl-CoA."
+  },
+  {
+    "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:5",
+    "source": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c.pdf",
+    "sourceNumber": 5,
+    "sourceFingerprint": "bc83fbf74589435a2e8c67e1d57d2f7c3d1fa9f51d893e9fa9d7718ca8cb7e48",
+    "chapterId": "first-year/biochemistry/paper-2/hormones",
+    "answer": "B",
+    "explanation": "11-beta hydroxylase deficiency reduces cortisol synthesis and increases ACTH, adrenal androgens, and deoxycorticosterone. Androgen excess causes precocious virilization, while the mineralocorticoid effect of deoxycorticosterone causes hypertension."
+  },
+  {
+    "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:9",
+    "source": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c.pdf",
+    "sourceNumber": 9,
+    "sourceFingerprint": "0c014d90dd5dc6631faf9002df2376d51da61ffd058a9dd752f204898cdfeaf1",
+    "chapterId": "first-year/biochemistry/paper-2/molecular-biology",
+    "answer": "D",
+    "explanation": "RNA processing includes capping, methylation and endonucleolytic cleavage. Glycosylation is classically taught as a modification of proteins rather than a standard RNA-processing step. Specialized glycoRNAs exist, so the answer concerns the conventional exam distinction."
+  },
+  {
+    "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:10",
+    "source": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c.pdf",
+    "sourceNumber": 10,
+    "sourceFingerprint": "8ff75784e1c9fc4230b32dc490ca2d67be70dae1a45ece62a53ca072cbc5b33f",
+    "chapterId": "first-year/biochemistry/paper-2/minerals",
+    "answer": "B",
+    "explanation": "Zinc deficiency can impair growth and gonadal maturation, causing delayed puberty and hypogonadism. Other manifestations include impaired wound healing and taste disturbance; the combination is more informative than any single nonspecific symptom."
+  },
+  {
+    "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:12",
+    "source": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c.pdf",
+    "sourceNumber": 12,
+    "sourceFingerprint": "7336f7343726e81917924db120aba62b694a83d0514a39c17877b0950e316c06",
+    "chapterId": "first-year/biochemistry/paper-2/miscellaneous-topics",
+    "answer": "A",
+    "explanation": "Tandem mass spectrometry measures multiple amino acids and acylcarnitines from a small blood sample and supports screening for many inborn errors of metabolism. Screening panels vary, and abnormal results require confirmatory testing; it does not detect every metabolic disorder."
+  },
+  {
+    "id": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408:1",
+    "source": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408.pdf",
+    "sourceNumber": 1,
+    "sourceFingerprint": "d5f29d8e423506825059e03de869a1eb48c375f8fe696f87d6acef4e2069ebdf",
+    "chapterId": "final-year/general-medicine/dermatology",
+    "answer": "B",
+    "explanation": "Tinea corporis, pityriasis rosea and porokeratosis can produce annular lesions. Urticaria pigmentosa, a form of cutaneous mastocytosis, classically produces pigmented macules or papules that may urticate with rubbing, rather than a typical annular eruption."
+  },
+  {
+    "id": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408:2",
+    "source": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408.pdf",
+    "sourceNumber": 2,
+    "sourceFingerprint": "027f152bdfd024534b8ad27d9c0ac28d9fc31d9f9fddee98156803d64d8175f3",
+    "chapterId": "final-year/general-medicine/dermatology",
+    "answer": "A",
+    "explanation": "Segmental vitiligo often progresses early and then becomes stable, unlike the more variable relapsing course of nonsegmental vitiligo. This is a typical course, not a guarantee for every patient."
+  },
+  {
+    "id": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408:3",
+    "source": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408.pdf",
+    "sourceNumber": 3,
+    "sourceFingerprint": "1576f1dc37e126de927387b8741de0da3faa849d9eb21f92539c8249448a720d",
+    "chapterId": "final-year/general-medicine/dermatology",
+    "answer": "A",
+    "explanation": "Patch testing investigates allergic contact dermatitis; KOH microscopy supports a dermatophyte diagnosis. Biopsy helps evaluate lupus vulgaris, and slit-skin smears can demonstrate acid-fast bacilli in leprosy. These tests support the clinical assessment and have disease-specific sensitivity limits."
+  },
+  {
+    "id": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408:5",
+    "source": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408.pdf",
+    "sourceNumber": 5,
+    "sourceFingerprint": "78a6996f0dd999f4104002e39b2b0832f783704d3c7c6674bb327a95c7f9f3f2",
+    "chapterId": "final-year/general-medicine/dermatology",
+    "answer": "B",
+    "explanation": "Clofazimine can cause red-brown to dark pigmentation of skin and discoloration of body fluids. Its accumulation in tissues also contributes to dryness and gastrointestinal adverse effects. Rifampicin instead classically causes orange-red discoloration of secretions."
+  },
+  {
+    "id": "gmu-2024-9674994c-68dc-4adb-bf75-b110e4d8d977:2",
+    "source": "gmu-2024-9674994c-68dc-4adb-bf75-b110e4d8d977.pdf",
+    "sourceNumber": 2,
+    "sourceFingerprint": "02261f67d67f7a212f1c4f0ae6daebce559fe8cde5d18af4b0bbeb5fcb497b82",
+    "chapterId": "final-year/general-surgery/abdominal-wall-hernia",
+    "answer": "B",
+    "explanation": "Inguinal hernias, particularly indirect inguinal hernias, remain the most common groin hernias in women overall. Femoral hernias have a stronger association with women than men but are less common in absolute number."
   }
 ]
