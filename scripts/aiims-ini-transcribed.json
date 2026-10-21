@@ -1,0 +1,353 @@
+[
+  {
+    "id": "aiims-1999-nov:1",
+    "source": "aiims-1999-nov.pdf",
+    "source_number": 1,
+    "question": "If a missile enters just above the pubic ramus through the anterior abdominal wall, which structure will it most likely pierce?",
+    "options": [
+      "Abdominal aorta",
+      "Left renal vein",
+      "Urinary bladder",
+      "Spinal cord"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aiims-1999-nov:2",
+    "source": "aiims-1999-nov.pdf",
+    "source_number": 2,
+    "question": "Which is not a boundary of Koch's triangle?",
+    "options": [
+      "Tendon of Todaro",
+      "Limbus of fossa ovalis",
+      "Coronary sinus",
+      "Tricuspid valve ring"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aiims-2001-may:4",
+    "source": "aiims-2001-may.pdf",
+    "source_number": 4,
+    "question": "Infective endocarditis is least likely to occur in which condition?",
+    "options": [
+      "ASD",
+      "Small VSD",
+      "MVP",
+      "TOF"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2005-eo:2",
+    "source": "aiims-2005-eo.pdf",
+    "source_number": 2,
+    "question": "Knowing the half-life of a drug helps determine which of the following?",
+    "options": [
+      "Median lethal dose",
+      "Median effective dose",
+      "Potency of drug",
+      "Frequency of dosing"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aiims-2005-eo:3",
+    "source": "aiims-2005-eo.pdf",
+    "source_number": 3,
+    "question": "Which human papillomavirus type is implicated in cervical carcinoma?",
+    "options": [
+      "6",
+      "11",
+      "16",
+      "42"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aiims-2005-eo:4",
+    "source": "aiims-2005-eo.pdf",
+    "source_number": 4,
+    "question": "The best way to visualise the corneoscleral angle is:",
+    "options": [
+      "Slit lamp microscopy",
+      "Gonioscopy",
+      "Ophthalmoscope",
+      "Keratometer"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aiims-2005-eo:7",
+    "source": "aiims-2005-eo.pdf",
+    "source_number": 7,
+    "question": "What is the content of Littre's hernia?",
+    "options": [
+      "Sigmoid colon",
+      "Urinary bladder",
+      "Meckel diverticulum",
+      "Ileus"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aiims-2006-eo:1",
+    "source": "aiims-2006-eo.pdf",
+    "source_number": 1,
+    "question": "Which cell junction permits exchange of cytoplasmic molecules between two cells?",
+    "options": [
+      "Gap junctions",
+      "Tight junctions",
+      "Anchoring junctions",
+      "Focal junctions"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2006-eo:2",
+    "source": "aiims-2006-eo.pdf",
+    "source_number": 2,
+    "question": "Which epithelium has an extra reserve of cell membrane for distension?",
+    "options": [
+      "Transitional",
+      "Stratified squamous",
+      "Stratified cuboidal",
+      "Stratified columnar"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2006-eo:3",
+    "source": "aiims-2006-eo.pdf",
+    "source_number": 3,
+    "question": "All are muscles of mastication except:",
+    "options": [
+      "Buccinator",
+      "Masseter",
+      "Temporalis",
+      "Pterygoids"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2006-eo:5",
+    "source": "aiims-2006-eo.pdf",
+    "source_number": 5,
+    "question": "A buffer has maximum buffering capacity at which pH?",
+    "options": [
+      "0.5 pKa",
+      "pKa",
+      "pKa + 1",
+      "2 pKa"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aiims-2009-eo:1",
+    "source": "aiims-2009-eo.pdf",
+    "source_number": 1,
+    "question": "The ophthalmic division of the fifth cranial nerve exits the skull through:",
+    "options": [
+      "Superior orbital fissure",
+      "Foramen ovale",
+      "Inferior orbital fissure",
+      "Foramen spinosum"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2010-eo:1",
+    "source": "aiims-2010-eo.pdf",
+    "source_number": 1,
+    "question": "Which statement about scalenus anterior is true?",
+    "options": [
+      "Inserted on scalene tubercle on second rib",
+      "Anterior to transverse cervical artery",
+      "Separates subclavian artery and vein",
+      "Pierced by phrenic nerve"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aiims-2010-eo:2",
+    "source": "aiims-2010-eo.pdf",
+    "source_number": 2,
+    "question": "All are supplied by the superior gluteal nerve except:",
+    "options": [
+      "Gluteus maximus",
+      "Gluteus minimus",
+      "Gluteus medius",
+      "Tensor fascia lata"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2010-eo:3",
+    "source": "aiims-2010-eo.pdf",
+    "source_number": 3,
+    "question": "Lacrimation is lost after a lesion of which nerve?",
+    "options": [
+      "Nasociliary nerve",
+      "Greater petrosal nerve",
+      "Anterior ethmoidal nerve",
+      "Superior orbital nerve"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aiims-2012:1",
+    "source": "aiims-2012.pdf",
+    "source_number": 1,
+    "question": "After mastectomy, a patient cannot extend, adduct and internally rotate the arm. The damaged nerve supplies which muscle?",
+    "options": [
+      "Latissimus dorsi",
+      "Pectoralis major",
+      "Teres minor",
+      "Long head of triceps"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2012:3",
+    "source": "aiims-2012.pdf",
+    "source_number": 3,
+    "question": "A cervical vertebra is distinguished from a thoracic vertebra by the presence of:",
+    "options": [
+      "Foramen transversarium",
+      "Triangular foramina",
+      "Upward facing facets",
+      "Larger vertebral body"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2012:5",
+    "source": "aiims-2012.pdf",
+    "source_number": 5,
+    "question": "Which statement is true?",
+    "options": [
+      "Hypothalamus is part of brainstem",
+      "Occipital lobe is part of cerebral cortex",
+      "Medulla is part of limbic system",
+      "All of the above"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aiims-2013-eo:4",
+    "source": "aiims-2013-eo.pdf",
+    "source_number": 4,
+    "question": "Which cartilage forms a complete ring around the airway?",
+    "options": [
+      "Cricoid cartilage",
+      "Epiglottis",
+      "Cuneiform cartilage",
+      "Thyroid cartilage"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2014-may:1",
+    "source": "aiims-2014-may.pdf",
+    "source_number": 1,
+    "question": "All are derived from ectoderm except:",
+    "options": [
+      "Hair follicles",
+      "Arrector pili",
+      "Sebaceous glands",
+      "Mammary glands"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aiims-2014-may:2",
+    "source": "aiims-2014-may.pdf",
+    "source_number": 2,
+    "question": "Which muscle is not a derivative of mesoderm?",
+    "options": [
+      "Skeletal muscles",
+      "Smooth muscles",
+      "Cardiac myocyte",
+      "Dilator of pupil"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aiims-2014-may:3",
+    "source": "aiims-2014-may.pdf",
+    "source_number": 3,
+    "question": "The buccopharyngeal membrane develops from:",
+    "options": [
+      "Ectoderm and mesoderm",
+      "Ectoderm and endoderm",
+      "Mesoderm and endoderm",
+      "Ectoderm, mesoderm and endoderm"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aiims-2015-may:6",
+    "source": "aiims-2015-may.pdf",
+    "source_number": 6,
+    "question": "Which test is most reliable among these for Eustachian tube dysfunction?",
+    "options": [
+      "Politzer test",
+      "Tympanometry",
+      "VEMP",
+      "Rhinomanometry"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aiims-2016-nov:4",
+    "source": "aiims-2016-nov.pdf",
+    "source_number": 4,
+    "question": "Why is oxygen administered after nitrous oxide is discontinued during emergence from anaesthesia?",
+    "options": [
+      "Second gas effect",
+      "Diffusion hypoxia",
+      "For adequate analgesia",
+      "Air is costlier than oxygen"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aiims-2017-may:1",
+    "source": "aiims-2017-may.pdf",
+    "source_number": 1,
+    "question": "Which is an example of an anaplerotic reaction?",
+    "options": [
+      "Pyruvate to oxaloacetate",
+      "Pyruvate to acetyl-CoA",
+      "Pyruvate to lactic acid",
+      "Pyruvate to alcohol"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2017-may:3",
+    "source": "aiims-2017-may.pdf",
+    "source_number": 3,
+    "question": "A low insulin-to-glucagon ratio favours which process?",
+    "options": [
+      "Fat synthesis",
+      "Cholesterol synthesis",
+      "Glycogen storage",
+      "Ketogenesis"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aiims-2017-may:5",
+    "source": "aiims-2017-may.pdf",
+    "source_number": 5,
+    "question": "Which macronutrient has the maximum thermic effect?",
+    "options": [
+      "Carbohydrate",
+      "Fat",
+      "Protein",
+      "Thermic energy is unrelated to macronutrients"
+    ],
+    "key": "C"
+  }
+]

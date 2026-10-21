@@ -2617,3 +2617,7 @@ Verified locally: TypeScript, production build, simulator/mobile/assets/catalog 
 ## 2026-10-20 — Tablet AI chat report
 
 See `docs/TABLET_AI_CHAT_FIX_20261020.md`. The shared NoteText standalone paragraph flex allocation and normal follow-up context flags were repaired. Actual production shared-component browser checks cover 390×844, 800×1280 and 1280×800, failure/retry and another turn. Native GPU/IME behavior and the reporting user's exact service/network failure remain unproven. Release/publication status is in the latest resume entry.
+
+## AIIMS/INI source import — 21 October 2026
+
+The first source-based recall-practice batch adds 66 AIIMS PG and 49 INI-CET questions, with original explanations, to the existing offline reader through separate exam choices. The old NEET bank and private replacement storage remain separate. Full source accounting, local validation, current exclusions and resumption instructions are in `docs/AIIMS_INI_IMPORT_20261021.md`. No generic dataset, publisher explanation pack, fabricated missing option or generated clinical illustration is used. This is a partial 115-item batch, not all papers; physical Android and eventual deployment status must not be inferred from the local browser and JS-bundle checks.
