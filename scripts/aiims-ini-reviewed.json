@@ -862,56 +862,6 @@
     "explanation": "A Littre hernia contains a Meckel diverticulum within the hernia sac. A Richter hernia instead traps only part of the bowel circumference."
   },
   {
-    "id": "aiims-2006-eo:1",
-    "source": "aiims-2006-eo.pdf",
-    "sourceNumber": 1,
-    "sourceFingerprint": "f3f69f4008325786ebbb8b2edbc4e840e9ce4c527ec9b8a2cc8db2621d9e3fce",
-    "chapterId": "first-year/anatomy/paper-1/histology",
-    "answer": "A",
-    "answerOrigin": "publisher_key",
-    "explanation": "Connexons in adjacent cell membranes align to form gap-junction channels. These allow ions and small molecules to pass between cells and support electrical and metabolic coupling."
-  },
-  {
-    "id": "aiims-2006-eo:2",
-    "source": "aiims-2006-eo.pdf",
-    "sourceNumber": 2,
-    "sourceFingerprint": "82e4524833de85661566df66b55c94583248e6b5c5c41f4d16c80a2219cd3a35",
-    "chapterId": "first-year/anatomy/paper-1/histology",
-    "answer": "A",
-    "answerOrigin": "publisher_key",
-    "explanation": "Urothelial umbrella cells can expand their apical surface using membrane reserves. This permits the urinary tract to distend while maintaining a barrier to urine."
-  },
-  {
-    "id": "aiims-2006-eo:3",
-    "source": "aiims-2006-eo.pdf",
-    "sourceNumber": 3,
-    "sourceFingerprint": "c910885e384ea426a891b3b47dd7c606e9fc3081cf20a7193519abee23fc30e2",
-    "chapterId": "first-year/anatomy/paper-2/head-and-neck",
-    "answer": "A",
-    "answerOrigin": "publisher_key",
-    "explanation": "Buccinator is a facial-expression muscle supplied by the facial nerve. It keeps food between the teeth but is not one of the four primary muscles of mastication."
-  },
-  {
-    "id": "aiims-2006-eo:5",
-    "source": "aiims-2006-eo.pdf",
-    "sourceNumber": 5,
-    "sourceFingerprint": "e2c5d71a8d0874a67d81fecd7b208b823459441f6889314f8abae542d940ed14",
-    "chapterId": "first-year/biochemistry/paper-2/maintenance-of-ph-and-acid-base-disorders",
-    "answer": "B",
-    "answerOrigin": "publisher_key",
-    "explanation": "At pH equal to pKa, the conjugate acid and base are present in equal concentrations. At a fixed total buffer concentration, this provides maximal resistance to small pH changes."
-  },
-  {
-    "id": "aiims-2009-eo:1",
-    "source": "aiims-2009-eo.pdf",
-    "sourceNumber": 1,
-    "sourceFingerprint": "26bc012716648fbe80a87654e758ace867cd42f7eccd75ac005115dedd09e48f",
-    "chapterId": "first-year/anatomy/paper-2/brain-and-cranial-nerves",
-    "answer": "A",
-    "answerOrigin": "publisher_key",
-    "explanation": "The ophthalmic division, V1, enters the orbit through the superior orbital fissure. V2 traverses foramen rotundum, while V3 passes through foramen ovale."
-  },
-  {
     "id": "aiims-2010-eo:1",
     "source": "aiims-2010-eo.pdf",
     "sourceNumber": 1,
@@ -1060,5 +1010,761 @@
     "answer": "C",
     "answerOrigin": "author_checked",
     "explanation": "Protein has a relatively high energy cost for digestion, amino-acid processing and metabolic turnover. Its thermic effect is therefore generally greater than that of fat or carbohydrate."
+  },
+  {
+    "id": "inicetmay25-anatomy:2",
+    "chapterId": "first-year/anatomy/paper-1/lower-limb",
+    "answer": "B",
+    "sourceFingerprint": "485d886a43678bc4de250aa8dae6a483bbb417d62735a3b681d8379a40ede320",
+    "explanation": "The superficial fibular nerve supplies fibularis longus and brevis in the lateral compartment. Fibularis tertius and extensor hallucis longus receive the deep fibular nerve."
+  },
+  {
+    "id": "inicetmay25-anatomy:4",
+    "chapterId": "first-year/anatomy/paper-2/head-and-neck",
+    "answer": "B",
+    "sourceFingerprint": "8e28c63c3f6e5b662cadd2a28df882c49fb3a8d8c7e37f163572bdc96e188218",
+    "explanation": "Repair of a cleft lip includes reconstruction of the interrupted orbicularis oris muscle. Restoring its continuity helps recover oral sphincter function."
+  },
+  {
+    "id": "inicetmay25-anatomy:9",
+    "chapterId": "first-year/anatomy/paper-1/upper-limb",
+    "answer": "B",
+    "sourceFingerprint": "8e2267e5d53cf1b2c6c790181aae8c10844263144d6bdce5a1b5ac0e76831e3a",
+    "explanation": "The deep ulnar branch supplies most intrinsic hand muscles, including the third lumbrical, opponens digiti minimi and dorsal interossei. Flexor carpi ulnaris receives a branch in the forearm."
+  },
+  {
+    "id": "inicetmay25-biochemistry:9",
+    "chapterId": "first-year/biochemistry/paper-2/hormones",
+    "answer": "B",
+    "sourceFingerprint": "0a66fac1b5377f8e8465d3d58ef85888339f7fa17b3dfa48a2c955651f31484d",
+    "explanation": "Insulin normally recruits GLUT4 to the surface of skeletal muscle cells. Impaired insulin signalling reduces this glucose uptake; brain and red cells primarily use insulin-independent transporters."
+  },
+  {
+    "id": "inicetmay25-biochemistry:10",
+    "chapterId": "first-year/biochemistry/paper-1/carbohydrate-metabolism",
+    "answer": "C",
+    "sourceFingerprint": "8e99977db4595e385eefa8c04e6f6f38cad867993c5f4dc095de5fab1e03fdd9",
+    "explanation": "Glycogen debranching-enzyme deficiency produces glycogen storage disease type III with abnormal limit-dextrin accumulation. Some response to glucagon may persist after feeding, while prolonged fasting exhausts accessible glycogen."
+  },
+  {
+    "id": "inicetmay25-dermatology:2",
+    "chapterId": "final-year/general-medicine/dermatology",
+    "answer": "B",
+    "sourceFingerprint": "e3585c1076b4c8a623c1e6828edb618e5f2ea57d04054c45f77519e0682e8a86",
+    "explanation": "Prolonged topical corticosteroid exposure can cause skin atrophy, acneiform eruptions and hypertrichosis. Risk increases with potency, duration, occlusion and use on thin skin."
+  },
+  {
+    "id": "inicetmay25-dermatology:5",
+    "chapterId": "second-year/microbiology/paper-2/genito-urinary-sexually-transmitted-infections",
+    "answer": "D",
+    "sourceFingerprint": "3ab4d1bd7c64bdd573097eaeb4adf753807b008ab90e37d423edf4643f87e83b",
+    "explanation": "A preceding genital ulcer followed by a palmoplantar eruption raises suspicion of secondary syphilis. Serologic testing supports diagnosis; interpretation combines treponemal and nontreponemal tests with the clinical context."
+  },
+  {
+    "id": "inicetmay25-ent:1",
+    "chapterId": "third-year/ent/ear",
+    "answer": "A",
+    "sourceFingerprint": "aa2bc3b12c90fd19efbf414f42a14d06f3125620d014cadb571a12b1e44231f3",
+    "explanation": "Trismus with painful muscle spasms after an ear infection suggests otogenic tetanus. Tetanospasmin blocks release of inhibitory neurotransmitters, producing sustained muscle rigidity and spasms."
+  },
+  {
+    "id": "inicetmay25-ent:3",
+    "chapterId": "third-year/ent/nose",
+    "answer": "D",
+    "sourceFingerprint": "1be419fabd5612f2bf7b8773a5e5fabeac1c05098b9f76ad79d688b644e9555b",
+    "explanation": "Juvenile nasopharyngeal angiofibroma is a highly vascular tumour associated with nasal obstruction and recurrent epistaxis in adolescent males. Routine office biopsy can provoke severe bleeding."
+  },
+  {
+    "id": "inicetmay25-ent:4",
+    "chapterId": "third-year/ent/ear",
+    "answer": "A",
+    "sourceFingerprint": "513b1cadf24af3087ef1bf7741e8528b581f40449d4b2c5bc9f20822ebb4e752",
+    "explanation": "Brief episodes of vertigo triggered by rolling in bed suggest benign paroxysmal positional vertigo. Displaced otoconia stimulate a semicircular canal during particular head movements."
+  },
+  {
+    "id": "inicetmay25-ent:6",
+    "chapterId": "third-year/ent/pharynx",
+    "answer": "B",
+    "sourceFingerprint": "482e4ffe8dd9ff045361e92781bb9270116f40784e56919f5016fd781e8c4030",
+    "explanation": "The internal branch of the superior laryngeal nerve lies close to the piriform recess mucosa. A sharp foreign body can injure it and affect sensation above the vocal folds."
+  },
+  {
+    "id": "inicetmay25-forensic-medicine:3",
+    "chapterId": "third-year/forensic-medicine/toxicology",
+    "answer": "A",
+    "sourceFingerprint": "6d33adfb6967b9d0cd29c6c8b4fbe5ab209edfcae54c3d9914397ae6ca248fd6",
+    "explanation": "Aluminium phosphide releases phosphine on contact with moisture or acid. Phosphine can reduce silver nitrate to metallic silver, causing blackening in a screening test."
+  },
+  {
+    "id": "inicetmay25-forensic-medicine:10",
+    "chapterId": "third-year/forensic-medicine/toxicology",
+    "answer": "B",
+    "sourceFingerprint": "1d24334523fa7cac710ef1102c8083b33dc847f5fed813f6d74b5637132460f7",
+    "explanation": "Chronic mercury exposure can cause intention tremor and neuropsychiatric change, traditionally described as erethism or mad-hatter syndrome. Basophilic stippling and metaphyseal lead lines instead suggest lead exposure."
+  },
+  {
+    "id": "inicetmay25-microbiology:3",
+    "chapterId": "second-year/microbiology/paper-2/mycology",
+    "answer": "A",
+    "sourceFingerprint": "1832ef52e12cb778877c7cf251dcb9efb73dbae11f713b04a8113fbf696a840c",
+    "explanation": "Candida oesophagitis is associated with odynophagia and adherent white plaques in immunocompromised patients. Microscopy can show budding yeast and pseudohyphae."
+  },
+  {
+    "id": "inicetmay25-microbiology:4",
+    "chapterId": "second-year/microbiology/paper-2/gastrointestinal-infections",
+    "answer": "B",
+    "sourceFingerprint": "2302235cc9d04546fa2f902c3a499fca18de889dff3d292a0603841650521be8",
+    "explanation": "The Kanagawa phenomenon is beta-haemolysis on Wagatsuma agar associated with thermostable direct haemolysin-producing Vibrio parahaemolyticus strains."
+  },
+  {
+    "id": "inicetmay25-microbiology:5",
+    "chapterId": "second-year/microbiology/paper-2/mycology",
+    "answer": "C",
+    "sourceFingerprint": "540db0cfbfb3b1c453a52cfe66b3d82b1bc1eeaf593484188fc52633cf9b262e",
+    "explanation": "Cryptococcus is an encapsulated yeast rather than a classic thermally dimorphic fungus. Histoplasma, Coccidioides and Talaromyces marneffei are conventionally grouped with dimorphic fungi."
+  },
+  {
+    "id": "inicetmay25-microbiology:6",
+    "chapterId": "second-year/microbiology/paper-2/parasitology",
+    "answer": "A",
+    "sourceFingerprint": "3fb6c26bd17b0a44adf01ac99d4985b917a278c2cf441d83f91d8d4024fae19a",
+    "explanation": "Strongyloides larvae can become infective within the host and penetrate intestinal or perianal tissue. This autoinfection cycle permits persistent infection and can accelerate during immunosuppression."
+  },
+  {
+    "id": "inicetmay25-microbiology:11",
+    "chapterId": "second-year/microbiology/paper-2/parasitology",
+    "answer": "B",
+    "sourceFingerprint": "3cd591c6ff595d5d7d33a0b9f0e0faf595d47f37b96298af8336fadb6387d089",
+    "explanation": "Toxoplasma gondii is an obligate intracellular parasite. Laboratory propagation can use cell culture or inoculation of susceptible mice; ordinary bacteriologic agar does not support its growth."
+  },
+  {
+    "id": "inicetmay25-obgyn:1",
+    "chapterId": "final-year/obstetrics-gynaecology/disorders-of-menstruation",
+    "answer": "C",
+    "sourceFingerprint": "2425b53e1de5b1c549655b9545e38fcacf3e5dae77c6cef642d9965fbaa5412c",
+    "explanation": "The Rotterdam approach requires two of ovulatory dysfunction, hyperandrogenism and polycystic ovarian morphology after excluding alternatives. In the listed choices, delayed cycles and hirsutism represent the first two features."
+  },
+  {
+    "id": "inicetmay25-obgyn:3",
+    "chapterId": "final-year/obstetrics-gynaecology/gynecological-malignancies",
+    "answer": "A",
+    "sourceFingerprint": "3503c5ba12836772aaa3c51f2e329e2ad43a85d0520650cfce51677ea1359bef",
+    "explanation": "High-risk HPV types 16 and 18 account for a large proportion of cervical cancers. Types 6 and 11 are mainly associated with anogenital warts."
+  },
+  {
+    "id": "inicetmay25-obgyn:6",
+    "chapterId": "final-year/obstetrics-gynaecology/pregnancy-complications",
+    "answer": "D",
+    "sourceFingerprint": "7c2ccb6b4d4fd991dd812a59068b7aaf504012cdff0f271e98cc2f3cc35ed391",
+    "explanation": "Maternal fever more commonly produces fetal tachycardia. Head compression, severe placental compromise and congenital heart block can produce slower fetal heart rates."
+  },
+  {
+    "id": "inicetmay25-obgyn:8",
+    "chapterId": "final-year/obstetrics-gynaecology/imaging-and-procedures",
+    "answer": "A",
+    "sourceFingerprint": "4b96e7d124fbdf6b272428018ae65e64718e0fc2fc9b9a49f4eae7b0ea605317",
+    "explanation": "Positioning precedes speculum insertion. Once the cervix is visualised, a suitable sampling device can collect cervical cells; specimen collection should follow the relevant screening protocol."
+  },
+  {
+    "id": "inicetmay25-orthopaedics:5",
+    "chapterId": "final-year/general-surgery/ctev-bone-tumors",
+    "answer": "A",
+    "sourceFingerprint": "aadef64e43ce1ccea46f013ed15efa37e718cac6b74c9c5277f5f54116a70fc7",
+    "explanation": "Osteosarcoma can produce an aggressive periosteal reaction, including a sunburst pattern and a Codman triangle. These signs require interpretation alongside the site and other imaging findings."
+  },
+  {
+    "id": "inicetmay25-orthopaedics:7",
+    "chapterId": "final-year/general-surgery/upper-lower-limb",
+    "answer": "C",
+    "sourceFingerprint": "769fd31fdf9ab39efd799039c7e15f4f6c64e4a1f4d000a9014ced8b01edb757",
+    "explanation": "Rheumatoid inflammation can weaken stabilising ligaments around the odontoid and cause atlantoaxial instability. Cervical pain with myelopathic signs warrants evaluation for cord compromise."
+  },
+  {
+    "id": "inicetmay25-orthopaedics:8",
+    "chapterId": "final-year/general-surgery/trauma-and-fractures",
+    "answer": "C",
+    "sourceFingerprint": "8829c6feeedeefd9a5a8f3d43c7cdd43262bca395072153f53d10e255918302b",
+    "explanation": "The Honda or H-shaped sacral pattern reflects bilateral vertical sacral insufficiency fractures with a connecting transverse component. MRI can show the associated marrow oedema."
+  },
+  {
+    "id": "inicetmay25-pathology:1",
+    "chapterId": "second-year/pathology/paper-2/kidney",
+    "answer": "D",
+    "sourceFingerprint": "f188e0ff0773b4667612875c28bef7959000b16ee29e4f0008d9043d886e0c51",
+    "explanation": "Armanni-Ebstein change is glycogen accumulation in renal tubular epithelium. Mesangial expansion, basement-membrane thickening and podocyte loss are glomerular changes of diabetic kidney disease."
+  },
+  {
+    "id": "inicetmay25-pathology:3",
+    "chapterId": "second-year/pathology/paper-1/neoplasia",
+    "answer": "D",
+    "sourceFingerprint": "80e96666db24f829d7a1f55aec9245e4c6bafe5b788c1b437e0960f9e1afe7ee",
+    "explanation": "Mucosal neuromas characterise MEN2B, which is associated with activating RET variants. TP53 is associated with Li-Fraumeni syndrome rather than being the defining MEN2B gene."
+  },
+  {
+    "id": "inicetmay25-pathology:4",
+    "chapterId": "second-year/pathology/paper-1/platelets",
+    "answer": "B",
+    "sourceFingerprint": "2d0680fd606476d052364022e503f8a214e6ef84be832d427ee680fc8e1675a4",
+    "explanation": "Von Willebrand disease is the most common inherited bleeding disorder. Deficient or dysfunctional von Willebrand factor impairs platelet adhesion and can reduce factor VIII stability."
+  },
+  {
+    "id": "inicetmay25-pathology:5",
+    "chapterId": "second-year/pathology/paper-1/genetic-disorders",
+    "answer": "A",
+    "sourceFingerprint": "4d079e512768a0fb392d5b35dd97bf132e3f91a77dfc41351925547c596cdd64",
+    "explanation": "Turner syndrome commonly includes short stature, a webbed neck, a broad chest and short fourth metacarpals. A prominent occiput is classically associated with Edwards syndrome."
+  },
+  {
+    "id": "inicetmay25-pathology:6",
+    "chapterId": "second-year/pathology/paper-1/genetic-disorders",
+    "answer": "D",
+    "sourceFingerprint": "c1699136042430eca0788ab2715d1ab07f0f2b38ed842dfc6e3688bdc8fdb536",
+    "explanation": "Bloom syndrome is an autosomal recessive DNA-repair disorder involving BLM. Trisomies and the extra sex chromosome in Klinefelter syndrome are numerical chromosome abnormalities."
+  },
+  {
+    "id": "inicetmay25-pathology:7",
+    "chapterId": "second-year/pathology/paper-1/cell-injury",
+    "answer": "B",
+    "sourceFingerprint": "9155cb6aa78f88bea2fcb70863da09eebaaa7819f121bd0b62aa646dd099d0fe",
+    "explanation": "Inflammasome activation can activate caspase-1, leading to gasdermin-mediated membrane pores and inflammatory pyroptotic cell death. This differs from conventional noninflammatory apoptosis."
+  },
+  {
+    "id": "inicetmay25-pharmacology:1",
+    "chapterId": "second-year/pharmacology/paper-2/miscellaneous-drugs",
+    "answer": "C",
+    "sourceFingerprint": "1f9688528b6ad68c2f965edb0fd501501b7a63ed1a99573aea122c3d10240138",
+    "explanation": "Thalidomide has immunomodulatory effects and is used in selected myeloma and erythema nodosum leprosum regimens. Its severe teratogenicity requires strict pregnancy-prevention safeguards; it is not a conventional antimetabolite."
+  },
+  {
+    "id": "inicetmay25-pharmacology:2",
+    "chapterId": "second-year/pharmacology/paper-1/central-nervous-system",
+    "answer": "C",
+    "sourceFingerprint": "09c43c890520b606a928340f38ad350921897aae28073207c0efde4735d8f042",
+    "explanation": "Both drug groups enhance GABA-mediated inhibition and can add to alcohol-induced sedation. Flumazenil antagonises benzodiazepine-site effects, while thiopentone initially wears off mainly through redistribution rather than metabolism."
+  },
+  {
+    "id": "inicetmay25-pharmacology:5",
+    "chapterId": "second-year/pharmacology/paper-1/general-pharmacology",
+    "answer": "C",
+    "sourceFingerprint": "843ff7ee767105edc9887cb514897ddf1b546811100a4a796fb9e54a702fdd2f",
+    "explanation": "Phase I metabolism includes oxidation, reduction and hydrolysis. These reactions introduce or expose functional groups, sometimes enabling subsequent phase II conjugation."
+  },
+  {
+    "id": "inicetmay25-physiology:1",
+    "chapterId": "first-year/physiology/paper-2/central-nervous-system",
+    "answer": "A",
+    "sourceFingerprint": "83f537ad2a330735c7bda4930588643194c18005e2a4e131d7321fb4ae1b212d",
+    "explanation": "Posterior alpha activity is most evident during relaxed wakefulness with the eyes closed. Eye opening attenuates this rhythm, a response called alpha blocking."
+  },
+  {
+    "id": "inicetmay25-physiology:2",
+    "chapterId": "first-year/physiology/paper-1/general-physiology",
+    "answer": "B",
+    "sourceFingerprint": "5cb4f4e576f4fa369fbe370ad860df0a8762cfc3331d22991d802b56e73224c8",
+    "explanation": "Tight junctions occupy the apical part of the lateral membrane in epithelial cells. They form a paracellular barrier and help preserve apical-basolateral polarity."
+  },
+  {
+    "id": "inicetmay25-physiology:3",
+    "chapterId": "first-year/physiology/paper-2/central-nervous-system",
+    "answer": "D",
+    "sourceFingerprint": "5f6dc8a6516525352d315330e55e2f20e07d36a793942bc9f3b84e2b588f74f6",
+    "explanation": "Fever involves an increased thermoregulatory set point mediated chiefly through prostaglandin E2 signalling in the preoptic hypothalamic region."
+  },
+  {
+    "id": "inicetmay25-physiology:5",
+    "chapterId": "first-year/physiology/paper-2/respiratory-physiology",
+    "answer": "A",
+    "sourceFingerprint": "9f028da0f12b75b4d983b99ea3c67e6d43617ee8c07c96883eb04039ff5781ef",
+    "explanation": "Acute altitude exposure stimulates ventilation because inspired oxygen pressure falls. Increased carbon-dioxide loss produces respiratory alkalosis before renal compensation develops."
+  },
+  {
+    "id": "inicetmay25-physiology:6",
+    "chapterId": "first-year/physiology/paper-1/nerve-muscle-physiology",
+    "answer": "C",
+    "sourceFingerprint": "2e03b4930399d02618d4c175a201b056fa383163b92570e442cfee109056b839",
+    "explanation": "Using the simplified examination relation, frequency is the reciprocal of contraction time. One divided by 0.040 seconds is 25 hertz; physiological fusion thresholds vary with muscle properties."
+  },
+  {
+    "id": "inicetmay25-psm:2",
+    "chapterId": "third-year/community-medicine/paper-1/health-information-and-medical-statistics",
+    "answer": "D",
+    "sourceFingerprint": "04776cca86c12f7a3327916d15146100c02c9f58466f86e7e817de8b397afbe6",
+    "explanation": "Mean and median describe central tendency rather than dispersion. Measures such as variance, standard deviation and interquartile range describe spread."
+  },
+  {
+    "id": "inicetmay25-psm:3",
+    "chapterId": "third-year/community-medicine/paper-1/health-information-and-medical-statistics",
+    "answer": "C",
+    "sourceFingerprint": "e7481d7ecded99a3b54a656f8915071d76883d0d595501ae1a4d4d8c10c23d15",
+    "explanation": "Quantiles locate observations within an ordered distribution. Quartiles divide it into four parts and tertiles into three; neither is itself a single measure of central tendency."
+  },
+  {
+    "id": "inicetmay25-psm:4",
+    "chapterId": "third-year/community-medicine/paper-1/principles-methods-epidemiology",
+    "answer": "C",
+    "sourceFingerprint": "883b48e82b335671bff6eb6a895d422ca1ce8cf63eb91edc5bb6595f891da73b",
+    "explanation": "A study begins with a research question and defined objectives. Population selection and study procedures follow, with analysis performed after data collection."
+  },
+  {
+    "id": "inicetmay25-psychiatry:1",
+    "chapterId": "second-year/pharmacology/paper-1/central-nervous-system",
+    "answer": "A",
+    "sourceFingerprint": "37469f96c8be29fac546cd45546c021e009e3008663de3855ce3233fec136c4c",
+    "explanation": "Valproate exposure during pregnancy is associated with neural-tube defects and adverse neurodevelopmental outcomes. Pregnancy planning requires specialist medication review rather than abrupt unsupervised discontinuation."
+  },
+  {
+    "id": "inicetmay25-psychiatry:2",
+    "chapterId": "first-year/physiology/paper-2/central-nervous-system",
+    "answer": "B",
+    "sourceFingerprint": "7c5b66dd7bb4328e22d088616d02498dfdd2031af7860ebe9c8a7aeadd4321fa",
+    "explanation": "The hippocampal formation is central to formation and consolidation of declarative or explicit memories. Procedural motor learning relies more on other circuits, including the basal ganglia and cerebellum."
+  },
+  {
+    "id": "inicetmay25-psychiatry:4",
+    "chapterId": "second-year/pharmacology/paper-1/central-nervous-system",
+    "answer": "B",
+    "sourceFingerprint": "2e2c8b5c2f1cbbea07432ef1648f6d33fbd2fe74ebff8a09f0b563e4386d5fd7",
+    "explanation": "Ketamine can produce a rapid antidepressant response through mechanisms involving NMDA-receptor antagonism and downstream glutamatergic signalling. Clinical use requires appropriate supervised assessment and monitoring."
+  },
+  {
+    "id": "inicetmay25-psychiatry:8",
+    "chapterId": "final-year/general-medicine/psychiatry-medicine",
+    "answer": "B",
+    "sourceFingerprint": "3520ef901830eb48a92fee1a491e8c8d645901c22d8a6846f9d1b2399a4e3d95",
+    "explanation": "Lithium, valproate and antipsychotics such as haloperidol can be used in acute mania depending on the clinical setting. Amitriptyline is an antidepressant and may worsen mood switching."
+  },
+  {
+    "id": "inicetmay25-radiology:2",
+    "chapterId": "final-year/general-surgery/neck-thyroid-parathyroid",
+    "answer": "A",
+    "sourceFingerprint": "89a91014d0bd448ea8743ade7bcf929ffd6d264830b2a8e481be24cf8036a1f1",
+    "explanation": "Technetium-99m sestamibi imaging can help localise hyperfunctioning parathyroid tissue before surgery. Imaging localises a lesion; biochemical evaluation establishes the diagnosis of hyperparathyroidism."
+  },
+  {
+    "id": "inicetmay25-radiology:4",
+    "chapterId": "final-year/general-medicine/neuro-and-stroke",
+    "answer": "A",
+    "sourceFingerprint": "3f7950d90d5136d79b1f100ef8dfba4cce96275bff0f13e12265d97da2963111",
+    "explanation": "An eye-of-the-tiger appearance in the globus pallidus is classically associated with pantothenate kinase-associated neurodegeneration. The pattern reflects central signal change within surrounding iron-associated low signal."
+  },
+  {
+    "id": "inicetmay25-surgery:4",
+    "chapterId": "final-year/general-surgery/appendix-rectum-anal-canal",
+    "answer": "D",
+    "sourceFingerprint": "47d38bd29a46bd66b99f03ae6960305b1a0545e91ba45219fa00aee4bd28b4ca",
+    "explanation": "Intramucosal colorectal carcinoma is classified as Tis. In the absence of nodal or distant disease this corresponds to stage 0 rather than an invasive stage I tumour."
+  },
+  {
+    "id": "inicetmay25-surgery:5",
+    "chapterId": "final-year/general-surgery/urologycanal",
+    "answer": "D",
+    "sourceFingerprint": "e9e609761b4b8716b4c7a0d312ee5a91ae1a845bf8058618672e9af73a8370a7",
+    "explanation": "Urinary citrate binds calcium and inhibits crystal formation. Low citrate promotes calcium stones; increased urinary calcium, oxalate or uric acid can also promote stone formation."
+  },
+  {
+    "id": "inicetmay25-surgery:9",
+    "chapterId": "final-year/general-surgery/urologycanal",
+    "answer": "B",
+    "sourceFingerprint": "95d5a267c31501dc8f73f531cd6116d941f3e103ca6056fe4958467797bd32bd",
+    "explanation": "Noncontrast CT of the urinary tract is highly sensitive for ureteric calculi in nonpregnant adults. Ultrasound may be preferred initially where radiation avoidance is particularly important."
+  },
+  {
+    "id": "inicetmay25-surgery:13",
+    "chapterId": "final-year/general-surgery/esophagus-stomach",
+    "answer": "B",
+    "sourceFingerprint": "ba2527bafe1d12dc5696ea9a0112dc216e7264f9623cf9bcbc65a70a246481fe",
+    "explanation": "The Los Angeles system grades erosive oesophagitis. Achalasia is classified using manometric patterns, conventionally described with the Chicago classification."
+  },
+  {
+    "id": "inicetmay25-medicine:8",
+    "chapterId": "final-year/general-medicine/endocrinology",
+    "answer": "B",
+    "sourceFingerprint": "12a7bac225897c3f962e441c99082a2d01bef7a2c6e296a9ea2f27a0eea6ec46",
+    "explanation": "Excess iodine can increase thyroid hormone synthesis in susceptible autonomous thyroid tissue. This iodine-induced hyperthyroidism is called the Jod-Basedow phenomenon."
+  },
+  {
+    "id": "inicetmay25-medicine:10",
+    "chapterId": "first-year/physiology/paper-1/renal-physiology",
+    "answer": "C",
+    "sourceFingerprint": "0e5070cd3e16c6f72514f8d5c7810e536b5476d944f9386a22f97a1eaca20da2",
+    "explanation": "Volume depletion can stimulate antidiuretic hormone despite low plasma osmolality. Water retention, particularly with hypotonic fluid intake, can then contribute to hyponatraemia."
+  },
+  {
+    "id": "inicetmay25-medicine:15",
+    "chapterId": "final-year/general-medicine/gastro-and-hepatology",
+    "answer": "B",
+    "sourceFingerprint": "6d7287eee27d3191478edee51ac887fdf9414765cc5256de59af214d5b3e6611",
+    "explanation": "Helicobacter-associated ulcer risk depends on bacterial virulence, host susceptibility and environmental factors. Infection therefore does not produce peptic ulceration in every infected individual."
+  },
+  {
+    "id": "inicetmay25-pediatrics:1",
+    "chapterId": "second-year/microbiology/paper-1/immunology",
+    "answer": "C",
+    "sourceFingerprint": "39749f636ab798e773edaa181f1eef66e1d266dd970f2a7e1b9bc70922587a52",
+    "explanation": "MMR contains live attenuated viruses and is contraindicated in severe cellular immunodeficiency. Inactivated vaccines do not carry the same replication risk, although immune responses may be reduced."
+  },
+  {
+    "id": "inicetmay25-pediatrics:9",
+    "chapterId": "final-year/paediatrics/cvs",
+    "answer": "B",
+    "sourceFingerprint": "7f3531a603903212109a9c3ca114f78e7ea35a9a3e9bfce4e1d5a30acfe64785",
+    "explanation": "Tetralogy of Fallot includes right-ventricular outflow obstruction, a ventricular septal defect, an overriding aorta and right-ventricular hypertrophy. The obstruction is often infundibular."
+  },
+  {
+    "id": "inicetmay25-pediatrics:11",
+    "chapterId": "final-year/paediatrics/electrolytes-and-nutrition",
+    "answer": "B",
+    "sourceFingerprint": "bb3a21929d41161d421101314c4ef20ad050d1e10567beef89e87199205ed42a",
+    "explanation": "Carbohydrate refeeding increases insulin, shifting phosphate, potassium and magnesium into cells. This can cause dangerous electrolyte depletion in a malnourished patient."
+  },
+  {
+    "id": "inicetmay25-opthalmology:3",
+    "chapterId": "third-year/ophthalmology/diseases-of-retina",
+    "answer": "B",
+    "sourceFingerprint": "6ce918c0f6e53f4f8b4210f47bea693af4ab0e9dce202c435d604a6c2b49fc81",
+    "explanation": "Proliferative diabetic retinopathy can form fibrovascular membranes that contract and pull the retina away from the underlying tissue. This produces tractional retinal detachment."
+  },
+  {
+    "id": "inicetmay25-opthalmology:6",
+    "chapterId": "third-year/ophthalmology/diseases-of-retina",
+    "answer": "B",
+    "sourceFingerprint": "49ed8b78ab23bc2e98ac6f6aec346e8b017067a00fe1d8673b0a512db6f48a32",
+    "explanation": "Optical coherence tomography provides high-resolution cross-sectional images of retinal layers. Perimetry assesses visual fields rather than retinal microanatomy."
+  },
+  {
+    "id": "aiims-2005-eo:5",
+    "chapterId": "second-year/pharmacology/paper-2/anti-microbial-drugs",
+    "answer": "A",
+    "sourceFingerprint": "b93877b5478ec3817f5f89e0bee99e71a072945dc2f9fd81decd07d4cfe65edf",
+    "explanation": "Mebendazole interferes with helminth microtubules and glucose utilisation. It is used against several intestinal nematodes, whereas amoebiasis requires an antiamoebic regimen.",
+    "answerOrigin": "author_checked"
+  },
+  {
+    "id": "aiims-2005-eo:6",
+    "chapterId": "second-year/microbiology/paper-2/parasitology",
+    "answer": "A",
+    "sourceFingerprint": "e36bb54e2ed8ca55b1d7dfe3347523981ff6137e6e9dfe6c96fb00a2b85d4db6",
+    "explanation": "Toxocara larvae can migrate through human tissues after ingestion of infective eggs. Humans are accidental hosts and do not complete the normal intestinal adult-worm cycle.",
+    "answerOrigin": "author_checked"
+  },
+  {
+    "id": "aiims-2005-eo:14",
+    "chapterId": "first-year/biochemistry/paper-2/protein-metabolism",
+    "answer": "A",
+    "sourceFingerprint": "b5d7e31ef7caad3f4785356b0bf7eb8c3c908415f7f5d790a34c4e9ee2b7a767",
+    "explanation": "Wheat protein is relatively deficient in lysine compared with reference amino-acid requirements. Combining cereal and pulse proteins can improve the overall amino-acid pattern.",
+    "answerOrigin": "author_checked"
+  },
+  {
+    "id": "aiims-2005-eo:20",
+    "chapterId": "final-year/general-surgery/upper-lower-limb",
+    "answer": "B",
+    "sourceFingerprint": "6508d0b6f38b3d0ffd50400a4cac85982c5e28e6eacc4f8cf5cf8d3cb4f555cc",
+    "explanation": "Kienbock disease is osteonecrosis of the lunate. The other eponyms refer to different bones, including the femoral head in Perthes disease.",
+    "answerOrigin": "author_checked"
+  },
+  {
+    "id": "aiims-2012:2",
+    "chapterId": "first-year/anatomy/paper-2/head-and-neck",
+    "answer": "A",
+    "sourceFingerprint": "c4b849371a4448f03504c84b1bc7a46359dcb8898eb86fc2a7fe281e970b068d",
+    "explanation": "Stylopharyngeus is supplied by the glossopharyngeal nerve. Most other pharyngeal muscles receive vagal motor supply through the pharyngeal plexus; older descriptions attributed these fibres to the cranial accessory component.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aiims-2012:6",
+    "chapterId": "first-year/physiology/paper-2/central-nervous-system",
+    "answer": "B",
+    "sourceFingerprint": "4c3104539e87a251fb811b06d0c11c5146056dce84eb159399939a11e6db64e1",
+    "explanation": "Within the traditional examination model, CSF absorption increases as CSF pressure rises relative to venous pressure. This pressure-dependent outflow is an important regulator of CSF pressure.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aiims-2012:9",
+    "chapterId": "first-year/physiology/paper-1/renal-physiology",
+    "answer": "C",
+    "sourceFingerprint": "9b7cad5663b2311f0f5ab57c66a86647092b50f4922d1bdb3e17c81f7febed27",
+    "explanation": "Low plasma osmolality normally suppresses ADH secretion. Pain, nausea or substantial volume depletion can provide nonosmotic stimuli that modify the normal osmotic response.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aiims-2014-may:11",
+    "chapterId": "first-year/anatomy/paper-2/brain-and-cranial-nerves",
+    "answer": "D",
+    "sourceFingerprint": "066b4805857765741b7eb93d5c23208a4b00c7a5244cf0d41b137b8314320081",
+    "explanation": "Branches of the vertebral, anterior spinal and posterior inferior cerebellar arteries supply the medulla. The superior cerebellar artery primarily supplies superior cerebellar structures.",
+    "answerOrigin": "author_checked"
+  },
+  {
+    "id": "aiims-2014-may:13",
+    "chapterId": "first-year/anatomy/paper-2/head-and-neck",
+    "answer": "A",
+    "sourceFingerprint": "70682e2156bc49c5151a4e57b1df9cf286d9dc660746a745b347b80e30d91b47",
+    "explanation": "Stylohyoid receives facial-nerve motor supply. The pterygoids and tensor veli palatini are supplied by mandibular-division branches of the trigeminal nerve.",
+    "answerOrigin": "author_checked"
+  },
+  {
+    "id": "aiims-2014-may:14",
+    "chapterId": "first-year/anatomy/paper-2/head-and-neck",
+    "answer": "B",
+    "sourceFingerprint": "74e0c2fc4df38413aaef70bcb68042e363dc2d6f36ade97bf70820dcc9d54c43",
+    "explanation": "Parotid parasympathetic fibres originate in the glossopharyngeal pathway and synapse in the otic ganglion. Facial-nerve pathways supply the other listed glands.",
+    "answerOrigin": "author_checked"
+  },
+  {
+    "id": "aiims-2016-nov:2",
+    "chapterId": "final-year/general-medicine/dermatology",
+    "answer": "D",
+    "sourceFingerprint": "b23a0e73ab904c8d37fed6da3e51e96925b8a788e5698696ef509eedbfa09002",
+    "explanation": "Repeated hair pulling can produce broken shafts at different lengths, perifollicular injury and nonscarring alopecia. These findings favour trichotillomania over uniform patterned hair loss.",
+    "answerOrigin": "author_checked"
+  },
+  {
+    "id": "aiims-2016-nov:5",
+    "chapterId": "final-year/general-surgery/peritoneum-hbs-pancreas",
+    "answer": "C",
+    "sourceFingerprint": "7ee7c7adf6b2a9dd901caff15996007d3adebe68f3054b5b82a141a2b7a8d4a2",
+    "explanation": "Persistent gallbladder nonvisualisation under an appropriate hepatobiliary scintigraphy protocol can indicate cystic-duct obstruction in acute cholecystitis. Fasting, hepatic dysfunction and other factors can affect interpretation.",
+    "answerOrigin": "author_checked"
+  },
+  {
+    "id": "aiims-2017-may:7",
+    "chapterId": "first-year/biochemistry/paper-2/protein-metabolism",
+    "answer": "A",
+    "sourceFingerprint": "0030ddb047d86248e5a3a3be9836c870e48bdc06b15114cb0068f7c9aca68b0a",
+    "explanation": "Phenylbutyrate is converted to phenylacetate, which conjugates with glutamine. Urinary excretion of phenylacetylglutamine provides an alternative route for nitrogen disposal.",
+    "answerOrigin": "author_checked"
+  },
+  {
+    "id": "aiims-2017-may:9",
+    "chapterId": "first-year/biochemistry/paper-1/carbohydrate-metabolism",
+    "answer": "A",
+    "sourceFingerprint": "2799e4193123eea5fd5e7054158b4b364b454fefcdcb0365f2d0cac8c6671b5b",
+    "explanation": "A low insulin-to-glucagon ratio characterises fasting and promotes fuel mobilisation. Glycogen synthesis and storage are favoured instead by the insulin-dominant fed state.",
+    "answerOrigin": "author_checked"
+  },
+  {
+    "id": "aiims-2017-may:10",
+    "chapterId": "first-year/biochemistry/paper-2/molecular-biology",
+    "answer": "A",
+    "sourceFingerprint": "ddece6eb3f58a4f94c8b894987a193b4741f7523a16f94ba852cc135f64358b5",
+    "explanation": "CRISPR-Cas9 uses a guide RNA to direct a nuclease to a chosen DNA sequence. Association studies identify correlations, while microscopy and diagnostic amplification have different purposes.",
+    "answerOrigin": "author_checked"
+  },
+  {
+    "id": "aiims-2017-may:11",
+    "chapterId": "first-year/physiology/paper-2/cardiovascular-physiology",
+    "answer": "A",
+    "sourceFingerprint": "7a4a39058d34df3c779bfad43b361bf72ad08ea938810f023b17b77637613ab5",
+    "explanation": "Serotonin can activate cardiac vagal afferents, including through 5-HT3 receptors, and evoke the Bezold-Jarisch reflex with bradycardia and hypotension.",
+    "answerOrigin": "author_checked"
+  },
+  {
+    "id": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706:1",
+    "chapterId": "first-year/anatomy/paper-2/thorax",
+    "answer": "C",
+    "sourceFingerprint": "fb2e5089d9731a3ff0a14628ef322335f3a85b10a125610122db51ad193229aa",
+    "explanation": "At the hilum, the pulmonary veins are generally anterior, with pulmonary arterial structures between the veins and the more posterior bronchi. Superior-inferior arrangements differ between the two sides.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706:2",
+    "chapterId": "first-year/anatomy/paper-2/head-and-neck",
+    "answer": "B",
+    "sourceFingerprint": "22c923d0e97effd80dfecbb7b66e4be36e7b1c9a44f1bbf635fb2cb6850616ab",
+    "explanation": "The mental artery is a terminal branch of the inferior alveolar artery. The labial and lateral nasal arteries are branches of the facial artery.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706:3",
+    "chapterId": "first-year/anatomy/paper-1/lower-limb",
+    "answer": "D",
+    "sourceFingerprint": "ba64264f0e5e93cc4565d902b44e4e48392e5a259eaa2ec2933956e57d4235d3",
+    "explanation": "The superior gluteal nerve supplies gluteus medius, gluteus minimus and tensor fasciae latae. Piriformis receives separate branches from the sacral plexus.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-68a4b930-b5c8-11ed-a822-0a5e36bc6706:1",
+    "chapterId": "first-year/physiology/paper-1/nerve-muscle-physiology",
+    "answer": "A",
+    "sourceFingerprint": "eaf2436e0b8f146fd5b013026639bc78cd8615562590d5d49d27e3174fb41f31",
+    "explanation": "ATP binding lowers the affinity of myosin for actin and permits detachment. ATP hydrolysis then helps recock the head for another cross-bridge cycle.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706:1",
+    "chapterId": "first-year/biochemistry/paper-2/protein-metabolism",
+    "answer": "A",
+    "sourceFingerprint": "092130fcb101e6e7ffcd53df987281b71abb2f0e40b76b993a6cb9a8c1a0af30",
+    "explanation": "Maple syrup urine disease impairs branched-chain amino-acid catabolism. Leucine, isoleucine and valine require controlled intake; methionine is not one of these branched-chain amino acids.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-6e15085c-b5c8-11ed-8a74-0a5e36bc6706:1",
+    "chapterId": "second-year/pathology/paper-1/genetic-disorders",
+    "answer": "B",
+    "sourceFingerprint": "5584c2bb614d4db47a2a5bd7f1043e35ae1b745ad627fef477baadf91a3770b7",
+    "explanation": "Genomic imprinting produces parent-of-origin-specific gene expression through epigenetic marking. It differs from mosaicism, which describes genetically different cell populations within one individual.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706:1",
+    "chapterId": "second-year/pharmacology/paper-1/cardiovascular-system",
+    "answer": "D",
+    "sourceFingerprint": "05484c0be94db1acfa54a93ca29b5161133b8676d2388c1365c31d7614ea76d2",
+    "explanation": "Verapamil commonly causes constipation through its effects on gastrointestinal smooth muscle. Aliskiren can cause hyperkalaemia rather than the hypokalaemia listed in the distractor.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706:2",
+    "chapterId": "second-year/pharmacology/paper-2/hormones",
+    "answer": "B",
+    "sourceFingerprint": "13781ac37eb20c0fc487c1bc92167cfc59f609ae45fcc92b6b47af4edd8ffbc1",
+    "explanation": "These drugs inhibit conversion of testosterone to dihydrotestosterone. A reduction in PSA can occur during treatment, but it is a consequence rather than the primary enzyme target.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-68d61bf6-b5c8-11ed-ac15-0a5e36bc6706:2",
+    "chapterId": "third-year/community-medicine/paper-1/health-information-and-medical-statistics",
+    "answer": "A",
+    "sourceFingerprint": "3103a29c51df428b84ed8fc63684fc318e6e57fc1a747855dc03903f10fe8655",
+    "explanation": "Descriptive statistics summarise the observed data using tables, graphs and numerical measures. Inferential methods draw conclusions about a wider population from sample observations.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-68d61bf6-b5c8-11ed-ac15-0a5e36bc6706:4",
+    "chapterId": "third-year/community-medicine/paper-1/health-information-and-medical-statistics",
+    "answer": "A",
+    "sourceFingerprint": "01ab1d0e76264570c0f1bff4e2e9fff988f04111107cfdfbb2518bffd3dc97b2",
+    "explanation": "For otherwise comparable sampling, a larger sample reduces standard error. Greater variability or a higher required confidence level generally makes the interval wider.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706:1",
+    "chapterId": "final-year/obstetrics-gynaecology/disorders-of-menstruation",
+    "answer": "D",
+    "sourceFingerprint": "c150e533cb3b2918bd54038256c5e54ff9c64810614592a90f77368eea4c22da",
+    "explanation": "Insufficient hypothalamic or pituitary stimulation reduces gonadotropin drive to the testes. Low testosterone and impaired sperm production can occur together with low or inappropriately normal LH and FSH.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706:2",
+    "chapterId": "final-year/obstetrics-gynaecology/physiology-pregnancy",
+    "answer": "C",
+    "sourceFingerprint": "571beff439408828e7db7297a1d501e3e23d37d16ca4f2266cee5ff48d8a577c",
+    "explanation": "Pregnancy increases many procoagulant factors, including VII and VIII. Factor XI activity may decrease, illustrating that the changes are not uniform across all clotting factors.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:3",
+    "chapterId": "final-year/paediatrics/cns",
+    "answer": "B",
+    "sourceFingerprint": "22e9cb4488e785a2dfa3be9fb5ef550d258f4fa34bb8e7791da8a45fbbb56d01",
+    "explanation": "Hormonal therapy, including ACTH in appropriate settings, is used for infantile epileptic spasms associated with West syndrome. Treatment selection also depends on the underlying cause.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-6d9d909c-b5c8-11ed-b2cd-0a5e36bc6706:1",
+    "chapterId": "first-year/anatomy/paper-2/head-and-neck",
+    "answer": "C",
+    "sourceFingerprint": "cdacf36bd42402ca0837d498209dc2b5adf277149e342a88021a6a6d7d892d3e",
+    "explanation": "Superior oblique primarily intorts the eye and also depresses and abducts it. Its depressive action is particularly useful when the eye is adducted.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-71e9b57c-b5c8-11ed-a8c5-0a5e36bc6706:1",
+    "chapterId": "first-year/anatomy/paper-2/brain-and-cranial-nerves",
+    "answer": "B",
+    "sourceFingerprint": "9579d5ddc70d3a2022bdeeb3c2f89c184a242bedd3339e6830c8e674ce1de4af",
+    "explanation": "Ascending auditory pathways relay through cochlear nuclei and bilateral brainstem circuits, including the superior olivary complex. Fibres then ascend through the lateral lemniscus toward the inferior colliculus.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706:2",
+    "chapterId": "second-year/microbiology/paper-1/general-microbiology",
+    "answer": "A",
+    "sourceFingerprint": "28706c91b85819bfc40accad664847fb1d966d8f56883630d08a0a8c3d069527",
+    "explanation": "Phase-contrast optics convert differences in phase caused by variations in optical path into visible intensity differences. This permits viewing many unstained living cells.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:2",
+    "chapterId": "first-year/biochemistry/paper-1/lipid-metabolism",
+    "answer": "A",
+    "sourceFingerprint": "65a44f9e09c29a0c58f294e5c1bcbe1212385c6487e8d1f8764af9af6ef422e2",
+    "explanation": "Refsum disease impairs peroxisomal alpha-oxidation of phytanic acid. The methyl group near its carboxyl end prevents ordinary initial beta-oxidation until alpha-oxidation processes the substrate.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706:2",
+    "chapterId": "first-year/anatomy/paper-1/upper-limb",
+    "answer": "B",
+    "sourceFingerprint": "ad1fbc7361639f60a8e52e1b5edb24f5cd018be95762f8c98aabe20e62a9e8c3",
+    "explanation": "Adductor pollicis receives the deep branch of the ulnar nerve. Weakness can produce compensatory thumb interphalangeal flexion during the paper-holding manoeuvre known as Froment testing.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706:3",
+    "chapterId": "final-year/general-surgery/upper-lower-limb",
+    "answer": "D",
+    "sourceFingerprint": "387096ba845f18abec28fdf6e91907a68cb4357d363c11316c3913e0f158bb77",
+    "explanation": "Cubitus valgus following a lateral-condyle injury can stretch the ulnar nerve over time. Interosseous weakness impairs finger adduction and abduction.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706:1",
+    "chapterId": "third-year/forensic-medicine/mechanical-injuries",
+    "answer": "D",
+    "sourceFingerprint": "f50f21ac2064b79c47503b303561524cf8ad70f6cd4e866a74970dbb776de320",
+    "explanation": "Unburnt or partially burnt propellant particles can embed in the skin and create tattooing. Soot deposition is a different phenomenon and may be removable from the surface.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:2",
+    "chapterId": "final-year/general-medicine/neuro-and-stroke",
+    "answer": "A",
+    "sourceFingerprint": "426ab2e2b31bcb9daba54dccba43b977669d693758bd34892e3c488622fa6435",
+    "explanation": "A right posterior parietal lesion can disrupt spatial attention to the left side. Neglect is an attentional disorder and is not equivalent to isolated loss of visual acuity.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:1",
+    "chapterId": "final-year/obstetrics-gynaecology/physiology-pregnancy",
+    "answer": "D",
+    "sourceFingerprint": "0749ea15bd41f997bef6c9652d053bc4fee8436ba3e62c53b8fbc9a76ef2b497",
+    "explanation": "The normal umbilical cord contains two arteries and one vein. Placental dimensions and weight vary, but the two-vessel-cord statement is the clear abnormality in the listed choices.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:1",
+    "chapterId": "third-year/ophthalmology/neuro-ophthalmology",
+    "answer": "A",
+    "sourceFingerprint": "ea34f5d79b445b0a57daedab89b0b3eb5599c78196f02fe0d3c03577b26b45f5",
+    "explanation": "An asymmetric optic-nerve lesion can cause a relative afferent pupillary defect. Typical optic neuritis often causes painful eye movements and reduced colour vision; treatment depends on the cause and clinical circumstances.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:1",
+    "chapterId": "first-year/physiology/paper-2/cardiovascular-physiology",
+    "answer": "B",
+    "sourceFingerprint": "959d333308bef2b01d7cd7067d2e1956affcfe123f5b4a8dc5c9957d22d07c14",
+    "explanation": "Fast sodium influx produces phase 0, followed by early transient outward current. Calcium influx supports the plateau, and increased net potassium efflux drives final repolarisation.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5cd670f8-c103-11ed-97fb-0a5e36bc6706:2",
+    "chapterId": "final-year/general-medicine/dermatology",
+    "answer": "B",
+    "sourceFingerprint": "0b351f4ce2e5942bf84c853b2373d15c4c732a5c4d80d0e52991376ee7c1ea53",
+    "explanation": "Alopecia areata, telogen effluvium and androgenetic alopecia preserve follicular structures sufficiently to be classified as nonscarring. Frontal fibrosing alopecia is a cicatricial disorder.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706:2",
+    "chapterId": "final-year/general-surgery/neuro-cardiothoracic-surgery",
+    "answer": "A",
+    "sourceFingerprint": "b4955f03655d1f3fb0656f347814c707c8aa4011f69aeba3918e9a1781844445",
+    "explanation": "Minor trauma can tear bridging veins, particularly where cerebral atrophy stretches them. A subdural collection may cause gradually developing headache and neurological symptoms.",
+    "answerOrigin": "publisher_key_author_checked"
   }
 ]

@@ -6,6 +6,7 @@ export type OfflineMcq = {
   id: string; chapterId: string; question: string; options: string[];
   answerIndex: number | null; sourceAnswer: string; explanation: string;
   requiresImage: boolean; imageIds: string[];
+  examYear?: number; examSession?: string;
 };
 export type OfflineBank = {
   schema: 1; id: string; chapters: OfflineChapter[]; records: OfflineMcq[];
@@ -39,6 +40,7 @@ export function validateOfflineBank(value: unknown): asserts value is OfflineBan
       throw new Error(`Incomplete or invalid offline question: ${String(object(row) ? row.id : '')}`);
     }
     if (row.requiresImage && row.imageIds.length === 0) throw new Error(`Required image missing: ${row.id}`);
+    if ((row.examYear !== undefined && (!Number.isInteger(row.examYear) || Number(row.examYear) < 1900 || Number(row.examYear) > 2100)) || (row.examSession !== undefined && (row.examYear === undefined || !nonempty(row.examSession) || row.examSession.length > 40))) throw new Error(`Invalid exam year/session: ${row.id}`);
     const label = String(row.sourceAnswer).trim();
     const labelledIndex = /^[A-Ha-h]$/.test(label) ? label.toUpperCase().charCodeAt(0) - 65 : /^[1-8]$/.test(label) ? Number(label) - 1 : row.options.indexOf(label);
     if ((labelledIndex >= 0 && labelledIndex !== row.answerIndex) || (labelledIndex < 0 && (row.answerIndex !== null || /^[A-Ha-h1-8]$/.test(label)))) throw new Error(`Source answer and option index disagree: ${row.id}`);
@@ -52,7 +54,7 @@ export function createOfflineReader(input: unknown) {
   // Own the installed snapshot: later changes to an import object cannot corrupt it.
   const bank = JSON.parse(JSON.stringify(input)) as OfflineBank;
   const chapters = new Map(bank.chapters.map(chapter => [chapter.id, chapter]));
-  const indexed = bank.records.map(row => ({ row, text: `${row.question} ${row.options.join(' ')} ${row.explanation} ${chapters.get(row.chapterId)!.names.join(' ')}`.toLocaleLowerCase() }));
+  const indexed = bank.records.map(row => ({ row, text: `${row.question} ${row.options.join(' ')} ${row.explanation} ${row.examYear ?? ''} ${row.examSession ?? ''} ${chapters.get(row.chapterId)!.names.join(' ')}`.toLocaleLowerCase() }));
   return {
     id: bank.id,
     total: bank.records.length,

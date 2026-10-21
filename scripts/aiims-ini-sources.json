@@ -6,7 +6,8 @@
     "bytes": 541552,
     "exam": "aiims-pg",
     "year": 2017,
-    "required": true
+    "required": true,
+    "session": "November"
   },
   {
     "file": "aiims-2018-may.html",
@@ -15,7 +16,8 @@
     "bytes": 423090,
     "exam": "aiims-pg",
     "year": 2018,
-    "required": true
+    "required": true,
+    "session": "May"
   },
   {
     "file": "aiims-2018-nov.html",
@@ -24,7 +26,8 @@
     "bytes": 516528,
     "exam": "aiims-pg",
     "year": 2018,
-    "required": true
+    "required": true,
+    "session": "November"
   },
   {
     "file": "aiims-2019-may.html",
@@ -33,7 +36,8 @@
     "bytes": 415929,
     "exam": "aiims-pg",
     "year": 2019,
-    "required": true
+    "required": true,
+    "session": "May"
   },
   {
     "file": "aiims-2020-jun.html",
@@ -42,7 +46,8 @@
     "bytes": 508908,
     "exam": "aiims-pg",
     "year": 2020,
-    "required": true
+    "required": true,
+    "session": "June"
   },
   {
     "file": "aiims-1999-nov.pdf",
@@ -51,7 +56,8 @@
     "bytes": 134950,
     "exam": "aiims-pg",
     "year": 1999,
-    "required": true
+    "required": true,
+    "session": "November"
   },
   {
     "file": "aiims-2001-may.pdf",
@@ -60,7 +66,8 @@
     "bytes": 99324,
     "exam": "aiims-pg",
     "year": 2001,
-    "required": true
+    "required": true,
+    "session": "May"
   },
   {
     "file": "aiims-2000-eo.pdf",
@@ -123,7 +130,8 @@
     "bytes": 795490,
     "exam": "aiims-pg",
     "year": 2006,
-    "required": true
+    "required": false,
+    "identityStatus": "held_mixed_dental_collection"
   },
   {
     "file": "aiims-2007-eo.pdf",
@@ -150,7 +158,8 @@
     "bytes": 993792,
     "exam": "aiims-pg",
     "year": 2009,
-    "required": true
+    "required": false,
+    "identityStatus": "held_mixed_dental_collection"
   },
   {
     "file": "aiims-2010-eo.pdf",
@@ -186,7 +195,8 @@
     "bytes": 120281,
     "exam": "aiims-pg",
     "year": 2014,
-    "required": true
+    "required": true,
+    "session": "May"
   },
   {
     "file": "aiims-2015-may.pdf",
@@ -195,7 +205,8 @@
     "bytes": 98238,
     "exam": "aiims-pg",
     "year": 2015,
-    "required": true
+    "required": true,
+    "session": "May"
   },
   {
     "file": "aiims-2016-nov.pdf",
@@ -204,7 +215,8 @@
     "bytes": 98806,
     "exam": "aiims-pg",
     "year": 2016,
-    "required": true
+    "required": true,
+    "session": "November"
   },
   {
     "file": "aiims-2017-may.pdf",
@@ -213,7 +225,8 @@
     "bytes": 90980,
     "exam": "aiims-pg",
     "year": 2017,
-    "required": true
+    "required": true,
+    "session": "May"
   },
   {
     "file": "aiims-2012.pdf",
@@ -393,6 +406,425 @@
     "bytes": 1330330,
     "exam": "ini-cet",
     "year": 2026,
+    "required": true,
+    "session": "May"
+  },
+  {
+    "file": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/57d76ddc-c103-11ed-a156-0a5e36bc6706/57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+    "pageUrl": "https://docs.aglasem.com/view/57d76ddc-c103-11ed-a156-0a5e36bc6706",
+    "sha256": "845fb0ee20b0d9e73a3c30fd3396816a620f82c3a11398888c0e54f216113632",
+    "bytes": 965543,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "November",
+    "required": true
+  },
+  {
+    "file": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/58543d6c-c103-11ed-bee2-0a5e36bc6706/58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+    "pageUrl": "https://docs.aglasem.com/view/58543d6c-c103-11ed-bee2-0a5e36bc6706",
+    "sha256": "7d2c647e0f27137433cac64acd13996df9a08532fb55f706a779d1fa1be042d7",
+    "bytes": 1702881,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "November",
+    "required": true
+  },
+  {
+    "file": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/5a8ea69e-c103-11ed-97f4-0a5e36bc6706/5a8ea69e-c103-11ed-97f4-0a5e36bc6706.pdf",
+    "pageUrl": "https://docs.aglasem.com/view/5a8ea69e-c103-11ed-97f4-0a5e36bc6706",
+    "sha256": "726ca2f05d74db5d59468f711d5b20cdba80d7ad4c9fe97768119758cf4d0525",
+    "bytes": 1040979,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "November",
+    "required": true
+  },
+  {
+    "file": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/5ab51d7e-c103-11ed-bad9-0a5e36bc6706/5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+    "pageUrl": "https://docs.aglasem.com/view/5ab51d7e-c103-11ed-bad9-0a5e36bc6706",
+    "sha256": "b2381d2b16d594361a8306e591d9bbda41190d29edc67fa64e0d886e32507257",
+    "bytes": 1176655,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "November",
+    "required": true
+  },
+  {
+    "file": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/5abf01ea-c103-11ed-b016-0a5e36bc6706/5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+    "pageUrl": "https://docs.aglasem.com/view/5abf01ea-c103-11ed-b016-0a5e36bc6706",
+    "sha256": "7d44cc014357f1b05cdead364c5ac3c618e7238ec3b775940a3d4f585a41ef32",
+    "bytes": 1213657,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "November",
+    "required": true
+  },
+  {
+    "file": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/5b37c544-c103-11ed-80a9-0a5e36bc6706/5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "pageUrl": "https://docs.aglasem.com/view/5b37c544-c103-11ed-80a9-0a5e36bc6706",
+    "sha256": "28fb442a3ac2811f587ae768582caa2fd3ea11f99fbf3ac9c2c4bf15c04ecf34",
+    "bytes": 1465115,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "November",
+    "required": true
+  },
+  {
+    "file": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/5b68bcd0-c103-11ed-9ef1-0a5e36bc6706/5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+    "pageUrl": "https://docs.aglasem.com/view/5b68bcd0-c103-11ed-9ef1-0a5e36bc6706",
+    "sha256": "3fececd890598c97b0a0658bffd70232a64f7a056f011a8f4d617e653859ad70",
+    "bytes": 2194653,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "November",
+    "required": true
+  },
+  {
+    "file": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/5b91a956-c103-11ed-a1ff-0a5e36bc6706/5b91a956-c103-11ed-a1ff-0a5e36bc6706.pdf",
+    "pageUrl": "https://docs.aglasem.com/view/5b91a956-c103-11ed-a1ff-0a5e36bc6706",
+    "sha256": "04a645fc9a3c995ba789c2b66198392ef46f4c4fee54e85ecfcde41203ced561",
+    "bytes": 1667929,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "November",
+    "required": true
+  },
+  {
+    "file": "aglasem-5cd670f8-c103-11ed-97fb-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/5cd670f8-c103-11ed-97fb-0a5e36bc6706/5cd670f8-c103-11ed-97fb-0a5e36bc6706.pdf",
+    "pageUrl": "https://docs.aglasem.com/view/5cd670f8-c103-11ed-97fb-0a5e36bc6706",
+    "sha256": "bd5780298ae29a009ca9ac86e406b3998c8a0aafcf256e32292601577203661b",
+    "bytes": 2206181,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "November",
+    "required": true
+  },
+  {
+    "file": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/5d79a87c-c103-11ed-b3df-0a5e36bc6706/5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+    "pageUrl": "https://docs.aglasem.com/view/5d79a87c-c103-11ed-b3df-0a5e36bc6706",
+    "sha256": "b09a1221597f1079d100b8fca247f2b323847014e026c551ac4a9d237f708c16",
+    "bytes": 1359998,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "November",
+    "required": true
+  },
+  {
+    "file": "aglasem-68a4b930-b5c8-11ed-a822-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/68a4b930-b5c8-11ed-a822-0a5e36bc6706/68a4b930-b5c8-11ed-a822-0a5e36bc6706.pdf",
+    "pageUrl": "https://docs.aglasem.com/view/68a4b930-b5c8-11ed-a822-0a5e36bc6706",
+    "sha256": "371435e7f3b5bd599d5bf4f69139223c05f808204a2e8f676f429fd499e8d96f",
+    "bytes": 1501376,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "aglasem-68d61bf6-b5c8-11ed-ac15-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/68d61bf6-b5c8-11ed-ac15-0a5e36bc6706/68d61bf6-b5c8-11ed-ac15-0a5e36bc6706.pdf",
+    "pageUrl": "https://docs.aglasem.com/view/68d61bf6-b5c8-11ed-ac15-0a5e36bc6706",
+    "sha256": "aa3babbb98c1c14e6f4be87b8c0c1adf102ed6322b7bd7c4bbc3aff77c7081d3",
+    "bytes": 1863341,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/6c98950c-b5c8-11ed-844e-0a5e36bc6706/6c98950c-b5c8-11ed-844e-0a5e36bc6706.pdf",
+    "pageUrl": "https://docs.aglasem.com/view/6c98950c-b5c8-11ed-844e-0a5e36bc6706",
+    "sha256": "f1b08121372e2d1f95c8685e118e8c56fa61fd2e3e5fafe47e693cc2284cab84",
+    "bytes": 1823439,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/6cddafe8-b5c8-11ed-88d6-0a5e36bc6706/6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+    "pageUrl": "https://docs.aglasem.com/view/6cddafe8-b5c8-11ed-88d6-0a5e36bc6706",
+    "sha256": "ce1f32cb6fbb0d28cc29a4cce72598c26ab4b71261066305b5576c2c0a2e5d54",
+    "bytes": 1555757,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "aglasem-6d9d909c-b5c8-11ed-b2cd-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/6d9d909c-b5c8-11ed-b2cd-0a5e36bc6706/6d9d909c-b5c8-11ed-b2cd-0a5e36bc6706.pdf",
+    "pageUrl": "https://docs.aglasem.com/view/6d9d909c-b5c8-11ed-b2cd-0a5e36bc6706",
+    "sha256": "9749244da5e0c12dfb8fbef1b506524837d56ad6bcd0555a3018a5d496061b7f",
+    "bytes": 1002711,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "aglasem-6e15085c-b5c8-11ed-8a74-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/6e15085c-b5c8-11ed-8a74-0a5e36bc6706/6e15085c-b5c8-11ed-8a74-0a5e36bc6706.pdf",
+    "pageUrl": "https://docs.aglasem.com/view/6e15085c-b5c8-11ed-8a74-0a5e36bc6706",
+    "sha256": "4a2779477c392c87b63c8fbff7ecd88bcc76069babd988f89be833cbfa2e7db6",
+    "bytes": 3505139,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/6e299e8e-b5c8-11ed-99c1-0a5e36bc6706/6e299e8e-b5c8-11ed-99c1-0a5e36bc6706.pdf",
+    "pageUrl": "https://docs.aglasem.com/view/6e299e8e-b5c8-11ed-99c1-0a5e36bc6706",
+    "sha256": "f96e4ef6ba5de7ad41214a6ee42182ff27733e5ed65b3c05bba84f42f2be4faf",
+    "bytes": 1845428,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "aglasem-71e9b57c-b5c8-11ed-a8c5-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/71e9b57c-b5c8-11ed-a8c5-0a5e36bc6706/71e9b57c-b5c8-11ed-a8c5-0a5e36bc6706.pdf",
+    "pageUrl": "https://docs.aglasem.com/view/71e9b57c-b5c8-11ed-a8c5-0a5e36bc6706",
+    "sha256": "81e53f207c09e43e56168c722bda687345b38f76d867cc41ad70c0c3fc01a00b",
+    "bytes": 1257578,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/74878f7a-b5c8-11ed-beb5-0a5e36bc6706/74878f7a-b5c8-11ed-beb5-0a5e36bc6706.pdf",
+    "pageUrl": "https://docs.aglasem.com/view/74878f7a-b5c8-11ed-beb5-0a5e36bc6706",
+    "sha256": "2ec98f15413deccaff0fb22ea33253b6e398884b2f60e56e09f8d31e1624e5a0",
+    "bytes": 1144378,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706/76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706.pdf",
+    "pageUrl": "https://docs.aglasem.com/view/76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706",
+    "sha256": "1aa07a7e1c6a5ced43d0de75f3888686625723ce8a98e3c0a9876c513aab0b92",
+    "bytes": 2136472,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "inicetmay25-anatomy.pdf",
+    "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/ANATOMY-%E2%80%93-INI-2025-Reworked_compressed.pdf",
+    "pageUrl": "https://tinyurl.com/inicetmay25-anatomy",
+    "sha256": "468419ec511cd38cc8b31193a571554065d134d3087f822f6b7fad09ce715994",
+    "bytes": 689744,
+    "exam": "ini-cet",
+    "year": 2025,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "inicetmay25-biochemistry.pdf",
+    "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Biochemistry-INI-25-May-Reworked-Copy_compressed.pdf",
+    "pageUrl": "https://tinyurl.com/inicetmay25-biochemistry",
+    "sha256": "4094cbcfc493c8b0cef4a6b55c91bdd363764df63035e8ab4d627f5245659ee8",
+    "bytes": 245152,
+    "exam": "ini-cet",
+    "year": 2025,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "inicetmay25-dermatology.pdf",
+    "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Dermatology-INI-2025-May-Reworked_compressed.pdf",
+    "pageUrl": "https://tinyurl.com/inicetmay25-dermatology",
+    "sha256": "5d2af40746f0028d9b4e7ad9620431dcc8487953052d2191f1fdf586e0c5c14f",
+    "bytes": 247663,
+    "exam": "ini-cet",
+    "year": 2025,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "inicetmay25-ent.pdf",
+    "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/ENT-INICET-2025-MAY_compressed.pdf",
+    "pageUrl": "https://tinyurl.com/inicetmay25-ent",
+    "sha256": "eab239603b3a6fe4e5918b3b3e3b1d19040f6b6c392d23d9093f2a9efea16ec1",
+    "bytes": 197488,
+    "exam": "ini-cet",
+    "year": 2025,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "inicetmay25-forensic-medicine.pdf",
+    "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/FMT-INI-25-May-Reworked_compressed.pdf",
+    "pageUrl": "https://tinyurl.com/inicetmay25-forensic-medicine",
+    "sha256": "574db8b98b62c5ccb1e3df13fa15de9d85b24fa86e3dfbe5ce9894141cf8cf24",
+    "bytes": 228440,
+    "exam": "ini-cet",
+    "year": 2025,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "inicetmay25-medicine.pdf",
+    "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Medicine-INI-25-May-Reworked-2025_compressed.pdf",
+    "pageUrl": "https://tinyurl.com/inicetmay25-medicine",
+    "sha256": "e9c6bee8b4b3c5daf78e70cd6b288316b534fa70438a4927d02d08bf4c67f881",
+    "bytes": 219675,
+    "exam": "ini-cet",
+    "year": 2025,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "inicetmay25-microbiology.pdf",
+    "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Microbiology-INI-2025-May-Reworked_compressed.pdf",
+    "pageUrl": "https://tinyurl.com/inicetmay25-microbiology",
+    "sha256": "7b2615ccc568d7320ec469b9c85d4b7a40e179e50d43624a485da6905c5b3e68",
+    "bytes": 311258,
+    "exam": "ini-cet",
+    "year": 2025,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "inicetmay25-obgyn.pdf",
+    "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/OBG-INI-25-May-Reworked_compressed.pdf",
+    "pageUrl": "https://tinyurl.com/inicetmay25-obgyn",
+    "sha256": "cb8ed731831749ac99e5dc993af6a3b60880545e93228b4150a56aa5053cd6ed",
+    "bytes": 243638,
+    "exam": "ini-cet",
+    "year": 2025,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "inicetmay25-opthalmology.pdf",
+    "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Ophthalmology-INI-2025-May-Reworked-File_compressed.pdf",
+    "pageUrl": "https://tinyurl.com/inicetmay25-opthalmology",
+    "sha256": "2c85ab4fce007659fdc4c950af931fe3abade29a2741691f52cff6cf56869f71",
+    "bytes": 229742,
+    "exam": "ini-cet",
+    "year": 2025,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "inicetmay25-orthopaedics.pdf",
+    "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Orthopedics-INI-25-May-Reworked_compressed.pdf",
+    "pageUrl": "https://tinyurl.com/inicetmay25-orthopaedics",
+    "sha256": "b5334cd766e801c56ecc88dcb7ea55f182423df76b1477dd34cb435f673751b0",
+    "bytes": 225708,
+    "exam": "ini-cet",
+    "year": 2025,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "inicetmay25-pathology.pdf",
+    "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Pathology-INI-May-2025-Reworked_compressed.pdf",
+    "pageUrl": "https://tinyurl.com/inicetmay25-pathology",
+    "sha256": "718c457f6df9e581b0267a6c72107ba8a563d0599addc397f1d6f6a88ea75a52",
+    "bytes": 260963,
+    "exam": "ini-cet",
+    "year": 2025,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "inicetmay25-pediatrics.pdf",
+    "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Pediatrics-INI-25-May-Reworked-File_compressed.pdf",
+    "pageUrl": "https://tinyurl.com/inicetmay25-pediatrics",
+    "sha256": "f9048be4ed38ea700ff53dc22ecac5e05e189db8360e9b27b133f79837f53131",
+    "bytes": 227125,
+    "exam": "ini-cet",
+    "year": 2025,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "inicetmay25-pharmacology.pdf",
+    "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Pharmacology-INI-25-May-Reworked_compressed.pdf",
+    "pageUrl": "https://tinyurl.com/inicetmay25-pharmacology",
+    "sha256": "1a47c7d2f938f1eb25a7eeddadae4eff24867d793b2f80f9982e4fefe80a1d76",
+    "bytes": 260695,
+    "exam": "ini-cet",
+    "year": 2025,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "inicetmay25-physiology.pdf",
+    "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Physiology-INI-May-2025-Reworked_compressed.pdf",
+    "pageUrl": "https://tinyurl.com/inicetmay25-physiology",
+    "sha256": "0a2f0f4e973bea32ec8fe4cd7ffefcbad01f09b8da1a9744716218e03b889eb1",
+    "bytes": 216838,
+    "exam": "ini-cet",
+    "year": 2025,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "inicetmay25-psm.pdf",
+    "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/PSM-INI-25-May-Reworked_compressed.pdf",
+    "pageUrl": "https://tinyurl.com/inicetmay25-psm",
+    "sha256": "d8a2e6f11b4b180ebc749c8e5e1c473f62b2f9699d6f8cf3e8e8d30eefccb534",
+    "bytes": 254627,
+    "exam": "ini-cet",
+    "year": 2025,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "inicetmay25-psychiatry.pdf",
+    "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Psychiatry-INI-25-May-Reworked_compressed.pdf",
+    "pageUrl": "https://tinyurl.com/inicetmay25-psychiatry",
+    "sha256": "67ce90a1c53c1647e6f33a9c18bd8d51399219011a46b75352eede9888752cb2",
+    "bytes": 212570,
+    "exam": "ini-cet",
+    "year": 2025,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "inicetmay25-radiology.pdf",
+    "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Radiology-INI-25-May-Reworked_compressed.pdf",
+    "pageUrl": "https://tinyurl.com/inicetmay25-radiology",
+    "sha256": "041bcf711cfd9ae9354d4eb545bedf893c9c6c4e3273ce7e26d76492a8b4eda2",
+    "bytes": 367886,
+    "exam": "ini-cet",
+    "year": 2025,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "inicetmay25-surgery.pdf",
+    "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Surgery-INI-25-May-Reworked_compressed.pdf",
+    "pageUrl": "https://tinyurl.com/inicetmay25-surgery",
+    "sha256": "3c78eaf6ac4e1456d2008e32e6e2cb6ac680ed6e3196e4c041ecf0a7a68dd610",
+    "bytes": 250749,
+    "exam": "ini-cet",
+    "year": 2025,
+    "session": "May",
     "required": true
   }
 ]

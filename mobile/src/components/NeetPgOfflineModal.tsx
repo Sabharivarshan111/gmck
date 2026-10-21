@@ -42,6 +42,7 @@ import { useReducedMotion } from '@/theme/motion';
 import { radius, space } from '@/theme/tokens';
 import type { InstalledReader } from '@shared/neetPgInstall';
 import type { OfflineMcq } from '@shared/neetPgOffline';
+import { pgExamYearLabel } from '@shared/pgExamYear';
 
 const YEARS = [
   ['first-year', '1st'],
@@ -630,6 +631,9 @@ export function NeetPgOfflineModal({
                 <Text style={[typeScale.overline, { color: colors.textMuted }]}>
                   QUESTION {String(position + 1).padStart(2, '0')}
                 </Text>
+                <Text style={[typeScale.caption, {color: colors.textMuted}]}>
+                  {pgExamYearLabel(question, bankLabel)}
+                </Text>
                 <Text
                   selectable
                   style={[
@@ -1101,6 +1105,9 @@ export function NeetPgOfflineModal({
                         style={[typeScale.body, { color: colors.text }]}
                       >
                         {item.question.question}
+                      </Text>
+                      <Text style={[typeScale.caption, {color: colors.textMuted}]}>
+                        {pgExamYearLabel(item.question, bankLabel)}
                       </Text>
                       <Text
                         style={[typeScale.caption, { color: colors.textMuted }]}

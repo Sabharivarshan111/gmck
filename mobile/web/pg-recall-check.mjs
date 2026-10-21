@@ -36,24 +36,30 @@ const open=async()=>{
 };
 try {
   await open();
+  await label('Search offline NEET PG questions').fill('multipennate');
+  await page.getByText('NEET-PG 2017 · Recall',{exact:true}).first().waitFor();
+  await label('Open NEET PG question 1').click();
+  await page.getByText('NEET-PG 2017 · Recall',{exact:true}).waitFor();
+  await label('Return to NEET PG library').click();
   for(const width of [360,390,430]){
     await page.setViewportSize({width,height:844});
-    await choose('AIIMS PG',66);
+    await choose('AIIMS PG',77);
     for(const name of ['NEET-PG','AIIMS PG','INI-CET']){
       const box=await label('Open '+name+' practice').boundingBox();assert.ok(box&&box.x>=0&&box.x+box.width<=width+1&&box.height>=43.5);
     }
-    await choose('INI-CET',49);
+    await choose('INI-CET',135);
   }
   await page.setViewportSize({width:390,height:844});
-  await choose('AIIMS PG',66);
+  await choose('AIIMS PG',77);
   await page.screenshot({path:path.join(evidence,'aiims-library.png')});
   await label('Search offline AIIMS PG questions').fill('Dorello');
   await label('Open AIIMS PG question 1').click();
   await label('Show answer and explanation').click();
   await page.getByText('Answer: D',{exact:true}).waitFor();
+  await page.getByText('AIIMS PG 2017 · November · Recall',{exact:true}).waitFor();
   await label('Save this AIIMS PG question').click();
   await label('Return to AIIMS PG library').click();
-  await choose('INI-CET',49);
+  await choose('INI-CET',135);
   await page.screenshot({path:path.join(evidence,'ini-library.png')});
   await page.getByText('0 saved',{exact:true}).waitFor();
   await label('Search offline INI-CET questions').fill('SGLT1');
@@ -62,13 +68,26 @@ try {
   await page.getByText('Answer: C',{exact:true}).waitFor();
   await page.screenshot({path:path.join(evidence,'ini-answer.png')});
   await label('Return to INI-CET library').click();
+  await label('Search offline INI-CET questions').fill('myosin head');
+  await label('Open INI-CET question 1').click();
+  await page.getByText('INI-CET 2022 · May · Recall',{exact:true}).waitFor();
+  await label('Show answer and explanation').click();
+  await page.getByText('Answer: A',{exact:true}).waitFor();
+  await page.screenshot({path:path.join(evidence,'ini-year-session.png')});
+  await label('Return to INI-CET library').click();
+  await page.waitForFunction(()=>!!navigator.serviceWorker.controller,undefined,{timeout:120000});
   await context.setOffline(true);
-  await choose('AIIMS PG',66);
+  await choose('AIIMS PG',77);
   await label('Show saved AIIMS PG questions').click();
   await label('Open AIIMS PG question 1').click();
   await page.getByText(/Dorello/).first().waitFor();
   await label('Return to AIIMS PG library').click();
   await choose('NEET-PG',2078);
+  await page.reload();
+  await label('NEET-PG practice questions').click();
+  await label('Search offline NEET PG questions').waitFor();
+  await choose('AIIMS PG',77);
+  await choose('INI-CET',135);
   assert.deepEqual(errors,[]);
   console.log('PASS 360/390/430 exam controls; separate counts, source-key reveal, bookmark isolation, offline switching and unchanged NEET bank.');
 } finally {await browser.close();await new Promise(resolve=>server.close(resolve));}

@@ -1,0 +1,65 @@
+[
+  {
+    "id": "aiims-2006-eo:1",
+    "source": "aiims-2006-eo.pdf",
+    "sourceNumber": 1,
+    "sourceFingerprint": "f3f69f4008325786ebbb8b2edbc4e840e9ce4c527ec9b8a2cc8db2621d9e3fce",
+    "chapterId": "first-year/anatomy/paper-1/histology",
+    "answer": "A",
+    "answerOrigin": "publisher_key",
+    "explanation": "Connexons in adjacent cell membranes align to form gap-junction channels. These allow ions and small molecules to pass between cells and support electrical and metabolic coupling.",
+    "holdReason": "Collection contains dental sections; MD/MS examination identity not established."
+  },
+  {
+    "id": "aiims-2006-eo:2",
+    "source": "aiims-2006-eo.pdf",
+    "sourceNumber": 2,
+    "sourceFingerprint": "82e4524833de85661566df66b55c94583248e6b5c5c41f4d16c80a2219cd3a35",
+    "chapterId": "first-year/anatomy/paper-1/histology",
+    "answer": "A",
+    "answerOrigin": "publisher_key",
+    "explanation": "Urothelial umbrella cells can expand their apical surface using membrane reserves. This permits the urinary tract to distend while maintaining a barrier to urine.",
+    "holdReason": "Collection contains dental sections; MD/MS examination identity not established."
+  },
+  {
+    "id": "aiims-2006-eo:3",
+    "source": "aiims-2006-eo.pdf",
+    "sourceNumber": 3,
+    "sourceFingerprint": "c910885e384ea426a891b3b47dd7c606e9fc3081cf20a7193519abee23fc30e2",
+    "chapterId": "first-year/anatomy/paper-2/head-and-neck",
+    "answer": "A",
+    "answerOrigin": "publisher_key",
+    "explanation": "Buccinator is a facial-expression muscle supplied by the facial nerve. It keeps food between the teeth but is not one of the four primary muscles of mastication.",
+    "holdReason": "Collection contains dental sections; MD/MS examination identity not established."
+  },
+  {
+    "id": "aiims-2006-eo:5",
+    "source": "aiims-2006-eo.pdf",
+    "sourceNumber": 5,
+    "sourceFingerprint": "e2c5d71a8d0874a67d81fecd7b208b823459441f6889314f8abae542d940ed14",
+    "chapterId": "first-year/biochemistry/paper-2/maintenance-of-ph-and-acid-base-disorders",
+    "answer": "B",
+    "answerOrigin": "publisher_key",
+    "explanation": "At pH equal to pKa, the conjugate acid and base are present in equal concentrations. At a fixed total buffer concentration, this provides maximal resistance to small pH changes.",
+    "holdReason": "Collection contains dental sections; MD/MS examination identity not established."
+  },
+  {
+    "id": "aiims-2009-eo:1",
+    "source": "aiims-2009-eo.pdf",
+    "sourceNumber": 1,
+    "sourceFingerprint": "26bc012716648fbe80a87654e758ace867cd42f7eccd75ac005115dedd09e48f",
+    "chapterId": "first-year/anatomy/paper-2/brain-and-cranial-nerves",
+    "answer": "A",
+    "answerOrigin": "publisher_key",
+    "explanation": "The ophthalmic division, V1, enters the orbit through the superior orbital fissure. V2 traverses foramen rotundum, while V3 passes through foramen ovale.",
+    "holdReason": "Collection contains dental sections; MD/MS examination identity not established."
+  },
+  {
+    "id": "inicetmay25-anatomy:3",
+    "chapterId": "first-year/anatomy/paper-1/abdomen-and-pelvis",
+    "answer": "B",
+    "sourceFingerprint": "279a1f1fb1cb4a3b56f782b18d80c017c5671e8e0054ff041c7dc4a9a8024691",
+    "explanation": "The hepatocystic triangle is bounded by the cystic duct, common hepatic duct and inferior liver surface. The cystic artery usually traverses this space rather than forming its boundary.",
+    "holdReason": "Duplicate of existing ini-2025-01:1 with shuffled choices."
+  }
+]
