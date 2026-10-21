@@ -1,0 +1,540 @@
+{
+  "checkedOn": "2026-10-21",
+  "purpose": "Source-discovery receipts, not an approved question list",
+  "files": [
+    {
+      "file": "inicetmay25-microbiology.pdf",
+      "url": "https://tinyurl.com/inicetmay25-microbiology",
+      "resolvedUrl": "https://www.doctutorials.com/wp-content/uploads/2025/12/Microbiology-INI-2025-May-Reworked_compressed.pdf",
+      "bytes": 311258,
+      "sha256": "7b2615ccc568d7320ec469b9c85d4b7a40e179e50d43624a485da6905c5b3e68",
+      "status": "pdf"
+    },
+    {
+      "file": "inicetmay25-pharmacology.pdf",
+      "url": "https://tinyurl.com/inicetmay25-pharmacology",
+      "resolvedUrl": "https://www.doctutorials.com/wp-content/uploads/2025/12/Pharmacology-INI-25-May-Reworked_compressed.pdf",
+      "bytes": 260695,
+      "sha256": "1a47c7d2f938f1eb25a7eeddadae4eff24867d793b2f80f9982e4fefe80a1d76",
+      "status": "pdf"
+    },
+    {
+      "file": "inicetmay25-anatomy.pdf",
+      "url": "https://tinyurl.com/inicetmay25-anatomy",
+      "resolvedUrl": "https://www.doctutorials.com/wp-content/uploads/2025/12/ANATOMY-%E2%80%93-INI-2025-Reworked_compressed.pdf",
+      "bytes": 689744,
+      "sha256": "468419ec511cd38cc8b31193a571554065d134d3087f822f6b7fad09ce715994",
+      "status": "pdf"
+    },
+    {
+      "file": "inicetmay25-physiology.pdf",
+      "url": "https://tinyurl.com/inicetmay25-physiology",
+      "resolvedUrl": "https://www.doctutorials.com/wp-content/uploads/2025/12/Physiology-INI-May-2025-Reworked_compressed.pdf",
+      "bytes": 216838,
+      "sha256": "0a2f0f4e973bea32ec8fe4cd7ffefcbad01f09b8da1a9744716218e03b889eb1",
+      "status": "pdf"
+    },
+    {
+      "file": "inicetmay25-ent.pdf",
+      "url": "https://tinyurl.com/inicetmay25-ent",
+      "resolvedUrl": "https://www.doctutorials.com/wp-content/uploads/2025/12/ENT-INICET-2025-MAY_compressed.pdf",
+      "bytes": 197488,
+      "sha256": "eab239603b3a6fe4e5918b3b3e3b1d19040f6b6c392d23d9093f2a9efea16ec1",
+      "status": "pdf"
+    },
+    {
+      "file": "inicetmay25-biochemistry.pdf",
+      "url": "https://tinyurl.com/inicetmay25-biochemistry",
+      "resolvedUrl": "https://www.doctutorials.com/wp-content/uploads/2025/12/Biochemistry-INI-25-May-Reworked-Copy_compressed.pdf",
+      "bytes": 245152,
+      "sha256": "4094cbcfc493c8b0cef4a6b55c91bdd363764df63035e8ab4d627f5245659ee8",
+      "status": "pdf"
+    },
+    {
+      "file": "inicetmay25-obgyn.pdf",
+      "url": "https://tinyurl.com/inicetmay25-obgyn",
+      "resolvedUrl": "https://www.doctutorials.com/wp-content/uploads/2025/12/OBG-INI-25-May-Reworked_compressed.pdf",
+      "bytes": 243638,
+      "sha256": "cb8ed731831749ac99e5dc993af6a3b60880545e93228b4150a56aa5053cd6ed",
+      "status": "pdf"
+    },
+    {
+      "file": "inicetmay25-opthalmology.pdf",
+      "url": "https://tinyurl.com/inicetmay25-opthalmology",
+      "resolvedUrl": "https://www.doctutorials.com/wp-content/uploads/2025/12/Ophthalmology-INI-2025-May-Reworked-File_compressed.pdf",
+      "bytes": 229742,
+      "sha256": "2c85ab4fce007659fdc4c950af931fe3abade29a2741691f52cff6cf56869f71",
+      "status": "pdf"
+    },
+    {
+      "file": "inicetmay25-forensic-medicine.pdf",
+      "url": "https://tinyurl.com/inicetmay25-forensic-medicine",
+      "resolvedUrl": "https://www.doctutorials.com/wp-content/uploads/2025/12/FMT-INI-25-May-Reworked_compressed.pdf",
+      "bytes": 228440,
+      "sha256": "574db8b98b62c5ccb1e3df13fa15de9d85b24fa86e3dfbe5ce9894141cf8cf24",
+      "status": "pdf"
+    },
+    {
+      "file": "inicetmay25-medicine.pdf",
+      "url": "https://tinyurl.com/inicetmay25-medicine",
+      "resolvedUrl": "https://www.doctutorials.com/wp-content/uploads/2025/12/Medicine-INI-25-May-Reworked-2025_compressed.pdf",
+      "bytes": 219675,
+      "sha256": "e9c6bee8b4b3c5daf78e70cd6b288316b534fa70438a4927d02d08bf4c67f881",
+      "status": "pdf"
+    },
+    {
+      "file": "inicetmay25-psm.pdf",
+      "url": "https://tinyurl.com/inicetmay25-psm",
+      "resolvedUrl": "https://www.doctutorials.com/wp-content/uploads/2025/12/PSM-INI-25-May-Reworked_compressed.pdf",
+      "bytes": 254627,
+      "sha256": "d8a2e6f11b4b180ebc749c8e5e1c473f62b2f9699d6f8cf3e8e8d30eefccb534",
+      "status": "pdf"
+    },
+    {
+      "file": "inicetmay25-dermatology.pdf",
+      "url": "https://tinyurl.com/inicetmay25-dermatology",
+      "resolvedUrl": "https://www.doctutorials.com/wp-content/uploads/2025/12/Dermatology-INI-2025-May-Reworked_compressed.pdf",
+      "bytes": 247663,
+      "sha256": "5d2af40746f0028d9b4e7ad9620431dcc8487953052d2191f1fdf586e0c5c14f",
+      "status": "pdf"
+    },
+    {
+      "file": "inicetmay25-surgery.pdf",
+      "url": "https://tinyurl.com/inicetmay25-surgery",
+      "resolvedUrl": "https://www.doctutorials.com/wp-content/uploads/2025/12/Surgery-INI-25-May-Reworked_compressed.pdf",
+      "bytes": 250749,
+      "sha256": "3c78eaf6ac4e1456d2008e32e6e2cb6ac680ed6e3196e4c041ecf0a7a68dd610",
+      "status": "pdf"
+    },
+    {
+      "file": "inicetmay25-pediatrics.pdf",
+      "url": "https://tinyurl.com/inicetmay25-pediatrics",
+      "resolvedUrl": "https://www.doctutorials.com/wp-content/uploads/2025/12/Pediatrics-INI-25-May-Reworked-File_compressed.pdf",
+      "bytes": 227125,
+      "sha256": "f9048be4ed38ea700ff53dc22ecac5e05e189db8360e9b27b133f79837f53131",
+      "status": "pdf"
+    },
+    {
+      "file": "inicetmay25-psychiatry.pdf",
+      "url": "https://tinyurl.com/inicetmay25-psychiatry",
+      "resolvedUrl": "https://www.doctutorials.com/wp-content/uploads/2025/12/Psychiatry-INI-25-May-Reworked_compressed.pdf",
+      "bytes": 212570,
+      "sha256": "67ce90a1c53c1647e6f33a9c18bd8d51399219011a46b75352eede9888752cb2",
+      "status": "pdf"
+    },
+    {
+      "file": "inicetmay25-anaesthesia.pdf",
+      "url": "https://tinyurl.com/inicetmay25-anaesthesia",
+      "resolvedUrl": "https://www.doctutorials.com/wp-content/uploads/2025/12/Anaesthesia-INI-25-May-Reworked_compressed.pdf",
+      "bytes": 401735,
+      "sha256": "d36e433ef20b29c42c2035adff4a8f1e2d4fc335d23dddcca4598017f964fbaa",
+      "status": "pdf"
+    },
+    {
+      "file": "inicetmay25-radiology.pdf",
+      "url": "https://tinyurl.com/inicetmay25-radiology",
+      "resolvedUrl": "https://www.doctutorials.com/wp-content/uploads/2025/12/Radiology-INI-25-May-Reworked_compressed.pdf",
+      "bytes": 367886,
+      "sha256": "041bcf711cfd9ae9354d4eb545bedf893c9c6c4e3273ce7e26d76492a8b4eda2",
+      "status": "pdf"
+    },
+    {
+      "file": "inicetmay25-orthopaedics.pdf",
+      "url": "https://tinyurl.com/inicetmay25-orthopaedics",
+      "resolvedUrl": "https://www.doctutorials.com/wp-content/uploads/2025/12/Orthopedics-INI-25-May-Reworked_compressed.pdf",
+      "bytes": 225708,
+      "sha256": "b5334cd766e801c56ecc88dcb7ea55f182423df76b1477dd34cb435f673751b0",
+      "status": "pdf"
+    },
+    {
+      "file": "inicetmay25-pathology.pdf",
+      "url": "https://tinyurl.com/inicetmay25-pathology",
+      "resolvedUrl": "https://www.doctutorials.com/wp-content/uploads/2025/12/Pathology-INI-May-2025-Reworked_compressed.pdf",
+      "bytes": 260963,
+      "sha256": "718c457f6df9e581b0267a6c72107ba8a563d0599addc397f1d6f6a88ea75a52",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706/76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706.pdf",
+      "bytes": 2136472,
+      "sha256": "1aa07a7e1c6a5ced43d0de75f3888686625723ce8a98e3c0a9876c513aab0b92",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-6e15085c-b5c8-11ed-8a74-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/6e15085c-b5c8-11ed-8a74-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/6e15085c-b5c8-11ed-8a74-0a5e36bc6706/6e15085c-b5c8-11ed-8a74-0a5e36bc6706.pdf",
+      "bytes": 3505139,
+      "sha256": "4a2779477c392c87b63c8fbff7ecd88bcc76069babd988f89be833cbfa2e7db6",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/74878f7a-b5c8-11ed-beb5-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/74878f7a-b5c8-11ed-beb5-0a5e36bc6706/74878f7a-b5c8-11ed-beb5-0a5e36bc6706.pdf",
+      "bytes": 1144378,
+      "sha256": "2ec98f15413deccaff0fb22ea33253b6e398884b2f60e56e09f8d31e1624e5a0",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-68a4b930-b5c8-11ed-a822-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/68a4b930-b5c8-11ed-a822-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/68a4b930-b5c8-11ed-a822-0a5e36bc6706/68a4b930-b5c8-11ed-a822-0a5e36bc6706.pdf",
+      "bytes": 1501376,
+      "sha256": "371435e7f3b5bd599d5bf4f69139223c05f808204a2e8f676f429fd499e8d96f",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/704ed580-b5c8-11ed-aa20-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/704ed580-b5c8-11ed-aa20-0a5e36bc6706/704ed580-b5c8-11ed-aa20-0a5e36bc6706.pdf",
+      "bytes": 2523161,
+      "sha256": "fda4e2298d9c36db43149a9f6882003dd9eb0e21f9e278fe93775c0c6e234dd9",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/6c98950c-b5c8-11ed-844e-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/6c98950c-b5c8-11ed-844e-0a5e36bc6706/6c98950c-b5c8-11ed-844e-0a5e36bc6706.pdf",
+      "bytes": 1823439,
+      "sha256": "f1b08121372e2d1f95c8685e118e8c56fa61fd2e3e5fafe47e693cc2284cab84",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/6e299e8e-b5c8-11ed-99c1-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/6e299e8e-b5c8-11ed-99c1-0a5e36bc6706/6e299e8e-b5c8-11ed-99c1-0a5e36bc6706.pdf",
+      "bytes": 1845428,
+      "sha256": "f96e4ef6ba5de7ad41214a6ee42182ff27733e5ed65b3c05bba84f42f2be4faf",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/715beab2-b5c8-11ed-8572-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/715beab2-b5c8-11ed-8572-0a5e36bc6706/715beab2-b5c8-11ed-8572-0a5e36bc6706.pdf",
+      "bytes": 1588314,
+      "sha256": "f3611e7cfe4c4f33f8a6676f69cf80ea93687893cc4a8a2c47510553861055d9",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/68fa49d6-b5c8-11ed-880a-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/68fa49d6-b5c8-11ed-880a-0a5e36bc6706/68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf",
+      "bytes": 2710264,
+      "sha256": "cbee161746285f7496a8feb194ab82c1a3279492da6e45a456880da616d49d3d",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706/7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+      "bytes": 1887733,
+      "sha256": "4a72b91d98ec8931ed5a3a348f8e2d97a29fee2a9b195431a8108f83e39cb5de",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-68d61bf6-b5c8-11ed-ac15-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/68d61bf6-b5c8-11ed-ac15-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/68d61bf6-b5c8-11ed-ac15-0a5e36bc6706/68d61bf6-b5c8-11ed-ac15-0a5e36bc6706.pdf",
+      "bytes": 1863341,
+      "sha256": "aa3babbb98c1c14e6f4be87b8c0c1adf102ed6322b7bd7c4bbc3aff77c7081d3",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/6cddafe8-b5c8-11ed-88d6-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/6cddafe8-b5c8-11ed-88d6-0a5e36bc6706/6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+      "bytes": 1555757,
+      "sha256": "ce1f32cb6fbb0d28cc29a4cce72598c26ab4b71261066305b5576c2c0a2e5d54",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-71e9b57c-b5c8-11ed-a8c5-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/71e9b57c-b5c8-11ed-a8c5-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/71e9b57c-b5c8-11ed-a8c5-0a5e36bc6706/71e9b57c-b5c8-11ed-a8c5-0a5e36bc6706.pdf",
+      "bytes": 1257578,
+      "sha256": "81e53f207c09e43e56168c722bda687345b38f76d867cc41ad70c0c3fc01a00b",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-6d9d909c-b5c8-11ed-b2cd-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/6d9d909c-b5c8-11ed-b2cd-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/6d9d909c-b5c8-11ed-b2cd-0a5e36bc6706/6d9d909c-b5c8-11ed-b2cd-0a5e36bc6706.pdf",
+      "bytes": 1002711,
+      "sha256": "9749244da5e0c12dfb8fbef1b506524837d56ad6bcd0555a3018a5d496061b7f",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-7259d24e-b5c8-11ed-9bac-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/7259d24e-b5c8-11ed-9bac-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/7259d24e-b5c8-11ed-9bac-0a5e36bc6706/7259d24e-b5c8-11ed-9bac-0a5e36bc6706.pdf",
+      "bytes": 1963798,
+      "sha256": "4103b8b6a108a2aa36aaf98b729597adbba70fd2814c75a5c2ee95db24ef84a0",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/687ac148-b5c8-11ed-9b49-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/687ac148-b5c8-11ed-9b49-0a5e36bc6706/687ac148-b5c8-11ed-9b49-0a5e36bc6706.pdf",
+      "bytes": 1293032,
+      "sha256": "84b102122a4c61b5c43d29257c76e85166887c7e62ed29c8bd206f4389ee90fa",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-68da6e7c-b5c8-11ed-8174-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/68da6e7c-b5c8-11ed-8174-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/68da6e7c-b5c8-11ed-8174-0a5e36bc6706/68da6e7c-b5c8-11ed-8174-0a5e36bc6706.pdf",
+      "bytes": 1915631,
+      "sha256": "cfeb1f9d0a436fa2c553f72c6448bfc833615421072b7f8b2e1d1fe85ff73ae9",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-74aff46a-b5c8-11ed-b820-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/74aff46a-b5c8-11ed-b820-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/74aff46a-b5c8-11ed-b820-0a5e36bc6706/74aff46a-b5c8-11ed-b820-0a5e36bc6706.pdf",
+      "bytes": 790795,
+      "sha256": "6c213c0396e6f12e40adc468531e4f8482696e506c83916113fca6215e94d967",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/585ca6be-c103-11ed-9d15-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/585ca6be-c103-11ed-9d15-0a5e36bc6706/585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+      "bytes": 1732992,
+      "sha256": "6f644cd8aa9e12aa995370911dfa8c2c466d549238b6828d00eb65ce3c8e7aaa",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/594e1a76-c103-11ed-991c-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/594e1a76-c103-11ed-991c-0a5e36bc6706/594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+      "bytes": 2149984,
+      "sha256": "4441b3fe3299066974530ff56569836ff16c3b17468d889ae24dad45b4641600",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/5b68bcd0-c103-11ed-9ef1-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/5b68bcd0-c103-11ed-9ef1-0a5e36bc6706/5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+      "bytes": 2194653,
+      "sha256": "3fececd890598c97b0a0658bffd70232a64f7a056f011a8f4d617e653859ad70",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/57d76ddc-c103-11ed-a156-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/57d76ddc-c103-11ed-a156-0a5e36bc6706/57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+      "bytes": 965543,
+      "sha256": "845fb0ee20b0d9e73a3c30fd3396816a620f82c3a11398888c0e54f216113632",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/5d79a87c-c103-11ed-b3df-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/5d79a87c-c103-11ed-b3df-0a5e36bc6706/5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+      "bytes": 1359998,
+      "sha256": "b09a1221597f1079d100b8fca247f2b323847014e026c551ac4a9d237f708c16",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/5d9ef32a-c103-11ed-8570-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/5d9ef32a-c103-11ed-8570-0a5e36bc6706/5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+      "bytes": 1820341,
+      "sha256": "219c8b449bf199370d82f5384d0b6eb42f0016b6f06a0afeba43e259584cfdd3",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/598c16fa-c103-11ed-9631-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/598c16fa-c103-11ed-9631-0a5e36bc6706/598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+      "bytes": 1058263,
+      "sha256": "9c7e2470c27069c73f46db8336a0d3e19f9352619fcedd5e9e605269de6e14d0",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/5b91a956-c103-11ed-a1ff-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/5b91a956-c103-11ed-a1ff-0a5e36bc6706/5b91a956-c103-11ed-a1ff-0a5e36bc6706.pdf",
+      "bytes": 1667929,
+      "sha256": "04a645fc9a3c995ba789c2b66198392ef46f4c4fee54e85ecfcde41203ced561",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/5b37c544-c103-11ed-80a9-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/5b37c544-c103-11ed-80a9-0a5e36bc6706/5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+      "bytes": 1465115,
+      "sha256": "28fb442a3ac2811f587ae768582caa2fd3ea11f99fbf3ac9c2c4bf15c04ecf34",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/5abf01ea-c103-11ed-b016-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/5abf01ea-c103-11ed-b016-0a5e36bc6706/5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+      "bytes": 1213657,
+      "sha256": "7d44cc014357f1b05cdead364c5ac3c618e7238ec3b775940a3d4f585a41ef32",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/58543d6c-c103-11ed-bee2-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/58543d6c-c103-11ed-bee2-0a5e36bc6706/58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+      "bytes": 1702881,
+      "sha256": "7d2c647e0f27137433cac64acd13996df9a08532fb55f706a779d1fa1be042d7",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-5c9ee0f2-c103-11ed-97fb-0a5e36bc6706",
+      "url": "https://docs.aglasem.com/view/5c9ee0f2-c103-11ed-97fb-0a5e36bc6706",
+      "status": "failed",
+      "error": "HTTP Error 410: Gone"
+    },
+    {
+      "file": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/5d822ace-c103-11ed-a976-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/5d822ace-c103-11ed-a976-0a5e36bc6706/5d822ace-c103-11ed-a976-0a5e36bc6706.pdf",
+      "bytes": 1501493,
+      "sha256": "5d144e0379307f61ca25b98325a586e678413bfc3c76b9126bf4f561099e9341",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/5ab51d7e-c103-11ed-bad9-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/5ab51d7e-c103-11ed-bad9-0a5e36bc6706/5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+      "bytes": 1176655,
+      "sha256": "b2381d2b16d594361a8306e591d9bbda41190d29edc67fa64e0d886e32507257",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/5a8ea69e-c103-11ed-97f4-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/5a8ea69e-c103-11ed-97f4-0a5e36bc6706/5a8ea69e-c103-11ed-97f4-0a5e36bc6706.pdf",
+      "bytes": 1040979,
+      "sha256": "726ca2f05d74db5d59468f711d5b20cdba80d7ad4c9fe97768119758cf4d0525",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-58415486-c103-11ed-847b-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/58415486-c103-11ed-847b-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/58415486-c103-11ed-847b-0a5e36bc6706/58415486-c103-11ed-847b-0a5e36bc6706.pdf",
+      "bytes": 1548329,
+      "sha256": "ad651401ec6a4b0e9180f122938e465be6f7d76618bda60fe4e4baa407a8c5a7",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/57d9fa20-c103-11ed-81fa-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/57d9fa20-c103-11ed-81fa-0a5e36bc6706/57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+      "bytes": 949329,
+      "sha256": "8990f9b44981080d4fc24fc0da2e2220418534636ed722d7afd6e63b01e410f5",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-5cd670f8-c103-11ed-97fb-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/5cd670f8-c103-11ed-97fb-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/5cd670f8-c103-11ed-97fb-0a5e36bc6706/5cd670f8-c103-11ed-97fb-0a5e36bc6706.pdf",
+      "bytes": 2206181,
+      "sha256": "bd5780298ae29a009ca9ac86e406b3998c8a0aafcf256e32292601577203661b",
+      "status": "pdf"
+    },
+    {
+      "file": "gmu-2024-b5bcc5f6-93e6-4642-bc23-37a2a3d921d7.pdf.pdf",
+      "url": "https://media.getmyuni.com/assets/downloadables/b5bcc5f6-93e6-4642-bc23-37a2a3d921d7.pdf",
+      "resolvedUrl": "https://media.getmyuni.com/assets/downloadables/b5bcc5f6-93e6-4642-bc23-37a2a3d921d7.pdf",
+      "bytes": 666276,
+      "sha256": "c9feb753284963ca00215b48850fc4d28b17903e8f8b48e035c652e2c1b92e63",
+      "status": "pdf"
+    },
+    {
+      "file": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408.pdf.pdf",
+      "url": "https://media.getmyuni.com/assets/downloadables/da1839b8-317e-4e21-9b18-dca9000e6408.pdf",
+      "resolvedUrl": "https://media.getmyuni.com/assets/downloadables/da1839b8-317e-4e21-9b18-dca9000e6408.pdf",
+      "bytes": 481520,
+      "sha256": "da455a5b6a0648d9008f012f77ae5ea0cbe061b69934fc1423575fa7ed84063f",
+      "status": "pdf"
+    },
+    {
+      "file": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c.pdf.pdf",
+      "url": "https://media.getmyuni.com/assets/downloadables/5573f47e-9cad-4728-af8c-2c6b9b89302c.pdf",
+      "resolvedUrl": "https://media.getmyuni.com/assets/downloadables/5573f47e-9cad-4728-af8c-2c6b9b89302c.pdf",
+      "bytes": 1493211,
+      "sha256": "669379292a49f986d2e61e1fd132e450e272a3faf10bc11578ce85cfa7ce1a40",
+      "status": "pdf"
+    },
+    {
+      "file": "gmu-2024-9674994c-68dc-4adb-bf75-b110e4d8d977.pdf.pdf",
+      "url": "https://media.getmyuni.com/assets/downloadables/9674994c-68dc-4adb-bf75-b110e4d8d977.pdf",
+      "resolvedUrl": "https://media.getmyuni.com/assets/downloadables/9674994c-68dc-4adb-bf75-b110e4d8d977.pdf",
+      "bytes": 2364898,
+      "sha256": "e5806e459937e3c204b874b2c480280b0e7416698dbb3364d5fb783746aa02cb",
+      "status": "pdf"
+    },
+    {
+      "file": "gmu-2024-72d75f60-243e-4f12-aba9-74a240c6e3a4.pdf.pdf",
+      "url": "https://media.getmyuni.com/assets/downloadables/72d75f60-243e-4f12-aba9-74a240c6e3a4.pdf",
+      "resolvedUrl": "https://media.getmyuni.com/assets/downloadables/72d75f60-243e-4f12-aba9-74a240c6e3a4.pdf",
+      "bytes": 2965314,
+      "sha256": "b385d1cef11f78ce3d042b9bffec64f940090c4f2beb482861c3308b1ac69376",
+      "status": "pdf"
+    },
+    {
+      "file": "aglasem-5da426e2-c103-11ed-80bf-0a5e36bc6706.pdf",
+      "url": "https://docs.aglasem.com/view/5da426e2-c103-11ed-80bf-0a5e36bc6706",
+      "resolvedUrl": "https://cdn.aglasem.com/aglasem-doc/5da426e2-c103-11ed-80bf-0a5e36bc6706/5da426e2-c103-11ed-80bf-0a5e36bc6706.pdf",
+      "bytes": 712040,
+      "sha256": "6762cfe989938ed5959d19a2ff1c306380f30e398f4dd0b9ff5b88333b001152",
+      "status": "pdf"
+    },
+    {
+      "file": "aiims-pg-november-2013-rapid-review.html",
+      "url": "https://medicosplexus.com/aiims-pg-november-2013-rapid-review/",
+      "resolvedUrl": "https://medicosplexus.com/aiims-pg-november-2013-rapid-review/",
+      "bytes": 112589,
+      "sha256": "aaf0b214bfec29feb6da2d32db69bc4c1629fe9a7b83e32eff9506a049d237cb",
+      "status": "html"
+    },
+    {
+      "file": "aiims-pg-may-2014-rapid-review.html",
+      "url": "https://medicosplexus.com/aiims-pg-may-2014-rapid-review/",
+      "resolvedUrl": "https://medicosplexus.com/aiims-pg-may-2014-rapid-review/",
+      "bytes": 112559,
+      "sha256": "ff58c36d8936658ff8d26d9316d1504608fccfe8d377f3f52206aaea16b93871",
+      "status": "html"
+    },
+    {
+      "file": "aiims-pg-november-2012-rapid-review.html",
+      "url": "https://medicosplexus.com/aiims-pg-november-2012-rapid-review/",
+      "resolvedUrl": "https://medicosplexus.com/aiims-pg-november-2012-rapid-review/",
+      "bytes": 109284,
+      "sha256": "08c2385d1212bb40cfe1eaf0b99ea79b58404b3d6c6b34bbd45a0ee8801516e6",
+      "status": "html"
+    },
+    {
+      "file": "aiims-pg-may-2013-rapid-review.html",
+      "url": "https://medicosplexus.com/aiims-pg-may-2013-rapid-review/",
+      "resolvedUrl": "https://medicosplexus.com/aiims-pg-may-2013-rapid-review/",
+      "bytes": 108957,
+      "sha256": "19c32e2a32a93af4a5609754ab53e95e63f8d22e68e0126ed89ac703cb209efe",
+      "status": "html"
+    },
+    {
+      "file": "aiims-pg-november-2011-rapid-review.html",
+      "url": "https://medicosplexus.com/aiims-pg-november-2011-rapid-review/",
+      "resolvedUrl": "https://medicosplexus.com/aiims-pg-november-2011-rapid-review/",
+      "bytes": 112431,
+      "sha256": "67faf49b8ad8aaa240dd180c52258ad488116821b869dd0907913806bda08b2c",
+      "status": "html"
+    },
+    {
+      "file": "aiims-pg-may-2012-rapid-review.html",
+      "url": "https://medicosplexus.com/aiims-pg-may-2012-rapid-review/",
+      "resolvedUrl": "https://medicosplexus.com/aiims-pg-may-2012-rapid-review/",
+      "bytes": 113957,
+      "sha256": "1048318847e24cabe3fe67635264c9d7d28873f2c8648ca115c01c6bb4267143",
+      "status": "html"
+    }
+  ]
+}

@@ -64,6 +64,7 @@ def build(sources):
         if identity in seen_ids or identity in conflicts:raise ValueError('Conflicting review identity: '+identity)
         seen_ids.add(identity)
         row=candidates[identity];source=source_index[row['source']]
+        if source.get('identityStatus','').startswith('held_'):raise ValueError('Source exam identity is held: '+identity)
         if digest(row)!=review['sourceFingerprint']:raise ValueError('Reviewed source item changed: '+identity)
         if row['key']!=review['answer'] or row['key'] not in ['A','B','C','D']:raise ValueError('Answer mismatch: '+identity)
         if not review['explanation'].strip() or review['chapterId'] not in chapters:raise ValueError('Explanation/chapter missing: '+identity)
@@ -77,8 +78,8 @@ def build(sources):
         if signature in seen[exam]:raise ValueError('Duplicate question: '+identity)
         seen[exam].add(signature)
         bank=banks[exam]
-        bank['records'].append(dict(id=identity,chapterId=review['chapterId'],question=row['question'],options=row['options'],answerIndex=ord(row['key'])-65,sourceAnswer=row['key'],explanation=review['explanation'],requiresImage=False,imageIds=[]))
-        receipts.append(dict(id=identity,exam=exam,collectionYear=source['year'],sourceUrl=source['url'],sourceSha256=source['sha256'],sourceNumber=row['source_number'],numberSemantics='document_or_collection_number_not_authenticated_exam_order',answerOrigin=review.get('answerOrigin','publisher_key_author_checked'),sourceFingerprint=digest(row),chapterId=review['chapterId']))
+        bank['records'].append(dict(id=identity,chapterId=review['chapterId'],question=row['question'],options=row['options'],answerIndex=ord(row['key'])-65,sourceAnswer=row['key'],explanation=review['explanation'],requiresImage=False,imageIds=[],examYear=source['year'],**({'examSession':source['session']} if source.get('session') else {})))
+        receipts.append(dict(id=identity,exam=exam,collectionYear=source['year'],examSession=source.get('session'),sourceUrl=source['url'],sourceSha256=source['sha256'],sourceNumber=row['source_number'],numberSemantics='document_or_collection_number_not_authenticated_exam_order',answerOrigin=review.get('answerOrigin','publisher_key_author_checked'),sourceFingerprint=digest(row),chapterId=review['chapterId']))
     for exam,bank in banks.items():
         used={r['chapterId'] for r in bank['records']};bank['chapters']=[c for c in syllabus['chapters'] if c['id'] in used]
         if not bank['records']:raise ValueError('Empty exam bank: '+exam)

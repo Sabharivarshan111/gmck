@@ -349,5 +349,1344 @@
       "Thermic energy is unrelated to macronutrients"
     ],
     "key": "C"
+  },
+  {
+    "id": "inicetmay25-anatomy:2",
+    "source": "inicetmay25-anatomy.pdf",
+    "source_number": 2,
+    "question": "Superficial branch of peroneal nerve supplies which of the following muscles? 1. Peroneus brevis 2. Peroneus longus 3. Peroneus tertius 4. Extensor hallucis longus",
+    "options": [
+      "1, 2, 3",
+      "1, 2",
+      "1, 2, 3, 4",
+      "1, 3, 4"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-anatomy:3",
+    "source": "inicetmay25-anatomy.pdf",
+    "source_number": 3,
+    "question": "All of the following are a boundary of Hepato-Cystic triangle EXCEPT?",
+    "options": [
+      "Cystic duct",
+      "Cystic artery",
+      "Common hepatic duct (CHD)",
+      "Inferior border of liver"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-anatomy:4",
+    "source": "inicetmay25-anatomy.pdf",
+    "source_number": 4,
+    "question": "During cleft lip surgery, which muscles are mainly repaired?",
+    "options": [
+      "Levator labii superioris",
+      "Orbicularis oris",
+      "Orbicularis oculi",
+      "Masseter"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-anatomy:9",
+    "source": "inicetmay25-anatomy.pdf",
+    "source_number": 9,
+    "question": "The deep branch of the ulnar nerve supplies which of the following muscles? 1) Flexor carpi ulnaris 2) 3rd lumbrical 3) Opponens digiti minimi 4) Fourth Dorsal interossei",
+    "options": [
+      "1, 2, 3",
+      "2, 3, 4",
+      "1, 4",
+      "2, 4"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-biochemistry:9",
+    "source": "inicetmay25-biochemistry.pdf",
+    "source_number": 9,
+    "question": "Which cell has decreased uptake of glucose in insulin resistance?",
+    "options": [
+      "Kidney",
+      "Skeletal muscle",
+      "Brain",
+      "RBC"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-biochemistry:10",
+    "source": "inicetmay25-biochemistry.pdf",
+    "source_number": 10,
+    "question": "A patient has hepatosplenomegaly and hypoglycemia. After glucagon administration, blood glucose rises following a meal but does not improve after an overnight fast. Liver biopsy shows abnormally structured glycogen. Which enzyme deficiency is most likely responsible?",
+    "options": [
+      "Muscle phosphorylase",
+      "Glycogen phosphorylase",
+      "Debranching enzyme",
+      "Glucose-6-phosphatase"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "inicetmay25-dermatology:2",
+    "source": "inicetmay25-dermatology.pdf",
+    "source_number": 2,
+    "question": "Local side effects of topical corticosteroids among the following: 1. Blue discolouration of skin 2. Atrophy 3. Acneiform eruption 4. Hypertrichosis",
+    "options": [
+      "1, 2, 3",
+      "2, 3, 4",
+      "1, 2, 4",
+      "2, 4"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-dermatology:5",
+    "source": "inicetmay25-dermatology.pdf",
+    "source_number": 5,
+    "question": "A patient with a history of transient genital ulcers 2 weeks back, now presents with lesions on the palms and soles. Which of the following investigations can be used to diagnose the disease?",
+    "options": [
+      "KOH mount",
+      "Gram stain",
+      "Tzanck smear",
+      "Serology"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "inicetmay25-ent:1",
+    "source": "inicetmay25-ent.pdf",
+    "source_number": 1,
+    "question": "After an ear infection, a child had limb spasm, pain and difficulty opening mouth. What could be the cause?",
+    "options": [
+      "Tetanus",
+      "Myelopathy",
+      "Sigmoid sinus thrombosis",
+      "Bezold abscess"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "inicetmay25-ent:3",
+    "source": "inicetmay25-ent.pdf",
+    "source_number": 3,
+    "question": "Which of the following is incorrect about juvenile angiofibroma?",
+    "options": [
+      "Recurrent epistaxis",
+      "Unilateral nasal obstruction",
+      "Exclusively seen in adolescent male",
+      "Biopsy done under local anesthesia"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "inicetmay25-ent:4",
+    "source": "inicetmay25-ent.pdf",
+    "source_number": 4,
+    "question": "A patient experiences vertigo and vomiting specifically when turning in bed. Which of the following is the most likely diagnosis?",
+    "options": [
+      "Benign paroxysmal positional vertigo (BPPV)",
+      "Vestibular neuritis",
+      "Ménière’s disease",
+      "Labyrinthitis"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "inicetmay25-ent:6",
+    "source": "inicetmay25-ent.pdf",
+    "source_number": 6,
+    "question": "If the pyriform fossa is injured due to a fish bone, which nerve is likely to be damaged?",
+    "options": [
+      "Vagus nerve",
+      "Internal branch of superior laryngeal nerve",
+      "Recurrent laryngeal nerve",
+      "Glossopharyngeal nerve"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-forensic-medicine:3",
+    "source": "inicetmay25-forensic-medicine.pdf",
+    "source_number": 3,
+    "question": "Gastric aspirate turns black with silver nitrate in which poisoning? (AgNO₃)",
+    "options": [
+      "Aluminium Phosphide",
+      "Mercury",
+      "Malathion",
+      "Barbiturate"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "inicetmay25-forensic-medicine:10",
+    "source": "inicetmay25-forensic-medicine.pdf",
+    "source_number": 10,
+    "question": "A child is diagnosed with chronic mercury poisoning. Which of the following clinical features is most characteristically associated with this condition?",
+    "options": [
+      "Lead lines on long bones",
+      "Danbury tremors and Mad Hatter syndrome",
+      "Mees’ lines on nails",
+      "Basophilic stippling in red blood cells"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-microbiology:3",
+    "source": "inicetmay25-microbiology.pdf",
+    "source_number": 3,
+    "question": "A HIV-positive patient presents with dysphagia and odynophagia. Esophagus shows white plaque. What is the most likely cause of this from the following?",
+    "options": [
+      "Budding yeast cells with pseudo hyphae",
+      "Thin septate hyphae with acute angle branching",
+      "Acid fast bacilli",
+      "Giant eosinophilic cell with granuloma"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "inicetmay25-microbiology:4",
+    "source": "inicetmay25-microbiology.pdf",
+    "source_number": 4,
+    "question": "Kanagawa phenomenon in Wagatsuma agar is seen in which organism?",
+    "options": [
+      "Vibrio cholera",
+      "Vibrio parahaemolyticus",
+      "Staphylococcus aureus",
+      "Clostridium difficile"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-microbiology:5",
+    "source": "inicetmay25-microbiology.pdf",
+    "source_number": 5,
+    "question": "Which of the following is NOT a dimorphic fungus?",
+    "options": [
+      "Histoplasma capsulatum",
+      "Coccidioides",
+      "Cryptococcus neoformans",
+      "Teleromyces marneffi"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "inicetmay25-microbiology:6",
+    "source": "inicetmay25-microbiology.pdf",
+    "source_number": 6,
+    "question": "Which helminth most commonly causes autoinfection?",
+    "options": [
+      "Strongyloides stercoralis",
+      "Ancylostoma duodenale",
+      "Ascaris lumbricoides",
+      "Hymenolepis nana"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "inicetmay25-microbiology:11",
+    "source": "inicetmay25-microbiology.pdf",
+    "source_number": 11,
+    "question": "Which of the following methods is commonly used for culturing Toxoplasma gondii in a laboratory setting?",
+    "options": [
+      "Stool culture",
+      "Peritoneal inoculation in mice",
+      "Blood agar culture",
+      "Chocolate agar culture"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-obgyn:1",
+    "source": "inicetmay25-obgyn.pdf",
+    "source_number": 1,
+    "question": "According to Modified Rotterdam Criteria, which are the criteria for PCOS? 1) Obesity 2) Delayed menstruation 3) Hirsutism 4) Insulin resistance",
+    "options": [
+      "1, 2, 3",
+      "1 and 2",
+      "2 and 3",
+      "1 and 4"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "inicetmay25-obgyn:3",
+    "source": "inicetmay25-obgyn.pdf",
+    "source_number": 3,
+    "question": "Which strains of HPV most commonly cause cervical cancer?",
+    "options": [
+      "16, 18",
+      "33, 34",
+      "6, 11",
+      "41, 42"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "inicetmay25-obgyn:6",
+    "source": "inicetmay25-obgyn.pdf",
+    "source_number": 6,
+    "question": "Which of the following does not cause fetal bradycardia?",
+    "options": [
+      "Abruption",
+      "Fetal head compression",
+      "Congenital heart block",
+      "Maternal fever"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "inicetmay25-obgyn:8",
+    "source": "inicetmay25-obgyn.pdf",
+    "source_number": 8,
+    "question": "Arrange the following steps in the correct sequence for taking a Pap smear: 1) Lithotomy position 2) Per speculum examination 3) Use of Ayre’s spatula",
+    "options": [
+      "Lithotomy position → Per speculum → Ayre’s spatula",
+      "Lithotomy position → Ayre’s spatula → Per speculum",
+      "Per speculum → Lithotomy position → Ayre’s spatula",
+      "Lithotomy position → Ayre’s spatula"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "inicetmay25-orthopaedics:5",
+    "source": "inicetmay25-orthopaedics.pdf",
+    "source_number": 5,
+    "question": "Which tumour is associated with Codman’s triangle and sunburst appearance?",
+    "options": [
+      "Osteosarcoma",
+      "Ewing’s sarcoma",
+      "Giant cell tumour (GCT)",
+      "Chondrosarcoma"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "inicetmay25-orthopaedics:7",
+    "source": "inicetmay25-orthopaedics.pdf",
+    "source_number": 7,
+    "question": "A patient with rheumatoid arthritis presents with neck pain and signs of myelopathy. What is the most likely diagnosis?",
+    "options": [
+      "Osteoarthritis of vertebrae",
+      "C2–C3 intervertebral stenosis",
+      "Atlantoaxial dislocation",
+      "Disc herniation"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "inicetmay25-orthopaedics:8",
+    "source": "inicetmay25-orthopaedics.pdf",
+    "source_number": 8,
+    "question": "The Honda sign on the short tau inversion recovery (STIR) MRI is seen in:",
+    "options": [
+      "Transient marrow edema",
+      "Acute osteomyelitis",
+      "Sacral insufficiency fracture",
+      "Multiple myeloma"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "inicetmay25-pathology:1",
+    "source": "inicetmay25-pathology.pdf",
+    "source_number": 1,
+    "question": "In a patient with diabetic kidney disease, which of the following is not considered a typical glomerular lesion?",
+    "options": [
+      "Podocyte dropout",
+      "Mesangial expansion",
+      "Diffuse Glomerular basement membrane (GBM) thickening",
+      "Armani-Ebstein lesions"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "inicetmay25-pathology:3",
+    "source": "inicetmay25-pathology.pdf",
+    "source_number": 3,
+    "question": "Identify the incorrect combination:",
+    "options": [
+      "STK-11 - Breast cancer",
+      "BRCA2 – Prostate cancer",
+      "PTEN - Thyroid carcinoma",
+      "P53 - Mucosal neuroma"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "inicetmay25-pathology:4",
+    "source": "inicetmay25-pathology.pdf",
+    "source_number": 4,
+    "question": "Which is the most common inherited bleeding disorder?",
+    "options": [
+      "Haemophilia",
+      "Von Willebrand Disease (vWD)",
+      "DIC",
+      "Factor V deficiency"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-pathology:5",
+    "source": "inicetmay25-pathology.pdf",
+    "source_number": 5,
+    "question": "All the following are seen in Turner’s syndrome EXCEPT?",
+    "options": [
+      "Prominent occiput",
+      "Short 4th metacarpal",
+      "Webbed neck",
+      "Widely spaced nipples"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "inicetmay25-pathology:6",
+    "source": "inicetmay25-pathology.pdf",
+    "source_number": 6,
+    "question": "All the following are aneuploidy disorders EXCEPT?",
+    "options": [
+      "Trisomy 21",
+      "Trisomy 13",
+      "Klinefelter syndrome",
+      "Bloom syndrome"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "inicetmay25-pathology:7",
+    "source": "inicetmay25-pathology.pdf",
+    "source_number": 7,
+    "question": "– Non- Clinical Question Caspase-1 is primarily involved in which type of programmed cell death?",
+    "options": [
+      "Necroptosis",
+      "Pyroptosis",
+      "Apoptosis",
+      "Ferroptosis"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-pharmacology:1",
+    "source": "inicetmay25-pharmacology.pdf",
+    "source_number": 1,
+    "question": "Which of the following are correct statements about thalidomide? 1) Has antimetabolite action 2) Used in type 2 lepra reaction 3) Has teratogenic effect 4) Used in refractory cases of multiple myeloma",
+    "options": [
+      "1, 2, 3",
+      "2, 3",
+      "2, 3, 4",
+      "3, 4"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "inicetmay25-pharmacology:2",
+    "source": "inicetmay25-pharmacology.pdf",
+    "source_number": 2,
+    "question": "Which of the following statements are true about benzodiazepines and barbiturates? 1) Flumazenil is an antidote for barbiturate 2) They cause additive sedation with alcohol 3) Thiopentone has short duration of action due to metabolism 4) They cause inhibition of GABA chloride channels",
+    "options": [
+      "1, 3",
+      "2, 3",
+      "2",
+      "1, 4"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "inicetmay25-pharmacology:5",
+    "source": "inicetmay25-pharmacology.pdf",
+    "source_number": 5,
+    "question": "What is the main role of phase 1 in xenobiotic metabolism?",
+    "options": [
+      "To make the compound more permeable across membranes",
+      "To extract functional proteins through oxidase/reductase reactions",
+      "Introduce or expose functional groups for further metabolism",
+      "To directly conjugate the compound and facilitate excretion"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "inicetmay25-physiology:1",
+    "source": "inicetmay25-physiology.pdf",
+    "source_number": 1,
+    "question": "When a patient opens their eyes after keeping them closed, which EEG wave activity decreases?",
+    "options": [
+      "Alpha wave",
+      "Theta wave",
+      "Beta wave",
+      "Delta wave"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "inicetmay25-physiology:2",
+    "source": "inicetmay25-physiology.pdf",
+    "source_number": 2,
+    "question": "In which part of the cell are tight junctions located?",
+    "options": [
+      "Apical",
+      "Apicolateral",
+      "Basal",
+      "Basolateral"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-physiology:3",
+    "source": "inicetmay25-physiology.pdf",
+    "source_number": 3,
+    "question": "The fever caused during an infection is regulated by which part of the brain:",
+    "options": [
+      "Paraventricular nucleus of hypothalamus",
+      "Dorsal nucleus of hypothalamus",
+      "Amygdala",
+      "Pre-optic area of Hypothalamus"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "inicetmay25-physiology:5",
+    "source": "inicetmay25-physiology.pdf",
+    "source_number": 5,
+    "question": "While a person rapid ascent to high altitude leads to which acid – base :",
+    "options": [
+      "Respiratory alkalosis",
+      "Metabolic alkalosis",
+      "Respiratory acidosis",
+      "Metabolic acidosis"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "inicetmay25-physiology:6",
+    "source": "inicetmay25-physiology.pdf",
+    "source_number": 6,
+    "question": "What is the tetanizing frequency if the muscle contraction period is 40 milliseconds?",
+    "options": [
+      "20 Hz",
+      "40 Hz",
+      "25 Hz",
+      "50 Hz"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "inicetmay25-psm:2",
+    "source": "inicetmay25-psm.pdf",
+    "source_number": 2,
+    "question": "Pick the incorrect combination:",
+    "options": [
+      "Standard error - Variability",
+      "Coefficient of correlation - Relationship",
+      "Asymmetry of distribution - Skewness",
+      "Mean, median - Dispersion"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "inicetmay25-psm:3",
+    "source": "inicetmay25-psm.pdf",
+    "source_number": 3,
+    "question": "Quartiles and tertiles are measures of:",
+    "options": [
+      "Dispersion",
+      "Central tendency",
+      "Locations",
+      "Variation"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "inicetmay25-psm:4",
+    "source": "inicetmay25-psm.pdf",
+    "source_number": 4,
+    "question": ". Setting research objective",
+    "options": [
+      "4-3-2-1",
+      "1-2-3-4",
+      "3-4-2-1",
+      "3-4-1-2"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "inicetmay25-psychiatry:1",
+    "source": "inicetmay25-psychiatry.pdf",
+    "source_number": 1,
+    "question": "A 40-year-old woman with bipolar disorder is planning for pregnancy. Which of the following drugs must be avoided due to the possibility of neural tube defects and intellectual disability?",
+    "options": [
+      "Valproate",
+      "Oxcarbazepine",
+      "Lamotrigine",
+      "Levetiracetam"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "inicetmay25-psychiatry:2",
+    "source": "inicetmay25-psychiatry.pdf",
+    "source_number": 2,
+    "question": "Which of the following is responsible for explicit memory?",
+    "options": [
+      "Thalamus",
+      "Hippocampus",
+      "Amygdala",
+      "Cerebellum"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-psychiatry:4",
+    "source": "inicetmay25-psychiatry.pdf",
+    "source_number": 4,
+    "question": "Which of the following new psychoactive agents results in rapid onset of action in the management of depression?",
+    "options": [
+      "Cannabinoids",
+      "Ketamine",
+      "Bupropion",
+      "Mephedrone"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-psychiatry:8",
+    "source": "inicetmay25-psychiatry.pdf",
+    "source_number": 8,
+    "question": "Which of the following drugs are used in treatment of acute mania? 1) Haloperidol 2) Valproate 3) Lithium 4) Amitriptyline",
+    "options": [
+      "Only 3",
+      "1, 2, 3",
+      "1, 2, 3, 4",
+      "1, 3"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-radiology:2",
+    "source": "inicetmay25-radiology.pdf",
+    "source_number": 2,
+    "question": "Most useful investigation for localization of parathyroid adenoma is:",
+    "options": [
+      "Sestamibi scan",
+      "USG",
+      "FDG PET",
+      "MRI"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "inicetmay25-radiology:4",
+    "source": "inicetmay25-radiology.pdf",
+    "source_number": 4,
+    "question": "Eye of the tiger appearance on MRI is associated with:",
+    "options": [
+      "Pantothenate kinase-associated degeneration (PKAN)",
+      "Wilson’s disease",
+      "Krabbe’s disease",
+      "Huntington chorea"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "inicetmay25-surgery:4",
+    "source": "inicetmay25-surgery.pdf",
+    "source_number": 4,
+    "question": "A female presents with bleeding per rectum. A mass is felt 6 cm from anal verge. The tumour shows intra-mucosal carcinoma. What is the stage of the cancer?",
+    "options": [
+      "1",
+      "2A",
+      "2B",
+      "0"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "inicetmay25-surgery:5",
+    "source": "inicetmay25-surgery.pdf",
+    "source_number": 5,
+    "question": "Recurrent urinary stones occur in all of these except:",
+    "options": [
+      "Hyperoxaluria",
+      "Hyperuricosuria",
+      "Hypercalciuria",
+      "Hypercitraturia"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "inicetmay25-surgery:9",
+    "source": "inicetmay25-surgery.pdf",
+    "source_number": 9,
+    "question": "A patient with ureteric calculi is being investigated. What is the investigation of choice for diagnosis?",
+    "options": [
+      "USG KUB (ultrasound)",
+      "NCCT KUB (non-contrast CT KUB)",
+      "CECT KUB",
+      "Ureteroscopy"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-surgery:13",
+    "source": "inicetmay25-surgery.pdf",
+    "source_number": 13,
+    "question": "Which of these is incorrectly paired?",
+    "options": [
+      "Chronic pancreatitis — Manheim score",
+      "Achalasia — Los Angeles classification",
+      "Colonoscopy — Boston score",
+      "Parathyroid resection — Miami criteria"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-medicine:8",
+    "source": "inicetmay25-medicine.pdf",
+    "source_number": 8,
+    "question": "A person living in an iodine deficient area developed hyperthyroidism after taking iodine supplementation. Which phenomenon explains this?",
+    "options": [
+      "Wolff-Chaikoff effect",
+      "Jod-Basedow effect",
+      "Goitre",
+      "Medullary thyroid cancer"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-medicine:10",
+    "source": "inicetmay25-medicine.pdf",
+    "source_number": 10,
+    "question": "Which of the following best explains the development of hyponatremia in a hypovolemic patient with diarrhea?",
+    "options": [
+      "Decreased reabsorption of sodium from kidney",
+      "Decreased secretion of aldosterone",
+      "Non-osmotic release of antidiuretic hormone (ADH)",
+      "Decreased sodium absorption from the intestine"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "inicetmay25-medicine:15",
+    "source": "inicetmay25-medicine.pdf",
+    "source_number": 15,
+    "question": "In some individuals, peptic ulcers do not develop despite the presence of Helicobacter pylori. This is most likely due to:",
+    "options": [
+      "NSAIDs causing ulceration independent of H. pylori",
+      "Variation in host and bacterial virulence factors",
+      "Colonization limited to the antrum in asymptomatic individuals",
+      "All strains of H. pylori being non-ulcerogenic in certain hosts"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-pediatrics:1",
+    "source": "inicetmay25-pediatrics.pdf",
+    "source_number": 1,
+    "question": "Which of the following vaccines should not be given to a child with severe combined immunodeficiency disorder (SCID)?",
+    "options": [
+      "IPV",
+      "Hepatitis B vaccine",
+      "MMR vaccine",
+      "DTaP"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "inicetmay25-pediatrics:9",
+    "source": "inicetmay25-pediatrics.pdf",
+    "source_number": 9,
+    "question": "Which of the following is seen in tetralogy of Fallot (TOF)?",
+    "options": [
+      "Left ventricular hypertrophy (LVH)",
+      "Pulmonary infundibular stenosis",
+      "Inter atrial septal defect",
+      "Transposition of great vessels"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-pediatrics:11",
+    "source": "inicetmay25-pediatrics.pdf",
+    "source_number": 11,
+    "question": "A malnourished child, given too much food, developed hypophosphatemia & hypomagnesemia. What could be the mechanism of this?",
+    "options": [
+      "Catecholamine spike increases electrolyte uptake",
+      "Insulin mediated uptake of electrolytes, phosphate",
+      "Urinary loss of phosphates",
+      "Glucagon spike and cause more loss of phosphate and electrolyte"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-opthalmology:3",
+    "source": "inicetmay25-opthalmology.pdf",
+    "source_number": 3,
+    "question": "The type of retinal detachment seen in uncontrolled diabetes is:",
+    "options": [
+      "Rhegmatogenous",
+      "Tractional",
+      "Exudative",
+      "None of the above"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-opthalmology:6",
+    "source": "inicetmay25-opthalmology.pdf",
+    "source_number": 6,
+    "question": "Which is the best test to visualize all layers of the retina?",
+    "options": [
+      "Perimetry",
+      "OCT",
+      "Fluorescence angiography",
+      "Ultrasound B-Scan"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aiims-2005-eo:5",
+    "source": "aiims-2005-eo.pdf",
+    "source_number": 5,
+    "question": "Mebendazole treats all of the following except:",
+    "options": [
+      "Intestinal amoebiasis",
+      "Trichuriasis",
+      "Ancylostoma infection",
+      "Roundworm infection"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2005-eo:6",
+    "source": "aiims-2005-eo.pdf",
+    "source_number": 6,
+    "question": "Which organism causes visceral larva migrans?",
+    "options": [
+      "Toxocara cati",
+      "Ancylostoma duodenale",
+      "Loa loa",
+      "Trichuris trichiura"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2005-eo:14",
+    "source": "aiims-2005-eo.pdf",
+    "source_number": 14,
+    "question": "The limiting amino acid in wheat is:",
+    "options": [
+      "Lysine",
+      "Threonine",
+      "Tryptophan",
+      "Cysteine"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2005-eo:20",
+    "source": "aiims-2005-eo.pdf",
+    "source_number": 20,
+    "question": "Osteonecrosis of the lunate is called:",
+    "options": [
+      "Freiberg disease",
+      "Kienbock disease",
+      "Perthes disease",
+      "Kohler disease"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aiims-2012:2",
+    "source": "aiims-2012.pdf",
+    "source_number": 2,
+    "question": "Which muscle is spared by interruption of the cranial accessory fibres travelling with the vagus?",
+    "options": [
+      "Stylopharyngeus",
+      "Palatopharyngeus",
+      "Salpingopharyngeus",
+      "Cricopharyngeus"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2012:6",
+    "source": "aiims-2012.pdf",
+    "source_number": 6,
+    "question": "CSF pressure is mainly regulated by:",
+    "options": [
+      "Rate of CSF formation",
+      "Rate of CSF absorption",
+      "Cerebral blood flow",
+      "Venous pressure"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aiims-2012:9",
+    "source": "aiims-2012.pdf",
+    "source_number": 9,
+    "question": "Which statement about ADH is false?",
+    "options": [
+      "Secretion increases postoperatively",
+      "It is a neurosecretion",
+      "Secretion increases when plasma osmolality is low",
+      "It increases permeability in the distal nephron"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aiims-2014-may:11",
+    "source": "aiims-2014-may.pdf",
+    "source_number": 11,
+    "question": "The medulla receives blood from all of these arteries except:",
+    "options": [
+      "Anterior spinal",
+      "Posterior inferior cerebellar",
+      "Vertebral",
+      "Superior cerebellar"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aiims-2014-may:13",
+    "source": "aiims-2014-may.pdf",
+    "source_number": 13,
+    "question": "The trigeminal nerve supplies all of these muscles except:",
+    "options": [
+      "Stylohyoid",
+      "Medial pterygoid",
+      "Lateral pterygoid",
+      "Tensor veli palatini"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2014-may:14",
+    "source": "aiims-2014-may.pdf",
+    "source_number": 14,
+    "question": "The facial nerve provides secretomotor fibres to all of these except:",
+    "options": [
+      "Lacrimal gland",
+      "Parotid gland",
+      "Submandibular gland",
+      "Nasal glands"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aiims-2016-nov:2",
+    "source": "aiims-2016-nov.pdf",
+    "source_number": 2,
+    "question": "Patchy nonscarring hair loss with broken hairs, perifollicular haemorrhage and mild inflammation suggests:",
+    "options": [
+      "Alopecia areata",
+      "Androgenic alopecia",
+      "Loose anagen hair",
+      "Trichotillomania"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aiims-2016-nov:5",
+    "source": "aiims-2016-nov.pdf",
+    "source_number": 5,
+    "question": "Nonvisualisation of the gallbladder on hepatobiliary scintigraphy suggests:",
+    "options": [
+      "Chronic cholecystitis",
+      "Gallbladder carcinoma",
+      "Acute cholecystitis",
+      "Common bile duct stone"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aiims-2017-may:7",
+    "source": "aiims-2017-may.pdf",
+    "source_number": 7,
+    "question": "Phenylbutyrate is used in urea-cycle disorders because it:",
+    "options": [
+      "Removes excess nitrogen using glutamine",
+      "Removes excess nitrogen using glycine",
+      "Induces urea-cycle enzymes",
+      "Increases ATP production"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2017-may:9",
+    "source": "aiims-2017-may.pdf",
+    "source_number": 9,
+    "question": "A low insulin-to-glucagon ratio favours all except:",
+    "options": [
+      "Glycogen storage",
+      "Glycogen breakdown",
+      "Gluconeogenesis",
+      "Ketogenesis"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2017-may:10",
+    "source": "aiims-2017-may.pdf",
+    "source_number": 10,
+    "question": "Which is a genome-editing technique?",
+    "options": [
+      "CRISPR-Cas9",
+      "Genome-wide association study",
+      "Scanning force microscopy",
+      "GeneXpert"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2017-may:11",
+    "source": "aiims-2017-may.pdf",
+    "source_number": 11,
+    "question": "Which mediator can trigger the Bezold-Jarisch reflex?",
+    "options": [
+      "Serotonin",
+      "Histamine",
+      "Angiotensin",
+      "Prostaglandin"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706:1",
+    "source": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706.pdf",
+    "source_number": 1,
+    "question": "From anterior to posterior, the main structures at the lung hilum are:",
+    "options": [
+      "Pulmonary vein, bronchus, pulmonary artery",
+      "Pulmonary artery, bronchus, pulmonary vein",
+      "Pulmonary vein, pulmonary artery, bronchus",
+      "Bronchus, pulmonary artery, pulmonary vein"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706:2",
+    "source": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706.pdf",
+    "source_number": 2,
+    "question": "Which is not a branch of the facial artery?",
+    "options": [
+      "Superior labial",
+      "Mental",
+      "Inferior labial",
+      "Lateral nasal"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706:3",
+    "source": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706.pdf",
+    "source_number": 3,
+    "question": "The superior gluteal nerve supplies all except:",
+    "options": [
+      "Gluteus medius",
+      "Gluteus minimus",
+      "Tensor fasciae latae",
+      "Piriformis"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-68a4b930-b5c8-11ed-a822-0a5e36bc6706:1",
+    "source": "aglasem-68a4b930-b5c8-11ed-a822-0a5e36bc6706.pdf",
+    "source_number": 1,
+    "question": "What detaches a myosin head from actin during muscle contraction?",
+    "options": [
+      "Binding of ATP",
+      "Hydrolysis of ATP to ADP and phosphate",
+      "Decrease in sarcoplasmic calcium",
+      "Power stroke"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706:1",
+    "source": "aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706.pdf",
+    "source_number": 1,
+    "question": "Which amino acid is not restricted in maple syrup urine disease?",
+    "options": [
+      "Methionine",
+      "Valine",
+      "Leucine",
+      "Isoleucine"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-6e15085c-b5c8-11ed-8a74-0a5e36bc6706:1",
+    "source": "aglasem-6e15085c-b5c8-11ed-8a74-0a5e36bc6706.pdf",
+    "source_number": 1,
+    "question": "Parent-of-origin-dependent expression of genetic material is called:",
+    "options": [
+      "Reduced penetrance",
+      "Genomic imprinting",
+      "Mosaicism",
+      "Incomplete penetrance"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706:1",
+    "source": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706.pdf",
+    "source_number": 1,
+    "question": "Which drug-adverse effect pairing is correct?",
+    "options": [
+      "Hydralazine — heart failure",
+      "Atenolol — haemolytic anaemia",
+      "Aliskiren — hypokalaemia",
+      "Verapamil — constipation"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706:2",
+    "source": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706.pdf",
+    "source_number": 2,
+    "question": "A 5-alpha-reductase inhibitor primarily acts to:",
+    "options": [
+      "Decrease intracellular testosterone",
+      "Decrease intracellular dihydrotestosterone",
+      "Decrease serum PSA",
+      "Increase serum PSA"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-68d61bf6-b5c8-11ed-ac15-0a5e36bc6706:2",
+    "source": "aglasem-68d61bf6-b5c8-11ed-ac15-0a5e36bc6706.pdf",
+    "source_number": 2,
+    "question": "Methods used to summarise a collection of data form:",
+    "options": [
+      "Descriptive statistics",
+      "Theoretical statistics",
+      "Inferential statistics",
+      "Analytical statistics"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-68d61bf6-b5c8-11ed-ac15-0a5e36bc6706:4",
+    "source": "aglasem-68d61bf6-b5c8-11ed-ac15-0a5e36bc6706.pdf",
+    "source_number": 4,
+    "question": "Which change generally narrows a confidence interval?",
+    "options": [
+      "Increasing sample size",
+      "Decreasing sample size",
+      "Increasing confidence level",
+      "Increasing variability"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706:1",
+    "source": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706.pdf",
+    "source_number": 1,
+    "question": "Hypogonadotropic hypogonadism in an infertile man can be associated with:",
+    "options": [
+      "Azoospermia or severe oligospermia",
+      "Low LH and FSH",
+      "Low testosterone",
+      "All of these"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706:2",
+    "source": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706.pdf",
+    "source_number": 2,
+    "question": "Which coagulation factor tends to decrease during pregnancy?",
+    "options": [
+      "Factor II",
+      "Factor VIII",
+      "Factor XI",
+      "Factor VII"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:3",
+    "source": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+    "source_number": 3,
+    "question": "ACTH is used in the treatment of:",
+    "options": [
+      "Tuberous sclerosis",
+      "West syndrome",
+      "Rolandic epilepsy",
+      "Juvenile myoclonic epilepsy"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-6d9d909c-b5c8-11ed-b2cd-0a5e36bc6706:1",
+    "source": "aglasem-6d9d909c-b5c8-11ed-b2cd-0a5e36bc6706.pdf",
+    "source_number": 1,
+    "question": "The actions of superior oblique are:",
+    "options": [
+      "Intorsion, elevation and abduction",
+      "Extorsion, depression and adduction",
+      "Intorsion, depression and abduction",
+      "Intorsion, elevation and adduction"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-71e9b57c-b5c8-11ed-a8c5-0a5e36bc6706:1",
+    "source": "aglasem-71e9b57c-b5c8-11ed-a8c5-0a5e36bc6706.pdf",
+    "source_number": 1,
+    "question": "Which auditory pathway sequence is correct?",
+    "options": [
+      "Superior olive, cochlear nuclei, lateral lemniscus, inferior colliculus",
+      "Cochlear nuclei, superior olive, lateral lemniscus, inferior colliculus",
+      "Inferior colliculus, cochlear nuclei, superior olive, lateral lemniscus",
+      "Lateral lemniscus, cochlear nuclei, superior olive, inferior colliculus"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706:2",
+    "source": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+    "source_number": 2,
+    "question": "Which microscopy technique produces contrast in transparent living cells?",
+    "options": [
+      "Phase-contrast microscopy",
+      "Dark-ground microscopy",
+      "Polarised-light microscopy",
+      "Electron microscopy"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:2",
+    "source": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+    "source_number": 2,
+    "question": "Refsum disease results from impaired:",
+    "options": [
+      "Alpha-oxidation of branched-chain fatty acids in peroxisomes",
+      "Beta-oxidation of branched-chain fatty acids in peroxisomes",
+      "Alpha-oxidation of branched-chain fatty acids in lysosomes",
+      "Beta-oxidation of branched-chain fatty acids in mitochondria"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706:2",
+    "source": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706.pdf",
+    "source_number": 2,
+    "question": "Which nerve supplies adductor pollicis, assessed by the book test?",
+    "options": [
+      "Median nerve",
+      "Ulnar nerve",
+      "Posterior interosseous nerve",
+      "Radial nerve"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706:3",
+    "source": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706.pdf",
+    "source_number": 3,
+    "question": "Late ulnar neuropathy after a childhood lateral humeral-condyle fracture may cause:",
+    "options": [
+      "Ape-thumb deformity",
+      "Pointing index",
+      "Kiloh-Nevin sign",
+      "Inability to adduct the fingers"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706:1",
+    "source": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706.pdf",
+    "source_number": 1,
+    "question": "Tattooing around a bullet entry wound is caused by:",
+    "options": [
+      "Smoke",
+      "Flame",
+      "Muzzle impression",
+      "Unburnt powder particles"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:2",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "source_number": 2,
+    "question": "Left-sided neglect affecting drawing, shaving and eating suggests a lesion of the:",
+    "options": [
+      "Right posterior parietal cortex",
+      "Left parietal cortex",
+      "Right temporal cortex",
+      "Right frontal cortex"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:1",
+    "source": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+    "source_number": 1,
+    "question": "Which statement about a normal placenta and cord is false?",
+    "options": [
+      "Placenta weighs about 500 g",
+      "Placenta is round or oval, about 22 cm across",
+      "Central thickness is about 2.5 cm",
+      "The umbilical cord normally has two vessels"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:1",
+    "source": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+    "source_number": 1,
+    "question": "Which finding supports unilateral optic neuritis?",
+    "options": [
+      "Relative afferent pupillary defect",
+      "No pain with eye movement",
+      "Multiple myeloma as a common cause",
+      "Oral corticosteroids alone as standard treatment"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:1",
+    "source": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+    "source_number": 1,
+    "question": "Order these ventricular action-potential events: 1 sodium-channel opening; 2 transient outward potassium flow; 3 calcium-channel opening; 4 repolarising potassium current.",
+    "options": [
+      "3-4-1-2",
+      "1-2-3-4",
+      "2-1-4-3",
+      "3-1-4-2"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-5cd670f8-c103-11ed-97fb-0a5e36bc6706:2",
+    "source": "aglasem-5cd670f8-c103-11ed-97fb-0a5e36bc6706.pdf",
+    "source_number": 2,
+    "question": "Which group consists of nonscarring causes of alopecia? 1 alopecia areata; 2 telogen effluvium; 3 androgenetic alopecia; 4 frontal fibrosing alopecia.",
+    "options": [
+      "3 and 4",
+      "1, 2 and 3",
+      "2, 3 and 4",
+      "4 only"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706:2",
+    "source": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+    "source_number": 2,
+    "question": "An older woman develops headache and neurological symptoms several days after a fall. The most likely diagnosis is:",
+    "options": [
+      "Subdural haematoma",
+      "Multi-infarct dementia",
+      "Frontal meningioma",
+      "Korsakoff syndrome"
+    ],
+    "key": "A"
   }
 ]
