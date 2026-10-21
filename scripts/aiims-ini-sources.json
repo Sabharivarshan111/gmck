@@ -1,0 +1,398 @@
+[
+  {
+    "file": "aiims-2017-nov.html",
+    "url": "https://medicoapps.org/aiims-pg-nov-2017/",
+    "sha256": "4d2e6210dc10534c615c03bddc83b2d33ebdff53d64589c2813658345d2dd250",
+    "bytes": 541552,
+    "exam": "aiims-pg",
+    "year": 2017,
+    "required": true
+  },
+  {
+    "file": "aiims-2018-may.html",
+    "url": "https://medicoapps.org/aiims-pg-may-2018/",
+    "sha256": "23cf77ee6873ddda0776d9ffca21de418849999db4bab0f55fbfa75638588e9c",
+    "bytes": 423090,
+    "exam": "aiims-pg",
+    "year": 2018,
+    "required": true
+  },
+  {
+    "file": "aiims-2018-nov.html",
+    "url": "https://medicoapps.org/aiims-pg-nov-2018/",
+    "sha256": "0af4d633a708e9f85af0179f6537ca667d07cb4fcb79aac24aca7ac95992316a",
+    "bytes": 516528,
+    "exam": "aiims-pg",
+    "year": 2018,
+    "required": true
+  },
+  {
+    "file": "aiims-2019-may.html",
+    "url": "https://medicoapps.org/aiims-pg-may-2019/",
+    "sha256": "733f7995a43e487ad9a5a4699b4cf9f45aa2ecce2a26c01699b27bb2633dd059",
+    "bytes": 415929,
+    "exam": "aiims-pg",
+    "year": 2019,
+    "required": true
+  },
+  {
+    "file": "aiims-2020-jun.html",
+    "url": "https://medicoapps.org/aiims-pg-june-2020/",
+    "sha256": "d214ba390175e611b8c14ff56f3f5cd786a6aabc05050973056d8989b4855db2",
+    "bytes": 508908,
+    "exam": "aiims-pg",
+    "year": 2020,
+    "required": true
+  },
+  {
+    "file": "aiims-1999-nov.pdf",
+    "url": "https://www.educationobserver.com/forum/attachment.php?aid=5209",
+    "sha256": "60ed9fd695766226e45e0319966a3deac5487a3feceb3624e2762fc1033c0082",
+    "bytes": 134950,
+    "exam": "aiims-pg",
+    "year": 1999,
+    "required": true
+  },
+  {
+    "file": "aiims-2001-may.pdf",
+    "url": "https://www.educationobserver.com/forum/attachment.php?aid=5208",
+    "sha256": "b447e92b0c0b35d7a6aa174f7132fc318a7faa02cedb91dbc564431051db2c15",
+    "bytes": 99324,
+    "exam": "aiims-pg",
+    "year": 2001,
+    "required": true
+  },
+  {
+    "file": "aiims-2000-eo.pdf",
+    "url": "https://www.educationobserver.com/forum/attachment.php?aid=12977",
+    "sha256": "0eb39ff23cd6b932c6e0dc072c45ba39280de2d1ac80d707c8f194e63b27747f",
+    "bytes": 567776,
+    "exam": "aiims-pg",
+    "year": 2000,
+    "required": false
+  },
+  {
+    "file": "aiims-2001-eo.pdf",
+    "url": "https://www.educationobserver.com/forum/attachment.php?aid=12978",
+    "sha256": "e8d7658a51dd9d89291f09116b050e2d1cf8af7a242abdcb820a144b10adad1f",
+    "bytes": 668453,
+    "exam": "aiims-pg",
+    "year": 2001,
+    "required": false
+  },
+  {
+    "file": "aiims-2002-eo.pdf",
+    "url": "https://www.educationobserver.com/forum/attachment.php?aid=12979",
+    "sha256": "64d6051f71c1a2892ebaff78631c122673eb80820bfe4599069e54bdd220af3a",
+    "bytes": 662950,
+    "exam": "aiims-pg",
+    "year": 2002,
+    "required": false
+  },
+  {
+    "file": "aiims-2003-eo.pdf",
+    "url": "https://www.educationobserver.com/forum/attachment.php?aid=12980",
+    "sha256": "9ea6012cbba1908cd77298df874fcce8569f4cdd988ac00399646004ddf736f7",
+    "bytes": 207597,
+    "exam": "aiims-pg",
+    "year": 2003,
+    "required": false
+  },
+  {
+    "file": "aiims-2004-eo.pdf",
+    "url": "https://www.educationobserver.com/forum/attachment.php?aid=12981",
+    "sha256": "242a6885581231fe2e2b0e0dc2f9d0a94c304fb8118b71c522c0984d1840fe73",
+    "bytes": 676449,
+    "exam": "aiims-pg",
+    "year": 2004,
+    "required": false
+  },
+  {
+    "file": "aiims-2005-eo.pdf",
+    "url": "https://www.educationobserver.com/forum/attachment.php?aid=12982",
+    "sha256": "d09bee435daa91ba62fb617fc28118016e40dd116b0883d974563dc189995153",
+    "bytes": 646627,
+    "exam": "aiims-pg",
+    "year": 2005,
+    "required": true
+  },
+  {
+    "file": "aiims-2006-eo.pdf",
+    "url": "https://www.educationobserver.com/forum/attachment.php?aid=12983",
+    "sha256": "3ad37dde42fb5b25935c95d8e522352f963f52b0f823b4195eb8cb938db655d6",
+    "bytes": 795490,
+    "exam": "aiims-pg",
+    "year": 2006,
+    "required": true
+  },
+  {
+    "file": "aiims-2007-eo.pdf",
+    "url": "https://www.educationobserver.com/forum/attachment.php?aid=12984",
+    "sha256": "3967f2c6bd4f7c407fde2379b9b8f1e09b8d8919c330af8734599da6070ec8af",
+    "bytes": 624925,
+    "exam": "aiims-pg",
+    "year": 2007,
+    "required": false
+  },
+  {
+    "file": "aiims-2008-eo.pdf",
+    "url": "https://www.educationobserver.com/forum/attachment.php?aid=12985",
+    "sha256": "ad037ae0c84f9d1e4fd654f838fb636510d82ed4606ecb1da3f907e9d07d221c",
+    "bytes": 659763,
+    "exam": "aiims-pg",
+    "year": 2008,
+    "required": false
+  },
+  {
+    "file": "aiims-2009-eo.pdf",
+    "url": "https://www.educationobserver.com/forum/attachment.php?aid=12986",
+    "sha256": "3e74309b7968fa7f2c7a4c3b80f63966deb643806fcf0c80322ba55cadb9a331",
+    "bytes": 993792,
+    "exam": "aiims-pg",
+    "year": 2009,
+    "required": true
+  },
+  {
+    "file": "aiims-2010-eo.pdf",
+    "url": "https://www.educationobserver.com/forum/attachment.php?aid=12987",
+    "sha256": "608f91936280bf5c20d8652f823c35ef651e412504984cb7569f7f97a3ab0fca",
+    "bytes": 1890670,
+    "exam": "aiims-pg",
+    "year": 2010,
+    "required": true
+  },
+  {
+    "file": "aiims-2011-eo.pdf",
+    "url": "https://www.educationobserver.com/forum/attachment.php?aid=12988",
+    "sha256": "6d211943d7de5d6d088b618ebebcf9e5e8018a940e9f48935b16d988e1b9df6a",
+    "bytes": 595121,
+    "exam": "aiims-pg",
+    "year": 2011,
+    "required": false
+  },
+  {
+    "file": "aiims-2013-eo.pdf",
+    "url": "https://www.educationobserver.com/forum/attachment.php?aid=67129",
+    "sha256": "cfe834cede5dd326bfa6fd77351e5c7f1bda62f1e855a1b80596072591857c67",
+    "bytes": 2125512,
+    "exam": "aiims-pg",
+    "year": 2013,
+    "required": true
+  },
+  {
+    "file": "aiims-2014-may.pdf",
+    "url": "https://firstranker.com/frbeta/download.php/frdA300721A213125/download",
+    "sha256": "464eb797429329d5b76a83f9e987ddbfbbf89b7201da14c4a5fcd93636c3f0f4",
+    "bytes": 120281,
+    "exam": "aiims-pg",
+    "year": 2014,
+    "required": true
+  },
+  {
+    "file": "aiims-2015-may.pdf",
+    "url": "https://firstranker.com/frbeta/download.php/frdA300721A213126/download",
+    "sha256": "6bc2749e69a43930cf99caee85ae12fa36c184e4d20420f73c84d94f3698759a",
+    "bytes": 98238,
+    "exam": "aiims-pg",
+    "year": 2015,
+    "required": true
+  },
+  {
+    "file": "aiims-2016-nov.pdf",
+    "url": "https://firstranker.com/frbeta/download.php/frdA300721A213127/download",
+    "sha256": "4726725826667da4c4589b315c0256304c1b9fe14328effdb87ed092afca490e",
+    "bytes": 98806,
+    "exam": "aiims-pg",
+    "year": 2016,
+    "required": true
+  },
+  {
+    "file": "aiims-2017-may.pdf",
+    "url": "https://firstranker.com/frbeta/download.php/frdA300721A213128/download",
+    "sha256": "eda33b7f2c248215cebf15a49daec0e0046fc4a69eae88d85d7d7165f5a31003",
+    "bytes": 90980,
+    "exam": "aiims-pg",
+    "year": 2017,
+    "required": true
+  },
+  {
+    "file": "aiims-2012.pdf",
+    "url": "https://firstranker.com/frbeta/download.php/frdA300721A213124/download",
+    "sha256": "4cc10120cd8625a095c3bb861e020721ac781aa232a2846bb3ec7ee347de5d53",
+    "bytes": 138162,
+    "exam": "aiims-pg",
+    "year": 2012,
+    "required": true
+  },
+  {
+    "file": "INI_CET_2020_Memory_Based_Question_Paper_PDF_9eba861dd8787d88de0f988862cd3431.pdf",
+    "url": "https://cdn-images.prepp.in/public/image/INI_CET_2020_Memory_Based_Question_Paper_PDF_9eba861dd8787d88de0f988862cd3431.pdf",
+    "sha256": "db1348b5f4b2e74b1cec87eb4eef556af191723a03cf67d2f26ff9e7157a8128",
+    "bytes": 2037546,
+    "exam": "ini-cet",
+    "year": 2020,
+    "required": true
+  },
+  {
+    "file": "INI_CET_2020_Memory_Based_Answer_Key_PDF_c02afe766f2b22854460634405897993.pdf",
+    "url": "https://cdn-images.prepp.in/public/image/INI_CET_2020_Memory_Based_Answer_Key_PDF_c02afe766f2b22854460634405897993.pdf",
+    "sha256": "8462ea47dbe03c08841adeb837b545758674510cc0834c7d8dcfabf376c11cb4",
+    "bytes": 846856,
+    "exam": "ini-cet",
+    "year": 2020,
+    "required": true
+  },
+  {
+    "file": "INI_CET_2021_Memory_Based_Question_Paper_01_cef093487967243d9e5afa0d57de5e5f.pdf",
+    "url": "https://cdn-images.prepp.in/public/image/INI_CET_2021_Memory_Based_Question_Paper_01_cef093487967243d9e5afa0d57de5e5f.pdf",
+    "sha256": "ef5d8fb757ba679090eed9c9b4e9b1a9ad58aa5ba41228b44946eb6e849092ba",
+    "bytes": 3249740,
+    "exam": "ini-cet",
+    "year": 2021,
+    "required": true
+  },
+  {
+    "file": "INI_CET_2021_Memory_Based_Question_Paper_02_ec5f063fb54a891d761c85a1b0628b65.pdf",
+    "url": "https://cdn-images.prepp.in/public/image/INI_CET_2021_Memory_Based_Question_Paper_02_ec5f063fb54a891d761c85a1b0628b65.pdf",
+    "sha256": "f6fe1067c14f7329b01ef5c9b212e0052ab4b64a6a00e28bfc0a08c78e5e20ec",
+    "bytes": 3261155,
+    "exam": "ini-cet",
+    "year": 2021,
+    "required": true
+  },
+  {
+    "file": "INI_CET_2021_Memory_Based_Answer_Key_01_050aa84a6f4db92b2f7366078039ebb6.pdf",
+    "url": "https://cdn-images.prepp.in/public/image/INI_CET_2021_Memory_Based_Answer_Key_01_050aa84a6f4db92b2f7366078039ebb6.pdf",
+    "sha256": "f7eec8c9cec6154b58c193e999492142e9e8e1847185d11ea59db8d523dd6b84",
+    "bytes": 850976,
+    "exam": "ini-cet",
+    "year": 2021,
+    "required": true
+  },
+  {
+    "file": "INI_CET_2021_Memory_Based_Answer_Key_02_2ca7e0528985769911b22376559ba6b4.pdf",
+    "url": "https://cdn-images.prepp.in/public/image/INI_CET_2021_Memory_Based_Answer_Key_02_2ca7e0528985769911b22376559ba6b4.pdf",
+    "sha256": "966b1028ee514cedd25d367d4f2c8f42aa53837dc0b51872c0005e7861f0388f",
+    "bytes": 840979,
+    "exam": "ini-cet",
+    "year": 2021,
+    "required": true
+  },
+  {
+    "file": "INI_CET_2022_Memory_Based_Question_Paper_01_d0ea972cc3e006c92d058dcd0b76de7a.pdf",
+    "url": "https://cdn-images.prepp.in/public/image/INI_CET_2022_Memory_Based_Question_Paper_01_d0ea972cc3e006c92d058dcd0b76de7a.pdf",
+    "sha256": "28cb536ffb664bfaf97f12282eddc6a95d6dd2f9e492af622b5f1464f59be589",
+    "bytes": 4112482,
+    "exam": "ini-cet",
+    "year": 2022,
+    "required": true
+  },
+  {
+    "file": "INI_CET_2022_Memory_Based_Question_Paper_02_dd23dcd0bd30b653d5d3490b210cca67.pdf",
+    "url": "https://cdn-images.prepp.in/public/image/INI_CET_2022_Memory_Based_Question_Paper_02_dd23dcd0bd30b653d5d3490b210cca67.pdf",
+    "sha256": "b8e20e1f8cff27615afe547cb7a0e78409d5c746cc4f6b48ff473733c6dffc61",
+    "bytes": 2882464,
+    "exam": "ini-cet",
+    "year": 2022,
+    "required": true
+  },
+  {
+    "file": "INI_CET_2022_Memory_Based_Answer_Key_01_a1914fb9ac17b9d01c7218bbbbb1b9ab.pdf",
+    "url": "https://cdn-images.prepp.in/public/image/INI_CET_2022_Memory_Based_Answer_Key_01_a1914fb9ac17b9d01c7218bbbbb1b9ab.pdf",
+    "sha256": "3682862c285be3184ee0e60721b03e880c89c7a360292fcb904a06ca97b83063",
+    "bytes": 883665,
+    "exam": "ini-cet",
+    "year": 2022,
+    "required": true
+  },
+  {
+    "file": "INI_CET_2022_Memory_Based_Answer_Key_02_fc9e59f3fe0a9395d7796de437a791d8.pdf",
+    "url": "https://cdn-images.prepp.in/public/image/INI_CET_2022_Memory_Based_Answer_Key_02_fc9e59f3fe0a9395d7796de437a791d8.pdf",
+    "sha256": "1ebb61d97770e17f824413cd86233342b6b1e3379ad609a78c1c986c46025037",
+    "bytes": 896556,
+    "exam": "ini-cet",
+    "year": 2022,
+    "required": true
+  },
+  {
+    "file": "INI_CET_2023_Memory_Based_Question_Paper_01_5b5ef42ab123a5614f1503045079d35f.pdf",
+    "url": "https://cdn-images.prepp.in/public/image/INI_CET_2023_Memory_Based_Question_Paper_01_5b5ef42ab123a5614f1503045079d35f.pdf",
+    "sha256": "2e1a65af1f3ccc6afa3be9f198ad66f3518672475c72092ff38d4b3a95d07fdd",
+    "bytes": 906525,
+    "exam": "ini-cet",
+    "year": 2023,
+    "required": true
+  },
+  {
+    "file": "INI_CET_2023_Memory_Based_Question_Paper_02_68f504e5c534c04a3724b62c99f5fb0d.pdf",
+    "url": "https://cdn-images.prepp.in/public/image/INI_CET_2023_Memory_Based_Question_Paper_02_68f504e5c534c04a3724b62c99f5fb0d.pdf",
+    "sha256": "9fc8ff8af093b66b84452d7bbc205c2187fb49f9bdaba40b9abdaa2a429915e2",
+    "bytes": 2320094,
+    "exam": "ini-cet",
+    "year": 2023,
+    "required": true
+  },
+  {
+    "file": "INI_CET_2023_Memory_Based_Answer_Key_PDF_01_823a1a4d8e0d2bafe8dd73fa4cc34c31.pdf",
+    "url": "https://cdn-images.prepp.in/public/image/INI_CET_2023_Memory_Based_Answer_Key_PDF_01_823a1a4d8e0d2bafe8dd73fa4cc34c31.pdf",
+    "sha256": "195a7eb371c24f42bbd0867b1c6a494bf9cbacc7476a9bc83b6990e6f4b9707b",
+    "bytes": 773379,
+    "exam": "ini-cet",
+    "year": 2023,
+    "required": true
+  },
+  {
+    "file": "INI_CET_2023_Memory_Based_Answer_Key_PDF_02_ae3f39e54f78df3126aa6de94174409f.pdf",
+    "url": "https://cdn-images.prepp.in/public/image/INI_CET_2023_Memory_Based_Answer_Key_PDF_02_ae3f39e54f78df3126aa6de94174409f.pdf",
+    "sha256": "22de78be7c48157954223e510a1516c2552ea801d7d1c7ea910b30f5c6f8cffc",
+    "bytes": 724417,
+    "exam": "ini-cet",
+    "year": 2023,
+    "required": true
+  },
+  {
+    "file": "INI_CET_2024_Memory_Based_Question_Paper_PDF_fd86dca0c9fa6c05d53974a17af6d987.pdf",
+    "url": "https://cdn-images.prepp.in/public/image/INI_CET_2024_Memory_Based_Question_Paper_PDF_fd86dca0c9fa6c05d53974a17af6d987.pdf",
+    "sha256": "c5447b883253644741b5c28fbf989a9af0a3a3ca54f37384376673c13553c5e5",
+    "bytes": 1071969,
+    "exam": "ini-cet",
+    "year": 2024,
+    "required": true
+  },
+  {
+    "file": "INI_CET_2024_Memory_Based_Answer_Key_PDF_ccb9c0e1a1e626bb29df9b2be4a7b4a6.pdf",
+    "url": "https://cdn-images.prepp.in/public/image/INI_CET_2024_Memory_Based_Answer_Key_PDF_ccb9c0e1a1e626bb29df9b2be4a7b4a6.pdf",
+    "sha256": "755d26136029bef80c99f97bb562581c297c990808e2f50bae5cf3ab0e7bc16e",
+    "bytes": 702294,
+    "exam": "ini-cet",
+    "year": 2024,
+    "required": true
+  },
+  {
+    "file": "INI_CET_2025_Memory_Based_Question_Paper_PDF_3e7926e3410e8285f29d4ad33c0d384c.pdf",
+    "url": "https://cdn-images.prepp.in/public/image/INI_CET_2025_Memory_Based_Question_Paper_PDF_3e7926e3410e8285f29d4ad33c0d384c.pdf",
+    "sha256": "3a0939cbf08557851a4dff1b97107aaa0e8614f534add611f8dea4c5ef6258bf",
+    "bytes": 1961689,
+    "exam": "ini-cet",
+    "year": 2025,
+    "required": true
+  },
+  {
+    "file": "INI_CET_2025_Memory_Based_Answer_Key_PDF_5d1813371cec303c275b8d51f94401bb.pdf",
+    "url": "https://cdn-images.prepp.in/public/image/INI_CET_2025_Memory_Based_Answer_Key_PDF_5d1813371cec303c275b8d51f94401bb.pdf",
+    "sha256": "f17565892e298bdd2a4352f08beee214923eddadb102e8a1ed9db9d2e1b70c6c",
+    "bytes": 768232,
+    "exam": "ini-cet",
+    "year": 2025,
+    "required": true
+  },
+  {
+    "file": "INICET_May_2026_DigiNerve-new-01.pdf",
+    "url": "https://www.diginerve.com/blogs/wp-content/uploads/2026/05/INICET_May_2026_DigiNerve-new-01.pdf",
+    "sha256": "634617d6903db5df37f86fcb0385ab41c4016dcec22783de7cc26ca642e94999",
+    "bytes": 1330330,
+    "exam": "ini-cet",
+    "year": 2026,
+    "required": true
+  }
+]

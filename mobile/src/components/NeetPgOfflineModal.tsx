@@ -74,16 +74,21 @@ export function NeetPgOfflineModal({
   onReplace,
   installing,
   initialQuestionId,
+  bankLabel = 'NEET-PG',
+  examChoices,
 }: {
   visible: boolean;
   onClose: () => void;
   installed: InstalledReader;
-  onReplace: () => void;
+  onReplace?: () => void;
   installing: boolean;
   initialQuestionId?: string;
+  bankLabel?: string;
+  examChoices?: React.ReactNode;
 }) {
   const { colors, preference, setPreference } = useTheme();
   const insets = useSafeAreaInsets();
+  const spokenLabel = bankLabel === 'NEET-PG' ? 'NEET PG' : bankLabel;
   const reducedMotion = useReducedMotion();
   const { reader } = installed;
   const study = useNeetStudy(reader.id);
@@ -343,11 +348,12 @@ export function NeetPgOfflineModal({
           accessibilityRole="header"
           style={[typeScale.title1, { color: colors.text }]}
         >
-          NEET-PG
+          {bankLabel}
         </Text>
         <Text style={[typeScale.callout, { color: colors.textMuted }]}>
           Chapter-wise practice
         </Text>
+        {examChoices}
         <View style={[styles.stats, { borderColor: colors.border }]}>
           <View style={styles.flex}>
             <Text style={[typeScale.bodyStrong, { color: colors.text }]}>
@@ -369,7 +375,7 @@ export function NeetPgOfflineModal({
             </Text>
           </View>
           <Touchable
-            label="Show saved NEET PG questions"
+            label={`Show saved ${spokenLabel} questions`}
             state={{ selected: savedOnly }}
             disabled={!savedReady}
             onPress={() => {
@@ -407,14 +413,14 @@ export function NeetPgOfflineModal({
             setSearchPage(0);
           }}
           placeholder="Search a question or concept"
-          accessibilityLabel="Search offline NEET PG questions"
+          accessibilityLabel={`Search offline ${spokenLabel} questions`}
           placeholderTextColor={colors.textMuted}
           returnKeyType="search"
           style={[styles.searchInput, typeScale.body, { color: colors.text }]}
         />
         {query ? (
           <Touchable
-            label="Clear NEET PG search"
+            label={`Clear ${spokenLabel} search`}
             onPress={() => {
               setQuery('');
               setSearchPage(0);
@@ -473,7 +479,7 @@ export function NeetPgOfflineModal({
         </View>
         {subject ? (
           <Touchable
-            label="Back to all NEET PG subjects"
+            label={`Back to all ${spokenLabel} subjects`}
             onPress={() => {
               setSubject(null);
               setSearchPage(0);
@@ -510,10 +516,10 @@ export function NeetPgOfflineModal({
           <Touchable
             label={
               scope
-                ? 'Return to NEET PG library'
+                ? `Return to ${spokenLabel} library`
                 : planOpen
-                ? 'Return to NEET PG library'
-                : 'Close offline NEET PG bank'
+                ? `Return to ${spokenLabel} library`
+                : `Close offline ${spokenLabel} bank`
             }
             onPress={
               scope
@@ -551,8 +557,8 @@ export function NeetPgOfflineModal({
             <Touchable
               label={
                 bookmarked
-                  ? 'Unsave this NEET PG question'
-                  : 'Save this NEET PG question'
+                  ? `Unsave this ${spokenLabel} question`
+                  : `Save this ${spokenLabel} question`
               }
               state={{ selected: bookmarked }}
               disabled={!savedReady}
@@ -567,7 +573,7 @@ export function NeetPgOfflineModal({
             </Touchable>
           ) : null}
           <Touchable
-            label="NEET PG appearance and bank settings"
+            label={`${spokenLabel} appearance and bank settings`}
             onPress={() => setSettingsOpen(true)}
             style={styles.iconButton}
           >
@@ -940,7 +946,7 @@ export function NeetPgOfflineModal({
                 </View>
                 <View style={styles.navigation}>
                   <Touchable
-                    label="Previous NEET PG question"
+                    label={`Previous ${spokenLabel} question`}
                     disabled={position === 0}
                     onPress={() => pageQuestion(position - 1)}
                     style={[
@@ -961,8 +967,8 @@ export function NeetPgOfflineModal({
                   <Touchable
                     label={
                       sessionIds && position + 1 >= activeResult.total
-                        ? 'Finish NEET PG session'
-                        : 'Next NEET PG question'
+                        ? `Finish ${spokenLabel} session`
+                        : `Next ${spokenLabel} question`
                     }
                     disabled={!sessionIds && position + 1 >= activeResult.total}
                     onPress={() => {
@@ -1052,7 +1058,7 @@ export function NeetPgOfflineModal({
                       : 'Try another concept, year or subject.'}
                   </Text>
                   <Touchable
-                    label="Reset NEET PG filters"
+                    label={`Reset ${spokenLabel} filters`}
                     onPress={() => {
                       setQuery('');
                       setSavedOnly(false);
@@ -1073,7 +1079,7 @@ export function NeetPgOfflineModal({
               renderItem={({ item }) =>
                 item.kind === 'question' ? (
                   <Touchable
-                    label={'Open NEET PG question ' + (item.index + 1)}
+                    label={`Open ${spokenLabel} question ` + (item.index + 1)}
                     onPress={() => start(undefined, item.index)}
                     style={[styles.libraryRow, { borderColor: colors.border }]}
                   >
@@ -1231,7 +1237,7 @@ export function NeetPgOfflineModal({
               ]}
             >
               <Touchable
-                label="Open NEET PG study planner"
+                label={`Open ${spokenLabel} study planner`}
                 onPress={() => setPlanOpen(true)}
                 style={[
                   styles.plannerShortcut,
@@ -1249,7 +1255,7 @@ export function NeetPgOfflineModal({
 
               {libraryResult.total > 0 ? (
                 <Touchable
-                  label="Start NEET PG practice"
+                  label={`Start ${spokenLabel} practice`}
                   onPress={() => start()}
                   style={[styles.start, { backgroundColor: colors.primary }]}
                 >
@@ -1327,7 +1333,7 @@ export function NeetPgOfflineModal({
             <Text style={[typeScale.footnote, { color: colors.textMuted }]}>
               {reader.total.toLocaleString()} questions · stored offline
             </Text>
-            <Touchable
+            {onReplace ? <Touchable
               label="Replace offline bank"
               disabled={installing}
               onPress={() => {
@@ -1340,7 +1346,7 @@ export function NeetPgOfflineModal({
               <Text style={[typeScale.bodyStrong, { color: colors.text }]}>
                 {installing ? 'Installing…' : 'Import a question bank'}
               </Text>
-            </Touchable>
+            </Touchable> : null}
           </View>
         </Sheet>
         {aiOpen && question ? (

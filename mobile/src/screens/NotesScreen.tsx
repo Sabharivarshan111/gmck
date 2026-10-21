@@ -313,7 +313,7 @@ function VaultView({ onNotes, onPgPractice, onSimulator, onProformas, onFlashcar
   const textScale = useTextScale();
   const entries = [
     { title: 'Notes', hint: 'Years, subjects & handwritten notes', emoji: '📚', open: onNotes },
-    { title: 'NEET-PG', label: 'NEET-PG practice questions', hint: 'Practice by subject & chapter', emoji: '📝', open: onPgPractice },
+    { title: 'PG Practice', label: 'NEET-PG practice questions', hint: 'NEET-PG · AIIMS PG · INI-CET', emoji: '📝', open: onPgPractice },
     { title: 'Simulator & Anatomy', hint: 'Explore anatomy & bedside skills', emoji: '🫀', open: onSimulator },
     { title: 'Case proformas', hint: 'History & examination guides', emoji: '📋', open: onProformas },
     { title: 'Anki flashcards', hint: 'Decks & spaced repetition', emoji: '📇', open: onFlashcards },
@@ -447,7 +447,7 @@ function YearsView({
           <BookOpenCheck size={18} color={colors.accent} />
         </View>
         <View style={styles.flex}>
-          <Text style={[styles.extraTitle, { color: colors.text }]}>NEET-PG practice questions</Text>
+          <Text style={[styles.extraTitle, { color: colors.text }]}>PG practice questions</Text>
           <Text style={[styles.extraSub, { color: colors.textMuted }]}>
             Original practice questions and official exam information
           </Text>

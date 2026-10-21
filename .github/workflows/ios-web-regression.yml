@@ -25,7 +25,9 @@ jobs:
       - run: npm run build:vercel
       - run: node node_modules/playwright-core/cli.js install --with-deps chromium webkit
         working-directory: mobile
+      - run: node scripts/test-aiims-ini-offline.mjs
       - run: node mobile/web/neet-pg-offline-check.mjs
+      - run: node mobile/web/pg-recall-check.mjs
       - run: node mobile/web/ai-chat-check.mjs
       - run: node mobile/web/ios-regression.mjs
       - run: ORBIT_BROWSER=webkit node mobile/web/ios-regression.mjs
@@ -36,3 +38,4 @@ jobs:
           path: |
             /tmp/orbit-ios-evidence
             docs/evidence/tablet-ai-chat
+            docs/evidence/pg-recalls
