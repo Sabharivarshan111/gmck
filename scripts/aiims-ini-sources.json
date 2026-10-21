@@ -826,5 +826,60 @@
     "year": 2025,
     "session": "May",
     "required": true
+  },
+  {
+    "file": "gmu-2024-72d75f60-243e-4f12-aba9-74a240c6e3a4.pdf",
+    "url": "https://media.getmyuni.com/assets/downloadables/72d75f60-243e-4f12-aba9-74a240c6e3a4.pdf",
+    "pageUrl": "https://news.getmyuni.com/ini-cet-unofficial-answer-key-2024-may-19-for-all-recall-memory-based-questions",
+    "sha256": "b385d1cef11f78ce3d042b9bffec64f940090c4f2beb482861c3308b1ac69376",
+    "bytes": 2965314,
+    "exam": "ini-cet",
+    "year": 2024,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c.pdf",
+    "url": "https://media.getmyuni.com/assets/downloadables/5573f47e-9cad-4728-af8c-2c6b9b89302c.pdf",
+    "pageUrl": "https://news.getmyuni.com/ini-cet-unofficial-answer-key-2024-may-19-for-all-recall-memory-based-questions",
+    "sha256": "669379292a49f986d2e61e1fd132e450e272a3faf10bc11578ce85cfa7ce1a40",
+    "bytes": 1493211,
+    "exam": "ini-cet",
+    "year": 2024,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408.pdf",
+    "url": "https://media.getmyuni.com/assets/downloadables/da1839b8-317e-4e21-9b18-dca9000e6408.pdf",
+    "pageUrl": "https://news.getmyuni.com/ini-cet-unofficial-answer-key-2024-may-19-for-all-recall-memory-based-questions",
+    "sha256": "da455a5b6a0648d9008f012f77ae5ea0cbe061b69934fc1423575fa7ed84063f",
+    "bytes": 481520,
+    "exam": "ini-cet",
+    "year": 2024,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "gmu-2024-9674994c-68dc-4adb-bf75-b110e4d8d977.pdf",
+    "url": "https://media.getmyuni.com/assets/downloadables/9674994c-68dc-4adb-bf75-b110e4d8d977.pdf",
+    "pageUrl": "https://news.getmyuni.com/ini-cet-unofficial-answer-key-2024-may-19-for-all-recall-memory-based-questions",
+    "sha256": "e5806e459937e3c204b874b2c480280b0e7416698dbb3364d5fb783746aa02cb",
+    "bytes": 2364898,
+    "exam": "ini-cet",
+    "year": 2024,
+    "session": "May",
+    "required": true
+  },
+  {
+    "file": "gmu-2024-b5bcc5f6-93e6-4642-bc23-37a2a3d921d7.pdf",
+    "url": "https://media.getmyuni.com/assets/downloadables/b5bcc5f6-93e6-4642-bc23-37a2a3d921d7.pdf",
+    "pageUrl": "https://news.getmyuni.com/ini-cet-unofficial-answer-key-2024-may-19-for-all-recall-memory-based-questions",
+    "sha256": "c9feb753284963ca00215b48850fc4d28b17903e8f8b48e035c652e2c1b92e63",
+    "bytes": 666276,
+    "exam": "ini-cet",
+    "year": 2024,
+    "session": "May",
+    "required": true
   }
 ]

@@ -22,7 +22,7 @@ def digest(row):
     value = json.dumps([row['question'], row['options'], row['key']], ensure_ascii=False, separators=(',', ':'))
     return hashlib.sha256(value.encode()).hexdigest()
 
-def prepare(sources, download):
+def prepare(sources, download, required_files=None):
     manifest=json.loads((ROOT/'scripts/aiims-ini-sources.json').read_text())
     def fetch(source):
         target=sources/source['file']
@@ -40,18 +40,67 @@ def prepare(sources, download):
         # WordPress pages vary between requests; selected-item fingerprints pin their text.
         if source['file'].endswith('.pdf') and hashlib.sha256(target.read_bytes()).hexdigest()!=source['sha256']:
             raise ValueError('Source fingerprint changed: '+source['file'])
-    with ThreadPoolExecutor(max_workers=5) as pool:list(pool.map(fetch,[s for s in manifest if s['required']]))
+    with ThreadPoolExecutor(max_workers=5) as pool:list(pool.map(fetch,[s for s in manifest if s['required'] and (required_files is None or s['file'] in required_files)]))
     return {s['file']:s for s in manifest}
 
-def build(sources):
-    source_index=prepare(sources,False)
-    result=json.loads((sources/'candidates.json').read_text())
+def reviewed_baseline(source_index):
+    """Recover only previously published, fingerprinted rows, preserving provenance.
+
+    Used when extending a released bank without reimporting mutable remote PDFs.
+    New identities can only come from explicit transcriptions and freshly hash-
+    checked source files. A prior row is not a substitute for new source evidence.
+    """
+    receipt=json.loads((ROOT/'docs/AIIMS_INI_RELEASE_CANDIDATE_20261021.json').read_text())
+    provenance={r['id']:r for r in receipt['questionProvenance']}
+    reviews={r['id']:r for r in json.loads((ROOT/'scripts/aiims-ini-reviewed.json').read_text())}
+    result=[]
+    for name,exam in [('aiimsPgBank','aiims-pg'),('iniCetBank','ini-cet')]:
+        bank=json.loads((ROOT/f'mobile/src/lib/{name}.json').read_text())
+        for row in bank['records']:
+            prior=provenance.pop(row['id']);review=reviews[row['id']]
+            matches=[s for s in source_index.values() if s['url']==prior['sourceUrl'] and s['sha256']==prior['sourceSha256']]
+            if len(matches)!=1:raise ValueError('Released source identity is ambiguous: '+row['id'])
+            source=matches[0]
+            if review.get('source',source['file'])!=source['file']:raise ValueError('Released review source mismatch: '+row['id'])
+            candidate=dict(id=row['id'],source=source['file'],source_number=prior['sourceNumber'],question=row['question'],options=row['options'],key=row['sourceAnswer'])
+            if (digest(candidate)!=prior['sourceFingerprint'] or digest(candidate)!=review['sourceFingerprint']
+                or source['sha256']!=prior['sourceSha256'] or source['url']!=prior['sourceUrl']
+                or exam!=prior['exam'] or source['exam']!=exam
+                or row['examYear']!=source['year'] or source['year']!=prior['collectionYear']
+                or row.get('examSession')!=source.get('session') or source.get('session')!=prior.get('examSession')
+                or row['chapterId']!=review['chapterId'] or row['explanation']!=review['explanation']
+                or row['answerIndex']!=ord(review['answer'])-65):
+                raise ValueError('Released baseline changed: '+row['id'])
+            result.append(candidate)
+    if provenance:raise ValueError('Released receipt contains missing records')
+    return result,receipt['privateExtractedCandidates']
+
+def build(sources, extend_reviewed=False):
+    transcribed=json.loads((ROOT/'scripts/aiims-ini-transcribed.json').read_text())
+    if extend_reviewed:
+        source_index={s['file']:s for s in json.loads((ROOT/'scripts/aiims-ini-sources.json').read_text())}
+        result,private_count=reviewed_baseline(source_index)
+        previous_ids={r['id'] for r in result}
+        new_ids={r['id'] for r in json.loads((ROOT/'scripts/aiims-ini-reviewed.json').read_text())}-previous_ids
+        additions={r['id']:r for r in transcribed if r['id'] in new_ids}
+        if set(additions)!=new_ids:raise ValueError('New reviews require explicit source transcriptions')
+        prepare(sources,False,{r['source'] for r in additions.values()})
+        # Existing transcriptions are checked again below against the baseline.
+        existing={r['id']:r for r in result}
+        for row in transcribed:
+            if row['id'] in existing and digest(row)!=digest(existing[row['id']]):
+                raise ValueError('Released transcription changed: '+row['id'])
+        transcribed=[r for r in transcribed if r['id'] not in previous_ids]
+    else:
+        source_index=prepare(sources,False)
+        result=json.loads((sources/'candidates.json').read_text())
+        private_count=len(result)
     candidates={}
     conflicts=set()
     for row in result:
         if row['id'] in candidates and digest(row)!=digest(candidates[row['id']]):conflicts.add(row['id'])
         candidates[row['id']]=row
-    for row in json.loads((ROOT/'scripts/aiims-ini-transcribed.json').read_text()):
+    for row in transcribed:
         if row['id'] in candidates:raise ValueError('Transcription overlaps extraction: '+row['id'])
         candidates[row['id']]=row
     reviews=json.loads((ROOT/'scripts/aiims-ini-reviewed.json').read_text())
@@ -83,7 +132,7 @@ def build(sources):
     for exam,bank in banks.items():
         used={r['chapterId'] for r in bank['records']};bank['chapters']=[c for c in syllabus['chapters'] if c['id'] in used]
         if not bank['records']:raise ValueError('Empty exam bank: '+exam)
-    summary=dict(date='2026-10-21',status='reviewed_release_candidate',totalQuestions=len(receipts),examCounts=dict(Counter(r['exam'] for r in receipts)),collectionYearCounts={exam:dict(sorted(Counter(r['collectionYear'] for r in receipts if r['exam']==exam).items())) for exam in banks},sourceDocuments=len(source_index),sourcesUsed=len(source_words),privateExtractedCandidates=len(result),questionProvenance=receipts,limitations=['Partial recall-practice selection, not complete historical papers or authenticated exam wording.','Explanations are original authored educational text; no independent clinical certification claimed.','Text-only single-answer batch. Image-dependent, multiple-answer and disputed items are held.','Document labels and supplied keys can be wrong; source date is not an exam-authentication guarantee.','No generic question dataset was used. No publisher explanations or images were copied.'])
+    summary=dict(date='2026-10-21',status='reviewed_release_candidate',totalQuestions=len(receipts),examCounts=dict(Counter(r['exam'] for r in receipts)),collectionYearCounts={exam:dict(sorted(Counter(r['collectionYear'] for r in receipts if r['exam']==exam).items())) for exam in banks},sourceDocuments=len(source_index),sourcesUsed=len(source_words),privateExtractedCandidates=private_count,questionProvenance=receipts,limitations=['Partial recall-practice selection, not complete historical papers or authenticated exam wording.','Explanations are original authored educational text; no independent clinical certification claimed.','Text-only single-answer batch. Image-dependent, multiple-answer and disputed items are held.','Document labels and supplied keys can be wrong; source date is not an exam-authentication guarantee.','No generic question dataset was used. No publisher explanations or images were copied.'])
     outputs={ROOT/'mobile/src/lib/aiimsPgBank.json':banks['aiims-pg'],ROOT/'mobile/src/lib/iniCetBank.json':banks['ini-cet']}
     summary['payloadBytes']={p.name:len(json.dumps(v,ensure_ascii=False,separators=(',',':')).encode()) for p,v in outputs.items()}
     outputs[ROOT/'docs/AIIMS_INI_RELEASE_CANDIDATE_20261021.json']=summary
@@ -94,7 +143,11 @@ def build(sources):
     print(json.dumps({k:v for k,v in summary.items() if k!='questionProvenance'},indent=2))
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--sources',type=Path,required=True);parser.add_argument('--download',action='store_true');args=parser.parse_args();args.sources.mkdir(exist_ok=True,parents=True)
-    prepare(args.sources,args.download)
-    subprocess.run([sys.executable,str(ROOT/'scripts/pg-import/extract_aiims_ini.py'),'--sources',str(args.sources)],check=True)
-    build(args.sources)
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--sources',type=Path,required=True);parser.add_argument('--download',action='store_true');parser.add_argument('--extend-reviewed',action='store_true',help='Preserve receipt-verified released rows; hash-check source files for new transcribed reviews');args=parser.parse_args();args.sources.mkdir(exist_ok=True,parents=True)
+    if args.extend_reviewed:
+        if args.download:parser.error('--extend-reviewed uses staged new sources; do not combine with --download')
+        build(args.sources,True)
+    else:
+        prepare(args.sources,args.download)
+        subprocess.run([sys.executable,str(ROOT/'scripts/pg-import/extract_aiims_ini.py'),'--sources',str(args.sources)],check=True)
+        build(args.sources)

@@ -61,5 +61,15 @@
     "sourceFingerprint": "279a1f1fb1cb4a3b56f782b18d80c017c5671e8e0054ff041c7dc4a9a8024691",
     "explanation": "The hepatocystic triangle is bounded by the cystic duct, common hepatic duct and inferior liver surface. The cystic artery usually traverses this space rather than forming its boundary.",
     "holdReason": "Duplicate of existing ini-2025-01:1 with shuffled choices."
+  },
+  {
+    "id": "gmu-2024-9674994c-68dc-4adb-bf75-b110e4d8d977:16",
+    "source": "gmu-2024-9674994c-68dc-4adb-bf75-b110e4d8d977.pdf",
+    "sourceNumber": 16,
+    "sourceFingerprint": "7186640a9df56d0028b4d833e0518ef41ed752e3ca0d491b51c0d0b8a41c02b8",
+    "chapterId": "final-year/general-surgery/neuro-cardiothoracic-surgery",
+    "answer": "A",
+    "explanation": "The Mount Fuji sign describes separation and compression of the frontal lobes by subdural air and is associated with tension pneumocephalus. The source offers only the broader term pneumocephalus, which is the best listed answer.",
+    "reason": "Duplicate of existing ini-2024-01:3 (Mt Fuji sign), despite expanded abbreviation and shuffled choices."
   }
 ]

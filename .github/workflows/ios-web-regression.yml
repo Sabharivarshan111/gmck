@@ -25,6 +25,7 @@ jobs:
       - run: npm run build:vercel
       - run: node node_modules/playwright-core/cli.js install --with-deps chromium webkit
         working-directory: mobile
+      - run: python scripts/test-pg-source-extension.py
       - run: node scripts/test-aiims-ini-offline.mjs
       - run: node scripts/test-pg-exam-years.mjs
       - run: node mobile/web/neet-pg-offline-check.mjs

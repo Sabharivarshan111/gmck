@@ -12,10 +12,10 @@ const chapters = new Map(read('mobile/src/lib/neetPgStudyData.json').chapters.ma
 const fetchBefore = globalThis.fetch;
 globalThis.fetch=()=>{throw Error('Offline bank attempted networking');};
 try {
-  for (const [file,count] of [['aiimsPgBank.json',77],['iniCetBank.json',135]]) {
+  for (const [file,count] of [['aiimsPgBank.json',80],['iniCetBank.json',150]]) {
     const bank=read('mobile/src/lib/'+file);validateOfflineBank(bank);
     const reader=createOfflineReader(bank);assert.equal(reader.total,count);
-    assert.equal(fs.statSync('mobile/src/lib/'+file).size<100000,true);
+    assert.equal(fs.statSync('mobile/src/lib/'+file).size<125000,true);
     const rows=[];
     for(let offset=0;offset<reader.total;offset+=40)rows.push(...reader.search({offset}).records);
     assert.equal(rows.length,count);assert.equal(new Set(rows.map(r=>r.id)).size,count);
@@ -41,11 +41,11 @@ try {
   }
   for (const held of ['aiims-2017-nov:1', 'ini-2024-01:15', 'ini-2026-may:8']) assert.equal(reviewed.some(r=>r.id===held),false);
   for(const row of read('scripts/aiims-ini-held.json')) assert.equal(reviewed.some(r=>r.id===row.id),false);
-  assert.equal(receipts.totalQuestions,212);
-  assert.equal(receipts.questionProvenance.length,212);
+  assert.equal(receipts.totalQuestions,230);
+  assert.equal(receipts.questionProvenance.length,230);
   const used = new Set(receipts.questionProvenance.map(r=>r.id));assert.deepEqual(used,new Set(reviewed.map(r=>r.id)));
   // Existing NEET payload remains separate and is not relabelled as another exam.
   const neet=read('mobile/src/lib/neetPgBank.json');assert.equal(neet.records.length,2078);
   assert.equal(neet.records.some(r=>used.has(r.id)),false);
 } finally {globalThis.fetch=fetchBefore;}
-console.log('PASS: 212 source-fingerprinted recall items, original explanations, real syllabus paths, offline search/filter/answers, mutation isolation and unchanged 2,078-item NEET bank.');
+console.log('PASS: 230 source-fingerprinted recall items, original explanations, real syllabus paths, offline search/filter/answers, mutation isolation and unchanged 2,078-item NEET bank.');
