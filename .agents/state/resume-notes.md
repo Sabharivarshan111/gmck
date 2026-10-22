@@ -2410,3 +2410,14 @@ DO NOT:Restore search-preview draft questions, held duplicates, changed source h
 **NEXT:** Finish browser evidence/checks, push PR, verify merged production asset payloads. Continue original publisher/key/image review of unimported leads, preserving200-word per-document excerpt limits.
 
 **DO NOT:** Conflate PG Blazer with PGBlaster; claim200/436/90 as reviewed question counts; import MedMCQA, missing choices or generated search summaries; infer January2012 admission as exam year2012. No change to version/signing/ad configuration or release gates.
+
+
+## 2026-10-22 — Faculty recalls publication and statistics chapter refinement
+
+**DONE:** PR117 merged as55fc57ddfb139b4ca7c4746c496519259f687c2b (tested tree85e42801d33310f75597f68d60abfe2387002c17). Hosted PG content integrity39711051858 passed. Existing broad Web gate still reports digestive92% versus95%; untouched. Nine additions are239 combined, not the larger candidate pools. Final taxonomy check moves only the new descriptive-statistics item to Health Information & Medical Statistics; all previous230 records remain identical. Receipt/review/bank agree; existing IDs and source fingerprints are preserved.
+
+**HALF-DONE:** Publishing taxonomy follow-up and confirming production assets; production deployment forPR117 queued/building at this checkpoint. No signed Android release or Play upload claimed.
+
+**NEXT:** Finish final browser check for statistics chapter, publish follow-up, verify production payloads and put final CI/deployment outcome in PR receipt.
+
+**DO NOT:** Weaken anatomy/iOS release gates or count unrecovered PG Blazer records as imported. No MedMCQA.

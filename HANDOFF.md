@@ -2636,3 +2636,7 @@ The next individually reviewed expansion adds18 questions, yielding AIIMS80 and 
 ## 2026-10-22 — Additional AIIMS/INI faculty recalls and deeper archive search
 
 Nine selected additions bring candidate AIIMS83 / INI156 (239 total). Previous230 complete records and NEET2078/year sidecar unchanged. Two public faculty HTML documents and actual key slides inspected, pinned and documented; original explanations and real chapter/year/session metadata provided. Larger unimported sources include PG Blazer May/November2011 and May2015, a mixed-month436-slide AIIMS2015 deck and INI November2023 multi-subject recall. Counts and holds are explicit in docs/AIIMS_INI_DEEPER_SEARCH_20261022.md; receipts in scripts/aiims-ini-discovered-20261022.json. No MedMCQA, publisher explanations or images distributed. Local content/build/type/native checks pass; final browser/publication outcome is recorded in the PR receipt. No new signed APK/Play/device claim.
+
+
+### Faculty recalls publication checkpoint
+PR117 merged nine additions (AIIMS83/INI156). Follow-up refines only the new descriptive-statistics chapter, preserving its ID/wording/key and all previous230 complete rows. Source/data/year checks and final web/Android JS builds pass; final production and hosted outcomes belong to the PR receipts. Broad digestive anatomy coverage gate remains92% versus95%, unchanged.
