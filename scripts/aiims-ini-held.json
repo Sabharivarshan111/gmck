@@ -71,5 +71,11 @@
     "answer": "A",
     "explanation": "The Mount Fuji sign describes separation and compression of the frontal lobes by subdural air and is associated with tension pneumocephalus. The source offers only the broader term pneumocephalus, which is the best listed answer.",
     "reason": "Duplicate of existing ini-2024-01:3 (Mt Fuji sign), despite expanded abbreviation and shuffled choices."
+  },
+  {
+    "id": "faculty-ini-2022-may-psm:4",
+    "source": "slideshare-ini-2022-may-psm.html",
+    "sourceNumber": 4,
+    "reason": "Same confidence-interval/sample-size question as aglasem-68d61bf6-b5c8-11ed-ac15-0a5e36bc6706:4; semantic duplicate despite different wording."
   }
 ]

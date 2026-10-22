@@ -38,7 +38,7 @@ def prepare(sources, download, required_files=None):
             if source['required']:raise ValueError('Missing required source: '+source['file'])
             return
         # WordPress pages vary between requests; selected-item fingerprints pin their text.
-        if source['file'].endswith('.pdf') and hashlib.sha256(target.read_bytes()).hexdigest()!=source['sha256']:
+        if (source['file'].endswith('.pdf') or source.get('pinBytes')) and hashlib.sha256(target.read_bytes()).hexdigest()!=source['sha256']:
             raise ValueError('Source fingerprint changed: '+source['file'])
     with ThreadPoolExecutor(max_workers=5) as pool:list(pool.map(fetch,[s for s in manifest if s['required'] and (required_files is None or s['file'] in required_files)]))
     return {s['file']:s for s in manifest}
@@ -132,7 +132,7 @@ def build(sources, extend_reviewed=False):
     for exam,bank in banks.items():
         used={r['chapterId'] for r in bank['records']};bank['chapters']=[c for c in syllabus['chapters'] if c['id'] in used]
         if not bank['records']:raise ValueError('Empty exam bank: '+exam)
-    summary=dict(date='2026-10-21',status='reviewed_release_candidate',totalQuestions=len(receipts),examCounts=dict(Counter(r['exam'] for r in receipts)),collectionYearCounts={exam:dict(sorted(Counter(r['collectionYear'] for r in receipts if r['exam']==exam).items())) for exam in banks},sourceDocuments=len(source_index),sourcesUsed=len(source_words),privateExtractedCandidates=private_count,questionProvenance=receipts,limitations=['Partial recall-practice selection, not complete historical papers or authenticated exam wording.','Explanations are original authored educational text; no independent clinical certification claimed.','Text-only single-answer batch. Image-dependent, multiple-answer and disputed items are held.','Document labels and supplied keys can be wrong; source date is not an exam-authentication guarantee.','No generic question dataset was used. No publisher explanations or images were copied.'])
+    summary=dict(date='2026-10-22',status='reviewed_release_candidate',totalQuestions=len(receipts),examCounts=dict(Counter(r['exam'] for r in receipts)),collectionYearCounts={exam:dict(sorted(Counter(r['collectionYear'] for r in receipts if r['exam']==exam).items())) for exam in banks},sourceDocuments=len(source_index),sourcesUsed=len(source_words),privateExtractedCandidates=private_count,questionProvenance=receipts,limitations=['Partial recall-practice selection, not complete historical papers or authenticated exam wording.','Explanations are original authored educational text; no independent clinical certification claimed.','Text-only single-answer batch. Image-dependent, multiple-answer and disputed items are held.','Document labels and supplied keys can be wrong; source date is not an exam-authentication guarantee.','No generic question dataset was used. No publisher explanations or images were copied.'])
     outputs={ROOT/'mobile/src/lib/aiimsPgBank.json':banks['aiims-pg'],ROOT/'mobile/src/lib/iniCetBank.json':banks['ini-cet']}
     summary['payloadBytes']={p.name:len(json.dumps(v,ensure_ascii=False,separators=(',',':')).encode()) for p,v in outputs.items()}
     outputs[ROOT/'docs/AIIMS_INI_RELEASE_CANDIDATE_20261021.json']=summary
