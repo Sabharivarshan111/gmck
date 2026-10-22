@@ -89,6 +89,12 @@ try {
   await page.getByText('Answer: C',{exact:true}).waitFor();
   await page.screenshot({path:path.join(evidence,'ini-faculty-2022.png')});
   await label('Return to INI-CET library').click();
+  await label('Search offline INI-CET questions').fill('describe the collected data');
+  await label('Open INI-CET question 1').click();
+  await page.getByText(/Health Information.*Medical Statistics/).waitFor();
+  await label('Show answer and explanation').click();
+  await page.getByText('Answer: B',{exact:true}).waitFor();
+  await label('Return to INI-CET library').click();
   await choose('AIIMS PG',83);
   await label('Search offline AIIMS PG questions').fill('Semantic memory');
   await label('Open AIIMS PG question 1').click();

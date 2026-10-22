@@ -40,3 +40,5 @@ node scripts/test-pg-exam-years.mjs
 ```
 
 New faculty HTML sources opt into byte pinning; a tampered staged HTML document must fail just like a changed PDF. Earlier mutable WordPress behavior is preserved. Seven extension integrity checks pass, including altered-source rejection. The offline test pins83/156/239 and preserves the NEET bank. Browser checks include the new May2016 semantic-memory answerB and May2022 HPV answerC, year labels, bookmarking and offline switching. Final build/browser/publication outcomes are recorded in the PR receipt; this document is not a signed APK or Play publication claim.
+
+Final taxonomy check: the new descriptive-statistics item is filed under **Health Information & Medical Statistics**. Question text, choices, key, identity and counts are unchanged. PR117 merged the additions; a follow-up carries this chapter refinement and refreshed cache. Final publication receipts are in the PR descriptions.
