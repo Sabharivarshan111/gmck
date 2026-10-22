@@ -1,0 +1,239 @@
+{
+  "date": "2026-10-22",
+  "baselineCommit": "4233d8fe939cbc9a5c8d5bb1948f193b45e2b821",
+  "baselineCounts": {
+    "aiims-pg": 83,
+    "ini-cet": 156
+  },
+  "added": 13,
+  "sourceRepaired": 1,
+  "duplicateWithdrawn": 1,
+  "unchangedEarlierRecords": 237,
+  "finalCounts": {
+    "aiims-pg": 90,
+    "ini-cet": 161
+  },
+  "finalTotal": 251,
+  "structuralScope": "All251 active records: keys, identity fingerprints, chapters, dates, complete four choices, held exclusion and numbered-sequence context. This is not independent clinical certification of every historical item.",
+  "newSourceScope": "Seven individual PG Blazer pages and six selected items from the November2023 faculty recall deck. Full slides and publisher images/explanations are not distributed.",
+  "files": [
+    {
+      "file": "inicetmay25-psm.pdf",
+      "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/PSM-INI-25-May-Reworked_compressed.pdf",
+      "pageUrl": "https://tinyurl.com/inicetmay25-psm",
+      "sha256": "d8a2e6f11b4b180ebc749c8e5e1c473f62b2f9699d6f8cf3e8e8d30eefccb534",
+      "bytes": 254627,
+      "exam": "ini-cet",
+      "year": 2025,
+      "session": "May",
+      "required": true,
+      "acquisition": "HTTP200 original public HTML or PDF bytes",
+      "selected": true
+    },
+    {
+      "file": "pgblazer-2011-may-92.html",
+      "url": "https://pgblazer.com/aiims-may-2011-mcq-92/",
+      "sha256": "9dbf70e21c2ab7e48fc9120d6d001db7e245d5b76e11334ecf74643e858d0533",
+      "bytes": 42900,
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "May",
+      "required": true,
+      "pinBytes": true,
+      "acquisition": "HTTP200 original public HTML or PDF bytes",
+      "selected": true
+    },
+    {
+      "file": "pgblazer-2011-nov-196.html",
+      "url": "https://pgblazer.com/aiims-november-2011-mcq-196/",
+      "sha256": "5f74a97b754926056c6efc5aa339d8ee21331e67cc6ab61a5e04d2f89553dd5c",
+      "bytes": 45608,
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "November",
+      "required": true,
+      "pinBytes": true,
+      "acquisition": "HTTP200 original public HTML or PDF bytes",
+      "selected": true
+    },
+    {
+      "file": "pgblazer-2015-may-25.html",
+      "url": "https://pgblazer.com/aiims-pg-entrance-may-2015-mcq-25-judet-view-x-ray/",
+      "sha256": "dbe2927ed4ca69c1ac131f2f60559d8d4587cdaad71ba249120ab702a54aab09",
+      "bytes": 45037,
+      "exam": "aiims-pg",
+      "year": 2015,
+      "session": "May",
+      "required": true,
+      "pinBytes": true,
+      "acquisition": "HTTP200 original public HTML or PDF bytes",
+      "selected": true
+    },
+    {
+      "file": "pgblazer-2015-may-28.html",
+      "url": "https://pgblazer.com/aiims-pg-entrance-may-2015-mcq-28-disease-trends/",
+      "sha256": "14808ed8677d86802b642da6aef4ade1802a7a22512e1fe57cbc3896af5d496f",
+      "bytes": 44771,
+      "exam": "aiims-pg",
+      "year": 2015,
+      "session": "May",
+      "required": true,
+      "pinBytes": true,
+      "acquisition": "HTTP200 original public HTML or PDF bytes",
+      "selected": true
+    },
+    {
+      "file": "pgblazer-2015-may-29.html",
+      "url": "https://pgblazer.com/aiims-pg-entrance-may-2015-mcq-29-hypertensive-bleed/",
+      "sha256": "fc3a770f51928f8d89eac9b5c69784be26366af756545695b3cb26e34e97a240",
+      "bytes": 45070,
+      "exam": "aiims-pg",
+      "year": 2015,
+      "session": "May",
+      "required": true,
+      "pinBytes": true,
+      "acquisition": "HTTP200 original public HTML or PDF bytes",
+      "selected": true
+    },
+    {
+      "file": "pgblazer-2015-may-32.html",
+      "url": "https://pgblazer.com/aiims-pg-entrance-may-2015-mcq-32-tropical-spastic-paraparesis/",
+      "sha256": "5b957d870236b41803f6189f3611a0cfa68236619c303b5b38fd2172b9d9da57",
+      "bytes": 45601,
+      "exam": "aiims-pg",
+      "year": 2015,
+      "session": "May",
+      "required": true,
+      "pinBytes": true,
+      "acquisition": "HTTP200 original public HTML or PDF bytes",
+      "selected": true
+    },
+    {
+      "file": "pgblazer-2015-may-34.html",
+      "url": "https://pgblazer.com/aiims-pg-entrance-may-2015-mcq-34-heterochromia-iridis/",
+      "sha256": "dbecfc874ca0e59cd55c38d92bf4383c531b1813af6c2c8ea82fd6b8b6388f70",
+      "bytes": 45722,
+      "exam": "aiims-pg",
+      "year": 2015,
+      "session": "May",
+      "required": true,
+      "pinBytes": true,
+      "acquisition": "HTTP200 original public HTML or PDF bytes",
+      "selected": true
+    },
+    {
+      "file": "faculty-ini-2023-nov-part1.html",
+      "url": "https://www.slideshare.net/slideshow/ini-cet-nov-2023-recall-session-part1pdf/264931543",
+      "sha256": "a746855f9816e1a6362fa21fd940622d717e0a717be7ae08a736f0aea55c9963",
+      "bytes": 1161029,
+      "exam": "ini-cet",
+      "year": 2023,
+      "session": "November",
+      "required": true,
+      "pinBytes": true,
+      "acquisition": "HTTP200 original public HTML or PDF bytes",
+      "selected": true
+    },
+    {
+      "file": "pgblazer-2015-may-33.html",
+      "url": "https://pgblazer.com/aiims-pg-entrance-may-2015-mcq-33-three-swab-test/",
+      "sha256": "540980c7100caff62c7c29b773d63c30b30f40357000a599cae7340644cf7597",
+      "bytes": 45863,
+      "exam": "aiims-pg",
+      "year": 2015,
+      "session": "May",
+      "required": false,
+      "pinBytes": true,
+      "identityStatus": "held_key_stem_conflict",
+      "acquisition": "HTTP200 original public HTML or PDF bytes",
+      "selected": false
+    }
+  ],
+  "sourceImages": [
+    {
+      "file": "nov2023-slide-28.jpg",
+      "bytes": 9944,
+      "sha256": "6dd7f96ab0c224184d810fff0b0f55b6b1dee94cd9fccc283be45096a29b1be5",
+      "use": "Private source verification; not distributed"
+    },
+    {
+      "file": "nov2023-slide-29.jpg",
+      "bytes": 10366,
+      "sha256": "5e47a08f1c4bf4123195f56223e550a2d096e4c088866af77e08f4ebfd980073",
+      "use": "Private source verification; not distributed"
+    },
+    {
+      "file": "nov2023-slide-30.jpg",
+      "bytes": 6055,
+      "sha256": "b00a7abbb8104af33af9c6fa955eef74b6a24defefef06783d27dc887a244fab",
+      "use": "Private source verification; not distributed"
+    },
+    {
+      "file": "nov2023-slide-34.jpg",
+      "bytes": 14820,
+      "sha256": "6415378301c9dc5b12d6f72fc38035a73c54c130672ce57729ceccc21b8ddac4",
+      "use": "Private source verification; not distributed"
+    },
+    {
+      "file": "nov2023-slide-36.jpg",
+      "bytes": 11382,
+      "sha256": "f86a156eb70046840f6cbce6c7bf325108050347f6f21f2c222915f960245961",
+      "use": "Private source verification; not distributed"
+    },
+    {
+      "file": "nov2023-slide-40.jpg",
+      "bytes": 7932,
+      "sha256": "a0268d48a054986eb84905cad2c2d767234de6058e71333988c56016a4afee95",
+      "use": "Private source verification; not distributed"
+    },
+    {
+      "file": "nov2023-slide-53.jpg",
+      "bytes": 9413,
+      "sha256": "02991194ecb0770851c5e1180cd1cbbca5bdb85dad2d53c9c6f738440607a747",
+      "use": "Private source verification; not distributed"
+    },
+    {
+      "file": "nov2023-slide-86.jpg",
+      "bytes": 13592,
+      "sha256": "732d6553e98f6625df96f00eba176c9858225f1c073b873525f6caf70fb3e9b5",
+      "use": "Private source verification; not distributed"
+    },
+    {
+      "file": "nov2023-slide-9.jpg",
+      "bytes": 6345,
+      "sha256": "7cdd8e5e9406647e77e9582fc99d4db7df69d8188737f267b26af96b1337ba8a",
+      "use": "Private source verification; not distributed"
+    }
+  ],
+  "answerCrossChecks": {
+    "latanoprost": "https://dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=213a0003-da2b-4b91-9281-c05a73f94e46&type=display",
+    "HTLV": "https://www.who.int/news-room/fact-sheets/detail/human-t-lymphotropic-virus-type-1",
+    "Judet": "https://surgeryreference.aofoundation.org/orthopedic-trauma/adult-trauma/acetabulum/further-reading/radiology-of-the-intact-acetabulum",
+    "CAP": "https://pubmed.ncbi.nlm.nih.gov/1088926/",
+    "MAP": "https://pubmed.ncbi.nlm.nih.gov/32694334/",
+    "hypertensive_ICH": "https://www.ahajournals.org/doi/10.1161/STR.0000000000000407",
+    "secular_trend": "https://www.cdc.gov/field-epi-manual/php/chapters/describing-epi-data.html",
+    "rivastigmine": "https://www.accessdata.fda.gov/drugsatfda_docs/label/2015/022083s020lbl.pdf",
+    "ethionamide": "https://extranet.who.int/prequal/sites/default/files/whopar_files/TB133part4v1.pdf",
+    "dexrazoxane": "https://dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=c9c625fc-8852-4ed4-bcf2-63f46a706782&type=display",
+    "aspirin_thyroid_storm": "https://www.jstage.jst.go.jp/article/endocrj/advpub/0/advpub_EJ16-0336/_pdf",
+    "NPDR": "https://www.nei.nih.gov/research-and-training/research-news/early-anti-vegf-treatment-diabetic-retinopathy-yields-no-benefit-visual-acuity"
+  },
+  "pendingSemanticPairs": [
+    [
+      "ini-2025-01:8",
+      "inicetmay25-physiology:2"
+    ],
+    [
+      "ini-2022-01:10",
+      "aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706:1"
+    ]
+  ],
+  "pendingReason": "Similar questions in sources with different precision of session attribution. Resolve original-session evidence before merging; do not infer a month from collection01.",
+  "limits": [
+    "Partial recall-practice bank, not full official papers.",
+    "No MedMCQA or generic dataset used.",
+    "Selected INI document excerpt106 words; five AIIMS May2015 page selections88 words in aggregate.",
+    "The Nov2023 deck is189 slides; only accessible text-bearing slides and the selected original image slides were audited, not189 validated questions."
+  ]
+}

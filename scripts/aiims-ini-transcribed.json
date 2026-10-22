@@ -897,19 +897,6 @@
     "key": "C"
   },
   {
-    "id": "inicetmay25-psm:4",
-    "source": "inicetmay25-psm.pdf",
-    "source_number": 4,
-    "question": ". Setting research objective",
-    "options": [
-      "4-3-2-1",
-      "1-2-3-4",
-      "3-4-2-1",
-      "3-4-1-2"
-    ],
-    "key": "C"
-  },
-  {
     "id": "inicetmay25-psychiatry:1",
     "source": "inicetmay25-psychiatry.pdf",
     "source_number": 1,
@@ -2052,5 +2039,187 @@
       "Penicillin"
     ],
     "key": "C"
+  },
+  {
+    "id": "inicetmay25-psm:4",
+    "source": "inicetmay25-psm.pdf",
+    "source_number": 4,
+    "question": "Organize the following steps in the correct sequence for conducting research: 1. Conduct data analysis; 2. Selecting population; 3. Setting research question; 4. Setting research objective.",
+    "options": [
+      "4-3-2-1",
+      "1-2-3-4",
+      "3-4-2-1",
+      "3-4-1-2"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "pgblazer-2011-may-92:92",
+    "source": "pgblazer-2011-may-92.html",
+    "source_number": 92,
+    "question": "CAP in Lac operon is an example of:",
+    "options": [
+      "Positive regulator",
+      "Negative regulator",
+      "Constitutive expression",
+      "Attenuation"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "pgblazer-2011-nov-196:196",
+    "source": "pgblazer-2011-nov-196.html",
+    "source_number": 196,
+    "question": "Mean arterial pressure is calculated as:",
+    "options": [
+      "(SBP+2DBP)/3",
+      "(DBP+2SBP)/3",
+      "(SBP+3DBP)/2",
+      "(DBP+3SBP)/2"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "pgblazer-2015-may-25:25",
+    "source": "pgblazer-2015-may-25.html",
+    "source_number": 25,
+    "question": "Judet view is used in X-ray of?",
+    "options": [
+      "Scaphoid",
+      "Shoulder",
+      "Pelvis",
+      "Calcaneum"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "pgblazer-2015-may-28:28",
+    "source": "pgblazer-2015-may-28.html",
+    "source_number": 28,
+    "question": "Increase in the incidence of non communicable disease compared to previous years is known as?",
+    "options": [
+      "Secular trend",
+      "Seasonal trend",
+      "Cyclical trend",
+      "Periodical trend"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "pgblazer-2015-may-29:29",
+    "source": "pgblazer-2015-may-29.html",
+    "source_number": 29,
+    "question": "Which of the following is the most common location for hypertensive haemorrhage?",
+    "options": [
+      "Brain stem",
+      "Basal ganglia",
+      "Thalamus",
+      "Cerebral hemispheres"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "pgblazer-2015-may-32:32",
+    "source": "pgblazer-2015-may-32.html",
+    "source_number": 32,
+    "question": "Causative organism of tropical spastic paraparesis is?",
+    "options": [
+      "Human immunodeficiency virus 1",
+      "Human immunodeficiency virus 2",
+      "Hepatitis B virus",
+      "Human T cell lymphotropic virus"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "pgblazer-2015-may-34:34",
+    "source": "pgblazer-2015-may-34.html",
+    "source_number": 34,
+    "question": "Topical drug which can induce heterochromia iridis is?",
+    "options": [
+      "Timolol",
+      "Prednisolone",
+      "Latanoprost",
+      "Olopatadine"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "faculty-ini-2023-nov-part1:slide-9",
+    "source": "faculty-ini-2023-nov-part1.html",
+    "source_number": 9,
+    "question": "In which part of the body are apocrine glands commonly present?",
+    "options": [
+      "Face",
+      "Scalp",
+      "Axilla",
+      "Palm & Soles"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "faculty-ini-2023-nov-part1:slide-28",
+    "source": "faculty-ini-2023-nov-part1.html",
+    "source_number": 28,
+    "question": "A patient with dementia cannot tolerate oral drugs. Which listed acetylcholinesterase inhibitor has a transdermal option?",
+    "options": [
+      "Donepezil",
+      "Memantine",
+      "Gallantamine",
+      "Rivastigmine"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "faculty-ini-2023-nov-part1:slide-29",
+    "source": "faculty-ini-2023-nov-part1.html",
+    "source_number": 29,
+    "question": "A 26-year-old patient develops neck swelling and raised TSH after six months of anti-tubercular treatment. Which drug is implicated?",
+    "options": [
+      "Rifampicin",
+      "Pyrazinamide",
+      "Cycloserine",
+      "Ethionamide"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "faculty-ini-2023-nov-part1:slide-30",
+    "source": "faculty-ini-2023-nov-part1.html",
+    "source_number": 30,
+    "question": "Which medicine reduces doxorubicin-associated cardiotoxicity?",
+    "options": [
+      "Aprepitant",
+      "Dexrazoxane",
+      "Amifostine",
+      "Leucovorin"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "faculty-ini-2023-nov-part1:slide-53",
+    "source": "faculty-ini-2023-nov-part1.html",
+    "source_number": 53,
+    "question": "Which listed medicine is avoided in thyroid storm?",
+    "options": [
+      "Propranolol",
+      "Lugol’s iodine",
+      "PTU",
+      "Aspirin"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "faculty-ini-2023-nov-part1:slide-86",
+    "source": "faculty-ini-2023-nov-part1.html",
+    "source_number": 86,
+    "question": "A 50-year-old patient with diabetes for 20 years has NPDR. Which finding would not be observed?",
+    "options": [
+      "Disc neovascularization",
+      "Retinal haemorrhage",
+      "Soft exudates",
+      "Venous beading"
+    ],
+    "key": "A"
   }
 ]

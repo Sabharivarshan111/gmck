@@ -1302,7 +1302,7 @@
     "id": "inicetmay25-psm:4",
     "chapterId": "third-year/community-medicine/paper-1/principles-methods-epidemiology",
     "answer": "C",
-    "sourceFingerprint": "883b48e82b335671bff6eb6a895d422ca1ce8cf63eb91edc5bb6595f891da73b",
+    "sourceFingerprint": "a764ac7bb53293102ce7ccb0f230b64b9d2daf25008ecf2d18a161cb367c7f61",
     "explanation": "A study begins with a research question and defined objectives. Population selection and study procedures follow, with analysis performed after data collection."
   },
   {
@@ -1983,20 +1983,6 @@
     ]
   },
   {
-    "id": "faculty-ini-2022-may-psm:5",
-    "source": "slideshare-ini-2022-may-psm.html",
-    "sourceNumber": 5,
-    "sourceFingerprint": "fb6e17f73218d0e5b796f97af4e4ddd485ae0ddfcbbf9ae65dd720f39bf4abf6",
-    "chapterId": "third-year/community-medicine/paper-1/health-information-and-medical-statistics",
-    "answer": "B",
-    "explanation": "Descriptive statistics summarise observed data using measures such as frequencies, averages and dispersion. Inferential statistics use sample data to draw conclusions about a wider population.",
-    "answerOrigin": "faculty_key_author_checked",
-    "sourceSlides": [
-      24,
-      28
-    ]
-  },
-  {
     "id": "faculty-ini-2022-may-psm:9",
     "source": "slideshare-ini-2022-may-psm.html",
     "sourceNumber": 9,
@@ -2051,5 +2037,152 @@
       71,
       75
     ]
+  },
+  {
+    "id": "pgblazer-2011-may-92:92",
+    "source": "pgblazer-2011-may-92.html",
+    "sourceNumber": 92,
+    "sourceFingerprint": "90098e6d1e654b399e4f50763b84d2085c42b17dfb535e5b0f2fb9050fa43aa3",
+    "chapterId": "first-year/biochemistry/paper-2/molecular-biology",
+    "answer": "A",
+    "explanation": "CAP, also called CRP, forms a complex with cyclic AMP and promotes transcription at the lac promoter by helping RNA polymerase act there. It is a positive regulator, whereas the lac repressor provides negative control."
+  },
+  {
+    "id": "pgblazer-2011-nov-196:196",
+    "source": "pgblazer-2011-nov-196.html",
+    "sourceNumber": 196,
+    "sourceFingerprint": "8800e0584b616a1cf8a1ca47952f5e74ecb0017393493422edf2dd2efd4cd6fd",
+    "chapterId": "first-year/physiology/paper-2/cardiovascular-physiology",
+    "answer": "A",
+    "explanation": "At ordinary resting heart rates, mean arterial pressure is commonly estimated as diastolic pressure plus one-third of pulse pressure: (SBP + 2 × DBP)/3. This is an approximation; the true mean is the time average of the arterial pressure waveform."
+  },
+  {
+    "id": "pgblazer-2015-may-25:25",
+    "source": "pgblazer-2015-may-25.html",
+    "sourceNumber": 25,
+    "sourceFingerprint": "b6f5d21f800e39b437594d76e490de3cb64a300f85ab85f06842eefefb1d0ba5",
+    "chapterId": "final-year/general-surgery/upper-lower-limb",
+    "answer": "C",
+    "explanation": "Judet projections are iliac and obturator oblique views of the pelvis. They help assess the acetabular columns and walls, especially when evaluating an acetabular fracture."
+  },
+  {
+    "id": "pgblazer-2015-may-28:28",
+    "source": "pgblazer-2015-may-28.html",
+    "sourceNumber": 28,
+    "sourceFingerprint": "546d52de3154f3801356df3766bc9bc99cec3703789780b61c7362abb778f9a2",
+    "chapterId": "third-year/community-medicine/paper-1/principles-methods-epidemiology",
+    "answer": "A",
+    "explanation": "A secular trend describes a change in disease occurrence over years or decades. It differs from a seasonal variation within a year and from a repeating cyclical fluctuation."
+  },
+  {
+    "id": "pgblazer-2015-may-29:29",
+    "source": "pgblazer-2015-may-29.html",
+    "sourceNumber": 29,
+    "sourceFingerprint": "4b32da757c7424b028bc4976f0d637da5c1686b0a230879b0561f35b47678ed4",
+    "chapterId": "final-year/general-medicine/neuro-and-stroke",
+    "answer": "B",
+    "explanation": "Chronic hypertension damages small penetrating cerebral arteries. The basal ganglia, particularly the putamen, are a classic common location for hypertensive intracerebral haemorrhage; the thalamus, pons and cerebellum are other important sites."
+  },
+  {
+    "id": "pgblazer-2015-may-32:32",
+    "source": "pgblazer-2015-may-32.html",
+    "sourceNumber": 32,
+    "sourceFingerprint": "1408225ea4e0bdc647e353b87fe0bc330cece9a5706029305a4595671f96683c",
+    "chapterId": "second-year/microbiology/paper-2/central-nervous-system-infections",
+    "answer": "D",
+    "explanation": "HTLV-1 can cause a chronic progressive inflammatory myelopathy called HTLV-1-associated myelopathy or tropical spastic paraparesis. Spastic weakness predominantly affects the lower limbs."
+  },
+  {
+    "id": "pgblazer-2015-may-34:34",
+    "source": "pgblazer-2015-may-34.html",
+    "sourceNumber": 34,
+    "sourceFingerprint": "d03f842f6530960adf4b634211bee552d9b71b0e2e2e1546c03ee57643081cb2",
+    "chapterId": "third-year/ophthalmology/ocular-therapeutics",
+    "answer": "C",
+    "explanation": "Latanoprost can increase iris pigmentation by increasing melanin within iris stromal melanocytes. If one eye is treated, the resulting difference in colour can produce acquired heterochromia. Iris colour changes may persist after treatment stops."
+  },
+  {
+    "id": "faculty-ini-2023-nov-part1:slide-9",
+    "source": "faculty-ini-2023-nov-part1.html",
+    "sourceNumber": 9,
+    "sourceFingerprint": "62917b84f9f2e7409b7f30e6e392bfce1b5a62c50f79b3ace33bd2ad2fb3cce6",
+    "chapterId": "first-year/anatomy/paper-1/histology",
+    "answer": "C",
+    "explanation": "Apocrine sweat glands are concentrated in areas such as the axilla and anogenital region and usually drain into hair follicles. Palms and soles contain eccrine glands instead.",
+    "answerOrigin": "faculty_annotated_key_author_checked",
+    "sourceSlides": [
+      9
+    ],
+    "wording": "source_based_normalized_recall"
+  },
+  {
+    "id": "faculty-ini-2023-nov-part1:slide-28",
+    "source": "faculty-ini-2023-nov-part1.html",
+    "sourceNumber": 28,
+    "sourceFingerprint": "97b9ac9c9460375aa7021a903fff31363d358fa38589377513f34eda3b37a92b",
+    "chapterId": "second-year/pharmacology/paper-1/central-nervous-system",
+    "answer": "D",
+    "explanation": "Rivastigmine is available as a transdermal patch for selected patients with dementia. This provides an alternative route when an oral cholinesterase inhibitor is poorly tolerated. Memantine is an NMDA receptor antagonist.",
+    "answerOrigin": "faculty_annotated_key_author_checked",
+    "sourceSlides": [
+      28
+    ],
+    "wording": "source_based_normalized_recall"
+  },
+  {
+    "id": "faculty-ini-2023-nov-part1:slide-29",
+    "source": "faculty-ini-2023-nov-part1.html",
+    "sourceNumber": 29,
+    "sourceFingerprint": "4eef1008eb73839637303af7ee6aa17ff5792124f67a1934255d72578376959d",
+    "chapterId": "second-year/pharmacology/paper-2/anti-microbial-drugs",
+    "answer": "D",
+    "explanation": "Ethionamide can cause hypothyroidism, sometimes with goitre. Raised TSH together with compatible symptoms during treatment is therefore an important adverse-effect clue; para-aminosalicylic acid is another tuberculosis drug associated with hypothyroidism.",
+    "answerOrigin": "faculty_annotated_key_author_checked",
+    "sourceSlides": [
+      29
+    ],
+    "wording": "source_based_normalized_recall"
+  },
+  {
+    "id": "faculty-ini-2023-nov-part1:slide-30",
+    "source": "faculty-ini-2023-nov-part1.html",
+    "sourceNumber": 30,
+    "sourceFingerprint": "f2ecb2db6eb6af5ce9cf89d9947f065e04441e0c4900e9efe189ed615208fe10",
+    "chapterId": "second-year/pharmacology/paper-2/neoplastic-drugs",
+    "answer": "B",
+    "explanation": "Dexrazoxane can reduce anthracycline-associated cardiac injury in selected patients receiving doxorubicin. Its use depends on the treatment setting and cumulative exposure; it is not automatically required from the first dose.",
+    "answerOrigin": "faculty_annotated_key_author_checked",
+    "sourceSlides": [
+      30
+    ],
+    "wording": "source_based_normalized_recall"
+  },
+  {
+    "id": "faculty-ini-2023-nov-part1:slide-53",
+    "source": "faculty-ini-2023-nov-part1.html",
+    "sourceNumber": 53,
+    "sourceFingerprint": "25bdb54814206ab44679b752bab64ae381475e700a551fd0ca0060b81d4a81ad",
+    "chapterId": "second-year/pharmacology/paper-2/hormones",
+    "answer": "D",
+    "explanation": "Aspirin and other salicylates can displace thyroid hormones from binding proteins and increase circulating free hormone. They are therefore avoided for fever control in thyroid storm.",
+    "answerOrigin": "faculty_annotated_key_author_checked",
+    "sourceSlides": [
+      53
+    ],
+    "wording": "source_based_normalized_recall"
+  },
+  {
+    "id": "faculty-ini-2023-nov-part1:slide-86",
+    "source": "faculty-ini-2023-nov-part1.html",
+    "sourceNumber": 86,
+    "sourceFingerprint": "60ee45a1c62bef936c76d650a651405727f5f208ff2b29539bdca135b53a6a6e",
+    "chapterId": "third-year/ophthalmology/diseases-of-retina",
+    "answer": "A",
+    "explanation": "New vessels at the optic disc signify proliferative diabetic retinopathy. Retinal haemorrhages, cotton-wool spots and venous beading can occur before that proliferative stage.",
+    "answerOrigin": "faculty_annotated_key_author_checked",
+    "sourceSlides": [
+      86
+    ],
+    "wording": "source_based_normalized_recall"
   }
 ]
