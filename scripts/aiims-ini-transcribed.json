@@ -2221,5 +2221,681 @@
       "Venous beading"
     ],
     "key": "A"
+  },
+  {
+    "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:12",
+    "source": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+    "source_number": 12,
+    "question": "Which artery is not a branch of the posterior division of the internal iliac artery?",
+    "options": [
+      "Iliolumbar artery",
+      "Lateral sacral artery",
+      "Superior gluteal artery",
+      "Inferior gluteal artery"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:24",
+    "source": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+    "source_number": 24,
+    "question": "Hemiballismus is associated with a lesion of which nucleus?",
+    "options": [
+      "Putamen",
+      "Caudate nucleus",
+      "Subthalamic nucleus",
+      "Globus pallidus"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:25",
+    "source": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+    "source_number": 25,
+    "question": "Which nerve is most commonly injured near the proximal fibula?",
+    "options": [
+      "Femoral nerve",
+      "Common peroneal nerve",
+      "Lateral cutaneous nerve of thigh",
+      "Saphenous nerve"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:29",
+    "source": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+    "source_number": 29,
+    "question": "Subdural haemorrhage most commonly follows injury to which vessels?",
+    "options": [
+      "Middle meningeal artery",
+      "Charcot artery",
+      "Bridging veins",
+      "Middle cerebral artery"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:34",
+    "source": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+    "source_number": 34,
+    "question": "The internal capsule contains which type of nerve fibres?",
+    "options": [
+      "Association",
+      "Commissural",
+      "Projection",
+      "All"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:35",
+    "source": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+    "source_number": 35,
+    "question": "Which neurons are present in the molecular layer of the cerebellar cortex?",
+    "options": [
+      "Purkinje",
+      "Basket/Stellate cells",
+      "Golgi",
+      "Granular cells"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:5",
+    "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+    "source_number": 5,
+    "question": "Which molecule mediates leukocyte rolling on vascular endothelium?",
+    "options": [
+      "Platelet endothelial cell adhesion molecule-1",
+      "E-selectins",
+      "Cadherins",
+      "CD11a"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:12",
+    "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+    "source_number": 12,
+    "question": "Which statement is not typical of haemophilia A?",
+    "options": [
+      "Factor VIII deficiency",
+      "X-linked recessive inheritance",
+      "More common in males",
+      "Mucosal bleeding is seen commonly"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:14",
+    "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+    "source_number": 14,
+    "question": "A gastric tumour is CD117-positive but cytokeratin- and S100-negative. Which diagnosis is most likely?",
+    "options": [
+      "GIST",
+      "Adenocarcinoma",
+      "Hodgkin’s lymphoma",
+      "Squamous cell carcinoma"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:16",
+    "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+    "source_number": 16,
+    "question": "Marked leucocytosis with basophilia, eosinophilia and neutrophilia most strongly suggests which leukaemia?",
+    "options": [
+      "CML",
+      "CLL",
+      "AML",
+      "ALL"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:1",
+    "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+    "source_number": 1,
+    "question": "After starting cART, a patient develops pigmentation of the palms and soles. Which listed drug is associated with this effect?",
+    "options": [
+      "Nelfinavir",
+      "Emtricitabine",
+      "Abacavir",
+      "Zidovudine"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:11",
+    "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+    "source_number": 11,
+    "question": "Dorzolamide is classified as which of the following?",
+    "options": [
+      "Topically applied sulfonamide antibacterial",
+      "Topical ocular carbonic anhydrase inhibitor",
+      "Second-generation sulfonylurea",
+      "Opioid receptor agonist"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:14",
+    "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+    "source_number": 14,
+    "question": "Sildenafil improves penile erectile function by increasing which intracellular mediator?",
+    "options": [
+      "cAMP",
+      "cGMP",
+      "Calcium",
+      "Phosphatidyl glycerol and inositol phosphate"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:20",
+    "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+    "source_number": 20,
+    "question": "Urinary alkalinisation is most useful in toxicity from which listed drug?",
+    "options": [
+      "Beta blockers",
+      "Calcium channel blockers",
+      "Aspirin",
+      "Acetaminophen"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:33",
+    "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+    "source_number": 33,
+    "question": "Which listed drug can precipitate haemolysis in G6PD deficiency?",
+    "options": [
+      "Primaquine",
+      "Chloroquine",
+      "Penicillin",
+      "Tetracycline"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:5",
+    "source": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706.pdf",
+    "source_number": 5,
+    "question": "When should alcohol hand sanitiser be replaced by handwashing with soap and water?",
+    "options": [
+      "Before examining the patient",
+      "After examining the patient",
+      "After touching the bed or surrounding of the patient",
+      "When hands are visibly soiled"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:6",
+    "source": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706.pdf",
+    "source_number": 6,
+    "question": "What minimum number of antenatal contacts does the WHO eight-contact model recommend?",
+    "options": [
+      "4",
+      "8",
+      "13",
+      "20"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:15",
+    "source": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706.pdf",
+    "source_number": 15,
+    "question": "Which listed index measures contraceptive failure?",
+    "options": [
+      "Pearl index",
+      "Sullivan index",
+      "Abortion rates",
+      "Performance index"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:17",
+    "source": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706.pdf",
+    "source_number": 17,
+    "question": "After an earthquake, building codes are strengthened to reduce damage in future earthquakes. This is an example of:",
+    "options": [
+      "Disaster response",
+      "Disaster impact",
+      "Disaster mitigation",
+      "Disaster preparedness"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:18",
+    "source": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706.pdf",
+    "source_number": 18,
+    "question": "A hooch tragedy is classically associated with poisoning by which substance?",
+    "options": [
+      "Methyl alcohol",
+      "Ethyl alcohol",
+      "Propranolol",
+      "Ethanol"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706:8",
+    "source": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+    "source_number": 8,
+    "question": "The most common cystic-fibrosis variant involves which amino acid and channel?",
+    "options": [
+      "Phenylalanine at position 508; chloride channel",
+      "Phenylalanine at position 708; calcium channel",
+      "Tryptophan at position 708; chloride channel",
+      "Tryptophan at position 508; calcium channel"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706:17",
+    "source": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+    "source_number": 17,
+    "question": "Which hormone has relatively little influence on fetal growth compared with postnatal growth?",
+    "options": [
+      "GH",
+      "Insulin",
+      "Thyroid",
+      "Glucocorticoid"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706:21",
+    "source": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+    "source_number": 21,
+    "question": "Which cyanotic congenital heart defect classically produces a boot-shaped cardiac silhouette?",
+    "options": [
+      "TOF",
+      "TAPVC",
+      "TGA",
+      "None of the above"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706:28",
+    "source": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+    "source_number": 28,
+    "question": "A child has weak lower-limb pulses with radiofemoral delay. Which lesion is most likely?",
+    "options": [
+      "Transposition of great arteries",
+      "Ventricular septal defect",
+      "Tetralogy of Fallot",
+      "Coarctation of aorta"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:5",
+    "source": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+    "source_number": 5,
+    "question": "Which oral drug listed is used to aid smoking cessation?",
+    "options": [
+      "Varenicline",
+      "Muscarine",
+      "Cevimeline",
+      "Atropine"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:7",
+    "source": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+    "source_number": 7,
+    "question": "Which statement about disulfiram is false?",
+    "options": [
+      "Inhibits alcohol dehydrogenase",
+      "Accumulates acetaldehyde",
+      "Initiated at 250 mg",
+      "Not an anticraving agent"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:10",
+    "source": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+    "source_number": 10,
+    "question": "Which adverse effect is more associated with oxcarbazepine than with carbamazepine?",
+    "options": [
+      "Rash",
+      "Agranulocytosis",
+      "Hyponatraemia",
+      "Visual side effects"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:14",
+    "source": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+    "source_number": 14,
+    "question": "Which statement about memantine is correct?",
+    "options": [
+      "Maintenance dose is 15–20 mg/kg",
+      "NMDA antagonist",
+      "Used alone and not in combination with donepezil",
+      "Metabolised by liver"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-58415486-c103-11ed-847b-0a5e36bc6706:10",
+    "source": "aglasem-58415486-c103-11ed-847b-0a5e36bc6706.pdf",
+    "source_number": 10,
+    "question": "Which region is not routinely included in the core whole-body trauma CT protocol?",
+    "options": [
+      "Cervical spine",
+      "Limbs",
+      "Head",
+      "Abdomen"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-58415486-c103-11ed-847b-0a5e36bc6706:11",
+    "source": "aglasem-58415486-c103-11ed-847b-0a5e36bc6706.pdf",
+    "source_number": 11,
+    "question": "In intrauterine fetal demise, gas within fetal blood vessels is traditionally called which sign?",
+    "options": [
+      "Hydrops appearance",
+      "Spalding sign",
+      "Robert sign",
+      "Maceration"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-74aff46a-b5c8-11ed-b820-0a5e36bc6706:1",
+    "source": "aglasem-74aff46a-b5c8-11ed-b820-0a5e36bc6706.pdf",
+    "source_number": 1,
+    "question": "Which sequence lists inhalational anaesthetics from greater to lesser potency?",
+    "options": [
+      "Isoflurane > halothane > methoxyflurane > N2O",
+      "Methoxyflurane > isoflurane > halothane > N2O",
+      "N2O > halothane > isoflurane > methoxyflurane",
+      "Methoxyflurane > halothane > isoflurane > N2O"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-74aff46a-b5c8-11ed-b820-0a5e36bc6706:2",
+    "source": "aglasem-74aff46a-b5c8-11ed-b820-0a5e36bc6706.pdf",
+    "source_number": 2,
+    "question": "Which theory classically explains pain relief from transcutaneous electrical nerve stimulation?",
+    "options": [
+      "Descending inhibition",
+      "Gate control theory",
+      "Central inhibition",
+      "Sensitisation"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706:2",
+    "source": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706.pdf",
+    "source_number": 2,
+    "question": "Which listed neurodevelopmental disorder predominantly affects females?",
+    "options": [
+      "Rett’s syndrome",
+      "Asperger’s syndrome",
+      "Atypical autism",
+      "Classical autism"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706:3",
+    "source": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706.pdf",
+    "source_number": 3,
+    "question": "A patient develops sustained upward eye deviation after starting risperidone. Which listed intervention treats this acute dystonic reaction?",
+    "options": [
+      "Injection promethazine",
+      "Injection lorazepam",
+      "Reassure the patient",
+      "Injection phenytoin"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706:7",
+    "source": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706.pdf",
+    "source_number": 7,
+    "question": "A patient with alcohol-related cirrhosis has stopped drinking. Which listed benzodiazepine is preferred for withdrawal management?",
+    "options": [
+      "Lorazepam",
+      "Diazepam",
+      "Clonazepam",
+      "Alprazolam"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-7259d24e-b5c8-11ed-9bac-0a5e36bc6706:4",
+    "source": "aglasem-7259d24e-b5c8-11ed-9bac-0a5e36bc6706.pdf",
+    "source_number": 4,
+    "question": "A pregnant woman develops a type 2 lepra reaction. Which listed treatment is appropriate?",
+    "options": [
+      "Add steroids",
+      "Stop MDT and give steroids",
+      "Thalidomide",
+      "Azathioprine"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706:5",
+    "source": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706.pdf",
+    "source_number": 5,
+    "question": "Which listed tumour is not an AIDS-defining malignancy?",
+    "options": [
+      "Non-Hodgkin’s lymphoma",
+      "Invasive cervical cancer",
+      "Kaposi sarcoma",
+      "Malignant melanoma"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706:6",
+    "source": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706.pdf",
+    "source_number": 6,
+    "question": "Which listed organism belongs to the Mollicutes?",
+    "options": [
+      "Ureaplasma urealyticum",
+      "Chlamydophila pneumoniae",
+      "Chlamydia trachomatis",
+      "Orientia tsutsugamushi"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706:13",
+    "source": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706.pdf",
+    "source_number": 13,
+    "question": "Which primary (PIR) versus secondary (SIR) immune-response comparison is incorrect?",
+    "options": [
+      "PIR: IgM; SIR: IgG",
+      "PIR lag: 4–7 days; SIR lag: 1–2 days",
+      "PIR antibody affinity high; SIR antibody affinity low",
+      "PIR short-lived; SIR prolonged"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:8",
+    "source": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+    "source_number": 8,
+    "question": "Tongue fasciculations most strongly suggest which listed disorder?",
+    "options": [
+      "SMA",
+      "MG",
+      "DMD",
+      "GBS"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:9",
+    "source": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+    "source_number": 9,
+    "question": "Which listed agent is not a standard emergency treatment for hyperkalaemia?",
+    "options": [
+      "Calcium gluconate",
+      "Insulin",
+      "Salbutamol",
+      "Magnesium sulfate"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:10",
+    "source": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+    "source_number": 10,
+    "question": "Which listed condition usually causes peripheral rather than central cyanosis?",
+    "options": [
+      "Methaemoglobinaemia",
+      "Pulmonary arteriovenous fistula",
+      "Hypothermia",
+      "High altitude"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706:5",
+    "source": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706.pdf",
+    "source_number": 5,
+    "question": "Which plant has yellow flowers and seeds contained in prickly capsules?",
+    "options": [
+      "Argemone mexicana",
+      "Nerium odorum",
+      "Papaver somniferum",
+      "Calotropis"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706:6",
+    "source": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706.pdf",
+    "source_number": 6,
+    "question": "Which features support chronic arsenic poisoning? 1. Mee’s lines; 2. Raindrop pigmentation; 3. Mixed neuropathy; 4. Luminescent vomit; 5. Bone-marrow depression.",
+    "options": [
+      "1,2,3,5",
+      "2,4,5",
+      "1,3,4,5",
+      "1,2,5"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706:8",
+    "source": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706.pdf",
+    "source_number": 8,
+    "question": "Which finding is not typical of the muscarinic toxidrome in organophosphorus poisoning?",
+    "options": [
+      "Diuresis",
+      "Bradycardia",
+      "Mydriasis",
+      "Bronchoconstriction"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706:9",
+    "source": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706.pdf",
+    "source_number": 9,
+    "question": "Which finding is not typical of cocaine intoxication?",
+    "options": [
+      "Tingling and numbness of hands and feet",
+      "Constricted pupils and bradycardia",
+      "Hypertension",
+      "Hyperthermia"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-68da6e7c-b5c8-11ed-8174-0a5e36bc6706:1",
+    "source": "aglasem-68da6e7c-b5c8-11ed-8174-0a5e36bc6706.pdf",
+    "source_number": 1,
+    "question": "After a road-traffic accident, a patient has GCS 3 but a normal initial noncontrast head CT. Which listed injury is most likely?",
+    "options": [
+      "SAH",
+      "EDH",
+      "Cerebral contusion",
+      "DAI"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706:3",
+    "source": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf",
+    "source_number": 3,
+    "question": "Which statement about severe frostbite is correct?",
+    "options": [
+      "May need amputation in severe cases",
+      "Antibiotics have no role",
+      "Rewarming is not done",
+      "Do not dry"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706:9",
+    "source": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf",
+    "source_number": 9,
+    "question": "During nonoperative management of grade 3 splenic trauma, which new finding most strongly indicates laparotomy?",
+    "options": [
+      "Haemoglobin falls from 12 to 10 g/dL",
+      "Pneumoperitoneum",
+      "Extraperitoneal bladder rupture",
+      "Distended gallbladder"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706:18",
+    "source": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf",
+    "source_number": 18,
+    "question": "Which statement about inflammatory bowel disease is correct?",
+    "options": [
+      "Crohn disease has skip lesions",
+      "Childhood IBD is genetic",
+      "Crohn disease is mucosal and UC is transmural",
+      "Crohn disease is fully curable"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706:20",
+    "source": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf",
+    "source_number": 20,
+    "question": "Which rectal-prolapse operation uses an abdominal rather than a perineal approach?",
+    "options": [
+      "Wells surgery",
+      "Thiersch surgery",
+      "Altemeier surgery",
+      "Delorme surgery"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "inicetmay25-anaesthesia:1",
+    "source": "inicetmay25-anaesthesia.pdf",
+    "source_number": 1,
+    "question": "Which listed medicine reverses residual muscle relaxation caused by vecuronium?",
+    "options": [
+      "Neostigmine",
+      "Atropine",
+      "Dantrolene sodium",
+      "Baclofen"
+    ],
+    "key": "A"
   }
 ]

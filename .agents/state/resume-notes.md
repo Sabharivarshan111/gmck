@@ -2444,3 +2444,15 @@ DO NOT:Restore search-preview draft questions, held duplicates, changed source h
 **NEXT:** Review the16 missing2022 subject files and May2025 Anaesthesia; recover the dead November2022 ENT view through an independently matched source. Respect existing source budgets and approval ledgers, add only independently reviewed complete items with original explanations and source-supported years, then run the established bank/offline/build checks before publication.
 
 **DO NOT:** Count subject PDF pages as separate full exam papers or as questions; call the2277 historical candidates newly found/unique/validated; treat public download as a whole-bank redistribution licence; import UG/MDS/MedMCQA or guess sessions from collection01/02. Existing runtime totals remain90/161 until actual reviewed imports are made.
+
+## 2026-10-22 — Import from the17 newly recovered INI source PDFs
+
+**DONE:**52 selected complete recalls added from16 documents:21 May2022,30 November2022,1 May2025. Candidate AIIMS90/INI213=303. Original251 full records and NEET2078/year bytes unchanged. All17 recovered PDF hashes match the coverage receipts;47 selected/rejected source pages visually checked,37 scanned pages OCRed. Twenty-one new holds/duplicates exclude wrong keys, truncated choices, date/laterality conflicts and repeats. Source manifest115, contributing92; original selected excerpts under200 words/document. Import receipt scripts/aiims-ini-missing-papers-import-20261022.json; report docs/AIIMS_INI_MISSING_PAPERS_IMPORT_20261022.md.
+
+**DONE:**11 source-integrity tests,303 data/fingerprint/offline checks,2078 year/payload joins, old reader/installer/discussion, native+preview types, full mobile ESLint, required native guards, production web build, Android JS bundle, release import graph and original NEET browser flow pass. Dorzolamide chapter refined to Ocular Therapeutics; final reader run includes it plus new year/key/arsenic-statement checks. Final outcome and publication/live proof belong to PR receipt. Source-image files stay private; no publisher assets or MedMCQA import. Legacy raw-pack test needs absent unshipped generated zst files; do not regenerate those unrelated artifacts.
+
+**HALF-DONE:** Publishing this tested candidate and confirming exact production assets. No signed APK, physical-device or Play claim. Unselected source questions are not blanket clinically certified.
+
+**NEXT:** Complete final reader/screenshot inspection, publish branch/PR, verify tested tree and actual public90/213 banks plus SW. Continue remaining source review separately.
+
+**DO NOT:** Add held thiopentone/LP/DES keys or truncate numbered statements; fill missing choices; infer a session from collection01/02; treat historical2277 as approved/unique. Leave existing anatomy/iOS gates and version/signing/ad configuration unchanged.

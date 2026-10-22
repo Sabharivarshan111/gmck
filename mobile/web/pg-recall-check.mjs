@@ -47,7 +47,7 @@ try {
     for(const name of ['NEET-PG','AIIMS PG','INI-CET']){
       const box=await label('Open '+name+' practice').boundingBox();assert.ok(box&&box.x>=0&&box.x+box.width<=width+1&&box.height>=43.5);
     }
-    await choose('INI-CET',161);
+    await choose('INI-CET',213);
   }
   await page.setViewportSize({width:390,height:844});
   await choose('AIIMS PG',90);
@@ -59,7 +59,7 @@ try {
   await page.getByText('AIIMS PG 2017 · November · Recall',{exact:true}).waitFor();
   await label('Save this AIIMS PG question').click();
   await label('Return to AIIMS PG library').click();
-  await choose('INI-CET',161);
+  await choose('INI-CET',213);
   await page.screenshot({path:path.join(evidence,'ini-library.png')});
   await page.getByText('0 saved',{exact:true}).waitFor();
   await label('Search offline INI-CET questions').fill('SGLT1');
@@ -116,13 +116,41 @@ try {
   await label('Show answer and explanation').click();
   await page.getByText('Answer: C',{exact:true}).waitFor();
   await label('Return to AIIMS PG library').click();
-  await choose('INI-CET',161);
+  await choose('INI-CET',213);
   await label('Search offline INI-CET questions').fill('doxorubicin');
   await label('Open INI-CET question 1').click();
   await page.getByText('INI-CET 2023 · November · Recall',{exact:true}).waitFor();
   await label('Show answer and explanation').click();
   await page.getByText('Answer: B',{exact:true}).waitFor();
   await page.screenshot({path:path.join(evidence,'ini-audit-2023.png')});
+  await label('Return to INI-CET library').click();
+  await label('Search offline INI-CET questions').fill('Dorzolamide');
+  await label('Open INI-CET question 1').click();
+  await page.getByText('Ocular therapeutics',{exact:true}).waitFor();
+  await label('Show answer and explanation').click();
+  await page.getByText('Answer: B',{exact:true}).waitFor();
+  await label('Return to INI-CET library').click();
+  await label('Search offline INI-CET questions').fill('reverses residual muscle relaxation');
+  await label('Open INI-CET question 1').click();
+  await page.getByText('INI-CET 2025 · May · Recall',{exact:true}).waitFor();
+  await label('Show answer and explanation').click();
+  await page.getByText('Answer: A',{exact:true}).waitFor();
+  await page.screenshot({path:path.join(evidence,'ini-missing-papers-2025.png')});
+  await label('Return to INI-CET library').click();
+  await label('Search offline INI-CET questions').fill('Which features support chronic arsenic');
+  await label('Open INI-CET question 1').click();
+  await page.getByText('INI-CET 2022 · May · Recall',{exact:true}).waitFor();
+  await page.getByText(/1\. Mee.*5\. Bone-marrow depression/).waitFor();
+  await label('Show answer and explanation').click();
+  await page.getByText('Answer: A',{exact:true}).waitFor();
+  await page.screenshot({path:path.join(evidence,'ini-missing-papers-2022-may.png')});
+  await label('Return to INI-CET library').click();
+  await label('Search offline INI-CET questions').fill('Hemiballismus');
+  await label('Open INI-CET question 1').click();
+  await page.getByText('INI-CET 2022 · November · Recall',{exact:true}).waitFor();
+  await label('Show answer and explanation').click();
+  await page.getByText('Answer: C',{exact:true}).waitFor();
+  await page.screenshot({path:path.join(evidence,'ini-missing-papers-2022-nov.png')});
   await label('Return to INI-CET library').click();
   await label('Search offline INI-CET questions').fill('Organize the following steps');
   await label('Open INI-CET question 1').click();
@@ -146,7 +174,7 @@ try {
   await label('NEET-PG practice questions').click();
   await label('Search offline NEET PG questions').waitFor();
   await choose('AIIMS PG',90);
-  await choose('INI-CET',161);
+  await choose('INI-CET',213);
   assert.deepEqual(errors,[]);
   console.log('PASS 360/390/430 exam controls; separate counts, source-key reveal, bookmark isolation, offline switching and unchanged NEET bank.');
 } finally {await browser.close();await new Promise(resolve=>server.close(resolve));}

@@ -2184,5 +2184,473 @@
       86
     ],
     "wording": "source_based_normalized_recall"
+  },
+  {
+    "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:12",
+    "source": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+    "sourceNumber": 12,
+    "sourceFingerprint": "878c25e6117cf2c8e306e0387c2e8f22b2982f00ef6b5b83670068f9663960e9",
+    "chapterId": "first-year/anatomy/paper-1/abdomen-and-pelvis",
+    "answer": "D",
+    "explanation": "The posterior division gives iliolumbar, lateral sacral and superior gluteal branches. The inferior gluteal artery usually arises from the anterior division."
+  },
+  {
+    "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:24",
+    "source": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+    "sourceNumber": 24,
+    "sourceFingerprint": "e32a80e41336f30f2cbba9db326c0fadb24632f8f8f43c3f93bf6c447fe60565",
+    "chapterId": "first-year/anatomy/paper-2/brain-and-cranial-nerves",
+    "answer": "C",
+    "explanation": "A lesion of the subthalamic nucleus classically causes contralateral hemiballismus, with involuntary flinging movements of the limbs."
+  },
+  {
+    "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:25",
+    "source": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+    "sourceNumber": 25,
+    "sourceFingerprint": "59795151cf2170df58cd767bd93d5795ff3a9e13a16cd49a7fe686b6f8f57479",
+    "chapterId": "first-year/anatomy/paper-1/lower-limb",
+    "answer": "B",
+    "explanation": "The common fibular (peroneal) nerve winds superficially around the fibular neck, making it vulnerable to fractures and external compression."
+  },
+  {
+    "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:29",
+    "source": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+    "sourceNumber": 29,
+    "sourceFingerprint": "b90df2628dccea94d93c489e1b8e228e20fa98413f8644926e5ba2d90955cd00",
+    "chapterId": "first-year/anatomy/paper-2/brain-and-cranial-nerves",
+    "answer": "C",
+    "explanation": "Bridging veins travel from the cerebral surface toward the dural venous sinuses. Their tearing produces bleeding in the potential subdural space."
+  },
+  {
+    "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:34",
+    "source": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+    "sourceNumber": 34,
+    "sourceFingerprint": "e89f1be2982e958afe81c429336a61876dbaef80f322e4b2ce1c30205fa7f244",
+    "chapterId": "first-year/anatomy/paper-2/brain-and-cranial-nerves",
+    "answer": "C",
+    "explanation": "Projection fibres connect the cerebral cortex with subcortical structures, brainstem and spinal cord. The internal capsule is a major compact pathway for these fibres."
+  },
+  {
+    "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:35",
+    "source": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+    "sourceNumber": 35,
+    "sourceFingerprint": "75e775ed1de805ef3fd168698a3e0649ee3794d6a639a52d0e6c8c04352aabe5",
+    "chapterId": "first-year/anatomy/paper-1/histology",
+    "answer": "B",
+    "explanation": "Basket and stellate interneuron cell bodies lie in the molecular layer. Purkinje cell bodies form the Purkinje layer; granule and Golgi cell bodies lie in the granular layer."
+  },
+  {
+    "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:5",
+    "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+    "sourceNumber": 5,
+    "sourceFingerprint": "394368054be25172b593a16840611e56e1756109d968160827f82d6d102771e5",
+    "chapterId": "second-year/pathology/paper-1/inflammation-repair",
+    "answer": "B",
+    "explanation": "Selectins mediate the weak, transient attachments responsible for rolling. Integrins support firm adhesion, while PECAM-1 participates in transendothelial migration."
+  },
+  {
+    "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:12",
+    "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+    "sourceNumber": 12,
+    "sourceFingerprint": "37f67e3805053c7490341ece40073093ec41b5a18c9400bc0633f42706115048",
+    "chapterId": "second-year/pathology/paper-1/platelets",
+    "answer": "D",
+    "explanation": "Haemophilia A is factor VIII deficiency and typically causes deep-tissue bleeding and haemarthroses. Prominent mucocutaneous bleeding more strongly suggests a platelet or von Willebrand disorder."
+  },
+  {
+    "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:14",
+    "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+    "sourceNumber": 14,
+    "sourceFingerprint": "409d9aa7787c61fa6810a9b89c7d2d30d060e02f77998b32cd220d7864628d2d",
+    "chapterId": "second-year/pathology/paper-2/gastrointestinal-system",
+    "answer": "A",
+    "explanation": "Most gastrointestinal stromal tumours express KIT (CD117), often with DOG1. Cytokeratin supports epithelial tumours, whereas S100 suggests neural or melanocytic differentiation."
+  },
+  {
+    "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:16",
+    "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+    "sourceNumber": 16,
+    "sourceFingerprint": "79dadef53c600ccba408081fef5045356c74b14466a2ad6dde9f78ed156b7caa",
+    "chapterId": "second-year/pathology/paper-1/white-blood-cells",
+    "answer": "A",
+    "explanation": "A very high white-cell count with expansion of the granulocytic series and basophilia is characteristic of chronic myeloid leukaemia. Confirmation requires demonstrating the defining BCR::ABL1 abnormality."
+  },
+  {
+    "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:1",
+    "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+    "sourceNumber": 1,
+    "sourceFingerprint": "92482a91e69931461c4d32359d564fbb66323f49711184aafced0d9a3f8a5fa4",
+    "chapterId": "second-year/pharmacology/paper-2/anti-microbial-drugs",
+    "answer": "B",
+    "explanation": "Emtricitabine can cause mild hyperpigmentation of the palms and soles. This recognised adverse effect helps distinguish it from the other antiretroviral drugs listed."
+  },
+  {
+    "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:11",
+    "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+    "sourceNumber": 11,
+    "sourceFingerprint": "e46e7219fc07149553a4c3bf6a484e4fd073f9c7c76f8befa1b0af7cbb0078a0",
+    "chapterId": "third-year/ophthalmology/ocular-therapeutics",
+    "answer": "B",
+    "explanation": "Dorzolamide inhibits carbonic anhydrase in the ciliary processes and reduces aqueous humour formation. It is administered topically to lower intraocular pressure."
+  },
+  {
+    "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:14",
+    "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+    "sourceNumber": 14,
+    "sourceFingerprint": "b42d4d0c756c6dc13d7c5898c2a6747ba7e1d89303673ceb54169538655f6c23",
+    "chapterId": "second-year/pharmacology/paper-1/cardiovascular-system",
+    "answer": "B",
+    "explanation": "Sildenafil inhibits phosphodiesterase type 5, slowing cGMP breakdown. Increased cGMP enhances nitric-oxide-mediated relaxation of cavernosal smooth muscle."
+  },
+  {
+    "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:20",
+    "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+    "sourceNumber": 20,
+    "sourceFingerprint": "de12d1f5acdd227c27a07e80fa2352f4d0a2664fa5a11e9de390470ac255419f",
+    "chapterId": "third-year/forensic-medicine/toxicology",
+    "answer": "C",
+    "explanation": "Alkaline urine increases ionisation and renal elimination of salicylate. Severe salicylate poisoning may additionally require haemodialysis; urine alkalinisation is not sufficient for every case."
+  },
+  {
+    "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:33",
+    "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+    "sourceNumber": 33,
+    "sourceFingerprint": "ef22a4aa76cdbb2240611faa05c27a0ca2fda45135b7a8a14f35f5a734652d0b",
+    "chapterId": "second-year/pharmacology/paper-2/anti-microbial-drugs",
+    "answer": "A",
+    "explanation": "Primaquine generates oxidative stress that can cause haemolysis when red cells lack adequate G6PD activity. G6PD assessment is therefore important before its use."
+  },
+  {
+    "id": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:5",
+    "source": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706.pdf",
+    "sourceNumber": 5,
+    "sourceFingerprint": "bb5c35c7d766ea364cccd25b5505f74dd6a90b5810bfe5e798f4c2ea56134861",
+    "chapterId": "third-year/community-medicine/paper-1/hospital-waste-management",
+    "answer": "D",
+    "explanation": "Visible dirt or organic material requires washing with soap and water. Alcohol-based hand rub is suitable for many routine clinical contacts when hands are not visibly soiled."
+  },
+  {
+    "id": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:6",
+    "source": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "63d72a4c7db617e6e0ed0603f5d8425f7f49b7512306d9ea6e0fb5715df63d17",
+    "chapterId": "third-year/community-medicine/paper-2/obstetrics-pediatrics-and-geriatrics",
+    "answer": "B",
+    "explanation": "The WHO antenatal-care model recommends at least eight contacts, beginning in the first trimester. A contact includes assessment and appropriate care, rather than merely attendance."
+  },
+  {
+    "id": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:15",
+    "source": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706.pdf",
+    "sourceNumber": 15,
+    "sourceFingerprint": "2fba069fe62a8a57531c7c3c8fa6755afd46adb894a1cd6f078149a002c03af9",
+    "chapterId": "third-year/community-medicine/paper-2/demography-and-family-planning",
+    "answer": "A",
+    "explanation": "The Pearl index expresses unintended pregnancies per 100 woman-years of contraceptive exposure. Lower values indicate fewer observed failures, although comparisons depend on study conditions."
+  },
+  {
+    "id": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:17",
+    "source": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706.pdf",
+    "sourceNumber": 17,
+    "sourceFingerprint": "7c2e9568062b5dc4330600c99e90a63c7c79db4fec7d81af906bac3670fb8daa",
+    "chapterId": "third-year/community-medicine/paper-2/disaster-management",
+    "answer": "C",
+    "explanation": "Mitigation reduces the severity of future disaster impacts. Structural standards and earthquake-resistant construction reduce vulnerability, rather than responding to an event already in progress."
+  },
+  {
+    "id": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:18",
+    "source": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706.pdf",
+    "sourceNumber": 18,
+    "sourceFingerprint": "dcca976606568d8a8c4a16eb01940991b76766a6d6ba04e18191b6d55d6c8713",
+    "chapterId": "third-year/forensic-medicine/toxicology",
+    "answer": "A",
+    "explanation": "Illicit alcohol contaminated with methanol can cause mass poisoning. Its toxic metabolite formate produces high-anion-gap acidosis and visual toxicity."
+  },
+  {
+    "id": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706:8",
+    "source": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+    "sourceNumber": 8,
+    "sourceFingerprint": "bea5bb73532ac49fafe6418c7e98104f066e3e7f698fe22cc782bd3eb12eb71e",
+    "chapterId": "final-year/paediatrics/rheumatology-and-genetics",
+    "answer": "A",
+    "explanation": "F508del removes phenylalanine at position 508 of CFTR, an epithelial chloride/bicarbonate channel. It commonly causes abnormal folding and processing of the protein."
+  },
+  {
+    "id": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706:17",
+    "source": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+    "sourceNumber": 17,
+    "sourceFingerprint": "9a82e23d06bf6a01be09d0ff4af6c4a1cc4f063e62d739b8eb57bb73b4f4ae6b",
+    "chapterId": "final-year/paediatrics/endocrine-and-metabolic-disorders",
+    "answer": "A",
+    "explanation": "Fetal growth is much less dependent on pituitary growth hormone than postnatal linear growth. Insulin, nutrient delivery and insulin-like growth factors are major fetal growth influences."
+  },
+  {
+    "id": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706:21",
+    "source": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+    "sourceNumber": 21,
+    "sourceFingerprint": "1ddc67101fc94b0f6bdeeede2df2ad249c391ddf797406d15ebe9467408fbb26",
+    "chapterId": "final-year/paediatrics/cvs",
+    "answer": "A",
+    "explanation": "Tetralogy of Fallot can produce an upturned apex and concave pulmonary-artery segment, creating the classic boot-shaped appearance. Not every affected child has the textbook silhouette."
+  },
+  {
+    "id": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706:28",
+    "source": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+    "sourceNumber": 28,
+    "sourceFingerprint": "6fde482486dac11dd273e3f2bb238161864795b69f24f376272b50ec5aed0a54",
+    "chapterId": "final-year/paediatrics/cvs",
+    "answer": "D",
+    "explanation": "Aortic coarctation obstructs blood flow toward the lower body. Reduced or delayed femoral pulses compared with radial pulses are important clinical clues."
+  },
+  {
+    "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:5",
+    "source": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+    "sourceNumber": 5,
+    "sourceFingerprint": "01dccdeffb4ca5df17001176757da430a3040d3f3e99c0aa94c0f7cd0a130aef",
+    "chapterId": "final-year/general-medicine/psychiatry-medicine",
+    "answer": "A",
+    "explanation": "Varenicline is a partial agonist at alpha4beta2 nicotinic acetylcholine receptors. It reduces nicotine withdrawal and the rewarding effects of smoking."
+  },
+  {
+    "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:7",
+    "source": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+    "sourceNumber": 7,
+    "sourceFingerprint": "9db3349e8855a405ec51c2609f29fbf881c37a378f84b1d6790dac71a74f21ab",
+    "chapterId": "final-year/general-medicine/psychiatry-medicine",
+    "answer": "A",
+    "explanation": "Disulfiram inhibits aldehyde dehydrogenase, causing acetaldehyde accumulation after alcohol intake. It is an aversive treatment and is not an agent for treating acute alcohol withdrawal."
+  },
+  {
+    "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:10",
+    "source": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+    "sourceNumber": 10,
+    "sourceFingerprint": "9e8b2add8f7d9a72d4872bcd406b4ed8e239e86d56f1649c1534719ef34b65b4",
+    "chapterId": "second-year/pharmacology/paper-1/central-nervous-system",
+    "answer": "C",
+    "explanation": "Both medicines can lower serum sodium, but hyponatraemia is particularly associated with oxcarbazepine. Symptoms and sodium concentration require assessment when clinically indicated."
+  },
+  {
+    "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:14",
+    "source": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+    "sourceNumber": 14,
+    "sourceFingerprint": "57cf08326db3e41c764b2f5650d521ad3e445484317ae8b1c5423731036f0120",
+    "chapterId": "second-year/pharmacology/paper-1/central-nervous-system",
+    "answer": "B",
+    "explanation": "Memantine is an uncompetitive NMDA receptor antagonist used in moderate-to-severe Alzheimer disease. It can be combined with a cholinesterase inhibitor; the listed weight-based maintenance dose is incorrect."
+  },
+  {
+    "id": "aglasem-58415486-c103-11ed-847b-0a5e36bc6706:10",
+    "source": "aglasem-58415486-c103-11ed-847b-0a5e36bc6706.pdf",
+    "sourceNumber": 10,
+    "sourceFingerprint": "1fb6c87c6964e827accd71f2a0626545b40449cc6097c460d7fea6753c0de74f",
+    "chapterId": "final-year/general-surgery/shock-burns-trauma",
+    "answer": "B",
+    "explanation": "Core trauma CT covers the head, cervical spine and trunk, generally through the pelvis or mid-thigh. Dedicated imaging of entire limbs is added according to the injuries suspected."
+  },
+  {
+    "id": "aglasem-58415486-c103-11ed-847b-0a5e36bc6706:11",
+    "source": "aglasem-58415486-c103-11ed-847b-0a5e36bc6706.pdf",
+    "sourceNumber": 11,
+    "sourceFingerprint": "9ced1e6886e988d97cdabf7746429349c7bb4a48c5c3a009e80a9ff9c03f6ec8",
+    "chapterId": "final-year/obstetrics-gynaecology/pregnancy-complications",
+    "answer": "C",
+    "explanation": "Robert sign refers to gas in the fetal heart or vessels after fetal death. It is a late finding; ultrasound confirmation of absent cardiac activity is the usual basis for diagnosis."
+  },
+  {
+    "id": "aglasem-74aff46a-b5c8-11ed-b820-0a5e36bc6706:1",
+    "source": "aglasem-74aff46a-b5c8-11ed-b820-0a5e36bc6706.pdf",
+    "sourceNumber": 1,
+    "sourceFingerprint": "8172b5b1c255004ca365aeb95504ec0af8b7dff57eda50edb90ff16d8a2c02ba",
+    "chapterId": "final-year/general-surgery/anaesthesia",
+    "answer": "D",
+    "explanation": "Anaesthetic potency varies inversely with minimum alveolar concentration. Methoxyflurane has a lower MAC than halothane and isoflurane; nitrous oxide has a much higher MAC."
+  },
+  {
+    "id": "aglasem-74aff46a-b5c8-11ed-b820-0a5e36bc6706:2",
+    "source": "aglasem-74aff46a-b5c8-11ed-b820-0a5e36bc6706.pdf",
+    "sourceNumber": 2,
+    "sourceFingerprint": "8e9351dc4a36bb8019e34bbf88f9e06a85305d2a167b0261d7e255d58b39197f",
+    "chapterId": "final-year/general-surgery/anaesthesia",
+    "answer": "B",
+    "explanation": "Activation of large-diameter afferents can inhibit nociceptive transmission in the dorsal horn, as described by gate control theory. TENS can also engage other inhibitory pathways."
+  },
+  {
+    "id": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706:2",
+    "source": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706.pdf",
+    "sourceNumber": 2,
+    "sourceFingerprint": "e8c58fee2e80966d7a3b9a826d4ec3b574966bd21f623d038d36566cebe4ec82",
+    "chapterId": "final-year/general-medicine/psychiatry-medicine",
+    "answer": "A",
+    "explanation": "Classic Rett syndrome predominantly affects girls and is commonly associated with pathogenic MECP2 variants. Regression after an initially normal early developmental period is characteristic."
+  },
+  {
+    "id": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706:3",
+    "source": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706.pdf",
+    "sourceNumber": 3,
+    "sourceFingerprint": "3943146f53bf3f2b74080b12b5e1598d344b408a26bb03783f877428e0e30ac4",
+    "chapterId": "final-year/general-medicine/psychiatry-medicine",
+    "answer": "A",
+    "explanation": "This presentation suggests an oculogyric crisis caused by dopamine-receptor blockade. Promethazine has anticholinergic activity and is a recognised treatment option for an acute dystonic reaction."
+  },
+  {
+    "id": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706:7",
+    "source": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706.pdf",
+    "sourceNumber": 7,
+    "sourceFingerprint": "12239b196a3d9e185e2618d9fc24a822a62058ea4373da5e81603d9219e22243",
+    "chapterId": "final-year/general-medicine/psychiatry-medicine",
+    "answer": "A",
+    "explanation": "Lorazepam undergoes glucuronidation and lacks long-lived active metabolites, making it preferable to diazepam in significant liver disease. Withdrawal treatment still requires monitoring and distinction from hepatic encephalopathy."
+  },
+  {
+    "id": "aglasem-7259d24e-b5c8-11ed-9bac-0a5e36bc6706:4",
+    "source": "aglasem-7259d24e-b5c8-11ed-9bac-0a5e36bc6706.pdf",
+    "sourceNumber": 4,
+    "sourceFingerprint": "afcf7169be66349fcf5d2c999f97c6269ec43761494446e88d69bd515ad8d27d",
+    "chapterId": "final-year/general-medicine/dermatology",
+    "answer": "A",
+    "explanation": "Systemic corticosteroids can treat clinically significant erythema nodosum leprosum during pregnancy while multidrug therapy is continued. Thalidomide is contraindicated in pregnancy because of severe teratogenicity."
+  },
+  {
+    "id": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706:5",
+    "source": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706.pdf",
+    "sourceNumber": 5,
+    "sourceFingerprint": "fa51b62355c1a9266a42e8b808fa6a4ac95f81e132b05e72dacad178874cb903",
+    "chapterId": "second-year/microbiology/paper-2/genito-urinary-sexually-transmitted-infections",
+    "answer": "D",
+    "explanation": "Kaposi sarcoma, invasive cervical carcinoma and specified non-Hodgkin lymphomas are AIDS-defining malignancies. Melanoma may occur in people with HIV but is not on the defining list."
+  },
+  {
+    "id": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706:6",
+    "source": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "b7f91fae68865bc846f2e54700cc48408eabaeb631df574d0ae7170806570375",
+    "chapterId": "second-year/microbiology/paper-1/general-microbiology",
+    "answer": "A",
+    "explanation": "Ureaplasma belongs to the wall-less Mollicutes. Absence of a peptidoglycan cell wall distinguishes this group from the other bacteria listed."
+  },
+  {
+    "id": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706:13",
+    "source": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706.pdf",
+    "sourceNumber": 13,
+    "sourceFingerprint": "5888ad45859c8af465a48eb44775618efdcf46f1464c1386fde54c5472def1aa",
+    "chapterId": "second-year/microbiology/paper-1/immunology",
+    "answer": "C",
+    "explanation": "Affinity maturation and memory B cells generally make secondary antibody responses faster and of higher average affinity. The option reverses the usual primary-secondary affinity relationship."
+  },
+  {
+    "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:8",
+    "source": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+    "sourceNumber": 8,
+    "sourceFingerprint": "d8f98fefa15dfdfb6c4207231b9b31affe55ca2ffa3dc16cc39ae3128a56a8e9",
+    "chapterId": "final-year/paediatrics/rheumatology-and-genetics",
+    "answer": "A",
+    "explanation": "Spinal muscular atrophy affects anterior horn motor neurons and can cause tongue fasciculations. Myasthenia gravis is a neuromuscular-junction disorder and Duchenne muscular dystrophy is a primary myopathy."
+  },
+  {
+    "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:9",
+    "source": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+    "sourceNumber": 9,
+    "sourceFingerprint": "36b090acf3ccded679a71a9b5be5dd91c3f4ac5e708c84a2295bf71ecbb8c406",
+    "chapterId": "final-year/general-medicine/emergency-and-critical-cares",
+    "answer": "D",
+    "explanation": "Calcium stabilises cardiac membranes; insulin and beta2 agonists shift potassium into cells. Magnesium sulfate does not have a standard role in correcting hyperkalaemia."
+  },
+  {
+    "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:10",
+    "source": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+    "sourceNumber": 10,
+    "sourceFingerprint": "77f8a93cc100e887372aa11f996b521416db437cdc270e7ffc537ddb01eb07c4",
+    "chapterId": "final-year/general-medicine/emergency-and-critical-cares",
+    "answer": "C",
+    "explanation": "Cold-induced vasoconstriction slows peripheral blood flow and increases local oxygen extraction. The other options can reduce systemic arterial oxygenation or cause a dyshemoglobinaemia."
+  },
+  {
+    "id": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706:5",
+    "source": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706.pdf",
+    "sourceNumber": 5,
+    "sourceFingerprint": "081e52d65769d3fea6636b7fbe4b8a098837e915df7b61046cbf16c97c2dee62",
+    "chapterId": "third-year/forensic-medicine/toxicology",
+    "answer": "A",
+    "explanation": "Argemone mexicana is recognised by yellow flowers and prickly capsules. Contamination of edible oils with its seed oil can cause epidemic dropsy."
+  },
+  {
+    "id": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706:6",
+    "source": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "1c66b0b5b0c4da7fecccaf124afe70eb4703893bd66e38d2537194899ae1ffb0",
+    "chapterId": "third-year/forensic-medicine/toxicology",
+    "answer": "A",
+    "explanation": "Chronic arsenic exposure can produce nail lines, pigmentary changes, peripheral neuropathy and marrow suppression. Luminescent vomitus is classically associated with phosphorus, rather than arsenic."
+  },
+  {
+    "id": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706:8",
+    "source": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706.pdf",
+    "sourceNumber": 8,
+    "sourceFingerprint": "1aeceb4053616b82f98dfe888ddb82d7684027c44e0e267a076353df125ce9b9",
+    "chapterId": "third-year/forensic-medicine/toxicology",
+    "answer": "C",
+    "explanation": "Excess acetylcholine usually causes miosis, bronchoconstriction, secretions and bradycardia. Mydriasis is the opposite of the classic muscarinic pupillary response, although mixed presentations can occur."
+  },
+  {
+    "id": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706:9",
+    "source": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706.pdf",
+    "sourceNumber": 9,
+    "sourceFingerprint": "c8f923d9b267eb518da3aa0dd0f97c29a9fa04bcac9d08d8dd4afe296936113e",
+    "chapterId": "third-year/forensic-medicine/toxicology",
+    "answer": "B",
+    "explanation": "Cocaine produces a sympathomimetic toxidrome, typically with dilated pupils, tachycardia, hypertension and hyperthermia. Miosis with bradycardia is not the characteristic pattern."
+  },
+  {
+    "id": "aglasem-68da6e7c-b5c8-11ed-8174-0a5e36bc6706:1",
+    "source": "aglasem-68da6e7c-b5c8-11ed-8174-0a5e36bc6706.pdf",
+    "sourceNumber": 1,
+    "sourceFingerprint": "c5c2333d89dc42dec48f85b7155b6334831f9c96924cad54b9f2ba62e17d5adf",
+    "chapterId": "final-year/general-surgery/shock-burns-trauma",
+    "answer": "D",
+    "explanation": "Diffuse axonal injury may cause profound impairment of consciousness with little visible abnormality on initial CT. MRI is more sensitive to the associated axonal lesions."
+  },
+  {
+    "id": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706:3",
+    "source": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf",
+    "sourceNumber": 3,
+    "sourceFingerprint": "3d6547d528021b8018ddc95bc8bc2d0d5e7d442dbc843357f9e173bddd9fc3fc",
+    "chapterId": "final-year/general-surgery/shock-burns-trauma",
+    "answer": "A",
+    "explanation": "Severe frostbite can cause irreversible tissue loss requiring amputation. Rapid controlled rewarming is important when refreezing can be prevented; definitive surgery is usually delayed until tissue viability is clear."
+  },
+  {
+    "id": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706:9",
+    "source": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf",
+    "sourceNumber": 9,
+    "sourceFingerprint": "e0100c9716ea0d396e13bc374ad306761b527cec50b9df07b03cd5ceea91d392",
+    "chapterId": "final-year/general-surgery/shock-burns-trauma",
+    "answer": "B",
+    "explanation": "New pneumoperitoneum after blunt abdominal trauma raises concern for hollow-viscus perforation requiring surgical assessment. A modest haemoglobin change alone does not automatically establish failure of splenic nonoperative management."
+  },
+  {
+    "id": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706:18",
+    "source": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf",
+    "sourceNumber": 18,
+    "sourceFingerprint": "620b0202534319f7a6472ecd43a1c7cbff3dd23934a00b22e892ec02fac5e134",
+    "chapterId": "final-year/general-surgery/small-large-intestine",
+    "answer": "A",
+    "explanation": "Crohn disease characteristically has discontinuous skip lesions and transmural inflammation. Ulcerative colitis typically has continuous mucosal inflammation; the source option reverses these patterns."
+  },
+  {
+    "id": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706:20",
+    "source": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf",
+    "sourceNumber": 20,
+    "sourceFingerprint": "5638d2add9a6c8c84c2e8126a3aa5ef90bb609c5b0a5770163d7ecb07503c112",
+    "chapterId": "final-year/general-surgery/appendix-rectum-anal-canal",
+    "answer": "A",
+    "explanation": "Wells rectopexy is an abdominal rectopexy procedure. Thiersch encirclement, Altemeier perineal rectosigmoidectomy and Delorme mucosal sleeve resection use perineal approaches."
+  },
+  {
+    "id": "inicetmay25-anaesthesia:1",
+    "source": "inicetmay25-anaesthesia.pdf",
+    "sourceNumber": 1,
+    "sourceFingerprint": "b41ff2906e8e5b5fcedb1f077e4d3501bcde6a50cd261ae4bfdc972b46856b90",
+    "chapterId": "final-year/general-surgery/anaesthesia",
+    "answer": "A",
+    "explanation": "Neostigmine inhibits acetylcholinesterase, increasing acetylcholine at the neuromuscular junction. It reverses suitable residual nondepolarising blockade after recovery has begun and is given with an antimuscarinic; it is not reliable for profound blockade."
   }
 ]

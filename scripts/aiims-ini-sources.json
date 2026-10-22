@@ -1003,5 +1003,193 @@
     "required": false,
     "pinBytes": true,
     "identityStatus": "held_key_stem_conflict"
+  },
+  {
+    "file": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/704ed580-b5c8-11ed-aa20-0a5e36bc6706/704ed580-b5c8-11ed-aa20-0a5e36bc6706.pdf",
+    "sha256": "fda4e2298d9c36db43149a9f6882003dd9eb0e21f9e278fe93775c0c6e234dd9",
+    "bytes": 2523161,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "May",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/715beab2-b5c8-11ed-8572-0a5e36bc6706/715beab2-b5c8-11ed-8572-0a5e36bc6706.pdf",
+    "sha256": "f3611e7cfe4c4f33f8a6676f69cf80ea93687893cc4a8a2c47510553861055d9",
+    "bytes": 1588314,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "May",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706/7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+    "sha256": "4a72b91d98ec8931ed5a3a348f8e2d97a29fee2a9b195431a8108f83e39cb5de",
+    "bytes": 1887733,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "May",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/68fa49d6-b5c8-11ed-880a-0a5e36bc6706/68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf",
+    "sha256": "cbee161746285f7496a8feb194ab82c1a3279492da6e45a456880da616d49d3d",
+    "bytes": 2710264,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "May",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "aglasem-7259d24e-b5c8-11ed-9bac-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/7259d24e-b5c8-11ed-9bac-0a5e36bc6706/7259d24e-b5c8-11ed-9bac-0a5e36bc6706.pdf",
+    "sha256": "4103b8b6a108a2aa36aaf98b729597adbba70fd2814c75a5c2ee95db24ef84a0",
+    "bytes": 1963798,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "May",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/687ac148-b5c8-11ed-9b49-0a5e36bc6706/687ac148-b5c8-11ed-9b49-0a5e36bc6706.pdf",
+    "sha256": "84b102122a4c61b5c43d29257c76e85166887c7e62ed29c8bd206f4389ee90fa",
+    "bytes": 1293032,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "May",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "aglasem-68da6e7c-b5c8-11ed-8174-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/68da6e7c-b5c8-11ed-8174-0a5e36bc6706/68da6e7c-b5c8-11ed-8174-0a5e36bc6706.pdf",
+    "sha256": "cfeb1f9d0a436fa2c553f72c6448bfc833615421072b7f8b2e1d1fe85ff73ae9",
+    "bytes": 1915631,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "May",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "aglasem-74aff46a-b5c8-11ed-b820-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/74aff46a-b5c8-11ed-b820-0a5e36bc6706/74aff46a-b5c8-11ed-b820-0a5e36bc6706.pdf",
+    "sha256": "6c213c0396e6f12e40adc468531e4f8482696e506c83916113fca6215e94d967",
+    "bytes": 790795,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "May",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/5d9ef32a-c103-11ed-8570-0a5e36bc6706/5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+    "sha256": "219c8b449bf199370d82f5384d0b6eb42f0016b6f06a0afeba43e259584cfdd3",
+    "bytes": 1820341,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "November",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/594e1a76-c103-11ed-991c-0a5e36bc6706/594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+    "sha256": "4441b3fe3299066974530ff56569836ff16c3b17468d889ae24dad45b4641600",
+    "bytes": 2149984,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "November",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/585ca6be-c103-11ed-9d15-0a5e36bc6706/585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+    "sha256": "6f644cd8aa9e12aa995370911dfa8c2c466d549238b6828d00eb65ce3c8e7aaa",
+    "bytes": 1732992,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "November",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/5d822ace-c103-11ed-a976-0a5e36bc6706/5d822ace-c103-11ed-a976-0a5e36bc6706.pdf",
+    "sha256": "5d144e0379307f61ca25b98325a586e678413bfc3c76b9126bf4f561099e9341",
+    "bytes": 1501493,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "November",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/598c16fa-c103-11ed-9631-0a5e36bc6706/598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+    "sha256": "9c7e2470c27069c73f46db8336a0d3e19f9352619fcedd5e9e605269de6e14d0",
+    "bytes": 1058263,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "November",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/57d9fa20-c103-11ed-81fa-0a5e36bc6706/57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+    "sha256": "8990f9b44981080d4fc24fc0da2e2220418534636ed722d7afd6e63b01e410f5",
+    "bytes": 949329,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "November",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "aglasem-58415486-c103-11ed-847b-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/58415486-c103-11ed-847b-0a5e36bc6706/58415486-c103-11ed-847b-0a5e36bc6706.pdf",
+    "sha256": "ad651401ec6a4b0e9180f122938e465be6f7d76618bda60fe4e4baa407a8c5a7",
+    "bytes": 1548329,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "November",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "aglasem-5da426e2-c103-11ed-80bf-0a5e36bc6706.pdf",
+    "url": "https://cdn.aglasem.com/aglasem-doc/5da426e2-c103-11ed-80bf-0a5e36bc6706/5da426e2-c103-11ed-80bf-0a5e36bc6706.pdf",
+    "sha256": "6762cfe989938ed5959d19a2ff1c306380f30e398f4dd0b9ff5b88333b001152",
+    "bytes": 712040,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "November",
+    "required": false,
+    "pinBytes": true,
+    "reviewStatus": "held_malformed_stem_and_multiselect"
+  },
+  {
+    "file": "inicetmay25-anaesthesia.pdf",
+    "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Anaesthesia-INI-25-May-Reworked_compressed.pdf",
+    "sha256": "d36e433ef20b29c42c2035adff4a8f1e2d4fc335d23dddcca4598017f964fbaa",
+    "bytes": 401735,
+    "exam": "ini-cet",
+    "year": 2025,
+    "session": "May",
+    "required": true,
+    "pinBytes": true
   }
 ]

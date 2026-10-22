@@ -111,5 +111,172 @@
     "source": "faculty-ini-2023-nov-part1.html",
     "sourceNumber": 34,
     "reason": "Annotation adds an E answer for empagliflozin outside the four listed options. Although dapagliflozin is a valid HFrEF medicine, source-option/key completeness is unresolved."
+  },
+  {
+    "id": "inicetmay25-anaesthesia:2",
+    "source": "inicetmay25-anaesthesia.pdf",
+    "sourceNumber": 2,
+    "sourcePage": 2,
+    "reason": "Printed key B includes rapid elimination as the reason for thiopentone short action. Redistribution, not rapid elimination, explains termination after a single bolus; the correct statement pair is not offered.",
+    "printedKey": "B"
+  },
+  {
+    "id": "inicetmay25-anaesthesia:3",
+    "source": "inicetmay25-anaesthesia.pdf",
+    "sourceNumber": 3,
+    "sourcePage": 3,
+    "reason": "Printed false-statement combination includes meningitis being an unusual complication. This conflicts with the wording and the supplied combination; no replacement key is inferred.",
+    "printedKey": "C"
+  },
+  {
+    "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:3",
+    "source": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+    "sourceNumber": 3,
+    "sourcePage": 3,
+    "reason": "Original option D ends at “Sensory loss at a specific”. A draft completion was rejected after viewing the actual page; missing words are not supplied.",
+    "printedKey": "A"
+  },
+  {
+    "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:4",
+    "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+    "sourceNumber": 4,
+    "sourcePage": 3,
+    "reason": "Printed key names tobacco for clear-cell carcinoma of the female genital tract despite DES being an offered option. Key conflicts with the established association.",
+    "printedKey": "D"
+  },
+  {
+    "id": "aglasem-5da426e2-c103-11ed-80bf-0a5e36bc6706:1",
+    "source": "aglasem-5da426e2-c103-11ed-80bf-0a5e36bc6706.pdf",
+    "sourceNumber": 1,
+    "sourcePage": 2,
+    "reason": "Original ventilator stem contains a garbled patient description. Do not infer an ARDS diagnosis or silently rewrite the missing clinical context.",
+    "printedKey": "C"
+  },
+  {
+    "id": "aglasem-5da426e2-c103-11ed-80bf-0a5e36bc6706:3",
+    "source": "aglasem-5da426e2-c103-11ed-80bf-0a5e36bc6706.pdf",
+    "sourceNumber": 3,
+    "sourcePage": 2,
+    "reason": "Five supplied choices and several correct answers; not a text-only single-answer import."
+  },
+  {
+    "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:11",
+    "source": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+    "sourceNumber": 11,
+    "sourcePage": 6,
+    "reason": "Bulbar urethral extravasation question has more than one plausible excluded space among the supplied choices; requires source clarification.",
+    "printedKey": "A"
+  },
+  {
+    "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:20",
+    "source": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+    "sourceNumber": 20,
+    "sourcePage": 9,
+    "reason": "Trendelenburg laterality wording and supplied key cannot be accepted without clarifying which side denotes pelvic drop versus stance.",
+    "printedKey": "C"
+  },
+  {
+    "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:28",
+    "source": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+    "sourceNumber": 28,
+    "sourcePage": 11,
+    "reason": "Ambiguous Trendelenburg laterality and an evening-shift annotation in the purported session collection; not used to assert a date or key.",
+    "printedKey": "B"
+  },
+  {
+    "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:15",
+    "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+    "sourceNumber": 15,
+    "sourcePage": 7,
+    "reason": "Printed phase-III key conflicts with the tiny sample stated in the trial vignette. Do not repair the numbers or key by guessing.",
+    "printedKey": "B"
+  },
+  {
+    "id": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:11",
+    "source": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706.pdf",
+    "sourceNumber": 11,
+    "sourcePage": 5,
+    "reason": "A negative test with 98% sensitivity alone does not safely rule out disease irrespective of prior probability; supplied key overstates the conclusion.",
+    "printedKey": "D"
+  },
+  {
+    "id": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706:7",
+    "source": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706.pdf",
+    "sourceNumber": 7,
+    "sourcePage": 3,
+    "reason": "Single printed key for an acid-fast organism list is inconsistent with multiple acid-fast or partially acid-fast options.",
+    "printedKey": "C"
+  },
+  {
+    "id": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706:10",
+    "source": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706.pdf",
+    "sourceNumber": 10,
+    "sourcePage": 5,
+    "reason": "The source labels several opportunistic-infection prophylaxis statements as mandatory; more than one is clinically problematic. No guessed single replacement key.",
+    "printedKey": "D"
+  },
+  {
+    "id": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706:12",
+    "source": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf",
+    "sourceNumber": 12,
+    "sourcePage": 6,
+    "reason": "One-month tamoxifen washout is not suitable to publish as current pregnancy advice. This older source requires explicit dated guidance and does not supply a suitable current option.",
+    "printedKey": "A"
+  },
+  {
+    "id": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706:12",
+    "source": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+    "sourceNumber": 12,
+    "sourcePage": 5,
+    "reason": "Rheumatic-fever prophylaxis duration omits the age-based minimum; a bare five-year answer for the stated child is not promoted.",
+    "printedKey": "A"
+  },
+  {
+    "id": "aglasem-68da6e7c-b5c8-11ed-8174-0a5e36bc6706:2",
+    "source": "aglasem-68da6e7c-b5c8-11ed-8174-0a5e36bc6706.pdf",
+    "sourceNumber": 2,
+    "sourcePage": 2,
+    "reason": "Hip radiograph and painful-limp stem are paired with intracranial-haemorrhage options; source question/options mismatch.",
+    "printedKey": "A"
+  },
+  {
+    "id": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706:6",
+    "source": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706.pdf",
+    "sourceNumber": 6,
+    "sourcePage": 3,
+    "reason": "Bipolar epidemiology options and printed exception key are inconsistent; no clinically reliable single answer is established.",
+    "printedKey": "C"
+  },
+  {
+    "id": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706:3",
+    "source": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706.pdf",
+    "sourceNumber": 3,
+    "sourcePage": 2,
+    "reason": "Already represented by the May2022 faculty transfusion-screening question.",
+    "duplicateOf": "faculty-ini-2022-may-psm:15"
+  },
+  {
+    "id": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706:14",
+    "source": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706.pdf",
+    "sourceNumber": 14,
+    "sourcePage": 6,
+    "reason": "Already represented by the earlier source collection MHC-I/CD8 question.",
+    "duplicateOf": "ini-2022-01:22"
+  },
+  {
+    "id": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706:15",
+    "source": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706.pdf",
+    "sourceNumber": 15,
+    "sourcePage": 6,
+    "reason": "Already represented by the May2022 faculty airborne-isolation question.",
+    "duplicateOf": "faculty-ini-2022-may-psm:14"
+  },
+  {
+    "id": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706:1",
+    "source": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf",
+    "sourceNumber": 1,
+    "sourcePage": 2,
+    "reason": "Already represented by the earlier source collection normal-prostate-volume question.",
+    "duplicateOf": "ini-2022-01:2"
   }
 ]
