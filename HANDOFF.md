@@ -2640,3 +2640,8 @@ Nine selected additions bring candidate AIIMS83 / INI156 (239 total). Previous23
 
 ### Faculty recalls publication checkpoint
 PR117 merged nine additions (AIIMS83/INI156). Follow-up refines only the new descriptive-statistics chapter, preserving its ID/wording/key and all previous230 complete rows. Source/data/year checks and final web/Android JS builds pass; final production and hosted outcomes belong to the PR receipts. Broad digestive anatomy coverage gate remains92% versus95%, unchanged.
+
+
+## 2026-10-22 — AIIMS/INI continued source audit
+
+AIIMS90 / INI161 =251 candidate:13 additions, one original-PDF repair and one same-session duplicate withdrawal. Research sequence ID/choices/key preserved; duplicate retained as a full held review. All other237 earlier rows and NEET2078/year bytes unchanged. Direct PG Blazer original HTML now acquired; new INI2023 annotated slides visually checked. Three disputed/incomplete-key candidates held. Explicit correction/withdrawal provenance and numbered-statement guard have11 passing integrity tests. Production build/native JS/type/lint/guards and actual browser year/key/stem/bookmark/offline tests pass. Detailed evidence/resumption: docs/AIIMS_INI_SOURCE_AUDIT_20261022.md. Final publication/hosted/live receipts belong to the PR; no signed APK/Play/device claim.

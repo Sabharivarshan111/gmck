@@ -1,0 +1,20 @@
+[
+  {
+    "id": "inicetmay25-psm:4",
+    "source": "inicetmay25-psm.pdf",
+    "reason": "Original PDF page2 contains the complete stem and all four statements. Extraction had retained only the last statement.",
+    "beforeSourceFingerprint": "883b48e82b335671bff6eb6a895d422ca1ce8cf63eb91edc5bb6595f891da73b",
+    "afterSourceFingerprint": "a764ac7bb53293102ce7ccb0f230b64b9d2daf25008ecf2d18a161cb367c7f61",
+    "beforeQuestion": ". Setting research objective",
+    "afterQuestion": "Organize the following steps in the correct sequence for conducting research: 1. Conduct data analysis; 2. Selecting population; 3. Setting research question; 4. Setting research objective.",
+    "beforeReview": {
+      "id": "inicetmay25-psm:4",
+      "chapterId": "third-year/community-medicine/paper-1/principles-methods-epidemiology",
+      "answer": "C",
+      "sourceFingerprint": "883b48e82b335671bff6eb6a895d422ca1ce8cf63eb91edc5bb6595f891da73b",
+      "explanation": "A study begins with a research question and defined objectives. Population selection and study procedures follow, with analysis performed after data collection."
+    },
+    "sourcePage": 2,
+    "answerAndOptionsUnchanged": true
+  }
+]

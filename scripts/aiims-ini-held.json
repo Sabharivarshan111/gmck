@@ -77,5 +77,39 @@
     "source": "slideshare-ini-2022-may-psm.html",
     "sourceNumber": 4,
     "reason": "Same confidence-interval/sample-size question as aglasem-68d61bf6-b5c8-11ed-ac15-0a5e36bc6706:4; semantic duplicate despite different wording."
+  },
+  {
+    "id": "faculty-ini-2022-may-psm:5",
+    "source": "slideshare-ini-2022-may-psm.html",
+    "sourceNumber": 5,
+    "sourceFingerprint": "fb6e17f73218d0e5b796f97af4e4ddd485ae0ddfcbbf9ae65dd720f39bf4abf6",
+    "chapterId": "third-year/community-medicine/paper-1/health-information-and-medical-statistics",
+    "answer": "B",
+    "explanation": "Descriptive statistics summarise observed data using measures such as frequencies, averages and dispersion. Inferential statistics use sample data to draw conclusions about a wider population.",
+    "answerOrigin": "faculty_key_author_checked",
+    "sourceSlides": [
+      24,
+      28
+    ],
+    "reason": "Same INI-CET May2022 descriptive-statistics question as aglasem-68d61bf6-b5c8-11ed-ac15-0a5e36bc6706:2, with reordered options. Keep the older stable ID.",
+    "duplicateOf": "aglasem-68d61bf6-b5c8-11ed-ac15-0a5e36bc6706:2"
+  },
+  {
+    "id": "pgblazer-2015-may-33:33",
+    "source": "pgblazer-2015-may-33.html",
+    "sourceNumber": 33,
+    "reason": "Stem specifies dye in top swab, but supplied key says ureterovaginal fistula and the same article describes unstained urine for that diagnosis. Held without rewriting the stem to fit the key."
+  },
+  {
+    "id": "faculty-ini-2023-nov-part1:slide-36",
+    "source": "faculty-ini-2023-nov-part1.html",
+    "sourceNumber": 36,
+    "reason": "Handwritten answer names ritonavir outside the four supplied protease-inhibitor options. Do not replace that annotation with a guessed source key."
+  },
+  {
+    "id": "faculty-ini-2023-nov-part1:slide-34",
+    "source": "faculty-ini-2023-nov-part1.html",
+    "sourceNumber": 34,
+    "reason": "Annotation adds an E answer for empagliflozin outside the four listed options. Although dapagliflozin is a valid HFrEF medicine, source-option/key completeness is unresolved."
   }
 ]

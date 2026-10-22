@@ -11,6 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -21,6 +22,24 @@ ROOT = Path(__file__).resolve().parents[1]
 def digest(row):
     value = json.dumps([row['question'], row['options'], row['key']], ensure_ascii=False, separators=(',', ':'))
     return hashlib.sha256(value.encode()).hexdigest()
+
+def validate_numbered_sequence(row):
+    """A permutation answer is unusable when its numbered statements were lost."""
+    if all(re.fullmatch(r'\d+(?:\s*[-–,>]\s*\d+)+', o.strip()) for o in row['options']):
+        numbers=set(re.findall(r'\d+',row['options'][0]))
+        if any(set(re.findall(r'\d+',o))!=numbers for o in row['options']):return
+        if any(not re.search(r'(?<!\d)'+n+r'(?:[.):]\s*|\s+)\S',row['question']) for n in numbers):
+            raise ValueError('Numbered sequence is missing its statements: '+row['id'])
+
+def merge_transcription(candidates, row, audits):
+    identity=row['id']
+    if identity in candidates:
+        previous=candidates[identity];audit=audits.get(identity)
+        if (not audit or not audit.get('reason') or digest(previous) not in [audit['beforeSourceFingerprint'],audit['afterSourceFingerprint']]
+            or digest(row)!=audit['afterSourceFingerprint'] or previous['source']!=row['source']
+            or previous['source_number']!=row['source_number']):
+            raise ValueError('Transcription overlaps extraction without an audited correction: '+identity)
+    candidates[identity]=row
 
 def prepare(sources, download, required_files=None):
     manifest=json.loads((ROOT/'scripts/aiims-ini-sources.json').read_text())
@@ -53,11 +72,22 @@ def reviewed_baseline(source_index):
     receipt=json.loads((ROOT/'docs/AIIMS_INI_RELEASE_CANDIDATE_20261021.json').read_text())
     provenance={r['id']:r for r in receipt['questionProvenance']}
     reviews={r['id']:r for r in json.loads((ROOT/'scripts/aiims-ini-reviewed.json').read_text())}
+    held_path=ROOT/'scripts/aiims-ini-held.json'
+    held={r['id']:r for r in json.loads(held_path.read_text())} if held_path.exists() else {}
+    audit_path=ROOT/'scripts/aiims-ini-audit-corrections.json'
+    audits={r['id']:r for r in json.loads(audit_path.read_text())} if audit_path.exists() else {}
+    transcribed={r['id']:r for r in json.loads((ROOT/'scripts/aiims-ini-transcribed.json').read_text())}
     result=[]
     for name,exam in [('aiimsPgBank','aiims-pg'),('iniCetBank','ini-cet')]:
         bank=json.loads((ROOT/f'mobile/src/lib/{name}.json').read_text())
         for row in bank['records']:
-            prior=provenance.pop(row['id']);review=reviews[row['id']]
+            prior=provenance.pop(row['id']);identity=row['id'];audit=audits.get(identity)
+            if identity in held and identity in reviews:raise ValueError('Held item has an active review: '+identity)
+            correction=audit and prior['sourceFingerprint']==audit['beforeSourceFingerprint']
+            if audit and prior['sourceFingerprint'] not in [audit['beforeSourceFingerprint'],audit['afterSourceFingerprint']]:
+                raise ValueError('Audit baseline fingerprint mismatch: '+identity)
+            review=audit['beforeReview'] if correction else reviews.get(identity,held.get(identity))
+            if not review or not review.get('sourceFingerprint'):raise ValueError('Released item needs a complete review or hold: '+identity)
             matches=[s for s in source_index.values() if s['url']==prior['sourceUrl'] and s['sha256']==prior['sourceSha256']]
             if len(matches)!=1:raise ValueError('Released source identity is ambiguous: '+row['id'])
             source=matches[0]
@@ -71,12 +101,25 @@ def reviewed_baseline(source_index):
                 or row['chapterId']!=review['chapterId'] or row['explanation']!=review['explanation']
                 or row['answerIndex']!=ord(review['answer'])-65):
                 raise ValueError('Released baseline changed: '+row['id'])
+            if identity in held:
+                if not held[identity].get('reason'):raise ValueError('Released hold needs a reason: '+identity)
+                continue
+            if correction:
+                replacement=transcribed.get(identity);new_review=reviews[identity]
+                if (not replacement or not audit.get('reason') or replacement['source']!=candidate['source']
+                    or replacement['source_number']!=candidate['source_number']
+                    or digest(replacement)!=audit['afterSourceFingerprint']
+                    or digest(replacement)!=new_review['sourceFingerprint']):
+                    raise ValueError('Audit replacement is not reviewed: '+identity)
+                candidate=replacement
             result.append(candidate)
     if provenance:raise ValueError('Released receipt contains missing records')
     return result,receipt['privateExtractedCandidates']
 
 def build(sources, extend_reviewed=False):
     transcribed=json.loads((ROOT/'scripts/aiims-ini-transcribed.json').read_text())
+    audit_path=ROOT/'scripts/aiims-ini-audit-corrections.json'
+    audits={r['id']:r for r in json.loads(audit_path.read_text())} if audit_path.exists() else {}
     if extend_reviewed:
         source_index={s['file']:s for s in json.loads((ROOT/'scripts/aiims-ini-sources.json').read_text())}
         result,private_count=reviewed_baseline(source_index)
@@ -84,7 +127,9 @@ def build(sources, extend_reviewed=False):
         new_ids={r['id'] for r in json.loads((ROOT/'scripts/aiims-ini-reviewed.json').read_text())}-previous_ids
         additions={r['id']:r for r in transcribed if r['id'] in new_ids}
         if set(additions)!=new_ids:raise ValueError('New reviews require explicit source transcriptions')
-        prepare(sources,False,{r['source'] for r in additions.values()})
+        prior={r['id']:r for r in json.loads((ROOT/'docs/AIIMS_INI_RELEASE_CANDIDATE_20261021.json').read_text())['questionProvenance']}
+        corrected_sources={r['source'] for r in audits.values() if r['id'] in prior and prior[r['id']]['sourceFingerprint']==r['beforeSourceFingerprint']}
+        prepare(sources,False,{r['source'] for r in additions.values()}|corrected_sources)
         # Existing transcriptions are checked again below against the baseline.
         existing={r['id']:r for r in result}
         for row in transcribed:
@@ -101,15 +146,16 @@ def build(sources, extend_reviewed=False):
         if row['id'] in candidates and digest(row)!=digest(candidates[row['id']]):conflicts.add(row['id'])
         candidates[row['id']]=row
     for row in transcribed:
-        if row['id'] in candidates:raise ValueError('Transcription overlaps extraction: '+row['id'])
-        candidates[row['id']]=row
+        merge_transcription(candidates,row,audits)
     reviews=json.loads((ROOT/'scripts/aiims-ini-reviewed.json').read_text())
+    held_ids={r['id'] for r in json.loads((ROOT/'scripts/aiims-ini-held.json').read_text())}
     syllabus=json.loads((ROOT/'mobile/src/lib/neetPgStudyData.json').read_text())
     chapters={c['id']:c for c in syllabus['chapters']}
     banks={exam:dict(schema=1,id=f'{exam}-practice-20261021',chapters=[],records=[],images={}) for exam in ['aiims-pg','ini-cet']}
     seen={exam:set() for exam in banks}; seen_ids=set(); receipts=[]; source_words=Counter()
     for review in reviews:
         identity=review['id']
+        if identity in held_ids:raise ValueError('Held item has an active review: '+identity)
         if identity in seen_ids or identity in conflicts:raise ValueError('Conflicting review identity: '+identity)
         seen_ids.add(identity)
         row=candidates[identity];source=source_index[row['source']]
@@ -121,6 +167,7 @@ def build(sources, extend_reviewed=False):
         # This batch contains text-only, single-answer items. Images and multi-selects
         # must be reviewed in their original form in a later batch.
         if any(o.strip() in ['?', '??', 'Not recalled'] for o in row['options']):raise ValueError('Unrecalled option: '+identity)
+        validate_numbered_sequence(row)
         source_words[row['source']]+=len(' '.join([row['question']]+row['options']).split())
         if source_words[row['source']]>200:raise ValueError('Selected source excerpt exceeds batch budget: '+row['source'])
         exam=source['exam']; signature=json.dumps([row['question'].casefold(),[o.casefold() for o in row['options']]])

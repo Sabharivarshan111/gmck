@@ -2421,3 +2421,16 @@ DO NOT:Restore search-preview draft questions, held duplicates, changed source h
 **NEXT:** Finish final browser check for statistics chapter, publish follow-up, verify production payloads and put final CI/deployment outcome in PR receipt.
 
 **DO NOT:** Weaken anatomy/iOS release gates or count unrecovered PG Blazer records as imported. No MedMCQA.
+
+
+## 2026-10-22 — AIIMS/INI source audit, missing-stem repair and new recalls
+
+**DONE:** Candidate AIIMS90 / INI161 =251.13 additions: seven PG Blazer2011/2015 HTML items and six INI November2023 faculty-deck items. Acquired original public bytes, inspected actual slide keys and cross-checked primary clinical references. Repaired inicetmay25-psm:4 from source PDF page2, preserving its ID/choices/keyC. Withdrew duplicate faculty-ini-2022-may-psm:5 in favour of the older May2022 AglaSem ID. Other237 earlier records and all2078 NEET/year-sidecar bytes unchanged. Hold three additional contradictory/incomplete key sources. See docs/AIIMS_INI_SOURCE_AUDIT_20261022.md and scripts/aiims-ini-audit-20261022.json.
+
+**DONE:** Explicit before/after audit support preserves baseline verification while enabling source-confirmed repairs and complete reviewed withdrawals. Numbered-permutation guard prevents the missing-statements failure; held IDs cannot be reintroduced.11 integrity tests pass, including source/tamper/repair/withdrawal/override negatives.251-item fingerprints/chapters/years and237-row preservation, NEET2078/year checks, reader/installer/planner/discussion, native+preview TypeScript/mobile ESLint/native guards, production web/Android JS bundle pass.360/390/430 browser verifies new2011/2015/2023 labels/keys, repaired May2025 stem/keyC, bookmarks and offline reload. Screenshots inspected; original NEET flow passes.
+
+**HALF-DONE:** Publishing branch/PR and verifying production. No signed APK/Play/device claim. Existing digestive92%-versus95% anatomy and older iOS failures are not bypassed.
+
+**NEXT:** Publish tested tree, inspect hosted PG checks and production payloads; put final outcome in PR receipt. Resolve remaining similar-question pairs only with original-session evidence.
+
+**DO NOT:** Reintroduce the retired statistics duplicate, overwrite historical changed PDF hashes, use MedMCQA/model APIs, infer months from01/02 filenames, distribute source images/explanations, or treat189 slides as189 reviewed questions. Source metadata includes third-party hosting limits. Withdrawn duplicate bookmarks are not remapped; canonical older question remains available.

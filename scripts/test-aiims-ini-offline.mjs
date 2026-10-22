@@ -12,7 +12,7 @@ const chapters = new Map(read('mobile/src/lib/neetPgStudyData.json').chapters.ma
 const fetchBefore = globalThis.fetch;
 globalThis.fetch=()=>{throw Error('Offline bank attempted networking');};
 try {
-  for (const [file,count] of [['aiimsPgBank.json',83],['iniCetBank.json',156]]) {
+  for (const [file,count] of [['aiimsPgBank.json',90],['iniCetBank.json',161]]) {
     const bank=read('mobile/src/lib/'+file);validateOfflineBank(bank);
     const reader=createOfflineReader(bank);assert.equal(reader.total,count);
     assert.equal(fs.statSync('mobile/src/lib/'+file).size<125000,true);
@@ -41,11 +41,16 @@ try {
   }
   for (const held of ['aiims-2017-nov:1', 'ini-2024-01:15', 'ini-2026-may:8']) assert.equal(reviewed.some(r=>r.id===held),false);
   for(const row of read('scripts/aiims-ini-held.json')) assert.equal(reviewed.some(r=>r.id===row.id),false);
-  assert.equal(receipts.totalQuestions,239);
-  assert.equal(receipts.questionProvenance.length,239);
+  const ini=read('mobile/src/lib/iniCetBank.json');
+  assert.equal(ini.records.some(r=>r.id==='faculty-ini-2022-may-psm:5'),false);
+  const repaired=ini.records.find(r=>r.id==='inicetmay25-psm:4');
+  for(const statement of ['1. Conduct data analysis','2. Selecting population','3. Setting research question','4. Setting research objective'])assert.ok(repaired.question.includes(statement));
+  assert.equal(repaired.sourceAnswer,'C');
+  assert.equal(receipts.totalQuestions,251);
+  assert.equal(receipts.questionProvenance.length,251);
   const used = new Set(receipts.questionProvenance.map(r=>r.id));assert.deepEqual(used,new Set(reviewed.map(r=>r.id)));
   // Existing NEET payload remains separate and is not relabelled as another exam.
   const neet=read('mobile/src/lib/neetPgBank.json');assert.equal(neet.records.length,2078);
   assert.equal(neet.records.some(r=>used.has(r.id)),false);
 } finally {globalThis.fetch=fetchBefore;}
-console.log('PASS: 239 source-fingerprinted recall items, original explanations, real syllabus paths, offline search/filter/answers, mutation isolation and unchanged 2,078-item NEET bank.');
+console.log('PASS: 251 source-fingerprinted recall items, original explanations, real syllabus paths, offline search/filter/answers, mutation isolation and unchanged 2,078-item NEET bank.');
