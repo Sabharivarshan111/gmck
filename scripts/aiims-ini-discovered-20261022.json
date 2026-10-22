@@ -1,0 +1,158 @@
+{
+  "date": "2026-10-22",
+  "status": "nine_reviewed_additions_plus_unimported_research_leads",
+  "addedQuestions": 9,
+  "files": [
+    {
+      "file": "slideshare-aiims-2016-may-psychiatry.html",
+      "url": "https://www.slideshare.net/slideshow/aiims-2016-may-psychiatry-questions-and-answers/62976754",
+      "sha256": "fb2ec4dfc4e25d5eefa7f575bb9eb2582b1c43f28bdad0475b5caefab599ebdc",
+      "bytes": 1307889,
+      "exam": "aiims-pg",
+      "year": 2016,
+      "session": "May",
+      "required": true,
+      "pinBytes": true,
+      "acquiredAt": "2026-10-22",
+      "acquisition": "HTTP 200 public HTML; selected slide JPEGs visually inspected",
+      "runtimeImagesCopied": false
+    },
+    {
+      "file": "slideshare-ini-2022-may-psm.html",
+      "url": "https://www.slideshare.net/slideshow/inicet-may-2022-psm-recall-questions/251923213",
+      "sha256": "e17dc643c63cb5fb5fcca1aa82d961a5dd365f00bd93c074a6f142d134b71223",
+      "bytes": 1594186,
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": "May",
+      "required": true,
+      "pinBytes": true,
+      "acquiredAt": "2026-10-22",
+      "acquisition": "HTTP 200 public HTML; selected slide JPEGs visually inspected",
+      "runtimeImagesCopied": false
+    }
+  ],
+  "privateSourceImages": [
+    {
+      "file": "INICET-May-2022-PSM-Recall-questions-12-320.jpg",
+      "bytes": 10541,
+      "sha256": "0b201d58d14f2f729429caacb8363596988957ef8cc89564d353e9cbbb5bf37f",
+      "use": "private source/key verification only"
+    },
+    {
+      "file": "INICET-May-2022-PSM-Recall-questions-28-320.jpg",
+      "bytes": 6203,
+      "sha256": "10518e29714af0230c4ffb6d4b1c06074e2debe3341e76eeeebd0fb82dd271eb",
+      "use": "private source/key verification only"
+    },
+    {
+      "file": "INICET-May-2022-PSM-Recall-questions-46-320.jpg",
+      "bytes": 6853,
+      "sha256": "1e135427ae20e4d84554081c496f103cf6427c15a23f455ccc7a1c575d91b3d1",
+      "use": "private source/key verification only"
+    },
+    {
+      "file": "INICET-May-2022-PSM-Recall-questions-64-320.jpg",
+      "bytes": 6378,
+      "sha256": "a066e4433c15b45c6ab637ca6028b56b72860a6e1df031d167b0acee73fd19e4",
+      "use": "private source/key verification only"
+    },
+    {
+      "file": "INICET-May-2022-PSM-Recall-questions-68-320.jpg",
+      "bytes": 4890,
+      "sha256": "7446775afcd02db667a77248b56ae8bb7b3d16c719f3505232481acbdca5ad21",
+      "use": "private source/key verification only"
+    },
+    {
+      "file": "INICET-May-2022-PSM-Recall-questions-75-320.jpg",
+      "bytes": 7432,
+      "sha256": "dbdb4e3d7d32c81b1ae53517d65f36ce9c97aac79160d5ed6f6e06a4da23be2d",
+      "use": "private source/key verification only"
+    },
+    {
+      "file": "aiims2016-1.jpg",
+      "bytes": 23190,
+      "sha256": "7af72786381a080d0985abe4baa8bf97f8c56c336c3048b0732194afd429ff84",
+      "use": "private source/key verification only"
+    },
+    {
+      "file": "aiims2016-7.jpg",
+      "bytes": 23198,
+      "sha256": "54d77c890737fb983b8227b09b2ae57384ae6b0926dab198e9b4aa87108819d0",
+      "use": "private source/key verification only"
+    },
+    {
+      "file": "aiims2016-8.jpg",
+      "bytes": 22582,
+      "sha256": "b3eff51b45ee40686bfb186de7aec814588260fc6540dbb4c880163d8bea3db1",
+      "use": "private source/key verification only"
+    }
+  ],
+  "unimportedLeads": [
+    {
+      "url": "https://pgblazer.com/aiims/aiims-2011/",
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "May",
+      "observed": "Category includes item labelled160, duplicate numbers158/159, and incomplete choices. Sample pages92 and158-2 have complete choices and editorial keys.",
+      "countStatus": "Numbered labels are not a count of complete unique questions",
+      "access": "Search retrieval readable; direct HTTP downloads returned406; not acquired or imported"
+    },
+    {
+      "url": "https://pgblazer.com/aiims/aiims-november-2011/",
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "November",
+      "observed": "Publisher advertises200 recalled items; category links200 through195 include incomplete199/195.",
+      "claimedQuestions": 200,
+      "countStatus": "Publisher claim, not individually acquired/reviewed count",
+      "examDateEvidence": "https://pgblazer.com/aiims-pg-entrance-november-2011-questions-and-answers-discussion/",
+      "admissionSession": "January2012",
+      "access": "Search retrieval readable; not acquired or imported"
+    },
+    {
+      "url": "https://pgblazer.com/aiims/aiims-may-2015/",
+      "exam": "aiims-pg",
+      "year": 2015,
+      "session": "May",
+      "observed": "Category shows35 through28; individual pages3,4,16,20,24,25,26 also indexed. Some missing editorial answers, legal context and disputed stems.",
+      "countStatus": "35 is highest observed label; not a verified unique complete count",
+      "examDateEvidence": "https://pgblazer.com/aiims-pg-entrance-may-2015-mcq-recall-and-discussion/",
+      "access": "Search retrieval readable; direct HTTP406; not acquired or imported"
+    },
+    {
+      "url": "https://www.slideshare.net/slideshow/1-aiims-november-2015-questions-answers/62976682",
+      "exam": "aiims-pg",
+      "year": 2015,
+      "slides": 436,
+      "uploader": "Manjunath Shetty",
+      "observed": "Cover/first question sayNovember2015; numerous subsequent slide headers sayMay2015. Session must be resolved per item.",
+      "status": "held_session_conflict",
+      "countStatus": "Slides are not question count; not imported"
+    },
+    {
+      "url": "https://www.slideshare.net/slideshow/ini-cet-nov-2023-recall-session-part1pdf/264931543",
+      "exam": "ini-cet",
+      "year": 2023,
+      "session": "November",
+      "uploader": "KuldeepSinghDeepak",
+      "observed": "Public indexed subject recall deck with named faculty; substantial image-dependent material and missing choices. AI-generated synopsis misidentifies pityriasis rosea as psoriasis.",
+      "status": "new_lead_requires_download_original_publisher_and_key_review",
+      "countStatus": "No reviewed question count; not imported"
+    }
+  ],
+  "answerCrossChecks": [
+    "https://www.who.int/news/item/11-04-2022-one-dose-human-papillomavirus-(hpv)-vaccine-offers-solid-protection-against-cervical-cancer",
+    "https://cdn.who.int/media/docs/default-source/immunization/immunization_schedules/immunization-summary-table-3.pdf?download=true&sfvrsn=7c2de9f9_12",
+    "https://www.cdc.gov/infection-control/hcp/measles/index.html",
+    "https://www.pib.gov.in/PressReleasePage.aspx?PRID=1760064",
+    "https://www.who.int/india/health-topics/leishmaniasis",
+    "https://www.nimh.nih.gov/health/topics/obsessive-compulsive-disorder-ocd",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC8297234/"
+  ],
+  "notes": [
+    "PG Blazer is distinct from previously searched PGBlaster.",
+    "No generic datasets or MedMCQA.",
+    "Raw HTML and slide images remain private staging; only selected question/options and original explanations enter runtime."
+  ]
+}

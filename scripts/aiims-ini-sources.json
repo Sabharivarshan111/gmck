@@ -881,5 +881,27 @@
     "year": 2024,
     "session": "May",
     "required": true
+  },
+  {
+    "file": "slideshare-aiims-2016-may-psychiatry.html",
+    "url": "https://www.slideshare.net/slideshow/aiims-2016-may-psychiatry-questions-and-answers/62976754",
+    "sha256": "fb2ec4dfc4e25d5eefa7f575bb9eb2582b1c43f28bdad0475b5caefab599ebdc",
+    "bytes": 1307889,
+    "exam": "aiims-pg",
+    "year": 2016,
+    "session": "May",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "slideshare-ini-2022-may-psm.html",
+    "url": "https://www.slideshare.net/slideshow/inicet-may-2022-psm-recall-questions/251923213",
+    "sha256": "e17dc643c63cb5fb5fcca1aa82d961a5dd365f00bd93c074a6f142d134b71223",
+    "bytes": 1594186,
+    "exam": "ini-cet",
+    "year": 2022,
+    "session": "May",
+    "required": true,
+    "pinBytes": true
   }
 ]

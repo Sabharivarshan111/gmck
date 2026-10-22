@@ -2397,3 +2397,16 @@ DONE:Final content is AIIMS80 + INI150 =230, eighteen additions (3 May2019 AIIMS
 HALF-DONE:Publishing branch/PR and checking production assets. Existing anatomy/legacy iOS gates are not bypassed; no physical-device, signed APK or Play claim.
 NEXT:Record PR/merge/deployment receipt after publication; continue additional public source review separately.
 DO NOT:Restore search-preview draft questions, held duplicates, changed source hashes, generic datasets or fabricated options. Historical full-source rebuild still requires matching old files; use documented --extend-reviewed for receipt-preserving additions.
+
+
+## 2026-10-22 — Deeper AIIMS/INI research and faculty-source addition
+
+**DONE:** Found separate PG Blazer May/November2011 and May2015 collections, AIIMS2015/2016 faculty decks, INI May2022 PSM and a November2023 multi-subject lead. Detailed URLs, honest count semantics, source holds and acquisition receipts are in docs/AIIMS_INI_DEEPER_SEARCH_20261022.md and scripts/aiims-ini-discovered-20261022.json. Nine reviewed text-only additions: AIIMS May2016 psychiatry3 + INI May2022 PSM6. Candidate totals83/156=239. Earlier230 complete rows and NEET2078/year sidecar compare unchanged. Actual faculty slide keys visually inspected; new HTML bytes pinned, seven integrity tests pass. Source excerpts52/163 words; no publisher explanations/images redistributed. CI/sample-size semantic duplicate held; AIIMS2015 deck month conflict held.
+
+**DONE:** Data/year/offline reader/installer/planner/discussion checks, native+preview TypeScript, release import graph, required native guards, production web assembly and Android production JS bundle pass. New content appears in compiled JS. Browser includes new year/key checks; final run and publication outcome belong in the PR receipt.
+
+**HALF-DONE:** Publishing this candidate and confirming production assets. No signed Android release or Play/device certification. Larger source pools are not individually reviewed imports; PG Blazer direct acquisition returned406 despite readable search results.
+
+**NEXT:** Finish browser evidence/checks, push PR, verify merged production asset payloads. Continue original publisher/key/image review of unimported leads, preserving200-word per-document excerpt limits.
+
+**DO NOT:** Conflate PG Blazer with PGBlaster; claim200/436/90 as reviewed question counts; import MedMCQA, missing choices or generated search summaries; infer January2012 admission as exam year2012. No change to version/signing/ad configuration or release gates.

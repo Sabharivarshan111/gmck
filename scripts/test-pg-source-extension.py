@@ -31,7 +31,7 @@ class ExtensionIntegrity(unittest.TestCase):
 
     def test_released_rows_recover_with_receipts(self):
         rows, count = builder.reviewed_baseline(self.index)
-        self.assertEqual(len(rows), 230)
+        self.assertEqual(len(rows), 239)
         self.assertEqual(count, 2277)
 
     def test_changed_answer_is_rejected(self):
@@ -73,6 +73,16 @@ class ExtensionIntegrity(unittest.TestCase):
         (self.root/'new.pdf').write_bytes(data+b' changed')
         with self.assertRaisesRegex(ValueError, 'fingerprint changed'):
             builder.prepare(self.root, False, {'new.pdf'})
+
+    def test_pinned_html_hash_is_required(self):
+        data = b'<html>Public faculty recall source</html>'
+        record = dict(file='faculty.html',url='https://example.invalid/faculty.html',required=True,pinBytes=True,sha256=hashlib.sha256(data).hexdigest())
+        (self.root/'scripts/aiims-ini-sources.json').write_text(json.dumps([record]))
+        (self.root/'faculty.html').write_bytes(data)
+        builder.prepare(self.root, False, {'faculty.html'})
+        (self.root/'faculty.html').write_bytes(data+b' changed')
+        with self.assertRaisesRegex(ValueError, 'fingerprint changed'):
+            builder.prepare(self.root, False, {'faculty.html'})
 
 if __name__ == '__main__':
     unittest.main()

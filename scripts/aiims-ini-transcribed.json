@@ -1935,5 +1935,122 @@
       "Pneumothorax"
     ],
     "key": "A"
+  },
+  {
+    "id": "faculty-aiims-2016-may-psychiatry:1",
+    "source": "slideshare-aiims-2016-may-psychiatry.html",
+    "source_number": 1,
+    "question": "Semantic memory includes all except?",
+    "options": [
+      "Rules",
+      "Specific events",
+      "Words",
+      "Language"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "faculty-aiims-2016-may-psychiatry:5",
+    "source": "slideshare-aiims-2016-may-psychiatry.html",
+    "source_number": 5,
+    "question": "MMSE is used in assessment of:",
+    "options": [
+      "Cognition",
+      "Mood and effect",
+      "Thought process",
+      "Insight"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "faculty-aiims-2016-may-psychiatry:6",
+    "source": "slideshare-aiims-2016-may-psychiatry.html",
+    "source_number": 6,
+    "question": "Which of the following about obsession is not true?",
+    "options": [
+      "It is considered as disorder of content of thought",
+      "It persists despite resistance",
+      "Ego-dystonic",
+      "It is always seen in schizophrenia"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "faculty-ini-2022-may-psm:2",
+    "source": "slideshare-ini-2022-may-psm.html",
+    "source_number": 2,
+    "question": "According to WHO SAGE, How many doses of HPV is/are given to 9 – 14 years girl?",
+    "options": [
+      "1 dose",
+      "2 dose",
+      "1 or 2 dose",
+      "3 dose"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "faculty-ini-2022-may-psm:5",
+    "source": "slideshare-ini-2022-may-psm.html",
+    "source_number": 5,
+    "question": "Which of the following research method is used to describe the collected data?",
+    "options": [
+      "Theoretical statistics",
+      "Descriptive statistics",
+      "Analytical statistics",
+      "Inferential statistics"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "faculty-ini-2022-may-psm:9",
+    "source": "slideshare-ini-2022-may-psm.html",
+    "source_number": 9,
+    "question": "A one year old child has come to your OPD. He received his last DPT vaccine at 6 weeks of age. Which one is true?",
+    "options": [
+      "Skip DPT",
+      "Give 2nd dose of DPT",
+      "Give 1st dose of DPT again and restart schedule",
+      "None of the above"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "faculty-ini-2022-may-psm:14",
+    "source": "slideshare-ini-2022-may-psm.html",
+    "source_number": 14,
+    "question": "Admission to isolation room is advised for which airborne infection?",
+    "options": [
+      "Measles",
+      "Nipah encephalitis",
+      "Aseptic meningitis",
+      "CJD"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "faculty-ini-2022-may-psm:15",
+    "source": "slideshare-ini-2022-may-psm.html",
+    "source_number": 15,
+    "question": "Which of the following is not routinely screened for – before blood transfusion?",
+    "options": [
+      "Malaria",
+      "Dengue",
+      "HBV",
+      "HIV"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "faculty-ini-2022-may-psm:17",
+    "source": "slideshare-ini-2022-may-psm.html",
+    "source_number": 17,
+    "question": "A patient presents to you with 3 weeks fever and abdominal distension. Antibiotics and antimalarials were not helpful. He turned out to be rk39 dipstick test positive. Which drug can be used?",
+    "options": [
+      "Fluconazole",
+      "Bedaquiline",
+      "Amphotericin B",
+      "Penicillin"
+    ],
+    "key": "C"
   }
 ]
