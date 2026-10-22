@@ -1,0 +1,1897 @@
+{
+  "date": "2026-10-22",
+  "baseCommit": "24d04775ec44e0cd84a65e702dc279b7c01f0a55",
+  "scope": "paper discovery and source coverage; no runtime-bank changes",
+  "appCounts": {
+    "neet-pg": 2078,
+    "aiims-pg": 90,
+    "ini-cet": 161
+  },
+  "privateExtractedCandidatesHistorical": 2277,
+  "historicalCandidateLimit": "Historical extraction count, not new, unique, complete, validated or cleared-for-republication question count.",
+  "existingSourceDocuments": 98,
+  "existingSourcesWithSelections": 76,
+  "catalogues": {
+    "aglasem-2022": [
+      {
+        "url": "https://docs.aglasem.com/view/76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706",
+        "label": "PDFAnatomyAglaSem DocsView",
+        "context": "8 May",
+        "alreadyInImportSourceManifest": true,
+        "subject": "Anatomy",
+        "examSession": "May"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/68a4b930-b5c8-11ed-a822-0a5e36bc6706",
+        "label": "PDFPhysiologyAglaSem DocsView",
+        "context": "8 May",
+        "alreadyInImportSourceManifest": true,
+        "subject": "Physiology",
+        "examSession": "May"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/74878f7a-b5c8-11ed-beb5-0a5e36bc6706",
+        "label": "PDFBiochemistryAglaSem DocsView",
+        "context": "8 May",
+        "alreadyInImportSourceManifest": true,
+        "subject": "Biochemistry",
+        "examSession": "May"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/6e15085c-b5c8-11ed-8a74-0a5e36bc6706",
+        "label": "PDFPathologyAglaSem DocsView",
+        "context": "8 May",
+        "alreadyInImportSourceManifest": true,
+        "subject": "Pathology",
+        "examSession": "May"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/704ed580-b5c8-11ed-aa20-0a5e36bc6706",
+        "label": "PDFMicrobiologyAglaSem DocsView",
+        "context": "8 May",
+        "alreadyInImportSourceManifest": false,
+        "subject": "Microbiology",
+        "examSession": "May"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/6c98950c-b5c8-11ed-844e-0a5e36bc6706",
+        "label": "PDFPharmacologyAglaSem DocsView",
+        "context": "8 May",
+        "alreadyInImportSourceManifest": true,
+        "subject": "Pharmacology",
+        "examSession": "May"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/715beab2-b5c8-11ed-8572-0a5e36bc6706",
+        "label": "PDFForensic MedicineAglaSem DocsView",
+        "context": "8 May",
+        "alreadyInImportSourceManifest": false,
+        "subject": "Forensic Medicine",
+        "examSession": "May"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/68d61bf6-b5c8-11ed-ac15-0a5e36bc6706",
+        "label": "PDFCommunity Medicine (PSM)AglaSem DocsView",
+        "context": "8 May",
+        "alreadyInImportSourceManifest": true,
+        "subject": "Community Medicine (PSM)",
+        "examSession": "May"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706",
+        "label": "PDFMedicineAglaSem DocsView",
+        "context": "8 May",
+        "alreadyInImportSourceManifest": false,
+        "subject": "Medicine",
+        "examSession": "May"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/68fa49d6-b5c8-11ed-880a-0a5e36bc6706",
+        "label": "PDFSurgeryAglaSem DocsView",
+        "context": "8 May",
+        "alreadyInImportSourceManifest": false,
+        "subject": "Surgery",
+        "examSession": "May"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/6e299e8e-b5c8-11ed-99c1-0a5e36bc6706",
+        "label": "PDFObstetrics and GynaecologyAglaSem DocsView",
+        "context": "8 May",
+        "alreadyInImportSourceManifest": true,
+        "subject": "Obstetrics and Gynaecology",
+        "examSession": "May"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/6cddafe8-b5c8-11ed-88d6-0a5e36bc6706",
+        "label": "PDFPaediatricsAglaSem DocsView",
+        "context": "8 May",
+        "alreadyInImportSourceManifest": true,
+        "subject": "Paediatrics",
+        "examSession": "May"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/6d9d909c-b5c8-11ed-b2cd-0a5e36bc6706",
+        "label": "PDFOphthalmologyAglaSem DocsView",
+        "context": "8 May",
+        "alreadyInImportSourceManifest": true,
+        "subject": "Ophthalmology",
+        "examSession": "May"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/71e9b57c-b5c8-11ed-a8c5-0a5e36bc6706",
+        "label": "PDFENTAglaSem DocsView",
+        "context": "8 May",
+        "alreadyInImportSourceManifest": true,
+        "subject": "ENT",
+        "examSession": "May"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/7259d24e-b5c8-11ed-9bac-0a5e36bc6706",
+        "label": "PDFDermatologyAglaSem DocsView",
+        "context": "8 May",
+        "alreadyInImportSourceManifest": false,
+        "subject": "Dermatology",
+        "examSession": "May"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/687ac148-b5c8-11ed-9b49-0a5e36bc6706",
+        "label": "PDFPsychiatryAglaSem DocsView",
+        "context": "8 May",
+        "alreadyInImportSourceManifest": false,
+        "subject": "Psychiatry",
+        "examSession": "May"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/68da6e7c-b5c8-11ed-8174-0a5e36bc6706",
+        "label": "PDFRadiologyAglaSem DocsView",
+        "context": "8 May",
+        "alreadyInImportSourceManifest": false,
+        "subject": "Radiology",
+        "examSession": "May"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/74aff46a-b5c8-11ed-b820-0a5e36bc6706",
+        "label": "PDFAnaesthesiaAglaSem DocsView",
+        "context": "8 May",
+        "alreadyInImportSourceManifest": false,
+        "subject": "Anaesthesia",
+        "examSession": "May"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/5d9ef32a-c103-11ed-8570-0a5e36bc6706",
+        "label": "PDFAnatomyAglaSem DocsView",
+        "context": "13 November",
+        "alreadyInImportSourceManifest": false,
+        "subject": "Anatomy",
+        "examSession": "November"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/57d76ddc-c103-11ed-a156-0a5e36bc6706",
+        "label": "PDFPhysiologyAglaSem DocsView",
+        "context": "13 November",
+        "alreadyInImportSourceManifest": true,
+        "subject": "Physiology",
+        "examSession": "November"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/5d79a87c-c103-11ed-b3df-0a5e36bc6706",
+        "label": "PDFBiochemistryAglaSem DocsView",
+        "context": "13 November",
+        "alreadyInImportSourceManifest": true,
+        "subject": "Biochemistry",
+        "examSession": "November"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/594e1a76-c103-11ed-991c-0a5e36bc6706",
+        "label": "PDFPathologyAglaSem DocsView",
+        "context": "13 November",
+        "alreadyInImportSourceManifest": false,
+        "subject": "Pathology",
+        "examSession": "November"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/5b68bcd0-c103-11ed-9ef1-0a5e36bc6706",
+        "label": "PDFMicrobiologyAglaSem DocsView",
+        "context": "13 November",
+        "alreadyInImportSourceManifest": true,
+        "subject": "Microbiology",
+        "examSession": "November"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/585ca6be-c103-11ed-9d15-0a5e36bc6706",
+        "label": "PDFPharmacologyAglaSem DocsView",
+        "context": "13 November",
+        "alreadyInImportSourceManifest": false,
+        "subject": "Pharmacology",
+        "examSession": "November"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/5b91a956-c103-11ed-a1ff-0a5e36bc6706",
+        "label": "PDFForensic MedicineAglaSem DocsView",
+        "context": "13 November",
+        "alreadyInImportSourceManifest": true,
+        "subject": "Forensic Medicine",
+        "examSession": "November"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/5d822ace-c103-11ed-a976-0a5e36bc6706",
+        "label": "PDFCommunity Medicine (PSM)AglaSem DocsView",
+        "context": "13 November",
+        "alreadyInImportSourceManifest": false,
+        "subject": "Community Medicine (PSM)",
+        "examSession": "November"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/5b37c544-c103-11ed-80a9-0a5e36bc6706",
+        "label": "PDFMedicineAglaSem DocsView",
+        "context": "13 November",
+        "alreadyInImportSourceManifest": true,
+        "subject": "Medicine",
+        "examSession": "November"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/58543d6c-c103-11ed-bee2-0a5e36bc6706",
+        "label": "PDFSurgeryAglaSem DocsView",
+        "context": "13 November",
+        "alreadyInImportSourceManifest": true,
+        "subject": "Surgery",
+        "examSession": "November"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/5abf01ea-c103-11ed-b016-0a5e36bc6706",
+        "label": "PDFObstetrics and GynaecologyAglaSem DocsView",
+        "context": "13 November",
+        "alreadyInImportSourceManifest": true,
+        "subject": "Obstetrics and Gynaecology",
+        "examSession": "November"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/598c16fa-c103-11ed-9631-0a5e36bc6706",
+        "label": "PDFPaediatricsAglaSem DocsView",
+        "context": "13 November",
+        "alreadyInImportSourceManifest": false,
+        "subject": "Paediatrics",
+        "examSession": "November"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/5ab51d7e-c103-11ed-bad9-0a5e36bc6706",
+        "label": "PDFOphthalmologyAglaSem DocsView",
+        "context": "13 November",
+        "alreadyInImportSourceManifest": true,
+        "subject": "Ophthalmology",
+        "examSession": "November"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/5c9ee0f2-c103-11ed-97fb-0a5e36bc6706",
+        "label": "PDFENTAglaSem DocsView",
+        "context": "13 November",
+        "alreadyInImportSourceManifest": false,
+        "subject": "ENT",
+        "examSession": "November"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/5a8ea69e-c103-11ed-97f4-0a5e36bc6706",
+        "label": "PDFOrthopaedicsAglaSem DocsView",
+        "context": "13 November",
+        "alreadyInImportSourceManifest": true,
+        "subject": "Orthopaedics",
+        "examSession": "November"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/5cd670f8-c103-11ed-97fb-0a5e36bc6706",
+        "label": "PDFDermatologyAglaSem DocsView",
+        "context": "13 November",
+        "alreadyInImportSourceManifest": true,
+        "subject": "Dermatology",
+        "examSession": "November"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/57d9fa20-c103-11ed-81fa-0a5e36bc6706",
+        "label": "PDFPsychiatryAglaSem DocsView",
+        "context": "13 November",
+        "alreadyInImportSourceManifest": false,
+        "subject": "Psychiatry",
+        "examSession": "November"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/58415486-c103-11ed-847b-0a5e36bc6706",
+        "label": "PDFRadiologyAglaSem DocsView",
+        "context": "13 November",
+        "alreadyInImportSourceManifest": false,
+        "subject": "Radiology",
+        "examSession": "November"
+      },
+      {
+        "url": "https://docs.aglasem.com/view/5da426e2-c103-11ed-80bf-0a5e36bc6706",
+        "label": "PDFAnaesthesiaAglaSem DocsView",
+        "context": "13 November",
+        "alreadyInImportSourceManifest": false,
+        "subject": "Anaesthesia",
+        "examSession": "November"
+      }
+    ],
+    "doctutorials-2025": [
+      {
+        "url": "https://tinyurl.com/inicetmay25-anatomy",
+        "label": "INI CET 2025 Anatomy Previous Year Question Paper Pdf",
+        "context": "INI CET May 2025 Previous Year Question Paper (PYQs) with Solutions"
+      },
+      {
+        "url": "https://tinyurl.com/inicetmay25-biochemistry",
+        "label": "INI CET 2025 Biochemistry Previous Year Question Paper Pdf",
+        "context": "INI CET May 2025 Previous Year Question Paper (PYQs) with Solutions"
+      },
+      {
+        "url": "https://tinyurl.com/inicetmay25-physiology",
+        "label": "INI CET 2025 Physiology Previous Year Question Paper Pdf",
+        "context": "INI CET May 2025 Previous Year Question Paper (PYQs) with Solutions"
+      },
+      {
+        "url": "https://tinyurl.com/inicetmay25-microbiology",
+        "label": "INI CET 2025 Microbiology Previous Year Question Paper Pdf",
+        "context": "INI CET May 2025 Previous Year Question Paper (PYQs) with Solutions"
+      },
+      {
+        "url": "https://tinyurl.com/inicetmay25-pharmacology",
+        "label": "INI CET 2025 Pharmacology Previous Year Question Paper Pdf",
+        "context": "INI CET May 2025 Previous Year Question Paper (PYQs) with Solutions"
+      },
+      {
+        "url": "https://tinyurl.com/inicetmay25-ent",
+        "label": "INI CET 2025 ENT Previous Year Question Paper Pdf",
+        "context": "INI CET May 2025 Previous Year Question Paper (PYQs) with Solutions"
+      },
+      {
+        "url": "https://tinyurl.com/inicetmay25-forensic-medicine",
+        "label": "INI CET 2025 FMT Previous Year Question Paper Pdf",
+        "context": "INI CET May 2025 Previous Year Question Paper (PYQs) with Solutions"
+      },
+      {
+        "url": "https://tinyurl.com/inicetmay25-opthalmology",
+        "label": "INI CET 2025 Ophthalmology Previous Year Question Paper Pdf",
+        "context": "INI CET May 2025 Previous Year Question Paper (PYQs) with Solutions"
+      },
+      {
+        "url": "https://tinyurl.com/inicetmay25-psm",
+        "label": "INI CET 2025 PSM Previous Year Question Paper Pdf",
+        "context": "INI CET May 2025 Previous Year Question Paper (PYQs) with Solutions"
+      },
+      {
+        "url": "https://tinyurl.com/inicetmay25-dermatology",
+        "label": "INI CET 2025 Dermatology Previous Year Question Paper Pdf",
+        "context": "INI CET May 2025 Previous Year Question Paper (PYQs) with Solutions"
+      },
+      {
+        "url": "https://tinyurl.com/inicetmay25-medicine",
+        "label": "INI CET 2025 Medicine Previous Year Question Paper Pdf",
+        "context": "INI CET May 2025 Previous Year Question Paper (PYQs) with Solutions"
+      },
+      {
+        "url": "https://tinyurl.com/inicetmay25-obgyn",
+        "label": "INI CET 2025 ObGyn Previous Year Question Paper Pdf",
+        "context": "INI CET May 2025 Previous Year Question Paper (PYQs) with Solutions"
+      },
+      {
+        "url": "https://tinyurl.com/inicetmay25-orthopaedics",
+        "label": "INI CET 2025 Orthopaedics Previous Year Question Paper Pdf",
+        "context": "INI CET May 2025 Previous Year Question Paper (PYQs) with Solutions"
+      },
+      {
+        "url": "https://tinyurl.com/inicetmay25-pediatrics",
+        "label": "INI CET 2025 Pediatrics Previous Year Question Paper Pdf",
+        "context": "INI CET May 2025 Previous Year Question Paper (PYQs) with Solutions"
+      },
+      {
+        "url": "https://tinyurl.com/inicetmay25-psychiatry",
+        "label": "INI CET 2025 Psychiatry Previous Year Question Paper Pdf",
+        "context": "INI CET May 2025 Previous Year Question Paper (PYQs) with Solutions"
+      },
+      {
+        "url": "https://tinyurl.com/inicetmay25-radiology",
+        "label": "INI CET 2025 Radiology Previous Year Question Paper Pdf",
+        "context": "INI CET May 2025 Previous Year Question Paper (PYQs) with Solutions"
+      },
+      {
+        "url": "https://tinyurl.com/inicetmay25-surgery",
+        "label": "INI CET 2025 Surgery Previous Year Question Paper Pdf",
+        "context": "INI CET May 2025 Previous Year Question Paper (PYQs) with Solutions"
+      },
+      {
+        "url": "https://tinyurl.com/inicetmay25-anaesthesia",
+        "label": "INI CET 2025 Anaesthesia Previous Year Question Paper Pdf",
+        "context": "INI CET May 2025 Previous Year Question Paper (PYQs) with Solutions"
+      },
+      {
+        "url": "https://tinyurl.com/inicetmay25-pathology",
+        "label": "INI CET 2025 Pathology Previous Year Question Paper Pdf",
+        "context": "INI CET May 2025 Previous Year Question Paper (PYQs) with Solutions"
+      }
+    ],
+    "prepp": [],
+    "firstranker": [
+      {
+        "url": "https://firstranker.com/fr/frdA310721A082180/download-aiims-pg-2020-june-physiology-question-paper",
+        "label": "Download",
+        "context": "AIIMS PG Last10 Years 2011-2021 Previous Question Papers with Answer Keys (Solved Question Papers)"
+      },
+      {
+        "url": "https://firstranker.com/fr/frdA310721A082181/download-aiims-pg-2020-june-physiology-solved-paper",
+        "label": "Download",
+        "context": "AIIMS PG Last10 Years 2011-2021 Previous Question Papers with Answer Keys (Solved Question Papers)"
+      },
+      {
+        "url": "https://firstranker.com/fr/frdA310721A082182/download-aiims-pg-2020-psm-solved-paper",
+        "label": "Download",
+        "context": "AIIMS PG Last10 Years 2011-2021 Previous Question Papers with Answer Keys (Solved Question Papers)"
+      },
+      {
+        "url": "https://firstranker.com/fr/frdA300721A213128/download-aiims-pg-2017-may-question-paper-with-answers",
+        "label": "Download",
+        "context": "AIIMS PG Last10 Years 2011-2021 Previous Question Papers with Answer Keys (Solved Question Papers)"
+      },
+      {
+        "url": "https://firstranker.com/fr/frdA300721A213127/download-aiims-pg-2016-november-question-paper-with-answers",
+        "label": "Download",
+        "context": "AIIMS PG Last10 Years 2011-2021 Previous Question Papers with Answer Keys (Solved Question Papers)"
+      },
+      {
+        "url": "https://firstranker.com/fr/frdA300721A213126/download-aiims-pg-2015-may-question-paper-with-answers",
+        "label": "Download",
+        "context": "AIIMS PG Last10 Years 2011-2021 Previous Question Papers with Answer Keys (Solved Question Papers)"
+      },
+      {
+        "url": "https://firstranker.com/fr/frdA300721A213125/download-aiims-pg-2014-may-question-paper-with-answers",
+        "label": "Download",
+        "context": "AIIMS PG Last10 Years 2011-2021 Previous Question Papers with Answer Keys (Solved Question Papers)"
+      },
+      {
+        "url": "https://firstranker.com/fr/frdA300721A213124/download-aiims-pg-2012-question-paper-with-answers",
+        "label": "Download",
+        "context": "AIIMS PG Last10 Years 2011-2021 Previous Question Papers with Answer Keys (Solved Question Papers)"
+      },
+      {
+        "url": "https://firstranker.com/fr/frdA300721A213123/download-aiims-pg-2011-may-question-paper-with-answers",
+        "label": "Download",
+        "context": "AIIMS PG Last10 Years 2011-2021 Previous Question Papers with Answer Keys (Solved Question Papers)"
+      },
+      {
+        "url": "https://firstranker.com/fr/frdA300721A213122/download-aiims-pg-2009-question-paper-with-answers",
+        "label": "Download",
+        "context": "AIIMS PG Last10 Years 2011-2021 Previous Question Papers with Answer Keys (Solved Question Papers)"
+      },
+      {
+        "url": "https://firstranker.com/fr/frdA300721A213121/download-aiims-pg-2006-may-question-paper-with-answers",
+        "label": "Download",
+        "context": "AIIMS PG Last10 Years 2011-2021 Previous Question Papers with Answer Keys (Solved Question Papers)"
+      },
+      {
+        "url": "https://firstranker.com/fr/frdA300721A213120/download-aiims-pg-2005-question-paper-with-answes",
+        "label": "Download",
+        "context": "AIIMS PG Last10 Years 2011-2021 Previous Question Papers with Answer Keys (Solved Question Papers)"
+      }
+    ],
+    "prepladder": [
+      {
+        "url": "https://image.prepladder.com/content/1VhEAo831pm58wXuFB491785752380.pdf",
+        "label": "Annual Return",
+        "context": "Stay Ahead in Your Prep"
+      }
+    ]
+  },
+  "indexAcquisition": [
+    {
+      "id": "aglasem-2022",
+      "url": "https://admission.aglasem.com/ini-cet-2022-question-paper/",
+      "status": "original_html_acquired",
+      "exit": 0,
+      "bytes": 129591,
+      "sha256": "ce99a00f603122740d1bd3c6936e028b2b8a48fe74981416deaee7d5f875d99d"
+    },
+    {
+      "id": "doctutorials-2025",
+      "url": "https://www.doctutorials.com/ini-cet/ini-cet-previous-year-question-papers",
+      "status": "original_html_acquired",
+      "exit": 0,
+      "bytes": 311107,
+      "sha256": "e77dc77e1d3703ddf90e97e8c2d9a2b786969f21b41e7f304aaf5949accd3e12"
+    },
+    {
+      "id": "prepp",
+      "url": "https://prepp.in/ini-cet-exam/question-paper",
+      "status": "direct_http_403",
+      "exit": 0,
+      "bytes": 919,
+      "sha256": "e624ec553f989f44a412aa35d1b031207b024b46f762af1bf73a15e041c09d08"
+    },
+    {
+      "id": "firstranker",
+      "url": "https://firstranker.com/all-india-institutes-of-medical-sciences/aiims-pg-last10-years-2011-2021-previous-question-papers-with-answer-keys-solved-question-papers/",
+      "status": "original_html_acquired",
+      "exit": 0,
+      "bytes": 154025,
+      "sha256": "7c2393884edc777b436d8e06a9577a163348f44990c0e5bf944461484a8c0f39"
+    },
+    {
+      "id": "prepladder",
+      "url": "https://www.prepladder.com/neet-pg-study-material/previous-years-question-papers/ini-cet-previous-year-question-papers",
+      "status": "original_html_acquired",
+      "exit": 0,
+      "bytes": 584269,
+      "sha256": "eabfbe34201aa6f74c88b522e2adb8dbff7726bf4316ec13e9ac3f36677cf505"
+    }
+  ],
+  "newSourceAcquisition": [
+    {
+      "url": "https://docs.aglasem.com/view/704ed580-b5c8-11ed-aa20-0a5e36bc6706",
+      "label": "PDFMicrobiologyAglaSem DocsView",
+      "context": "8 May",
+      "viewStatus": "200",
+      "pdfUrl": "https://cdn.aglasem.com/aglasem-doc/704ed580-b5c8-11ed-aa20-0a5e36bc6706/704ed580-b5c8-11ed-aa20-0a5e36bc6706.pdf",
+      "httpStatus": "200",
+      "acquisitionStatus": "downloaded_unreviewed",
+      "bytes": 2523161,
+      "sha256": "fda4e2298d9c36db43149a9f6882003dd9eb0e21f9e278fe93775c0c6e234dd9",
+      "pages": 7,
+      "exam": "ini-cet",
+      "examYear": 2022,
+      "examSession": "May",
+      "dateEvidence": "https://admission.aglasem.com/ini-cet-2022-question-paper/",
+      "approvedQuestions": 0,
+      "reviewStatus": "pending_question_options_key_image_and_duplicate_review",
+      "subject": "Microbiology"
+    },
+    {
+      "url": "https://docs.aglasem.com/view/715beab2-b5c8-11ed-8572-0a5e36bc6706",
+      "label": "PDFForensic MedicineAglaSem DocsView",
+      "context": "8 May",
+      "viewStatus": "200",
+      "pdfUrl": "https://cdn.aglasem.com/aglasem-doc/715beab2-b5c8-11ed-8572-0a5e36bc6706/715beab2-b5c8-11ed-8572-0a5e36bc6706.pdf",
+      "httpStatus": "200",
+      "acquisitionStatus": "downloaded_unreviewed",
+      "bytes": 1588314,
+      "sha256": "f3611e7cfe4c4f33f8a6676f69cf80ea93687893cc4a8a2c47510553861055d9",
+      "pages": 6,
+      "exam": "ini-cet",
+      "examYear": 2022,
+      "examSession": "May",
+      "dateEvidence": "https://admission.aglasem.com/ini-cet-2022-question-paper/",
+      "approvedQuestions": 0,
+      "reviewStatus": "pending_question_options_key_image_and_duplicate_review",
+      "subject": "Forensic Medicine"
+    },
+    {
+      "url": "https://docs.aglasem.com/view/7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706",
+      "label": "PDFMedicineAglaSem DocsView",
+      "context": "8 May",
+      "viewStatus": "200",
+      "pdfUrl": "https://cdn.aglasem.com/aglasem-doc/7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706/7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+      "httpStatus": "200",
+      "acquisitionStatus": "downloaded_unreviewed",
+      "bytes": 1887733,
+      "sha256": "4a72b91d98ec8931ed5a3a348f8e2d97a29fee2a9b195431a8108f83e39cb5de",
+      "pages": 7,
+      "exam": "ini-cet",
+      "examYear": 2022,
+      "examSession": "May",
+      "dateEvidence": "https://admission.aglasem.com/ini-cet-2022-question-paper/",
+      "approvedQuestions": 0,
+      "reviewStatus": "pending_question_options_key_image_and_duplicate_review",
+      "subject": "Medicine"
+    },
+    {
+      "url": "https://docs.aglasem.com/view/68fa49d6-b5c8-11ed-880a-0a5e36bc6706",
+      "label": "PDFSurgeryAglaSem DocsView",
+      "context": "8 May",
+      "viewStatus": "200",
+      "pdfUrl": "https://cdn.aglasem.com/aglasem-doc/68fa49d6-b5c8-11ed-880a-0a5e36bc6706/68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf",
+      "httpStatus": "200",
+      "acquisitionStatus": "downloaded_unreviewed",
+      "bytes": 2710264,
+      "sha256": "cbee161746285f7496a8feb194ab82c1a3279492da6e45a456880da616d49d3d",
+      "pages": 9,
+      "exam": "ini-cet",
+      "examYear": 2022,
+      "examSession": "May",
+      "dateEvidence": "https://admission.aglasem.com/ini-cet-2022-question-paper/",
+      "approvedQuestions": 0,
+      "reviewStatus": "pending_question_options_key_image_and_duplicate_review",
+      "subject": "Surgery"
+    },
+    {
+      "url": "https://docs.aglasem.com/view/7259d24e-b5c8-11ed-9bac-0a5e36bc6706",
+      "label": "PDFDermatologyAglaSem DocsView",
+      "context": "8 May",
+      "viewStatus": "200",
+      "pdfUrl": "https://cdn.aglasem.com/aglasem-doc/7259d24e-b5c8-11ed-9bac-0a5e36bc6706/7259d24e-b5c8-11ed-9bac-0a5e36bc6706.pdf",
+      "httpStatus": "200",
+      "acquisitionStatus": "downloaded_unreviewed",
+      "bytes": 1963798,
+      "sha256": "4103b8b6a108a2aa36aaf98b729597adbba70fd2814c75a5c2ee95db24ef84a0",
+      "pages": 5,
+      "exam": "ini-cet",
+      "examYear": 2022,
+      "examSession": "May",
+      "dateEvidence": "https://admission.aglasem.com/ini-cet-2022-question-paper/",
+      "approvedQuestions": 0,
+      "reviewStatus": "pending_question_options_key_image_and_duplicate_review",
+      "subject": "Dermatology"
+    },
+    {
+      "url": "https://docs.aglasem.com/view/687ac148-b5c8-11ed-9b49-0a5e36bc6706",
+      "label": "PDFPsychiatryAglaSem DocsView",
+      "context": "8 May",
+      "viewStatus": "200",
+      "pdfUrl": "https://cdn.aglasem.com/aglasem-doc/687ac148-b5c8-11ed-9b49-0a5e36bc6706/687ac148-b5c8-11ed-9b49-0a5e36bc6706.pdf",
+      "httpStatus": "200",
+      "acquisitionStatus": "downloaded_unreviewed",
+      "bytes": 1293032,
+      "sha256": "84b102122a4c61b5c43d29257c76e85166887c7e62ed29c8bd206f4389ee90fa",
+      "pages": 4,
+      "exam": "ini-cet",
+      "examYear": 2022,
+      "examSession": "May",
+      "dateEvidence": "https://admission.aglasem.com/ini-cet-2022-question-paper/",
+      "approvedQuestions": 0,
+      "reviewStatus": "pending_question_options_key_image_and_duplicate_review",
+      "subject": "Psychiatry"
+    },
+    {
+      "url": "https://docs.aglasem.com/view/68da6e7c-b5c8-11ed-8174-0a5e36bc6706",
+      "label": "PDFRadiologyAglaSem DocsView",
+      "context": "8 May",
+      "viewStatus": "200",
+      "pdfUrl": "https://cdn.aglasem.com/aglasem-doc/68da6e7c-b5c8-11ed-8174-0a5e36bc6706/68da6e7c-b5c8-11ed-8174-0a5e36bc6706.pdf",
+      "httpStatus": "200",
+      "acquisitionStatus": "downloaded_unreviewed",
+      "bytes": 1915631,
+      "sha256": "cfeb1f9d0a436fa2c553f72c6448bfc833615421072b7f8b2e1d1fe85ff73ae9",
+      "pages": 5,
+      "exam": "ini-cet",
+      "examYear": 2022,
+      "examSession": "May",
+      "dateEvidence": "https://admission.aglasem.com/ini-cet-2022-question-paper/",
+      "approvedQuestions": 0,
+      "reviewStatus": "pending_question_options_key_image_and_duplicate_review",
+      "subject": "Radiology"
+    },
+    {
+      "url": "https://docs.aglasem.com/view/74aff46a-b5c8-11ed-b820-0a5e36bc6706",
+      "label": "PDFAnaesthesiaAglaSem DocsView",
+      "context": "8 May",
+      "viewStatus": "200",
+      "pdfUrl": "https://cdn.aglasem.com/aglasem-doc/74aff46a-b5c8-11ed-b820-0a5e36bc6706/74aff46a-b5c8-11ed-b820-0a5e36bc6706.pdf",
+      "httpStatus": "200",
+      "acquisitionStatus": "downloaded_unreviewed",
+      "bytes": 790795,
+      "sha256": "6c213c0396e6f12e40adc468531e4f8482696e506c83916113fca6215e94d967",
+      "pages": 2,
+      "exam": "ini-cet",
+      "examYear": 2022,
+      "examSession": "May",
+      "dateEvidence": "https://admission.aglasem.com/ini-cet-2022-question-paper/",
+      "approvedQuestions": 0,
+      "reviewStatus": "pending_question_options_key_image_and_duplicate_review",
+      "subject": "Anaesthesia"
+    },
+    {
+      "url": "https://docs.aglasem.com/view/5d9ef32a-c103-11ed-8570-0a5e36bc6706",
+      "label": "PDFAnatomyAglaSem DocsView",
+      "context": "13 November",
+      "viewStatus": "200",
+      "pdfUrl": "https://cdn.aglasem.com/aglasem-doc/5d9ef32a-c103-11ed-8570-0a5e36bc6706/5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+      "httpStatus": "200",
+      "acquisitionStatus": "downloaded_unreviewed",
+      "bytes": 1820341,
+      "sha256": "219c8b449bf199370d82f5384d0b6eb42f0016b6f06a0afeba43e259584cfdd3",
+      "pages": 17,
+      "exam": "ini-cet",
+      "examYear": 2022,
+      "examSession": "November",
+      "dateEvidence": "https://admission.aglasem.com/ini-cet-2022-question-paper/",
+      "approvedQuestions": 0,
+      "reviewStatus": "pending_question_options_key_image_and_duplicate_review",
+      "subject": "Anatomy"
+    },
+    {
+      "url": "https://docs.aglasem.com/view/594e1a76-c103-11ed-991c-0a5e36bc6706",
+      "label": "PDFPathologyAglaSem DocsView",
+      "context": "13 November",
+      "viewStatus": "200",
+      "pdfUrl": "https://cdn.aglasem.com/aglasem-doc/594e1a76-c103-11ed-991c-0a5e36bc6706/594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+      "httpStatus": "200",
+      "acquisitionStatus": "downloaded_unreviewed",
+      "bytes": 2149984,
+      "sha256": "4441b3fe3299066974530ff56569836ff16c3b17468d889ae24dad45b4641600",
+      "pages": 16,
+      "exam": "ini-cet",
+      "examYear": 2022,
+      "examSession": "November",
+      "dateEvidence": "https://admission.aglasem.com/ini-cet-2022-question-paper/",
+      "approvedQuestions": 0,
+      "reviewStatus": "pending_question_options_key_image_and_duplicate_review",
+      "subject": "Pathology"
+    },
+    {
+      "url": "https://docs.aglasem.com/view/585ca6be-c103-11ed-9d15-0a5e36bc6706",
+      "label": "PDFPharmacologyAglaSem DocsView",
+      "context": "13 November",
+      "viewStatus": "200",
+      "pdfUrl": "https://cdn.aglasem.com/aglasem-doc/585ca6be-c103-11ed-9d15-0a5e36bc6706/585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+      "httpStatus": "200",
+      "acquisitionStatus": "downloaded_unreviewed",
+      "bytes": 1732992,
+      "sha256": "6f644cd8aa9e12aa995370911dfa8c2c466d549238b6828d00eb65ce3c8e7aaa",
+      "pages": 20,
+      "exam": "ini-cet",
+      "examYear": 2022,
+      "examSession": "November",
+      "dateEvidence": "https://admission.aglasem.com/ini-cet-2022-question-paper/",
+      "approvedQuestions": 0,
+      "reviewStatus": "pending_question_options_key_image_and_duplicate_review",
+      "subject": "Pharmacology"
+    },
+    {
+      "url": "https://docs.aglasem.com/view/5d822ace-c103-11ed-a976-0a5e36bc6706",
+      "label": "PDFCommunity Medicine (PSM)AglaSem DocsView",
+      "context": "13 November",
+      "viewStatus": "200",
+      "pdfUrl": "https://cdn.aglasem.com/aglasem-doc/5d822ace-c103-11ed-a976-0a5e36bc6706/5d822ace-c103-11ed-a976-0a5e36bc6706.pdf",
+      "httpStatus": "200",
+      "acquisitionStatus": "downloaded_unreviewed",
+      "bytes": 1501493,
+      "sha256": "5d144e0379307f61ca25b98325a586e678413bfc3c76b9126bf4f561099e9341",
+      "pages": 11,
+      "exam": "ini-cet",
+      "examYear": 2022,
+      "examSession": "November",
+      "dateEvidence": "https://admission.aglasem.com/ini-cet-2022-question-paper/",
+      "approvedQuestions": 0,
+      "reviewStatus": "pending_question_options_key_image_and_duplicate_review",
+      "subject": "Community Medicine (PSM)"
+    },
+    {
+      "url": "https://docs.aglasem.com/view/598c16fa-c103-11ed-9631-0a5e36bc6706",
+      "label": "PDFPaediatricsAglaSem DocsView",
+      "context": "13 November",
+      "viewStatus": "200",
+      "pdfUrl": "https://cdn.aglasem.com/aglasem-doc/598c16fa-c103-11ed-9631-0a5e36bc6706/598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+      "httpStatus": "200",
+      "acquisitionStatus": "downloaded_unreviewed",
+      "bytes": 1058263,
+      "sha256": "9c7e2470c27069c73f46db8336a0d3e19f9352619fcedd5e9e605269de6e14d0",
+      "pages": 9,
+      "exam": "ini-cet",
+      "examYear": 2022,
+      "examSession": "November",
+      "dateEvidence": "https://admission.aglasem.com/ini-cet-2022-question-paper/",
+      "approvedQuestions": 0,
+      "reviewStatus": "pending_question_options_key_image_and_duplicate_review",
+      "subject": "Paediatrics"
+    },
+    {
+      "url": "https://docs.aglasem.com/view/5c9ee0f2-c103-11ed-97fb-0a5e36bc6706",
+      "label": "PDFENTAglaSem DocsView",
+      "context": "13 November",
+      "viewStatus": "410",
+      "exam": "ini-cet",
+      "examYear": 2022,
+      "examSession": "November",
+      "dateEvidence": "https://admission.aglasem.com/ini-cet-2022-question-paper/",
+      "approvedQuestions": 0,
+      "reviewStatus": "pending_question_options_key_image_and_duplicate_review",
+      "subject": "ENT"
+    },
+    {
+      "url": "https://docs.aglasem.com/view/57d9fa20-c103-11ed-81fa-0a5e36bc6706",
+      "label": "PDFPsychiatryAglaSem DocsView",
+      "context": "13 November",
+      "viewStatus": "200",
+      "pdfUrl": "https://cdn.aglasem.com/aglasem-doc/57d9fa20-c103-11ed-81fa-0a5e36bc6706/57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+      "httpStatus": "200",
+      "acquisitionStatus": "downloaded_unreviewed",
+      "bytes": 949329,
+      "sha256": "8990f9b44981080d4fc24fc0da2e2220418534636ed722d7afd6e63b01e410f5",
+      "pages": 6,
+      "exam": "ini-cet",
+      "examYear": 2022,
+      "examSession": "November",
+      "dateEvidence": "https://admission.aglasem.com/ini-cet-2022-question-paper/",
+      "approvedQuestions": 0,
+      "reviewStatus": "pending_question_options_key_image_and_duplicate_review",
+      "subject": "Psychiatry"
+    },
+    {
+      "url": "https://docs.aglasem.com/view/58415486-c103-11ed-847b-0a5e36bc6706",
+      "label": "PDFRadiologyAglaSem DocsView",
+      "context": "13 November",
+      "viewStatus": "200",
+      "pdfUrl": "https://cdn.aglasem.com/aglasem-doc/58415486-c103-11ed-847b-0a5e36bc6706/58415486-c103-11ed-847b-0a5e36bc6706.pdf",
+      "httpStatus": "200",
+      "acquisitionStatus": "downloaded_unreviewed",
+      "bytes": 1548329,
+      "sha256": "ad651401ec6a4b0e9180f122938e465be6f7d76618bda60fe4e4baa407a8c5a7",
+      "pages": 9,
+      "exam": "ini-cet",
+      "examYear": 2022,
+      "examSession": "November",
+      "dateEvidence": "https://admission.aglasem.com/ini-cet-2022-question-paper/",
+      "approvedQuestions": 0,
+      "reviewStatus": "pending_question_options_key_image_and_duplicate_review",
+      "subject": "Radiology"
+    },
+    {
+      "url": "https://docs.aglasem.com/view/5da426e2-c103-11ed-80bf-0a5e36bc6706",
+      "label": "PDFAnaesthesiaAglaSem DocsView",
+      "context": "13 November",
+      "viewStatus": "200",
+      "pdfUrl": "https://cdn.aglasem.com/aglasem-doc/5da426e2-c103-11ed-80bf-0a5e36bc6706/5da426e2-c103-11ed-80bf-0a5e36bc6706.pdf",
+      "httpStatus": "200",
+      "acquisitionStatus": "downloaded_unreviewed",
+      "bytes": 712040,
+      "sha256": "6762cfe989938ed5959d19a2ff1c306380f30e398f4dd0b9ff5b88333b001152",
+      "pages": 3,
+      "exam": "ini-cet",
+      "examYear": 2022,
+      "examSession": "November",
+      "dateEvidence": "https://admission.aglasem.com/ini-cet-2022-question-paper/",
+      "approvedQuestions": 0,
+      "reviewStatus": "pending_question_options_key_image_and_duplicate_review",
+      "subject": "Anaesthesia"
+    },
+    {
+      "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Anaesthesia-INI-25-May-Reworked_compressed.pdf",
+      "httpStatus": "200",
+      "bytes": 401735,
+      "sha256": "d36e433ef20b29c42c2035adff4a8f1e2d4fc335d23dddcca4598017f964fbaa",
+      "pages": 3,
+      "acquisitionStatus": "downloaded_unreviewed",
+      "exam": "ini-cet",
+      "examYear": 2025,
+      "examSession": "May",
+      "subject": "Anaesthesia",
+      "approvedQuestions": 0,
+      "reviewStatus": "pending_question_options_key_image_and_duplicate_review",
+      "dateEvidence": "https://www.doctutorials.com/ini-cet/ini-cet-previous-year-question-papers"
+    }
+  ],
+  "newSourceSummary": {
+    "missingFromPriorManifest": 18,
+    "newPdfsDownloaded": 17,
+    "newPdfPages": 139,
+    "unavailableView": 1,
+    "newQuestionsApproved": 0
+  },
+  "preppExistingQuestionPaperLinks": [
+    {
+      "file": "INI_CET_2020_Memory_Based_Question_Paper_PDF_9eba861dd8787d88de0f988862cd3431.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2020_Memory_Based_Question_Paper_PDF_9eba861dd8787d88de0f988862cd3431.pdf",
+      "sha256": "db1348b5f4b2e74b1cec87eb4eef556af191723a03cf67d2f26ff9e7157a8128",
+      "bytes": 2037546,
+      "exam": "ini-cet",
+      "year": 2020,
+      "required": true
+    },
+    {
+      "file": "INI_CET_2021_Memory_Based_Question_Paper_01_cef093487967243d9e5afa0d57de5e5f.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2021_Memory_Based_Question_Paper_01_cef093487967243d9e5afa0d57de5e5f.pdf",
+      "sha256": "ef5d8fb757ba679090eed9c9b4e9b1a9ad58aa5ba41228b44946eb6e849092ba",
+      "bytes": 3249740,
+      "exam": "ini-cet",
+      "year": 2021,
+      "required": true
+    },
+    {
+      "file": "INI_CET_2021_Memory_Based_Question_Paper_02_ec5f063fb54a891d761c85a1b0628b65.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2021_Memory_Based_Question_Paper_02_ec5f063fb54a891d761c85a1b0628b65.pdf",
+      "sha256": "f6fe1067c14f7329b01ef5c9b212e0052ab4b64a6a00e28bfc0a08c78e5e20ec",
+      "bytes": 3261155,
+      "exam": "ini-cet",
+      "year": 2021,
+      "required": true
+    },
+    {
+      "file": "INI_CET_2022_Memory_Based_Question_Paper_01_d0ea972cc3e006c92d058dcd0b76de7a.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2022_Memory_Based_Question_Paper_01_d0ea972cc3e006c92d058dcd0b76de7a.pdf",
+      "sha256": "28cb536ffb664bfaf97f12282eddc6a95d6dd2f9e492af622b5f1464f59be589",
+      "bytes": 4112482,
+      "exam": "ini-cet",
+      "year": 2022,
+      "required": true
+    },
+    {
+      "file": "INI_CET_2022_Memory_Based_Question_Paper_02_dd23dcd0bd30b653d5d3490b210cca67.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2022_Memory_Based_Question_Paper_02_dd23dcd0bd30b653d5d3490b210cca67.pdf",
+      "sha256": "b8e20e1f8cff27615afe547cb7a0e78409d5c746cc4f6b48ff473733c6dffc61",
+      "bytes": 2882464,
+      "exam": "ini-cet",
+      "year": 2022,
+      "required": true
+    },
+    {
+      "file": "INI_CET_2023_Memory_Based_Question_Paper_01_5b5ef42ab123a5614f1503045079d35f.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2023_Memory_Based_Question_Paper_01_5b5ef42ab123a5614f1503045079d35f.pdf",
+      "sha256": "2e1a65af1f3ccc6afa3be9f198ad66f3518672475c72092ff38d4b3a95d07fdd",
+      "bytes": 906525,
+      "exam": "ini-cet",
+      "year": 2023,
+      "required": true
+    },
+    {
+      "file": "INI_CET_2023_Memory_Based_Question_Paper_02_68f504e5c534c04a3724b62c99f5fb0d.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2023_Memory_Based_Question_Paper_02_68f504e5c534c04a3724b62c99f5fb0d.pdf",
+      "sha256": "9fc8ff8af093b66b84452d7bbc205c2187fb49f9bdaba40b9abdaa2a429915e2",
+      "bytes": 2320094,
+      "exam": "ini-cet",
+      "year": 2023,
+      "required": true
+    },
+    {
+      "file": "INI_CET_2024_Memory_Based_Question_Paper_PDF_fd86dca0c9fa6c05d53974a17af6d987.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2024_Memory_Based_Question_Paper_PDF_fd86dca0c9fa6c05d53974a17af6d987.pdf",
+      "sha256": "c5447b883253644741b5c28fbf989a9af0a3a3ca54f37384376673c13553c5e5",
+      "bytes": 1071969,
+      "exam": "ini-cet",
+      "year": 2024,
+      "required": true
+    },
+    {
+      "file": "INI_CET_2025_Memory_Based_Question_Paper_PDF_3e7926e3410e8285f29d4ad33c0d384c.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2025_Memory_Based_Question_Paper_PDF_3e7926e3410e8285f29d4ad33c0d384c.pdf",
+      "sha256": "3a0939cbf08557851a4dff1b97107aaa0e8614f534add611f8dea4c5ef6258bf",
+      "bytes": 1961689,
+      "exam": "ini-cet",
+      "year": 2025,
+      "required": true
+    }
+  ],
+  "additionalRecallPages": [
+    {
+      "exam": "aiims-pg",
+      "year": 2017,
+      "session": "November",
+      "url": "https://medicoapps.org/aiims-pg-nov-2017/"
+    },
+    {
+      "exam": "aiims-pg",
+      "year": 2018,
+      "session": "May",
+      "url": "https://medicoapps.org/aiims-pg-may-2018/"
+    },
+    {
+      "exam": "aiims-pg",
+      "year": 2018,
+      "session": "November",
+      "url": "https://medicoapps.org/aiims-pg-nov-2018/"
+    },
+    {
+      "exam": "aiims-pg",
+      "year": 2019,
+      "session": "May",
+      "url": "https://medicoapps.org/aiims-pg-may-2019/"
+    },
+    {
+      "exam": "aiims-pg",
+      "year": 2020,
+      "session": "June",
+      "url": "https://medicoapps.org/aiims-pg-june-2020/"
+    },
+    {
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "May",
+      "url": "https://pgblazer.com/aiims/aiims-2011/"
+    },
+    {
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "November",
+      "url": "https://pgblazer.com/aiims/aiims-november-2011/"
+    },
+    {
+      "exam": "aiims-pg",
+      "year": 2015,
+      "session": "May",
+      "url": "https://pgblazer.com/aiims/aiims-may-2015/"
+    },
+    {
+      "exam": "ini-cet",
+      "year": 2026,
+      "session": "May",
+      "url": "https://www.diginerve.com/blogs/inicet-may-2026-recall-questions-with-answers-pdf/"
+    }
+  ],
+  "existingPerDocumentSelectionCounts": [
+    {
+      "file": "aiims-2017-nov.html",
+      "url": "https://medicoapps.org/aiims-pg-nov-2017/",
+      "exam": "aiims-pg",
+      "year": 2017,
+      "session": "November",
+      "approvedSelections": 8,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aiims-2018-may.html",
+      "url": "https://medicoapps.org/aiims-pg-may-2018/",
+      "exam": "aiims-pg",
+      "year": 2018,
+      "session": "May",
+      "approvedSelections": 8,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aiims-2018-nov.html",
+      "url": "https://medicoapps.org/aiims-pg-nov-2018/",
+      "exam": "aiims-pg",
+      "year": 2018,
+      "session": "November",
+      "approvedSelections": 8,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aiims-2019-may.html",
+      "url": "https://medicoapps.org/aiims-pg-may-2019/",
+      "exam": "aiims-pg",
+      "year": 2019,
+      "session": "May",
+      "approvedSelections": 10,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aiims-2020-jun.html",
+      "url": "https://medicoapps.org/aiims-pg-june-2020/",
+      "exam": "aiims-pg",
+      "year": 2020,
+      "session": "June",
+      "approvedSelections": 8,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aiims-1999-nov.pdf",
+      "url": "https://www.educationobserver.com/forum/attachment.php?aid=5209",
+      "exam": "aiims-pg",
+      "year": 1999,
+      "session": "November",
+      "approvedSelections": 2,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aiims-2001-may.pdf",
+      "url": "https://www.educationobserver.com/forum/attachment.php?aid=5208",
+      "exam": "aiims-pg",
+      "year": 2001,
+      "session": "May",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aiims-2000-eo.pdf",
+      "url": "https://www.educationobserver.com/forum/attachment.php?aid=12977",
+      "exam": "aiims-pg",
+      "year": 2000,
+      "session": null,
+      "approvedSelections": 0,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aiims-2001-eo.pdf",
+      "url": "https://www.educationobserver.com/forum/attachment.php?aid=12978",
+      "exam": "aiims-pg",
+      "year": 2001,
+      "session": null,
+      "approvedSelections": 0,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aiims-2002-eo.pdf",
+      "url": "https://www.educationobserver.com/forum/attachment.php?aid=12979",
+      "exam": "aiims-pg",
+      "year": 2002,
+      "session": null,
+      "approvedSelections": 0,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aiims-2003-eo.pdf",
+      "url": "https://www.educationobserver.com/forum/attachment.php?aid=12980",
+      "exam": "aiims-pg",
+      "year": 2003,
+      "session": null,
+      "approvedSelections": 0,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aiims-2004-eo.pdf",
+      "url": "https://www.educationobserver.com/forum/attachment.php?aid=12981",
+      "exam": "aiims-pg",
+      "year": 2004,
+      "session": null,
+      "approvedSelections": 0,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aiims-2005-eo.pdf",
+      "url": "https://www.educationobserver.com/forum/attachment.php?aid=12982",
+      "exam": "aiims-pg",
+      "year": 2005,
+      "session": null,
+      "approvedSelections": 8,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aiims-2006-eo.pdf",
+      "url": "https://www.educationobserver.com/forum/attachment.php?aid=12983",
+      "exam": "aiims-pg",
+      "year": 2006,
+      "session": null,
+      "approvedSelections": 0,
+      "identityStatus": "held_mixed_dental_collection"
+    },
+    {
+      "file": "aiims-2007-eo.pdf",
+      "url": "https://www.educationobserver.com/forum/attachment.php?aid=12984",
+      "exam": "aiims-pg",
+      "year": 2007,
+      "session": null,
+      "approvedSelections": 0,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aiims-2008-eo.pdf",
+      "url": "https://www.educationobserver.com/forum/attachment.php?aid=12985",
+      "exam": "aiims-pg",
+      "year": 2008,
+      "session": null,
+      "approvedSelections": 0,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aiims-2009-eo.pdf",
+      "url": "https://www.educationobserver.com/forum/attachment.php?aid=12986",
+      "exam": "aiims-pg",
+      "year": 2009,
+      "session": null,
+      "approvedSelections": 0,
+      "identityStatus": "held_mixed_dental_collection"
+    },
+    {
+      "file": "aiims-2010-eo.pdf",
+      "url": "https://www.educationobserver.com/forum/attachment.php?aid=12987",
+      "exam": "aiims-pg",
+      "year": 2010,
+      "session": null,
+      "approvedSelections": 3,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aiims-2011-eo.pdf",
+      "url": "https://www.educationobserver.com/forum/attachment.php?aid=12988",
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": null,
+      "approvedSelections": 0,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aiims-2013-eo.pdf",
+      "url": "https://www.educationobserver.com/forum/attachment.php?aid=67129",
+      "exam": "aiims-pg",
+      "year": 2013,
+      "session": null,
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aiims-2014-may.pdf",
+      "url": "https://firstranker.com/frbeta/download.php/frdA300721A213125/download",
+      "exam": "aiims-pg",
+      "year": 2014,
+      "session": "May",
+      "approvedSelections": 6,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aiims-2015-may.pdf",
+      "url": "https://firstranker.com/frbeta/download.php/frdA300721A213126/download",
+      "exam": "aiims-pg",
+      "year": 2015,
+      "session": "May",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aiims-2016-nov.pdf",
+      "url": "https://firstranker.com/frbeta/download.php/frdA300721A213127/download",
+      "exam": "aiims-pg",
+      "year": 2016,
+      "session": "November",
+      "approvedSelections": 3,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aiims-2017-may.pdf",
+      "url": "https://firstranker.com/frbeta/download.php/frdA300721A213128/download",
+      "exam": "aiims-pg",
+      "year": 2017,
+      "session": "May",
+      "approvedSelections": 7,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aiims-2012.pdf",
+      "url": "https://firstranker.com/frbeta/download.php/frdA300721A213124/download",
+      "exam": "aiims-pg",
+      "year": 2012,
+      "session": null,
+      "approvedSelections": 6,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "INI_CET_2020_Memory_Based_Question_Paper_PDF_9eba861dd8787d88de0f988862cd3431.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2020_Memory_Based_Question_Paper_PDF_9eba861dd8787d88de0f988862cd3431.pdf",
+      "exam": "ini-cet",
+      "year": 2020,
+      "session": null,
+      "approvedSelections": 7,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "INI_CET_2020_Memory_Based_Answer_Key_PDF_c02afe766f2b22854460634405897993.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2020_Memory_Based_Answer_Key_PDF_c02afe766f2b22854460634405897993.pdf",
+      "exam": "ini-cet",
+      "year": 2020,
+      "session": null,
+      "approvedSelections": 0,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "INI_CET_2021_Memory_Based_Question_Paper_01_cef093487967243d9e5afa0d57de5e5f.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2021_Memory_Based_Question_Paper_01_cef093487967243d9e5afa0d57de5e5f.pdf",
+      "exam": "ini-cet",
+      "year": 2021,
+      "session": null,
+      "approvedSelections": 7,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "INI_CET_2021_Memory_Based_Question_Paper_02_ec5f063fb54a891d761c85a1b0628b65.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2021_Memory_Based_Question_Paper_02_ec5f063fb54a891d761c85a1b0628b65.pdf",
+      "exam": "ini-cet",
+      "year": 2021,
+      "session": null,
+      "approvedSelections": 7,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "INI_CET_2021_Memory_Based_Answer_Key_01_050aa84a6f4db92b2f7366078039ebb6.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2021_Memory_Based_Answer_Key_01_050aa84a6f4db92b2f7366078039ebb6.pdf",
+      "exam": "ini-cet",
+      "year": 2021,
+      "session": null,
+      "approvedSelections": 0,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "INI_CET_2021_Memory_Based_Answer_Key_02_2ca7e0528985769911b22376559ba6b4.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2021_Memory_Based_Answer_Key_02_2ca7e0528985769911b22376559ba6b4.pdf",
+      "exam": "ini-cet",
+      "year": 2021,
+      "session": null,
+      "approvedSelections": 0,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "INI_CET_2022_Memory_Based_Question_Paper_01_d0ea972cc3e006c92d058dcd0b76de7a.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2022_Memory_Based_Question_Paper_01_d0ea972cc3e006c92d058dcd0b76de7a.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": null,
+      "approvedSelections": 6,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "INI_CET_2022_Memory_Based_Question_Paper_02_dd23dcd0bd30b653d5d3490b210cca67.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2022_Memory_Based_Question_Paper_02_dd23dcd0bd30b653d5d3490b210cca67.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": null,
+      "approvedSelections": 0,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "INI_CET_2022_Memory_Based_Answer_Key_01_a1914fb9ac17b9d01c7218bbbbb1b9ab.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2022_Memory_Based_Answer_Key_01_a1914fb9ac17b9d01c7218bbbbb1b9ab.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": null,
+      "approvedSelections": 0,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "INI_CET_2022_Memory_Based_Answer_Key_02_fc9e59f3fe0a9395d7796de437a791d8.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2022_Memory_Based_Answer_Key_02_fc9e59f3fe0a9395d7796de437a791d8.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": null,
+      "approvedSelections": 0,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "INI_CET_2023_Memory_Based_Question_Paper_01_5b5ef42ab123a5614f1503045079d35f.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2023_Memory_Based_Question_Paper_01_5b5ef42ab123a5614f1503045079d35f.pdf",
+      "exam": "ini-cet",
+      "year": 2023,
+      "session": null,
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "INI_CET_2023_Memory_Based_Question_Paper_02_68f504e5c534c04a3724b62c99f5fb0d.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2023_Memory_Based_Question_Paper_02_68f504e5c534c04a3724b62c99f5fb0d.pdf",
+      "exam": "ini-cet",
+      "year": 2023,
+      "session": null,
+      "approvedSelections": 4,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "INI_CET_2023_Memory_Based_Answer_Key_PDF_01_823a1a4d8e0d2bafe8dd73fa4cc34c31.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2023_Memory_Based_Answer_Key_PDF_01_823a1a4d8e0d2bafe8dd73fa4cc34c31.pdf",
+      "exam": "ini-cet",
+      "year": 2023,
+      "session": null,
+      "approvedSelections": 0,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "INI_CET_2023_Memory_Based_Answer_Key_PDF_02_ae3f39e54f78df3126aa6de94174409f.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2023_Memory_Based_Answer_Key_PDF_02_ae3f39e54f78df3126aa6de94174409f.pdf",
+      "exam": "ini-cet",
+      "year": 2023,
+      "session": null,
+      "approvedSelections": 0,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "INI_CET_2024_Memory_Based_Question_Paper_PDF_fd86dca0c9fa6c05d53974a17af6d987.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2024_Memory_Based_Question_Paper_PDF_fd86dca0c9fa6c05d53974a17af6d987.pdf",
+      "exam": "ini-cet",
+      "year": 2024,
+      "session": null,
+      "approvedSelections": 4,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "INI_CET_2024_Memory_Based_Answer_Key_PDF_ccb9c0e1a1e626bb29df9b2be4a7b4a6.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2024_Memory_Based_Answer_Key_PDF_ccb9c0e1a1e626bb29df9b2be4a7b4a6.pdf",
+      "exam": "ini-cet",
+      "year": 2024,
+      "session": null,
+      "approvedSelections": 0,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "INI_CET_2025_Memory_Based_Question_Paper_PDF_3e7926e3410e8285f29d4ad33c0d384c.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2025_Memory_Based_Question_Paper_PDF_3e7926e3410e8285f29d4ad33c0d384c.pdf",
+      "exam": "ini-cet",
+      "year": 2025,
+      "session": null,
+      "approvedSelections": 5,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "INI_CET_2025_Memory_Based_Answer_Key_PDF_5d1813371cec303c275b8d51f94401bb.pdf",
+      "url": "https://cdn-images.prepp.in/public/image/INI_CET_2025_Memory_Based_Answer_Key_PDF_5d1813371cec303c275b8d51f94401bb.pdf",
+      "exam": "ini-cet",
+      "year": 2025,
+      "session": null,
+      "approvedSelections": 0,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "INICET_May_2026_DigiNerve-new-01.pdf",
+      "url": "https://www.diginerve.com/blogs/wp-content/uploads/2026/05/INICET_May_2026_DigiNerve-new-01.pdf",
+      "exam": "ini-cet",
+      "year": 2026,
+      "session": "May",
+      "approvedSelections": 8,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/57d76ddc-c103-11ed-a156-0a5e36bc6706/57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": "November",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/58543d6c-c103-11ed-bee2-0a5e36bc6706/58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": "November",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/5a8ea69e-c103-11ed-97f4-0a5e36bc6706/5a8ea69e-c103-11ed-97f4-0a5e36bc6706.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": "November",
+      "approvedSelections": 2,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/5ab51d7e-c103-11ed-bad9-0a5e36bc6706/5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": "November",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/5abf01ea-c103-11ed-b016-0a5e36bc6706/5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": "November",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/5b37c544-c103-11ed-80a9-0a5e36bc6706/5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": "November",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/5b68bcd0-c103-11ed-9ef1-0a5e36bc6706/5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": "November",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/5b91a956-c103-11ed-a1ff-0a5e36bc6706/5b91a956-c103-11ed-a1ff-0a5e36bc6706.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": "November",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aglasem-5cd670f8-c103-11ed-97fb-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/5cd670f8-c103-11ed-97fb-0a5e36bc6706/5cd670f8-c103-11ed-97fb-0a5e36bc6706.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": "November",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/5d79a87c-c103-11ed-b3df-0a5e36bc6706/5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": "November",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aglasem-68a4b930-b5c8-11ed-a822-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/68a4b930-b5c8-11ed-a822-0a5e36bc6706/68a4b930-b5c8-11ed-a822-0a5e36bc6706.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": "May",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aglasem-68d61bf6-b5c8-11ed-ac15-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/68d61bf6-b5c8-11ed-ac15-0a5e36bc6706/68d61bf6-b5c8-11ed-ac15-0a5e36bc6706.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": "May",
+      "approvedSelections": 2,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/6c98950c-b5c8-11ed-844e-0a5e36bc6706/6c98950c-b5c8-11ed-844e-0a5e36bc6706.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": "May",
+      "approvedSelections": 2,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/6cddafe8-b5c8-11ed-88d6-0a5e36bc6706/6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": "May",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aglasem-6d9d909c-b5c8-11ed-b2cd-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/6d9d909c-b5c8-11ed-b2cd-0a5e36bc6706/6d9d909c-b5c8-11ed-b2cd-0a5e36bc6706.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": "May",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aglasem-6e15085c-b5c8-11ed-8a74-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/6e15085c-b5c8-11ed-8a74-0a5e36bc6706/6e15085c-b5c8-11ed-8a74-0a5e36bc6706.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": "May",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/6e299e8e-b5c8-11ed-99c1-0a5e36bc6706/6e299e8e-b5c8-11ed-99c1-0a5e36bc6706.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": "May",
+      "approvedSelections": 2,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aglasem-71e9b57c-b5c8-11ed-a8c5-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/71e9b57c-b5c8-11ed-a8c5-0a5e36bc6706/71e9b57c-b5c8-11ed-a8c5-0a5e36bc6706.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": "May",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/74878f7a-b5c8-11ed-beb5-0a5e36bc6706/74878f7a-b5c8-11ed-beb5-0a5e36bc6706.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": "May",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706/76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706.pdf",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": "May",
+      "approvedSelections": 3,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "inicetmay25-anatomy.pdf",
+      "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/ANATOMY-%E2%80%93-INI-2025-Reworked_compressed.pdf",
+      "exam": "ini-cet",
+      "year": 2025,
+      "session": "May",
+      "approvedSelections": 3,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "inicetmay25-biochemistry.pdf",
+      "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Biochemistry-INI-25-May-Reworked-Copy_compressed.pdf",
+      "exam": "ini-cet",
+      "year": 2025,
+      "session": "May",
+      "approvedSelections": 2,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "inicetmay25-dermatology.pdf",
+      "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Dermatology-INI-2025-May-Reworked_compressed.pdf",
+      "exam": "ini-cet",
+      "year": 2025,
+      "session": "May",
+      "approvedSelections": 2,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "inicetmay25-ent.pdf",
+      "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/ENT-INICET-2025-MAY_compressed.pdf",
+      "exam": "ini-cet",
+      "year": 2025,
+      "session": "May",
+      "approvedSelections": 4,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "inicetmay25-forensic-medicine.pdf",
+      "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/FMT-INI-25-May-Reworked_compressed.pdf",
+      "exam": "ini-cet",
+      "year": 2025,
+      "session": "May",
+      "approvedSelections": 2,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "inicetmay25-medicine.pdf",
+      "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Medicine-INI-25-May-Reworked-2025_compressed.pdf",
+      "exam": "ini-cet",
+      "year": 2025,
+      "session": "May",
+      "approvedSelections": 3,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "inicetmay25-microbiology.pdf",
+      "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Microbiology-INI-2025-May-Reworked_compressed.pdf",
+      "exam": "ini-cet",
+      "year": 2025,
+      "session": "May",
+      "approvedSelections": 5,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "inicetmay25-obgyn.pdf",
+      "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/OBG-INI-25-May-Reworked_compressed.pdf",
+      "exam": "ini-cet",
+      "year": 2025,
+      "session": "May",
+      "approvedSelections": 4,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "inicetmay25-opthalmology.pdf",
+      "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Ophthalmology-INI-2025-May-Reworked-File_compressed.pdf",
+      "exam": "ini-cet",
+      "year": 2025,
+      "session": "May",
+      "approvedSelections": 2,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "inicetmay25-orthopaedics.pdf",
+      "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Orthopedics-INI-25-May-Reworked_compressed.pdf",
+      "exam": "ini-cet",
+      "year": 2025,
+      "session": "May",
+      "approvedSelections": 3,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "inicetmay25-pathology.pdf",
+      "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Pathology-INI-May-2025-Reworked_compressed.pdf",
+      "exam": "ini-cet",
+      "year": 2025,
+      "session": "May",
+      "approvedSelections": 6,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "inicetmay25-pediatrics.pdf",
+      "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Pediatrics-INI-25-May-Reworked-File_compressed.pdf",
+      "exam": "ini-cet",
+      "year": 2025,
+      "session": "May",
+      "approvedSelections": 3,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "inicetmay25-pharmacology.pdf",
+      "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Pharmacology-INI-25-May-Reworked_compressed.pdf",
+      "exam": "ini-cet",
+      "year": 2025,
+      "session": "May",
+      "approvedSelections": 3,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "inicetmay25-physiology.pdf",
+      "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Physiology-INI-May-2025-Reworked_compressed.pdf",
+      "exam": "ini-cet",
+      "year": 2025,
+      "session": "May",
+      "approvedSelections": 5,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "inicetmay25-psm.pdf",
+      "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/PSM-INI-25-May-Reworked_compressed.pdf",
+      "exam": "ini-cet",
+      "year": 2025,
+      "session": "May",
+      "approvedSelections": 3,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "inicetmay25-psychiatry.pdf",
+      "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Psychiatry-INI-25-May-Reworked_compressed.pdf",
+      "exam": "ini-cet",
+      "year": 2025,
+      "session": "May",
+      "approvedSelections": 4,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "inicetmay25-radiology.pdf",
+      "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Radiology-INI-25-May-Reworked_compressed.pdf",
+      "exam": "ini-cet",
+      "year": 2025,
+      "session": "May",
+      "approvedSelections": 2,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "inicetmay25-surgery.pdf",
+      "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Surgery-INI-25-May-Reworked_compressed.pdf",
+      "exam": "ini-cet",
+      "year": 2025,
+      "session": "May",
+      "approvedSelections": 4,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "gmu-2024-72d75f60-243e-4f12-aba9-74a240c6e3a4.pdf",
+      "url": "https://media.getmyuni.com/assets/downloadables/72d75f60-243e-4f12-aba9-74a240c6e3a4.pdf",
+      "exam": "ini-cet",
+      "year": 2024,
+      "session": "May",
+      "approvedSelections": 4,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c.pdf",
+      "url": "https://media.getmyuni.com/assets/downloadables/5573f47e-9cad-4728-af8c-2c6b9b89302c.pdf",
+      "exam": "ini-cet",
+      "year": 2024,
+      "session": "May",
+      "approvedSelections": 6,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408.pdf",
+      "url": "https://media.getmyuni.com/assets/downloadables/da1839b8-317e-4e21-9b18-dca9000e6408.pdf",
+      "exam": "ini-cet",
+      "year": 2024,
+      "session": "May",
+      "approvedSelections": 4,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "gmu-2024-9674994c-68dc-4adb-bf75-b110e4d8d977.pdf",
+      "url": "https://media.getmyuni.com/assets/downloadables/9674994c-68dc-4adb-bf75-b110e4d8d977.pdf",
+      "exam": "ini-cet",
+      "year": 2024,
+      "session": "May",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "gmu-2024-b5bcc5f6-93e6-4642-bc23-37a2a3d921d7.pdf",
+      "url": "https://media.getmyuni.com/assets/downloadables/b5bcc5f6-93e6-4642-bc23-37a2a3d921d7.pdf",
+      "exam": "ini-cet",
+      "year": 2024,
+      "session": "May",
+      "approvedSelections": 0,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "slideshare-aiims-2016-may-psychiatry.html",
+      "url": "https://www.slideshare.net/slideshow/aiims-2016-may-psychiatry-questions-and-answers/62976754",
+      "exam": "aiims-pg",
+      "year": 2016,
+      "session": "May",
+      "approvedSelections": 3,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "slideshare-ini-2022-may-psm.html",
+      "url": "https://www.slideshare.net/slideshow/inicet-may-2022-psm-recall-questions/251923213",
+      "exam": "ini-cet",
+      "year": 2022,
+      "session": "May",
+      "approvedSelections": 5,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "pgblazer-2011-may-92.html",
+      "url": "https://pgblazer.com/aiims-may-2011-mcq-92/",
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "May",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "pgblazer-2011-nov-196.html",
+      "url": "https://pgblazer.com/aiims-november-2011-mcq-196/",
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "November",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "pgblazer-2015-may-25.html",
+      "url": "https://pgblazer.com/aiims-pg-entrance-may-2015-mcq-25-judet-view-x-ray/",
+      "exam": "aiims-pg",
+      "year": 2015,
+      "session": "May",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "pgblazer-2015-may-28.html",
+      "url": "https://pgblazer.com/aiims-pg-entrance-may-2015-mcq-28-disease-trends/",
+      "exam": "aiims-pg",
+      "year": 2015,
+      "session": "May",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "pgblazer-2015-may-29.html",
+      "url": "https://pgblazer.com/aiims-pg-entrance-may-2015-mcq-29-hypertensive-bleed/",
+      "exam": "aiims-pg",
+      "year": 2015,
+      "session": "May",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "pgblazer-2015-may-32.html",
+      "url": "https://pgblazer.com/aiims-pg-entrance-may-2015-mcq-32-tropical-spastic-paraparesis/",
+      "exam": "aiims-pg",
+      "year": 2015,
+      "session": "May",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "pgblazer-2015-may-34.html",
+      "url": "https://pgblazer.com/aiims-pg-entrance-may-2015-mcq-34-heterochromia-iridis/",
+      "exam": "aiims-pg",
+      "year": 2015,
+      "session": "May",
+      "approvedSelections": 1,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "faculty-ini-2023-nov-part1.html",
+      "url": "https://www.slideshare.net/slideshow/ini-cet-nov-2023-recall-session-part1pdf/264931543",
+      "exam": "ini-cet",
+      "year": 2023,
+      "session": "November",
+      "approvedSelections": 6,
+      "identityStatus": "see_existing_manifest"
+    },
+    {
+      "file": "pgblazer-2015-may-33.html",
+      "url": "https://pgblazer.com/aiims-pg-entrance-may-2015-mcq-33-three-swab-test/",
+      "exam": "aiims-pg",
+      "year": 2015,
+      "session": "May",
+      "approvedSelections": 0,
+      "identityStatus": "held_key_stem_conflict"
+    }
+  ],
+  "limitations": [
+    "Subject PDFs are fragments of exam sittings, not separate full exam papers.",
+    "17 files downloaded is not 17 papers newly imported into the app.",
+    "Catalogue dates require item-level confirmation; no unknown collection 01/02 is mapped to a guessed month.",
+    "Original PDF bytes remain private staging; links/hashes only are committed.",
+    "Existing editorial excerpt limits, permissions, source authentication, medical-key review and missing-image/multi-answer restrictions remain applicable.",
+    "AIIMS MBBS/UG, MDS and mixed dental collections are not silently counted as AIIMS PG MD/MS.",
+    "Free download availability does not by itself establish permission to republish an entire coaching bank.",
+    "No new MedMCQA, generated questions, runtime data, source-manifest replacements or app count changes."
+  ]
+}
