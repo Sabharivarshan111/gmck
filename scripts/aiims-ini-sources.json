@@ -1191,5 +1191,49 @@
     "session": "May",
     "required": true,
     "pinBytes": true
+  },
+  {
+    "file": "prepladder-aiims-2020-jun-pharma.html",
+    "url": "https://www.prepladder.com/neet-pg-study-material/notifications/aiims-june-2020-pharma-recall-questions",
+    "sha256": "9b8bdc5fbdcc43a4eb0011bd13fa8325a6f32d777773e867920743a25d07ab69",
+    "bytes": 60450,
+    "exam": "aiims-pg",
+    "year": 2020,
+    "session": "June",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "pgblazer-2011-may-158-2.html",
+    "url": "https://pgblazer.com/aiims-may-2011-mcq-158-2/",
+    "sha256": "65de485a1420224e7199fe30136cf86af53593979ade1a40c6f21ec96b598de9",
+    "bytes": 43650,
+    "exam": "aiims-pg",
+    "year": 2011,
+    "session": "May",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "pgblazer-2011-nov-197.html",
+    "url": "https://pgblazer.com/aiims-november-2011-mcq-197/",
+    "sha256": "ec0947f83a36ed637dcc537a751d7d51864cb6a0673599ecf76dfc6478d43309",
+    "bytes": 49611,
+    "exam": "aiims-pg",
+    "year": 2011,
+    "session": "November",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "pgblazer-2015-may-31.html",
+    "url": "https://pgblazer.com/aiims-pg-entrance-may-2015-mcq-31-reticular-fibers/",
+    "sha256": "646a3f3aee5d2166b7b783bf4e516acdce0173aa2a1b819f50dd0ab9d0426ffa",
+    "bytes": 45160,
+    "exam": "aiims-pg",
+    "year": 2015,
+    "session": "May",
+    "required": true,
+    "pinBytes": true
   }
 ]

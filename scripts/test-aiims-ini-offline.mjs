@@ -16,7 +16,7 @@ assert.equal(missingFigureReference.test('Identify the marked structure'),true);
 const fetchBefore = globalThis.fetch;
 globalThis.fetch=()=>{throw Error('Offline bank attempted networking');};
 try {
-  for (const [file,count] of [['aiimsPgBank.json',90],['iniCetBank.json',213]]) {
+  for (const [file,count] of [['aiimsPgBank.json',100],['iniCetBank.json',213]]) {
     const bank=read('mobile/src/lib/'+file);validateOfflineBank(bank);
     const reader=createOfflineReader(bank);assert.equal(reader.total,count);
     assert.equal(fs.statSync('mobile/src/lib/'+file).size<175000,true);
@@ -50,8 +50,8 @@ try {
   const repaired=ini.records.find(r=>r.id==='inicetmay25-psm:4');
   for(const statement of ['1. Conduct data analysis','2. Selecting population','3. Setting research question','4. Setting research objective'])assert.ok(repaired.question.includes(statement));
   assert.equal(repaired.sourceAnswer,'C');
-  assert.equal(receipts.totalQuestions,303);
-  assert.equal(receipts.questionProvenance.length,303);
+  assert.equal(receipts.totalQuestions,313);
+  assert.equal(receipts.questionProvenance.length,313);
   const fresh=read('scripts/aiims-ini-missing-papers-import-20261022.json');
   assert.equal(fresh.newQuestions,52);
   for(const review of fresh.questionReviews){
@@ -67,4 +67,4 @@ try {
   const neet=read('mobile/src/lib/neetPgBank.json');assert.equal(neet.records.length,2078);
   assert.equal(neet.records.some(r=>used.has(r.id)),false);
 } finally {globalThis.fetch=fetchBefore;}
-console.log('PASS: 303 source-fingerprinted recall items, original explanations, real syllabus paths, offline search/filter/answers, mutation isolation and unchanged 2,078-item NEET bank.');
+console.log('PASS: 313 source-fingerprinted recall items, original explanations, real syllabus paths, offline search/filter/answers, mutation isolation and unchanged 2,078-item NEET bank.');

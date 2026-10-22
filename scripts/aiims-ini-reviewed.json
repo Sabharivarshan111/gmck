@@ -2652,5 +2652,95 @@
     "chapterId": "final-year/general-surgery/anaesthesia",
     "answer": "A",
     "explanation": "Neostigmine inhibits acetylcholinesterase, increasing acetylcholine at the neuromuscular junction. It reverses suitable residual nondepolarising blockade after recovery has begun and is given with an antimuscarinic; it is not reliable for profound blockade."
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:6",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "sourceNumber": 6,
+    "sourceFingerprint": "7d4c94982baa65d6f08fa06247fec9d91d30b98def27fc962b1040624c183385",
+    "chapterId": "second-year/pharmacology/paper-2/anti-microbial-drugs",
+    "answer": "B",
+    "explanation": "Ethionamide inhibits mycolic-acid synthesis and is classified as a second-line antitubercular drug. Its use depends on drug susceptibility and the selected regimen; it is not part of routine first-line treatment for drug-susceptible tuberculosis."
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:11",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "sourceNumber": 11,
+    "sourceFingerprint": "ffd61b0707291f57771afa1254281858eb3a08ead8035f4473d62ed2fa5d213d",
+    "chapterId": "second-year/pharmacology/paper-1/central-nervous-system",
+    "answer": "A",
+    "explanation": "Vigabatrin can damage the retina and cause permanent, concentric visual-field loss. This characteristic adverse effect explains the progressive tunnel vision in the recall; monitoring cannot guarantee prevention."
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:12",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "sourceNumber": 12,
+    "sourceFingerprint": "d6a6b4889523d836e3802976b88e4efe625c33ac6f80233a0a4d62e19c4a65a7",
+    "chapterId": "second-year/pharmacology/paper-1/general-pharmacology",
+    "answer": "A",
+    "explanation": "Thyroxine is converted to the more active T3, which binds nuclear thyroid-hormone receptors and changes gene transcription. The other listed hormones primarily signal through receptors on the cell surface."
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:15",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "sourceNumber": 15,
+    "sourceFingerprint": "4e4fd49e3b392fded039b169f1d165dc0752b7c464ec61060b586f58bfd3122c",
+    "chapterId": "second-year/pharmacology/paper-1/cardiovascular-system",
+    "answer": "D",
+    "explanation": "Aminocaproic acid limits plasminogen activation and fibrinolysis, helping control bleeding driven by excessive fibrin breakdown. Alteplase promotes fibrinolysis, whereas andexanet alfa targets factor Xa inhibitor anticoagulation."
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:17",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "sourceNumber": 17,
+    "sourceFingerprint": "701db31be5ebb4843a2f1599086e120efb7366a156f94eb3c8062d3d9b0c46bf",
+    "chapterId": "second-year/pharmacology/paper-1/cardiovascular-system",
+    "answer": "C",
+    "explanation": "Streptokinase is a fibrinolytic and is not used for NSTEMI reperfusion. Aspirin and P2Y12 inhibitors are antiplatelet agents used in appropriate acute-coronary-syndrome settings; prasugrel selection depends on the invasive strategy and contraindications."
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:22",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "sourceNumber": 22,
+    "sourceFingerprint": "5c3ad1d2f24abada156162b304bed8bd4236135db3e3af6683f257c003b5584d",
+    "chapterId": "second-year/pharmacology/paper-1/central-nervous-system",
+    "answer": "C",
+    "explanation": "The standard reference sample is obtained about 12 hours after the preceding lithium dose. A consistent sampling interval is necessary to interpret results against the therapeutic range; symptoms and renal function also matter."
+  },
+  {
+    "id": "pgblazer-2011-may-158-2:158",
+    "source": "pgblazer-2011-may-158-2.html",
+    "sourceNumber": 158,
+    "sourceFingerprint": "aea184273d8d950b3304ae1718fb04fa2ec9f2e4b0bac67eb30f191e0c956aee",
+    "chapterId": "final-year/general-surgery/vein-lymphatics-nerves",
+    "answer": "C",
+    "explanation": "Amyloid deposition, hypothyroidism and diabetes are recognised associations of carpal tunnel syndrome. Addison disease is the exception intended by this recall; this is an exam comparison, not a claim that a patient with adrenal disease cannot independently develop nerve compression."
+  },
+  {
+    "id": "pgblazer-2011-nov-197:197",
+    "source": "pgblazer-2011-nov-197.html",
+    "sourceNumber": 197,
+    "sourceFingerprint": "c3736cf760d83bbcaeef7bf2463b305bd74434e74423be38b3e08ffd63e186b7",
+    "chapterId": "final-year/general-surgery/trauma-and-fractures",
+    "answer": "A",
+    "explanation": "Alkaline phosphatase may rise with osteoblastic activity in heterotopic ossification. It is the best listed laboratory marker, but normal values do not exclude the condition and the level alone cannot establish lesion maturity; imaging remains important."
+  },
+  {
+    "id": "pgblazer-2015-may-31:31",
+    "source": "pgblazer-2015-may-31.html",
+    "sourceNumber": 31,
+    "sourceFingerprint": "6ce186582ccec06b520504b893c4a4ff30798716565a188f4ffdd52d02a07df9",
+    "chapterId": "first-year/anatomy/paper-1/histology",
+    "answer": "C",
+    "explanation": "The thymic parenchyma is supported by epithelial reticular cells, unlike the type III collagen network of the other listed tissues. The distinction concerns the parenchymal framework; the capsule, septa and vascular connective tissue still contain collagen."
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:3",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "sourceNumber": 3,
+    "sourceFingerprint": "ba3ddf8d6dc113d68b0c0fae5a25f679230aeb340ed3eee32097a14d0aaa9fa8",
+    "chapterId": "second-year/pharmacology/paper-1/cardiovascular-system",
+    "answer": "D",
+    "explanation": "Metoprolol and verapamil both slow atrioventricular conduction and reduce heart rate. Their effects can add together, producing significant bradycardia or higher-degree AV block; verapamil can also reduce metoprolol clearance."
   }
 ]

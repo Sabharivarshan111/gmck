@@ -2897,5 +2897,135 @@
       "Baclofen"
     ],
     "key": "A"
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:6",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "source_number": 6,
+    "question": "Which listed agent belongs to the second-line antitubercular drugs?",
+    "options": [
+      "Streptomycin",
+      "Ethionamide",
+      "Vancomycin",
+      "Acyclovir"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:11",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "source_number": 11,
+    "question": "Progressive narrowing of peripheral vision develops during prolonged antiseizure treatment. Which drug best explains this toxicity?",
+    "options": [
+      "Vigabatrin",
+      "Ethosuximide",
+      "Phenobarbital",
+      "Levetiracetam"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:12",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "source_number": 12,
+    "question": "Which agent has its classical action through an intracellular receptor?",
+    "options": [
+      "Thyroxine",
+      "Glucagon",
+      "Epinephrine",
+      "Parathyroid hormone"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:15",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "source_number": 15,
+    "question": "Which option can counter excessive fibrinolysis after a fibrinolytic overdose?",
+    "options": [
+      "Ethamsylate",
+      "Alteplase",
+      "Andexanet alfa",
+      "Epsilon-aminocaproic acid"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:17",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "source_number": 17,
+    "question": "Which listed medicine is excluded from the treatment of NSTEMI?",
+    "options": [
+      "Clopidogrel",
+      "Aspirin",
+      "Streptokinase",
+      "Prasugrel"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:22",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "source_number": 22,
+    "question": "When should the standard monitoring sample for a lithium level be collected?",
+    "options": [
+      "Immediately after dosing",
+      "8 hours after the previous dose",
+      "12 hours after the previous dose",
+      "24 hours after the previous dose"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "pgblazer-2011-may-158-2:158",
+    "source": "pgblazer-2011-may-158-2.html",
+    "source_number": 158,
+    "question": "Which condition is not a typical cause of median-nerve compression at the carpal tunnel?",
+    "options": [
+      "Amyloidosis",
+      "Hypothyroidism",
+      "Addison disease",
+      "Diabetes mellitus"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "pgblazer-2011-nov-197:197",
+    "source": "pgblazer-2011-nov-197.html",
+    "source_number": 197,
+    "question": "For heterotopic bone formation near the knee, which listed laboratory test is most useful?",
+    "options": [
+      "Alkaline phosphatase",
+      "Serum calcium",
+      "Serum acid phosphatase",
+      "Serum potassium"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "pgblazer-2015-may-31:31",
+    "source": "pgblazer-2015-may-31.html",
+    "source_number": 31,
+    "question": "Which organ has an epithelial-reticular parenchymal framework instead of the usual reticular-collagen meshwork?",
+    "options": [
+      "Lymph node",
+      "Spleen",
+      "Thymus",
+      "Bone marrow"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:3",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "source_number": 3,
+    "question": "Adding verapamil to metoprolol for hypertension increases the risk of which complication?",
+    "options": [
+      "Torsades de pointes",
+      "Ventricular tachycardia",
+      "Ventricular fibrillation",
+      "Bradycardia with AV block"
+    ],
+    "key": "D"
   }
 ]

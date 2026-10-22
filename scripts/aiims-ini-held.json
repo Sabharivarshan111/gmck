@@ -278,5 +278,30 @@
     "sourcePage": 2,
     "reason": "Already represented by the earlier source collection normal-prostate-volume question.",
     "duplicateOf": "ini-2022-01:2"
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:2",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "reason": "Image-dependent flagellate-dermatitis question; no image imported."
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:4",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "reason": "One source option ends with an incomplete phrase; no missing words supplied."
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:9",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "reason": "Printed rosuvastatin/clarithromycin rationale incorrectly generalises CYP3A4 statin metabolism; held for clinical review."
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:13",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "reason": "Historical HIV PEP choices omit current preferred regimens; not imported as present-day guidance."
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:14",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "reason": "Both cladribine and pentostatin are accepted classic hairy-cell leukaemia treatments; preferred-drug stem lacks a unique clinical answer."
   }
 ]

@@ -2456,3 +2456,17 @@ DO NOT:Restore search-preview draft questions, held duplicates, changed source h
 **NEXT:** Complete final reader/screenshot inspection, publish branch/PR, verify tested tree and actual public90/213 banks plus SW. Continue remaining source review separately.
 
 **DO NOT:** Add held thiopentone/LP/DES keys or truncate numbered statements; fill missing choices; infer a session from collection01/02; treat historical2277 as approved/unique. Leave existing anatomy/iOS gates and version/signing/ad configuration unchanged.
+
+## 2026-10-22 — AIIMS PG source extension to 100
+
+### DONE
+Added 10 reviewed AIIMS recalls (June2020 pharma seven, May/Nov2011 two, May2015 one), four pinned HTML sources and five explicit holds. Counts AIIMS100/INI213/NEET2078. All prior303 full records and NEET bytes preserved. Source-extension/offline/year/import-graph checks and 360/390/430 browser flows pass; production build, native/preview TypeScript, quiet lint and required guards verified. See docs/AIIMS_RECALL_EXTENSION_20261022.md and scripts/aiims-june2020-audit-20261022.json.
+
+### HALF-DONE
+Publication receipt will be attached to the corresponding PR with exact tree, hosted checks and Vercel/live asset comparison. No signed APK or physical device verification claimed.
+
+### NEXT
+Continue source-specific AIIMS and INI audits within source excerpt budgets; inspect original documents and reject incomplete, disputed or generic items.
+
+### DO NOT
+Do not promote the five new pharmacology holds, manufacture missing options, import MedMCQA, or bypass anatomy/native release gates. FirstRanker2020 physiology-solved and PSM downloads now return moved-document pages, not papers. Preserve all prior question IDs and fields.

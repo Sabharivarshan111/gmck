@@ -1,0 +1,188 @@
+{
+  "date": "2026-10-22",
+  "newQuestions": 10,
+  "sourceFiles": [
+    {
+      "file": "prepladder-aiims-2020-jun-pharma.html",
+      "url": "https://www.prepladder.com/neet-pg-study-material/notifications/aiims-june-2020-pharma-recall-questions",
+      "sha256": "9b8bdc5fbdcc43a4eb0011bd13fa8325a6f32d777773e867920743a25d07ab69",
+      "bytes": 60450,
+      "exam": "aiims-pg",
+      "year": 2020,
+      "session": "June",
+      "required": true,
+      "pinBytes": true
+    },
+    {
+      "file": "pgblazer-2011-may-158-2.html",
+      "url": "https://pgblazer.com/aiims-may-2011-mcq-158-2/",
+      "sha256": "65de485a1420224e7199fe30136cf86af53593979ade1a40c6f21ec96b598de9",
+      "bytes": 43650,
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "May",
+      "required": true,
+      "pinBytes": true
+    },
+    {
+      "file": "pgblazer-2011-nov-197.html",
+      "url": "https://pgblazer.com/aiims-november-2011-mcq-197/",
+      "sha256": "ec0947f83a36ed637dcc537a751d7d51864cb6a0673599ecf76dfc6478d43309",
+      "bytes": 49611,
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "November",
+      "required": true,
+      "pinBytes": true
+    },
+    {
+      "file": "pgblazer-2015-may-31.html",
+      "url": "https://pgblazer.com/aiims-pg-entrance-may-2015-mcq-31-reticular-fibers/",
+      "sha256": "646a3f3aee5d2166b7b783bf4e516acdce0173aa2a1b819f50dd0ab9d0426ffa",
+      "bytes": 45160,
+      "exam": "aiims-pg",
+      "year": 2015,
+      "session": "May",
+      "required": true,
+      "pinBytes": true
+    }
+  ],
+  "questionReviews": [
+    {
+      "id": "prepladder-aiims-2020-jun-pharma:6",
+      "source": "prepladder-aiims-2020-jun-pharma.html",
+      "sourceNumber": 6,
+      "suppliedKey": "B",
+      "chapterId": "second-year/pharmacology/paper-2/anti-microbial-drugs",
+      "reviewNotes": "Source heading and printed key inspected; adapted recall wording, complete source options, original explanation."
+    },
+    {
+      "id": "prepladder-aiims-2020-jun-pharma:11",
+      "source": "prepladder-aiims-2020-jun-pharma.html",
+      "sourceNumber": 11,
+      "suppliedKey": "A",
+      "chapterId": "second-year/pharmacology/paper-1/central-nervous-system",
+      "reviewNotes": "Source heading and printed key inspected; adapted recall wording, complete source options, original explanation."
+    },
+    {
+      "id": "prepladder-aiims-2020-jun-pharma:12",
+      "source": "prepladder-aiims-2020-jun-pharma.html",
+      "sourceNumber": 12,
+      "suppliedKey": "A",
+      "chapterId": "second-year/pharmacology/paper-1/general-pharmacology",
+      "reviewNotes": "Source heading and printed key inspected; adapted recall wording, complete source options, original explanation."
+    },
+    {
+      "id": "prepladder-aiims-2020-jun-pharma:15",
+      "source": "prepladder-aiims-2020-jun-pharma.html",
+      "sourceNumber": 15,
+      "suppliedKey": "D",
+      "chapterId": "second-year/pharmacology/paper-1/cardiovascular-system",
+      "reviewNotes": "Source heading and printed key inspected; adapted recall wording, complete source options, original explanation."
+    },
+    {
+      "id": "prepladder-aiims-2020-jun-pharma:17",
+      "source": "prepladder-aiims-2020-jun-pharma.html",
+      "sourceNumber": 17,
+      "suppliedKey": "C",
+      "chapterId": "second-year/pharmacology/paper-1/cardiovascular-system",
+      "reviewNotes": "Source heading and printed key inspected; adapted recall wording, complete source options, original explanation."
+    },
+    {
+      "id": "prepladder-aiims-2020-jun-pharma:22",
+      "source": "prepladder-aiims-2020-jun-pharma.html",
+      "sourceNumber": 22,
+      "suppliedKey": "C",
+      "chapterId": "second-year/pharmacology/paper-1/central-nervous-system",
+      "reviewNotes": "Source heading and printed key inspected; adapted recall wording, complete source options, original explanation."
+    },
+    {
+      "id": "pgblazer-2011-may-158-2:158",
+      "source": "pgblazer-2011-may-158-2.html",
+      "sourceNumber": 158,
+      "suppliedKey": "C",
+      "chapterId": "final-year/general-surgery/vein-lymphatics-nerves",
+      "reviewNotes": "Source heading and printed key inspected; adapted recall wording, complete source options, original explanation."
+    },
+    {
+      "id": "pgblazer-2011-nov-197:197",
+      "source": "pgblazer-2011-nov-197.html",
+      "sourceNumber": 197,
+      "suppliedKey": "A",
+      "chapterId": "final-year/general-surgery/trauma-and-fractures",
+      "reviewNotes": "Source heading and printed key inspected; adapted recall wording, complete source options, original explanation."
+    },
+    {
+      "id": "pgblazer-2015-may-31:31",
+      "source": "pgblazer-2015-may-31.html",
+      "sourceNumber": 31,
+      "suppliedKey": "C",
+      "chapterId": "first-year/anatomy/paper-1/histology",
+      "reviewNotes": "Source heading and printed key inspected; adapted recall wording, complete source options, original explanation."
+    },
+    {
+      "id": "prepladder-aiims-2020-jun-pharma:3",
+      "source": "prepladder-aiims-2020-jun-pharma.html",
+      "sourceNumber": 3,
+      "suppliedKey": "D",
+      "chapterId": "second-year/pharmacology/paper-1/cardiovascular-system",
+      "reviewNotes": "Complete source options and supplied key D inspected; interaction corroborated by FDA label."
+    }
+  ],
+  "heldCandidates": [
+    {
+      "id": "prepladder-aiims-2020-jun-pharma:2",
+      "source": "prepladder-aiims-2020-jun-pharma.html",
+      "reason": "Image-dependent flagellate-dermatitis question; no image imported."
+    },
+    {
+      "id": "prepladder-aiims-2020-jun-pharma:4",
+      "source": "prepladder-aiims-2020-jun-pharma.html",
+      "reason": "One source option ends with an incomplete phrase; no missing words supplied."
+    },
+    {
+      "id": "prepladder-aiims-2020-jun-pharma:9",
+      "source": "prepladder-aiims-2020-jun-pharma.html",
+      "reason": "Printed rosuvastatin/clarithromycin rationale incorrectly generalises CYP3A4 statin metabolism; held for clinical review."
+    },
+    {
+      "id": "prepladder-aiims-2020-jun-pharma:13",
+      "source": "prepladder-aiims-2020-jun-pharma.html",
+      "reason": "Historical HIV PEP choices omit current preferred regimens; not imported as present-day guidance."
+    },
+    {
+      "id": "prepladder-aiims-2020-jun-pharma:14",
+      "source": "prepladder-aiims-2020-jun-pharma.html",
+      "reason": "Both cladribine and pentostatin are accepted classic hairy-cell leukaemia treatments; preferred-drug stem lacks a unique clinical answer."
+    }
+  ],
+  "limitations": [
+    "Partial author-reviewed recall selection, not official questions or a complete paper.",
+    "No publisher explanations, illustrations or original documents redistributed.",
+    "May 2011 collection reuses source number 158; the -158-2 post identity is preserved.",
+    "Historical ALP and thymic-stroma items include explicit clinical/anatomical qualifications."
+  ],
+  "originalPharmacologyQuestionOptionWords": {
+    "3": 41,
+    "6": 18,
+    "11": 33,
+    "12": 18,
+    "15": 26,
+    "17": 21,
+    "22": 31
+  },
+  "originalPharmacologyTotalWords": 188,
+  "medicalReferences": [
+    "https://www.accessdata.fda.gov/drugsatfda_docs/label/2016/019614s053lbl.pdf",
+    "https://doi.org/10.1093/CID/CIW376",
+    "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=082d818a-4f4e-4675-98c6-91db0294e63c",
+    "https://www.ncbi.nlm.nih.gov/books/NBK285568/",
+    "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=2612ee97-1723-40f2-99e6-3a736f63200f",
+    "https://www.nice.org.uk/guidance/NG185/chapter/recommendations",
+    "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a12d50fb-2c2f-4105-ad17-adbf90d439d4",
+    "https://www.orthoinfo.org/diseases--conditions/carpal-tunnel-syndrome/",
+    "https://pubmed.ncbi.nlm.nih.gov/11884494/",
+    "https://pubmed.ncbi.nlm.nih.gov/305735/",
+    "https://digitalhistology.org/organs-systems/lymphoid/organs/thymus/thymus-3/"
+  ]
+}
