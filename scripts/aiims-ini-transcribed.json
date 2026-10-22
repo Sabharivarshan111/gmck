@@ -3027,5 +3027,174 @@
       "Bradycardia with AV block"
     ],
     "key": "D"
+  },
+  {
+    "id": "pgblazer-2012-may-1:1",
+    "source": "pgblazer-2012-may-1.html",
+    "source_number": 1,
+    "question": "Gallow’s traction is used for ?",
+    "options": [
+      "Fracture shaft of femur",
+      "Fracture neck of femur",
+      "Fracture humerus",
+      "Fracture tibia"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "pgblazer-2012-may-2:2",
+    "source": "pgblazer-2012-may-2.html",
+    "source_number": 2,
+    "question": "Bracket calcification is seen in?",
+    "options": [
+      "Meningioma",
+      "Sturge Weber syndrome",
+      "Tuberous sclerosis",
+      "Lipoma of corpus callosum"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "pgblazer-2012-may-3:3",
+    "source": "pgblazer-2012-may-3.html",
+    "source_number": 3,
+    "question": "Choking is seen in?",
+    "options": [
+      "Revolver",
+      "Pistol",
+      "Shotgun",
+      "Sports rifle"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "pgblazer-2012-may-4:4",
+    "source": "pgblazer-2012-may-4.html",
+    "source_number": 4,
+    "question": "Which scientific principle is the basis for thermodilution method used in measurement of cardiac output?",
+    "options": [
+      "Hagen-poisseuille principle",
+      "Stewart-hamilton principle",
+      "Bernoulli’s principle",
+      "Universal gas equation"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "pgblazer-2012-may-5:5",
+    "source": "pgblazer-2012-may-5.html",
+    "source_number": 5,
+    "question": "More than one codon coding for same amino acid is known as?",
+    "options": [
+      "Degeneracy",
+      "Transcription",
+      "Mutation",
+      "Frame shift mutation"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "pgblazer-2012-may-8:8",
+    "source": "pgblazer-2012-may-8.html",
+    "source_number": 8,
+    "question": "Which is true?",
+    "options": [
+      "Occipital lobe is a part of the cerebral cortex",
+      "Medulla is a part of limbic system",
+      "Hypothalamus is a part of brainstem",
+      "All of the above"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "reflex-ini-2024-may:49",
+    "source": "reflex-ini-2024-may.html",
+    "source_number": 49,
+    "question": "A 30-year-old woman with chronic hypertension develops postpartum haemorrhage. Which of the following agents is contraindicated?",
+    "options": [
+      "Oxytocin",
+      "Methylergometrine",
+      "Prostaglandin F2α",
+      "Misoprostol"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "reflex-ini-2024-may:52",
+    "source": "reflex-ini-2024-may.html",
+    "source_number": 52,
+    "question": "What is the correct dose regimen for antenatal corticosteroids?",
+    "options": [
+      "Dexamethasone 6 mg every 12 hours, 4 doses",
+      "Dexamethasone 12 mg every 12 hours, 2 doses",
+      "Betamethasone 12 mg every 12 hours, 4 doses",
+      "Betamethasone 6 mg every 12 hours, 2 doses"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "reflex-ini-2024-may:61",
+    "source": "reflex-ini-2024-may.html",
+    "source_number": 61,
+    "question": "Which of the following is not included in the criteria to diagnose autism?",
+    "options": [
+      "Cognitive delays",
+      "Failure to communicate effectively",
+      "Repetitive behaviours or restricted interests",
+      "Impaired social interactions"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "reflex-ini-2024-may:63",
+    "source": "reflex-ini-2024-may.html",
+    "source_number": 63,
+    "question": "Which of the following is true about CT?",
+    "options": [
+      "Water has a Hounsfield unit of 0",
+      "An unfiltered X-ray beam is used",
+      "CT head dose is 20 mSv",
+      "It is the first investigation for gallstones"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "pgblazer-2015-may-24:24",
+    "source": "pgblazer-2015-may-24.html",
+    "source_number": 24,
+    "question": "Shenton line is a feature seen in X ray of?",
+    "options": [
+      "Elbow",
+      "Shoulder",
+      "Hip",
+      "Knee"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "pgblazer-2015-may-19:19",
+    "source": "pgblazer-2015-may-19.html",
+    "source_number": 19,
+    "question": "Jersey finger is seen in rupture of?",
+    "options": [
+      "Flexor digitorum profundus",
+      "Flexor digitorum superficialis",
+      "Extensor digiti minimi",
+      "Extensor indicis"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "pgblazer-2015-may-20:20",
+    "source": "pgblazer-2015-may-20.html",
+    "source_number": 20,
+    "question": "Which of the following anaesthetic agents cause pain on intravenous administration?",
+    "options": [
+      "Propofol",
+      "Midazolam",
+      "Ketamine",
+      "Thiopentone"
+    ],
+    "key": "A"
   }
 ]

@@ -2742,5 +2742,104 @@
     "chapterId": "second-year/pharmacology/paper-1/cardiovascular-system",
     "answer": "D",
     "explanation": "Metoprolol and verapamil both slow atrioventricular conduction and reduce heart rate. Their effects can add together, producing significant bradycardia or higher-degree AV block; verapamil can also reduce metoprolol clearance."
+  },
+  {
+    "id": "pgblazer-2012-may-1:1",
+    "source": "pgblazer-2012-may-1.html",
+    "sourceNumber": 1,
+    "sourceFingerprint": "7a8b4eadd81c6aeae1a7a6abe7223ed1d07a03754167f3fcecb6796effd2161b",
+    "chapterId": "final-year/general-surgery/trauma-and-fractures",
+    "answer": "A",
+    "explanation": "Gallows traction can immobilise femoral shaft fractures in selected infants and small children. It is not the usual traction method for the other listed fracture sites."
+  },
+  {
+    "id": "pgblazer-2012-may-2:2",
+    "source": "pgblazer-2012-may-2.html",
+    "sourceNumber": 2,
+    "sourceFingerprint": "df51475463b7094d90123e08fd67b11e6227bc780b0c7c8b09cdcd6873df5d24",
+    "chapterId": "final-year/general-medicine/neuro-and-stroke",
+    "answer": "D",
+    "explanation": "Peripheral calcification around a pericallosal lipoma may produce a bracket-shaped appearance. Sturge-Weber syndrome instead classically causes gyriform or tram-track calcification."
+  },
+  {
+    "id": "pgblazer-2012-may-3:3",
+    "source": "pgblazer-2012-may-3.html",
+    "sourceNumber": 3,
+    "sourceFingerprint": "09028b5bd621b90f0745605becb7c1821cc156b666e26d50e4ba40af8dc92751",
+    "chapterId": "third-year/forensic-medicine/mechanical-injuries",
+    "answer": "C",
+    "explanation": "Here choking means choke boring of a firearm, not airway obstruction. The constriction near a shotgun muzzle controls the spread of the shot."
+  },
+  {
+    "id": "pgblazer-2012-may-4:4",
+    "source": "pgblazer-2012-may-4.html",
+    "sourceNumber": 4,
+    "sourceFingerprint": "28560fe5e55370a5724cf8da05c014c28425213168ca4cb02e54f05836c01540",
+    "chapterId": "first-year/physiology/paper-2/cardiovascular-physiology",
+    "answer": "B",
+    "explanation": "Thermodilution applies the Stewart-Hamilton indicator-dilution equation. Cardiac output is calculated using the injected thermal indicator and the resulting temperature-versus-time curve."
+  },
+  {
+    "id": "pgblazer-2012-may-5:5",
+    "source": "pgblazer-2012-may-5.html",
+    "sourceNumber": 5,
+    "sourceFingerprint": "38bc589b4066c4daed992cf4e4d045cf8c2a2b5280abc0e22e29e879dd5344c2",
+    "chapterId": "first-year/biochemistry/paper-2/molecular-biology",
+    "answer": "A",
+    "explanation": "Degeneracy is the use of different codons to specify the same amino acid. It does not mean that one codon normally specifies several different amino acids."
+  },
+  {
+    "id": "reflex-ini-2024-may:49",
+    "source": "reflex-ini-2024-may.html",
+    "sourceNumber": 49,
+    "sourceFingerprint": "1b63c9875058f04834d1918243e929bc02db00609664e8c0c1a08d0f1246171a",
+    "chapterId": "final-year/obstetrics-gynaecology/abnormal-labour",
+    "answer": "B",
+    "explanation": "Methylergometrine is an ergot uterotonic with vasoconstrictor effects. Hypertension is a contraindication because it can provoke severe blood-pressure elevation."
+  },
+  {
+    "id": "reflex-ini-2024-may:52",
+    "source": "reflex-ini-2024-may.html",
+    "sourceNumber": 52,
+    "sourceFingerprint": "11fa2ec8103e4041a8b181d09d1d2106b142785b484746c998927cc5a9b18340",
+    "chapterId": "final-year/obstetrics-gynaecology/pregnancy-complications",
+    "answer": "A",
+    "explanation": "One antenatal corticosteroid course is dexamethasone 6 mg intramuscularly every 12 hours for four doses, totalling 24 mg. The listed betamethasone regimens are incorrect; its standard course is 12 mg intramuscularly 24 hours apart for two doses."
+  },
+  {
+    "id": "reflex-ini-2024-may:61",
+    "source": "reflex-ini-2024-may.html",
+    "sourceNumber": 61,
+    "sourceFingerprint": "1501fd1cd5b5b8b0e004436c76a5ae6c480063f6b6424224f62f54f57e124877",
+    "chapterId": "final-year/general-medicine/psychiatry-medicine",
+    "answer": "A",
+    "explanation": "Autism requires characteristic social-communication deficits and restricted or repetitive behaviours. Cognitive or intellectual impairment may coexist, but it is not required for the diagnosis."
+  },
+  {
+    "id": "pgblazer-2015-may-24:24",
+    "source": "pgblazer-2015-may-24.html",
+    "sourceNumber": 24,
+    "sourceFingerprint": "d8d86e716d29f67ff605e1746f8d43deddaf9866c437c6985b802128752234a2",
+    "chapterId": "final-year/general-surgery/trauma-and-fractures",
+    "answer": "C",
+    "explanation": "Shenton line is assessed on hip or pelvic radiographs. It forms a smooth arc along the inferior margin of the superior pubic ramus and the inferomedial femoral neck."
+  },
+  {
+    "id": "pgblazer-2015-may-19:19",
+    "source": "pgblazer-2015-may-19.html",
+    "sourceNumber": 19,
+    "sourceFingerprint": "af0a1393b22363acb4969e5a124ab0857e00caff890be31420b69cc82a2997a3",
+    "chapterId": "final-year/general-surgery/upper-lower-limb",
+    "answer": "A",
+    "explanation": "Jersey finger is an avulsion or rupture of the flexor digitorum profundus tendon at its distal attachment. The injured finger cannot actively flex normally at the distal interphalangeal joint."
+  },
+  {
+    "id": "pgblazer-2015-may-20:20",
+    "source": "pgblazer-2015-may-20.html",
+    "sourceNumber": 20,
+    "sourceFingerprint": "ebf06b2c1858fcb5d4be172b331b143ea8eeb80065d2cc828cd6f36325937622",
+    "chapterId": "final-year/general-surgery/anaesthesia",
+    "answer": "A",
+    "explanation": "Propofol commonly causes burning or pain during intravenous injection. The supplied answer identifies its characteristic association; it does not imply that injection-site pain can never occur with another drug."
   }
 ]

@@ -2656,3 +2656,7 @@ The recovered17-PDF coverage batch now contributes52 individually checked text r
 
 ## 2026-10-22 — AIIMS PG reaches 100 reviewed recalls
 Added seven June2020 pharmacology recalls, two May/November2011 items and one May2015 histology item; AIIMS100/INI213, NEET2078 unchanged. Four private raw HTML snapshots have committed URL/hash receipts; five incomplete/ambiguous/outdated candidates held. See docs/AIIMS_RECALL_EXTENSION_20261022.md and scripts/aiims-june2020-audit-20261022.json. Full previous303 records preserved. Production build and focused browser/offline/year/source checks passed; no signing, version, ads or release-gate edits. Exact publication and hosted verification will be recorded on the batch PR.
+
+## 2026-10-23 — Additional reviewed AIIMS/INI recalls
+
+Eleven new source-backed selections, plus preservation of the native branch's earlier ten-question extension, produce108 AIIMS PG/216 INI-CET=324. All313 prior records and NEET2078/year bytes unchanged. Read docs/AIIMS_INI_ADDITIONS_20261023.md and the latest resume entry for source receipts, excluded duplicates and validation. Production web/Android JS builds and actual browser offline flow pass; no signed APK/device claim.

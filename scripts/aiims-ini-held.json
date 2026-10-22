@@ -303,5 +303,45 @@
     "id": "prepladder-aiims-2020-jun-pharma:14",
     "source": "prepladder-aiims-2020-jun-pharma.html",
     "reason": "Both cladribine and pentostatin are accepted classic hairy-cell leukaemia treatments; preferred-drug stem lacks a unique clinical answer."
+  },
+  {
+    "id": "pgblazer-2012-may-6:6",
+    "source": "pgblazer-2012-may-6.html",
+    "sourceNumber": 6,
+    "reason": "Obsolete, potentially stigmatising forensic sexual-role terminology; not suitable for contemporary educational import."
+  },
+  {
+    "id": "pgblazer-2012-may-7:7",
+    "source": "pgblazer-2012-may-7.html",
+    "sourceNumber": 7,
+    "reason": "A single-mechanism oedema stem obscures underfill/overfill mechanisms in nephrotic syndrome; hold rather than overgeneralise its key."
+  },
+  {
+    "id": "reflex-ini-2024-may:54",
+    "source": "reflex-ini-2024-may.html",
+    "sourceNumber": 54,
+    "reason": "Downes criteria already present as ini-2024-01:14; no second import of this concept/session."
+  },
+  {
+    "id": "pgblazer-2012-may-8:8",
+    "source": "pgblazer-2012-may-8.html",
+    "sourceNumber": 8,
+    "sourceFingerprint": "94a386361e267c64d4511f450d143b4ed56062d383a0a3f66777608322cb2d0a",
+    "chapterId": "first-year/anatomy/paper-2/brain-and-cranial-nerves",
+    "answer": "A",
+    "explanation": "The occipital lobe is a cerebral lobe containing visual cortical areas. The medulla belongs to the brainstem, while the hypothalamus belongs to the diencephalon.",
+    "reason": "Semantic duplicate of existing question with paraphrased stem or shuffled choices.",
+    "duplicateOf": "aiims-2012:5"
+  },
+  {
+    "id": "reflex-ini-2024-may:63",
+    "source": "reflex-ini-2024-may.html",
+    "sourceNumber": 63,
+    "sourceFingerprint": "f1b0f1798526ea07c77e427d0660ef20bc501f29f58f10e46a869256ccacfe01",
+    "chapterId": "final-year/general-surgery/miscellaneous",
+    "answer": "A",
+    "explanation": "The CT attenuation scale assigns water 0 Hounsfield units and air about -1000. Head CT dose varies by protocol; the source distractor is not a universal dose definition. Ultrasonography is generally the initial examination for suspected gallstones.",
+    "reason": "Semantic duplicate of existing question with paraphrased stem or shuffled choices.",
+    "duplicateOf": "ini-2024-01:5"
   }
 ]

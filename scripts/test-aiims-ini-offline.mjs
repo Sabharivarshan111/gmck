@@ -16,7 +16,7 @@ assert.equal(missingFigureReference.test('Identify the marked structure'),true);
 const fetchBefore = globalThis.fetch;
 globalThis.fetch=()=>{throw Error('Offline bank attempted networking');};
 try {
-  for (const [file,count] of [['aiimsPgBank.json',100],['iniCetBank.json',213]]) {
+  for (const [file,count] of [['aiimsPgBank.json',108],['iniCetBank.json',216]]) {
     const bank=read('mobile/src/lib/'+file);validateOfflineBank(bank);
     const reader=createOfflineReader(bank);assert.equal(reader.total,count);
     assert.equal(fs.statSync('mobile/src/lib/'+file).size<175000,true);
@@ -50,8 +50,8 @@ try {
   const repaired=ini.records.find(r=>r.id==='inicetmay25-psm:4');
   for(const statement of ['1. Conduct data analysis','2. Selecting population','3. Setting research question','4. Setting research objective'])assert.ok(repaired.question.includes(statement));
   assert.equal(repaired.sourceAnswer,'C');
-  assert.equal(receipts.totalQuestions,313);
-  assert.equal(receipts.questionProvenance.length,313);
+  assert.equal(receipts.totalQuestions,324);
+  assert.equal(receipts.questionProvenance.length,324);
   const fresh=read('scripts/aiims-ini-missing-papers-import-20261022.json');
   assert.equal(fresh.newQuestions,52);
   for(const review of fresh.questionReviews){
@@ -61,10 +61,10 @@ try {
   assert.equal(ini.records.find(r=>r.id==='inicetmay25-anaesthesia:1').sourceAnswer,'A');
   const arsenic=ini.records.find(r=>r.id==='aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706:6');
   for(const n of ['1.','2.','3.','4.','5.'])assert.ok(arsenic.question.includes(n));
-  assert.equal(fs.statSync('mobile/src/lib/aiimsPgBank.json').size+fs.statSync('mobile/src/lib/iniCetBank.json').size<220000,true);
+  assert.equal(fs.statSync('mobile/src/lib/aiimsPgBank.json').size+fs.statSync('mobile/src/lib/iniCetBank.json').size<250000,true);
   const used = new Set(receipts.questionProvenance.map(r=>r.id));assert.deepEqual(used,new Set(reviewed.map(r=>r.id)));
   // Existing NEET payload remains separate and is not relabelled as another exam.
   const neet=read('mobile/src/lib/neetPgBank.json');assert.equal(neet.records.length,2078);
   assert.equal(neet.records.some(r=>used.has(r.id)),false);
 } finally {globalThis.fetch=fetchBefore;}
-console.log('PASS: 313 source-fingerprinted recall items, original explanations, real syllabus paths, offline search/filter/answers, mutation isolation and unchanged 2,078-item NEET bank.');
+console.log('PASS: 324 source-fingerprinted recall items, original explanations, real syllabus paths, offline search/filter/answers, mutation isolation and unchanged 2,078-item NEET bank.');

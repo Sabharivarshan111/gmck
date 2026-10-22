@@ -2470,3 +2470,15 @@ Continue source-specific AIIMS and INI audits within source excerpt budgets; ins
 
 ### DO NOT
 Do not promote the five new pharmacology holds, manufacture missing options, import MedMCQA, or bypass anatomy/native release gates. FirstRanker2020 physiology-solved and PSM downloads now return moved-document pages, not papers. Preserve all prior question IDs and fields.
+
+## 2026-10-23 — Eleven more AIIMS/INI recalls, previous native extension preserved
+
+**DONE:** Fetched native branch and fast-forwarded to 79dfbc9633372e3e873104f7a6196114c564ef59, preserving its earlier ten AIIMS additions (native baseline100/213; main90/213). Added11 new reviewed selections: AIIMS May2012 five, May2015 three, INI May2024 three. Candidate108/216=324. Exact full-record comparison preserves all313 prior records and NEET2078/year bytes. Sources hash-pinned; original explanations; source labels retained. Two semantic duplicates held plus dated forensic terminology and oversimplified nephrotic-oedema item; no missing options filled, practice additions or generic dataset imported. Evidence scripts/aiims-ini-additions-20261023.json, report docs/AIIMS_INI_ADDITIONS_20261023.md.
+
+**DONE:**11 extension-integrity tests;324 offline data/fingerprint/key/chapter/held checks;2078 exact NEET year joins; old planner/discussion; native TypeScript and ESLint; required version/XP/reminder/edges/diagrams/APKG/Kotlin/repo guards; production web assembly; final Android production JS bundle pass. Browser360/390/430, previous/new answer keys, new2012/2024 session labels, bookmarks, offline switch/reload pass. New thermodilution and steroid-regimen screenshots visually inspected. Combined JSON224KB, explicit test budget250KB. Chromium was obtained as a local test dependency; no product dependency or lockfile changes.
+
+**HALF-DONE:** Push/PR and eventual production deployment still need receipts. No signed APK/physical-device/Play claim.
+
+**NEXT:** Publish the native branch and review PR against main, preserving its earlier ten-question extension; verify final counts after deployment. Continue other source candidates separately.
+
+**DO NOT:** Reimport carpal-tunnel/thymic-framework rows already in preserved native branch; duplicate shuffled neuroanatomy/CT/Downes items; trust Reflex flagged keys or practice additions. Do not use prior research lead counts as approved totals.
