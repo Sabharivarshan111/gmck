@@ -2664,3 +2664,7 @@ Eleven new source-backed selections, plus preservation of the native branch's ea
 ### 2026-10-23 — Six further AIIMS recall selections
 
 Candidate114 AIIMS/216 INI=330. Six new May2015 recalls preserve all324 earlier records. Four editorial keys are explicitly labelled because their complete recall questions have no publisher keys. See docs/AIIMS_INI_ADDITIONS_20261023_BATCH2.md and latest resume note. Existing anatomy CI remains separate and unbypassed.
+
+### 2026-10-23 — Eight INI-CET 2025 selections
+
+Candidate114 AIIMS/224 INI=338. Eight complete DigiNerve recalls with supplied keys, original explanations and reference/duplicate receipts; all330 previous records and NEET2078/year bytes preserved. The source names2025 but omits exam month; no month inferred. Three other source leads audited without import (403, incomplete article, oversizedPDF). Report docs/AIIMS_INI_ADDITIONS_20261023_BATCH3.md; latest resume entry and PR122 carry validation/publication receipt. Existing anatomy CI gate remains untouched.

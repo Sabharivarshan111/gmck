@@ -2494,3 +2494,13 @@ Do not promote the five new pharmacology holds, manufacture missing options, imp
 **NEXT:** Update PR122 with exact tested tree and114/216 counts. Continue subject/source review separately.
 
 **DO NOT:** Treat editorial keys as supplied keys; remove their visible attribution; import held receptor-affinity/methacholine/screening/autoimmune or missing-option items.
+
+## 2026-10-23 — Eight additional INI-CET 2025 recalls
+
+**DONE:**114 AIIMS/224 INI=338. DigiNerve2025 source HTML hash pinned,8 supplied-key selections,145 question/option words, original explanations and8 professional/primary reference links. Repeated subject numbering preserved in audit separately from document ordinals. Source does not identify exam month; records omit examSession. All330 prior full records and NEET2078/year bytes exact-preserved. Six disputed/duplicate candidates held, all images excluded. Audited Cerebellum403, DocTutorials analysis-only and oversized PrepLadder PDF without import. See docs/AIIMS_INI_ADDITIONS_20261023_BATCH3.md and scripts/aiims-ini-additions-20261023-batch3.json.
+
+**DONE:**11 integrity tests,338 offline/fingerprint/key/chapter/held checks and2078 source-year joins pass. Production web/Android JS/browser verification in progress; final results follow below.
+
+**NEXT:** Continue source-level review with exact provenance; do not infer month from publication date or import known conflicting keys. PR122 remains the review target; unrelated anatomy CI failure is not bypassed. No signed APK or physical-device claim.
+
+**VERIFIED:** Assembled production web build and Android production JS bundle pass. Actual browser at360/390/430 passes new2025 no-month attribution, immune-tolerance keyA and explanation, existing labels/keys/bookmark isolation, service-worker offline switching and reload. New screenshot inspected. Updated branch publication goes to PR122; no merge/live claim. Exact published SHA/tree recorded in PR metadata to avoid a circular committed receipt.

@@ -2901,5 +2901,77 @@
     "answer": "C",
     "answerOrigin": "editorial_key_primary_reference_checked",
     "explanation": "Editorial answer: the recall source provides no answer key. Type IV collagen forms a sheet-like network in basement membranes. It differs from the fibrillar collagens that provide tensile support in structures such as tendon and skin."
+  },
+  {
+    "id": "diginerve-ini-2025:13",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 13,
+    "sourceFingerprint": "1ae83cee91c316a6ea18b5085cdc481b8549dca713fe1ac82f1a65e063d0d20b",
+    "chapterId": "first-year/physiology/paper-2/central-nervous-system",
+    "answer": "B",
+    "explanation": "Raphe nuclei contain the principal serotonergic cell bodies of the central nervous system. The substantia nigra is associated with dopamine, the locus coeruleus with noradrenaline, and the nucleus basalis with acetylcholine."
+  },
+  {
+    "id": "diginerve-ini-2025:14",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 14,
+    "sourceFingerprint": "d9ca4171692fd53ecefbb8df026f4ededf2844ac1340f07545cb31004e5e282e",
+    "chapterId": "second-year/pathology/paper-1/immunology",
+    "answer": "A",
+    "explanation": "The 2025 prize recognised discoveries concerning peripheral immune tolerance. Regulatory T cells help restrain immune responses against self; this complements the removal of many self-reactive lymphocytes during central tolerance."
+  },
+  {
+    "id": "diginerve-ini-2025:31",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 31,
+    "sourceFingerprint": "67556f5b07d9513b534c20b78bdbafca1d621d17fdc5eaabd191bad2c197b25c",
+    "chapterId": "first-year/biochemistry/paper-2/minerals",
+    "answer": "A",
+    "explanation": "The kidneys regulate magnesium balance by varying the proportion of filtered magnesium that is reabsorbed. Intestinal uptake and skeletal stores also contribute, but renal handling provides the major adjustable control of excretion."
+  },
+  {
+    "id": "diginerve-ini-2025:34",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 34,
+    "sourceFingerprint": "dc16f94933303fb3480926a0cf92f9e33aa320d1e5346c920e69e10d8139f640",
+    "chapterId": "first-year/biochemistry/paper-1/lipid-metabolism",
+    "answer": "B",
+    "explanation": "Citrate carries acetyl units from mitochondria into the cytosol. ATP-citrate lyase cleaves it to provide acetyl-CoA for fatty-acid synthesis; acetyl-CoA itself does not freely cross the inner mitochondrial membrane."
+  },
+  {
+    "id": "diginerve-ini-2025:40",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 40,
+    "sourceFingerprint": "031e903c26e4729fd9b274430ad5463243d647cc55c97945bdd7c1dd31ead0b2",
+    "chapterId": "second-year/microbiology/paper-2/gastrointestinal-infections",
+    "answer": "C",
+    "explanation": "Norovirus is a major cause of acute viral gastroenteritis in adults and of outbreaks in closed settings. Rotavirus is classically associated with severe diarrhoea in young children; the exact population burden varies by setting."
+  },
+  {
+    "id": "diginerve-ini-2025:48",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 48,
+    "sourceFingerprint": "e1fe059a896ef0d8d9167ea228396400aa3ba6bc2f920d79c4861e783192c3b8",
+    "chapterId": "second-year/microbiology/paper-2/mycology",
+    "answer": "D",
+    "explanation": "Black grains favour eumycetoma caused by a pigmented fungus such as Madurella mycetomatis. The listed bacterial causes do not produce the characteristic black fungal grains. Grain colour supports identification but is not a substitute for laboratory confirmation."
+  },
+  {
+    "id": "diginerve-ini-2025:55",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 55,
+    "sourceFingerprint": "f918e7d1988157845f49ca778106baed62e1c7229c022d61de8314af522f39b2",
+    "chapterId": "second-year/microbiology/paper-1/miscellaneous-bacteria-and-zoonotic-diseases",
+    "answer": "A",
+    "explanation": "Ehrlichia chaffeensis is an obligate intracellular, tick-borne bacterium that infects monocytes and causes human monocytic ehrlichiosis. The other listed organisms are not classified as obligate intracellular bacteria."
+  },
+  {
+    "id": "diginerve-ini-2025:57",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 57,
+    "sourceFingerprint": "70c8ea40b3aef41412c9ada44ed2f1b79904922212735504dfdbb8a9f3cef153",
+    "chapterId": "second-year/pathology/paper-2/liver-gallbladder-pancreas",
+    "answer": "B",
+    "explanation": "Primary sclerosing cholangitis can show concentric periductal fibrosis. This classic onion-skin pattern is often absent from small biopsy samples and is not completely specific; diagnosis also depends on the clinical and cholangiographic findings."
   }
 ]

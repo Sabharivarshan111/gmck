@@ -409,5 +409,41 @@
     "source": "pgblazer-2015-may-2.html",
     "sourceNumber": 2,
     "reason": "Immune-mediated versus autoimmune classification is not a sufficiently unambiguous discriminator here."
+  },
+  {
+    "id": "diginerve-ini-2025:18",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 18,
+    "reason": "Source physiology Q7 gives A for myasthenia, conflicting with postsynaptic receptor loss in option C; key conflict held."
+  },
+  {
+    "id": "diginerve-ini-2025:24",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 24,
+    "reason": "PCR step ordering duplicates ini-2020-01:6."
+  },
+  {
+    "id": "diginerve-ini-2025:29",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 29,
+    "reason": "Second Nobel-prize entry duplicates selected document ordinal 14."
+  },
+  {
+    "id": "diginerve-ini-2025:38",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 38,
+    "reason": "Xanthurenic-acid/B6 concept duplicates ini-2023-02:15."
+  },
+  {
+    "id": "diginerve-ini-2025:35",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 35,
+    "reason": "Folate-only treatment question has a disputed supplied key; held."
+  },
+  {
+    "id": "diginerve-ini-2025:51",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 51,
+    "reason": "Biosafety-level statement does not distinguish culture manipulation from lower-risk diagnostic work."
   }
 ]

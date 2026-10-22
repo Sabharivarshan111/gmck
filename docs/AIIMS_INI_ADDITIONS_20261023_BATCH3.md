@@ -1,0 +1,11 @@
+# Eight further INI-CET recall selections — 23 October 2026
+
+The review branch now contains **114 AIIMS PG and 224 INI-CET questions, 338 combined**. Eight new INI-CET selections come from DigiNerve's publicly accessible 2025 recall collection. Every prior 330 complete record and both NEET bank/year files remain unchanged.
+
+Topics: central serotonin synthesis, the 2025 Nobel immune-tolerance discovery, renal magnesium handling, citrate in lipogenesis, norovirus, black-grain eumycetoma, Ehrlichia and primary sclerosing cholangitis. All four supplied options and answer ordering are retained. Concise factual paraphrases and original explanations use 145 question/option words from this source. Primary or professional reference links, publisher subject/question labels, document ordinals, fingerprints and nearest existing comparisons are in `scripts/aiims-ini-additions-20261023-batch3.json`.
+
+The publisher labels its collection 2025 without naming an exam month. Records intentionally have no session month; the December publication date is not used to infer November. Repeated question numbers are disambiguated by whole-document ordinals plus the recorded subject label. These remain recalled questions, not authenticated original exam wording.
+
+Further source search identified Cerebellum's November 2025 surgery recall article (HTTP 403; no import), DocTutorials' November 2025 analysis (topics without complete four-option questions; no import), and a PrepLadder May 2023 PDF (30 MB; exceeds acquisition limit; no import). These are discovery leads, not additional imported source documents. DigiNerve's duplicate PCR, second Nobel entry and B6/xanthurenate concepts remain held. Myasthenia and folate entries have questionable supplied keys; the bare biosafety item lacks procedural context. Image-dependent questions were excluded.
+
+All 11 extension-integrity tests, 338 offline source/key/chapter checks and 2,078 NEET year joins pass. Exact preservation of both old PG banks and both NEET files was checked. Production web, Android JS and browser results are recorded in the resume note and PR receipt. Existing anatomy CI publication failure is separate and unmodified. No generic dataset, publisher images/explanations, signed APK or physical-device claim.

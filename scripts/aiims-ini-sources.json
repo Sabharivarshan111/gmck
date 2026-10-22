@@ -1411,5 +1411,15 @@
     "session": "May",
     "required": true,
     "pinBytes": true
+  },
+  {
+    "file": "diginerve-ini-2025.html",
+    "url": "https://www.diginerve.com/blogs/ini-cet-2025-recall-questions-with-answers-free-pdf-download-all-200-qs/",
+    "sha256": "908a5dae3081c211d3efb7c0e221a7fcbbfe5b78b0fd4a4242e240a5fb1d4e95",
+    "bytes": 238583,
+    "exam": "ini-cet",
+    "year": 2025,
+    "required": true,
+    "pinBytes": true
   }
 ]

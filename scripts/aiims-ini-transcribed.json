@@ -3274,5 +3274,109 @@
       "Type V"
     ],
     "key": "C"
+  },
+  {
+    "id": "diginerve-ini-2025:13",
+    "source": "diginerve-ini-2025.html",
+    "source_number": 13,
+    "question": "Which neurotransmitter and central synthesis-site pairing is correct?",
+    "options": [
+      "Acetylcholine- substantia nigra",
+      "Serotonin-Raphe nucleus",
+      "Norepinephrine- Nucleus basalis of Meynert",
+      "Dopamine – Locus ceruleus"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "diginerve-ini-2025:14",
+    "source": "diginerve-ini-2025.html",
+    "source_number": 14,
+    "question": "The 2025 physiology or medicine Nobel recognised discoveries concerning which immune process?",
+    "options": [
+      "Peripheral Immune Tolerance",
+      "mRNA’s role in post-translational modifications",
+      "RNA polymerization",
+      "Cancer chemotherapy"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "diginerve-ini-2025:31",
+    "source": "diginerve-ini-2025.html",
+    "source_number": 31,
+    "question": "Which process chiefly adjusts circulating magnesium balance?",
+    "options": [
+      "Renal reabsorption",
+      "Gastrointestinal absorption",
+      "Bone resorption",
+      "Dietary intake"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "diginerve-ini-2025:34",
+    "source": "diginerve-ini-2025.html",
+    "source_number": 34,
+    "question": "Which TCA intermediate supplies carbon for cytosolic fatty-acid production?",
+    "options": [
+      "Succinate",
+      "Citrate",
+      "Malate",
+      "Fumarate"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "diginerve-ini-2025:40",
+    "source": "diginerve-ini-2025.html",
+    "source_number": 40,
+    "question": "Among these viruses, which most commonly causes adult viral gastroenteritis?",
+    "options": [
+      "Rotavirus",
+      "Adenovirus 40/41",
+      "Norovirus",
+      "Astrovirus"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "diginerve-ini-2025:48",
+    "source": "diginerve-ini-2025.html",
+    "source_number": 48,
+    "question": "Draining sinuses discharge black grains. Which listed organism best explains this mycetoma?",
+    "options": [
+      "Staphylococcus aureus",
+      "Nocardia asteroides",
+      "Actinomyces israelii",
+      "Madurella mycetomatis"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "diginerve-ini-2025:55",
+    "source": "diginerve-ini-2025.html",
+    "source_number": 55,
+    "question": "Which listed bacterium requires an intracellular environment for growth?",
+    "options": [
+      "Ehrlichia chaffeensis",
+      "Staphylococcus aureus",
+      "Tropheryma whipplei",
+      "Streptococcus pyogenes"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "diginerve-ini-2025:57",
+    "source": "diginerve-ini-2025.html",
+    "source_number": 57,
+    "question": "Concentric periductal onion-skin scarring characterises which listed biliary disorder?",
+    "options": [
+      "Primary biliary cholangitis",
+      "Primary sclerosing cholangitis",
+      "Biliary atresia",
+      "Acute cholecystitis"
+    ],
+    "key": "B"
   }
 ]

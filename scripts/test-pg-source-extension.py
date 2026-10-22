@@ -31,7 +31,7 @@ class ExtensionIntegrity(unittest.TestCase):
 
     def test_released_rows_recover_with_receipts(self):
         rows, count = builder.reviewed_baseline(self.index)
-        self.assertEqual(len(rows), 330)
+        self.assertEqual(len(rows), 338)
         self.assertEqual(count, 2277)
 
     def test_changed_answer_is_rejected(self):
