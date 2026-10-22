@@ -1,0 +1,1004 @@
+{
+  "date": "2026-10-22",
+  "baselineCommit": "0a99beeb237c3044a0ecd85373bfa0f9f782ec9d",
+  "baselineCounts": {
+    "aiims-pg": 90,
+    "ini-cet": 161
+  },
+  "newQuestions": 52,
+  "finalCounts": {
+    "aiims-pg": 90,
+    "ini-cet": 213
+  },
+  "newSources": 17,
+  "contributingSources": 16,
+  "newHeldOrDuplicateCandidates": 21,
+  "sourceFiles": [
+    {
+      "file": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/704ed580-b5c8-11ed-aa20-0a5e36bc6706/704ed580-b5c8-11ed-aa20-0a5e36bc6706.pdf",
+      "sha256": "fda4e2298d9c36db43149a9f6882003dd9eb0e21f9e278fe93775c0c6e234dd9",
+      "bytes": 2523161,
+      "pages": 7,
+      "examYear": 2022,
+      "examSession": "May",
+      "selectedQuestions": 3
+    },
+    {
+      "file": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/715beab2-b5c8-11ed-8572-0a5e36bc6706/715beab2-b5c8-11ed-8572-0a5e36bc6706.pdf",
+      "sha256": "f3611e7cfe4c4f33f8a6676f69cf80ea93687893cc4a8a2c47510553861055d9",
+      "bytes": 1588314,
+      "pages": 6,
+      "examYear": 2022,
+      "examSession": "May",
+      "selectedQuestions": 4
+    },
+    {
+      "file": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706/7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+      "sha256": "4a72b91d98ec8931ed5a3a348f8e2d97a29fee2a9b195431a8108f83e39cb5de",
+      "bytes": 1887733,
+      "pages": 7,
+      "examYear": 2022,
+      "examSession": "May",
+      "selectedQuestions": 3
+    },
+    {
+      "file": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/68fa49d6-b5c8-11ed-880a-0a5e36bc6706/68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf",
+      "sha256": "cbee161746285f7496a8feb194ab82c1a3279492da6e45a456880da616d49d3d",
+      "bytes": 2710264,
+      "pages": 9,
+      "examYear": 2022,
+      "examSession": "May",
+      "selectedQuestions": 4
+    },
+    {
+      "file": "aglasem-7259d24e-b5c8-11ed-9bac-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/7259d24e-b5c8-11ed-9bac-0a5e36bc6706/7259d24e-b5c8-11ed-9bac-0a5e36bc6706.pdf",
+      "sha256": "4103b8b6a108a2aa36aaf98b729597adbba70fd2814c75a5c2ee95db24ef84a0",
+      "bytes": 1963798,
+      "pages": 5,
+      "examYear": 2022,
+      "examSession": "May",
+      "selectedQuestions": 1
+    },
+    {
+      "file": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/687ac148-b5c8-11ed-9b49-0a5e36bc6706/687ac148-b5c8-11ed-9b49-0a5e36bc6706.pdf",
+      "sha256": "84b102122a4c61b5c43d29257c76e85166887c7e62ed29c8bd206f4389ee90fa",
+      "bytes": 1293032,
+      "pages": 4,
+      "examYear": 2022,
+      "examSession": "May",
+      "selectedQuestions": 3
+    },
+    {
+      "file": "aglasem-68da6e7c-b5c8-11ed-8174-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/68da6e7c-b5c8-11ed-8174-0a5e36bc6706/68da6e7c-b5c8-11ed-8174-0a5e36bc6706.pdf",
+      "sha256": "cfeb1f9d0a436fa2c553f72c6448bfc833615421072b7f8b2e1d1fe85ff73ae9",
+      "bytes": 1915631,
+      "pages": 5,
+      "examYear": 2022,
+      "examSession": "May",
+      "selectedQuestions": 1
+    },
+    {
+      "file": "aglasem-74aff46a-b5c8-11ed-b820-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/74aff46a-b5c8-11ed-b820-0a5e36bc6706/74aff46a-b5c8-11ed-b820-0a5e36bc6706.pdf",
+      "sha256": "6c213c0396e6f12e40adc468531e4f8482696e506c83916113fca6215e94d967",
+      "bytes": 790795,
+      "pages": 2,
+      "examYear": 2022,
+      "examSession": "May",
+      "selectedQuestions": 2
+    },
+    {
+      "file": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/5d9ef32a-c103-11ed-8570-0a5e36bc6706/5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+      "sha256": "219c8b449bf199370d82f5384d0b6eb42f0016b6f06a0afeba43e259584cfdd3",
+      "bytes": 1820341,
+      "pages": 17,
+      "examYear": 2022,
+      "examSession": "November",
+      "selectedQuestions": 6
+    },
+    {
+      "file": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/594e1a76-c103-11ed-991c-0a5e36bc6706/594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+      "sha256": "4441b3fe3299066974530ff56569836ff16c3b17468d889ae24dad45b4641600",
+      "bytes": 2149984,
+      "pages": 16,
+      "examYear": 2022,
+      "examSession": "November",
+      "selectedQuestions": 4
+    },
+    {
+      "file": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/585ca6be-c103-11ed-9d15-0a5e36bc6706/585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+      "sha256": "6f644cd8aa9e12aa995370911dfa8c2c466d549238b6828d00eb65ce3c8e7aaa",
+      "bytes": 1732992,
+      "pages": 20,
+      "examYear": 2022,
+      "examSession": "November",
+      "selectedQuestions": 5
+    },
+    {
+      "file": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/5d822ace-c103-11ed-a976-0a5e36bc6706/5d822ace-c103-11ed-a976-0a5e36bc6706.pdf",
+      "sha256": "5d144e0379307f61ca25b98325a586e678413bfc3c76b9126bf4f561099e9341",
+      "bytes": 1501493,
+      "pages": 11,
+      "examYear": 2022,
+      "examSession": "November",
+      "selectedQuestions": 5
+    },
+    {
+      "file": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/598c16fa-c103-11ed-9631-0a5e36bc6706/598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+      "sha256": "9c7e2470c27069c73f46db8336a0d3e19f9352619fcedd5e9e605269de6e14d0",
+      "bytes": 1058263,
+      "pages": 9,
+      "examYear": 2022,
+      "examSession": "November",
+      "selectedQuestions": 4
+    },
+    {
+      "file": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/57d9fa20-c103-11ed-81fa-0a5e36bc6706/57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+      "sha256": "8990f9b44981080d4fc24fc0da2e2220418534636ed722d7afd6e63b01e410f5",
+      "bytes": 949329,
+      "pages": 6,
+      "examYear": 2022,
+      "examSession": "November",
+      "selectedQuestions": 4
+    },
+    {
+      "file": "aglasem-58415486-c103-11ed-847b-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/58415486-c103-11ed-847b-0a5e36bc6706/58415486-c103-11ed-847b-0a5e36bc6706.pdf",
+      "sha256": "ad651401ec6a4b0e9180f122938e465be6f7d76618bda60fe4e4baa407a8c5a7",
+      "bytes": 1548329,
+      "pages": 9,
+      "examYear": 2022,
+      "examSession": "November",
+      "selectedQuestions": 2
+    },
+    {
+      "file": "aglasem-5da426e2-c103-11ed-80bf-0a5e36bc6706.pdf",
+      "url": "https://cdn.aglasem.com/aglasem-doc/5da426e2-c103-11ed-80bf-0a5e36bc6706/5da426e2-c103-11ed-80bf-0a5e36bc6706.pdf",
+      "sha256": "6762cfe989938ed5959d19a2ff1c306380f30e398f4dd0b9ff5b88333b001152",
+      "bytes": 712040,
+      "pages": 3,
+      "examYear": 2022,
+      "examSession": "November",
+      "selectedQuestions": 0
+    },
+    {
+      "file": "inicetmay25-anaesthesia.pdf",
+      "url": "https://www.doctutorials.com/wp-content/uploads/2025/12/Anaesthesia-INI-25-May-Reworked_compressed.pdf",
+      "sha256": "d36e433ef20b29c42c2035adff4a8f1e2d4fc335d23dddcca4598017f964fbaa",
+      "bytes": 401735,
+      "pages": 3,
+      "examYear": 2025,
+      "examSession": "May",
+      "selectedQuestions": 1
+    }
+  ],
+  "questionReviews": [
+    {
+      "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:12",
+      "sourcePages": [
+        6,
+        7
+      ],
+      "sourceNumber": 12,
+      "suppliedKey": "D",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:24",
+      "sourcePages": [
+        10,
+        11
+      ],
+      "sourceNumber": 24,
+      "suppliedKey": "C",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:25",
+      "sourcePages": [
+        11
+      ],
+      "sourceNumber": 25,
+      "suppliedKey": "B",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:29",
+      "sourcePages": [
+        11,
+        12
+      ],
+      "sourceNumber": 29,
+      "suppliedKey": "C",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:34",
+      "sourcePages": [
+        13
+      ],
+      "sourceNumber": 34,
+      "suppliedKey": "C",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:35",
+      "sourcePages": [
+        13
+      ],
+      "sourceNumber": 35,
+      "suppliedKey": "B",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:5",
+      "sourcePages": [
+        3,
+        4
+      ],
+      "sourceNumber": 5,
+      "suppliedKey": "B",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:12",
+      "sourcePages": [
+        6
+      ],
+      "sourceNumber": 12,
+      "suppliedKey": "D",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:14",
+      "sourcePages": [
+        6
+      ],
+      "sourceNumber": 14,
+      "suppliedKey": "A",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:16",
+      "sourcePages": [
+        7
+      ],
+      "sourceNumber": 16,
+      "suppliedKey": "A",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:1",
+      "sourcePages": [
+        2
+      ],
+      "sourceNumber": 1,
+      "suppliedKey": "B",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:11",
+      "sourcePages": [
+        5
+      ],
+      "sourceNumber": 11,
+      "suppliedKey": "B",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:14",
+      "sourcePages": [
+        6
+      ],
+      "sourceNumber": 14,
+      "suppliedKey": "B",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:20",
+      "sourcePages": [
+        8
+      ],
+      "sourceNumber": 20,
+      "suppliedKey": "C",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:33",
+      "sourcePages": [
+        12
+      ],
+      "sourceNumber": 33,
+      "suppliedKey": "A",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:5",
+      "sourcePages": [
+        3
+      ],
+      "sourceNumber": 5,
+      "suppliedKey": "D",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:6",
+      "sourcePages": [
+        3
+      ],
+      "sourceNumber": 6,
+      "suppliedKey": "B",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:15",
+      "sourcePages": [
+        6
+      ],
+      "sourceNumber": 15,
+      "suppliedKey": "A",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:17",
+      "sourcePages": [
+        7
+      ],
+      "sourceNumber": 17,
+      "suppliedKey": "C",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:18",
+      "sourcePages": [
+        7
+      ],
+      "sourceNumber": 18,
+      "suppliedKey": "A",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706:8",
+      "sourcePages": [
+        3,
+        4
+      ],
+      "sourceNumber": 8,
+      "suppliedKey": "A",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706:17",
+      "sourcePages": [
+        6
+      ],
+      "sourceNumber": 17,
+      "suppliedKey": "A",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706:21",
+      "sourcePages": [
+        7
+      ],
+      "sourceNumber": 21,
+      "suppliedKey": "A",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706:28",
+      "sourcePages": [
+        9
+      ],
+      "sourceNumber": 28,
+      "suppliedKey": "D",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:5",
+      "sourcePages": [
+        3
+      ],
+      "sourceNumber": 5,
+      "suppliedKey": "A",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:7",
+      "sourcePages": [
+        3,
+        4
+      ],
+      "sourceNumber": 7,
+      "suppliedKey": "A",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:10",
+      "sourcePages": [
+        4
+      ],
+      "sourceNumber": 10,
+      "suppliedKey": "C",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:14",
+      "sourcePages": [
+        5,
+        6
+      ],
+      "sourceNumber": 14,
+      "suppliedKey": "B",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-58415486-c103-11ed-847b-0a5e36bc6706:10",
+      "sourcePages": [
+        6
+      ],
+      "sourceNumber": 10,
+      "suppliedKey": "B",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-58415486-c103-11ed-847b-0a5e36bc6706:11",
+      "sourcePages": [
+        6
+      ],
+      "sourceNumber": 11,
+      "suppliedKey": "C",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-74aff46a-b5c8-11ed-b820-0a5e36bc6706:1",
+      "sourcePages": [
+        2
+      ],
+      "sourceNumber": 1,
+      "suppliedKey": "D",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-74aff46a-b5c8-11ed-b820-0a5e36bc6706:2",
+      "sourcePages": [
+        2
+      ],
+      "sourceNumber": 2,
+      "suppliedKey": "B",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706:2",
+      "sourcePages": [
+        2
+      ],
+      "sourceNumber": 2,
+      "suppliedKey": "A",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706:3",
+      "sourcePages": [
+        2
+      ],
+      "sourceNumber": 3,
+      "suppliedKey": "A",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706:7",
+      "sourcePages": [
+        3
+      ],
+      "sourceNumber": 7,
+      "suppliedKey": "A",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-7259d24e-b5c8-11ed-9bac-0a5e36bc6706:4",
+      "sourcePages": [
+        3
+      ],
+      "sourceNumber": 4,
+      "suppliedKey": "A",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706:5",
+      "sourcePages": [
+        3
+      ],
+      "sourceNumber": 5,
+      "suppliedKey": "D",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706:6",
+      "sourcePages": [
+        3
+      ],
+      "sourceNumber": 6,
+      "suppliedKey": "A",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706:13",
+      "sourcePages": [
+        6
+      ],
+      "sourceNumber": 13,
+      "suppliedKey": "C",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:8",
+      "sourcePages": [
+        4
+      ],
+      "sourceNumber": 8,
+      "suppliedKey": "A",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:9",
+      "sourcePages": [
+        4
+      ],
+      "sourceNumber": 9,
+      "suppliedKey": "D",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:10",
+      "sourcePages": [
+        4,
+        5
+      ],
+      "sourceNumber": 10,
+      "suppliedKey": "C",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706:5",
+      "sourcePages": [
+        3,
+        4
+      ],
+      "sourceNumber": 5,
+      "suppliedKey": "A",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706:6",
+      "sourcePages": [
+        4
+      ],
+      "sourceNumber": 6,
+      "suppliedKey": "A",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706:8",
+      "sourcePages": [
+        5
+      ],
+      "sourceNumber": 8,
+      "suppliedKey": "C",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706:9",
+      "sourcePages": [
+        5
+      ],
+      "sourceNumber": 9,
+      "suppliedKey": "B",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-68da6e7c-b5c8-11ed-8174-0a5e36bc6706:1",
+      "sourcePages": [
+        2
+      ],
+      "sourceNumber": 1,
+      "suppliedKey": "D",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706:3",
+      "sourcePages": [
+        2,
+        3
+      ],
+      "sourceNumber": 3,
+      "suppliedKey": "A",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706:9",
+      "sourcePages": [
+        5
+      ],
+      "sourceNumber": 9,
+      "suppliedKey": "B",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706:18",
+      "sourcePages": [
+        8
+      ],
+      "sourceNumber": 18,
+      "suppliedKey": "A",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706:20",
+      "sourcePages": [
+        9
+      ],
+      "sourceNumber": 20,
+      "suppliedKey": "A",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    },
+    {
+      "id": "inicetmay25-anaesthesia:1",
+      "sourcePages": [
+        2
+      ],
+      "sourceNumber": 1,
+      "suppliedKey": "A",
+      "normalisation": "Condensed wording/OCR spelling and punctuation; all supplied choices and answer positions retained in meaning; no missing clinical information supplied."
+    }
+  ],
+  "privateRenderedSourcePages": [
+    {
+      "source": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+      "page": 6,
+      "sha256": "a69f0ce739b8eb3d85e943a208044aace4d2fffcec4e70c45270e18f57454ab8"
+    },
+    {
+      "source": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+      "page": 7,
+      "sha256": "c53246ad9304b25c87a40d71ed230a0dc4e328e443d0230cb1c67eabc5bbfc43"
+    },
+    {
+      "source": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+      "page": 10,
+      "sha256": "91a8db6b3a6cd56cbabb7421b91d24af61c2c5fe641d0bb16173e11e0aedb964"
+    },
+    {
+      "source": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+      "page": 11,
+      "sha256": "e8fb810b8a64992dce66b9bc4567a928237260da240ea2283e73e06a5abac68e"
+    },
+    {
+      "source": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+      "page": 12,
+      "sha256": "ad5ae228433478e292387f8a1da1957c9ddb77a4219bd3078f8266b4fabc1207"
+    },
+    {
+      "source": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf",
+      "page": 13,
+      "sha256": "1f1eccef3c56986942b733c09c04c32d7eefe6ea3c4ec7761cf7579e560c4bf4"
+    },
+    {
+      "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+      "page": 3,
+      "sha256": "84ca376092732516f27239c8b024ef9258b615c3ab8fb2194e64629d8eb8c3e0"
+    },
+    {
+      "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+      "page": 4,
+      "sha256": "533e38dfe16adf084a9166031633744f0346b7a61c0dfdc8f643aec2fba6723c"
+    },
+    {
+      "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+      "page": 6,
+      "sha256": "1c3420b36d082e724f18b95d5303f6fd5a087a08bf6c33647eb47b6e8a6e001f"
+    },
+    {
+      "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+      "page": 7,
+      "sha256": "99960a0aeb40398471b962329f50598e0894e699121e63691688230c20f76a65"
+    },
+    {
+      "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+      "page": 2,
+      "sha256": "9fbb8783229b5e3445a5ff03abcb51737a60e204ffa4593f74dc72ed2a12cd50"
+    },
+    {
+      "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+      "page": 5,
+      "sha256": "3ef3e1717cf3de19de86d4cf05df16d46906b7fa10a4b281f3ec1978ec87e032"
+    },
+    {
+      "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+      "page": 6,
+      "sha256": "774c07400b0d8f457ddb9fb6db63e21bde82d7095059ecbb7b7357dcd6c30417"
+    },
+    {
+      "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+      "page": 8,
+      "sha256": "3029dca759fd6691deb572593e85a48f8739d82471f4d0dd980d9ed725c0ac5b"
+    },
+    {
+      "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+      "page": 12,
+      "sha256": "6cdaeb12a23a21785868c3d8dadb130b7c4fd0f05085cb773bc13e6def47cac6"
+    },
+    {
+      "source": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706.pdf",
+      "page": 3,
+      "sha256": "4b014a255953be2e9f42d9e44592b6692de1f81894f27a8d7c41d6310821f9b3"
+    },
+    {
+      "source": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706.pdf",
+      "page": 6,
+      "sha256": "6b87a54dd4b086810b36c5091ec1130c41fa597832f8d3f5c5af6ac417575e77"
+    },
+    {
+      "source": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706.pdf",
+      "page": 7,
+      "sha256": "1edff91ec60fa7dbd16551a8ec55a6e57b01702dd42908cfe7614ee9ecd53b65"
+    },
+    {
+      "source": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+      "page": 3,
+      "sha256": "b8f5e839e1cdd35aedb33ce9feb369354039e27488af5a4ef5e35230cda4c731"
+    },
+    {
+      "source": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+      "page": 4,
+      "sha256": "a53fbae361579aefac380b570a9de5bbbdb48b4f386d167fbd1963bcfc5e6c2b"
+    },
+    {
+      "source": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+      "page": 6,
+      "sha256": "df3167b6ce84f92a6d2c0c11e46ce53da93bcb06308c006600f50502b9856602"
+    },
+    {
+      "source": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+      "page": 7,
+      "sha256": "a4e5911cf2e99a8a76db1de66ac982dd51573978839d77cc90aa96a3c11dc5df"
+    },
+    {
+      "source": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+      "page": 9,
+      "sha256": "f06e81b860796cc75bc1da348036be76c378232e0a0839e59639d5ad78f5098a"
+    },
+    {
+      "source": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+      "page": 3,
+      "sha256": "0727b40796b71932f8b182371d8890ae524eae3b68d67cd1015af4269701f4c3"
+    },
+    {
+      "source": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+      "page": 4,
+      "sha256": "154340fa4c8b2628b458ad7293d42c44724ac65e51add7e4b1a9f9c19689fc44"
+    },
+    {
+      "source": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+      "page": 5,
+      "sha256": "2a60f12106032033a5c75b9402c255ff5133d37e892bc51e65180a67081a30d7"
+    },
+    {
+      "source": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+      "page": 6,
+      "sha256": "262d4e1a0c6daf555bc15f284113f66b8a75d063240234047ec16f49b49c3119"
+    },
+    {
+      "source": "aglasem-58415486-c103-11ed-847b-0a5e36bc6706.pdf",
+      "page": 6,
+      "sha256": "d732876b0e68c40d925db2bb1d68bc4cd88be6647a60919ffbfab9d685935077"
+    },
+    {
+      "source": "aglasem-74aff46a-b5c8-11ed-b820-0a5e36bc6706.pdf",
+      "page": 2,
+      "sha256": "1b6b238ece20beac16c19741a82c4436ec3d9561519f45a756cb0256ca95b8a6"
+    },
+    {
+      "source": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706.pdf",
+      "page": 2,
+      "sha256": "976747f57439c8fc7d1b32d72fa9ff6cf31da169e8a38cb4f72e4e3ce42fbbd2"
+    },
+    {
+      "source": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706.pdf",
+      "page": 3,
+      "sha256": "6100eb8a30b3cf92b5547b9e25c7ed0842a89d93c8b11138f54df17372a83b69"
+    },
+    {
+      "source": "aglasem-7259d24e-b5c8-11ed-9bac-0a5e36bc6706.pdf",
+      "page": 3,
+      "sha256": "814731a5a6a9866877b40474f5ac2c4744c973609b9d423cc9ac92c5f6498755"
+    },
+    {
+      "source": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706.pdf",
+      "page": 3,
+      "sha256": "fc1cd8d5f46d30c9e8fba15a508d09869fb2a96001e36cbeb15ed1899d93919e"
+    },
+    {
+      "source": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706.pdf",
+      "page": 6,
+      "sha256": "5bd2f4616f34c8d9567cc49a3e77ebc8ea550883a0f380ee3941ccfb8a376f36"
+    },
+    {
+      "source": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+      "page": 3,
+      "sha256": "6343830c828c54128e55458cfc3d8bd1196db0b28dc7501db1ced07d639f26d7"
+    },
+    {
+      "source": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+      "page": 4,
+      "sha256": "38b72554bb1416f491d6e6c570fc0c3b3e9cc66ab99e47ce92c1b3afa5c69750"
+    },
+    {
+      "source": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+      "page": 5,
+      "sha256": "caad4cf9daa9c79a4eb08606f7707ee98e52f02be73b3a1a8c9afb4de7f54053"
+    },
+    {
+      "source": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706.pdf",
+      "page": 3,
+      "sha256": "4ddba4008d82f63010b31fd310c333725686f3d69871e7d47c482d988972cd2d"
+    },
+    {
+      "source": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706.pdf",
+      "page": 4,
+      "sha256": "7c0d434e8b0610666bd0f5d1101ac23143f92a7d1a602febf5197d480f6a0f40"
+    },
+    {
+      "source": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706.pdf",
+      "page": 5,
+      "sha256": "3be5d3c3dead7827a05ccd0041179d8f59d13380b516839203f61668cfef993a"
+    },
+    {
+      "source": "aglasem-68da6e7c-b5c8-11ed-8174-0a5e36bc6706.pdf",
+      "page": 2,
+      "sha256": "51c4c6ed0519d4c9dc66e85bcde9a0fc19bec5a413ae6b82c0b5c19e350b7904"
+    },
+    {
+      "source": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf",
+      "page": 2,
+      "sha256": "b6775e489d5792c6ce0cb9729882ae87ac2a8896f67465c396a2b2869c49f291"
+    },
+    {
+      "source": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf",
+      "page": 3,
+      "sha256": "91fe28e35d29a568c29b415d086a7883e6c9c57860500945b43b6ef51493dd31"
+    },
+    {
+      "source": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf",
+      "page": 5,
+      "sha256": "00e1430a7c9246fdc411bbe36ff346970ae4a8ac79e1209132d6f8ac94192f64"
+    },
+    {
+      "source": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf",
+      "page": 8,
+      "sha256": "05a93ac6b51bcd711ea033de10afa4ddf59696ad6c12ff5853f34b19531f4927"
+    },
+    {
+      "source": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf",
+      "page": 9,
+      "sha256": "11db35484305265a8bff0ce601e21d3b7de752baac0754e129a9474bcb5cf7a7"
+    },
+    {
+      "source": "inicetmay25-anaesthesia.pdf",
+      "page": 2,
+      "sha256": "d36dd9012811ed40605ab828ebbcbc31aef98ec582446ddae9806c6d032d2ec4"
+    }
+  ],
+  "originalSelectedExcerptWordsUpperBound": {
+    "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706.pdf": 134,
+    "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf": 128,
+    "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf": 154,
+    "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706.pdf": 138,
+    "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf": 125,
+    "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf": 109,
+    "aglasem-58415486-c103-11ed-847b-0a5e36bc6706.pdf": 59,
+    "aglasem-74aff46a-b5c8-11ed-b820-0a5e36bc6706.pdf": 73,
+    "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706.pdf": 141,
+    "aglasem-7259d24e-b5c8-11ed-9bac-0a5e36bc6706.pdf": 29,
+    "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706.pdf": 91,
+    "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf": 85,
+    "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706.pdf": 101,
+    "aglasem-68da6e7c-b5c8-11ed-8174-0a5e36bc6706.pdf": 45,
+    "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706.pdf": 124,
+    "inicetmay25-anaesthesia.pdf": 31
+  },
+  "answerCrossChecks": [
+    {
+      "topic": "Emtricitabine pigmentation",
+      "url": "https://dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=d6599395-3944-44f9-97f2-e0424c6b6a1f&type=display"
+    },
+    {
+      "topic": "CFTR F508del",
+      "url": "https://www.ncbi.nlm.nih.gov/books/NBK1250/table/cf.T.notable_cftr_variants/"
+    },
+    {
+      "topic": "WHO eight antenatal contacts",
+      "url": "https://www.who.int/news-room/detail/07-11-2016-pregnant-women-must-be-able-to-access-the-right-care-at-the-right-time-says-who"
+    },
+    {
+      "topic": "WHO handwashing visibly soiled hands",
+      "url": "https://iris.who.int/bitstream/handle/10665/44102/9789241597906_eng.pdf"
+    },
+    {
+      "topic": "Dorzolamide",
+      "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3206f5f4-103f-4f04-9c95-35cf17e7a3eb"
+    },
+    {
+      "topic": "Varenicline",
+      "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=78d1857f-8708-5410-792f-4a3e5e7971a5"
+    },
+    {
+      "topic": "Disulfiram",
+      "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=07abe950-3565-418c-8086-b804406a8c87"
+    },
+    {
+      "topic": "AIDS-defining malignancies",
+      "url": "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr5710a2.htm"
+    },
+    {
+      "topic": "Whole-body trauma CT",
+      "url": "https://www.nice.org.uk/guidance/ng39/chapter/recommendations"
+    },
+    {
+      "topic": "Vecuronium reversal",
+      "url": "https://www.dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=582c7f44-b614-18df-e063-6294a90a74b6&type=display"
+    },
+    {
+      "topic": "Primaquine/G6PD",
+      "url": "https://www.dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=09531382-2e06-4164-a7e1-169a1488788a"
+    },
+    {
+      "topic": "Arsenic clinical findings",
+      "url": "https://www.atsdr.cdc.gov/environmental-medicine/hcp/clinician-briefs/arsenic.html"
+    },
+    {
+      "topic": "Bowel trauma and free air",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8896237/"
+    },
+    {
+      "topic": "Oxcarbazepine sodium effects",
+      "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=b0bc10f0-7d1b-4adc-bc59-c48dab58ee5a"
+    },
+    {
+      "topic": "Rett syndrome",
+      "url": "https://www.ncbi.nlm.nih.gov/books/NBK1497/"
+    },
+    {
+      "topic": "Acute dystonia/promethazine",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9122152/"
+    },
+    {
+      "topic": "Leprosy special situations",
+      "url": "https://www.cltri.gov.in/AboutLeprosy/special%20situations%20in%20leprosy.pdf"
+    },
+    {
+      "topic": "Frostbite",
+      "url": "https://journals.sagepub.com/doi/full/10.1177/10806032231222359"
+    }
+  ],
+  "limitations": [
+    "52 selected complete text recalls, not full papers or a clinical certification of all139 source pages.",
+    "Dates are source-labelled recalls, not official exam authentication. Some unselected source annotations/keys are inconsistent.",
+    "Original publisher PDFs, images and explanations are not redistributed. Original explanations are authored for selected facts only.",
+    "Historical raw-candidate2277 count is unchanged and is not a new approved/unique total.",
+    "All251 earlier complete runtime records and NEET2078/year bytes must remain unchanged."
+  ]
+}
