@@ -2841,5 +2841,65 @@
     "chapterId": "final-year/general-surgery/anaesthesia",
     "answer": "A",
     "explanation": "Propofol commonly causes burning or pain during intravenous injection. The supplied answer identifies its characteristic association; it does not imply that injection-site pain can never occur with another drug."
+  },
+  {
+    "id": "pgblazer-2015-may-14:14",
+    "source": "pgblazer-2015-may-14.html",
+    "sourceNumber": 14,
+    "sourceFingerprint": "b95d3731cccc60b0ab0078b08e85d4741a64cb48b765bb1357410df424a4e716",
+    "chapterId": "first-year/anatomy/paper-2/brain-and-cranial-nerves",
+    "answer": "C",
+    "answerOrigin": "publisher_key_author_checked",
+    "explanation": "The abducens nucleus lies deep to the facial colliculus in the dorsal pons. Facial nerve fibres loop around this nucleus to form the internal genu; the facial motor nucleus itself lies more ventrolaterally."
+  },
+  {
+    "id": "pgblazer-2015-may-15:15",
+    "source": "pgblazer-2015-may-15.html",
+    "sourceNumber": 15,
+    "sourceFingerprint": "44b75ff0fcde551782d129f90e94d6f46308f6805005ff43acf12d0c3aeaab7b",
+    "chapterId": "first-year/physiology/paper-1/haematology",
+    "answer": "C",
+    "answerOrigin": "editorial_key_primary_reference_checked",
+    "explanation": "Editorial answer: the recall source provides no answer key. Fresh frozen plasma replaces multiple coagulation factors in a bleeding patient when a more specific replacement is not appropriate. Packed red cells chiefly replace oxygen-carrying capacity, while cryoprecipitate chiefly targets fibrinogen deficiency."
+  },
+  {
+    "id": "pgblazer-2015-may-13:13",
+    "source": "pgblazer-2015-may-13.html",
+    "sourceNumber": 13,
+    "sourceFingerprint": "4bb99c6f0abe1ac32be59021d88b2466aeaa2c1af041fff00560b6c8d43b5705",
+    "chapterId": "third-year/ophthalmology/diseases-of-vitreous",
+    "answer": "D",
+    "answerOrigin": "editorial_key_primary_reference_checked",
+    "explanation": "Editorial answer: the recall source provides no answer key. Ascorbate is concentrated in physiological vitreous and contributes to antioxidant protection. The potassium changes used in postmortem assessment are a different context from this comparison with circulating blood."
+  },
+  {
+    "id": "pgblazer-2015-may-8:8",
+    "source": "pgblazer-2015-may-8.html",
+    "sourceNumber": 8,
+    "sourceFingerprint": "1c0a48b4e5470ab3d0c35c9c630415330124675e2b412ccf8f18b81806e046ef",
+    "chapterId": "third-year/community-medicine/paper-2/health-programmes",
+    "answer": "A",
+    "answerOrigin": "publisher_key_author_checked",
+    "explanation": "Ni-kshay is the national web-based TB patient-management and surveillance system. It supports registration, testing, treatment records, adherence monitoring and transfer of care."
+  },
+  {
+    "id": "pgblazer-2015-may-5:5",
+    "source": "pgblazer-2015-may-5.html",
+    "sourceNumber": 5,
+    "sourceFingerprint": "271e0958ea63c3059ac33010d6816f69214061e84edb820ee047748883a5c744",
+    "chapterId": "first-year/physiology/paper-2/respiratory-physiology",
+    "answer": "D",
+    "answerOrigin": "editorial_key_primary_reference_checked",
+    "explanation": "Editorial answer: the recall source provides no answer key. In uncomplicated asthma, gas-transfer capacity is usually normal or increased, unlike the reduction associated with emphysema or pulmonary vascular disease. Clinical testing commonly reports carbon-monoxide diffusing capacity (DLCO); this recalled stem instead says O2. The word cannot should be understood as the conventional comparison, not a claim excluding coexisting disease."
+  },
+  {
+    "id": "pgblazer-2015-may-3:3",
+    "source": "pgblazer-2015-may-3.html",
+    "sourceNumber": 3,
+    "sourceFingerprint": "0b6912054f3c53f3345defe0f0b21f2c6c299d0a47c9b3dc2492b880e80d1ef5",
+    "chapterId": "first-year/anatomy/paper-1/histology",
+    "answer": "C",
+    "answerOrigin": "editorial_key_primary_reference_checked",
+    "explanation": "Editorial answer: the recall source provides no answer key. Type IV collagen forms a sheet-like network in basement membranes. It differs from the fibrillar collagens that provide tensile support in structures such as tendon and skin."
   }
 ]

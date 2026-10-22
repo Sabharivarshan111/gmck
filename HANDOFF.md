@@ -2660,3 +2660,7 @@ Added seven June2020 pharmacology recalls, two May/November2011 items and one Ma
 ## 2026-10-23 — Additional reviewed AIIMS/INI recalls
 
 Eleven new source-backed selections, plus preservation of the native branch's earlier ten-question extension, produce108 AIIMS PG/216 INI-CET=324. All313 prior records and NEET2078/year bytes unchanged. Read docs/AIIMS_INI_ADDITIONS_20261023.md and the latest resume entry for source receipts, excluded duplicates and validation. Production web/Android JS builds and actual browser offline flow pass; no signed APK/device claim.
+
+### 2026-10-23 — Six further AIIMS recall selections
+
+Candidate114 AIIMS/216 INI=330. Six new May2015 recalls preserve all324 earlier records. Four editorial keys are explicitly labelled because their complete recall questions have no publisher keys. See docs/AIIMS_INI_ADDITIONS_20261023_BATCH2.md and latest resume note. Existing anatomy CI remains separate and unbypassed.

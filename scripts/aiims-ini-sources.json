@@ -1345,5 +1345,71 @@
     "session": "May",
     "required": true,
     "pinBytes": true
+  },
+  {
+    "file": "pgblazer-2015-may-14.html",
+    "url": "https://pgblazer.com/aiims-pg-entrance-may-2015-mcq-14/",
+    "sha256": "b0edd927280591281eb8cb93296046e331ecbc1b0318336b65208870e30cad8a",
+    "bytes": 43824,
+    "exam": "aiims-pg",
+    "year": 2015,
+    "session": "May",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "pgblazer-2015-may-15.html",
+    "url": "https://pgblazer.com/aiims-pg-entrance-may-2015-mcq-15/",
+    "sha256": "66fc58a1ff2ff1779bcac83e06478a2b21fd970cce61e528b85b09d86e380b40",
+    "bytes": 46450,
+    "exam": "aiims-pg",
+    "year": 2015,
+    "session": "May",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "pgblazer-2015-may-13.html",
+    "url": "https://pgblazer.com/aiims-pg-entrance-may-2015-mcq-13/",
+    "sha256": "4557790e0c76d5ad907286666488325d3d58706dd693edc7f942c92d2553429a",
+    "bytes": 44545,
+    "exam": "aiims-pg",
+    "year": 2015,
+    "session": "May",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "pgblazer-2015-may-8.html",
+    "url": "https://pgblazer.com/aiims-pg-entrance-may-2015-mcq-8/",
+    "sha256": "f552ea33c5de059638e397b693d1309b87a97d34d12080f53c289946f762f1d4",
+    "bytes": 44077,
+    "exam": "aiims-pg",
+    "year": 2015,
+    "session": "May",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "pgblazer-2015-may-5.html",
+    "url": "https://pgblazer.com/aiims-pg-entrance-may-2015-mcq-5/",
+    "sha256": "725534b13e229762e0acc8f29731880a8e5926a2991cde3d6f99f72643cc67b8",
+    "bytes": 45038,
+    "exam": "aiims-pg",
+    "year": 2015,
+    "session": "May",
+    "required": true,
+    "pinBytes": true
+  },
+  {
+    "file": "pgblazer-2015-may-3.html",
+    "url": "https://pgblazer.com/aiims-pg-entrance-may-2015-mcq-3/",
+    "sha256": "5cbdc51520cdd6bd3ebd534eda8d6b857bd1bb7defb0cc6a59a974e41f8d5f49",
+    "bytes": 43585,
+    "exam": "aiims-pg",
+    "year": 2015,
+    "session": "May",
+    "required": true,
+    "pinBytes": true
   }
 ]

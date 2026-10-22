@@ -343,5 +343,71 @@
     "explanation": "The CT attenuation scale assigns water 0 Hounsfield units and air about -1000. Head CT dose varies by protocol; the source distractor is not a universal dose definition. Ultrasonography is generally the initial examination for suspected gallstones.",
     "reason": "Semantic duplicate of existing question with paraphrased stem or shuffled choices.",
     "duplicateOf": "ini-2024-01:5"
+  },
+  {
+    "id": "pgblazer-2015-may-18:18",
+    "source": "pgblazer-2015-may-18.html",
+    "sourceNumber": 18,
+    "reason": "ABCG2 is a candidate stem-cell marker; universal limbal-stem-cell specificity is not supported by this stem."
+  },
+  {
+    "id": "pgblazer-2015-may-17:17",
+    "source": "pgblazer-2015-may-17.html",
+    "sourceNumber": 17,
+    "reason": "Cherry-red spot and Hollenhorst plaque are bundled without enough arterial-occlusion context; no supplied key."
+  },
+  {
+    "id": "pgblazer-2015-may-16:16",
+    "source": "pgblazer-2015-may-16.html",
+    "sourceNumber": 16,
+    "reason": "Screening utility depends on population and recommendation; the options/stem do not identify a unique contemporary answer."
+  },
+  {
+    "id": "pgblazer-2015-may-12:12",
+    "source": "pgblazer-2015-may-12.html",
+    "sourceNumber": 12,
+    "reason": "Mast cells express high-affinity IgE receptors, but B cells can express low-affinity IgE receptors; the stem omits receptor affinity."
+  },
+  {
+    "id": "pgblazer-2015-may-11:11",
+    "source": "pgblazer-2015-may-11.html",
+    "sourceNumber": 11,
+    "reason": "Options A and D overlap on nonionic/lipid-soluble properties; no missing qualifier is invented."
+  },
+  {
+    "id": "pgblazer-2015-may-10:10",
+    "source": "pgblazer-2015-may-10.html",
+    "sourceNumber": 10,
+    "reason": "Methacholine is not selective for a single listed muscarinic subtype."
+  },
+  {
+    "id": "pgblazer-2015-may-9:9",
+    "source": "pgblazer-2015-may-9.html",
+    "sourceNumber": 9,
+    "reason": "Most common nephropathy lacks population or clinical context."
+  },
+  {
+    "id": "pgblazer-2015-may-7:7",
+    "source": "pgblazer-2015-may-7.html",
+    "sourceNumber": 7,
+    "reason": "The distinction between absolute malignancy contraindication and severe infection/scleral involvement is unresolved in the bare stem."
+  },
+  {
+    "id": "pgblazer-2015-may-6:6",
+    "source": "pgblazer-2015-may-6.html",
+    "sourceNumber": 6,
+    "reason": "Fourth option is unrecalled; another option is corrupted."
+  },
+  {
+    "id": "pgblazer-2015-may-4:4",
+    "source": "pgblazer-2015-may-4.html",
+    "sourceNumber": 4,
+    "reason": "Judicial-hanging knot conventions are jurisdiction dependent; no supplied key."
+  },
+  {
+    "id": "pgblazer-2015-may-2:2",
+    "source": "pgblazer-2015-may-2.html",
+    "sourceNumber": 2,
+    "reason": "Immune-mediated versus autoimmune classification is not a sufficiently unambiguous discriminator here."
   }
 ]

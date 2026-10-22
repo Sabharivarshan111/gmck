@@ -3196,5 +3196,83 @@
       "Thiopentone"
     ],
     "key": "A"
+  },
+  {
+    "id": "pgblazer-2015-may-14:14",
+    "source": "pgblazer-2015-may-14.html",
+    "source_number": 14,
+    "question": "Nucleus which lies beneath the facial colliculus is?",
+    "options": [
+      "Trigeminal",
+      "Glosso-pharyngeal",
+      "Abducens",
+      "Facial"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "pgblazer-2015-may-15:15",
+    "source": "pgblazer-2015-may-15.html",
+    "source_number": 15,
+    "question": "Treatment of choice in a patient with multiple clotting factor deficiency and active bleeding?",
+    "options": [
+      "Whole blood",
+      "Packed RBC",
+      "Fresh Frozen Plasma",
+      "Cryoprecipitate"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "pgblazer-2015-may-13:13",
+    "source": "pgblazer-2015-may-13.html",
+    "source_number": 13,
+    "question": "Compared to blood, vitreous humor has a high concentration of?",
+    "options": [
+      "Potassium",
+      "Sodium",
+      "Glucose",
+      "Ascorbate"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "pgblazer-2015-may-8:8",
+    "source": "pgblazer-2015-may-8.html",
+    "source_number": 8,
+    "question": "Nikshay is a software used by the government for the monitoring of?",
+    "options": [
+      "TB patients",
+      "Malaria surveillance",
+      "Neonatal infection",
+      "High risk pregnancies"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "pgblazer-2015-may-5:5",
+    "source": "pgblazer-2015-may-5.html",
+    "source_number": 5,
+    "question": "Which of the following cannot result in reduced Diffusion Lung Capacity of O2?",
+    "options": [
+      "Emphysema",
+      "Pulmonary artery hypertension",
+      "Pneumonia",
+      "Asthma"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "pgblazer-2015-may-3:3",
+    "source": "pgblazer-2015-may-3.html",
+    "source_number": 3,
+    "question": "Type of collagen characteristically seen in basement membrane is?",
+    "options": [
+      "Type I",
+      "Type III",
+      "Type IV",
+      "Type V"
+    ],
+    "key": "C"
   }
 ]

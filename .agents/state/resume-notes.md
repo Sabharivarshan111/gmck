@@ -2482,3 +2482,15 @@ Do not promote the five new pharmacology holds, manufacture missing options, imp
 **NEXT:** Publish the native branch and review PR against main, preserving its earlier ten-question extension; verify final counts after deployment. Continue other source candidates separately.
 
 **DO NOT:** Reimport carpal-tunnel/thymic-framework rows already in preserved native branch; duplicate shuffled neuroanatomy/CT/Downes items; trust Reflex flagged keys or practice additions. Do not use prior research lead counts as approved totals.
+
+## 2026-10-23 — Six further AIIMS May2015 recalls
+
+**DONE:** Added6 complete AIIMS May2015 selections: facial-colliculus nucleus, plasma replacement, vitreous ascorbate, Ni-kshay, asthma gas transfer and basement-membrane collagen. Candidate114 AIIMS/216 INI=330; all prior324 full rows and NEET2078/year bytes unchanged. Two source keys plus four primary-reference editorial keys; the four explanations visibly state source key is absent and receipts retain editorial_key_primary_reference_checked. Six source HTML hashes pinned. Eleven ambiguous/incomplete candidates held. No missing options or generic dataset. Report docs/AIIMS_INI_ADDITIONS_20261023_BATCH2.md and scripts/aiims-ini-additions-20261023-batch2.json.
+
+**DONE:**11 extension tests,330 offline/fingerprint/key/chapter/held checks including editorial attribution,2078 source-year joins, exact baseline comparison, assembled production build and Android JS bundle pass. Browser360/390/430 checks include new editorial FFP keyC and label, existing/new labels/keys, bookmarks and offline reload. Screenshot inspected. Native TypeScript/lint and native guards already passed on this same source-code baseline in previous batch; this batch changes data/test/documentation only.
+
+**HALF-DONE:** Push/latest PR receipt pending. Existing Web CI anatomy dossier coverage failure (92% vs95%) recorded in PR122; no merge or gate bypass. No signedAPK/device claim.
+
+**NEXT:** Update PR122 with exact tested tree and114/216 counts. Continue subject/source review separately.
+
+**DO NOT:** Treat editorial keys as supplied keys; remove their visible attribution; import held receptor-affinity/methacholine/screening/autoimmune or missing-option items.
