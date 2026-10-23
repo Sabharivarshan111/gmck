@@ -2456,3 +2456,149 @@ DO NOT:Restore search-preview draft questions, held duplicates, changed source h
 **NEXT:** Complete final reader/screenshot inspection, publish branch/PR, verify tested tree and actual public90/213 banks plus SW. Continue remaining source review separately.
 
 **DO NOT:** Add held thiopentone/LP/DES keys or truncate numbered statements; fill missing choices; infer a session from collection01/02; treat historical2277 as approved/unique. Leave existing anatomy/iOS gates and version/signing/ad configuration unchanged.
+
+## 2026-10-22 — AIIMS PG source extension to 100
+
+### DONE
+Added 10 reviewed AIIMS recalls (June2020 pharma seven, May/Nov2011 two, May2015 one), four pinned HTML sources and five explicit holds. Counts AIIMS100/INI213/NEET2078. All prior303 full records and NEET bytes preserved. Source-extension/offline/year/import-graph checks and 360/390/430 browser flows pass; production build, native/preview TypeScript, quiet lint and required guards verified. See docs/AIIMS_RECALL_EXTENSION_20261022.md and scripts/aiims-june2020-audit-20261022.json.
+
+### HALF-DONE
+Publication receipt will be attached to the corresponding PR with exact tree, hosted checks and Vercel/live asset comparison. No signed APK or physical device verification claimed.
+
+### NEXT
+Continue source-specific AIIMS and INI audits within source excerpt budgets; inspect original documents and reject incomplete, disputed or generic items.
+
+### DO NOT
+Do not promote the five new pharmacology holds, manufacture missing options, import MedMCQA, or bypass anatomy/native release gates. FirstRanker2020 physiology-solved and PSM downloads now return moved-document pages, not papers. Preserve all prior question IDs and fields.
+
+## 2026-10-23 — Eleven more AIIMS/INI recalls, previous native extension preserved
+
+**DONE:** Fetched native branch and fast-forwarded to 79dfbc9633372e3e873104f7a6196114c564ef59, preserving its earlier ten AIIMS additions (native baseline100/213; main90/213). Added11 new reviewed selections: AIIMS May2012 five, May2015 three, INI May2024 three. Candidate108/216=324. Exact full-record comparison preserves all313 prior records and NEET2078/year bytes. Sources hash-pinned; original explanations; source labels retained. Two semantic duplicates held plus dated forensic terminology and oversimplified nephrotic-oedema item; no missing options filled, practice additions or generic dataset imported. Evidence scripts/aiims-ini-additions-20261023.json, report docs/AIIMS_INI_ADDITIONS_20261023.md.
+
+**DONE:**11 extension-integrity tests;324 offline data/fingerprint/key/chapter/held checks;2078 exact NEET year joins; old planner/discussion; native TypeScript and ESLint; required version/XP/reminder/edges/diagrams/APKG/Kotlin/repo guards; production web assembly; final Android production JS bundle pass. Browser360/390/430, previous/new answer keys, new2012/2024 session labels, bookmarks, offline switch/reload pass. New thermodilution and steroid-regimen screenshots visually inspected. Combined JSON224KB, explicit test budget250KB. Chromium was obtained as a local test dependency; no product dependency or lockfile changes.
+
+**HALF-DONE:** Push/PR and eventual production deployment still need receipts. No signed APK/physical-device/Play claim.
+
+**NEXT:** Publish the native branch and review PR against main, preserving its earlier ten-question extension; verify final counts after deployment. Continue other source candidates separately.
+
+**DO NOT:** Reimport carpal-tunnel/thymic-framework rows already in preserved native branch; duplicate shuffled neuroanatomy/CT/Downes items; trust Reflex flagged keys or practice additions. Do not use prior research lead counts as approved totals.
+
+## 2026-10-23 — Six further AIIMS May2015 recalls
+
+**DONE:** Added6 complete AIIMS May2015 selections: facial-colliculus nucleus, plasma replacement, vitreous ascorbate, Ni-kshay, asthma gas transfer and basement-membrane collagen. Candidate114 AIIMS/216 INI=330; all prior324 full rows and NEET2078/year bytes unchanged. Two source keys plus four primary-reference editorial keys; the four explanations visibly state source key is absent and receipts retain editorial_key_primary_reference_checked. Six source HTML hashes pinned. Eleven ambiguous/incomplete candidates held. No missing options or generic dataset. Report docs/AIIMS_INI_ADDITIONS_20261023_BATCH2.md and scripts/aiims-ini-additions-20261023-batch2.json.
+
+**DONE:**11 extension tests,330 offline/fingerprint/key/chapter/held checks including editorial attribution,2078 source-year joins, exact baseline comparison, assembled production build and Android JS bundle pass. Browser360/390/430 checks include new editorial FFP keyC and label, existing/new labels/keys, bookmarks and offline reload. Screenshot inspected. Native TypeScript/lint and native guards already passed on this same source-code baseline in previous batch; this batch changes data/test/documentation only.
+
+**HALF-DONE:** Push/latest PR receipt pending. Existing Web CI anatomy dossier coverage failure (92% vs95%) recorded in PR122; no merge or gate bypass. No signedAPK/device claim.
+
+**NEXT:** Update PR122 with exact tested tree and114/216 counts. Continue subject/source review separately.
+
+**DO NOT:** Treat editorial keys as supplied keys; remove their visible attribution; import held receptor-affinity/methacholine/screening/autoimmune or missing-option items.
+
+## 2026-10-23 — Eight additional INI-CET 2025 recalls
+
+**DONE:**114 AIIMS/224 INI=338. DigiNerve2025 source HTML hash pinned,8 supplied-key selections,145 question/option words, original explanations and8 professional/primary reference links. Repeated subject numbering preserved in audit separately from document ordinals. Source does not identify exam month; records omit examSession. All330 prior full records and NEET2078/year bytes exact-preserved. Six disputed/duplicate candidates held, all images excluded. Audited Cerebellum403, DocTutorials analysis-only and oversized PrepLadder PDF without import. See docs/AIIMS_INI_ADDITIONS_20261023_BATCH3.md and scripts/aiims-ini-additions-20261023-batch3.json.
+
+**DONE:**11 integrity tests,338 offline/fingerprint/key/chapter/held checks and2078 source-year joins pass. Production web/Android JS/browser verification in progress; final results follow below.
+
+**NEXT:** Continue source-level review with exact provenance; do not infer month from publication date or import known conflicting keys. PR122 remains the review target; unrelated anatomy CI failure is not bypassed. No signed APK or physical-device claim.
+
+**VERIFIED:** Assembled production web build and Android production JS bundle pass. Actual browser at360/390/430 passes new2025 no-month attribution, immune-tolerance keyA and explanation, existing labels/keys/bookmark isolation, service-worker offline switching and reload. New screenshot inspected. Updated branch publication goes to PR122; no merge/live claim. Exact published SHA/tree recorded in PR metadata to avoid a circular committed receipt.
+
+## 2026-10-23 — Five further recalls and digestive dossier regression fix
+
+**DONE:**118 AIIMS/225 INI=343;5 additions,338 earlier complete records and NEET2078/year bytes unchanged. Four PG Blazer2011 pages acquired as web-retrieved publisher text (direct HTML403/406); manifest acquisitionMethod makes this explicit. PrepLadder May2025 PDF14,253,759bytes, selected page33 single-bolus thiopentone recovery. Seven duplicates held. Audit scripts/aiims-ini-additions-20261023-batch4.json and report docs/AIIMS_INI_ADDITIONS_20261023_BATCH4.md.
+
+**DONE:**Diagnosed CI anatomy regression99/108 digestive reach: correct abdomen exclusions removed oral/thoracic structures but four glands lacked a teaching dossier. Added shared oral_salivary_glands dossier, exact FJ2765–2768 rule and tap mapping. Coverage103/108=95.37% with original95% floor. Abdomen stays correct. Regression assertions cover all four gland ids and exclusions. Docs/ANATOMY_DIGESTIVE_COVERAGE_FIX_20261023.md explains references and five remaining digestive dossier gaps.
+
+**DONE:**11 extension integrity tests,343 offline/key/fingerprint/chapter/held checks,2078 NEET year joins; simulator organ/dossier/all-organ/mobile guards; deploy/repo guards; root/mobile TypeScript; quiet mobile ESLint; production assembled web and Android JS bundle. Browser360/390/430 offline PG flow includes new zymogen and thiopentone keys. Browser390px opens gland teaching panel; software raster source geometry inspected (4meshes,924triangles). XP/version/reminder/edges/diagrams/APKG/Kotlin guards pass. No physical-device or full WebGL rendering claim.
+
+**HALF-DONE:**Publishing tested tree and updating PR122 receipt; new remote CI outcome still needs checking.
+
+**NEXT:**Continue reviewed sources without semantic duplicates; watch PR122 Web build now that dossier gate passes locally. No signedAPK/Play upload or main merge authorized by this task.
+
+**DO NOT:**Lower digestive95% floor, restore oral glands to abdomen, describe retrieved-text hashes as original HTML hashes, or import incomplete publisher questions wholesale.
+
+## 2026-10-23 — Four additional AIIMS questions and build follow-through
+
+**DONE:**122 AIIMS/225 INI=347; all343 earlier records, INI bank and NEET2078/year bytes exact-preserved. Four November2011 recalls; two publisher and two labelled editorial keys. Four hash-pinned publisher text snapshots, reference/duplicate receipts in scripts/aiims-ini-additions-20261023-batch5.json. Complete source options retained; no invented choices. More than20 leads checked;13 incomplete/ambiguous items held, including2010 ossicle adult-size wording contradicted by PMID2268059. No new2010 coverage claim.
+
+**DONE:**Previous remote head aa69665 passed Web build, simulator integrity, PG integrity/provenance and Android debug/internal/release workflows. Separate broad simulator/production UI and AI-chat regressions failed. Fixed AI-chat test race: wait for each new answer action (second/third), not the already-visible last action from an earlier turn. All original request/context/error assertions retained;390/800/1280 real-browser checks pass. Product code unchanged. Separate simulator UI failures remain outside this data batch.
+
+**DONE:**11 integrity tests,347 offline/fingerprint/key/chapter/held checks,2078 NEET source-year joins and exact baseline preservation pass. Digestive dossier guard still passes103/108 with95% floor unchanged. Final production build, AndroidJS and extended browser verification in progress; publication/remoteCI outcome belongs to PR122.
+
+**HALF-DONE:**Publish tested tree and finish PR122 receipt after final build/browser verification.
+
+**NEXT:**Continue reviewed sources, inspect remaining broad simulator UI failures as a distinct task; use latest PR122 for exact publication status. No main merge, Play upload or fresh device verification claimed.
+
+**DO NOT:**Import missing distractors or disputed ossicle absolute; treat absent publisher keys as supplied; weaken assertions or coverage thresholds to clear CI.
+
+**VERIFIED:**Assembled production web build and Android production JS bundle pass. Actual browser PG flow360/390/430 passes both new editorial key reveals, visible editorial attribution, source year/session labels, saved-question isolation and offline reload. New screenshots inspected. Corrected AI-chat regression passes390/800/1280 after the final production build. Repo/release-import guards pass. Exact tested/published tree and new remoteCI results are recorded in PR122 to avoid circular commit receipts.
+
+## 2026-10-23 — Ten additional INI-CET May 2025 questions
+
+**DONE:**122 AIIMS/235 INI=357. Ten supplied-key selections from biochemistry/PSM/physiology;11 PDFs reacquired with exact hashes, selected pages rendered and visually inspected. Full source choices/keys, original explanations, real chapter/year/session labels. All347 prior complete records and NEET2078/year bytes preserved;14 problematic candidates held. See docs/AIIMS_INI_ADDITIONS_20261023_BATCH6.md and scripts/aiims-ini-additions-20261023-batch6.json. No new source-document count inflation.
+
+**DONE:**11 extension tests,357 content/offline/fingerprint/key/chapter checks,2078 year joins, production web and AndroidJS builds pass. Digestive dossier103/108 with95% floor unchanged. Browser verification/publication receipt follows.
+
+**NEXT:**Continue source-level review; runtime payload248310bytes is near unchanged250000 guard, so further expansion needs a documented budget decision. Previous e5b4d74 CI passed both Web builds, all Android builds, PG/integrity/provenance and iOS web checks; simulator mobile browser E2E remains failing separately. No main merge, Play upload or device claim.
+
+**DO NOT:**Import disputed source keys or duplicate sphingomyelinase questions; lower anatomy threshold; equate discovered candidates with approved questions.
+
+**VERIFIED:**Final production browser PG flow360/390/430 passes new PCR keyA and paired-test keyC, May2025 attribution, existing keys/bookmarks and service-worker offline reload. Both new screenshots visually inspected. Publishing exact tested tree to PR122; new CI pending.
+
+**OWNER TARGET:**Latest request targets509 additional questions across AIIMS PG and INI-CET combined. Treat357 as current reviewed total; no assertion that509 further unique/reusable candidates are already verified. Continue larger source/backlog audit after this checkpoint.
+
+## 2026-10-23 — Larger source review toward500 net additions
+
+**OWNER TARGET:**500 (corrected from509) additional AIIMS/INI questions combined, from357baseline to857. Current413 is not completion:56net added,444remaining.
+
+**DONE:**All100 manifest source PDFs reacquired/hash-matched,1669pages. OCR23scanned documents/101content pages. Private strict extractor finds709rows/705source identities over36AglaSemdocs;560without parser flags are not approved questions. Raw PDFs/OCR/candidates remain private. Receipts scripts/aiims-ini-scale500-acquisition-20261023.json.
+
+**DONE:**64 selected additions (11AIIMS/53INI); all complete supplied keys/pages visually checked, original explanations and exact options/order. Seven semantic overlaps excluded after TF-IDF/manual concept pass. Five extractor regressions prevent truncated multikey/sequence answers and silent duplicate-number merging. Selected question-level audit scripts/aiims-ini-scale500-20261023.json.
+
+**CORRECTION:**aiims-2005-eo.pdf page25 explicitly says Manipal2002, not AIIMS2005. Source identity held;8earlier selections withdrawn with full before-record/provenance retained. All349 other full old records and NEET2078/year bytes unchanged. Candidate125AIIMS/288INI=413.
+
+**DONE:**Updated bounded question-data budget750KB/bank,1MB combined raw,250KB combined gzip under owner500-question expansion; not a full-app10MB claim. No source/clinical/duplicate/geometry gates relaxed. Report docs/AIIMS_INI_SCALE500_20261023.md.11extension+5parser tests,413content/offline checks and2078year joins pass. Final web/AndroidJS builds pass after duplicates excluded; type/lint/browser/publication final receipt follows.
+
+**NEXT:**Continue toward444 net remaining additions, review private candidate suggestions and new eligible sources; do not claim500already found or approved. Preserve all holds and inspect original pages, including complete keys/continuations. No main merge, Play upload or device claim.
+
+**VERIFIED:**Final assembled web and AndroidJS builds pass after all7overlaps are held. Root/mobile TypeScript and quiet mobile ESLint pass; repository39path guard and digestive103/108 floor pass. Final production browser360/390/430 passes new AIIMS2000 paracentral keyD and INI2022May donor-milk keyD, exact source labels, older reader/bookmark/offline reload checks. Both new screenshots visually inspected after animation completion.349 prior complete records and NEETbytes exact-preserved. New five parser tests are wired into existing iOS regression workflow. Previous remote2f487e4 passed both Web builds, allAndroid and PG/integrity/provenance; separate WebKit iOS-regression step and simulator browser E2E failed. Latest exact tree/head and new CI belong to PR122; no merge/live claim.
+
+## 2026-10-23 — Owner removes the fixed question target
+
+**SCOPE UPDATE:**No500/509 target or quota. Continue adding as many complete, unique, defensible AIIMS/INI recalls as eligible sources support. Previous413checkpoint is the baseline; do not report444remaining as an active goal. Existing bounded size/source/clinical/provenance checks remain. Further review in progress.
+
+**ADDED:**16 further questions (3AIIMS/13INI), candidate128/301=429. All413 prior complete records and NEET2078/year bytes preserved. Nine contributing source PDFs re-hashed; source pages, continuations and complete keys visually inspected. All16 publisher keys with original explanations; no editorial-key substitution. Two overlaps (Warburg, respiratory rhythm) held before import,17candidate issues recorded. See scripts/aiims-ini-open-review-20261023.json and docs/AIIMS_INI_OPEN_REVIEW_20261023.md.
+
+**VERIFIED SO FAR:**11extension+5extractor tests,429source/key/chapter/offline checks and2078year joins pass. Budget remains750KB/bank,1MBrawcombined/250KBgzip; rationale updated to open-ended scope. Final builds/browser/publication receipt follows.
+
+**NEXT:**Continue eligible source review without a fixed quota. Do not count old444remaining or500target as active. Preserve all holds, source hashes and complete statements/options. No merge/Play/device claim.
+
+**FINAL VERIFIED:**Assembled production web and AndroidJS builds pass. Root/mobile TypeScript and quiet mobile ESLint pass; anatomy dossier guard retains103/108 with95%floor. Actual browser360/390/430 passes new DLCO keyB/year2010 and bland-cholestasis keyD/May2025, all old reader/key/year/bookmark checks and service-worker offline reload. New screenshots visually inspected. All413 old complete records and NEET2078/year files exact-preserved. Search includes explanations, so new browser selectors identify the exact intended question text rather than assuming the first matching result. Publication goes to PR122 with exact tested tree; no main merge/live/device claim.
+
+
+## 2026-10-23 — Continued open-ended review;20 more questions
+
+**DONE:**141AIIMS/308INI=449. Added13November2011 AIIMS article selections and7November2022 INI medicine selections. All429 preceding complete records and NEET2078/year bytes exact-preserved. Thirteen new pinned retrieved-text article receipts are not thirteen new sittings. Selected existing25page medicinePDF reacquired with exact SHA256; pages2,4,5,7,9,11,19 rendered/inspected including key continuation. Nineteen supplied keys; one complete no-key CAH recall has a visibly labelled editorial hydrocortisone answer supported by Endocrine Society. Original options/order retained; stems paraphrased and explanations authored. Twenty-three new holds; source words max198/200. Reports docs/AIIMS_INI_CONTINUED_REVIEW2_20261023.md and scripts/aiims-ini-continued-review2-20261023.json.
+
+**VERIFIED:**11extension+5extractor tests,449source/key/chapter/offline checks,2078year joins, root/mobile TypeScript, quiet mobile ESLint, assembled production web and AndroidJS bundle pass. Digestive103/108original95%floor and39path guard pass. Actual browser360/390/430 passes prior reader/bookmark/year/answer checks and service-worker offline reload; new CAHeditorial keyA and INI2022Novemberstatin keyA pass after offline reload. Two new answer screenshots inspected. Runtime314839bytes/78465gzip; budgets unchanged.
+
+**HALF-DONE:**This remains a partial historical recall bank; expansion has no fixed quota. Exact publication/CI receipt goes in PR122 to avoid circular committed-head metadata. No main merge/live/signed APK/device claim.
+
+**NEXT:**Continue other eligible source articles and PDF candidates; preserve all449 records and holds. The old500/509target and444remaining arithmetic are superseded.
+
+**DO NOT:**Rerun the private apply.py after publication; it intentionally refuses existing additions. Do not count duplicate left-neglect/sestamibi/reticulocyte/losartan/tetany items again. Pinned article hashes are retrieved text, not originalHTML. Workspace maintenance removed earlier scratch inputs; this pass restored repository from991e1c568f396f1545665ebc7aa2d4182c0d6d69. BrowserCDN downloads returned invalid archives; temporary npm Sparticuz Chromium binary ran the same test successfully, without changing repository dependencies or assertions.
+
+
+## 2026-10-23 — Compact native daily-ad offer
+
+**DONE:** Shortened all native placement messages to “A short sponsored ad plays once daily here to support ORBIT.” Here means the current placement: caps remain three independent buckets. Native UnlockCard now says “Unlock ORBIT Premium”, “Go ad-free. Explore 3D Anatomy, Patient Simulator & Auscultation.” and “Explore Premium”. Card width, padding, font sizes, borders and colors retained; increased invisible touch slop to meet target size. Existing Lovable /unlock destination and LINK_OUT owner choice unchanged. Added preview-only adpromptdemo rendering actual Dialog and UnlockCard without enabling ads.
+
+**VERIFIED:** Actual RN-web browser at 360/412px: card101px at both versus old118/101px respectively; new dialog328px, no runtime errors; click calls window.open with exact https://mbbsqbank-questor.lovable.app/unlock (navigation intercepted; remote checkout/payment not tested). Native+preview TypeScript, full quiet ESLint, payments/ads/billing/version/repo/xp/reminder/edges/diagrams/apkg/kotlin guards and Android production JS bundle pass. Full legacy smoke has missing Themes/Settings/Menu selectors and is not green. No physical-device, signed APK or live-payment claim.
+
+**HALF-DONE:** Vault tools currently have no paid bundle gate; this copy deliberately says Explore, not that a purchase unlocks the tools. New six/twelve-month Vault access, free Notes migration and November offer deadline remain a separate payment/entitlement project. Legacy Lovable preview has separate unpublised ad-copy/callback edits; credit exhaustion prevented its final360px correction. It is not the native app.
+
+**NEXT:** Build/release native popup after review; implement/test backend Vault entitlements before advertising paid Vault unlock.
+
+**DO NOT:** Publish a claim that payment unlocks Vault before that behavior exists; alter ad caps, pricing, entitlement rows, applicationId, signing, or version for this copy-only task.

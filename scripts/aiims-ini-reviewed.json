@@ -822,46 +822,6 @@
     "explanation": "An uncomplicated isolated atrial septal defect produces a low-pressure shunt and has a relatively low endocarditis risk. High-velocity jets and abnormal valves promote endothelial injury and vegetation formation."
   },
   {
-    "id": "aiims-2005-eo:2",
-    "source": "aiims-2005-eo.pdf",
-    "sourceNumber": 2,
-    "sourceFingerprint": "379d076d15468f302ac2538e594b6243d4d2d635dd42f455c6ad85e46194ef07",
-    "chapterId": "second-year/pharmacology/paper-1/general-pharmacology",
-    "answer": "D",
-    "answerOrigin": "author_checked",
-    "explanation": "Elimination half-life helps estimate how rapidly drug concentration falls and informs the dosing interval. It does not by itself establish drug potency, clinical efficacy or toxicity thresholds."
-  },
-  {
-    "id": "aiims-2005-eo:3",
-    "source": "aiims-2005-eo.pdf",
-    "sourceNumber": 3,
-    "sourceFingerprint": "0c93df2c633e0fe05a0932d7b4995b12cf82217c0849f8ec346d1d0b68ba1c7b",
-    "chapterId": "second-year/microbiology/paper-2/genito-urinary-sexually-transmitted-infections",
-    "answer": "C",
-    "answerOrigin": "author_checked",
-    "explanation": "HPV16 is a high-risk oncogenic type associated with cervical cancer. HPV6 and HPV11 are usually low-risk types associated with anogenital warts."
-  },
-  {
-    "id": "aiims-2005-eo:4",
-    "source": "aiims-2005-eo.pdf",
-    "sourceNumber": 4,
-    "sourceFingerprint": "754f30f946338af07a6fada4f5c6df8897d235a95ed77eba709a95754be92e13",
-    "chapterId": "third-year/ophthalmology/glaucoma",
-    "answer": "B",
-    "answerOrigin": "author_checked",
-    "explanation": "Gonioscopy uses a contact lens to overcome total internal reflection and visualise the anterior chamber angle. It helps distinguish open-angle from angle-closure mechanisms."
-  },
-  {
-    "id": "aiims-2005-eo:7",
-    "source": "aiims-2005-eo.pdf",
-    "sourceNumber": 7,
-    "sourceFingerprint": "684aff4276a7c929455dee0389c23c72a4ad7017890de18e71228c5b69d012ba",
-    "chapterId": "final-year/general-surgery/abdominal-wall-hernia",
-    "answer": "C",
-    "answerOrigin": "author_checked",
-    "explanation": "A Littre hernia contains a Meckel diverticulum within the hernia sac. A Richter hernia instead traps only part of the bowel circumference."
-  },
-  {
     "id": "aiims-2010-eo:1",
     "source": "aiims-2010-eo.pdf",
     "sourceNumber": 1,
@@ -1430,38 +1390,6 @@
     "answer": "B",
     "sourceFingerprint": "49ed8b78ab23bc2e98ac6f6aec346e8b017067a00fe1d8673b0a512db6f48a32",
     "explanation": "Optical coherence tomography provides high-resolution cross-sectional images of retinal layers. Perimetry assesses visual fields rather than retinal microanatomy."
-  },
-  {
-    "id": "aiims-2005-eo:5",
-    "chapterId": "second-year/pharmacology/paper-2/anti-microbial-drugs",
-    "answer": "A",
-    "sourceFingerprint": "b93877b5478ec3817f5f89e0bee99e71a072945dc2f9fd81decd07d4cfe65edf",
-    "explanation": "Mebendazole interferes with helminth microtubules and glucose utilisation. It is used against several intestinal nematodes, whereas amoebiasis requires an antiamoebic regimen.",
-    "answerOrigin": "author_checked"
-  },
-  {
-    "id": "aiims-2005-eo:6",
-    "chapterId": "second-year/microbiology/paper-2/parasitology",
-    "answer": "A",
-    "sourceFingerprint": "e36bb54e2ed8ca55b1d7dfe3347523981ff6137e6e9dfe6c96fb00a2b85d4db6",
-    "explanation": "Toxocara larvae can migrate through human tissues after ingestion of infective eggs. Humans are accidental hosts and do not complete the normal intestinal adult-worm cycle.",
-    "answerOrigin": "author_checked"
-  },
-  {
-    "id": "aiims-2005-eo:14",
-    "chapterId": "first-year/biochemistry/paper-2/protein-metabolism",
-    "answer": "A",
-    "sourceFingerprint": "b5d7e31ef7caad3f4785356b0bf7eb8c3c908415f7f5d790a34c4e9ee2b7a767",
-    "explanation": "Wheat protein is relatively deficient in lysine compared with reference amino-acid requirements. Combining cereal and pulse proteins can improve the overall amino-acid pattern.",
-    "answerOrigin": "author_checked"
-  },
-  {
-    "id": "aiims-2005-eo:20",
-    "chapterId": "final-year/general-surgery/upper-lower-limb",
-    "answer": "B",
-    "sourceFingerprint": "6508d0b6f38b3d0ffd50400a4cac85982c5e28e6eacc4f8cf5cf8d3cb4f555cc",
-    "explanation": "Kienbock disease is osteonecrosis of the lunate. The other eponyms refer to different bones, including the femoral head in Perthes disease.",
-    "answerOrigin": "author_checked"
   },
   {
     "id": "aiims-2012:2",
@@ -2652,5 +2580,1401 @@
     "chapterId": "final-year/general-surgery/anaesthesia",
     "answer": "A",
     "explanation": "Neostigmine inhibits acetylcholinesterase, increasing acetylcholine at the neuromuscular junction. It reverses suitable residual nondepolarising blockade after recovery has begun and is given with an antimuscarinic; it is not reliable for profound blockade."
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:6",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "sourceNumber": 6,
+    "sourceFingerprint": "7d4c94982baa65d6f08fa06247fec9d91d30b98def27fc962b1040624c183385",
+    "chapterId": "second-year/pharmacology/paper-2/anti-microbial-drugs",
+    "answer": "B",
+    "explanation": "Ethionamide inhibits mycolic-acid synthesis and is classified as a second-line antitubercular drug. Its use depends on drug susceptibility and the selected regimen; it is not part of routine first-line treatment for drug-susceptible tuberculosis."
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:11",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "sourceNumber": 11,
+    "sourceFingerprint": "ffd61b0707291f57771afa1254281858eb3a08ead8035f4473d62ed2fa5d213d",
+    "chapterId": "second-year/pharmacology/paper-1/central-nervous-system",
+    "answer": "A",
+    "explanation": "Vigabatrin can damage the retina and cause permanent, concentric visual-field loss. This characteristic adverse effect explains the progressive tunnel vision in the recall; monitoring cannot guarantee prevention."
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:12",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "sourceNumber": 12,
+    "sourceFingerprint": "d6a6b4889523d836e3802976b88e4efe625c33ac6f80233a0a4d62e19c4a65a7",
+    "chapterId": "second-year/pharmacology/paper-1/general-pharmacology",
+    "answer": "A",
+    "explanation": "Thyroxine is converted to the more active T3, which binds nuclear thyroid-hormone receptors and changes gene transcription. The other listed hormones primarily signal through receptors on the cell surface."
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:15",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "sourceNumber": 15,
+    "sourceFingerprint": "4e4fd49e3b392fded039b169f1d165dc0752b7c464ec61060b586f58bfd3122c",
+    "chapterId": "second-year/pharmacology/paper-1/cardiovascular-system",
+    "answer": "D",
+    "explanation": "Aminocaproic acid limits plasminogen activation and fibrinolysis, helping control bleeding driven by excessive fibrin breakdown. Alteplase promotes fibrinolysis, whereas andexanet alfa targets factor Xa inhibitor anticoagulation."
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:17",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "sourceNumber": 17,
+    "sourceFingerprint": "701db31be5ebb4843a2f1599086e120efb7366a156f94eb3c8062d3d9b0c46bf",
+    "chapterId": "second-year/pharmacology/paper-1/cardiovascular-system",
+    "answer": "C",
+    "explanation": "Streptokinase is a fibrinolytic and is not used for NSTEMI reperfusion. Aspirin and P2Y12 inhibitors are antiplatelet agents used in appropriate acute-coronary-syndrome settings; prasugrel selection depends on the invasive strategy and contraindications."
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:22",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "sourceNumber": 22,
+    "sourceFingerprint": "5c3ad1d2f24abada156162b304bed8bd4236135db3e3af6683f257c003b5584d",
+    "chapterId": "second-year/pharmacology/paper-1/central-nervous-system",
+    "answer": "C",
+    "explanation": "The standard reference sample is obtained about 12 hours after the preceding lithium dose. A consistent sampling interval is necessary to interpret results against the therapeutic range; symptoms and renal function also matter."
+  },
+  {
+    "id": "pgblazer-2011-may-158-2:158",
+    "source": "pgblazer-2011-may-158-2.html",
+    "sourceNumber": 158,
+    "sourceFingerprint": "aea184273d8d950b3304ae1718fb04fa2ec9f2e4b0bac67eb30f191e0c956aee",
+    "chapterId": "final-year/general-surgery/vein-lymphatics-nerves",
+    "answer": "C",
+    "explanation": "Amyloid deposition, hypothyroidism and diabetes are recognised associations of carpal tunnel syndrome. Addison disease is the exception intended by this recall; this is an exam comparison, not a claim that a patient with adrenal disease cannot independently develop nerve compression."
+  },
+  {
+    "id": "pgblazer-2011-nov-197:197",
+    "source": "pgblazer-2011-nov-197.html",
+    "sourceNumber": 197,
+    "sourceFingerprint": "c3736cf760d83bbcaeef7bf2463b305bd74434e74423be38b3e08ffd63e186b7",
+    "chapterId": "final-year/general-surgery/trauma-and-fractures",
+    "answer": "A",
+    "explanation": "Alkaline phosphatase may rise with osteoblastic activity in heterotopic ossification. It is the best listed laboratory marker, but normal values do not exclude the condition and the level alone cannot establish lesion maturity; imaging remains important."
+  },
+  {
+    "id": "pgblazer-2015-may-31:31",
+    "source": "pgblazer-2015-may-31.html",
+    "sourceNumber": 31,
+    "sourceFingerprint": "6ce186582ccec06b520504b893c4a4ff30798716565a188f4ffdd52d02a07df9",
+    "chapterId": "first-year/anatomy/paper-1/histology",
+    "answer": "C",
+    "explanation": "The thymic parenchyma is supported by epithelial reticular cells, unlike the type III collagen network of the other listed tissues. The distinction concerns the parenchymal framework; the capsule, septa and vascular connective tissue still contain collagen."
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:3",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "sourceNumber": 3,
+    "sourceFingerprint": "ba3ddf8d6dc113d68b0c0fae5a25f679230aeb340ed3eee32097a14d0aaa9fa8",
+    "chapterId": "second-year/pharmacology/paper-1/cardiovascular-system",
+    "answer": "D",
+    "explanation": "Metoprolol and verapamil both slow atrioventricular conduction and reduce heart rate. Their effects can add together, producing significant bradycardia or higher-degree AV block; verapamil can also reduce metoprolol clearance."
+  },
+  {
+    "id": "pgblazer-2012-may-1:1",
+    "source": "pgblazer-2012-may-1.html",
+    "sourceNumber": 1,
+    "sourceFingerprint": "7a8b4eadd81c6aeae1a7a6abe7223ed1d07a03754167f3fcecb6796effd2161b",
+    "chapterId": "final-year/general-surgery/trauma-and-fractures",
+    "answer": "A",
+    "explanation": "Gallows traction can immobilise femoral shaft fractures in selected infants and small children. It is not the usual traction method for the other listed fracture sites."
+  },
+  {
+    "id": "pgblazer-2012-may-2:2",
+    "source": "pgblazer-2012-may-2.html",
+    "sourceNumber": 2,
+    "sourceFingerprint": "df51475463b7094d90123e08fd67b11e6227bc780b0c7c8b09cdcd6873df5d24",
+    "chapterId": "final-year/general-medicine/neuro-and-stroke",
+    "answer": "D",
+    "explanation": "Peripheral calcification around a pericallosal lipoma may produce a bracket-shaped appearance. Sturge-Weber syndrome instead classically causes gyriform or tram-track calcification."
+  },
+  {
+    "id": "pgblazer-2012-may-3:3",
+    "source": "pgblazer-2012-may-3.html",
+    "sourceNumber": 3,
+    "sourceFingerprint": "09028b5bd621b90f0745605becb7c1821cc156b666e26d50e4ba40af8dc92751",
+    "chapterId": "third-year/forensic-medicine/mechanical-injuries",
+    "answer": "C",
+    "explanation": "Here choking means choke boring of a firearm, not airway obstruction. The constriction near a shotgun muzzle controls the spread of the shot."
+  },
+  {
+    "id": "pgblazer-2012-may-4:4",
+    "source": "pgblazer-2012-may-4.html",
+    "sourceNumber": 4,
+    "sourceFingerprint": "28560fe5e55370a5724cf8da05c014c28425213168ca4cb02e54f05836c01540",
+    "chapterId": "first-year/physiology/paper-2/cardiovascular-physiology",
+    "answer": "B",
+    "explanation": "Thermodilution applies the Stewart-Hamilton indicator-dilution equation. Cardiac output is calculated using the injected thermal indicator and the resulting temperature-versus-time curve."
+  },
+  {
+    "id": "pgblazer-2012-may-5:5",
+    "source": "pgblazer-2012-may-5.html",
+    "sourceNumber": 5,
+    "sourceFingerprint": "38bc589b4066c4daed992cf4e4d045cf8c2a2b5280abc0e22e29e879dd5344c2",
+    "chapterId": "first-year/biochemistry/paper-2/molecular-biology",
+    "answer": "A",
+    "explanation": "Degeneracy is the use of different codons to specify the same amino acid. It does not mean that one codon normally specifies several different amino acids."
+  },
+  {
+    "id": "reflex-ini-2024-may:49",
+    "source": "reflex-ini-2024-may.html",
+    "sourceNumber": 49,
+    "sourceFingerprint": "1b63c9875058f04834d1918243e929bc02db00609664e8c0c1a08d0f1246171a",
+    "chapterId": "final-year/obstetrics-gynaecology/abnormal-labour",
+    "answer": "B",
+    "explanation": "Methylergometrine is an ergot uterotonic with vasoconstrictor effects. Hypertension is a contraindication because it can provoke severe blood-pressure elevation."
+  },
+  {
+    "id": "reflex-ini-2024-may:52",
+    "source": "reflex-ini-2024-may.html",
+    "sourceNumber": 52,
+    "sourceFingerprint": "11fa2ec8103e4041a8b181d09d1d2106b142785b484746c998927cc5a9b18340",
+    "chapterId": "final-year/obstetrics-gynaecology/pregnancy-complications",
+    "answer": "A",
+    "explanation": "One antenatal corticosteroid course is dexamethasone 6 mg intramuscularly every 12 hours for four doses, totalling 24 mg. The listed betamethasone regimens are incorrect; its standard course is 12 mg intramuscularly 24 hours apart for two doses."
+  },
+  {
+    "id": "reflex-ini-2024-may:61",
+    "source": "reflex-ini-2024-may.html",
+    "sourceNumber": 61,
+    "sourceFingerprint": "1501fd1cd5b5b8b0e004436c76a5ae6c480063f6b6424224f62f54f57e124877",
+    "chapterId": "final-year/general-medicine/psychiatry-medicine",
+    "answer": "A",
+    "explanation": "Autism requires characteristic social-communication deficits and restricted or repetitive behaviours. Cognitive or intellectual impairment may coexist, but it is not required for the diagnosis."
+  },
+  {
+    "id": "pgblazer-2015-may-24:24",
+    "source": "pgblazer-2015-may-24.html",
+    "sourceNumber": 24,
+    "sourceFingerprint": "d8d86e716d29f67ff605e1746f8d43deddaf9866c437c6985b802128752234a2",
+    "chapterId": "final-year/general-surgery/trauma-and-fractures",
+    "answer": "C",
+    "explanation": "Shenton line is assessed on hip or pelvic radiographs. It forms a smooth arc along the inferior margin of the superior pubic ramus and the inferomedial femoral neck."
+  },
+  {
+    "id": "pgblazer-2015-may-19:19",
+    "source": "pgblazer-2015-may-19.html",
+    "sourceNumber": 19,
+    "sourceFingerprint": "af0a1393b22363acb4969e5a124ab0857e00caff890be31420b69cc82a2997a3",
+    "chapterId": "final-year/general-surgery/upper-lower-limb",
+    "answer": "A",
+    "explanation": "Jersey finger is an avulsion or rupture of the flexor digitorum profundus tendon at its distal attachment. The injured finger cannot actively flex normally at the distal interphalangeal joint."
+  },
+  {
+    "id": "pgblazer-2015-may-20:20",
+    "source": "pgblazer-2015-may-20.html",
+    "sourceNumber": 20,
+    "sourceFingerprint": "ebf06b2c1858fcb5d4be172b331b143ea8eeb80065d2cc828cd6f36325937622",
+    "chapterId": "final-year/general-surgery/anaesthesia",
+    "answer": "A",
+    "explanation": "Propofol commonly causes burning or pain during intravenous injection. The supplied answer identifies its characteristic association; it does not imply that injection-site pain can never occur with another drug."
+  },
+  {
+    "id": "pgblazer-2015-may-14:14",
+    "source": "pgblazer-2015-may-14.html",
+    "sourceNumber": 14,
+    "sourceFingerprint": "b95d3731cccc60b0ab0078b08e85d4741a64cb48b765bb1357410df424a4e716",
+    "chapterId": "first-year/anatomy/paper-2/brain-and-cranial-nerves",
+    "answer": "C",
+    "answerOrigin": "publisher_key_author_checked",
+    "explanation": "The abducens nucleus lies deep to the facial colliculus in the dorsal pons. Facial nerve fibres loop around this nucleus to form the internal genu; the facial motor nucleus itself lies more ventrolaterally."
+  },
+  {
+    "id": "pgblazer-2015-may-15:15",
+    "source": "pgblazer-2015-may-15.html",
+    "sourceNumber": 15,
+    "sourceFingerprint": "44b75ff0fcde551782d129f90e94d6f46308f6805005ff43acf12d0c3aeaab7b",
+    "chapterId": "first-year/physiology/paper-1/haematology",
+    "answer": "C",
+    "answerOrigin": "editorial_key_primary_reference_checked",
+    "explanation": "Editorial answer: the recall source provides no answer key. Fresh frozen plasma replaces multiple coagulation factors in a bleeding patient when a more specific replacement is not appropriate. Packed red cells chiefly replace oxygen-carrying capacity, while cryoprecipitate chiefly targets fibrinogen deficiency."
+  },
+  {
+    "id": "pgblazer-2015-may-13:13",
+    "source": "pgblazer-2015-may-13.html",
+    "sourceNumber": 13,
+    "sourceFingerprint": "4bb99c6f0abe1ac32be59021d88b2466aeaa2c1af041fff00560b6c8d43b5705",
+    "chapterId": "third-year/ophthalmology/diseases-of-vitreous",
+    "answer": "D",
+    "answerOrigin": "editorial_key_primary_reference_checked",
+    "explanation": "Editorial answer: the recall source provides no answer key. Ascorbate is concentrated in physiological vitreous and contributes to antioxidant protection. The potassium changes used in postmortem assessment are a different context from this comparison with circulating blood."
+  },
+  {
+    "id": "pgblazer-2015-may-8:8",
+    "source": "pgblazer-2015-may-8.html",
+    "sourceNumber": 8,
+    "sourceFingerprint": "1c0a48b4e5470ab3d0c35c9c630415330124675e2b412ccf8f18b81806e046ef",
+    "chapterId": "third-year/community-medicine/paper-2/health-programmes",
+    "answer": "A",
+    "answerOrigin": "publisher_key_author_checked",
+    "explanation": "Ni-kshay is the national web-based TB patient-management and surveillance system. It supports registration, testing, treatment records, adherence monitoring and transfer of care."
+  },
+  {
+    "id": "pgblazer-2015-may-5:5",
+    "source": "pgblazer-2015-may-5.html",
+    "sourceNumber": 5,
+    "sourceFingerprint": "271e0958ea63c3059ac33010d6816f69214061e84edb820ee047748883a5c744",
+    "chapterId": "first-year/physiology/paper-2/respiratory-physiology",
+    "answer": "D",
+    "answerOrigin": "editorial_key_primary_reference_checked",
+    "explanation": "Editorial answer: the recall source provides no answer key. In uncomplicated asthma, gas-transfer capacity is usually normal or increased, unlike the reduction associated with emphysema or pulmonary vascular disease. Clinical testing commonly reports carbon-monoxide diffusing capacity (DLCO); this recalled stem instead says O2. The word cannot should be understood as the conventional comparison, not a claim excluding coexisting disease."
+  },
+  {
+    "id": "pgblazer-2015-may-3:3",
+    "source": "pgblazer-2015-may-3.html",
+    "sourceNumber": 3,
+    "sourceFingerprint": "0b6912054f3c53f3345defe0f0b21f2c6c299d0a47c9b3dc2492b880e80d1ef5",
+    "chapterId": "first-year/anatomy/paper-1/histology",
+    "answer": "C",
+    "answerOrigin": "editorial_key_primary_reference_checked",
+    "explanation": "Editorial answer: the recall source provides no answer key. Type IV collagen forms a sheet-like network in basement membranes. It differs from the fibrillar collagens that provide tensile support in structures such as tendon and skin."
+  },
+  {
+    "id": "diginerve-ini-2025:13",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 13,
+    "sourceFingerprint": "1ae83cee91c316a6ea18b5085cdc481b8549dca713fe1ac82f1a65e063d0d20b",
+    "chapterId": "first-year/physiology/paper-2/central-nervous-system",
+    "answer": "B",
+    "explanation": "Raphe nuclei contain the principal serotonergic cell bodies of the central nervous system. The substantia nigra is associated with dopamine, the locus coeruleus with noradrenaline, and the nucleus basalis with acetylcholine."
+  },
+  {
+    "id": "diginerve-ini-2025:14",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 14,
+    "sourceFingerprint": "d9ca4171692fd53ecefbb8df026f4ededf2844ac1340f07545cb31004e5e282e",
+    "chapterId": "second-year/pathology/paper-1/immunology",
+    "answer": "A",
+    "explanation": "The 2025 prize recognised discoveries concerning peripheral immune tolerance. Regulatory T cells help restrain immune responses against self; this complements the removal of many self-reactive lymphocytes during central tolerance."
+  },
+  {
+    "id": "diginerve-ini-2025:31",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 31,
+    "sourceFingerprint": "67556f5b07d9513b534c20b78bdbafca1d621d17fdc5eaabd191bad2c197b25c",
+    "chapterId": "first-year/biochemistry/paper-2/minerals",
+    "answer": "A",
+    "explanation": "The kidneys regulate magnesium balance by varying the proportion of filtered magnesium that is reabsorbed. Intestinal uptake and skeletal stores also contribute, but renal handling provides the major adjustable control of excretion."
+  },
+  {
+    "id": "diginerve-ini-2025:34",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 34,
+    "sourceFingerprint": "dc16f94933303fb3480926a0cf92f9e33aa320d1e5346c920e69e10d8139f640",
+    "chapterId": "first-year/biochemistry/paper-1/lipid-metabolism",
+    "answer": "B",
+    "explanation": "Citrate carries acetyl units from mitochondria into the cytosol. ATP-citrate lyase cleaves it to provide acetyl-CoA for fatty-acid synthesis; acetyl-CoA itself does not freely cross the inner mitochondrial membrane."
+  },
+  {
+    "id": "diginerve-ini-2025:40",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 40,
+    "sourceFingerprint": "031e903c26e4729fd9b274430ad5463243d647cc55c97945bdd7c1dd31ead0b2",
+    "chapterId": "second-year/microbiology/paper-2/gastrointestinal-infections",
+    "answer": "C",
+    "explanation": "Norovirus is a major cause of acute viral gastroenteritis in adults and of outbreaks in closed settings. Rotavirus is classically associated with severe diarrhoea in young children; the exact population burden varies by setting."
+  },
+  {
+    "id": "diginerve-ini-2025:48",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 48,
+    "sourceFingerprint": "e1fe059a896ef0d8d9167ea228396400aa3ba6bc2f920d79c4861e783192c3b8",
+    "chapterId": "second-year/microbiology/paper-2/mycology",
+    "answer": "D",
+    "explanation": "Black grains favour eumycetoma caused by a pigmented fungus such as Madurella mycetomatis. The listed bacterial causes do not produce the characteristic black fungal grains. Grain colour supports identification but is not a substitute for laboratory confirmation."
+  },
+  {
+    "id": "diginerve-ini-2025:55",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 55,
+    "sourceFingerprint": "f918e7d1988157845f49ca778106baed62e1c7229c022d61de8314af522f39b2",
+    "chapterId": "second-year/microbiology/paper-1/miscellaneous-bacteria-and-zoonotic-diseases",
+    "answer": "A",
+    "explanation": "Ehrlichia chaffeensis is an obligate intracellular, tick-borne bacterium that infects monocytes and causes human monocytic ehrlichiosis. The other listed organisms are not classified as obligate intracellular bacteria."
+  },
+  {
+    "id": "diginerve-ini-2025:57",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 57,
+    "sourceFingerprint": "70c8ea40b3aef41412c9ada44ed2f1b79904922212735504dfdbb8a9f3cef153",
+    "chapterId": "second-year/pathology/paper-2/liver-gallbladder-pancreas",
+    "answer": "B",
+    "explanation": "Primary sclerosing cholangitis can show concentric periductal fibrosis. This classic onion-skin pattern is often absent from small biopsy samples and is not completely specific; diagnosis also depends on the clinical and cholangiographic findings."
+  },
+  {
+    "id": "pgblazer-2011-november-105:105",
+    "source": "pgblazer-2011-november-105-retrieved.txt",
+    "sourceNumber": 105,
+    "sourceFingerprint": "a03375ad960487ee81b5437d2b0c2cbe866dae392b1b6c5e572646a7b644a93b",
+    "chapterId": "second-year/pharmacology/paper-1/general-pharmacology",
+    "answer": "C",
+    "explanation": "Adrenergic and dopamine receptors are G-protein-coupled receptors with seven transmembrane helices. Their subtypes couple to different intracellular signalling pathways, but share this membrane topology."
+  },
+  {
+    "id": "pgblazer-2011-november-106:106",
+    "source": "pgblazer-2011-november-106-retrieved.txt",
+    "sourceNumber": 106,
+    "sourceFingerprint": "ab99b1200ef279e7b8749a72ef49dbc7f24c0c82be965c18d69e047e45d6fcd6",
+    "chapterId": "first-year/biochemistry/paper-1/lipid-metabolism",
+    "answer": "A",
+    "explanation": "Malonyl-CoA inhibits carnitine palmitoyltransferase I at the outer mitochondrial membrane. This coordinates increased fatty-acid synthesis with reduced mitochondrial entry of long-chain acyl groups for oxidation."
+  },
+  {
+    "id": "pgblazer-2011-november-108:108",
+    "source": "pgblazer-2011-november-108-retrieved.txt",
+    "sourceNumber": 108,
+    "sourceFingerprint": "818e21d88034edb9bcb34b997c0188df8d794fd477323ea06cf28f3a755cbb4a",
+    "chapterId": "first-year/biochemistry/paper-1/enzymology",
+    "answer": "A",
+    "explanation": "Chymotrypsinogen is a zymogen, an inactive precursor of chymotrypsin. Proteolytic activation in the intestinal lumen enables its digestive protease activity."
+  },
+  {
+    "id": "pgblazer-2011-may-40:40",
+    "source": "pgblazer-2011-may-40-retrieved.txt",
+    "sourceNumber": 40,
+    "sourceFingerprint": "52459f3826c9c4b6f9ab48170cce1dfd066090be831c2baaf595e41591426305",
+    "chapterId": "first-year/anatomy/paper-1/upper-limb",
+    "answer": "A",
+    "explanation": "The coracoacromial ligament spans the coracoid and acromion of the same scapula, forming a protective arch over the humeral head. The load pathway toward the axial skeleton instead involves the acromioclavicular and sternoclavicular articulations and their stabilising ligaments."
+  },
+  {
+    "id": "prepladder-ini-2025-may-recall:27",
+    "source": "prepladder-ini-2025-may-recall.pdf",
+    "sourceNumber": 27,
+    "sourceFingerprint": "82dd699396dbc4a8462cbece74fefc6425cfb401a2aa829438935c58cc4a5356",
+    "chapterId": "final-year/general-surgery/anaesthesia",
+    "answer": "A",
+    "explanation": "After a single bolus, thiopentone rapidly enters the brain and then redistributes into other tissues, reducing its brain concentration. This initial recovery differs from elimination; repeated doses or prolonged infusion can accumulate and prolong recovery."
+  },
+  {
+    "id": "pgblazer-2011-november-116:116",
+    "source": "pgblazer-2011-november-116-retrieved.txt",
+    "sourceNumber": 116,
+    "sourceFingerprint": "30590aa514b6937b74a7baf9c8460c8010b2f87bc579e2db139e63b84ed11828",
+    "chapterId": "final-year/general-surgery/shock-burns-trauma",
+    "answer": "B",
+    "answerOrigin": "publisher_key_author_checked",
+    "explanation": "Cold exposure generally produces peripheral vasoconstriction and increased vascular resistance. Arrhythmias, impaired coagulation and renal injury can complicate hypothermia. This comparison describes the usual cold response; advanced circulatory failure or rewarming can instead cause vasodilatation and hypotension."
+  },
+  {
+    "id": "pgblazer-2011-november-122:122",
+    "source": "pgblazer-2011-november-122-retrieved.txt",
+    "sourceNumber": 122,
+    "sourceFingerprint": "4972d1346ce76028348d5de9efcbf189d80557a532150d7539a2015101204f29",
+    "chapterId": "second-year/pathology/paper-1/genetic-disorders",
+    "answer": "A",
+    "answerOrigin": "editorial_key_primary_reference_checked",
+    "explanation": "Editorial answer: the recall source provides no answer key. Down syndrome results from additional chromosome-21 material, usually free trisomy, an unbalanced translocation, or mosaic trisomy. Deletion removes chromosome material and is not the mechanism of Down syndrome."
+  },
+  {
+    "id": "pgblazer-2011-november-135:135",
+    "source": "pgblazer-2011-november-135-retrieved.txt",
+    "sourceNumber": 135,
+    "sourceFingerprint": "ce590143d63287d5d0d0e905fecb946086e0438024ce8709dff71ca95d63220f",
+    "chapterId": "first-year/anatomy/paper-1/lower-limb",
+    "answer": "A",
+    "answerOrigin": "publisher_key_author_checked",
+    "explanation": "A femoral hernia passes through the femoral canal, the medial compartment of the femoral sheath. The femoral vein lies immediately lateral to the canal; the artery is farther lateral and the femoral nerve lies outside the sheath."
+  },
+  {
+    "id": "pgblazer-2011-november-137:137",
+    "source": "pgblazer-2011-november-137-retrieved.txt",
+    "sourceNumber": 137,
+    "sourceFingerprint": "86af62342bb7a306ad50425a1f3bba24d584e06e6ec99969adaa024d51dbbf9e",
+    "chapterId": "final-year/paediatrics/cvs",
+    "answer": "C",
+    "answerOrigin": "editorial_key_primary_reference_checked",
+    "explanation": "Editorial answer: the recall source provides no answer key. Increasing pulmonary flow with prostaglandin E1 can aggravate pulmonary venous congestion and oedema when anomalous pulmonary venous return is obstructed. Duct-dependent pulmonary or systemic outflow lesions may benefit from maintaining ductal patency. This risk is not a blanket prohibition on empiric prostaglandin in every undiagnosed cyanotic neonate; specialist assessment determines management."
+  },
+  {
+    "id": "inicetmay25-biochemistry:3",
+    "source": "inicetmay25-biochemistry.pdf",
+    "sourceNumber": 3,
+    "sourceFingerprint": "4fc8f15d99b38ab645dc4ec80c50f575bf58bb06ec95059f47770787433c2325",
+    "chapterId": "first-year/biochemistry/paper-1/lipid-metabolism",
+    "answer": "A",
+    "explanation": "Acid sphingomyelinase deficiency causes a Niemann-Pick disease phenotype with visceral lipid storage and, in neurovisceral forms, neurological deterioration and a cherry-red macula. Hepatosplenomegaly helps distinguish this pattern from classic Tay-Sachs disease."
+  },
+  {
+    "id": "inicetmay25-biochemistry:6",
+    "source": "inicetmay25-biochemistry.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "848520093f1fe5bc0bde469003620d589ac56fdf8d150dc4cbeea5bdc58d21dc",
+    "chapterId": "first-year/biochemistry/paper-2/molecular-biology",
+    "answer": "A",
+    "explanation": "With ideal amplification, each completed cycle doubles the DNA count. Cycle 25 therefore has half the copies of cycle 26. Real PCR efficiency can fall below this ideal, especially near the plateau."
+  },
+  {
+    "id": "inicetmay25-biochemistry:7",
+    "source": "inicetmay25-biochemistry.pdf",
+    "sourceNumber": 7,
+    "sourceFingerprint": "de9e0c4cf1495ec0940ba4f9a2f3407e6f33da96a90e99aa3556727cda72684d",
+    "chapterId": "first-year/physiology/paper-1/haematology",
+    "answer": "A",
+    "explanation": "During haemolysis, increased haem breakdown raises unconjugated bilirubin and intestinal urobilinogen formation. Direct bilirubin is usually not disproportionately raised when hepatic and biliary function are intact. G6PD-deficient individuals can have normal results between haemolytic episodes."
+  },
+  {
+    "id": "inicetmay25-psm:6",
+    "source": "inicetmay25-psm.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "8980ad1b5a52c447407171f26ec3d0ffc2836cff7a635cd4b44a1b4f9712716a",
+    "chapterId": "third-year/community-medicine/paper-1/principles-methods-epidemiology",
+    "answer": "C",
+    "explanation": "Exclude the ten previously affected children from the susceptible denominator in this simplified example. The risk is 20 divided by 90, or about 22.2%. This is an incidence proportion, not a person-time incidence rate."
+  },
+  {
+    "id": "inicetmay25-psm:10",
+    "source": "inicetmay25-psm.pdf",
+    "sourceNumber": 10,
+    "sourceFingerprint": "c5455bb0caba93a1673ea77963373137eb43323d73da4c1b0cd2efe213567b1e",
+    "chapterId": "second-year/microbiology/paper-2/genito-urinary-sexually-transmitted-infections",
+    "answer": "A",
+    "explanation": "The findings support gonococcal urethritis. Ceftriaxone is the appropriate listed agent; penicillin resistance makes amoxicillin unsuitable. Clinical care also includes testing and treatment for chlamydia when not excluded, assessment for other STIs and partner management."
+  },
+  {
+    "id": "inicetmay25-psm:11",
+    "source": "inicetmay25-psm.pdf",
+    "sourceNumber": 11,
+    "sourceFingerprint": "877455814f5ab652e1769ed998698638762e8a1cdfe9a3badf4d5d418f53f47b",
+    "chapterId": "third-year/community-medicine/paper-1/health-information-and-medical-statistics",
+    "answer": "C",
+    "explanation": "The severity groups act as strata, with sampling carried out within each. Stratified random sampling additionally requires random selection within those strata; dividing patients into groups alone does not establish randomisation."
+  },
+  {
+    "id": "inicetmay25-psm:14",
+    "source": "inicetmay25-psm.pdf",
+    "sourceNumber": 14,
+    "sourceFingerprint": "8806386c49fb65a463f0a1264461bb95d3e5de9212847bbf08423950ee94acda",
+    "chapterId": "third-year/community-medicine/paper-1/health-information-and-medical-statistics",
+    "answer": "C",
+    "explanation": "A paired t-test analyses the within-person weight differences. It tests their mean against zero, with the usual assumptions about independence between patients and approximate normality of the differences; an unpaired test discards the pairing."
+  },
+  {
+    "id": "inicetmay25-psm:17",
+    "source": "inicetmay25-psm.pdf",
+    "sourceNumber": 17,
+    "sourceFingerprint": "84d55ba6bcee929b0ecd38869dae573433b60317335be4803f6b514d9e4e4d31",
+    "chapterId": "third-year/community-medicine/paper-2/genetics-and-health",
+    "answer": "A",
+    "explanation": "A gene pool comprises the genes and alleles present in an interbreeding population. An individual has a genotype, while a community may include multiple species and their separate populations."
+  },
+  {
+    "id": "inicetmay25-physiology:8",
+    "source": "inicetmay25-physiology.pdf",
+    "sourceNumber": 8,
+    "sourceFingerprint": "7dbc3399f66929cb1963f1822cc4351ed08936d65d328d57a3762a32fd2efd04",
+    "chapterId": "first-year/physiology/paper-2/cardiovascular-physiology",
+    "answer": "B",
+    "explanation": "The inhibitory cardiopulmonary reflex produces hypotension and bradycardia with respiratory inhibition, which may present as bradypnoea or apnoea. Tachycardia is not part of its defining response."
+  },
+  {
+    "id": "inicetmay25-physiology:10",
+    "source": "inicetmay25-physiology.pdf",
+    "sourceNumber": 10,
+    "sourceFingerprint": "0e6e2f4794af2957e529596103674fd4051a9b4b8e6b2654c5b1cb38afdef8fd",
+    "chapterId": "first-year/physiology/paper-2/respiratory-physiology",
+    "answer": "A",
+    "explanation": "During inspiration, expansion spreads the surfactant film over a larger alveolar surface and surface tension rises relative to expiration. Film compression during expiration lowers surface tension and helps prevent alveolar collapse."
+  },
+  {
+    "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:3",
+    "source": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+    "sourceNumber": 3,
+    "sourceFingerprint": "fefcaa253b4b5284a50101e392d30bc9aee9f51e241bfd49907a54124048d210",
+    "chapterId": "first-year/physiology/paper-2/central-nervous-system",
+    "answer": "A",
+    "explanation": "Cerebral perfusion pressure is approximated by mean arterial pressure minus intracranial pressure. Raised intracranial pressure therefore reduces the pressure gradient driving cerebral blood flow."
+  },
+  {
+    "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:5",
+    "source": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+    "sourceNumber": 5,
+    "sourceFingerprint": "5dd87c2eee2d611b2d3fdce2b137ea1a9aabd9a7698df71608b636cd60d8a6e3",
+    "chapterId": "first-year/physiology/paper-1/renal-physiology",
+    "answer": "A",
+    "explanation": "The proximal tubule reabsorbs solute and water approximately together, leaving tubular fluid roughly isotonic to plasma. ADH mainly changes water permeability in the late distal nephron and collecting ducts."
+  },
+  {
+    "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:8",
+    "source": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+    "sourceNumber": 8,
+    "sourceFingerprint": "25c86497eb0b3683d802d1383c887680a2bb39fc69444875920f4e5b92512481",
+    "chapterId": "first-year/physiology/paper-2/respiratory-physiology",
+    "answer": "B",
+    "explanation": "2,3-BPG binds in the central cavity between the beta chains of deoxygenated adult haemoglobin. It stabilises the low-affinity state, favouring oxygen release to tissues."
+  },
+  {
+    "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:11",
+    "source": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+    "sourceNumber": 11,
+    "sourceFingerprint": "66636909d004a9b3bd16f9c962c2f7747ea58d4882b7c0349d3d6a9490bbec68",
+    "chapterId": "second-year/pharmacology/paper-1/autonomic-nervous-system",
+    "answer": "C",
+    "explanation": "Parasympathetic M3 receptors on ciliary smooth muscle activate Gq, phospholipase C and IP3-mediated calcium release. Ciliary contraction allows the lens to become more convex for near vision."
+  },
+  {
+    "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:12",
+    "source": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+    "sourceNumber": 12,
+    "sourceFingerprint": "88bec8500175e4dbe57f494b234780e838019257aa2d7124d3be5f712971db04",
+    "chapterId": "first-year/physiology/paper-1/renal-physiology",
+    "answer": "C",
+    "explanation": "Macula densa cells lie where the thick ascending limb reaches the distal tubule near its own glomerulus. They sense tubular sodium chloride delivery and participate in tubuloglomerular feedback."
+  },
+  {
+    "id": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706:4",
+    "source": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+    "sourceNumber": 4,
+    "sourceFingerprint": "7841e05a7953526313dacca2bf2d992328de7aaabb00353b78ad6e769a5bad08",
+    "chapterId": "final-year/general-surgery/shock-burns-trauma",
+    "answer": "D",
+    "explanation": "Tension pneumothorax can rapidly impair both ventilation and venous return. It is an immediately life-threatening problem sought during the breathing assessment and treated promptly when clinically diagnosed."
+  },
+  {
+    "id": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706:10",
+    "source": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+    "sourceNumber": 10,
+    "sourceFingerprint": "b87e39d64d3446661037f8496e2eb9946fdb2fa4c39734a07cc79d2cfdb36fcf",
+    "chapterId": "final-year/general-surgery/shock-burns-trauma",
+    "answer": "A",
+    "explanation": "Loss of sympathetic vascular tone causes hypotension in neurogenic shock. Associated interruption of cardiac sympathetic input can produce bradycardia, unlike the usual tachycardia of hypovolaemic shock."
+  },
+  {
+    "id": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706:12",
+    "source": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+    "sourceNumber": 12,
+    "sourceFingerprint": "ad5902c4b0071833cbb830f8c158e2acea8bf590fe27b875d7e375b28861d5d5",
+    "chapterId": "final-year/general-surgery/shock-burns-trauma",
+    "answer": "A",
+    "explanation": "The historical SIRS criteria include tachycardia above 90/min, tachypnoea, abnormal temperature and abnormal white-cell count. A heart rate below 80/min is not one of these criteria. SIRS alone is not the current definition of sepsis."
+  },
+  {
+    "id": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706:16",
+    "source": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+    "sourceNumber": 16,
+    "sourceFingerprint": "6ce5e97c4d949b2365f87f0e92528d42ebd0044ff8e07cbfe889852b7b2aed84",
+    "chapterId": "final-year/general-surgery/neck-thyroid-parathyroid",
+    "answer": "A",
+    "explanation": "Short-course inorganic iodide reduces thyroid hormone release and gland vascularity before selected Graves thyroidectomies. It is part of supervised preoperative preparation, generally after thionamide therapy."
+  },
+  {
+    "id": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706:13",
+    "source": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706.pdf",
+    "sourceNumber": 13,
+    "sourceFingerprint": "27e39dfc6750cb6e305798912e320435b3570105a1fa307d74f1c8d837c0323b",
+    "chapterId": "final-year/general-surgery/ctev-bone-tumors",
+    "answer": "A",
+    "explanation": "In Ponseti correction of clubfoot, cavus is corrected first by aligning the forefoot with the hindfoot. Adduction and varus are then corrected together; equinus is addressed last."
+  },
+  {
+    "id": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706:16",
+    "source": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706.pdf",
+    "sourceNumber": 16,
+    "sourceFingerprint": "05b552361ae12e7d2fda9fbe9884ff4d28945c07f364d3e2e9f8a1b10debd953",
+    "chapterId": "final-year/general-surgery/trauma-and-fractures",
+    "answer": "D",
+    "explanation": "The classic unhappy triad comprises the anterior cruciate ligament, medial collateral ligament and medial meniscus. Actual acute injury patterns vary, but this is the conventional named combination in the recall."
+  },
+  {
+    "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:6",
+    "source": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "eb3bec17a1c062b81bcb3ad01d92b6305957f327cffd3b32424de4a6efff3984",
+    "chapterId": "third-year/ophthalmology/glaucoma",
+    "answer": "A",
+    "explanation": "A Roenne nasal step is a visual-field defect. Increased cupping, vessel bayoneting and altered vessel position are optic-disc findings, so the field defect is the exception."
+  },
+  {
+    "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:8",
+    "source": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+    "sourceNumber": 8,
+    "sourceFingerprint": "8f0138bbb02afaad440050f1b4198be0e3fd71cda476795476203e3e1865c057",
+    "chapterId": "third-year/ophthalmology/diseases-of-cornea",
+    "answer": "C",
+    "explanation": "Haab striae are horizontal breaks in Descemet membrane associated with congenital glaucoma. Keratoconus instead produces irregular astigmatism, a scissoring retinoscopy reflex and, in advanced disease, Munson sign."
+  },
+  {
+    "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:9",
+    "source": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+    "sourceNumber": 9,
+    "sourceFingerprint": "049dae42ea360e159ad343493d9cfaed4cf08742542ce57822b0fb9a6d2abc6f",
+    "chapterId": "third-year/ophthalmology/diseases-of-conjuctiva",
+    "answer": "C",
+    "explanation": "Pterygium shows elastotic stromal degeneration and has a head, neck and body. Simple bare-sclera excision has a substantial recurrence risk; a claimed 95% reduction in recurrence is not a feature."
+  },
+  {
+    "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:10",
+    "source": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+    "sourceNumber": 10,
+    "sourceFingerprint": "d2ebfa584d6707c9b8452e2323be53bcfed6c9a2fe4bb04400d9c09dd4c966dc",
+    "chapterId": "third-year/ophthalmology/diseases-of-lens",
+    "answer": "C",
+    "explanation": "A Krukenberg spindle is pigment deposited on the corneal endothelium, classically in pigment dispersion. It is not a lens opacity; complicated cataract may follow uveitis and show polychromatic lustre."
+  },
+  {
+    "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:13",
+    "source": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+    "sourceNumber": 13,
+    "sourceFingerprint": "a3a9f07301f42c18ef27f63c9c0b3d9c2c6c9ff053e5b78febe09b4f19da55d7",
+    "chapterId": "third-year/ophthalmology/optics-and-refraction",
+    "answer": "B",
+    "explanation": "A standard Snellen optotype subtends five minutes of arc at its designated testing distance. Each critical stroke or gap subtends one minute of arc."
+  },
+  {
+    "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:5",
+    "source": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+    "sourceNumber": 5,
+    "sourceFingerprint": "88525a8a047ba58f2be3af51be95be66b5fef8641bb3b583b37d443649ac48f7",
+    "chapterId": "third-year/community-medicine/paper-2/demography-and-family-planning",
+    "answer": "B",
+    "explanation": "Female sterilisation is intended as permanent contraception. Injections, implants and intrauterine devices are reversible, although injections are not usually grouped with user-independent LARC methods in modern classifications."
+  },
+  {
+    "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:7",
+    "source": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+    "sourceNumber": 7,
+    "sourceFingerprint": "d27fec43a4c0f1339750b7a324216620eca5932e3568238d90405ea8cab27bb3",
+    "chapterId": "final-year/obstetrics-gynaecology/pregnancy-complications",
+    "answer": "B",
+    "explanation": "Loss of deep-tendon reflexes is an early clinical warning of magnesium toxicity, preceding respiratory depression at higher concentrations. Monitoring also includes breathing and urine output."
+  },
+  {
+    "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:11",
+    "source": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+    "sourceNumber": 11,
+    "sourceFingerprint": "c63bcd334ba253c3ab2d3c0b07a2b65bdc1c8d697c9ca9e8740e9fd459e00771",
+    "chapterId": "final-year/obstetrics-gynaecology/physiology-pregnancy",
+    "answer": "D",
+    "explanation": "The standard biophysical profile combines a nonstress test with ultrasound assessment of fetal breathing, movement, tone and amniotic fluid. Daily fetal movement counting is useful surveillance but is not one of its five scored components."
+  },
+  {
+    "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:17",
+    "source": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+    "sourceNumber": 17,
+    "sourceFingerprint": "47c8e09adb08c767b8adfda8497cf0c294244baf5ac2981b174e86a0888a04ea",
+    "chapterId": "third-year/community-medicine/paper-2/demography-and-family-planning",
+    "answer": "A",
+    "explanation": "Oral contraceptives do not protect against sexually transmitted infections, including HIV. They reduce the risk of ovarian and endometrial cancer; preventing pregnancy also reduces the absolute risk of ectopic pregnancy."
+  },
+  {
+    "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:19",
+    "source": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+    "sourceNumber": 19,
+    "sourceFingerprint": "38da23bfc9723ef555339bff0cd6320a67f22fcb5a0ef2954c7b7a6066ea09a4",
+    "chapterId": "final-year/obstetrics-gynaecology/pregnancy-complications",
+    "answer": "D",
+    "explanation": "Placenta praevia classically causes recurrent, painless vaginal warning bleeds. Painful bleeding with uterine tenderness suggests placental abruption instead."
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:15",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "sourceNumber": 15,
+    "sourceFingerprint": "ec39603addd0b2d362298bd86e7ca3038201e96f7319c5f4129fbb7ba7983c50",
+    "chapterId": "final-year/general-medicine/rheumatic-and-bone-diseases",
+    "answer": "C",
+    "explanation": "Anti-Smith antibodies are highly specific for systemic lupus erythematosus, although their sensitivity is limited. ANA is a sensitive screening marker; anti-dsDNA also has high specificity and can track selected disease manifestations."
+  },
+  {
+    "id": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706:7",
+    "source": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+    "sourceNumber": 7,
+    "sourceFingerprint": "09a7a3473c140f21c3d5b52d6c951c1706c6d0425b04e097271bf6508fe4de9c",
+    "chapterId": "second-year/microbiology/paper-1/immunology",
+    "answer": "B",
+    "explanation": "Classic hereditary angioedema types I and II involve deficient or dysfunctional C1 esterase inhibitor. Excess bradykinin causes recurrent non-urticarial swelling. Other hereditary angioedema forms can have normal C1 inhibitor."
+  },
+  {
+    "id": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706:9",
+    "source": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+    "sourceNumber": 9,
+    "sourceFingerprint": "8cf6915a7783dfcceb1067299072c7b8d87d266e4c8cf3cec8f6a1f149114c48",
+    "chapterId": "second-year/microbiology/paper-1/immunology",
+    "answer": "A",
+    "explanation": "IL-4 favours Th2 differentiation rather than the Th1 response. IL-12 promotes Th1 development, and IFN-gamma is a characteristic Th1 effector cytokine."
+  },
+  {
+    "id": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706:17",
+    "source": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+    "sourceNumber": 17,
+    "sourceFingerprint": "90dbbeb91225c6fa829efbfa24ec290c0536ca6e62715bcf05e67133d9376d9b",
+    "chapterId": "second-year/microbiology/paper-2/infections",
+    "answer": "D",
+    "explanation": "Parvovirus B19 causes erythema infectiosum, transient aplastic crises in haemolytic disorders, fetal hydrops and adult arthropathy. Polymyalgia rheumatica is not its characteristic young-adult rheumatic presentation."
+  },
+  {
+    "id": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706:18",
+    "source": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+    "sourceNumber": 18,
+    "sourceFingerprint": "ec3f780af698721f914a605705498b9289d51c474cf93401bf222d077c9265d0",
+    "chapterId": "second-year/microbiology/paper-2/infections",
+    "answer": "A",
+    "explanation": "Hand, foot and mouth disease commonly produces vesicles on the hands and feet with oral lesions. The other listed infections more typically cause non-vesicular exanthems."
+  },
+  {
+    "id": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706:4",
+    "source": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706.pdf",
+    "sourceNumber": 4,
+    "sourceFingerprint": "85d144aef836b72a7a81d7482cdeb666f2245efb4248490296c70189d335ae2f",
+    "chapterId": "third-year/forensic-medicine/mechanical-asphyxia",
+    "answer": "C",
+    "explanation": "A garrotte can use a ligature tightened with a twisting stick or similar mechanism, traditionally called the Spanish windlass. Throttling is manual neck compression; mugging uses an arm around the neck."
+  },
+  {
+    "id": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706:17",
+    "source": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706.pdf",
+    "sourceNumber": 17,
+    "sourceFingerprint": "dc7ca4cc89b0612d9111bd9ac92d6a0f95902ff0d500d3a3f0b21eebf8254de4",
+    "chapterId": "third-year/forensic-medicine/abortion-and-infant-deaths",
+    "answer": "A",
+    "explanation": "Vagitus uterinus refers to crying before complete delivery while the fetus is still within the uterus. Vagitus vaginalis describes crying while the head is still within the vagina."
+  },
+  {
+    "id": "aglasem-5cd670f8-c103-11ed-97fb-0a5e36bc6706:15",
+    "source": "aglasem-5cd670f8-c103-11ed-97fb-0a5e36bc6706.pdf",
+    "sourceNumber": 15,
+    "sourceFingerprint": "fc4fd032fec8478df558d25085cfdc78eb3c1b6b2c8d52269429242078d6a303",
+    "chapterId": "second-year/microbiology/paper-2/genito-urinary-sexually-transmitted-infections",
+    "answer": "D",
+    "explanation": "The Jarisch-Herxheimer reaction is an acute inflammatory response after treatment of some spirochaetal infections. Proinflammatory mediators include TNF-alpha, IL-6 and IL-8; it is distinct from an immediate drug allergy."
+  },
+  {
+    "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:1",
+    "source": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+    "sourceNumber": 1,
+    "sourceFingerprint": "399fe7e8a6ac54dccc4849712f44d16d690d4bfcc815ee8fc050f387d113c814",
+    "chapterId": "first-year/biochemistry/paper-1/lipid-metabolism",
+    "answer": "B",
+    "explanation": "Tangier disease results from biallelic ABCA1 dysfunction and impaired cellular cholesterol efflux to apolipoprotein A-I. Plasma HDL cholesterol is markedly reduced."
+  },
+  {
+    "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:10",
+    "source": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+    "sourceNumber": 10,
+    "sourceFingerprint": "2be354f4227f20e55c57b1c59643bf636b3196d3c2ecd1fa9e7fe4e6b47ec04f",
+    "chapterId": "first-year/biochemistry/paper-2/minerals",
+    "answer": "A",
+    "explanation": "Glutathione peroxidases, iodothyronine deiodinases and thioredoxin reductases include selenocysteine-containing enzymes. Glutathione synthetase is not one of these selenoenzymes."
+  },
+  {
+    "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:12",
+    "source": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+    "sourceNumber": 12,
+    "sourceFingerprint": "16bedd75588991c8e825083286324b7a5faef0141a474f55080bbe2ed6d57678",
+    "chapterId": "first-year/biochemistry/paper-2/miscellaneous-topics",
+    "answer": "A",
+    "explanation": "Zellweger spectrum disorders are peroxisome-biogenesis disorders, usually caused by pathogenic variants in PEX genes. Multiple peroxisomal metabolic pathways are affected."
+  },
+  {
+    "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:14",
+    "source": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+    "sourceNumber": 14,
+    "sourceFingerprint": "ab5f861eb91a051d8661b9c8104b867c1e0bde0e4e80909410869a0dbba9831b",
+    "chapterId": "first-year/biochemistry/paper-1/carbohydrate-metabolism",
+    "answer": "D",
+    "explanation": "Fructosamine measures glycated circulating proteins, predominantly albumin, and reflects roughly the preceding two to three weeks. Altered red-cell survival can make HbA1c misleading, while albumin turnover can affect fructosamine."
+  },
+  {
+    "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:6",
+    "source": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "f9229596e7eb9dfa77760bbaed6c5ea0f831d97ceab8db8869ff4f8add063371",
+    "chapterId": "final-year/general-medicine/psychiatry-medicine",
+    "answer": "D",
+    "explanation": "Stress describes emotional, cognitive, physiological and autonomic responses to demands or threats. The other options describe more specific anxiety or illness-preoccupation experiences."
+  },
+  {
+    "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:15",
+    "source": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+    "sourceNumber": 15,
+    "sourceFingerprint": "6e598058d4bfd45aa19d4f03baa541d3b39ed0cdc01aba12bc81af860e79c638",
+    "chapterId": "final-year/general-medicine/psychiatry-medicine",
+    "answer": "B",
+    "explanation": "Oxazepam undergoes glucuronidation and has no long-lived active metabolites, making it a common benzodiazepine choice when alcohol withdrawal coexists with significant liver dysfunction. Withdrawal severity and monitoring still guide treatment."
+  },
+  {
+    "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:8",
+    "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+    "sourceNumber": 8,
+    "sourceFingerprint": "a7dd3ec86bb9a555dca9389f7390de646823ad6026f0d5c15943f8fbb603b9ac",
+    "chapterId": "second-year/pharmacology/paper-1/central-nervous-system",
+    "answer": "B",
+    "explanation": "Lorazepam is an intravenous benzodiazepine used for acute seizures. Its glucuronidation and lack of active oxidative metabolites are useful in liver dysfunction; airway monitoring remains essential."
+  },
+  {
+    "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:22",
+    "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+    "sourceNumber": 22,
+    "sourceFingerprint": "0d7fb64fa4eadd30cef37f16fccdbee7131ffedcfb9e86a0f7a12f02319fa936",
+    "chapterId": "second-year/pharmacology/paper-2/anti-microbial-drugs",
+    "answer": "C",
+    "explanation": "Bedaquiline inhibits mycobacterial ATP synthase, and isoniazid inhibits mycolic-acid synthesis. Rifampicin has indications beyond tuberculosis, and pyrazinamide is not the classic hepatic enzyme inducer in this regimen."
+  },
+  {
+    "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:23",
+    "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+    "sourceNumber": 23,
+    "sourceFingerprint": "2d8e2ea5cfa081008fcabdd3ca7863bb4e44c1aaa1ebd5eda3cc30c91c05322d",
+    "chapterId": "second-year/pharmacology/paper-2/anti-microbial-drugs",
+    "answer": "C",
+    "explanation": "Meropenem covers many organisms causing complicated intra-abdominal infection, febrile neutropenia and selected diabetic-foot infections. It does not provide reliable MRSA coverage; these diagnoses do not mean every patient requires a carbapenem."
+  },
+  {
+    "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:28",
+    "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+    "sourceNumber": 28,
+    "sourceFingerprint": "0f5c7fbdf65c04f99e3b61086c694be1170cd859f7f1c5e1e733b212d1308c43",
+    "chapterId": "second-year/pathology/paper-1/cell-injury",
+    "answer": "C",
+    "explanation": "Metastatic calcification reflects abnormal calcium-phosphate metabolism and may occur in renal failure, hyperparathyroidism or vitamin D excess. Calcium deposited in damaged metastatic nodes is ordinarily dystrophic calcification."
+  },
+  {
+    "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:31",
+    "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+    "sourceNumber": 31,
+    "sourceFingerprint": "6c97fc4410368f2fc56a93a42451f1c40c24343fbba51fe37ce3ce674bd69b8b",
+    "chapterId": "second-year/pathology/paper-1/red-blood-cells",
+    "answer": "B",
+    "explanation": "Perls Prussian blue reaction demonstrates ferric iron in haemosiderin. Masson trichrome highlights collagen, PAS detects carbohydrate-rich substances, and Fite stain is used for mycobacteria."
+  },
+  {
+    "id": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706:2",
+    "source": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+    "sourceNumber": 2,
+    "sourceFingerprint": "655c11d04ca6c5dde5aaa41eae45706394d80e668450564b92613be64ace5c33",
+    "chapterId": "final-year/paediatrics/growth-and-development",
+    "answer": "A",
+    "explanation": "Arm span can provide an alternative estimate of stature when standing height cannot be measured reliably. The relationship varies with age and body proportions, so it is an estimate rather than an exact replacement."
+  },
+  {
+    "id": "aiims-2000-eo:1",
+    "source": "aiims-2000-eo.pdf",
+    "sourceNumber": 1,
+    "sourceFingerprint": "2439b4d4455c0f18d4cad04130c4c7b05ba001aa309d4a0e63ac33f38490bc24",
+    "chapterId": "first-year/anatomy/paper-2/brain-and-cranial-nerves",
+    "answer": "D",
+    "explanation": "The medial primary motor cortex in the paracentral lobule represents the contralateral lower limb and perineal region. A left-sided lesion therefore affects the right leg region."
+  },
+  {
+    "id": "aiims-2000-eo:3",
+    "source": "aiims-2000-eo.pdf",
+    "sourceNumber": 3,
+    "sourceFingerprint": "42232706eb86cce919298c000cb4c89a4990c3813a6be11563ef51cace6d58e0",
+    "chapterId": "first-year/anatomy/paper-2/thorax",
+    "answer": "A",
+    "explanation": "The aortic hiatus transmits the aorta and thoracic duct. The azygos vein commonly passes with them, although its route can vary; the vagal trunks accompany the oesophagus."
+  },
+  {
+    "id": "aiims-2000-eo:4",
+    "source": "aiims-2000-eo.pdf",
+    "sourceNumber": 4,
+    "sourceFingerprint": "8eb9619c21606f35fab72998b635dceeb34ffff0c22af62ead411ec0aa084731",
+    "chapterId": "first-year/anatomy/paper-1/lower-limb",
+    "answer": "A",
+    "explanation": "The obturator nerve supplies most medial-compartment thigh adductors. The hamstring part of adductor magnus is supplied by the tibial division of the sciatic nerve."
+  },
+  {
+    "id": "aiims-2001-may:9",
+    "source": "aiims-2001-may.pdf",
+    "sourceNumber": 9,
+    "sourceFingerprint": "bc653192e18850953c1ceacc962edad21c04fee96248289ea0cd8cf951bbc10f",
+    "chapterId": "second-year/pathology/paper-1/red-blood-cells",
+    "answer": "A",
+    "explanation": "Polycythaemia vera usually has increased red-cell mass and may have thrombocytosis or leucocytosis. Thrombosis, visual symptoms and bleeding can occur; thrombocytopenia is not typical of its usual proliferative phase."
+  },
+  {
+    "id": "aiims-2001-may:10",
+    "source": "aiims-2001-may.pdf",
+    "sourceNumber": 10,
+    "sourceFingerprint": "e5e97179447c298ae220b42f6e1e47d215fe6b81d3eabcba3554014f9843d8bb",
+    "chapterId": "second-year/pathology/paper-1/red-blood-cells",
+    "answer": "C",
+    "explanation": "Paroxysmal nocturnal haemoglobinuria is an acquired clonal stem-cell disorder. A GPI-anchor defect can affect multiple blood-cell lineages, with complement-mediated haemolysis and a risk of thrombosis."
+  },
+  {
+    "id": "aiims-2001-may:17",
+    "source": "aiims-2001-may.pdf",
+    "sourceNumber": 17,
+    "sourceFingerprint": "8461b0d6a49a038fbb16d62f502c0a175a718746503903b708096a4b24386ca8",
+    "chapterId": "second-year/pathology/paper-2/respiratory-system",
+    "answer": "B",
+    "explanation": "Small-cell lung carcinoma is strongly associated with smoking and commonly disseminates early. Its rapid growth and early metastatic tendency are characteristic, although other lung cancers can also behave aggressively."
+  },
+  {
+    "id": "aiims-2001-may:18",
+    "source": "aiims-2001-may.pdf",
+    "sourceNumber": 18,
+    "sourceFingerprint": "3341d6ee1eab0e164c00bd97671f873a427cf6833c99cb99db946d031e36fb7a",
+    "chapterId": "second-year/microbiology/paper-2/genito-urinary-sexually-transmitted-infections",
+    "answer": "A",
+    "explanation": "Neisseria gonorrhoeae is a Gram-negative diplococcus, not a Gram-positive coccus. Ascending infection and urethral complications can occur; ceftriaxone remains a recommended treatment, with additional management determined by current guidance."
+  },
+  {
+    "id": "aiims-2001-may:31",
+    "source": "aiims-2001-may.pdf",
+    "sourceNumber": 31,
+    "sourceFingerprint": "078b0c294d767afc214acd9b1cc6376d77e73ba1d509ea3f8c5a963faa564754",
+    "chapterId": "second-year/pathology/paper-2/endocrinology",
+    "answer": "C",
+    "explanation": "Primary adrenal insufficiency raises ACTH and related melanocortin activity. Hyperpigmentation can involve oral mucosa, palmar creases, pressure areas and scars; oral sparing is therefore the false statement."
+  },
+  {
+    "id": "aiims-2010-eo:8",
+    "source": "aiims-2010-eo.pdf",
+    "sourceNumber": 8,
+    "sourceFingerprint": "b0c65724e72474f8ba5648b76647683b92d86c6917930b4c8e2dd84fe7cba259",
+    "chapterId": "first-year/anatomy/paper-2/head-and-neck",
+    "answer": "A",
+    "explanation": "Tensor tympani receives motor fibres from the mandibular division of the trigeminal nerve through the nerve to medial pterygoid. Stapedius is supplied by the facial nerve."
+  },
+  {
+    "id": "aiims-2010-eo:13",
+    "source": "aiims-2010-eo.pdf",
+    "sourceNumber": 13,
+    "sourceFingerprint": "45e551391c07cf5bfc387a184a34ef6834583f8cfe31f7b952c1dbd0178ab923",
+    "chapterId": "first-year/physiology/paper-2/respiratory-physiology",
+    "answer": "B",
+    "explanation": "Haemoglobin concentration strongly affects arterial oxygen content, but not the partial pressure of dissolved oxygen itself. Inspired oxygen, altitude and alveolar carbon dioxide influence the alveolar and arterial oxygen pressures."
+  },
+  {
+    "id": "aiims-2010-eo:15",
+    "source": "aiims-2010-eo.pdf",
+    "sourceNumber": 15,
+    "sourceFingerprint": "55361d79e6eb9d64ff274f2c51c64bfe5e02b29b718ee92819c843151235271b",
+    "chapterId": "first-year/physiology/paper-1/renal-physiology",
+    "answer": "D",
+    "explanation": "The proximal tubule reabsorbs filtered glucose, most bicarbonate and much phosphate. Hydrogen ions are secreted into the lumen, helping reclaim bicarbonate and excrete acid."
+  },
+  {
+    "id": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706:9",
+    "source": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706.pdf",
+    "sourceNumber": 9,
+    "sourceFingerprint": "7c3d3bd72f48364f45474b7e4458309e0ed721453ee0610d459ad8c1f3edcb43",
+    "chapterId": "second-year/pharmacology/paper-2/neoplastic-drugs",
+    "answer": "D",
+    "explanation": "Cyclophosphamide is activated by hepatic oxidation to 4-hydroxycyclophosphamide, which equilibrates with aldophosphamide. Subsequent breakdown produces the cytotoxic phosphoramide mustard and acrolein."
+  },
+  {
+    "id": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706:11",
+    "source": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706.pdf",
+    "sourceNumber": 11,
+    "sourceFingerprint": "3259fd4694208aa434c1d1749199b0cc1f0a2e236bf3040881a5f47aa01a10a7",
+    "chapterId": "second-year/pharmacology/paper-2/anti-microbial-drugs",
+    "answer": "A",
+    "explanation": "Isoniazid is a prodrug activated by the mycobacterial KatG catalase-peroxidase. Its active products inhibit mycolic-acid synthesis; changes in KatG can confer resistance."
+  },
+  {
+    "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:2",
+    "source": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+    "sourceNumber": 2,
+    "sourceFingerprint": "560e03f2744b718c00581b07514b430f6bce9bff1816f84b82713f5fc8edf0aa",
+    "chapterId": "final-year/paediatrics/newborn-infants",
+    "answer": "D",
+    "explanation": "When a preterm or low-birthweight infant cannot receive sufficient mother's own milk, screened donor human milk is generally preferred where available. Fortification and nutritional monitoring depend on the infant's needs."
+  },
+  {
+    "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:7",
+    "source": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+    "sourceNumber": 7,
+    "sourceFingerprint": "fde542de2d1e4b5efa82d928fa4bbb414942b981dfb124511ecbe1d467f0375b",
+    "chapterId": "final-year/paediatrics/rheumatology-and-genetics",
+    "answer": "A",
+    "explanation": "Classic Rett syndrome is commonly associated with pathogenic MECP2 variants and an X-linked dominant pattern. Most cases arise de novo. OTC deficiency and Duchenne muscular dystrophy are X-linked recessive conditions."
+  },
+  {
+    "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:8",
+    "source": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+    "sourceNumber": 8,
+    "sourceFingerprint": "8460ab70a945852636717b5714f32d66149116d461e49d3801fda6ae10d20c37",
+    "chapterId": "final-year/paediatrics/rheumatology-and-genetics",
+    "answer": "A",
+    "explanation": "CFTR-related disease can cause congenital bilateral absence of the vas deferens, often with absent or hypoplastic seminal vesicles. This can occur with classic cystic fibrosis or a more limited CFTR-related phenotype."
+  },
+  {
+    "id": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706:4",
+    "source": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706.pdf",
+    "sourceNumber": 4,
+    "sourceFingerprint": "8a4a4653482005eee00ffedbbdc3125d987e5169023e203a12aebb6718721073",
+    "chapterId": "final-year/obstetrics-gynaecology/disorders-of-menstruation",
+    "answer": "B",
+    "explanation": "Kallmann syndrome combines congenital hypogonadotropic hypogonadism with impaired smell, ranging from hyposmia to anosmia. It reflects abnormal development or migration of GnRH neurons and associated olfactory pathways."
+  },
+  {
+    "id": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706:5",
+    "source": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706.pdf",
+    "sourceNumber": 5,
+    "sourceFingerprint": "baf2621360f56cd696f903ad52cfe816b151b7af7cad14bcfcb95484dc0499e1",
+    "chapterId": "final-year/obstetrics-gynaecology/physiology-pregnancy",
+    "answer": "A",
+    "explanation": "The modified biophysical profile combines a nonstress test with assessment of amniotic fluid volume, traditionally the amniotic fluid index. The full profile additionally scores fetal breathing, movement and tone."
+  },
+  {
+    "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:6",
+    "source": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "7374e70c2271f50069668c2507887552d7f331e9bc509b3a63af3c64637e839b",
+    "chapterId": "final-year/general-medicine/rheumatic-and-bone-diseases",
+    "answer": "D",
+    "explanation": "Methotrexate, sulfasalazine and hydroxychloroquine are conventional DMARDs used in initial rheumatoid arthritis treatment according to disease activity and patient factors. Azathioprine is not a usual first-line RA DMARD."
+  },
+  {
+    "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:7",
+    "source": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+    "sourceNumber": 7,
+    "sourceFingerprint": "2aa7d31d5b42a6d52e8702cc9ef511c33863e867886029d6ea8a5ec1638b3bae",
+    "chapterId": "final-year/general-medicine/infective-diseases",
+    "answer": "A",
+    "explanation": "Severe malaria can involve coma, hypoglycaemia, acute kidney injury and metabolic acidosis. A pH above 7.25 is not the acidosis criterion; severe acidosis is associated with lower pH or equivalent biochemical evidence."
+  },
+  {
+    "id": "aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706:8",
+    "source": "aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706.pdf",
+    "sourceNumber": 8,
+    "sourceFingerprint": "a0150de240f97630faa4d600529ee8ee0337aba26e9c76000a22ff9056d32fac",
+    "chapterId": "first-year/biochemistry/paper-2/molecular-biology",
+    "answer": "B",
+    "explanation": "DNA footprinting identifies a DNA region protected from cleavage by a bound protein. DNA fingerprinting distinguishes DNA profiles, while Northern blotting detects RNA."
+  },
+  {
+    "id": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706:6",
+    "source": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "516c88bbd1b9057fb5940516524e8b30b5444f4eba31763a1dae1ebec1b301e2",
+    "chapterId": "first-year/anatomy/paper-2/head-and-neck",
+    "answer": "D",
+    "explanation": "The foramen lacerum lies at the junction of sphenoid, petrous temporal and basilar occipital bones. It is largely filled by cartilage in life; the internal carotid artery passes across its superior aspect."
+  },
+  {
+    "id": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706:7",
+    "source": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706.pdf",
+    "sourceNumber": 7,
+    "sourceFingerprint": "e983ea054e4a1d264f361425c5adc5b9d1c201bf232c0710374bbd75c9895af2",
+    "chapterId": "first-year/anatomy/paper-2/head-and-neck",
+    "answer": "B",
+    "explanation": "The glossopharyngeal nerve occupies a separate anterior compartment of the jugular foramen, divided from the vagus and accessory nerves by a fibrous septum. The hypoglossal nerve exits through the hypoglossal canal."
+  },
+  {
+    "id": "inicetmay25-ent:5",
+    "source": "inicetmay25-ent.pdf",
+    "sourceNumber": 5,
+    "sourceFingerprint": "18841b84794ec17f2321f1f8e41976e4934b6c2b6a462fc5d08ca65b53d87150",
+    "chapterId": "third-year/ent/larynx-and-trachea",
+    "answer": "A",
+    "explanation": "Laryngomalacia and congenital subglottic stenosis can present with neonatal stridor. Laryngeal papillomatosis generally presents later, while a haemorrhagic vocal-cord polyp is not a usual neonatal cause."
+  },
+  {
+    "id": "inicetmay25-forensic-medicine:6",
+    "source": "inicetmay25-forensic-medicine.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "4bd3205313e9185c2c63a665e4ea0caeeef8ba089c5d07be2fb90109f7d18ab9",
+    "chapterId": "third-year/forensic-medicine/toxicology",
+    "answer": "B",
+    "explanation": "In the usual Indian snakebite classification, cobra and krait envenoming is chiefly associated with neurotoxicity, not predominantly myotoxicity. Some elapids, especially sea snakes, are important myotoxic exceptions; venom effects can overlap."
+  },
+  {
+    "id": "inicetmay25-forensic-medicine:8",
+    "source": "inicetmay25-forensic-medicine.pdf",
+    "sourceNumber": 8,
+    "sourceFingerprint": "44f1ee478e594726ed59736ee71e760320e9544054c24f8c8542bda1ca603ccd",
+    "chapterId": "third-year/forensic-medicine/mechanical-injuries",
+    "answer": "D",
+    "explanation": "A typical firearm entrance wound combines a penetrating or punctured laceration with an abrasion collar and surrounding contusion. Appearance varies with weapon, range and intervening material; the triad is a classic description rather than a universal rule."
+  },
+  {
+    "id": "inicetmay25-forensic-medicine:9",
+    "source": "inicetmay25-forensic-medicine.pdf",
+    "sourceNumber": 9,
+    "sourceFingerprint": "bc4096d3be3273cde3ddc00031847d6d22351199651b41236df822a0b299fd4f",
+    "chapterId": "third-year/forensic-medicine/abortion-and-infant-deaths",
+    "answer": "B",
+    "explanation": "Section 3(2)(b) covers pregnancies exceeding 20 weeks but not exceeding 24 weeks in prescribed eligible categories, with opinions from at least two registered medical practitioners. Separate provisions address emergencies and specified fetal abnormalities; the interval alone does not establish eligibility."
+  },
+  {
+    "id": "inicetmay25-medicine:7",
+    "source": "inicetmay25-medicine.pdf",
+    "sourceNumber": 7,
+    "sourceFingerprint": "b0dedbfaaf6ca1979eea970c1b81e0ed92730264481a2909b0841dd8081bd094",
+    "chapterId": "final-year/general-medicine/respiratory-medicine",
+    "answer": "A",
+    "explanation": "Procalcitonin trends may support a decision to discontinue antibiotics together with clinical assessment. They should not independently confirm VAP or select the empirical agent. The benefit is less clear when an appropriately short course is already routine."
+  },
+  {
+    "id": "inicetmay25-medicine:9",
+    "source": "inicetmay25-medicine.pdf",
+    "sourceNumber": 9,
+    "sourceFingerprint": "ba0a2befcda7ad71f8fc155d015ada4674a6f969a53ddb5da637a731da778ab5",
+    "chapterId": "final-year/general-medicine/hematology",
+    "answer": "B",
+    "explanation": "Erythropoiesis-stimulating agents are used in selected patients with CKD-related anaemia and selected lower-risk myelodysplastic syndromes. Iron status, endogenous erythropoietin, symptoms and risks guide selection; an ESA is not the primary treatment for a simple nutritional deficiency or aplastic anaemia."
+  },
+  {
+    "id": "inicetmay25-microbiology:8",
+    "source": "inicetmay25-microbiology.pdf",
+    "sourceNumber": 8,
+    "sourceFingerprint": "5466d3809dc567a4a6fd96636d45182b957a0ec6609e108db5d8ebe8bf41024b",
+    "chapterId": "second-year/microbiology/paper-2/mycology",
+    "answer": "D",
+    "explanation": "Congo red is routinely used to demonstrate amyloid rather than to identify an infecting organism. GMS and PAS help demonstrate fungi, and Fontana-Masson can highlight melanin in organisms such as Cryptococcus."
+  },
+  {
+    "id": "inicetmay25-orthopaedics:6",
+    "source": "inicetmay25-orthopaedics.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "87868c965b6f21cbe4b2623cec8ec6406f097d5f82a36b09b67d53220f42fae4",
+    "chapterId": "final-year/general-surgery/trauma-and-fractures",
+    "answer": "B",
+    "explanation": "MRI can be considered for early definitive imaging of a clinically suspected scaphoid fracture after thorough examination. Immobilisation is appropriate while assessment is arranged; a normal early radiograph does not reliably exclude an occult fracture."
+  },
+  {
+    "id": "inicetmay25-pharmacology:6",
+    "source": "inicetmay25-pharmacology.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "e5a9223020d4437ad2dc0b50727c24bb58e18ced10093cbd41444c7e81a07a4b",
+    "chapterId": "second-year/pharmacology/paper-1/central-nervous-system",
+    "answer": "C",
+    "explanation": "Both drugs have antimuscarinic activity and can cause dry mouth, blurred vision, constipation and urinary retention. Imipramine is a tricyclic antidepressant; diphenhydramine is a first-generation H1 antihistamine."
+  },
+  {
+    "id": "inicetmay25-pharmacology:10",
+    "source": "inicetmay25-pharmacology.pdf",
+    "sourceNumber": 10,
+    "sourceFingerprint": "f63c473d68acb6c376686080054b7d96dc2ac1cd0e13364262347c31f0ef6284",
+    "chapterId": "second-year/pharmacology/paper-2/miscellaneous-drugs",
+    "answer": "D",
+    "explanation": "Estrogens and anabolic androgenic steroids can produce bland canalicular cholestasis with little inflammatory change. Amoxicillin-clavulanate can also cause cholestatic injury, but its usual pattern is not the classic bland steroid-associated lesion."
+  },
+  {
+    "id": "inicetmay25-psychiatry:6",
+    "source": "inicetmay25-psychiatry.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "ebfbfbbc1fb119526a2f7db8790ec06feb6a967f0206ae7762e8a2cdb9e45a1c",
+    "chapterId": "final-year/general-medicine/psychiatry-medicine",
+    "answer": "D",
+    "explanation": "Flumazenil antagonises benzodiazepine effects and can precipitate seizures or acute withdrawal in susceptible patients. It is not long-term alcohol-withdrawal treatment. Opioid withdrawal is usually not fatal in otherwise healthy adults, although complications can occur in vulnerable patients."
+  },
+  {
+    "id": "inicetmay25-surgery:2",
+    "source": "inicetmay25-surgery.pdf",
+    "sourceNumber": 2,
+    "sourceFingerprint": "7f7105aee76091da0fc2f7ada2b93ff5e705dd6658f85b69b2a84abdf40cd11b",
+    "chapterId": "final-year/general-surgery/breast",
+    "answer": "D",
+    "explanation": "Disease confined to one quadrant does not itself rule out breast conservation when clear margins and appropriate radiotherapy are feasible. Persistently positive margins and major radiotherapy constraints require further treatment planning."
+  },
+  {
+    "id": "inicetmay25-surgery:6",
+    "source": "inicetmay25-surgery.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "08b98e220be53a4cb4a85cabcaaa15d27c90bff673e5456b7bd6a8fe91038b4e",
+    "chapterId": "final-year/general-surgery/shock-burns-trauma",
+    "answer": "D",
+    "explanation": "A simple pneumothorax can progress to tension physiology when air enters the pleural space but cannot escape. Positive-pressure ventilation can accelerate this process, impairing ventilation and venous return."
+  },
+  {
+    "id": "aiims-2010-eo:17",
+    "source": "aiims-2010-eo.pdf",
+    "sourceNumber": 17,
+    "sourceFingerprint": "37f12b55031f968a29ef2e8ebd8c2a320c91fde8376f2b92a99dc1dd5ac9b20d",
+    "chapterId": "first-year/physiology/paper-2/respiratory-physiology",
+    "answer": "A",
+    "explanation": "Gas diffusion depends on solubility as well as molecular mass. The much greater solubility of carbon dioxide outweighs its higher molecular mass, giving it substantially greater diffusibility than oxygen."
+  },
+  {
+    "id": "aiims-2010-eo:18",
+    "source": "aiims-2010-eo.pdf",
+    "sourceNumber": 18,
+    "sourceFingerprint": "95629cee966f7f8fb84fa3c85a23791bf6a6291e28db8b59063e9800cd657c2f",
+    "chapterId": "first-year/physiology/paper-2/respiratory-physiology",
+    "answer": "B",
+    "explanation": "The DLCO test uses a small concentration of carbon monoxide. Its high haemoglobin affinity keeps pulmonary capillary CO partial pressure very low, allowing uptake to reflect the alveolar-capillary diffusion process, with appropriate correction for relevant patient factors."
+  },
+  {
+    "id": "aiims-2010-eo:19",
+    "source": "aiims-2010-eo.pdf",
+    "sourceNumber": 19,
+    "sourceFingerprint": "f22dd2da6bdae9b82de4adb47a0468d2f9b08bd89973191640dd69ff5ab2e618",
+    "chapterId": "first-year/physiology/paper-2/central-nervous-system",
+    "answer": "A",
+    "explanation": "Most circulating plasma proteins cross the intact blood-brain barrier poorly compared with gases, water and many lipid-soluble molecules. This is a general permeability distinction; selected proteins have specific transport mechanisms."
+  },
+  {
+    "id": "pgblazer-2011-november-6:6",
+    "source": "pgblazer-2011-november-6-retrieved.txt",
+    "sourceFingerprint": "ccf8bda48cdb07452271c6d93f3ad9aa78abb297c8c10ba52e4d2530b6123f09",
+    "answer": "C",
+    "chapterId": "second-year/pharmacology/paper-2/hormones",
+    "explanation": "Methimazole inhibits thyroid peroxidase-dependent hormone synthesis. Unlike propylthiouracil, it does not have a clinically useful inhibitory effect on peripheral T4-to-T3 conversion. Propranolol at sufficient doses and amiodarone can also reduce this conversion.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-10:10",
+    "source": "pgblazer-2011-november-10-retrieved.txt",
+    "sourceFingerprint": "47e10d882aed4ae3583f7f5508e48537aa841c8a72a59d0c5653b39c5adc955c",
+    "answer": "D",
+    "chapterId": "final-year/obstetrics-gynaecology/disorders-of-menstruation",
+    "explanation": "Complete androgen insensitivity in a 46,XY individual causes resistance to androgen action. Testicular anti-Mullerian hormone prevents uterine development, while aromatisation supports breast development. Sparse sexual hair and inguinal testes distinguish it from Mullerian agenesis.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-12:12",
+    "source": "pgblazer-2011-november-12-retrieved.txt",
+    "sourceFingerprint": "f180f54f092d0d98b8a965b5d1f65aeb59d9dfcf079efa1174ebeb41297aa03d",
+    "answer": "A",
+    "chapterId": "first-year/biochemistry/paper-2/molecular-biology",
+    "explanation": "RNA polymerase makes RNA during transcription. Translation uses ribosomes and peptidyl-transferase activity, with charged tRNAs supplying amino acids. The source option aminoacyl transferase refers to the aminoacyl-tRNA charging component; it is not RNA polymerase.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-36:36",
+    "source": "pgblazer-2011-november-36-retrieved.txt",
+    "sourceFingerprint": "7091a606cce604bac674733017fba3b61155cd35a0141f8937253bbff762fc43",
+    "answer": "D",
+    "chapterId": "third-year/ophthalmology/diseases-of-uveal-tract",
+    "explanation": "LUMINATE investigated voclosporin, a calcineurin inhibitor, as a steroid-sparing treatment for noninfectious uveitis. This question identifies a historical trial drug; it does not imply that the trial established a current approved indication.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-51:51",
+    "source": "pgblazer-2011-november-51-retrieved.txt",
+    "sourceFingerprint": "935a2e34ec67a046fbac9c52a7ac4a896e87b6d0c7a982b8e34656b4b8ad85cf",
+    "answer": "C",
+    "chapterId": "third-year/ophthalmology/ocular-motility",
+    "explanation": "Third-nerve palsy can produce ptosis, diplopia and a laterally deviated eye from unopposed lateral rectus action. Parasympathetic involvement causes pupillary dilation; pupillary constriction is not its characteristic effect. Some third-nerve palsies spare the pupil.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-54:54",
+    "source": "pgblazer-2011-november-54-retrieved.txt",
+    "sourceFingerprint": "4d57c2b06abce31aef5d4696570e61dd2c86d627f841c29ac3a63ad560772462",
+    "answer": "B",
+    "chapterId": "final-year/general-surgery/esophagus-stomach",
+    "explanation": "A contrast swallow outlines the pharyngoesophageal pouch and its relationship to the upper oesophageal sphincter. Endoscopy can evaluate associated disease, but unrecognised entry into the pouch risks perforation.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-62:62",
+    "source": "pgblazer-2011-november-62-retrieved.txt",
+    "sourceFingerprint": "3ae7024ec6a72322e24664a5d1accd486036a94ed4153a1456821872c1ade1cd",
+    "answer": "A",
+    "chapterId": "final-year/general-surgery/anaesthesia",
+    "explanation": "Cooling reduces cerebral metabolism and slows or suppresses the EEG; sufficiently deep hypothermia can produce electrocerebral silence. Early hypoxia may initially cause excitation, whereas prolonged or severe hypoxia can also suppress the EEG.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-67:67",
+    "source": "pgblazer-2011-november-67-retrieved.txt",
+    "sourceFingerprint": "92d9aa6e478941b4f6c30551b98ea441c038d43b87ead9bf56bcdbf64166ab9c",
+    "answer": "B",
+    "chapterId": "final-year/paediatrics/nephrology",
+    "explanation": "NPHS2 encodes podocin, a podocyte slit-diaphragm-associated protein. Biallelic pathogenic variants can cause autosomal recessive steroid-resistant nephrotic syndrome, often with focal segmental glomerulosclerosis. NPHS2 is one of several causes; it does not explain every steroid-resistant case.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-74:74",
+    "source": "pgblazer-2011-november-74-retrieved.txt",
+    "sourceFingerprint": "a6f87f017beaad4b46a72d768c8a5421e92a2566e977955b9e75b9d7c0067bec",
+    "answer": "B",
+    "chapterId": "final-year/general-medicine/nephrology-and-neurology",
+    "explanation": "Interferon beta preparations are disease-modifying treatments for relapsing forms of multiple sclerosis. They reduce inflammatory disease activity; this is distinct from corticosteroid treatment of an acute relapse.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-76:76",
+    "source": "pgblazer-2011-november-76-retrieved.txt",
+    "sourceFingerprint": "892830bf88b0ec471a7d01ce1690715036ed551b19808bb7dcef2ff22f35106d",
+    "answer": "B",
+    "chapterId": "first-year/anatomy/paper-2/brain-and-cranial-nerves",
+    "explanation": "Below a spinal hemisection, corticospinal and dorsal-column deficits are mainly ipsilateral. Pain and temperature loss is contralateral, usually beginning a little below the lesion, because spinothalamic fibres cross within the cord. An ipsilateral extensor plantar response can emerge after spinal shock resolves.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-81:81",
+    "source": "pgblazer-2011-november-81-retrieved.txt",
+    "sourceFingerprint": "840009a116abf61a5bcdc8db76b954d1e248c7c2eded90fa62c3688043308b02",
+    "answer": "A",
+    "chapterId": "final-year/paediatrics/endocrine-and-metabolic-disorders",
+    "explanation": "Editorial answer: the recall source provides no answer key. Hydrocortisone is preferred for maintenance treatment in growing children with classic congenital adrenal hyperplasia. Newborn and early-infant regimens also require assessment for fludrocortisone and sodium supplementation; potent long-acting glucocorticoids are avoided for routine paediatric maintenance.",
+    "answerOrigin": "editorial_key_primary_reference_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-86:86",
+    "source": "pgblazer-2011-november-86-retrieved.txt",
+    "sourceFingerprint": "4ce38cf33aeb98cb5581686ffcb6caf517d0825453752617c0fdf169e84c6374",
+    "answer": "B",
+    "chapterId": "final-year/general-medicine/nephrology-and-neurology",
+    "explanation": "Reflux-related nephron loss can produce compensatory hyperfiltration and secondary focal segmental glomerulosclerosis. This glomerular scarring contributes to proteinuria and progressive renal impairment.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-89:89",
+    "source": "pgblazer-2011-november-89-retrieved.txt",
+    "sourceFingerprint": "6803552453b1ae2ce2300f19f45bc4d40fb99461cb763666f9c32dab2910b5f0",
+    "answer": "C",
+    "chapterId": "final-year/general-surgery/anaesthesia",
+    "explanation": "Xenon has a low blood-gas partition coefficient, allowing alveolar and brain partial pressures to change rapidly. Induction and emergence are consequently rapid, so slow induction with slow recovery is the incorrect statement.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:11",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "sourceFingerprint": "79b488e34a083c0fc789ffb2fa6c056ab6d74b9dd118fb6ead226f0f5d300b1f",
+    "answer": "A",
+    "chapterId": "final-year/general-medicine/cardiology",
+    "explanation": "Established coronary disease calls for a high-intensity statin when tolerated. Atorvastatin 80 mg is the high-intensity choice here; the other listed statin doses are moderate intensity. Subsequent LDL response and tolerance guide any additional lipid-lowering treatment.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:14",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "sourceFingerprint": "3b432a776d48481b90c319268d5bda5b0277dd3c54b8dd653988f8442e111a9a",
+    "answer": "C",
+    "chapterId": "second-year/pharmacology/paper-1/cardiovascular-system",
+    "explanation": "Losartan blocks angiotensin II signalling and lowers aldosterone, which can raise potassium. Clinically significant hyperkalaemia or renal deterioration warrants prompt assessment and may require withholding therapy. Chronic kidney disease alone is not an automatic reason to stop an otherwise indicated ARB.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:23",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "sourceFingerprint": "ffc545a43334fbc3773c6418883f870727048be182a7bc11af0c9bdf2e4e6334",
+    "answer": "B",
+    "chapterId": "first-year/physiology/paper-1/endocrine-physiology",
+    "explanation": "Vitamin D excess usually raises serum calcium, rather than producing the hypocalcaemia associated with tetany. Acute pancreatitis can lower calcium, and magnesium depletion can impair parathyroid hormone secretion or action.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:29",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "sourceFingerprint": "927f8c5dea6d08a5e67685cd3e85687a2be349744f0b8ace3826fa9eb709ac2f",
+    "answer": "C",
+    "chapterId": "final-year/general-medicine/gastro-and-hepatology",
+    "explanation": "A urea breath test detects persistent active H. pylori infection. Confirm eradication at least four weeks after antibiotics, with PPIs or PCABs withheld for two weeks and bismuth for four weeks. Serology can remain positive after cure and is unsuitable for this purpose.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:30",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "sourceFingerprint": "211a8d6cd7b87ee71ad6fb1adade7c9c4a18d84fb9a34973d315db56b077d1d6",
+    "answer": "A",
+    "chapterId": "second-year/pathology/paper-1/red-blood-cells",
+    "explanation": "Using the conventional normal haemoglobin of 15 g/dL, the correction is 9% multiplied by 5/15, giving 3%. This is a corrected percentage, not a reticulocyte production index; the latter also adjusts for prolonged reticulocyte maturation in severe anaemia.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:36",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "sourceFingerprint": "fd92bdda72d5f8f64c68bc8f41870c438c77736c1be86173589fe5a430a15c7f",
+    "answer": "B",
+    "chapterId": "second-year/microbiology/paper-2/infections",
+    "explanation": "EBV envelope glycoprotein gp350 binds complement receptor 2, also called CD21, on B lymphocytes. Other molecules participate in fusion and entry; CD21 is the attachment receptor tested here.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:67",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "sourceFingerprint": "795bc5284d4969ae90162583726b16dbc58555c94cf7f44b141f3990196ccd6e",
+    "answer": "A",
+    "chapterId": "final-year/general-medicine/neuro-and-stroke",
+    "explanation": "A syrinx can disrupt crossing spinothalamic fibres near the central canal while initially sparing dorsal-column pathways. This produces dissociated sensory loss, with pain and temperature affected more than vibration, position sense and discriminative touch.",
+    "answerOrigin": "publisher_key_author_checked"
   }
 ]

@@ -38,19 +38,19 @@ export function UnlockCard() {
       ]}>
       <Lock size={14} color={colors.accent} />
       <View style={styles.body}>
-        <Text style={[styles.title, { color: colors.text }]}>Ad-free is on the website</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Unlock ORBIT Premium</Text>
         <Text style={[styles.note, { color: colors.textMuted }]}>
           {LINK_OUT
-            ? 'Unlock it there, then sign in here with the same Google account and the ads stop.'
-            : 'Unlock it at mbbsqbank-questor.lovable.app, then sign in here with the same Google account and the ads stop.'}
+            ? 'Go ad-free. Explore 3D Anatomy, Patient Simulator & Auscultation.'
+            : 'Explore Premium at mbbsqbank-questor.lovable.app. Sign in with the same Google account.'}
         </Text>
         {LINK_OUT ? (
           <Touchable
             onPress={openUnlock}
-            label="Open the unlock page in your browser"
-            hitSlop={8}
+            label="Explore ORBIT Premium in your browser"
+            hitSlop={12}
             style={styles.row}>
-            <Text style={[styles.link, { color: colors.accent }]}>Open the unlock page</Text>
+            <Text style={[styles.link, { color: colors.accent }]}>Explore Premium</Text>
             <ExternalLink size={13} color={colors.accent} />
           </Touchable>
         ) : null}

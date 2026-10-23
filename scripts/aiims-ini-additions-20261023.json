@@ -1,0 +1,296 @@
+{
+  "date": "2026-10-23",
+  "baselineCounts": {
+    "aiims-pg": 100,
+    "ini-cet": 213
+  },
+  "newQuestions": 11,
+  "newCounts": {
+    "aiims-pg": 8,
+    "ini-cet": 3
+  },
+  "selectedReflexWords": 89,
+  "questionReviews": [
+    {
+      "id": "pgblazer-2012-may-1:1",
+      "source": "pgblazer-2012-may-1.html",
+      "sourceNumber": 1,
+      "sourceFingerprint": "7a8b4eadd81c6aeae1a7a6abe7223ed1d07a03754167f3fcecb6796effd2161b",
+      "suppliedKey": "A",
+      "conceptReference": "https://extranet.who.int/emt/sites/default/files/_A%20Field%20Guide.pdf",
+      "duplicateReview": "No matching concept in the inspected AIIMS/INI runtime records; nearest lexical matches retained for audit.",
+      "nearestExisting": [
+        {
+          "similarity": 0.507,
+          "id": "aiims-2019-may:12"
+        },
+        {
+          "similarity": 0.469,
+          "id": "aiims-2018-may:18"
+        },
+        {
+          "similarity": 0.456,
+          "id": "ini-2022-01:14"
+        }
+      ],
+      "sourceItem": 1
+    },
+    {
+      "id": "pgblazer-2012-may-2:2",
+      "source": "pgblazer-2012-may-2.html",
+      "sourceNumber": 2,
+      "sourceFingerprint": "df51475463b7094d90123e08fd67b11e6227bc780b0c7c8b09cdcd6873df5d24",
+      "suppliedKey": "D",
+      "conceptReference": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12495052/",
+      "duplicateReview": "No matching concept in the inspected AIIMS/INI runtime records; nearest lexical matches retained for audit.",
+      "nearestExisting": [
+        {
+          "similarity": 0.571,
+          "id": "ini-2024-01:3"
+        },
+        {
+          "similarity": 0.482,
+          "id": "aiims-2010-eo:3"
+        },
+        {
+          "similarity": 0.453,
+          "id": "ini-2025-01:9"
+        }
+      ],
+      "sourceItem": 2
+    },
+    {
+      "id": "pgblazer-2012-may-3:3",
+      "source": "pgblazer-2012-may-3.html",
+      "sourceNumber": 3,
+      "sourceFingerprint": "09028b5bd621b90f0745605becb7c1821cc156b666e26d50e4ba40af8dc92751",
+      "suppliedKey": "C",
+      "conceptReference": "https://nij.ojp.gov/nij-hosted-online-training-courses/firearms-examiner-training/glossary",
+      "duplicateReview": "No matching concept in the inspected AIIMS/INI runtime records; nearest lexical matches retained for audit.",
+      "nearestExisting": [
+        {
+          "similarity": 0.619,
+          "id": "ini-2024-01:3"
+        },
+        {
+          "similarity": 0.59,
+          "id": "ini-2025-01:9"
+        },
+        {
+          "similarity": 0.474,
+          "id": "aiims-2018-may:14"
+        }
+      ],
+      "sourceItem": 3
+    },
+    {
+      "id": "pgblazer-2012-may-4:4",
+      "source": "pgblazer-2012-may-4.html",
+      "sourceNumber": 4,
+      "sourceFingerprint": "28560fe5e55370a5724cf8da05c014c28425213168ca4cb02e54f05836c01540",
+      "suppliedKey": "B",
+      "conceptReference": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3580647/",
+      "duplicateReview": "No matching concept in the inspected AIIMS/INI runtime records; nearest lexical matches retained for audit.",
+      "nearestExisting": [
+        {
+          "similarity": 0.472,
+          "id": "aiims-2018-may:14"
+        },
+        {
+          "similarity": 0.451,
+          "id": "ini-2021-01:6"
+        },
+        {
+          "similarity": 0.442,
+          "id": "ini-2026-may:26"
+        }
+      ],
+      "sourceItem": 4
+    },
+    {
+      "id": "pgblazer-2012-may-5:5",
+      "source": "pgblazer-2012-may-5.html",
+      "sourceNumber": 5,
+      "sourceFingerprint": "38bc589b4066c4daed992cf4e4d045cf8c2a2b5280abc0e22e29e879dd5344c2",
+      "suppliedKey": "A",
+      "conceptReference": "https://www.genome.gov/sites/default/files/genome-old/pages/Education/Modules/BluePrintToYou/Blueprint5.pdf",
+      "duplicateReview": "No matching concept in the inspected AIIMS/INI runtime records; nearest lexical matches retained for audit.",
+      "nearestExisting": [
+        {
+          "similarity": 0.487,
+          "id": "pgblazer-2015-may-28:28"
+        },
+        {
+          "similarity": 0.484,
+          "id": "aiims-2005-eo:14"
+        },
+        {
+          "similarity": 0.473,
+          "id": "faculty-aiims-2016-may-psychiatry:6"
+        }
+      ],
+      "sourceItem": 5
+    },
+    {
+      "id": "reflex-ini-2024-may:49",
+      "source": "reflex-ini-2024-may.html",
+      "sourceNumber": 49,
+      "sourceFingerprint": "1b63c9875058f04834d1918243e929bc02db00609664e8c0c1a08d0f1246171a",
+      "suppliedKey": "B",
+      "conceptReference": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a9a3079e-b62b-4858-920e-d8f5cb38481e",
+      "duplicateReview": "No matching concept in the inspected AIIMS/INI runtime records; nearest lexical matches retained for audit.",
+      "nearestExisting": [
+        {
+          "similarity": 0.56,
+          "id": "ini-2021-01:38"
+        },
+        {
+          "similarity": 0.486,
+          "id": "inicetmay25-forensic-medicine:10"
+        },
+        {
+          "similarity": 0.475,
+          "id": "faculty-ini-2023-nov-part1:slide-86"
+        }
+      ],
+      "numberSemantics": "ordinal among all visible numbered items in acquired page; subject numbers reset",
+      "attribution": "publisher May 2024 recall label; no authenticated original exam paper"
+    },
+    {
+      "id": "reflex-ini-2024-may:52",
+      "source": "reflex-ini-2024-may.html",
+      "sourceNumber": 52,
+      "sourceFingerprint": "11fa2ec8103e4041a8b181d09d1d2106b142785b484746c998927cc5a9b18340",
+      "suppliedKey": "A",
+      "conceptReference": "https://platform.who.int/docs/default-source/mca-documents/policy-documents/operational-guidance/ind-mn-21-03-operational-guidance-2014-eng-operational-guidelines-use-of-antenatal-corticosteroids-in-preterm-labour.pdf",
+      "duplicateReview": "No matching concept in the inspected AIIMS/INI runtime records; nearest lexical matches retained for audit.",
+      "nearestExisting": [
+        {
+          "similarity": 0.532,
+          "id": "aiims-2018-nov:10"
+        },
+        {
+          "similarity": 0.517,
+          "id": "ini-2021-02:17"
+        },
+        {
+          "similarity": 0.496,
+          "id": "inicetmay25-pharmacology:5"
+        }
+      ],
+      "numberSemantics": "ordinal among all visible numbered items in acquired page; subject numbers reset",
+      "attribution": "publisher May 2024 recall label; no authenticated original exam paper"
+    },
+    {
+      "id": "reflex-ini-2024-may:61",
+      "source": "reflex-ini-2024-may.html",
+      "sourceNumber": 61,
+      "sourceFingerprint": "1501fd1cd5b5b8b0e004436c76a5ae6c480063f6b6424224f62f54f57e124877",
+      "suppliedKey": "A",
+      "conceptReference": "https://www.cdc.gov/autism/hcp/diagnosis/index.html",
+      "duplicateReview": "No matching concept in the inspected AIIMS/INI runtime records; nearest lexical matches retained for audit.",
+      "nearestExisting": [
+        {
+          "similarity": 0.657,
+          "id": "ini-2024-01:9"
+        },
+        {
+          "similarity": 0.653,
+          "id": "ini-2025-01:1"
+        },
+        {
+          "similarity": 0.638,
+          "id": "ini-2025-01:9"
+        }
+      ],
+      "numberSemantics": "ordinal among all visible numbered items in acquired page; subject numbers reset",
+      "attribution": "publisher May 2024 recall label; no authenticated original exam paper"
+    },
+    {
+      "id": "pgblazer-2015-may-24:24",
+      "source": "pgblazer-2015-may-24.html",
+      "sourceNumber": 24,
+      "sourceFingerprint": "d8d86e716d29f67ff605e1746f8d43deddaf9866c437c6985b802128752234a2",
+      "suppliedKey": "C",
+      "conceptReference": "https://pubmed.ncbi.nlm.nih.gov/21543686/",
+      "duplicateReview": "Checked complete stems/options against both updated banks, including unmerged prior ten. No matching record."
+    },
+    {
+      "id": "pgblazer-2015-may-19:19",
+      "source": "pgblazer-2015-may-19.html",
+      "sourceNumber": 19,
+      "sourceFingerprint": "af0a1393b22363acb4969e5a124ab0857e00caff890be31420b69cc82a2997a3",
+      "suppliedKey": "A",
+      "conceptReference": "https://www.assh.org/handcareprod/servlet/servlet.FileDownload?file=00P0a00000obXL3EAM",
+      "duplicateReview": "Checked complete stems/options against both updated banks, including unmerged prior ten. No matching record."
+    },
+    {
+      "id": "pgblazer-2015-may-20:20",
+      "source": "pgblazer-2015-may-20.html",
+      "sourceNumber": 20,
+      "sourceFingerprint": "ebf06b2c1858fcb5d4be172b331b143ea8eeb80065d2cc828cd6f36325937622",
+      "suppliedKey": "A",
+      "conceptReference": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=fdb77e13-f5a7-4c4a-9f8e-338b702239c8",
+      "duplicateReview": "Checked complete stems/options against both updated banks, including unmerged prior ten. No matching record."
+    }
+  ],
+  "limitations": [
+    "Source-labelled recalls, not authenticated original exam wording.",
+    "Eleven individually reviewed selections; the remaining candidate pools are not approved.",
+    "No publisher explanations/images, commercial-bank clone or generic dataset imported."
+  ],
+  "heldDuplicateReviews": [
+    {
+      "id": "pgblazer-2012-may-8:8",
+      "source": "pgblazer-2012-may-8.html",
+      "sourceNumber": 8,
+      "sourceFingerprint": "94a386361e267c64d4511f450d143b4ed56062d383a0a3f66777608322cb2d0a",
+      "suppliedKey": "A",
+      "conceptReference": "https://www.ncbi.nlm.nih.gov/mesh/68009778",
+      "duplicateReview": "No matching concept in the inspected AIIMS/INI runtime records; nearest lexical matches retained for audit.",
+      "nearestExisting": [
+        {
+          "similarity": 0.737,
+          "id": "aiims-2012:5"
+        },
+        {
+          "similarity": 0.52,
+          "id": "aiims-2017-may:10"
+        },
+        {
+          "similarity": 0.51,
+          "id": "inicetmay25-surgery:13"
+        }
+      ],
+      "sourceItem": 8,
+      "duplicateOf": "aiims-2012:5"
+    },
+    {
+      "id": "reflex-ini-2024-may:63",
+      "source": "reflex-ini-2024-may.html",
+      "sourceNumber": 63,
+      "sourceFingerprint": "f1b0f1798526ea07c77e427d0660ef20bc501f29f58f10e46a869256ccacfe01",
+      "suppliedKey": "A",
+      "conceptReference": "https://www-pub.iaea.org/MTCD/Publications/PDF/P1860_web.pdf",
+      "duplicateReview": "No matching concept in the inspected AIIMS/INI runtime records; nearest lexical matches retained for audit.",
+      "nearestExisting": [
+        {
+          "similarity": 0.78,
+          "id": "ini-2021-02:12"
+        },
+        {
+          "similarity": 0.732,
+          "id": "ini-2025-01:9"
+        },
+        {
+          "similarity": 0.719,
+          "id": "inicetmay25-microbiology:5"
+        }
+      ],
+      "numberSemantics": "ordinal among all visible numbered items in acquired page; subject numbers reset",
+      "attribution": "publisher May 2024 recall label; no authenticated original exam paper",
+      "duplicateOf": "ini-2024-01:5"
+    }
+  ],
+  "preservedUnmergedPriorCommit": "79dfbc9633372e3e873104f7a6196114c564ef59"
+}

@@ -32,9 +32,9 @@ for(const viewport of [{width:390,height:844},{width:800,height:1280},{width:128
  await page.getByText('Temporary service failure. Try again.',{exact:true}).waitFor();
  assert.equal(requests.at(-1).isNeedingClarification,true);assert.ok(requests.at(-1).conversationHistory.some(x=>x.content.includes('clotting factors')));
  const retry=page.getByLabel('Ask again',{exact:true}).last();await retry.scrollIntoViewIfNeeded();await retry.click();
- await page.getByLabel('Explain it simply',{exact:true}).last().waitFor();
+ await page.getByLabel('Explain it simply',{exact:true}).nth(1).waitFor();
  assert.ok(!requests.at(-1).conversationHistory.some(x=>x.content.includes('Temporary service failure')),'Error messages must not become AI context');
- await input.fill('And albumin?');await page.getByLabel('Send',{exact:true}).click();await page.getByLabel('Explain it simply',{exact:true}).last().waitFor();
+ await input.fill('And albumin?');await page.getByLabel('Send',{exact:true}).click();await page.getByLabel('Explain it simply',{exact:true}).nth(2).waitFor();
  assert.equal(requests.at(-1).prompt,'And albumin?');assert.equal(requests.at(-1).isNeedingClarification,true);
  await page.getByLabel('Expand to fullscreen chat',{exact:true}).click();assert.ok(await input.isVisible());await page.getByLabel('Exit fullscreen chat',{exact:true}).click();
  assert.deepEqual(errors,[]);await context.close();console.log(`PASS ${viewport.width}x${viewport.height}: natural paragraphs, follow-up context, failure/retry, next turn and fullscreen`);

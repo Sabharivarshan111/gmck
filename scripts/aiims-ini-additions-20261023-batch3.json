@@ -1,0 +1,247 @@
+{
+  "date": "2026-10-23",
+  "baselineCounts": {
+    "aiims-pg": 114,
+    "ini-cet": 216
+  },
+  "newQuestions": 8,
+  "newCounts": {
+    "aiims-pg": 0,
+    "ini-cet": 8
+  },
+  "sourceWords": 145,
+  "questionReviews": [
+    {
+      "id": "diginerve-ini-2025:13",
+      "source": "diginerve-ini-2025.html",
+      "sourceNumber": 13,
+      "publisherSection": "Physiology",
+      "publisherQuestionLabel": "Q2",
+      "sourceFingerprint": "1ae83cee91c316a6ea18b5085cdc481b8549dca713fe1ac82f1a65e063d0d20b",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "conceptReference": "https://www.ncbi.nlm.nih.gov/books/NBK544359/",
+      "nearestExisting": [
+        {
+          "similarity": 0.129,
+          "id": "aiims-2018-may:12"
+        },
+        {
+          "similarity": 0.125,
+          "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:24"
+        },
+        {
+          "similarity": 0.118,
+          "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:10"
+        }
+      ],
+      "duplicateReview": "No matching concept in the inspected 330-record baseline."
+    },
+    {
+      "id": "diginerve-ini-2025:14",
+      "source": "diginerve-ini-2025.html",
+      "sourceNumber": 14,
+      "publisherSection": "Physiology",
+      "publisherQuestionLabel": "Q3",
+      "sourceFingerprint": "d9ca4171692fd53ecefbb8df026f4ededf2844ac1340f07545cb31004e5e282e",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "conceptReference": "https://www.nobelprize.org/prizes/medicine/2025/press-release/",
+      "nearestExisting": [
+        {
+          "similarity": 0.114,
+          "id": "faculty-ini-2023-nov-part1:slide-53"
+        },
+        {
+          "similarity": 0.1,
+          "id": "aiims-2018-may:18"
+        },
+        {
+          "similarity": 0.095,
+          "id": "ini-2021-02:2"
+        }
+      ],
+      "duplicateReview": "No matching concept in the inspected 330-record baseline."
+    },
+    {
+      "id": "diginerve-ini-2025:31",
+      "source": "diginerve-ini-2025.html",
+      "sourceNumber": 31,
+      "publisherSection": "Biochemistry",
+      "publisherQuestionLabel": "Q8",
+      "sourceFingerprint": "67556f5b07d9513b534c20b78bdbafca1d621d17fdc5eaabd191bad2c197b25c",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "conceptReference": "https://ods.od.nih.gov/factsheets/Magnesium-HealthProfessional/",
+      "nearestExisting": [
+        {
+          "similarity": 0.087,
+          "id": "aiims-2018-may:23"
+        },
+        {
+          "similarity": 0.08,
+          "id": "ini-2023-02:13"
+        },
+        {
+          "similarity": 0.073,
+          "id": "inicetmay25-medicine:10"
+        }
+      ],
+      "duplicateReview": "No matching concept in the inspected 330-record baseline."
+    },
+    {
+      "id": "diginerve-ini-2025:34",
+      "source": "diginerve-ini-2025.html",
+      "sourceNumber": 34,
+      "publisherSection": "Biochemistry",
+      "publisherQuestionLabel": "Q11",
+      "sourceFingerprint": "dc16f94933303fb3480926a0cf92f9e33aa320d1e5346c920e69e10d8139f640",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "conceptReference": "https://www.guidetopharmacology.org/GRAC/FamilyDisplayForward?familyId=1086&objId=3245",
+      "nearestExisting": [
+        {
+          "similarity": 0.115,
+          "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:2"
+        },
+        {
+          "similarity": 0.097,
+          "id": "pgblazer-2011-nov-197:197"
+        },
+        {
+          "similarity": 0.083,
+          "id": "ini-2026-may:26"
+        }
+      ],
+      "duplicateReview": "No matching concept in the inspected 330-record baseline."
+    },
+    {
+      "id": "diginerve-ini-2025:40",
+      "source": "diginerve-ini-2025.html",
+      "sourceNumber": 40,
+      "publisherSection": "MICROBIOLOGY",
+      "publisherQuestionLabel": "Q1",
+      "sourceFingerprint": "031e903c26e4729fd9b274430ad5463243d647cc55c97945bdd7c1dd31ead0b2",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "conceptReference": "https://www.cdc.gov/norovirus/data-research/index.html",
+      "nearestExisting": [
+        {
+          "similarity": 0.154,
+          "id": "inicetmay25-microbiology:6"
+        },
+        {
+          "similarity": 0.148,
+          "id": "aiims-2015-may:6"
+        },
+        {
+          "similarity": 0.138,
+          "id": "inicetmay25-obgyn:3"
+        }
+      ],
+      "duplicateReview": "No matching concept in the inspected 330-record baseline."
+    },
+    {
+      "id": "diginerve-ini-2025:48",
+      "source": "diginerve-ini-2025.html",
+      "sourceNumber": 48,
+      "publisherSection": "MICROBIOLOGY",
+      "publisherQuestionLabel": "Q9",
+      "sourceFingerprint": "e1fe059a896ef0d8d9167ea228396400aa3ba6bc2f920d79c4861e783192c3b8",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "conceptReference": "https://www.who.int/publications/i/item/9789240047075",
+      "nearestExisting": [
+        {
+          "similarity": 0.128,
+          "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:5"
+        },
+        {
+          "similarity": 0.125,
+          "id": "inicetmay25-microbiology:4"
+        },
+        {
+          "similarity": 0.111,
+          "id": "prepladder-aiims-2020-jun-pharma:11"
+        }
+      ],
+      "duplicateReview": "No matching concept in the inspected 330-record baseline."
+    },
+    {
+      "id": "diginerve-ini-2025:55",
+      "source": "diginerve-ini-2025.html",
+      "sourceNumber": 55,
+      "publisherSection": "MICROBIOLOGY",
+      "publisherQuestionLabel": "Q16",
+      "sourceFingerprint": "f918e7d1988157845f49ca778106baed62e1c7229c022d61de8314af522f39b2",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "conceptReference": "https://www.canada.ca/en/public-health/services/laboratory-biosafety-biosecurity/pathogen-safety-data-sheets-risk-assessment/ehrlichia-chaffeensis.html",
+      "nearestExisting": [
+        {
+          "similarity": 0.107,
+          "id": "gmu-2024-72d75f60-243e-4f12-aba9-74a240c6e3a4:1"
+        },
+        {
+          "similarity": 0.103,
+          "id": "prepladder-aiims-2020-jun-pharma:12"
+        },
+        {
+          "similarity": 0.1,
+          "id": "inicetmay25-microbiology:4"
+        }
+      ],
+      "duplicateReview": "No matching concept in the inspected 330-record baseline."
+    },
+    {
+      "id": "diginerve-ini-2025:57",
+      "source": "diginerve-ini-2025.html",
+      "sourceNumber": 57,
+      "publisherSection": "Pathology",
+      "publisherQuestionLabel": "Q1",
+      "sourceFingerprint": "70c8ea40b3aef41412c9ada44ed2f1b79904922212735504dfdbb8a9f3cef153",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "conceptReference": "https://www.aasld.org/liver-fellow-network/core-series/pathology-pearls/pathology-pearls-post-8-primary-sclerosing",
+      "nearestExisting": [
+        {
+          "similarity": 0.12,
+          "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:8"
+        },
+        {
+          "similarity": 0.111,
+          "id": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706:2"
+        },
+        {
+          "similarity": 0.081,
+          "id": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706:3"
+        }
+      ],
+      "duplicateReview": "No matching concept in the inspected 330-record baseline."
+    }
+  ],
+  "sourceSearch": [
+    {
+      "url": "https://www.diginerve.com/blogs/ini-cet-2025-recall-questions-with-answers-free-pdf-download-all-200-qs/",
+      "status": "eight reviewed selections; collection year only; month not supplied"
+    },
+    {
+      "url": "https://www.cerebellumacademy.com/ini-cet-november-2025-recall-surgery-questions-explained-by-dr-amrit-nasta/",
+      "status": "403; no questions imported"
+    },
+    {
+      "url": "https://www.doctutorials.com/ini-cet/ini-cet-november-2025-recall",
+      "status": "analysis article without complete four-option questions; no import"
+    },
+    {
+      "url": "https://image.prepladder.com/content/_INI%20CET%20May%202023.pdf",
+      "status": "30 MB document exceeds acquisition limit; not imported"
+    }
+  ],
+  "limitations": [
+    "Publisher labels the collection 2025 but does not state an exam month. No month is inferred from publication date.",
+    "Stems are concise factual paraphrases; all four supplied options and key order are preserved.",
+    "Document ordinal differs from repeated subject-level question numbers.",
+    "Publisher explanations and images are not distributed."
+  ]
+}

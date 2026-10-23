@@ -1,12 +1,14 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
+import {gzipSync} from 'node:zlib';
 import {build} from '../mobile/node_modules/esbuild/lib/main.js';
 
 const output = await build({entryPoints:['src/lib/neetPgOffline.ts'],bundle:true,write:false,format:'esm',platform:'node'});
 const {createOfflineReader,validateOfflineBank} = await import('data:text/javascript;base64,'+Buffer.from(output.outputFiles[0].text).toString('base64'));
 const read = path => JSON.parse(fs.readFileSync(path,'utf8'));
 const reviewed = read('scripts/aiims-ini-reviewed.json');
+const payloadBudget = read('scripts/aiims-ini-payload-budget.json');
 const receipts = read('docs/AIIMS_INI_RELEASE_CANDIDATE_20261021.json');
 const chapters = new Map(read('mobile/src/lib/neetPgStudyData.json').chapters.map(c=>[c.id,c]));
 // 'Marked leucocytosis' is a severity descriptor, not a reference to a figure.
@@ -16,10 +18,10 @@ assert.equal(missingFigureReference.test('Identify the marked structure'),true);
 const fetchBefore = globalThis.fetch;
 globalThis.fetch=()=>{throw Error('Offline bank attempted networking');};
 try {
-  for (const [file,count] of [['aiimsPgBank.json',90],['iniCetBank.json',213]]) {
+  for (const [file,count] of [['aiimsPgBank.json',141],['iniCetBank.json',308]]) {
     const bank=read('mobile/src/lib/'+file);validateOfflineBank(bank);
     const reader=createOfflineReader(bank);assert.equal(reader.total,count);
-    assert.equal(fs.statSync('mobile/src/lib/'+file).size<175000,true);
+    assert.equal(fs.statSync('mobile/src/lib/'+file).size<payloadBudget.maxBankBytes,true);
     const rows=[];
     for(let offset=0;offset<reader.total;offset+=40)rows.push(...reader.search({offset}).records);
     assert.equal(rows.length,count);assert.equal(new Set(rows.map(r=>r.id)).size,count);
@@ -50,8 +52,8 @@ try {
   const repaired=ini.records.find(r=>r.id==='inicetmay25-psm:4');
   for(const statement of ['1. Conduct data analysis','2. Selecting population','3. Setting research question','4. Setting research objective'])assert.ok(repaired.question.includes(statement));
   assert.equal(repaired.sourceAnswer,'C');
-  assert.equal(receipts.totalQuestions,303);
-  assert.equal(receipts.questionProvenance.length,303);
+  assert.equal(receipts.totalQuestions,449);
+  assert.equal(receipts.questionProvenance.length,449);
   const fresh=read('scripts/aiims-ini-missing-papers-import-20261022.json');
   assert.equal(fresh.newQuestions,52);
   for(const review of fresh.questionReviews){
@@ -61,10 +63,113 @@ try {
   assert.equal(ini.records.find(r=>r.id==='inicetmay25-anaesthesia:1').sourceAnswer,'A');
   const arsenic=ini.records.find(r=>r.id==='aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706:6');
   for(const n of ['1.','2.','3.','4.','5.'])assert.ok(arsenic.question.includes(n));
-  assert.equal(fs.statSync('mobile/src/lib/aiimsPgBank.json').size+fs.statSync('mobile/src/lib/iniCetBank.json').size<220000,true);
+  assert.equal(fs.statSync('mobile/src/lib/aiimsPgBank.json').size+fs.statSync('mobile/src/lib/iniCetBank.json').size<payloadBudget.maxCombinedBytes,true);
+  const bankPaths=['mobile/src/lib/aiimsPgBank.json','mobile/src/lib/iniCetBank.json'];
+  assert.ok(bankPaths.reduce((n,p)=>n+gzipSync(fs.readFileSync(p),{level:9}).length,0)<payloadBudget.maxCombinedGzipBytes);
+  const scaleAudit=read('scripts/aiims-ini-scale500-20261023.json');
+  assert.equal(scaleAudit.questionReviews.length,64);
+  assert.equal(scaleAudit.withdrawals.length,8);
+  assert.equal(scaleAudit.baselineTotal+scaleAudit.newQuestions-scaleAudit.withdrawnQuestions,scaleAudit.resultTotal);
+  for(const audit of scaleAudit.questionReviews){
+    const row=bankPaths.flatMap(p=>read(p).records).find(r=>r.id===audit.id);assert.ok(row);
+    assert.match(audit.sourceKeyText,/^[A-D]$/);assert.equal(row.sourceAnswer,audit.sourceKeyText);
+    assert.ok(audit.sourcePages.length>0);
+    assert.equal(receipts.questionProvenance.find(p=>p.id===audit.id).answerOrigin,'publisher_key_author_checked');
+  }
+  for(const duplicate of scaleAudit.semanticDuplicatesHeld) assert.equal(reviewed.some(r=>r.id===duplicate.id),false);
+  const openReview=read('scripts/aiims-ini-open-review-20261023.json');
+  assert.equal(openReview.questionReviews.length,16);
+  assert.equal(openReview.baselineTotal+openReview.newQuestions,openReview.resultTotal);
+  for(const audit of openReview.questionReviews){
+    const row=bankPaths.flatMap(p=>read(p).records).find(r=>r.id===audit.id);assert.ok(row);
+    assert.equal(row.sourceAnswer,audit.suppliedKey);
+    assert.equal(row.examYear,audit.examYear);assert.equal(row.examSession??null,audit.examSession);
+    assert.ok(audit.sourcePages.length>0);
+    assert.equal(receipts.questionProvenance.find(p=>p.id===audit.id).answerOrigin,'publisher_key_author_checked');
+  }
+  for(const n of ['1.','2.','3.','4.']){
+    assert.ok(ini.records.find(r=>r.id==='inicetmay25-ent:5').question.includes(n));
+    assert.ok(ini.records.find(r=>r.id==='inicetmay25-medicine:9').question.includes(n));
+  }
+  assert.ok(ini.records.find(r=>r.id==='inicetmay25-medicine:7').explanation.includes('together with clinical assessment'));
+  assert.ok(ini.records.find(r=>r.id==='inicetmay25-forensic-medicine:9').explanation.includes('prescribed eligible categories'));
+  assert.ok(Object.values(openReview.sourceWordsAfterSelection).every(n=>n<=200));
+  const continued=read('scripts/aiims-ini-continued-review2-20261023.json');
+  assert.equal(continued.baselineTotal,openReview.resultTotal);
+  assert.equal(continued.resultTotal,receipts.totalQuestions);
+  assert.equal(continued.baselineTotal+continued.newQuestions,continued.resultTotal);
+  for(const audit of continued.questionReviews){
+    const row=bankPaths.flatMap(p=>read(p).records).find(r=>r.id===audit.id);assert.ok(row);
+    assert.equal(row.sourceAnswer,audit.reviewedAnswer);
+    assert.equal(row.examYear,audit.examYear);assert.equal(row.examSession,audit.examSession);
+    const receipt=receipts.questionProvenance.find(r=>r.id===audit.id);
+    assert.equal(receipt.answerOrigin,audit.answerOrigin);
+    if(audit.suppliedKey===null){
+      assert.equal(audit.answerOrigin,'editorial_key_primary_reference_checked');
+      assert.ok(row.explanation.startsWith('Editorial answer: the recall source provides no answer key.'));
+      assert.ok(audit.conceptReference.startsWith('https://www.endocrine.org/'));
+    } else assert.equal(row.sourceAnswer,audit.suppliedKey);
+  }
+  assert.ok(Object.values(continued.sourceWordsAfterSelection).every(n=>n<=200));
+  const heldSource=read('scripts/aiims-ini-sources.json').find(s=>s.file==='aiims-2005-eo.pdf');
+  assert.ok(heldSource.identityStatus.startsWith('held_'));
+  for(const old of scaleAudit.withdrawals){
+    assert.equal(reviewed.some(r=>r.id===old.id),false);
+    assert.equal(bankPaths.some(p=>read(p).records.some(r=>r.id===old.id)),false);
+    const hold=read('scripts/aiims-ini-held.json').find(r=>r.id===old.id);assert.ok(hold?.reason.includes('Manipal'));
+  }
+  const nextBatch=read('scripts/aiims-ini-additions-20261023-batch2.json');
+  const aiims=read('mobile/src/lib/aiimsPgBank.json');
+  for(const audit of nextBatch.questionReviews){
+    const record=aiims.records.find(r=>r.id===audit.id);assert.ok(record);
+    const provenance=receipts.questionProvenance.find(r=>r.id===audit.id);
+    assert.equal(provenance.answerOrigin,audit.answerOrigin);
+    if(audit.suppliedKey===null){
+      assert.equal(audit.answerOrigin,'editorial_key_primary_reference_checked');
+      assert.ok(record.explanation.startsWith('Editorial answer: the recall source provides no answer key.'));
+      assert.ok(audit.conceptReference.startsWith('https://'));
+    } else assert.equal(record.sourceAnswer,audit.suppliedKey);
+  }
+  const thirdBatch=read('scripts/aiims-ini-additions-20261023-batch3.json');
+  assert.equal(thirdBatch.questionReviews.length,8);
+  for(const audit of thirdBatch.questionReviews){
+    const record=ini.records.find(r=>r.id===audit.id);assert.ok(record);
+    assert.equal(record.sourceAnswer,audit.suppliedKey);
+    assert.equal(record.examYear,2025);
+    assert.equal(record.examSession,undefined);
+    assert.equal(receipts.questionProvenance.find(r=>r.id===audit.id).examSession,null);
+    assert.ok(audit.conceptReference.startsWith('https://'));
+  }
+  for(const audit of read('scripts/aiims-ini-additions-20261023-batch4.json').questionReviews){
+    const record=[...aiims.records,...ini.records].find(r=>r.id===audit.id);assert.ok(record);
+    assert.equal(record.sourceAnswer,audit.suppliedKey);
+    assert.equal(record.examSession,record.examYear===2011?(audit.source.includes('-may-')?'May':'November'):'May');
+  }
+  const fifthBatch=read('scripts/aiims-ini-additions-20261023-batch5.json');
+  assert.equal(fifthBatch.questionReviews.length,4);
+  for(const audit of fifthBatch.questionReviews){
+    const record=aiims.records.find(r=>r.id===audit.id);assert.ok(record);
+    assert.equal(record.sourceAnswer,audit.reviewedAnswer);
+    assert.equal(record.examYear,2011);assert.equal(record.examSession,'November');
+    assert.equal(receipts.questionProvenance.find(r=>r.id===audit.id).answerOrigin,audit.answerOrigin);
+    if(audit.suppliedKey===null){
+      assert.equal(audit.answerOrigin,'editorial_key_primary_reference_checked');
+      assert.ok(record.explanation.startsWith('Editorial answer: the recall source provides no answer key.'));
+      assert.ok(audit.conceptReference.startsWith('https://'));
+    } else assert.equal(record.sourceAnswer,audit.suppliedKey);
+  }
+  const sixthBatch=read('scripts/aiims-ini-additions-20261023-batch6.json');
+  assert.equal(sixthBatch.questionReviews.length,10);
+  for(const audit of sixthBatch.questionReviews){
+    const record=ini.records.find(r=>r.id===audit.id);assert.ok(record);
+    assert.equal(record.sourceAnswer,audit.suppliedKey);
+    assert.equal(record.examYear,2025);assert.equal(record.examSession,'May');
+    assert.ok(audit.sourcePages.length>0);
+  }
+  for(const words of Object.values(sixthBatch.sourceWordsAfterSelection))assert.ok(words<=200);
   const used = new Set(receipts.questionProvenance.map(r=>r.id));assert.deepEqual(used,new Set(reviewed.map(r=>r.id)));
   // Existing NEET payload remains separate and is not relabelled as another exam.
   const neet=read('mobile/src/lib/neetPgBank.json');assert.equal(neet.records.length,2078);
   assert.equal(neet.records.some(r=>used.has(r.id)),false);
 } finally {globalThis.fetch=fetchBefore;}
-console.log('PASS: 303 source-fingerprinted recall items, original explanations, real syllabus paths, offline search/filter/answers, mutation isolation and unchanged 2,078-item NEET bank.');
+console.log('PASS: 449 source-fingerprinted recall items, original explanations, real syllabus paths, offline search/filter/answers, mutation isolation and unchanged 2,078-item NEET bank.');

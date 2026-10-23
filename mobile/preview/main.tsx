@@ -25,6 +25,7 @@ import { hydrateAttendance } from '@/lib/attendance';
 import { hydrateProfile, hydrateStreak } from '@/hooks/useProfile';
 import { DailyAdConsent } from '@/components/DailyAdConsent';
 import { UnlockCard } from '@/components/UnlockCard';
+import { Dialog } from '@/components/Dialog';
 import { XpToast } from '@/components/XpToast';
 import { TourOverlay } from '@/components/TourOverlay';
 import { FirstRun } from '@/components/FirstRun';
@@ -1223,6 +1224,21 @@ function Shell() {
    * to see it was to flip `ADS_ENABLED`, a real gate rather than a screenshot
    * switch. Rendering the component directly is the honest way round that.
    */
+  if (screen === 'adpromptdemo') {
+    return (
+      <Dialog
+        visible
+        onDismiss={() => {}}
+        title="Sorry for the inconvenience"
+        message="A short sponsored ad plays once daily here to support ORBIT."
+        footer={<UnlockCard />}
+        actions={[
+          { label: 'Not now', onPress: () => {}, tone: 'secondary' },
+          { label: 'OK', onPress: () => {}, tone: 'primary' },
+        ]}
+      />
+    );
+  }
   if (screen === 'unlockdemo') {
     return (
       <View style={{ flex: 1, justifyContent: 'center', padding: 20 }}>

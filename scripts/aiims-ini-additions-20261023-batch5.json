@@ -1,0 +1,122 @@
+{
+  "date": "2026-10-23",
+  "baselineCounts": {
+    "aiims-pg": 118,
+    "ini-cet": 225
+  },
+  "newQuestions": 4,
+  "newCounts": {
+    "aiims-pg": 4,
+    "ini-cet": 0
+  },
+  "publisherKeyQuestions": 2,
+  "editorialKeyQuestions": 2,
+  "questionReviews": [
+    {
+      "id": "pgblazer-2011-november-116:116",
+      "source": "pgblazer-2011-november-116-retrieved.txt",
+      "sourceNumber": 116,
+      "sourceFingerprint": "30590aa514b6937b74a7baf9c8460c8010b2f87bc579e2db139e63b84ed11828",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://doi.org/10.1016/j.wem.2019.10.002",
+      "nearestExisting": [
+        {
+          "similarity": 0.148,
+          "id": "prepladder-aiims-2020-jun-pharma:17"
+        },
+        {
+          "similarity": 0.143,
+          "id": "inicetmay25-biochemistry:9"
+        },
+        {
+          "similarity": 0.143,
+          "id": "aiims-2014-may:2"
+        }
+      ],
+      "duplicateReview": "No matching complete concept in the inspected 343-record baseline."
+    },
+    {
+      "id": "pgblazer-2011-november-122:122",
+      "source": "pgblazer-2011-november-122-retrieved.txt",
+      "sourceNumber": 122,
+      "sourceFingerprint": "4972d1346ce76028348d5de9efcbf189d80557a532150d7539a2015101204f29",
+      "suppliedKey": null,
+      "reviewedAnswer": "A",
+      "answerOrigin": "editorial_key_primary_reference_checked",
+      "conceptReference": "https://www.cdc.gov/birth-defects/about/down-syndrome.html",
+      "nearestExisting": [
+        {
+          "similarity": 0.179,
+          "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:2"
+        },
+        {
+          "similarity": 0.179,
+          "id": "aiims-2014-may:2"
+        },
+        {
+          "similarity": 0.179,
+          "id": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706:2"
+        }
+      ],
+      "duplicateReview": "No matching complete concept in the inspected 343-record baseline."
+    },
+    {
+      "id": "pgblazer-2011-november-135:135",
+      "source": "pgblazer-2011-november-135-retrieved.txt",
+      "sourceNumber": 135,
+      "sourceFingerprint": "ce590143d63287d5d0d0e905fecb946086e0438024ce8709dff71ca95d63220f",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://www.ncbi.nlm.nih.gov/books/NBK482388/",
+      "nearestExisting": [
+        {
+          "similarity": 0.241,
+          "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:25"
+        },
+        {
+          "similarity": 0.179,
+          "id": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706:2"
+        },
+        {
+          "similarity": 0.161,
+          "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:12"
+        }
+      ],
+      "duplicateReview": "No matching complete concept in the inspected 343-record baseline."
+    },
+    {
+      "id": "pgblazer-2011-november-137:137",
+      "source": "pgblazer-2011-november-137-retrieved.txt",
+      "sourceNumber": 137,
+      "sourceFingerprint": "86af62342bb7a306ad50425a1f3bba24d584e06e6ec99969adaa024d51dbbf9e",
+      "suppliedKey": null,
+      "reviewedAnswer": "C",
+      "answerOrigin": "editorial_key_primary_reference_checked",
+      "conceptReference": "https://pubmed.ncbi.nlm.nih.gov/626671/",
+      "nearestExisting": [
+        {
+          "similarity": 0.186,
+          "id": "inicetmay25-pediatrics:9"
+        },
+        {
+          "similarity": 0.128,
+          "id": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706:28"
+        },
+        {
+          "similarity": 0.111,
+          "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:33"
+        }
+      ],
+      "duplicateReview": "No matching complete concept in the inspected 343-record baseline."
+    }
+  ],
+  "limitations": [
+    "Two answers are editorial because no publisher key is supplied, and are visibly labelled.",
+    "Source fingerprints pin retrieved publisher text, not original HTML bytes.",
+    "The 2010 ossicle item was held after conflicting primary measurements were found; no new 2010 coverage is claimed.",
+    "Year and session are publisher recall labels, not authentication of original exam wording."
+  ]
+}

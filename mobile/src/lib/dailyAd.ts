@@ -70,27 +70,27 @@ const REASON_TEXT: Record<DailyAdReason, { title: string; message: string }> = {
   'short-notes': {
     title: 'Sorry for the inconvenience',
     message:
-      'A short sponsored ad will play once — this happens only ONE time per day when you open essays or short notes and helps keep Orbit free. Tap OK to continue.',
+      'A short sponsored ad plays once daily here to support ORBIT.',
   },
   questions: {
     title: 'Sorry for the inconvenience',
     message:
-      'A short sponsored ad will play once — this happens only ONE time per day when you open essays or short notes and helps keep Orbit free. Tap OK to continue.',
+      'A short sponsored ad plays once daily here to support ORBIT.',
   },
   theme: {
     title: 'Sorry for the inconvenience',
     message:
-      'A short sponsored ad will play once — this happens only ONE time per day when you change themes and helps keep Orbit free. Tap OK to continue.',
+      'A short sponsored ad plays once daily here to support ORBIT.',
   },
   progress: {
     title: 'Sorry for the inconvenience',
     message:
-      'A short sponsored ad will play once — this happens only ONE time per day when you open My Progress and helps keep Orbit free. Tap OK to continue.',
+      'A short sponsored ad plays once daily here to support ORBIT.',
   },
   'custom-theme': {
     title: 'Sorry for the inconvenience',
     message:
-      'A short sponsored ad will play once — this happens only ONE time per day when you apply a custom theme and helps keep Orbit free. Tap OK to continue.',
+      'A short sponsored ad plays once daily here to support ORBIT.',
   },
 };
 

@@ -1,0 +1,171 @@
+{
+  "date": "2026-10-23",
+  "baselineCounts": {
+    "aiims-pg": 108,
+    "ini-cet": 216
+  },
+  "newQuestions": 6,
+  "newCounts": {
+    "aiims-pg": 6,
+    "ini-cet": 0
+  },
+  "publisherKeyQuestions": 2,
+  "editorialKeyQuestions": 4,
+  "questionReviews": [
+    {
+      "id": "pgblazer-2015-may-14:14",
+      "source": "pgblazer-2015-may-14.html",
+      "sourceNumber": 14,
+      "sourceFingerprint": "b95d3731cccc60b0ab0078b08e85d4741a64cb48b765bb1357410df424a4e716",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10651583/",
+      "nearestExisting": [
+        {
+          "similarity": 0.174,
+          "id": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706:2"
+        },
+        {
+          "similarity": 0.15,
+          "id": "ini-2021-02:12"
+        },
+        {
+          "similarity": 0.143,
+          "id": "aiims-2017-nov:9"
+        }
+      ],
+      "duplicateReview": "No matching complete concept in the inspected 324-record baseline."
+    },
+    {
+      "id": "pgblazer-2015-may-15:15",
+      "source": "pgblazer-2015-may-15.html",
+      "sourceNumber": 15,
+      "sourceFingerprint": "44b75ff0fcde551782d129f90e94d6f46308f6805005ff43acf12d0c3aeaab7b",
+      "suppliedKey": null,
+      "reviewedAnswer": "C",
+      "answerOrigin": "editorial_key_primary_reference_checked",
+      "conceptReference": "https://www.lifeblood.com.au/health-professionals/clinical-practice/use-of-blood-components/use-of-fresh-frozen-plasma",
+      "nearestExisting": [
+        {
+          "similarity": 0.154,
+          "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:12"
+        },
+        {
+          "similarity": 0.132,
+          "id": "ini-2021-01:38"
+        },
+        {
+          "similarity": 0.125,
+          "id": "ini-2022-01:10"
+        }
+      ],
+      "duplicateReview": "No matching complete concept in the inspected 324-record baseline."
+    },
+    {
+      "id": "pgblazer-2015-may-13:13",
+      "source": "pgblazer-2015-may-13.html",
+      "sourceNumber": 13,
+      "sourceFingerprint": "4bb99c6f0abe1ac32be59021d88b2466aeaa2c1af041fff00560b6c8d43b5705",
+      "suppliedKey": null,
+      "reviewedAnswer": "D",
+      "answerOrigin": "editorial_key_primary_reference_checked",
+      "conceptReference": "https://pubmed.ncbi.nlm.nih.gov/9192168/",
+      "nearestExisting": [
+        {
+          "similarity": 0.12,
+          "id": "ini-2021-02:17"
+        },
+        {
+          "similarity": 0.12,
+          "id": "aglasem-68d61bf6-b5c8-11ed-ac15-0a5e36bc6706:2"
+        },
+        {
+          "similarity": 0.115,
+          "id": "inicetmay25-biochemistry:9"
+        }
+      ],
+      "duplicateReview": "No matching complete concept in the inspected 324-record baseline."
+    },
+    {
+      "id": "pgblazer-2015-may-8:8",
+      "source": "pgblazer-2015-may-8.html",
+      "sourceNumber": 8,
+      "sourceFingerprint": "1c0a48b4e5470ab3d0c35c9c630415330124675e2b412ccf8f18b81806e046ef",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://beta.nikshay.in/Home/AboutUs",
+      "nearestExisting": [
+        {
+          "similarity": 0.161,
+          "id": "ini-2021-02:7"
+        },
+        {
+          "similarity": 0.161,
+          "id": "ini-2021-01:6"
+        },
+        {
+          "similarity": 0.161,
+          "id": "faculty-ini-2022-may-psm:15"
+        }
+      ],
+      "duplicateReview": "No matching complete concept in the inspected 324-record baseline."
+    },
+    {
+      "id": "pgblazer-2015-may-5:5",
+      "source": "pgblazer-2015-may-5.html",
+      "sourceNumber": 5,
+      "sourceFingerprint": "271e0958ea63c3059ac33010d6816f69214061e84edb820ee047748883a5c744",
+      "suppliedKey": null,
+      "reviewedAnswer": "D",
+      "answerOrigin": "editorial_key_primary_reference_checked",
+      "conceptReference": "https://pubmed.ncbi.nlm.nih.gov/8181330/",
+      "nearestExisting": [
+        {
+          "similarity": 0.172,
+          "id": "ini-2023-02:11"
+        },
+        {
+          "similarity": 0.172,
+          "id": "ini-2021-02:20"
+        },
+        {
+          "similarity": 0.172,
+          "id": "ini-2021-02:1"
+        }
+      ],
+      "duplicateReview": "No matching complete concept in the inspected 324-record baseline."
+    },
+    {
+      "id": "pgblazer-2015-may-3:3",
+      "source": "pgblazer-2015-may-3.html",
+      "sourceNumber": 3,
+      "sourceFingerprint": "0b6912054f3c53f3345defe0f0b21f2c6c299d0a47c9b3dc2492b880e80d1ef5",
+      "suppliedKey": null,
+      "reviewedAnswer": "C",
+      "answerOrigin": "editorial_key_primary_reference_checked",
+      "conceptReference": "https://pubmed.ncbi.nlm.nih.gov/6274634/",
+      "nearestExisting": [
+        {
+          "similarity": 0.25,
+          "id": "aiims-2018-may:1"
+        },
+        {
+          "similarity": 0.217,
+          "id": "inicetmay25-opthalmology:3"
+        },
+        {
+          "similarity": 0.174,
+          "id": "pgblazer-2015-may-24:24"
+        }
+      ],
+      "duplicateReview": "No matching complete concept in the inspected 324-record baseline."
+    }
+  ],
+  "limitations": [
+    "Question year/session comes from the recall publisher, not an authenticated original paper.",
+    "Four keys are editorial and explicitly labelled in the reader explanation and receipt.",
+    "No options were filled in; incomplete or ambiguous candidates remain held."
+  ]
+}

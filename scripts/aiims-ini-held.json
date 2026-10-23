@@ -278,5 +278,829 @@
     "sourcePage": 2,
     "reason": "Already represented by the earlier source collection normal-prostate-volume question.",
     "duplicateOf": "ini-2022-01:2"
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:2",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "reason": "Image-dependent flagellate-dermatitis question; no image imported."
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:4",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "reason": "One source option ends with an incomplete phrase; no missing words supplied."
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:9",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "reason": "Printed rosuvastatin/clarithromycin rationale incorrectly generalises CYP3A4 statin metabolism; held for clinical review."
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:13",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "reason": "Historical HIV PEP choices omit current preferred regimens; not imported as present-day guidance."
+  },
+  {
+    "id": "prepladder-aiims-2020-jun-pharma:14",
+    "source": "prepladder-aiims-2020-jun-pharma.html",
+    "reason": "Both cladribine and pentostatin are accepted classic hairy-cell leukaemia treatments; preferred-drug stem lacks a unique clinical answer."
+  },
+  {
+    "id": "pgblazer-2012-may-6:6",
+    "source": "pgblazer-2012-may-6.html",
+    "sourceNumber": 6,
+    "reason": "Obsolete, potentially stigmatising forensic sexual-role terminology; not suitable for contemporary educational import."
+  },
+  {
+    "id": "pgblazer-2012-may-7:7",
+    "source": "pgblazer-2012-may-7.html",
+    "sourceNumber": 7,
+    "reason": "A single-mechanism oedema stem obscures underfill/overfill mechanisms in nephrotic syndrome; hold rather than overgeneralise its key."
+  },
+  {
+    "id": "reflex-ini-2024-may:54",
+    "source": "reflex-ini-2024-may.html",
+    "sourceNumber": 54,
+    "reason": "Downes criteria already present as ini-2024-01:14; no second import of this concept/session."
+  },
+  {
+    "id": "pgblazer-2012-may-8:8",
+    "source": "pgblazer-2012-may-8.html",
+    "sourceNumber": 8,
+    "sourceFingerprint": "94a386361e267c64d4511f450d143b4ed56062d383a0a3f66777608322cb2d0a",
+    "chapterId": "first-year/anatomy/paper-2/brain-and-cranial-nerves",
+    "answer": "A",
+    "explanation": "The occipital lobe is a cerebral lobe containing visual cortical areas. The medulla belongs to the brainstem, while the hypothalamus belongs to the diencephalon.",
+    "reason": "Semantic duplicate of existing question with paraphrased stem or shuffled choices.",
+    "duplicateOf": "aiims-2012:5"
+  },
+  {
+    "id": "reflex-ini-2024-may:63",
+    "source": "reflex-ini-2024-may.html",
+    "sourceNumber": 63,
+    "sourceFingerprint": "f1b0f1798526ea07c77e427d0660ef20bc501f29f58f10e46a869256ccacfe01",
+    "chapterId": "final-year/general-surgery/miscellaneous",
+    "answer": "A",
+    "explanation": "The CT attenuation scale assigns water 0 Hounsfield units and air about -1000. Head CT dose varies by protocol; the source distractor is not a universal dose definition. Ultrasonography is generally the initial examination for suspected gallstones.",
+    "reason": "Semantic duplicate of existing question with paraphrased stem or shuffled choices.",
+    "duplicateOf": "ini-2024-01:5"
+  },
+  {
+    "id": "pgblazer-2015-may-18:18",
+    "source": "pgblazer-2015-may-18.html",
+    "sourceNumber": 18,
+    "reason": "ABCG2 is a candidate stem-cell marker; universal limbal-stem-cell specificity is not supported by this stem."
+  },
+  {
+    "id": "pgblazer-2015-may-17:17",
+    "source": "pgblazer-2015-may-17.html",
+    "sourceNumber": 17,
+    "reason": "Cherry-red spot and Hollenhorst plaque are bundled without enough arterial-occlusion context; no supplied key."
+  },
+  {
+    "id": "pgblazer-2015-may-16:16",
+    "source": "pgblazer-2015-may-16.html",
+    "sourceNumber": 16,
+    "reason": "Screening utility depends on population and recommendation; the options/stem do not identify a unique contemporary answer."
+  },
+  {
+    "id": "pgblazer-2015-may-12:12",
+    "source": "pgblazer-2015-may-12.html",
+    "sourceNumber": 12,
+    "reason": "Mast cells express high-affinity IgE receptors, but B cells can express low-affinity IgE receptors; the stem omits receptor affinity."
+  },
+  {
+    "id": "pgblazer-2015-may-11:11",
+    "source": "pgblazer-2015-may-11.html",
+    "sourceNumber": 11,
+    "reason": "Options A and D overlap on nonionic/lipid-soluble properties; no missing qualifier is invented."
+  },
+  {
+    "id": "pgblazer-2015-may-10:10",
+    "source": "pgblazer-2015-may-10.html",
+    "sourceNumber": 10,
+    "reason": "Methacholine is not selective for a single listed muscarinic subtype."
+  },
+  {
+    "id": "pgblazer-2015-may-9:9",
+    "source": "pgblazer-2015-may-9.html",
+    "sourceNumber": 9,
+    "reason": "Most common nephropathy lacks population or clinical context."
+  },
+  {
+    "id": "pgblazer-2015-may-7:7",
+    "source": "pgblazer-2015-may-7.html",
+    "sourceNumber": 7,
+    "reason": "The distinction between absolute malignancy contraindication and severe infection/scleral involvement is unresolved in the bare stem."
+  },
+  {
+    "id": "pgblazer-2015-may-6:6",
+    "source": "pgblazer-2015-may-6.html",
+    "sourceNumber": 6,
+    "reason": "Fourth option is unrecalled; another option is corrupted."
+  },
+  {
+    "id": "pgblazer-2015-may-4:4",
+    "source": "pgblazer-2015-may-4.html",
+    "sourceNumber": 4,
+    "reason": "Judicial-hanging knot conventions are jurisdiction dependent; no supplied key."
+  },
+  {
+    "id": "pgblazer-2015-may-2:2",
+    "source": "pgblazer-2015-may-2.html",
+    "sourceNumber": 2,
+    "reason": "Immune-mediated versus autoimmune classification is not a sufficiently unambiguous discriminator here."
+  },
+  {
+    "id": "diginerve-ini-2025:18",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 18,
+    "reason": "Source physiology Q7 gives A for myasthenia, conflicting with postsynaptic receptor loss in option C; key conflict held."
+  },
+  {
+    "id": "diginerve-ini-2025:24",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 24,
+    "reason": "PCR step ordering duplicates ini-2020-01:6."
+  },
+  {
+    "id": "diginerve-ini-2025:29",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 29,
+    "reason": "Second Nobel-prize entry duplicates selected document ordinal 14."
+  },
+  {
+    "id": "diginerve-ini-2025:38",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 38,
+    "reason": "Xanthurenic-acid/B6 concept duplicates ini-2023-02:15."
+  },
+  {
+    "id": "diginerve-ini-2025:35",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 35,
+    "reason": "Folate-only treatment question has a disputed supplied key; held."
+  },
+  {
+    "id": "diginerve-ini-2025:51",
+    "source": "diginerve-ini-2025.html",
+    "sourceNumber": 51,
+    "reason": "Biosafety-level statement does not distinguish culture manipulation from lower-risk diagnostic work."
+  },
+  {
+    "id": "prepladder-ini-2025-may-recall:1",
+    "source": "prepladder-ini-2025-may-recall.pdf",
+    "sourceNumber": 1,
+    "duplicateOf": "ini-2025-01:1",
+    "reason": "Existing recalled concept; source not imported wholesale."
+  },
+  {
+    "id": "prepladder-ini-2025-may-recall:4",
+    "source": "prepladder-ini-2025-may-recall.pdf",
+    "sourceNumber": 4,
+    "duplicateOf": "ini-2025-01:4",
+    "reason": "Existing recalled concept; source not imported wholesale."
+  },
+  {
+    "id": "prepladder-ini-2025-may-recall:8",
+    "source": "prepladder-ini-2025-may-recall.pdf",
+    "sourceNumber": 8,
+    "duplicateOf": "inicetmay25-physiology:2",
+    "reason": "Existing recalled concept; source not imported wholesale."
+  },
+  {
+    "id": "prepladder-ini-2025-may-recall:17",
+    "source": "prepladder-ini-2025-may-recall.pdf",
+    "sourceNumber": 17,
+    "duplicateOf": "inicetmay25-surgery:5",
+    "reason": "Existing recalled concept; source not imported wholesale."
+  },
+  {
+    "id": "prepladder-ini-2025-may-recall:25",
+    "source": "prepladder-ini-2025-may-recall.pdf",
+    "sourceNumber": 25,
+    "duplicateOf": "inicetmay25-surgery:5",
+    "reason": "Existing recalled concept; source not imported wholesale."
+  },
+  {
+    "id": "prepladder-ini-2025-may-recall:30",
+    "source": "prepladder-ini-2025-may-recall.pdf",
+    "sourceNumber": 30,
+    "duplicateOf": "inicetmay25-psychiatry:4",
+    "reason": "Existing recalled concept; source not imported wholesale."
+  },
+  {
+    "id": "prepladder-ini-2025-may-recall:37",
+    "source": "prepladder-ini-2025-may-recall.pdf",
+    "sourceNumber": 37,
+    "duplicateOf": "inicetmay25-pathology:3",
+    "reason": "Existing recalled concept; source not imported wholesale."
+  },
+  {
+    "id": "pgblazer-2011-november-110:110",
+    "source": "pgblazer-2011-november-110-retrieved.txt",
+    "sourceNumber": 110,
+    "reason": "The claim that glutamate is not involved in panic disorder is not sufficiently supported as an absolute exclusion."
+  },
+  {
+    "id": "pgblazer-2011-november-112:112",
+    "source": "pgblazer-2011-november-112-retrieved.txt",
+    "sourceNumber": 112,
+    "reason": "Two distractors are unrecalled."
+  },
+  {
+    "id": "pgblazer-2011-november-115:115",
+    "source": "pgblazer-2011-november-115-retrieved.txt",
+    "sourceNumber": 115,
+    "reason": "Fourth distractor is unrecalled and the Apgar timing wording is problematic."
+  },
+  {
+    "id": "pgblazer-2011-november-118:118",
+    "source": "pgblazer-2011-november-118-retrieved.txt",
+    "sourceNumber": 118,
+    "reason": "Complete choices are absent."
+  },
+  {
+    "id": "pgblazer-2011-november-119:119",
+    "source": "pgblazer-2011-november-119-retrieved.txt",
+    "sourceNumber": 119,
+    "reason": "Fourth distractor is absent; historical IPC context also needs a date-specific legal review."
+  },
+  {
+    "id": "pgblazer-2011-november-124:124",
+    "source": "pgblazer-2011-november-124-retrieved.txt",
+    "sourceNumber": 124,
+    "reason": "The exposed anatomical site is unspecified; both pH and lysozyme can be chemical barriers."
+  },
+  {
+    "id": "pgblazer-2011-november-133:133",
+    "source": "pgblazer-2011-november-133-retrieved.txt",
+    "sourceNumber": 133,
+    "reason": "Recalled sodium citrate concentration is inconsistent with usual coagulation sampling concentrations; not silently corrected."
+  },
+  {
+    "id": "pgblazer-2011-november-140:140",
+    "source": "pgblazer-2011-november-140-retrieved.txt",
+    "sourceNumber": 140,
+    "reason": "Fourth distractor is absent."
+  },
+  {
+    "id": "pgblazer-2011-november-145:145",
+    "source": "pgblazer-2011-november-145-retrieved.txt",
+    "sourceNumber": 145,
+    "reason": "Fourth distractor is absent."
+  },
+  {
+    "id": "pgblazer-2011-november-146:146",
+    "source": "pgblazer-2011-november-146-retrieved.txt",
+    "sourceNumber": 146,
+    "reason": "Only a topic fragment is recalled."
+  },
+  {
+    "id": "pgblazer-2011-november-147:147",
+    "source": "pgblazer-2011-november-147-retrieved.txt",
+    "sourceNumber": 147,
+    "reason": "Only a definition is present; no complete question/options."
+  },
+  {
+    "id": "pgblazer-2011-november-149:149",
+    "source": "pgblazer-2011-november-149-retrieved.txt",
+    "sourceNumber": 149,
+    "reason": "Most-common-cause ranking depends on population and period; no publisher key."
+  },
+  {
+    "id": "pgblazer-2010-november-3:3",
+    "source": "pgblazer-2010-november-category-retrieved.txt",
+    "sourceNumber": 3,
+    "reason": "Adult-size-before-birth wording conflicts with published human ossicle measurements (PMID2268059); source key not imported."
+  },
+  {
+    "id": "inicetmay25-psychiatry:7",
+    "source": "inicetmay25-psychiatry.pdf",
+    "sourceNumber": 7,
+    "reason": "Low self-esteem/confidence is an ICD-10 depressive symptom, so the supplied exclusion key is not accepted."
+  },
+  {
+    "id": "inicetmay25-opthalmology:2",
+    "source": "inicetmay25-opthalmology.pdf",
+    "sourceNumber": 2,
+    "reason": "Strabismus surgery can facilitate management in selected amblyopia cases; the absolute therapy exclusion is too broad."
+  },
+  {
+    "id": "inicetmay25-opthalmology:4",
+    "source": "inicetmay25-opthalmology.pdf",
+    "sourceNumber": 4,
+    "reason": "Optic neuritis can show optic-disc oedema; the unqualified normal-fundus statement is not universally true."
+  },
+  {
+    "id": "inicetmay25-radiology:1",
+    "source": "inicetmay25-radiology.pdf",
+    "sourceNumber": 1,
+    "reason": "CT is not absolutely contraindicated in pregnancy when clinically indicated."
+  },
+  {
+    "id": "inicetmay25-pediatrics:2",
+    "source": "inicetmay25-pediatrics.pdf",
+    "sourceNumber": 2,
+    "reason": "Inability to sit without support at nine months warrants developmental assessment rather than automatic reassurance."
+  },
+  {
+    "id": "inicetmay25-pediatrics:8",
+    "source": "inicetmay25-pediatrics.pdf",
+    "sourceNumber": 8,
+    "reason": "Same sphingomyelinase clinical concept as selected biochemistry question3."
+  },
+  {
+    "id": "inicetmay25-pathology:2",
+    "source": "inicetmay25-pathology.pdf",
+    "sourceNumber": 2,
+    "reason": "Excess adiposity is associated with multiple myeloma; supplied exception is not accepted."
+  },
+  {
+    "id": "inicetmay25-pathology:9",
+    "source": "inicetmay25-pathology.pdf",
+    "sourceNumber": 9,
+    "reason": "Stem asks NOT true but the supplied combination collects true free-radical statements."
+  },
+  {
+    "id": "inicetmay25-psm:5",
+    "source": "inicetmay25-psm.pdf",
+    "sourceNumber": 5,
+    "reason": "The denominator is earning members rather than the stated working-age population; not silently equated."
+  },
+  {
+    "id": "inicetmay25-psm:7",
+    "source": "inicetmay25-psm.pdf",
+    "sourceNumber": 7,
+    "reason": "Truck drivers are a recognised bridge population; a literal not-high-risk claim lacks the intended programme classification."
+  },
+  {
+    "id": "inicetmay25-physiology:7",
+    "source": "inicetmay25-physiology.pdf",
+    "sourceNumber": 7,
+    "reason": "The supplied ADH exception does not resolve the separate contradictory NaCl option."
+  },
+  {
+    "id": "inicetmay25-physiology:9",
+    "source": "inicetmay25-physiology.pdf",
+    "sourceNumber": 9,
+    "reason": "Temperature regulation includes feedback and feed-forward components; the bare label is too broad."
+  },
+  {
+    "id": "aiims-2005-eo:2",
+    "source": "aiims-2005-eo.pdf",
+    "sourceNumber": 2,
+    "sourceFingerprint": "379d076d15468f302ac2538e594b6243d4d2d635dd42f455c6ad85e46194ef07",
+    "chapterId": "second-year/pharmacology/paper-1/general-pharmacology",
+    "answer": "D",
+    "answerOrigin": "author_checked",
+    "explanation": "Elimination half-life helps estimate how rapidly drug concentration falls and informs the dosing interval. It does not by itself establish drug potency, clinical efficacy or toxicity thresholds.",
+    "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity."
+  },
+  {
+    "id": "aiims-2005-eo:3",
+    "source": "aiims-2005-eo.pdf",
+    "sourceNumber": 3,
+    "sourceFingerprint": "0c93df2c633e0fe05a0932d7b4995b12cf82217c0849f8ec346d1d0b68ba1c7b",
+    "chapterId": "second-year/microbiology/paper-2/genito-urinary-sexually-transmitted-infections",
+    "answer": "C",
+    "answerOrigin": "author_checked",
+    "explanation": "HPV16 is a high-risk oncogenic type associated with cervical cancer. HPV6 and HPV11 are usually low-risk types associated with anogenital warts.",
+    "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity."
+  },
+  {
+    "id": "aiims-2005-eo:4",
+    "source": "aiims-2005-eo.pdf",
+    "sourceNumber": 4,
+    "sourceFingerprint": "754f30f946338af07a6fada4f5c6df8897d235a95ed77eba709a95754be92e13",
+    "chapterId": "third-year/ophthalmology/glaucoma",
+    "answer": "B",
+    "answerOrigin": "author_checked",
+    "explanation": "Gonioscopy uses a contact lens to overcome total internal reflection and visualise the anterior chamber angle. It helps distinguish open-angle from angle-closure mechanisms.",
+    "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity."
+  },
+  {
+    "id": "aiims-2005-eo:7",
+    "source": "aiims-2005-eo.pdf",
+    "sourceNumber": 7,
+    "sourceFingerprint": "684aff4276a7c929455dee0389c23c72a4ad7017890de18e71228c5b69d012ba",
+    "chapterId": "final-year/general-surgery/abdominal-wall-hernia",
+    "answer": "C",
+    "answerOrigin": "author_checked",
+    "explanation": "A Littre hernia contains a Meckel diverticulum within the hernia sac. A Richter hernia instead traps only part of the bowel circumference.",
+    "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity."
+  },
+  {
+    "id": "aiims-2005-eo:5",
+    "chapterId": "second-year/pharmacology/paper-2/anti-microbial-drugs",
+    "answer": "A",
+    "sourceFingerprint": "b93877b5478ec3817f5f89e0bee99e71a072945dc2f9fd81decd07d4cfe65edf",
+    "explanation": "Mebendazole interferes with helminth microtubules and glucose utilisation. It is used against several intestinal nematodes, whereas amoebiasis requires an antiamoebic regimen.",
+    "answerOrigin": "author_checked",
+    "source": "aiims-2005-eo.pdf",
+    "sourceNumber": 5,
+    "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity."
+  },
+  {
+    "id": "aiims-2005-eo:6",
+    "chapterId": "second-year/microbiology/paper-2/parasitology",
+    "answer": "A",
+    "sourceFingerprint": "e36bb54e2ed8ca55b1d7dfe3347523981ff6137e6e9dfe6c96fb00a2b85d4db6",
+    "explanation": "Toxocara larvae can migrate through human tissues after ingestion of infective eggs. Humans are accidental hosts and do not complete the normal intestinal adult-worm cycle.",
+    "answerOrigin": "author_checked",
+    "source": "aiims-2005-eo.pdf",
+    "sourceNumber": 6,
+    "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity."
+  },
+  {
+    "id": "aiims-2005-eo:14",
+    "chapterId": "first-year/biochemistry/paper-2/protein-metabolism",
+    "answer": "A",
+    "sourceFingerprint": "b5d7e31ef7caad3f4785356b0bf7eb8c3c908415f7f5d790a34c4e9ee2b7a767",
+    "explanation": "Wheat protein is relatively deficient in lysine compared with reference amino-acid requirements. Combining cereal and pulse proteins can improve the overall amino-acid pattern.",
+    "answerOrigin": "author_checked",
+    "source": "aiims-2005-eo.pdf",
+    "sourceNumber": 14,
+    "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity."
+  },
+  {
+    "id": "aiims-2005-eo:20",
+    "chapterId": "final-year/general-surgery/upper-lower-limb",
+    "answer": "B",
+    "sourceFingerprint": "6508d0b6f38b3d0ffd50400a4cac85982c5e28e6eacc4f8cf5cf8d3cb4f555cc",
+    "explanation": "Kienbock disease is osteonecrosis of the lunate. The other eponyms refer to different bones, including the femoral head in Perthes disease.",
+    "answerOrigin": "author_checked",
+    "source": "aiims-2005-eo.pdf",
+    "sourceNumber": 20,
+    "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity."
+  },
+  {
+    "id": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706:11",
+    "source": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706.pdf",
+    "sourceNumber": 11,
+    "reason": "Publisher prints C,D; not a single answer, and lower-trunk palsy does not cause the upper-trunk posture."
+  },
+  {
+    "id": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706:14",
+    "source": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+    "sourceNumber": 14,
+    "reason": "Publisher answer is the sequence A-B-D-C, not optionA. Single-answer extraction would truncate the sequence."
+  },
+  {
+    "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:17",
+    "source": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+    "sourceNumber": 17,
+    "reason": "Nicotinamide can inhibit SIRT1 in vitro but stimulate activity through salvage pathways in cells; bare stimulation claim lacks context."
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:17",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "sourceNumber": 17,
+    "reason": "Treatment-choice stem has incomplete kidney-function context; not silently rewritten into a different pharmacokinetic question."
+  },
+  {
+    "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:20",
+    "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+    "sourceNumber": 20,
+    "reason": "The t(11;14) option is not a conventional B-ALL risk rearrangement; the supplied favourable-hyperdiploidy answer does not resolve the defective distractor."
+  },
+  {
+    "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:13",
+    "source": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+    "sourceNumber": 13,
+    "reason": "Prepubertal versus adolescent depression sex differences make the child option insufficiently age-specific."
+  },
+  {
+    "id": "aglasem-68a4b930-b5c8-11ed-a822-0a5e36bc6706:5",
+    "source": "aglasem-68a4b930-b5c8-11ed-a822-0a5e36bc6706.pdf",
+    "sourceNumber": 5,
+    "reason": "Repeated source question number; no silent merging of distinct questions under one identity."
+  },
+  {
+    "id": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706:6",
+    "source": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706.pdf",
+    "sourceNumber": 6,
+    "reason": "Contains withdrawn voxelotor and a source-key claim that all listed treatments are useful; outdated/incorrect distractor wording not imported."
+  },
+  {
+    "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:15",
+    "source": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+    "sourceNumber": 15,
+    "reason": "Both canagliflozin and rosiglitazone have fracture-risk associations; supplied exclusive key is not accepted."
+  },
+  {
+    "id": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706:10",
+    "source": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706.pdf",
+    "sourceNumber": 10,
+    "reason": "Both canagliflozin and rosiglitazone have fracture-risk associations; supplied exclusive key is not accepted."
+  },
+  {
+    "id": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706:16",
+    "source": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706.pdf",
+    "sourceNumber": 16,
+    "sourceFingerprint": "0c22a173e51932bee2c2c6efd194b1a9da557ebd346a61bd4aaeb86f2557dd1b",
+    "chapterId": "third-year/forensic-medicine/toxicology",
+    "answer": "A",
+    "explanation": "Hooch outbreaks classically involve methanol-contaminated illicit alcohol. Toxic metabolites produce metabolic acidosis and visual toxicity; ethanol alone does not explain the characteristic methanol syndrome.",
+    "reason": "Semantic duplicate of existing aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:18. Held after TF-IDF and concept review; wording/options differences do not create a new learning concept."
+  },
+  {
+    "id": "aglasem-5cd670f8-c103-11ed-97fb-0a5e36bc6706:18",
+    "source": "aglasem-5cd670f8-c103-11ed-97fb-0a5e36bc6706.pdf",
+    "sourceNumber": 18,
+    "sourceFingerprint": "1cd63941094b24ccab61c6e2ee40db7fcfe2d94c3d3c7950d043c269974edcf6",
+    "chapterId": "final-year/general-medicine/dermatology",
+    "answer": "B",
+    "explanation": "Finasteride inhibits type II 5-alpha reductase, reducing conversion of testosterone to dihydrotestosterone. This reduces androgen signalling in susceptible scalp follicles.",
+    "reason": "Semantic duplicate of existing aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706:2. Held after TF-IDF and concept review; wording/options differences do not create a new learning concept."
+  },
+  {
+    "id": "aglasem-68a4b930-b5c8-11ed-a822-0a5e36bc6706:7",
+    "source": "aglasem-68a4b930-b5c8-11ed-a822-0a5e36bc6706.pdf",
+    "sourceNumber": 7,
+    "sourceFingerprint": "bfff780097b43fc52dfd809999b8016b12de4650cd20aaa1af44549bb71ad9bb",
+    "chapterId": "first-year/physiology/paper-2/respiratory-physiology",
+    "answer": "D",
+    "explanation": "Hypothermia commonly produces peripheral cyanosis through vasoconstriction and reduced peripheral flow. High altitude, pulmonary arteriovenous shunting and methaemoglobinaemia can cause central cyanosis.",
+    "reason": "Semantic duplicate of existing aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:10. Held after TF-IDF and concept review; wording/options differences do not create a new learning concept."
+  },
+  {
+    "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:5",
+    "source": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+    "sourceNumber": 5,
+    "sourceFingerprint": "20328d110d873b3f1e5aa8c46680c22098ef0f480a7d7f56e8e36e18f23724e4",
+    "chapterId": "final-year/paediatrics/endocrine-and-metabolic-disorders",
+    "answer": "D",
+    "explanation": "Maple syrup urine disease impairs branched-chain amino-acid catabolism. Leucine, isoleucine and valine require controlled dietary provision; methionine is not one of the branched-chain amino acids.",
+    "reason": "Semantic duplicate of existing aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706:1. Held after TF-IDF and concept review; wording/options differences do not create a new learning concept."
+  },
+  {
+    "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:9",
+    "source": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+    "sourceNumber": 9,
+    "sourceFingerprint": "096e3e690e98e9873a39f278fedc895bcffdec683b4f810b789530be81db6732",
+    "chapterId": "final-year/paediatrics/cns",
+    "answer": "B",
+    "explanation": "Spinal muscular atrophy affects lower motor neurons and may produce tongue fasciculations with weakness and hypotonia. Duchenne dystrophy is a primary muscle disorder rather than a lower-motor-neuron disease.",
+    "reason": "Semantic duplicate of existing aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:8. Held after TF-IDF and concept review; wording/options differences do not create a new learning concept."
+  },
+  {
+    "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:16",
+    "source": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+    "sourceNumber": 16,
+    "sourceFingerprint": "1a4c8f2ea7e4a058d3d06a06bc3cade54acaaa9763129ed53e2f6438f4c0853c",
+    "chapterId": "final-year/general-medicine/infective-diseases",
+    "answer": "D",
+    "explanation": "Kaposi sarcoma, invasive cervical carcinoma and specified non-Hodgkin lymphomas are AIDS-defining cancers. Melanoma can occur in people with HIV but is not classified as an AIDS-defining malignancy.",
+    "reason": "Semantic duplicate of existing aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706:5. Held after TF-IDF and concept review; wording/options differences do not create a new learning concept."
+  },
+  {
+    "id": "aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706:4",
+    "source": "aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706.pdf",
+    "sourceNumber": 4,
+    "sourceFingerprint": "157f076b28794a1cf184f8e153910c5a85333863744a25802b24f4bbbc521dbc",
+    "chapterId": "first-year/biochemistry/paper-2/molecular-biology",
+    "answer": "B",
+    "explanation": "Spontaneous deamination converts 5-methylcytosine to thymine. Deamination of unmethylated cytosine produces uracil, explaining why methylated CpG sites are important mutation hotspots.",
+    "reason": "Semantic duplicate of existing ini-2022-01:16. Held after TF-IDF and concept review; wording/options differences do not create a new learning concept."
+  },
+  {
+    "id": "inicetmay25-biochemistry:8",
+    "source": "inicetmay25-biochemistry.pdf",
+    "sourceNumber": 8,
+    "reason": "Semantic duplicate of ini-2025-01:4, Warburg effect."
+  },
+  {
+    "id": "aiims-2010-eo:20",
+    "source": "aiims-2010-eo.pdf",
+    "sourceNumber": 20,
+    "reason": "Semantic duplicate of aiims-2019-may:17, inspiratory rhythm generation."
+  },
+  {
+    "id": "inicetmay25-ent:2",
+    "source": "inicetmay25-ent.pdf",
+    "sourceNumber": 2,
+    "reason": "Cochlear implantation can be indicated in far-advanced otosclerosis; its blanket exclusion is not accepted."
+  },
+  {
+    "id": "inicetmay25-microbiology:7",
+    "source": "inicetmay25-microbiology.pdf",
+    "sourceNumber": 7,
+    "reason": "Naegleria has three forms, but Acanthamoeba and Giardia ordinarily have two; supplied >2 forms key is not accepted."
+  },
+  {
+    "id": "inicetmay25-orthopaedics:2",
+    "source": "inicetmay25-orthopaedics.pdf",
+    "sourceNumber": 2,
+    "reason": "Multiple options about peripheral/facial nerve grafting and fibrin glue can be true; exclusive supplied key not accepted."
+  },
+  {
+    "id": "inicetmay25-orthopaedics:4",
+    "source": "inicetmay25-orthopaedics.pdf",
+    "sourceNumber": 4,
+    "reason": "Tuberculous osteomyelitis is a chronic bone infection; the unqualified rare-organism exception is not accepted."
+  },
+  {
+    "id": "inicetmay25-orthopaedics:9",
+    "source": "inicetmay25-orthopaedics.pdf",
+    "sourceNumber": 9,
+    "reason": "Clear-cell renal carcinoma can metastasise to bone; rare childhood occurrence does not justify cannot."
+  },
+  {
+    "id": "inicetmay25-pediatrics:5",
+    "source": "inicetmay25-pediatrics.pdf",
+    "sourceNumber": 5,
+    "reason": "Vomiting/poor weight gain alone do not sufficiently distinguish reflux from cow-milk-protein allergy in the stated choices."
+  },
+  {
+    "id": "inicetmay25-pediatrics:6",
+    "source": "inicetmay25-pediatrics.pdf",
+    "sourceNumber": 6,
+    "reason": "Platelet count and skin bleeding alone do not establish that a child requires IVIG; important bleeding/severity context is absent."
+  },
+  {
+    "id": "inicetmay25-pediatrics:10",
+    "source": "inicetmay25-pediatrics.pdf",
+    "sourceNumber": 10,
+    "reason": "Unconjugated bilirubin, late onset and beta-glucuronidase can all describe breast-milk jaundice; supplied single key is not exclusive."
+  },
+  {
+    "id": "inicetmay25-pharmacology:3",
+    "source": "inicetmay25-pharmacology.pdf",
+    "sourceNumber": 3,
+    "reason": "Magnesium sulphate is not given to prevent placental abruption; supplied combination includes this unsupported use."
+  },
+  {
+    "id": "inicetmay25-surgery:3",
+    "source": "inicetmay25-surgery.pdf",
+    "sourceNumber": 3,
+    "reason": "Z-plasty is both a scar-lengthening technique and a local transposition flap; choices overlap."
+  },
+  {
+    "id": "inicetmay25-surgery:19",
+    "source": "inicetmay25-surgery.pdf",
+    "sourceNumber": 19,
+    "reason": "Choices mix Dukes, Astler-Coller and TNM stage labels; muscularis-propria invasion is not the supplied StageIIa label."
+  },
+  {
+    "id": "inicetmay25-medicine:6",
+    "source": "inicetmay25-medicine.pdf",
+    "sourceNumber": 6,
+    "reason": "No resistance/ESBL or other severity context establishes meropenem as the universal best initial treatment for the stated complicatedUTI."
+  },
+  {
+    "id": "inicetmay25-medicine:11",
+    "source": "inicetmay25-medicine.pdf",
+    "sourceNumber": 11,
+    "reason": "P-wave timing concerns presystolic accentuation in sinus rhythm, not the whole mitral stenosis murmur."
+  },
+  {
+    "id": "inicetmay25-forensic-medicine:4",
+    "source": "inicetmay25-forensic-medicine.pdf",
+    "sourceNumber": 4,
+    "reason": "Minimum age forMTP is not18: adult consent and guardian consent for minors are different questions."
+  },
+  {
+    "id": "inicetmay25-opthalmology:5",
+    "source": "inicetmay25-opthalmology.pdf",
+    "sourceNumber": 5,
+    "reason": "Blindness definitions depend on presenting/best-corrected acuity and the applicable classification; source does not specify the framework."
+  },
+  {
+    "id": "pgblazer-2011-november-52:52",
+    "reason": "Both apraclonidine and brimonidine can cause lid retraction; the unqualified stem does not identify a unique answer.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-60:60",
+    "reason": "The historical SIADH question treats water loading as a routine diagnostic test; this is unsafe or inappropriate in many hyponatraemic patients.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-64:64",
+    "reason": "Mutation-detection methods and mutation type are insufficiently specified; no publisher key.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-68:68",
+    "reason": "The absolute earliest-wasting muscle claim is insufficiently supported across knee-osteoarthritis presentations.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-69:69",
+    "reason": "The source includes incorrect 25-alpha hydroxylation terminology and disputed vitamin-D requirements; do not repair distractors silently.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-80:80",
+    "reason": "Mixed-phenotype leukaemia classification needs lineage-marker intensity and context beyond this fragment; no publisher key.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-85:85",
+    "reason": "Fourth choice unrecalled; two displayed depression choices overlap.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-87:87",
+    "reason": "Aortic-stenosis intervention decision lacks mean gradient, valve area, LV function and adequate symptom context.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-88:88",
+    "reason": "A universal two-hour PT handling requirement is not established without the laboratory protocol and anticoagulant context.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-95:95",
+    "reason": "Historical PMTCT choices do not represent a complete contemporary maternal/infant regimen and several listed drugs can participate in ART.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-97:97",
+    "reason": "Fourth distractor is unrecalled.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-35:35",
+    "reason": "Historical investigational erectile-dysfunction use would be confused with the current approved bremelanotide indication by this unqualified stem.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-43:43",
+    "reason": "Endothelial-cell-loss percentage lacks a follow-up time and technique, both of which materially change the answer.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-44:44",
+    "reason": "Bacitracin susceptibility is a presumptive historic discriminator, not definitive establishment of group-A streptococcal diagnosis.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-3:3",
+    "reason": "Shearing and avulsion overlap in flaying/degloving; the alternatives mix mechanism and resulting injury.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-11:11",
+    "reason": "Very marked microcytosis and high ferritin do not uniquely discriminate chronic-inflammation anaemia from thalassaemia or mixed disease.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-14:14",
+    "reason": "The aplastic-leukaemia option is corrupted; it is not silently replaced with aplastic anaemia.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "inicetmay25-obgyn:4",
+    "reason": "Supplied letter B conflicts with the accompanying serous-carcinoma answer text and displayed option order.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "inicetmay25-opthalmology:7",
+    "reason": "Anterior-chamber cells and flare alone at two weeks do not uniquely establish postoperative endophthalmitis or its organism.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:47",
+    "reason": "Same numerical reticulocyte item as source question30, with additional corrupted wording; retain only question30.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:39",
+    "reason": "Same losartan/hyperkalaemia decision as source question14; one representative retained.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:61",
+    "reason": "Same vitamin-D/tetany exception as source question23; one representative retained.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:75",
+    "reason": "Hamman-type sounds can occur with other thoracic air collections, including a listed pneumopericardium alternative; unqualified seen-in stem held.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
   }
 ]

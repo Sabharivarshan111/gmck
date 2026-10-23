@@ -1,0 +1,6 @@
+{
+  "maxBankBytes": 750000,
+  "maxCombinedBytes": 1000000,
+  "maxCombinedGzipBytes": 250000,
+  "reason": "Owner authorises open-ended reviewed AIIMS/INI expansion (23Oct2026), superseding the earlier500-question target. Bounded question-text allowance remains750KB perbank,1MB combined raw and250KB combined gzip, below the owner10MB question-data constraint. Source, answer, duplicate and provenance gates remain unchanged."
+}

@@ -1,0 +1,3004 @@
+{
+  "date": "2026-10-23",
+  "targetAdditional": 500,
+  "baselineCounts": {
+    "aiims-pg": 122,
+    "ini-cet": 235
+  },
+  "baselineTotal": 357,
+  "newQuestions": 64,
+  "newCounts": {
+    "aiims-pg": 11,
+    "ini-cet": 53
+  },
+  "withdrawnQuestions": 8,
+  "netAdditional": 56,
+  "resultTotal": 413,
+  "remainingToTarget": 444,
+  "questionReviews": [
+    {
+      "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:3",
+      "source": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+      "sourceNumber": 3,
+      "sourcePages": [
+        3
+      ],
+      "sourceFingerprint": "fefcaa253b4b5284a50101e392d30bc9aee9f51e241bfd49907a54124048d210",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.091,
+          "id": "pgblazer-2011-nov-196:196"
+        },
+        {
+          "similarity": 0.091,
+          "id": "aiims-2012:6"
+        },
+        {
+          "similarity": 0.071,
+          "id": "ini-2026-may:9"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "ini-2026-may:9",
+          "similarity": 0.19
+        },
+        {
+          "id": "aiims-2012:5",
+          "similarity": 0.164
+        },
+        {
+          "id": "aiims-2020-jun:6",
+          "similarity": 0.147
+        }
+      ]
+    },
+    {
+      "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:5",
+      "source": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+      "sourceNumber": 5,
+      "sourcePages": [
+        3
+      ],
+      "sourceFingerprint": "5dd87c2eee2d611b2d3fdce2b137ea1a9aabd9a7698df71608b636cd60d8a6e3",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.208,
+          "id": "ini-2021-01:12"
+        },
+        {
+          "similarity": 0.16,
+          "id": "ini-2022-01:2"
+        },
+        {
+          "similarity": 0.154,
+          "id": "inicetmay25-opthalmology:3"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aiims-2012:9",
+          "similarity": 0.146
+        },
+        {
+          "id": "ini-2026-may:20",
+          "similarity": 0.126
+        },
+        {
+          "id": "aiims-2020-jun:6",
+          "similarity": 0.111
+        }
+      ]
+    },
+    {
+      "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:8",
+      "source": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+      "sourceNumber": 8,
+      "sourcePages": [
+        4
+      ],
+      "sourceFingerprint": "25c86497eb0b3683d802d1383c887680a2bb39fc69444875920f4e5b92512481",
+      "sourceKeyText": "B",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.129,
+          "id": "ini-2026-may:13"
+        },
+        {
+          "similarity": 0.125,
+          "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:2"
+        },
+        {
+          "similarity": 0.121,
+          "id": "ini-2020-01:6"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706:13",
+          "similarity": 0.123
+        },
+        {
+          "id": "ini-2022-01:14",
+          "similarity": 0.12
+        },
+        {
+          "id": "ini-2020-01:3",
+          "similarity": 0.106
+        }
+      ]
+    },
+    {
+      "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:11",
+      "source": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+      "sourceNumber": 11,
+      "sourcePages": [
+        5
+      ],
+      "sourceFingerprint": "66636909d004a9b3bd16f9c962c2f7747ea58d4882b7c0349d3d6a9490bbec68",
+      "sourceKeyText": "C",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.152,
+          "id": "ini-2021-01:12"
+        },
+        {
+          "similarity": 0.139,
+          "id": "ini-2021-01:30"
+        },
+        {
+          "similarity": 0.135,
+          "id": "ini-2020-01:6"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aglasem-68a4b930-b5c8-11ed-a822-0a5e36bc6706:1",
+          "similarity": 0.145
+        },
+        {
+          "id": "inicetmay25-anatomy:4",
+          "similarity": 0.121
+        },
+        {
+          "id": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706:13",
+          "similarity": 0.101
+        }
+      ]
+    },
+    {
+      "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:12",
+      "source": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+      "sourceNumber": 12,
+      "sourcePages": [
+        5
+      ],
+      "sourceFingerprint": "88bec8500175e4dbe57f494b234780e838019257aa2d7124d3be5f712971db04",
+      "sourceKeyText": "C",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.296,
+          "id": "aiims-2018-may:14"
+        },
+        {
+          "similarity": 0.132,
+          "id": "ini-2026-may:17"
+        },
+        {
+          "similarity": 0.103,
+          "id": "faculty-aiims-2016-may-psychiatry:5"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aiims-2018-may:14",
+          "similarity": 0.23
+        },
+        {
+          "id": "ini-2026-may:17",
+          "similarity": 0.165
+        },
+        {
+          "id": "inicetmay25-physiology:2",
+          "similarity": 0.123
+        }
+      ]
+    },
+    {
+      "id": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706:4",
+      "source": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+      "sourceNumber": 4,
+      "sourcePages": [
+        3
+      ],
+      "sourceFingerprint": "7841e05a7953526313dacca2bf2d992328de7aaabb00353b78ad6e769a5bad08",
+      "sourceKeyText": "D",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.132,
+          "id": "pgblazer-2015-may-29:29"
+        },
+        {
+          "similarity": 0.132,
+          "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:25"
+        },
+        {
+          "similarity": 0.128,
+          "id": "aglasem-58415486-c103-11ed-847b-0a5e36bc6706:10"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "ini-2024-01:3",
+          "similarity": 0.117
+        },
+        {
+          "id": "aiims-2019-may:12",
+          "similarity": 0.112
+        },
+        {
+          "id": "inicetmay25-physiology:10",
+          "similarity": 0.106
+        }
+      ]
+    },
+    {
+      "id": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706:10",
+      "source": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+      "sourceNumber": 10,
+      "sourcePages": [
+        4,
+        5
+      ],
+      "sourceFingerprint": "b87e39d64d3446661037f8496e2eb9946fdb2fa4c39734a07cc79d2cfdb36fcf",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.304,
+          "id": "ini-2023-02:11"
+        },
+        {
+          "similarity": 0.269,
+          "id": "ini-2024-01:9"
+        },
+        {
+          "similarity": 0.25,
+          "id": "ini-2021-02:12"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "inicetmay25-physiology:8",
+          "similarity": 0.317
+        },
+        {
+          "id": "inicetmay25-obgyn:6",
+          "similarity": 0.226
+        },
+        {
+          "id": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706:9",
+          "similarity": 0.163
+        }
+      ]
+    },
+    {
+      "id": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706:12",
+      "source": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+      "sourceNumber": 12,
+      "sourcePages": [
+        5
+      ],
+      "sourceFingerprint": "ad5902c4b0071833cbb830f8c158e2acea8bf590fe27b875d7e375b28861d5d5",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.103,
+          "id": "faculty-ini-2023-nov-part1:slide-86"
+        },
+        {
+          "similarity": 0.1,
+          "id": "ini-2021-02:7"
+        },
+        {
+          "similarity": 0.097,
+          "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:9"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "inicetmay25-obgyn:1",
+          "similarity": 0.201
+        },
+        {
+          "id": "reflex-ini-2024-may:61",
+          "similarity": 0.153
+        },
+        {
+          "id": "ini-2024-01:14",
+          "similarity": 0.116
+        }
+      ]
+    },
+    {
+      "id": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706:16",
+      "source": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+      "sourceNumber": 16,
+      "sourcePages": [
+        6
+      ],
+      "sourceFingerprint": "6ce5e97c4d949b2365f87f0e92528d42ebd0044ff8e07cbfe889852b7b2aed84",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.163,
+          "id": "faculty-ini-2023-nov-part1:slide-53"
+        },
+        {
+          "similarity": 0.131,
+          "id": "inicetmay25-psychiatry:1"
+        },
+        {
+          "similarity": 0.123,
+          "id": "inicetmay25-orthopaedics:7"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "inicetmay25-medicine:8",
+          "similarity": 0.11
+        },
+        {
+          "id": "inicetmay25-orthopaedics:7",
+          "similarity": 0.081
+        },
+        {
+          "id": "faculty-ini-2023-nov-part1:slide-53",
+          "similarity": 0.079
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706:13",
+      "source": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706.pdf",
+      "sourceNumber": 13,
+      "sourcePages": [
+        6
+      ],
+      "sourceFingerprint": "27e39dfc6750cb6e305798912e320435b3570105a1fa307d74f1c8d837c0323b",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.056,
+          "id": "pgblazer-2012-may-3:3"
+        },
+        {
+          "similarity": 0.05,
+          "id": "ini-2024-01:3"
+        },
+        {
+          "similarity": 0.05,
+          "id": "aiims-2019-may:18"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "inicetmay25-psm:6",
+          "similarity": 0.089
+        },
+        {
+          "id": "reflex-ini-2024-may:61",
+          "similarity": 0.0
+        },
+        {
+          "id": "reflex-ini-2024-may:52",
+          "similarity": 0.0
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706:16",
+      "source": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706.pdf",
+      "sourceNumber": 16,
+      "sourcePages": [
+        7,
+        8
+      ],
+      "sourceFingerprint": "05b552361ae12e7d2fda9fbe9884ff4d28945c07f364d3e2e9f8a1b10debd953",
+      "sourceKeyText": "D",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.12,
+          "id": "ini-2022-01:3"
+        },
+        {
+          "similarity": 0.087,
+          "id": "ini-2020-01:19"
+        },
+        {
+          "similarity": 0.083,
+          "id": "aiims-2018-nov:3"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "ini-2022-01:3",
+          "similarity": 0.291
+        },
+        {
+          "id": "aiims-2017-nov:3",
+          "similarity": 0.173
+        },
+        {
+          "id": "pgblazer-2011-may-40:40",
+          "similarity": 0.158
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:6",
+      "source": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+      "sourceNumber": 6,
+      "sourcePages": [
+        3,
+        4
+      ],
+      "sourceFingerprint": "eb3bec17a1c062b81bcb3ad01d92b6305957f327cffd3b32424de4a6efff3984",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.2,
+          "id": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706:2"
+        },
+        {
+          "similarity": 0.194,
+          "id": "ini-2025-01:9"
+        },
+        {
+          "similarity": 0.194,
+          "id": "inicetmay25-microbiology:5"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "faculty-ini-2023-nov-part1:slide-86",
+          "similarity": 0.157
+        },
+        {
+          "id": "aiims-2019-may:3",
+          "similarity": 0.148
+        },
+        {
+          "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:1",
+          "similarity": 0.122
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:8",
+      "source": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+      "sourceNumber": 8,
+      "sourcePages": [
+        4
+      ],
+      "sourceFingerprint": "8f0138bbb02afaad440050f1b4198be0e3fd71cda476795476203e3e1865c057",
+      "sourceKeyText": "C",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.261,
+          "id": "ini-2021-02:12"
+        },
+        {
+          "similarity": 0.259,
+          "id": "inicetmay25-microbiology:5"
+        },
+        {
+          "similarity": 0.259,
+          "id": "ini-2021-02:7"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aiims-2012:5",
+          "similarity": 0.141
+        },
+        {
+          "id": "inicetmay25-physiology:2",
+          "similarity": 0.131
+        },
+        {
+          "id": "aiims-2020-jun:8",
+          "similarity": 0.128
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:9",
+      "source": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+      "sourceNumber": 9,
+      "sourcePages": [
+        4
+      ],
+      "sourceFingerprint": "049dae42ea360e159ad343493d9cfaed4cf08742542ce57822b0fb9a6d2abc6f",
+      "sourceKeyText": "C",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.194,
+          "id": "inicetmay25-microbiology:5"
+        },
+        {
+          "similarity": 0.194,
+          "id": "ini-2021-02:7"
+        },
+        {
+          "similarity": 0.189,
+          "id": "ini-2021-01:30"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:17",
+          "similarity": 0.091
+        },
+        {
+          "id": "reflex-ini-2024-may:61",
+          "similarity": 0.0
+        },
+        {
+          "id": "reflex-ini-2024-may:52",
+          "similarity": 0.0
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:10",
+      "source": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+      "sourceNumber": 10,
+      "sourcePages": [
+        4
+      ],
+      "sourceFingerprint": "d2ebfa584d6707c9b8452e2323be53bcfed6c9a2fe4bb04400d9c09dd4c966dc",
+      "sourceKeyText": "C",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.25,
+          "id": "inicetmay25-microbiology:5"
+        },
+        {
+          "similarity": 0.25,
+          "id": "ini-2021-02:7"
+        },
+        {
+          "similarity": 0.25,
+          "id": "ini-2021-02:12"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "reflex-ini-2024-may:61",
+          "similarity": 0.0
+        },
+        {
+          "id": "reflex-ini-2024-may:52",
+          "similarity": 0.0
+        },
+        {
+          "id": "reflex-ini-2024-may:49",
+          "similarity": 0.0
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:13",
+      "source": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+      "sourceNumber": 13,
+      "sourcePages": [
+        5
+      ],
+      "sourceFingerprint": "a3a9f07301f42c18ef27f63c9c0b3d9c2c6c9ff053e5b78febe09b4f19da55d7",
+      "sourceKeyText": "B",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.119,
+          "id": "inicetmay25-psm:6"
+        },
+        {
+          "similarity": 0.108,
+          "id": "pgblazer-2015-may-8:8"
+        },
+        {
+          "similarity": 0.088,
+          "id": "ini-2021-02:7"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aiims-2005-eo:4",
+          "similarity": 0.107
+        },
+        {
+          "id": "prepladder-aiims-2020-jun-pharma:11",
+          "similarity": 0.082
+        },
+        {
+          "id": "inicetmay25-psm:11",
+          "similarity": 0.063
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:5",
+      "source": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+      "sourceNumber": 5,
+      "sourcePages": [
+        3
+      ],
+      "sourceFingerprint": "88525a8a047ba58f2be3af51be95be66b5fef8641bb3b583b37d443649ac48f7",
+      "sourceKeyText": "B",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.121,
+          "id": "aiims-2018-nov:4"
+        },
+        {
+          "similarity": 0.118,
+          "id": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408:1"
+        },
+        {
+          "similarity": 0.114,
+          "id": "ini-2020-01:3"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408:2",
+          "similarity": 0.213
+        },
+        {
+          "id": "ini-2021-02:2",
+          "similarity": 0.137
+        },
+        {
+          "id": "aglasem-68d61bf6-b5c8-11ed-ac15-0a5e36bc6706:2",
+          "similarity": 0.129
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:7",
+      "source": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+      "sourceNumber": 7,
+      "sourcePages": [
+        3
+      ],
+      "sourceFingerprint": "d27fec43a4c0f1339750b7a324216620eca5932e3568238d90405ea8cab27bb3",
+      "sourceKeyText": "B",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.147,
+          "id": "ini-2021-01:12"
+        },
+        {
+          "similarity": 0.143,
+          "id": "reflex-ini-2024-may:49"
+        },
+        {
+          "similarity": 0.14,
+          "id": "inicetmay25-surgery:9"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:9",
+          "similarity": 0.125
+        },
+        {
+          "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:20",
+          "similarity": 0.113
+        },
+        {
+          "id": "aglasem-58415486-c103-11ed-847b-0a5e36bc6706:11",
+          "similarity": 0.105
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:11",
+      "source": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+      "sourceNumber": 11,
+      "sourcePages": [
+        4
+      ],
+      "sourceFingerprint": "c63bcd334ba253c3ab2d3c0b07a2b65bdc1c8d697c9ca9e8740e9fd459e00771",
+      "sourceKeyText": "D",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.12,
+          "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:2"
+        },
+        {
+          "similarity": 0.12,
+          "id": "aiims-2014-may:2"
+        },
+        {
+          "similarity": 0.12,
+          "id": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706:2"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "reflex-ini-2024-may:61",
+          "similarity": 0.0
+        },
+        {
+          "id": "reflex-ini-2024-may:52",
+          "similarity": 0.0
+        },
+        {
+          "id": "reflex-ini-2024-may:49",
+          "similarity": 0.0
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:17",
+      "source": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+      "sourceNumber": 17,
+      "sourcePages": [
+        5
+      ],
+      "sourceFingerprint": "47c8e09adb08c767b8adfda8497cf0c294244baf5ac2981b174e86a0888a04ea",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.129,
+          "id": "aiims-2005-eo:5"
+        },
+        {
+          "similarity": 0.125,
+          "id": "gmu-2024-72d75f60-243e-4f12-aba9-74a240c6e3a4:6"
+        },
+        {
+          "similarity": 0.118,
+          "id": "aiims-2018-nov:4"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706:20",
+          "similarity": 0.112
+        },
+        {
+          "id": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:15",
+          "similarity": 0.104
+        },
+        {
+          "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:5",
+          "similarity": 0.088
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:19",
+      "source": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+      "sourceNumber": 19,
+      "sourcePages": [
+        6
+      ],
+      "sourceFingerprint": "38da23bfc9723ef555339bff0cd6320a67f22fcb5a0ef2954c7b7a6066ea09a4",
+      "sourceKeyText": "D",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.038,
+          "id": "aglasem-68d61bf6-b5c8-11ed-ac15-0a5e36bc6706:4"
+        },
+        {
+          "similarity": 0.036,
+          "id": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706:2"
+        },
+        {
+          "similarity": 0.033,
+          "id": "inicetmay25-pathology:4"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:1",
+          "similarity": 0.133
+        },
+        {
+          "id": "reflex-ini-2024-may:61",
+          "similarity": 0.0
+        },
+        {
+          "id": "reflex-ini-2024-may:52",
+          "similarity": 0.0
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:15",
+      "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+      "sourceNumber": 15,
+      "sourcePages": [
+        5
+      ],
+      "sourceFingerprint": "ec39603addd0b2d362298bd86e7ca3038201e96f7319c5f4129fbb7ba7983c50",
+      "sourceKeyText": "C",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.261,
+          "id": "inicetmay25-psychiatry:2"
+        },
+        {
+          "similarity": 0.259,
+          "id": "pgblazer-2015-may-29:29"
+        },
+        {
+          "similarity": 0.231,
+          "id": "ini-2021-02:7"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "faculty-aiims-2016-may-psychiatry:1",
+          "similarity": 0.216
+        },
+        {
+          "id": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706:13",
+          "similarity": 0.169
+        },
+        {
+          "id": "faculty-ini-2023-nov-part1:slide-29",
+          "similarity": 0.09
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706:7",
+      "source": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+      "sourceNumber": 7,
+      "sourcePages": [
+        4
+      ],
+      "sourceFingerprint": "09a7a3473c140f21c3d5b52d6c951c1706c6d0425b04e097271bf6508fe4de9c",
+      "sourceKeyText": "B",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.231,
+          "id": "ini-2023-02:15"
+        },
+        {
+          "similarity": 0.217,
+          "id": "ini-2021-02:12"
+        },
+        {
+          "similarity": 0.208,
+          "id": "aiims-2017-nov:9"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "ini-2021-02:20",
+          "similarity": 0.163
+        },
+        {
+          "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:5",
+          "similarity": 0.133
+        },
+        {
+          "id": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706:2",
+          "similarity": 0.119
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706:9",
+      "source": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+      "sourceNumber": 9,
+      "sourcePages": [
+        5
+      ],
+      "sourceFingerprint": "8cf6915a7783dfcceb1067299072c7b8d87d266e4c8cf3cec8f6a1f149114c48",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.261,
+          "id": "ini-2021-02:12"
+        },
+        {
+          "similarity": 0.233,
+          "id": "ini-2024-01:9"
+        },
+        {
+          "similarity": 0.226,
+          "id": "inicetmay25-psychiatry:8"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "ini-2020-01:19",
+          "similarity": 0.161
+        },
+        {
+          "id": "inicetmay25-pathology:7",
+          "similarity": 0.1
+        },
+        {
+          "id": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706:13",
+          "similarity": 0.07
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706:17",
+      "source": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+      "sourceNumber": 17,
+      "sourcePages": [
+        8
+      ],
+      "sourceFingerprint": "90dbbeb91225c6fa829efbfa24ec290c0536ca6e62715bcf05e67133d9376d9b",
+      "sourceKeyText": "D",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.079,
+          "id": "ini-2021-02:20"
+        },
+        {
+          "similarity": 0.051,
+          "id": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706:17"
+        },
+        {
+          "similarity": 0.049,
+          "id": "aglasem-58415486-c103-11ed-847b-0a5e36bc6706:11"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "ini-2021-02:20",
+          "similarity": 0.136
+        },
+        {
+          "id": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706:18",
+          "similarity": 0.108
+        },
+        {
+          "id": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706:2",
+          "similarity": 0.106
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706:18",
+      "source": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+      "sourceNumber": 18,
+      "sourcePages": [
+        8
+      ],
+      "sourceFingerprint": "ec3f780af698721f914a605705498b9289d51c474cf93401bf222d077c9265d0",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.188,
+          "id": "pgblazer-2012-may-3:3"
+        },
+        {
+          "similarity": 0.167,
+          "id": "ini-2024-01:3"
+        },
+        {
+          "similarity": 0.15,
+          "id": "pgblazer-2015-may-3:3"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "reflex-ini-2024-may:61",
+          "similarity": 0.0
+        },
+        {
+          "id": "reflex-ini-2024-may:52",
+          "similarity": 0.0
+        },
+        {
+          "id": "reflex-ini-2024-may:49",
+          "similarity": 0.0
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706:4",
+      "source": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706.pdf",
+      "sourceNumber": 4,
+      "sourcePages": [
+        3
+      ],
+      "sourceFingerprint": "85d144aef836b72a7a81d7482cdeb666f2245efb4248490296c70189d335ae2f",
+      "sourceKeyText": "C",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.136,
+          "id": "aiims-2017-nov:9"
+        },
+        {
+          "similarity": 0.13,
+          "id": "pgblazer-2015-may-3:3"
+        },
+        {
+          "similarity": 0.13,
+          "id": "aiims-2018-may:12"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "pgblazer-2015-may-3:3",
+          "similarity": 0.145
+        },
+        {
+          "id": "aiims-2018-may:1",
+          "similarity": 0.109
+        },
+        {
+          "id": "ini-2020-01:19",
+          "similarity": 0.088
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706:17",
+      "source": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706.pdf",
+      "sourceNumber": 17,
+      "sourcePages": [
+        7
+      ],
+      "sourceFingerprint": "dc7ca4cc89b0612d9111bd9ac92d6a0f95902ff0d500d3a3f0b21eebf8254de4",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.147,
+          "id": "pgblazer-2015-may-8:8"
+        },
+        {
+          "similarity": 0.143,
+          "id": "inicetmay25-physiology:3"
+        },
+        {
+          "similarity": 0.132,
+          "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:1"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "faculty-ini-2022-may-psm:15",
+          "similarity": 0.095
+        },
+        {
+          "id": "inicetmay25-psm:14",
+          "similarity": 0.065
+        },
+        {
+          "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:1",
+          "similarity": 0.039
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5cd670f8-c103-11ed-97fb-0a5e36bc6706:15",
+      "source": "aglasem-5cd670f8-c103-11ed-97fb-0a5e36bc6706.pdf",
+      "sourceNumber": 15,
+      "sourcePages": [
+        8
+      ],
+      "sourceFingerprint": "fc4fd032fec8478df558d25085cfdc78eb3c1b6b2c8d52269429242078d6a303",
+      "sourceKeyText": "D",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.192,
+          "id": "inicetmay25-physiology:8"
+        },
+        {
+          "similarity": 0.156,
+          "id": "inicetmay25-obgyn:1"
+        },
+        {
+          "similarity": 0.156,
+          "id": "faculty-ini-2022-may-psm:2"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "ini-2023-02:14",
+          "similarity": 0.161
+        },
+        {
+          "id": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706:2",
+          "similarity": 0.153
+        },
+        {
+          "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:2",
+          "similarity": 0.126
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:1",
+      "source": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+      "sourceNumber": 1,
+      "sourcePages": [
+        2
+      ],
+      "sourceFingerprint": "399fe7e8a6ac54dccc4849712f44d16d690d4bfcc815ee8fc050f387d113c814",
+      "sourceKeyText": "B",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.107,
+          "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:16"
+        },
+        {
+          "similarity": 0.103,
+          "id": "ini-2023-02:14"
+        },
+        {
+          "similarity": 0.1,
+          "id": "inicetmay25-orthopaedics:5"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Redundant clinical image omitted; low HDL and ABCA1 text independently identifies the condition.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706:18",
+          "similarity": 0.135
+        },
+        {
+          "id": "aiims-2020-jun:4",
+          "similarity": 0.127
+        },
+        {
+          "id": "ini-2020-01:2",
+          "similarity": 0.118
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:10",
+      "source": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+      "sourceNumber": 10,
+      "sourcePages": [
+        5
+      ],
+      "sourceFingerprint": "2be354f4227f20e55c57b1c59643bf636b3196d3c2ecd1fa9e7fe4e6b47ec04f",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.31,
+          "id": "inicetmay25-psychiatry:8"
+        },
+        {
+          "similarity": 0.267,
+          "id": "inicetmay25-anatomy:2"
+        },
+        {
+          "similarity": 0.25,
+          "id": "inicetmay25-pharmacology:1"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "ini-2021-01:38",
+          "similarity": 0.147
+        },
+        {
+          "id": "ini-2021-01:16",
+          "similarity": 0.135
+        },
+        {
+          "id": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706:2",
+          "similarity": 0.083
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:12",
+      "source": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+      "sourceNumber": 12,
+      "sourcePages": [
+        5
+      ],
+      "sourceFingerprint": "16bedd75588991c8e825083286324b7a5faef0141a474f55080bbe2ed6d57678",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.217,
+          "id": "ini-2021-01:30"
+        },
+        {
+          "similarity": 0.19,
+          "id": "pgblazer-2015-may-24:24"
+        },
+        {
+          "similarity": 0.19,
+          "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:24"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "ini-2021-01:30",
+          "similarity": 0.174
+        },
+        {
+          "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:2",
+          "similarity": 0.156
+        },
+        {
+          "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:1",
+          "similarity": 0.144
+        }
+      ]
+    },
+    {
+      "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:14",
+      "source": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+      "sourceNumber": 14,
+      "sourcePages": [
+        6
+      ],
+      "sourceFingerprint": "ab5f861eb91a051d8661b9c8104b867c1e0bde0e4e80909410869a0dbba9831b",
+      "sourceKeyText": "D",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.156,
+          "id": "ini-2021-01:30"
+        },
+        {
+          "similarity": 0.143,
+          "id": "pgblazer-2015-may-8:8"
+        },
+        {
+          "similarity": 0.133,
+          "id": "pgblazer-2015-may-24:24"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408:2",
+          "similarity": 0.142
+        },
+        {
+          "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:2",
+          "similarity": 0.122
+        },
+        {
+          "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:33",
+          "similarity": 0.11
+        }
+      ]
+    },
+    {
+      "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:6",
+      "source": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+      "sourceNumber": 6,
+      "sourcePages": [
+        3
+      ],
+      "sourceFingerprint": "f9229596e7eb9dfa77760bbaed6c5ea0f831d97ceab8db8869ff4f8add063371",
+      "sourceKeyText": "D",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.185,
+          "id": "inicetmay25-pharmacology:2"
+        },
+        {
+          "similarity": 0.167,
+          "id": "ini-2021-01:30"
+        },
+        {
+          "similarity": 0.167,
+          "id": "faculty-aiims-2016-may-psychiatry:6"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "reflex-ini-2024-may:61",
+          "similarity": 0.163
+        },
+        {
+          "id": "ini-2020-01:19",
+          "similarity": 0.144
+        },
+        {
+          "id": "ini-2026-may:9",
+          "similarity": 0.121
+        }
+      ]
+    },
+    {
+      "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:15",
+      "source": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+      "sourceNumber": 15,
+      "sourcePages": [
+        6
+      ],
+      "sourceFingerprint": "6e598058d4bfd45aa19d4f03baa541d3b39ed0cdc01aba12bc81af860e79c638",
+      "sourceKeyText": "B",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.222,
+          "id": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706:7"
+        },
+        {
+          "similarity": 0.211,
+          "id": "ini-2022-01:10"
+        },
+        {
+          "similarity": 0.175,
+          "id": "inicetmay25-pediatrics:1"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706:7",
+          "similarity": 0.187
+        },
+        {
+          "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:7",
+          "similarity": 0.123
+        },
+        {
+          "id": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:18",
+          "similarity": 0.09
+        }
+      ]
+    },
+    {
+      "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:8",
+      "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+      "sourceNumber": 8,
+      "sourcePages": [
+        4,
+        5
+      ],
+      "sourceFingerprint": "a7dd3ec86bb9a555dca9389f7390de646823ad6026f0d5c15943f8fbb603b9ac",
+      "sourceKeyText": "B",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.205,
+          "id": "ini-2021-01:30"
+        },
+        {
+          "similarity": 0.204,
+          "id": "inicetmay25-dermatology:5"
+        },
+        {
+          "similarity": 0.2,
+          "id": "inicetmay25-microbiology:11"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "pgblazer-2011-nov-197:197",
+          "similarity": 0.094
+        },
+        {
+          "id": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706:7",
+          "similarity": 0.089
+        },
+        {
+          "id": "inicetmay25-microbiology:11",
+          "similarity": 0.088
+        }
+      ]
+    },
+    {
+      "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:22",
+      "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+      "sourceNumber": 22,
+      "sourcePages": [
+        9
+      ],
+      "sourceFingerprint": "0d7fb64fa4eadd30cef37f16fccdbee7131ffedcfb9e86a0f7a12f02319fa936",
+      "sourceKeyText": "C",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.195,
+          "id": "inicetmay25-psychiatry:8"
+        },
+        {
+          "similarity": 0.179,
+          "id": "ini-2021-01:30"
+        },
+        {
+          "similarity": 0.178,
+          "id": "inicetmay25-microbiology:11"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:7",
+          "similarity": 0.229
+        },
+        {
+          "id": "ini-2021-01:16",
+          "similarity": 0.137
+        },
+        {
+          "id": "aiims-2020-jun:22",
+          "similarity": 0.137
+        }
+      ]
+    },
+    {
+      "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:23",
+      "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+      "sourceNumber": 23,
+      "sourcePages": [
+        9
+      ],
+      "sourceFingerprint": "2d8e2ea5cfa081008fcabdd3ca7863bb4e44c1aaa1ebd5eda3cc30c91c05322d",
+      "sourceKeyText": "C",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.143,
+          "id": "pgblazer-2015-may-24:24"
+        },
+        {
+          "similarity": 0.138,
+          "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:3"
+        },
+        {
+          "similarity": 0.129,
+          "id": "ini-2021-01:30"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aiims-2018-nov:1",
+          "similarity": 0.119
+        },
+        {
+          "id": "inicetmay25-pathology:1",
+          "similarity": 0.09
+        },
+        {
+          "id": "inicetmay25-surgery:4",
+          "similarity": 0.086
+        }
+      ]
+    },
+    {
+      "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:28",
+      "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+      "sourceNumber": 28,
+      "sourcePages": [
+        11
+      ],
+      "sourceFingerprint": "0f5c7fbdf65c04f99e3b61086c694be1170cd859f7f1c5e1e733b212d1308c43",
+      "sourceKeyText": "C",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.148,
+          "id": "inicetmay25-surgery:5"
+        },
+        {
+          "similarity": 0.143,
+          "id": "aiims-2020-jun:1"
+        },
+        {
+          "similarity": 0.143,
+          "id": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706:1"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "pgblazer-2012-may-2:2",
+          "similarity": 0.142
+        },
+        {
+          "id": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706:1",
+          "similarity": 0.092
+        },
+        {
+          "id": "aiims-2014-may:13",
+          "similarity": 0.09
+        }
+      ]
+    },
+    {
+      "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:31",
+      "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+      "sourceNumber": 31,
+      "sourcePages": [
+        12
+      ],
+      "sourceFingerprint": "6c97fc4410368f2fc56a93a42451f1c40c24343fbba51fe37ce3ce674bd69b8b",
+      "sourceKeyText": "B",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.13,
+          "id": "aiims-2005-eo:14"
+        },
+        {
+          "similarity": 0.12,
+          "id": "gmu-2024-9674994c-68dc-4adb-bf75-b110e4d8d977:2"
+        },
+        {
+          "similarity": 0.12,
+          "id": "aiims-2018-nov:10"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "inicetmay25-dermatology:2",
+          "similarity": 0.134
+        },
+        {
+          "id": "reflex-ini-2024-may:61",
+          "similarity": 0.0
+        },
+        {
+          "id": "reflex-ini-2024-may:52",
+          "similarity": 0.0
+        }
+      ]
+    },
+    {
+      "id": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706:2",
+      "source": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+      "sourceNumber": 2,
+      "sourcePages": [
+        2
+      ],
+      "sourceFingerprint": "655c11d04ca6c5dde5aaa41eae45706394d80e668450564b92613be64ace5c33",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.111,
+          "id": "pgblazer-2015-may-24:24"
+        },
+        {
+          "similarity": 0.105,
+          "id": "faculty-ini-2023-nov-part1:slide-86"
+        },
+        {
+          "similarity": 0.094,
+          "id": "ini-2021-01:23"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "pgblazer-2012-may-4:4",
+          "similarity": 0.112
+        },
+        {
+          "id": "aiims-2012:1",
+          "similarity": 0.092
+        },
+        {
+          "id": "ini-2021-01:23",
+          "similarity": 0.063
+        }
+      ]
+    },
+    {
+      "id": "aiims-2000-eo:1",
+      "source": "aiims-2000-eo.pdf",
+      "sourceNumber": 1,
+      "sourcePages": [
+        1,
+        2
+      ],
+      "sourceFingerprint": "2439b4d4455c0f18d4cad04130c4c7b05ba001aa309d4a0e63ac33f38490bc24",
+      "sourceKeyText": "D",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.147,
+          "id": "aiims-2020-jun:8"
+        },
+        {
+          "similarity": 0.129,
+          "id": "gmu-2024-9674994c-68dc-4adb-bf75-b110e4d8d977:2"
+        },
+        {
+          "similarity": 0.118,
+          "id": "ini-2021-02:20"
+        }
+      ],
+      "duplicateReview": "Inspected nearest existing items and concept keyword matches; no matching complete question concept.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified."
+    },
+    {
+      "id": "aiims-2000-eo:3",
+      "source": "aiims-2000-eo.pdf",
+      "sourceNumber": 3,
+      "sourcePages": [
+        1,
+        2
+      ],
+      "sourceFingerprint": "42232706eb86cce919298c000cb4c89a4990c3813a6be11563ef51cace6d58e0",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.133,
+          "id": "ini-2025-01:11"
+        },
+        {
+          "similarity": 0.133,
+          "id": "aiims-2017-nov:2"
+        },
+        {
+          "similarity": 0.133,
+          "id": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706:1"
+        }
+      ],
+      "duplicateReview": "Inspected nearest existing items and concept keyword matches; no matching complete question concept.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified."
+    },
+    {
+      "id": "aiims-2000-eo:4",
+      "source": "aiims-2000-eo.pdf",
+      "sourceNumber": 4,
+      "sourcePages": [
+        1,
+        2
+      ],
+      "sourceFingerprint": "8eb9619c21606f35fab72998b635dceeb34ffff0c22af62ead411ec0aa084731",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.227,
+          "id": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706:2"
+        },
+        {
+          "similarity": 0.185,
+          "id": "inicetmay25-anatomy:2"
+        },
+        {
+          "similarity": 0.156,
+          "id": "inicetmay25-anatomy:9"
+        }
+      ],
+      "duplicateReview": "Inspected nearest existing items and concept keyword matches; no matching complete question concept.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified."
+    },
+    {
+      "id": "aiims-2001-may:9",
+      "source": "aiims-2001-may.pdf",
+      "sourceNumber": 9,
+      "sourcePages": [
+        2
+      ],
+      "sourceFingerprint": "bc653192e18850953c1ceacc962edad21c04fee96248289ea0cd8cf951bbc10f",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.188,
+          "id": "pgblazer-2011-may-158-2:158"
+        },
+        {
+          "similarity": 0.185,
+          "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:2"
+        },
+        {
+          "similarity": 0.185,
+          "id": "aiims-2014-may:2"
+        }
+      ],
+      "duplicateReview": "Inspected nearest existing items and concept keyword matches; no matching complete question concept.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified."
+    },
+    {
+      "id": "aiims-2001-may:10",
+      "source": "aiims-2001-may.pdf",
+      "sourceNumber": 10,
+      "sourcePages": [
+        2
+      ],
+      "sourceFingerprint": "e5e97179447c298ae220b42f6e1e47d215fe6b81d3eabcba3554014f9843d8bb",
+      "sourceKeyText": "C",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.097,
+          "id": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706:2"
+        },
+        {
+          "similarity": 0.094,
+          "id": "inicetmay25-forensic-medicine:10"
+        },
+        {
+          "similarity": 0.086,
+          "id": "inicetmay25-orthopaedics:5"
+        }
+      ],
+      "duplicateReview": "Inspected nearest existing items and concept keyword matches; no matching complete question concept.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified."
+    },
+    {
+      "id": "aiims-2001-may:17",
+      "source": "aiims-2001-may.pdf",
+      "sourceNumber": 17,
+      "sourcePages": [
+        3
+      ],
+      "sourceFingerprint": "8461b0d6a49a038fbb16d62f502c0a175a718746503903b708096a4b24386ca8",
+      "sourceKeyText": "B",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.229,
+          "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:14"
+        },
+        {
+          "similarity": 0.167,
+          "id": "aiims-2001-may:4"
+        },
+        {
+          "similarity": 0.143,
+          "id": "ini-2020-01:19"
+        }
+      ],
+      "duplicateReview": "Inspected nearest existing items and concept keyword matches; no matching complete question concept.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified."
+    },
+    {
+      "id": "aiims-2001-may:18",
+      "source": "aiims-2001-may.pdf",
+      "sourceNumber": 18,
+      "sourcePages": [
+        3
+      ],
+      "sourceFingerprint": "3341d6ee1eab0e164c00bd97671f873a427cf6833c99cb99db946d031e36fb7a",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.156,
+          "id": "aiims-2018-may:12"
+        },
+        {
+          "similarity": 0.14,
+          "id": "aiims-2010-eo:1"
+        },
+        {
+          "similarity": 0.132,
+          "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:7"
+        }
+      ],
+      "duplicateReview": "Inspected nearest existing items and concept keyword matches; no matching complete question concept.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified."
+    },
+    {
+      "id": "aiims-2001-may:31",
+      "source": "aiims-2001-may.pdf",
+      "sourceNumber": 31,
+      "sourcePages": [
+        5
+      ],
+      "sourceFingerprint": "078b0c294d767afc214acd9b1cc6376d77e73ba1d509ea3f8c5a963faa564754",
+      "sourceKeyText": "C",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.175,
+          "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:14"
+        },
+        {
+          "similarity": 0.171,
+          "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:7"
+        },
+        {
+          "similarity": 0.162,
+          "id": "aiims-2012:9"
+        }
+      ],
+      "duplicateReview": "Inspected nearest existing items and concept keyword matches; no matching complete question concept.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified."
+    },
+    {
+      "id": "aiims-2010-eo:8",
+      "source": "aiims-2010-eo.pdf",
+      "sourceNumber": 8,
+      "sourcePages": [
+        3
+      ],
+      "sourceFingerprint": "b0c65724e72474f8ba5648b76647683b92d86c6917930b4c8e2dd84fe7cba259",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.19,
+          "id": "ini-2025-01:11"
+        },
+        {
+          "similarity": 0.182,
+          "id": "aiims-2014-may:13"
+        },
+        {
+          "similarity": 0.158,
+          "id": "pgblazer-2015-may-14:14"
+        }
+      ],
+      "duplicateReview": "Existing AIIMS2014 question tests stylohyoid as the trigeminal exception and does not include tensor tympani; the new item tests a separate muscle.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified."
+    },
+    {
+      "id": "aiims-2010-eo:13",
+      "source": "aiims-2010-eo.pdf",
+      "sourceNumber": 13,
+      "sourcePages": [
+        4
+      ],
+      "sourceFingerprint": "45e551391c07cf5bfc387a184a34ef6834583f8cfe31f7b952c1dbd0178ab923",
+      "sourceKeyText": "B",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.138,
+          "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:10"
+        },
+        {
+          "similarity": 0.133,
+          "id": "pgblazer-2011-may-40:40"
+        },
+        {
+          "similarity": 0.103,
+          "id": "inicetmay25-physiology:5"
+        }
+      ],
+      "duplicateReview": "Inspected nearest existing items and concept keyword matches; no matching complete question concept.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified."
+    },
+    {
+      "id": "aiims-2010-eo:15",
+      "source": "aiims-2010-eo.pdf",
+      "sourceNumber": 15,
+      "sourcePages": [
+        6
+      ],
+      "sourceFingerprint": "55361d79e6eb9d64ff274f2c51c64bfe5e02b29b718ee92819c843151235271b",
+      "sourceKeyText": "D",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.154,
+          "id": "gmu-2024-9674994c-68dc-4adb-bf75-b110e4d8d977:2"
+        },
+        {
+          "similarity": 0.148,
+          "id": "prepladder-aiims-2020-jun-pharma:17"
+        },
+        {
+          "similarity": 0.148,
+          "id": "faculty-ini-2023-nov-part1:slide-53"
+        }
+      ],
+      "duplicateReview": "Inspected nearest existing items and concept keyword matches; no matching complete question concept.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified."
+    },
+    {
+      "id": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706:9",
+      "source": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706.pdf",
+      "sourceNumber": 9,
+      "sourcePages": [
+        4
+      ],
+      "sourceFingerprint": "7c3d3bd72f48364f45474b7e4458309e0ed721453ee0610d459ad8c1f3edcb43",
+      "sourceKeyText": "D",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.138,
+          "id": "pgblazer-2011-november-106:106"
+        },
+        {
+          "similarity": 0.13,
+          "id": "ini-2021-01:12"
+        },
+        {
+          "similarity": 0.12,
+          "id": "ini-2021-02:7"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "pgblazer-2015-may-15:15",
+          "similarity": 0.087
+        },
+        {
+          "id": "pgblazer-2011-november-106:106",
+          "similarity": 0.084
+        },
+        {
+          "id": "ini-2026-may:20",
+          "similarity": 0.079
+        }
+      ]
+    },
+    {
+      "id": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706:11",
+      "source": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706.pdf",
+      "sourceNumber": 11,
+      "sourcePages": [
+        4,
+        5
+      ],
+      "sourceFingerprint": "3259fd4694208aa434c1d1749199b0cc1f0a2e236bf3040881a5f47aa01a10a7",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.172,
+          "id": "ini-2026-may:27"
+        },
+        {
+          "similarity": 0.167,
+          "id": "ini-2021-02:1"
+        },
+        {
+          "similarity": 0.161,
+          "id": "ini-2021-01:30"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aiims-2020-jun:22",
+          "similarity": 0.19
+        },
+        {
+          "id": "ini-2020-01:8",
+          "similarity": 0.131
+        },
+        {
+          "id": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706:3",
+          "similarity": 0.104
+        }
+      ]
+    },
+    {
+      "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:2",
+      "source": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+      "sourceNumber": 2,
+      "sourcePages": [
+        2
+      ],
+      "sourceFingerprint": "560e03f2744b718c00581b07514b430f6bce9bff1816f84b82713f5fc8edf0aa",
+      "sourceKeyText": "D",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.091,
+          "id": "ini-2021-01:23"
+        },
+        {
+          "similarity": 0.079,
+          "id": "inicetmay25-pediatrics:1"
+        },
+        {
+          "similarity": 0.079,
+          "id": "aglasem-68a4b930-b5c8-11ed-a822-0a5e36bc6706:1"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aiims-2005-eo:3",
+          "similarity": 0.086
+        },
+        {
+          "id": "ini-2020-01:4",
+          "similarity": 0.071
+        },
+        {
+          "id": "pgblazer-2015-may-32:32",
+          "similarity": 0.07
+        }
+      ]
+    },
+    {
+      "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:7",
+      "source": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+      "sourceNumber": 7,
+      "sourcePages": [
+        3
+      ],
+      "sourceFingerprint": "fde542de2d1e4b5efa82d928fa4bbb414942b981dfb124511ecbe1d467f0375b",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.2,
+          "id": "ini-2021-02:12"
+        },
+        {
+          "similarity": 0.192,
+          "id": "aiims-2017-nov:9"
+        },
+        {
+          "similarity": 0.188,
+          "id": "aiims-2018-may:18"
+        }
+      ],
+      "duplicateReview": "Existing Rett question asks female predominance; this item asks the inheritance pattern. Different learning fact.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706:2",
+          "similarity": 0.287
+        },
+        {
+          "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:3",
+          "similarity": 0.177
+        },
+        {
+          "id": "inicetmay25-pathology:6",
+          "similarity": 0.146
+        }
+      ]
+    },
+    {
+      "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:8",
+      "source": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+      "sourceNumber": 8,
+      "sourcePages": [
+        3
+      ],
+      "sourceFingerprint": "8460ab70a945852636717b5714f32d66149116d461e49d3801fda6ae10d20c37",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.179,
+          "id": "pgblazer-2012-may-2:2"
+        },
+        {
+          "similarity": 0.148,
+          "id": "pgblazer-2015-may-3:3"
+        },
+        {
+          "similarity": 0.148,
+          "id": "faculty-aiims-2016-may-psychiatry:5"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706:8",
+          "similarity": 0.168
+        },
+        {
+          "id": "ini-2025-01:1",
+          "similarity": 0.136
+        },
+        {
+          "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:1",
+          "similarity": 0.125
+        }
+      ]
+    },
+    {
+      "id": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706:4",
+      "source": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706.pdf",
+      "sourceNumber": 4,
+      "sourcePages": [
+        2,
+        3
+      ],
+      "sourceFingerprint": "8a4a4653482005eee00ffedbbdc3125d987e5169023e203a12aebb6718721073",
+      "sourceKeyText": "B",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.276,
+          "id": "ini-2021-01:30"
+        },
+        {
+          "similarity": 0.241,
+          "id": "ini-2023-02:11"
+        },
+        {
+          "similarity": 0.226,
+          "id": "aiims-2017-nov:23"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:3",
+          "similarity": 0.201
+        },
+        {
+          "id": "inicetmay25-pathology:6",
+          "similarity": 0.166
+        },
+        {
+          "id": "inicetmay25-pathology:5",
+          "similarity": 0.165
+        }
+      ]
+    },
+    {
+      "id": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706:5",
+      "source": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706.pdf",
+      "sourceNumber": 5,
+      "sourcePages": [
+        3
+      ],
+      "sourceFingerprint": "baf2621360f56cd696f903ad52cfe816b151b7af7cad14bcfcb95484dc0499e1",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.172,
+          "id": "inicetmay25-obgyn:6"
+        },
+        {
+          "similarity": 0.167,
+          "id": "ini-2022-01:16"
+        },
+        {
+          "similarity": 0.167,
+          "id": "ini-2021-02:12"
+        }
+      ],
+      "duplicateReview": "The full BPP and modified BPP have different scored components; this item specifically tests the modified profile.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "faculty-ini-2022-may-psm:9",
+          "similarity": 0.109
+        },
+        {
+          "id": "inicetmay25-obgyn:1",
+          "similarity": 0.102
+        },
+        {
+          "id": "aiims-2017-nov:23",
+          "similarity": 0.096
+        }
+      ]
+    },
+    {
+      "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:6",
+      "source": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+      "sourceNumber": 6,
+      "sourcePages": [
+        4
+      ],
+      "sourceFingerprint": "7374e70c2271f50069668c2507887552d7f331e9bc509b3a63af3c64637e839b",
+      "sourceKeyText": "D",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.148,
+          "id": "aiims-2018-nov:4"
+        },
+        {
+          "similarity": 0.143,
+          "id": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408:1"
+        },
+        {
+          "similarity": 0.129,
+          "id": "inicetmay25-psychiatry:8"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "inicetmay25-orthopaedics:7",
+          "similarity": 0.313
+        },
+        {
+          "id": "pgblazer-2015-may-24:24",
+          "similarity": 0.176
+        },
+        {
+          "id": "prepladder-aiims-2020-jun-pharma:6",
+          "similarity": 0.138
+        }
+      ]
+    },
+    {
+      "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:7",
+      "source": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+      "sourceNumber": 7,
+      "sourcePages": [
+        4
+      ],
+      "sourceFingerprint": "2aa7d31d5b42a6d52e8702cc9ef511c33863e867886029d6ea8a5ec1638b3bae",
+      "sourceKeyText": "A",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.156,
+          "id": "aiims-2018-nov:4"
+        },
+        {
+          "similarity": 0.152,
+          "id": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408:1"
+        },
+        {
+          "similarity": 0.147,
+          "id": "ini-2020-01:3"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "inicetmay25-physiology:6",
+          "similarity": 0.162
+        },
+        {
+          "id": "inicetmay25-biochemistry:6",
+          "similarity": 0.123
+        },
+        {
+          "id": "reflex-ini-2024-may:61",
+          "similarity": 0.0
+        }
+      ]
+    },
+    {
+      "id": "aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706:8",
+      "source": "aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706.pdf",
+      "sourceNumber": 8,
+      "sourcePages": [
+        4
+      ],
+      "sourceFingerprint": "a0150de240f97630faa4d600529ee8ee0337aba26e9c76000a22ff9056d32fac",
+      "sourceKeyText": "B",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.083,
+          "id": "aiims-2017-may:5"
+        },
+        {
+          "similarity": 0.083,
+          "id": "aiims-2017-may:10"
+        },
+        {
+          "similarity": 0.08,
+          "id": "ini-2026-may:13"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "ini-2023-01:13",
+          "similarity": 0.146
+        },
+        {
+          "id": "inicetmay25-biochemistry:6",
+          "similarity": 0.139
+        },
+        {
+          "id": "aiims-2017-may:5",
+          "similarity": 0.128
+        }
+      ]
+    },
+    {
+      "id": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706:6",
+      "source": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706.pdf",
+      "sourceNumber": 6,
+      "sourcePages": [
+        4
+      ],
+      "sourceFingerprint": "516c88bbd1b9057fb5940516524e8b30b5444f4eba31763a1dae1ebec1b301e2",
+      "sourceKeyText": "D",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.125,
+          "id": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:18"
+        },
+        {
+          "similarity": 0.115,
+          "id": "aiims-2012:2"
+        },
+        {
+          "similarity": 0.105,
+          "id": "aiims-2018-may:23"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "Original options and order preserved; whitespace and question wording may be clarified.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aiims-2018-nov:4",
+          "similarity": 0.173
+        },
+        {
+          "id": "aiims-2012:3",
+          "similarity": 0.128
+        },
+        {
+          "id": "reflex-ini-2024-may:61",
+          "similarity": 0.0
+        }
+      ]
+    },
+    {
+      "id": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706:7",
+      "source": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706.pdf",
+      "sourceNumber": 7,
+      "sourcePages": [
+        4
+      ],
+      "sourceFingerprint": "e983ea054e4a1d264f361425c5adc5b9d1c201bf232c0710374bbd75c9895af2",
+      "sourceKeyText": "B",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "reviewMethod": "Rendered original question/options and complete publisher key checked; original explanation authored and concept reviewed.",
+      "nearestExisting": [
+        {
+          "similarity": 0.154,
+          "id": "ini-2023-01:13"
+        },
+        {
+          "similarity": 0.133,
+          "id": "ini-2026-may:18"
+        },
+        {
+          "similarity": 0.125,
+          "id": "ini-2022-01:16"
+        }
+      ],
+      "duplicateReview": "Reviewed TF-IDF suggestions against the 357-record baseline, correct-answer concepts and related-keyword matches. Seven exact learning-concept overlaps are held separately.",
+      "transcriptionNotes": "OCR digit spacing repaired against rendered options.",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aiims-2017-nov:10",
+          "similarity": 0.123
+        },
+        {
+          "id": "aiims-2012:3",
+          "similarity": 0.112
+        },
+        {
+          "id": "ini-2026-may:18",
+          "similarity": 0.105
+        }
+      ]
+    }
+  ],
+  "withdrawals": [
+    {
+      "id": "aiims-2005-eo:2",
+      "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity.",
+      "sourcePages": [
+        25
+      ],
+      "beforeRecord": {
+        "id": "aiims-2005-eo:2",
+        "chapterId": "second-year/pharmacology/paper-1/general-pharmacology",
+        "question": "Knowing the half-life of a drug helps determine which of the following?",
+        "options": [
+          "Median lethal dose",
+          "Median effective dose",
+          "Potency of drug",
+          "Frequency of dosing"
+        ],
+        "answerIndex": 3,
+        "sourceAnswer": "D",
+        "explanation": "Elimination half-life helps estimate how rapidly drug concentration falls and informs the dosing interval. It does not by itself establish drug potency, clinical efficacy or toxicity thresholds.",
+        "requiresImage": false,
+        "imageIds": [],
+        "examYear": 2005
+      },
+      "beforeProvenance": {
+        "id": "aiims-2005-eo:2",
+        "exam": "aiims-pg",
+        "collectionYear": 2005,
+        "examSession": null,
+        "sourceUrl": "https://www.educationobserver.com/forum/attachment.php?aid=12982",
+        "sourceSha256": "d09bee435daa91ba62fb617fc28118016e40dd116b0883d974563dc189995153",
+        "sourceNumber": 2,
+        "numberSemantics": "document_or_collection_number_not_authenticated_exam_order",
+        "answerOrigin": "author_checked",
+        "sourceFingerprint": "379d076d15468f302ac2538e594b6243d4d2d635dd42f455c6ad85e46194ef07",
+        "chapterId": "second-year/pharmacology/paper-1/general-pharmacology"
+      }
+    },
+    {
+      "id": "aiims-2005-eo:3",
+      "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity.",
+      "sourcePages": [
+        25
+      ],
+      "beforeRecord": {
+        "id": "aiims-2005-eo:3",
+        "chapterId": "second-year/microbiology/paper-2/genito-urinary-sexually-transmitted-infections",
+        "question": "Which human papillomavirus type is implicated in cervical carcinoma?",
+        "options": [
+          "6",
+          "11",
+          "16",
+          "42"
+        ],
+        "answerIndex": 2,
+        "sourceAnswer": "C",
+        "explanation": "HPV16 is a high-risk oncogenic type associated with cervical cancer. HPV6 and HPV11 are usually low-risk types associated with anogenital warts.",
+        "requiresImage": false,
+        "imageIds": [],
+        "examYear": 2005
+      },
+      "beforeProvenance": {
+        "id": "aiims-2005-eo:3",
+        "exam": "aiims-pg",
+        "collectionYear": 2005,
+        "examSession": null,
+        "sourceUrl": "https://www.educationobserver.com/forum/attachment.php?aid=12982",
+        "sourceSha256": "d09bee435daa91ba62fb617fc28118016e40dd116b0883d974563dc189995153",
+        "sourceNumber": 3,
+        "numberSemantics": "document_or_collection_number_not_authenticated_exam_order",
+        "answerOrigin": "author_checked",
+        "sourceFingerprint": "0c93df2c633e0fe05a0932d7b4995b12cf82217c0849f8ec346d1d0b68ba1c7b",
+        "chapterId": "second-year/microbiology/paper-2/genito-urinary-sexually-transmitted-infections"
+      }
+    },
+    {
+      "id": "aiims-2005-eo:4",
+      "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity.",
+      "sourcePages": [
+        25
+      ],
+      "beforeRecord": {
+        "id": "aiims-2005-eo:4",
+        "chapterId": "third-year/ophthalmology/glaucoma",
+        "question": "The best way to visualise the corneoscleral angle is:",
+        "options": [
+          "Slit lamp microscopy",
+          "Gonioscopy",
+          "Ophthalmoscope",
+          "Keratometer"
+        ],
+        "answerIndex": 1,
+        "sourceAnswer": "B",
+        "explanation": "Gonioscopy uses a contact lens to overcome total internal reflection and visualise the anterior chamber angle. It helps distinguish open-angle from angle-closure mechanisms.",
+        "requiresImage": false,
+        "imageIds": [],
+        "examYear": 2005
+      },
+      "beforeProvenance": {
+        "id": "aiims-2005-eo:4",
+        "exam": "aiims-pg",
+        "collectionYear": 2005,
+        "examSession": null,
+        "sourceUrl": "https://www.educationobserver.com/forum/attachment.php?aid=12982",
+        "sourceSha256": "d09bee435daa91ba62fb617fc28118016e40dd116b0883d974563dc189995153",
+        "sourceNumber": 4,
+        "numberSemantics": "document_or_collection_number_not_authenticated_exam_order",
+        "answerOrigin": "author_checked",
+        "sourceFingerprint": "754f30f946338af07a6fada4f5c6df8897d235a95ed77eba709a95754be92e13",
+        "chapterId": "third-year/ophthalmology/glaucoma"
+      }
+    },
+    {
+      "id": "aiims-2005-eo:7",
+      "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity.",
+      "sourcePages": [
+        25
+      ],
+      "beforeRecord": {
+        "id": "aiims-2005-eo:7",
+        "chapterId": "final-year/general-surgery/abdominal-wall-hernia",
+        "question": "What is the content of Littre's hernia?",
+        "options": [
+          "Sigmoid colon",
+          "Urinary bladder",
+          "Meckel diverticulum",
+          "Ileus"
+        ],
+        "answerIndex": 2,
+        "sourceAnswer": "C",
+        "explanation": "A Littre hernia contains a Meckel diverticulum within the hernia sac. A Richter hernia instead traps only part of the bowel circumference.",
+        "requiresImage": false,
+        "imageIds": [],
+        "examYear": 2005
+      },
+      "beforeProvenance": {
+        "id": "aiims-2005-eo:7",
+        "exam": "aiims-pg",
+        "collectionYear": 2005,
+        "examSession": null,
+        "sourceUrl": "https://www.educationobserver.com/forum/attachment.php?aid=12982",
+        "sourceSha256": "d09bee435daa91ba62fb617fc28118016e40dd116b0883d974563dc189995153",
+        "sourceNumber": 7,
+        "numberSemantics": "document_or_collection_number_not_authenticated_exam_order",
+        "answerOrigin": "author_checked",
+        "sourceFingerprint": "684aff4276a7c929455dee0389c23c72a4ad7017890de18e71228c5b69d012ba",
+        "chapterId": "final-year/general-surgery/abdominal-wall-hernia"
+      }
+    },
+    {
+      "id": "aiims-2005-eo:5",
+      "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity.",
+      "sourcePages": [
+        25
+      ],
+      "beforeRecord": {
+        "id": "aiims-2005-eo:5",
+        "chapterId": "second-year/pharmacology/paper-2/anti-microbial-drugs",
+        "question": "Mebendazole treats all of the following except:",
+        "options": [
+          "Intestinal amoebiasis",
+          "Trichuriasis",
+          "Ancylostoma infection",
+          "Roundworm infection"
+        ],
+        "answerIndex": 0,
+        "sourceAnswer": "A",
+        "explanation": "Mebendazole interferes with helminth microtubules and glucose utilisation. It is used against several intestinal nematodes, whereas amoebiasis requires an antiamoebic regimen.",
+        "requiresImage": false,
+        "imageIds": [],
+        "examYear": 2005
+      },
+      "beforeProvenance": {
+        "id": "aiims-2005-eo:5",
+        "exam": "aiims-pg",
+        "collectionYear": 2005,
+        "examSession": null,
+        "sourceUrl": "https://www.educationobserver.com/forum/attachment.php?aid=12982",
+        "sourceSha256": "d09bee435daa91ba62fb617fc28118016e40dd116b0883d974563dc189995153",
+        "sourceNumber": 5,
+        "numberSemantics": "document_or_collection_number_not_authenticated_exam_order",
+        "answerOrigin": "author_checked",
+        "sourceFingerprint": "b93877b5478ec3817f5f89e0bee99e71a072945dc2f9fd81decd07d4cfe65edf",
+        "chapterId": "second-year/pharmacology/paper-2/anti-microbial-drugs"
+      }
+    },
+    {
+      "id": "aiims-2005-eo:6",
+      "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity.",
+      "sourcePages": [
+        25
+      ],
+      "beforeRecord": {
+        "id": "aiims-2005-eo:6",
+        "chapterId": "second-year/microbiology/paper-2/parasitology",
+        "question": "Which organism causes visceral larva migrans?",
+        "options": [
+          "Toxocara cati",
+          "Ancylostoma duodenale",
+          "Loa loa",
+          "Trichuris trichiura"
+        ],
+        "answerIndex": 0,
+        "sourceAnswer": "A",
+        "explanation": "Toxocara larvae can migrate through human tissues after ingestion of infective eggs. Humans are accidental hosts and do not complete the normal intestinal adult-worm cycle.",
+        "requiresImage": false,
+        "imageIds": [],
+        "examYear": 2005
+      },
+      "beforeProvenance": {
+        "id": "aiims-2005-eo:6",
+        "exam": "aiims-pg",
+        "collectionYear": 2005,
+        "examSession": null,
+        "sourceUrl": "https://www.educationobserver.com/forum/attachment.php?aid=12982",
+        "sourceSha256": "d09bee435daa91ba62fb617fc28118016e40dd116b0883d974563dc189995153",
+        "sourceNumber": 6,
+        "numberSemantics": "document_or_collection_number_not_authenticated_exam_order",
+        "answerOrigin": "author_checked",
+        "sourceFingerprint": "e36bb54e2ed8ca55b1d7dfe3347523981ff6137e6e9dfe6c96fb00a2b85d4db6",
+        "chapterId": "second-year/microbiology/paper-2/parasitology"
+      }
+    },
+    {
+      "id": "aiims-2005-eo:14",
+      "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity.",
+      "sourcePages": [
+        25
+      ],
+      "beforeRecord": {
+        "id": "aiims-2005-eo:14",
+        "chapterId": "first-year/biochemistry/paper-2/protein-metabolism",
+        "question": "The limiting amino acid in wheat is:",
+        "options": [
+          "Lysine",
+          "Threonine",
+          "Tryptophan",
+          "Cysteine"
+        ],
+        "answerIndex": 0,
+        "sourceAnswer": "A",
+        "explanation": "Wheat protein is relatively deficient in lysine compared with reference amino-acid requirements. Combining cereal and pulse proteins can improve the overall amino-acid pattern.",
+        "requiresImage": false,
+        "imageIds": [],
+        "examYear": 2005
+      },
+      "beforeProvenance": {
+        "id": "aiims-2005-eo:14",
+        "exam": "aiims-pg",
+        "collectionYear": 2005,
+        "examSession": null,
+        "sourceUrl": "https://www.educationobserver.com/forum/attachment.php?aid=12982",
+        "sourceSha256": "d09bee435daa91ba62fb617fc28118016e40dd116b0883d974563dc189995153",
+        "sourceNumber": 14,
+        "numberSemantics": "document_or_collection_number_not_authenticated_exam_order",
+        "answerOrigin": "author_checked",
+        "sourceFingerprint": "b5d7e31ef7caad3f4785356b0bf7eb8c3c908415f7f5d790a34c4e9ee2b7a767",
+        "chapterId": "first-year/biochemistry/paper-2/protein-metabolism"
+      }
+    },
+    {
+      "id": "aiims-2005-eo:20",
+      "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity.",
+      "sourcePages": [
+        25
+      ],
+      "beforeRecord": {
+        "id": "aiims-2005-eo:20",
+        "chapterId": "final-year/general-surgery/upper-lower-limb",
+        "question": "Osteonecrosis of the lunate is called:",
+        "options": [
+          "Freiberg disease",
+          "Kienbock disease",
+          "Perthes disease",
+          "Kohler disease"
+        ],
+        "answerIndex": 1,
+        "sourceAnswer": "B",
+        "explanation": "Kienbock disease is osteonecrosis of the lunate. The other eponyms refer to different bones, including the femoral head in Perthes disease.",
+        "requiresImage": false,
+        "imageIds": [],
+        "examYear": 2005
+      },
+      "beforeProvenance": {
+        "id": "aiims-2005-eo:20",
+        "exam": "aiims-pg",
+        "collectionYear": 2005,
+        "examSession": null,
+        "sourceUrl": "https://www.educationobserver.com/forum/attachment.php?aid=12982",
+        "sourceSha256": "d09bee435daa91ba62fb617fc28118016e40dd116b0883d974563dc189995153",
+        "sourceNumber": 20,
+        "numberSemantics": "document_or_collection_number_not_authenticated_exam_order",
+        "answerOrigin": "author_checked",
+        "sourceFingerprint": "6508d0b6f38b3d0ffd50400a4cac85982c5e28e6eacc4f8cf5cf8d3cb4f555cc",
+        "chapterId": "final-year/general-surgery/upper-lower-limb"
+      }
+    }
+  ],
+  "sourceWordsAfterSelection": {
+    "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf": 151,
+    "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf": 125,
+    "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf": 140,
+    "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf": 184,
+    "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf": 109,
+    "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf": 114,
+    "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706.pdf": 73,
+    "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf": 151,
+    "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf": 142,
+    "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf": 43,
+    "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf": 101,
+    "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706.pdf": 54,
+    "aglasem-5cd670f8-c103-11ed-97fb-0a5e36bc6706.pdf": 52,
+    "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf": 108,
+    "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706.pdf": 78,
+    "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf": 74,
+    "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706.pdf": 86,
+    "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf": 81,
+    "aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706.pdf": 28,
+    "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706.pdf": 97,
+    "aiims-2000-eo.pdf": 73,
+    "aiims-2001-may.pdf": 126,
+    "aiims-2010-eo.pdf": 113
+  },
+  "privateExtraction": {
+    "candidateRows": 709,
+    "uniqueSourceIdentities": 705,
+    "sourceDocuments": 36,
+    "rowsWithoutParserFlags": 560,
+    "approvedByExtraction": 0
+  },
+  "conceptReferences": [
+    "https://www.ncbi.nlm.nih.gov/books/NBK537271/",
+    "https://www.ncbi.nlm.nih.gov/books/NBK554593/",
+    "https://www.ncbi.nlm.nih.gov/books/NBK470185/",
+    "https://www.ncbi.nlm.nih.gov/books/NBK557551/",
+    "https://www.ncbi.nlm.nih.gov/books/NBK7715/",
+    "https://pubmed.ncbi.nlm.nih.gov/38317296/",
+    "https://pubmed.ncbi.nlm.nih.gov/28417163/",
+    "https://www.who.int/tools/elena/interventions/donormilk-infants",
+    "https://www.cancer.gov/publications/dictionaries/cancer-terms/def/aids-defining-cancer"
+  ],
+  "limitations": [
+    "500 is a target, not a completed import count.",
+    "100 hash matches confirm source bytes, not clinical correctness or exam attribution.",
+    "No raw candidate collection, publisher explanation or image is distributed.",
+    "All new selected answers have single publisher keys; no editorial key is silently substituted."
+  ],
+  "semanticDuplicatesHeld": [
+    {
+      "id": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706:16",
+      "duplicateOf": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:18"
+    },
+    {
+      "id": "aglasem-5cd670f8-c103-11ed-97fb-0a5e36bc6706:18",
+      "duplicateOf": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706:2"
+    },
+    {
+      "id": "aglasem-68a4b930-b5c8-11ed-a822-0a5e36bc6706:7",
+      "duplicateOf": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:10"
+    },
+    {
+      "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:5",
+      "duplicateOf": "aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706:1"
+    },
+    {
+      "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:9",
+      "duplicateOf": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:8"
+    },
+    {
+      "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:16",
+      "duplicateOf": "aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706:5"
+    },
+    {
+      "id": "aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706:4",
+      "duplicateOf": "ini-2022-01:16"
+    }
+  ]
+}
