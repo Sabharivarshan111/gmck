@@ -2576,3 +2576,16 @@ Do not promote the five new pharmacology holds, manufacture missing options, imp
 **NEXT:**Continue eligible source review without a fixed quota. Do not count old444remaining or500target as active. Preserve all holds, source hashes and complete statements/options. No merge/Play/device claim.
 
 **FINAL VERIFIED:**Assembled production web and AndroidJS builds pass. Root/mobile TypeScript and quiet mobile ESLint pass; anatomy dossier guard retains103/108 with95%floor. Actual browser360/390/430 passes new DLCO keyB/year2010 and bland-cholestasis keyD/May2025, all old reader/key/year/bookmark checks and service-worker offline reload. New screenshots visually inspected. All413 old complete records and NEET2078/year files exact-preserved. Search includes explanations, so new browser selectors identify the exact intended question text rather than assuming the first matching result. Publication goes to PR122 with exact tested tree; no main merge/live/device claim.
+
+
+## 2026-10-23 — Continued open-ended review;20 more questions
+
+**DONE:**141AIIMS/308INI=449. Added13November2011 AIIMS article selections and7November2022 INI medicine selections. All429 preceding complete records and NEET2078/year bytes exact-preserved. Thirteen new pinned retrieved-text article receipts are not thirteen new sittings. Selected existing25page medicinePDF reacquired with exact SHA256; pages2,4,5,7,9,11,19 rendered/inspected including key continuation. Nineteen supplied keys; one complete no-key CAH recall has a visibly labelled editorial hydrocortisone answer supported by Endocrine Society. Original options/order retained; stems paraphrased and explanations authored. Twenty-three new holds; source words max198/200. Reports docs/AIIMS_INI_CONTINUED_REVIEW2_20261023.md and scripts/aiims-ini-continued-review2-20261023.json.
+
+**VERIFIED:**11extension+5extractor tests,449source/key/chapter/offline checks,2078year joins, root/mobile TypeScript, quiet mobile ESLint, assembled production web and AndroidJS bundle pass. Digestive103/108original95%floor and39path guard pass. Actual browser360/390/430 passes prior reader/bookmark/year/answer checks and service-worker offline reload; new CAHeditorial keyA and INI2022Novemberstatin keyA pass after offline reload. Two new answer screenshots inspected. Runtime314839bytes/78465gzip; budgets unchanged.
+
+**HALF-DONE:**This remains a partial historical recall bank; expansion has no fixed quota. Exact publication/CI receipt goes in PR122 to avoid circular committed-head metadata. No main merge/live/signed APK/device claim.
+
+**NEXT:**Continue other eligible source articles and PDF candidates; preserve all449 records and holds. The old500/509target and444remaining arithmetic are superseded.
+
+**DO NOT:**Rerun the private apply.py after publication; it intentionally refuses existing additions. Do not count duplicate left-neglect/sestamibi/reticulocyte/losartan/tetany items again. Pinned article hashes are retrieved text, not originalHTML. Workspace maintenance removed earlier scratch inputs; this pass restored repository from991e1c568f396f1545665ebc7aa2d4182c0d6d69. BrowserCDN downloads returned invalid archives; temporary npm Sparticuz Chromium binary ran the same test successfully, without changing repository dependencies or assertions.

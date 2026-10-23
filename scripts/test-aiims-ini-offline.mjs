@@ -18,7 +18,7 @@ assert.equal(missingFigureReference.test('Identify the marked structure'),true);
 const fetchBefore = globalThis.fetch;
 globalThis.fetch=()=>{throw Error('Offline bank attempted networking');};
 try {
-  for (const [file,count] of [['aiimsPgBank.json',128],['iniCetBank.json',301]]) {
+  for (const [file,count] of [['aiimsPgBank.json',141],['iniCetBank.json',308]]) {
     const bank=read('mobile/src/lib/'+file);validateOfflineBank(bank);
     const reader=createOfflineReader(bank);assert.equal(reader.total,count);
     assert.equal(fs.statSync('mobile/src/lib/'+file).size<payloadBudget.maxBankBytes,true);
@@ -52,8 +52,8 @@ try {
   const repaired=ini.records.find(r=>r.id==='inicetmay25-psm:4');
   for(const statement of ['1. Conduct data analysis','2. Selecting population','3. Setting research question','4. Setting research objective'])assert.ok(repaired.question.includes(statement));
   assert.equal(repaired.sourceAnswer,'C');
-  assert.equal(receipts.totalQuestions,429);
-  assert.equal(receipts.questionProvenance.length,429);
+  assert.equal(receipts.totalQuestions,449);
+  assert.equal(receipts.questionProvenance.length,449);
   const fresh=read('scripts/aiims-ini-missing-papers-import-20261022.json');
   assert.equal(fresh.newQuestions,52);
   for(const review of fresh.questionReviews){
@@ -79,7 +79,7 @@ try {
   for(const duplicate of scaleAudit.semanticDuplicatesHeld) assert.equal(reviewed.some(r=>r.id===duplicate.id),false);
   const openReview=read('scripts/aiims-ini-open-review-20261023.json');
   assert.equal(openReview.questionReviews.length,16);
-  assert.equal(openReview.baselineTotal+openReview.newQuestions,receipts.totalQuestions);
+  assert.equal(openReview.baselineTotal+openReview.newQuestions,openReview.resultTotal);
   for(const audit of openReview.questionReviews){
     const row=bankPaths.flatMap(p=>read(p).records).find(r=>r.id===audit.id);assert.ok(row);
     assert.equal(row.sourceAnswer,audit.suppliedKey);
@@ -94,6 +94,23 @@ try {
   assert.ok(ini.records.find(r=>r.id==='inicetmay25-medicine:7').explanation.includes('together with clinical assessment'));
   assert.ok(ini.records.find(r=>r.id==='inicetmay25-forensic-medicine:9').explanation.includes('prescribed eligible categories'));
   assert.ok(Object.values(openReview.sourceWordsAfterSelection).every(n=>n<=200));
+  const continued=read('scripts/aiims-ini-continued-review2-20261023.json');
+  assert.equal(continued.baselineTotal,openReview.resultTotal);
+  assert.equal(continued.resultTotal,receipts.totalQuestions);
+  assert.equal(continued.baselineTotal+continued.newQuestions,continued.resultTotal);
+  for(const audit of continued.questionReviews){
+    const row=bankPaths.flatMap(p=>read(p).records).find(r=>r.id===audit.id);assert.ok(row);
+    assert.equal(row.sourceAnswer,audit.reviewedAnswer);
+    assert.equal(row.examYear,audit.examYear);assert.equal(row.examSession,audit.examSession);
+    const receipt=receipts.questionProvenance.find(r=>r.id===audit.id);
+    assert.equal(receipt.answerOrigin,audit.answerOrigin);
+    if(audit.suppliedKey===null){
+      assert.equal(audit.answerOrigin,'editorial_key_primary_reference_checked');
+      assert.ok(row.explanation.startsWith('Editorial answer: the recall source provides no answer key.'));
+      assert.ok(audit.conceptReference.startsWith('https://www.endocrine.org/'));
+    } else assert.equal(row.sourceAnswer,audit.suppliedKey);
+  }
+  assert.ok(Object.values(continued.sourceWordsAfterSelection).every(n=>n<=200));
   const heldSource=read('scripts/aiims-ini-sources.json').find(s=>s.file==='aiims-2005-eo.pdf');
   assert.ok(heldSource.identityStatus.startsWith('held_'));
   for(const old of scaleAudit.withdrawals){
@@ -155,4 +172,4 @@ try {
   const neet=read('mobile/src/lib/neetPgBank.json');assert.equal(neet.records.length,2078);
   assert.equal(neet.records.some(r=>used.has(r.id)),false);
 } finally {globalThis.fetch=fetchBefore;}
-console.log('PASS: 429 source-fingerprinted recall items, original explanations, real syllabus paths, offline search/filter/answers, mutation isolation and unchanged 2,078-item NEET bank.');
+console.log('PASS: 449 source-fingerprinted recall items, original explanations, real syllabus paths, offline search/filter/answers, mutation isolation and unchanged 2,078-item NEET bank.');

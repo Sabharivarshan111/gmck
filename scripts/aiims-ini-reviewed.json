@@ -3796,5 +3796,185 @@
     "chapterId": "first-year/physiology/paper-2/central-nervous-system",
     "answer": "A",
     "explanation": "Most circulating plasma proteins cross the intact blood-brain barrier poorly compared with gases, water and many lipid-soluble molecules. This is a general permeability distinction; selected proteins have specific transport mechanisms."
+  },
+  {
+    "id": "pgblazer-2011-november-6:6",
+    "source": "pgblazer-2011-november-6-retrieved.txt",
+    "sourceFingerprint": "ccf8bda48cdb07452271c6d93f3ad9aa78abb297c8c10ba52e4d2530b6123f09",
+    "answer": "C",
+    "chapterId": "second-year/pharmacology/paper-2/hormones",
+    "explanation": "Methimazole inhibits thyroid peroxidase-dependent hormone synthesis. Unlike propylthiouracil, it does not have a clinically useful inhibitory effect on peripheral T4-to-T3 conversion. Propranolol at sufficient doses and amiodarone can also reduce this conversion.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-10:10",
+    "source": "pgblazer-2011-november-10-retrieved.txt",
+    "sourceFingerprint": "47e10d882aed4ae3583f7f5508e48537aa841c8a72a59d0c5653b39c5adc955c",
+    "answer": "D",
+    "chapterId": "final-year/obstetrics-gynaecology/disorders-of-menstruation",
+    "explanation": "Complete androgen insensitivity in a 46,XY individual causes resistance to androgen action. Testicular anti-Mullerian hormone prevents uterine development, while aromatisation supports breast development. Sparse sexual hair and inguinal testes distinguish it from Mullerian agenesis.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-12:12",
+    "source": "pgblazer-2011-november-12-retrieved.txt",
+    "sourceFingerprint": "f180f54f092d0d98b8a965b5d1f65aeb59d9dfcf079efa1174ebeb41297aa03d",
+    "answer": "A",
+    "chapterId": "first-year/biochemistry/paper-2/molecular-biology",
+    "explanation": "RNA polymerase makes RNA during transcription. Translation uses ribosomes and peptidyl-transferase activity, with charged tRNAs supplying amino acids. The source option aminoacyl transferase refers to the aminoacyl-tRNA charging component; it is not RNA polymerase.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-36:36",
+    "source": "pgblazer-2011-november-36-retrieved.txt",
+    "sourceFingerprint": "7091a606cce604bac674733017fba3b61155cd35a0141f8937253bbff762fc43",
+    "answer": "D",
+    "chapterId": "third-year/ophthalmology/diseases-of-uveal-tract",
+    "explanation": "LUMINATE investigated voclosporin, a calcineurin inhibitor, as a steroid-sparing treatment for noninfectious uveitis. This question identifies a historical trial drug; it does not imply that the trial established a current approved indication.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-51:51",
+    "source": "pgblazer-2011-november-51-retrieved.txt",
+    "sourceFingerprint": "935a2e34ec67a046fbac9c52a7ac4a896e87b6d0c7a982b8e34656b4b8ad85cf",
+    "answer": "C",
+    "chapterId": "third-year/ophthalmology/ocular-motility",
+    "explanation": "Third-nerve palsy can produce ptosis, diplopia and a laterally deviated eye from unopposed lateral rectus action. Parasympathetic involvement causes pupillary dilation; pupillary constriction is not its characteristic effect. Some third-nerve palsies spare the pupil.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-54:54",
+    "source": "pgblazer-2011-november-54-retrieved.txt",
+    "sourceFingerprint": "4d57c2b06abce31aef5d4696570e61dd2c86d627f841c29ac3a63ad560772462",
+    "answer": "B",
+    "chapterId": "final-year/general-surgery/esophagus-stomach",
+    "explanation": "A contrast swallow outlines the pharyngoesophageal pouch and its relationship to the upper oesophageal sphincter. Endoscopy can evaluate associated disease, but unrecognised entry into the pouch risks perforation.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-62:62",
+    "source": "pgblazer-2011-november-62-retrieved.txt",
+    "sourceFingerprint": "3ae7024ec6a72322e24664a5d1accd486036a94ed4153a1456821872c1ade1cd",
+    "answer": "A",
+    "chapterId": "final-year/general-surgery/anaesthesia",
+    "explanation": "Cooling reduces cerebral metabolism and slows or suppresses the EEG; sufficiently deep hypothermia can produce electrocerebral silence. Early hypoxia may initially cause excitation, whereas prolonged or severe hypoxia can also suppress the EEG.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-67:67",
+    "source": "pgblazer-2011-november-67-retrieved.txt",
+    "sourceFingerprint": "92d9aa6e478941b4f6c30551b98ea441c038d43b87ead9bf56bcdbf64166ab9c",
+    "answer": "B",
+    "chapterId": "final-year/paediatrics/nephrology",
+    "explanation": "NPHS2 encodes podocin, a podocyte slit-diaphragm-associated protein. Biallelic pathogenic variants can cause autosomal recessive steroid-resistant nephrotic syndrome, often with focal segmental glomerulosclerosis. NPHS2 is one of several causes; it does not explain every steroid-resistant case.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-74:74",
+    "source": "pgblazer-2011-november-74-retrieved.txt",
+    "sourceFingerprint": "a6f87f017beaad4b46a72d768c8a5421e92a2566e977955b9e75b9d7c0067bec",
+    "answer": "B",
+    "chapterId": "final-year/general-medicine/nephrology-and-neurology",
+    "explanation": "Interferon beta preparations are disease-modifying treatments for relapsing forms of multiple sclerosis. They reduce inflammatory disease activity; this is distinct from corticosteroid treatment of an acute relapse.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-76:76",
+    "source": "pgblazer-2011-november-76-retrieved.txt",
+    "sourceFingerprint": "892830bf88b0ec471a7d01ce1690715036ed551b19808bb7dcef2ff22f35106d",
+    "answer": "B",
+    "chapterId": "first-year/anatomy/paper-2/brain-and-cranial-nerves",
+    "explanation": "Below a spinal hemisection, corticospinal and dorsal-column deficits are mainly ipsilateral. Pain and temperature loss is contralateral, usually beginning a little below the lesion, because spinothalamic fibres cross within the cord. An ipsilateral extensor plantar response can emerge after spinal shock resolves.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-81:81",
+    "source": "pgblazer-2011-november-81-retrieved.txt",
+    "sourceFingerprint": "840009a116abf61a5bcdc8db76b954d1e248c7c2eded90fa62c3688043308b02",
+    "answer": "A",
+    "chapterId": "final-year/paediatrics/endocrine-and-metabolic-disorders",
+    "explanation": "Editorial answer: the recall source provides no answer key. Hydrocortisone is preferred for maintenance treatment in growing children with classic congenital adrenal hyperplasia. Newborn and early-infant regimens also require assessment for fludrocortisone and sodium supplementation; potent long-acting glucocorticoids are avoided for routine paediatric maintenance.",
+    "answerOrigin": "editorial_key_primary_reference_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-86:86",
+    "source": "pgblazer-2011-november-86-retrieved.txt",
+    "sourceFingerprint": "4ce38cf33aeb98cb5581686ffcb6caf517d0825453752617c0fdf169e84c6374",
+    "answer": "B",
+    "chapterId": "final-year/general-medicine/nephrology-and-neurology",
+    "explanation": "Reflux-related nephron loss can produce compensatory hyperfiltration and secondary focal segmental glomerulosclerosis. This glomerular scarring contributes to proteinuria and progressive renal impairment.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "pgblazer-2011-november-89:89",
+    "source": "pgblazer-2011-november-89-retrieved.txt",
+    "sourceFingerprint": "6803552453b1ae2ce2300f19f45bc4d40fb99461cb763666f9c32dab2910b5f0",
+    "answer": "C",
+    "chapterId": "final-year/general-surgery/anaesthesia",
+    "explanation": "Xenon has a low blood-gas partition coefficient, allowing alveolar and brain partial pressures to change rapidly. Induction and emergence are consequently rapid, so slow induction with slow recovery is the incorrect statement.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:11",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "sourceFingerprint": "79b488e34a083c0fc789ffb2fa6c056ab6d74b9dd118fb6ead226f0f5d300b1f",
+    "answer": "A",
+    "chapterId": "final-year/general-medicine/cardiology",
+    "explanation": "Established coronary disease calls for a high-intensity statin when tolerated. Atorvastatin 80 mg is the high-intensity choice here; the other listed statin doses are moderate intensity. Subsequent LDL response and tolerance guide any additional lipid-lowering treatment.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:14",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "sourceFingerprint": "3b432a776d48481b90c319268d5bda5b0277dd3c54b8dd653988f8442e111a9a",
+    "answer": "C",
+    "chapterId": "second-year/pharmacology/paper-1/cardiovascular-system",
+    "explanation": "Losartan blocks angiotensin II signalling and lowers aldosterone, which can raise potassium. Clinically significant hyperkalaemia or renal deterioration warrants prompt assessment and may require withholding therapy. Chronic kidney disease alone is not an automatic reason to stop an otherwise indicated ARB.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:23",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "sourceFingerprint": "ffc545a43334fbc3773c6418883f870727048be182a7bc11af0c9bdf2e4e6334",
+    "answer": "B",
+    "chapterId": "first-year/physiology/paper-1/endocrine-physiology",
+    "explanation": "Vitamin D excess usually raises serum calcium, rather than producing the hypocalcaemia associated with tetany. Acute pancreatitis can lower calcium, and magnesium depletion can impair parathyroid hormone secretion or action.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:29",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "sourceFingerprint": "927f8c5dea6d08a5e67685cd3e85687a2be349744f0b8ace3826fa9eb709ac2f",
+    "answer": "C",
+    "chapterId": "final-year/general-medicine/gastro-and-hepatology",
+    "explanation": "A urea breath test detects persistent active H. pylori infection. Confirm eradication at least four weeks after antibiotics, with PPIs or PCABs withheld for two weeks and bismuth for four weeks. Serology can remain positive after cure and is unsuitable for this purpose.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:30",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "sourceFingerprint": "211a8d6cd7b87ee71ad6fb1adade7c9c4a18d84fb9a34973d315db56b077d1d6",
+    "answer": "A",
+    "chapterId": "second-year/pathology/paper-1/red-blood-cells",
+    "explanation": "Using the conventional normal haemoglobin of 15 g/dL, the correction is 9% multiplied by 5/15, giving 3%. This is a corrected percentage, not a reticulocyte production index; the latter also adjusts for prolonged reticulocyte maturation in severe anaemia.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:36",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "sourceFingerprint": "fd92bdda72d5f8f64c68bc8f41870c438c77736c1be86173589fe5a430a15c7f",
+    "answer": "B",
+    "chapterId": "second-year/microbiology/paper-2/infections",
+    "explanation": "EBV envelope glycoprotein gp350 binds complement receptor 2, also called CD21, on B lymphocytes. Other molecules participate in fusion and entry; CD21 is the attachment receptor tested here.",
+    "answerOrigin": "publisher_key_author_checked"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:67",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "sourceFingerprint": "795bc5284d4969ae90162583726b16dbc58555c94cf7f44b141f3990196ccd6e",
+    "answer": "A",
+    "chapterId": "final-year/general-medicine/neuro-and-stroke",
+    "explanation": "A syrinx can disrupt crossing spinothalamic fibres near the central canal while initially sparing dorsal-column pathways. This produces dissociated sensory loss, with pain and temperature affected more than vibration, position sense and discriminative touch.",
+    "answerOrigin": "publisher_key_author_checked"
   }
 ]

@@ -1,0 +1,1080 @@
+{
+  "date": "2026-10-23",
+  "scope": "Open-ended additional source review; no fixed500 target.",
+  "baselineTotal": 429,
+  "newQuestions": 20,
+  "resultTotal": 449,
+  "examCounts": {
+    "aiims-pg": 141,
+    "ini-cet": 308
+  },
+  "newSourceDocuments": 13,
+  "sourceAcquisition": [
+    {
+      "file": "pgblazer-2011-november-6-retrieved.txt",
+      "url": "https://pgblazer.com/aiims-november-2011-mcq-6/",
+      "sha256": "22cde3be920667ec0db386b2aade7a8f0df711c3c73e231ae88a5de0baceeb5c",
+      "bytes": 379,
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "November",
+      "required": true,
+      "pinBytes": true,
+      "acquisitionMethod": "web_tool_publisher_text_snapshot",
+      "acquisitionNote": "Direct HTML returned 406. This hash pins retrieved publisher text, not original HTML bytes. No publisher explanations are distributed."
+    },
+    {
+      "file": "pgblazer-2011-november-10-retrieved.txt",
+      "url": "https://pgblazer.com/aiims-november-2011-mcq-10/",
+      "sha256": "81d22221f64fc354061013631d96edc05c982f6f0c484c8d6e56b362495d00f1",
+      "bytes": 613,
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "November",
+      "required": true,
+      "pinBytes": true,
+      "acquisitionMethod": "web_tool_publisher_text_snapshot",
+      "acquisitionNote": "Direct HTML returned 406. This hash pins retrieved publisher text, not original HTML bytes. No publisher explanations are distributed."
+    },
+    {
+      "file": "pgblazer-2011-november-12-retrieved.txt",
+      "url": "https://pgblazer.com/aiims-november-2011-mcq-12/",
+      "sha256": "373284b50c2a828598301b5c39bc825a3ef869b1b54770d871dfdfe777b4d7ce",
+      "bytes": 327,
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "November",
+      "required": true,
+      "pinBytes": true,
+      "acquisitionMethod": "web_tool_publisher_text_snapshot",
+      "acquisitionNote": "Direct HTML returned 406. This hash pins retrieved publisher text, not original HTML bytes. No publisher explanations are distributed."
+    },
+    {
+      "file": "pgblazer-2011-november-36-retrieved.txt",
+      "url": "https://pgblazer.com/aiims-november-2011-mcq-36/",
+      "sha256": "4301a65c8b1597b356e860033417a0f308e2edf64711de0e8e573d3ad5dfb49e",
+      "bytes": 1182,
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "November",
+      "required": true,
+      "pinBytes": true,
+      "acquisitionMethod": "web_tool_publisher_text_snapshot",
+      "acquisitionNote": "Direct HTML returned 406. This hash pins retrieved publisher text, not original HTML bytes. No publisher explanations are distributed."
+    },
+    {
+      "file": "pgblazer-2011-november-51-retrieved.txt",
+      "url": "https://pgblazer.com/aiims-november-2011-mcq-51/",
+      "sha256": "50e4b380ff09c60a0d061f4f153b00f18ee79f79dcddcc18c25a60416251cb68",
+      "bytes": 297,
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "November",
+      "required": true,
+      "pinBytes": true,
+      "acquisitionMethod": "web_tool_publisher_text_snapshot",
+      "acquisitionNote": "Direct HTML returned 406. This hash pins retrieved publisher text, not original HTML bytes. No publisher explanations are distributed."
+    },
+    {
+      "file": "pgblazer-2011-november-54-retrieved.txt",
+      "url": "https://pgblazer.com/aiims-november-2011-mcq-54/",
+      "sha256": "8a637a5ad5909d006746a9c94001daacf3888739a3b3e28f1f3ceb09bd988aa4",
+      "bytes": 417,
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "November",
+      "required": true,
+      "pinBytes": true,
+      "acquisitionMethod": "web_tool_publisher_text_snapshot",
+      "acquisitionNote": "Direct HTML returned 406. This hash pins retrieved publisher text, not original HTML bytes. No publisher explanations are distributed."
+    },
+    {
+      "file": "pgblazer-2011-november-62-retrieved.txt",
+      "url": "https://pgblazer.com/aiims-november-2011-mcq-62/",
+      "sha256": "25c832d2c9f26c5533cbcf67d47d1789e45ca1f5f2fbb6b0f597caaadf5156d1",
+      "bytes": 308,
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "November",
+      "required": true,
+      "pinBytes": true,
+      "acquisitionMethod": "web_tool_publisher_text_snapshot",
+      "acquisitionNote": "Direct HTML returned 406. This hash pins retrieved publisher text, not original HTML bytes. No publisher explanations are distributed."
+    },
+    {
+      "file": "pgblazer-2011-november-67-retrieved.txt",
+      "url": "https://pgblazer.com/aiims-november-2011-mcq-67/",
+      "sha256": "5bc14764c584aec943846eacfb8e49cbdc00ff1a1be25a29683728f1b8694d2a",
+      "bytes": 1430,
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "November",
+      "required": true,
+      "pinBytes": true,
+      "acquisitionMethod": "web_tool_publisher_text_snapshot",
+      "acquisitionNote": "Direct HTML returned 406. This hash pins retrieved publisher text, not original HTML bytes. No publisher explanations are distributed."
+    },
+    {
+      "file": "pgblazer-2011-november-74-retrieved.txt",
+      "url": "https://pgblazer.com/aiims-november-2011-mcq-74/",
+      "sha256": "68cf75a207fb8e48a2a08aa9cf0ab86d5848639779119dc1fa3037cd27ffd019",
+      "bytes": 316,
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "November",
+      "required": true,
+      "pinBytes": true,
+      "acquisitionMethod": "web_tool_publisher_text_snapshot",
+      "acquisitionNote": "Direct HTML returned 406. This hash pins retrieved publisher text, not original HTML bytes. No publisher explanations are distributed."
+    },
+    {
+      "file": "pgblazer-2011-november-76-retrieved.txt",
+      "url": "https://pgblazer.com/aiims-november-2011-mcq-76/",
+      "sha256": "fcb97a8d031af7e7ee125f13f84140e1a2a1c64e9cffe2424d180c27a76ca063",
+      "bytes": 1190,
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "November",
+      "required": true,
+      "pinBytes": true,
+      "acquisitionMethod": "web_tool_publisher_text_snapshot",
+      "acquisitionNote": "Direct HTML returned 406. This hash pins retrieved publisher text, not original HTML bytes. No publisher explanations are distributed."
+    },
+    {
+      "file": "pgblazer-2011-november-81-retrieved.txt",
+      "url": "https://pgblazer.com/aiims-november-2011-mcq-81/",
+      "sha256": "2da70e6de92e32ba3d1f27726f194332d4a0fc1697228f3a06b9a9814f970bfa",
+      "bytes": 766,
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "November",
+      "required": true,
+      "pinBytes": true,
+      "acquisitionMethod": "web_tool_publisher_text_snapshot",
+      "acquisitionNote": "Direct HTML returned 406. This hash pins retrieved publisher text, not original HTML bytes. No publisher explanations are distributed."
+    },
+    {
+      "file": "pgblazer-2011-november-86-retrieved.txt",
+      "url": "https://pgblazer.com/aiims-november-2011-mcq-86/",
+      "sha256": "1091f34abf22a4a89d3a8bb2766d90e3b4533d27e46199e9e692e402d54b69fa",
+      "bytes": 629,
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "November",
+      "required": true,
+      "pinBytes": true,
+      "acquisitionMethod": "web_tool_publisher_text_snapshot",
+      "acquisitionNote": "Direct HTML returned 406. This hash pins retrieved publisher text, not original HTML bytes. No publisher explanations are distributed."
+    },
+    {
+      "file": "pgblazer-2011-november-89-retrieved.txt",
+      "url": "https://pgblazer.com/aiims-november-2011-mcq-89/",
+      "sha256": "5ada5d76b398061c594430699d8f32405055985a0f05c3ac113446d74c9557e1",
+      "bytes": 667,
+      "exam": "aiims-pg",
+      "year": 2011,
+      "session": "November",
+      "required": true,
+      "pinBytes": true,
+      "acquisitionMethod": "web_tool_publisher_text_snapshot",
+      "acquisitionNote": "Direct HTML returned 406. This hash pins retrieved publisher text, not original HTML bytes. No publisher explanations are distributed."
+    }
+  ],
+  "questionReviews": [
+    {
+      "id": "pgblazer-2011-november-6:6",
+      "source": "pgblazer-2011-november-6-retrieved.txt",
+      "sourcePages": [],
+      "examYear": 2011,
+      "examSession": "November",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://pubmed.ncbi.nlm.nih.gov/3838216/",
+      "originalSourceFingerprint": "4247138346f041c6de20085b92a1d0cb49751f410487837d4c0b62aed3347939",
+      "sourceFingerprint": "ccf8bda48cdb07452271c6d93f3ad9aa78abb297c8c10ba52e4d2530b6123f09",
+      "reviewNote": "Complete retrieved publisher text; options and order retained; stem paraphrased without changing the tested fact."
+    },
+    {
+      "id": "pgblazer-2011-november-10:10",
+      "source": "pgblazer-2011-november-10-retrieved.txt",
+      "sourcePages": [],
+      "examYear": 2011,
+      "examSession": "November",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://medlineplus.gov/genetics/condition/androgen-insensitivity-syndrome/",
+      "originalSourceFingerprint": "95088b9d545bc047ec2dcadd568b4fa7107bc0d6e70a1771b80c6096841777e4",
+      "sourceFingerprint": "47e10d882aed4ae3583f7f5508e48537aa841c8a72a59d0c5653b39c5adc955c",
+      "reviewNote": "Complete retrieved publisher text; options and order retained; stem paraphrased without changing the tested fact."
+    },
+    {
+      "id": "pgblazer-2011-november-12:12",
+      "source": "pgblazer-2011-november-12-retrieved.txt",
+      "sourcePages": [],
+      "examYear": 2011,
+      "examSession": "November",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://www.ncbi.nlm.nih.gov/books/NBK26829/",
+      "originalSourceFingerprint": "de98b6bbfae44843fc3bf3734ea7b4d61d25f635c8c9e4fa722fd273af2d2743",
+      "sourceFingerprint": "f180f54f092d0d98b8a965b5d1f65aeb59d9dfcf079efa1174ebeb41297aa03d",
+      "reviewNote": "Complete retrieved publisher text; options and order retained; stem paraphrased without changing the tested fact."
+    },
+    {
+      "id": "pgblazer-2011-november-36:36",
+      "source": "pgblazer-2011-november-36-retrieved.txt",
+      "sourcePages": [],
+      "examYear": 2011,
+      "examSession": "November",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://pubmed.ncbi.nlm.nih.gov/19668418/",
+      "originalSourceFingerprint": "a52bb228ec58fff4c719047d3f875ebb0d6b6238c2d5c1607c26e3d6fc9c9ff3",
+      "sourceFingerprint": "7091a606cce604bac674733017fba3b61155cd35a0141f8937253bbff762fc43",
+      "reviewNote": "Complete retrieved publisher text; options and order retained; stem paraphrased without changing the tested fact."
+    },
+    {
+      "id": "pgblazer-2011-november-51:51",
+      "source": "pgblazer-2011-november-51-retrieved.txt",
+      "sourcePages": [],
+      "examYear": 2011,
+      "examSession": "November",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://www.ncbi.nlm.nih.gov/books/NBK526112/",
+      "originalSourceFingerprint": "bd696917f255d577b893f2098236fc2591bb8d5ef1047886f4e36715f27fdfc7",
+      "sourceFingerprint": "935a2e34ec67a046fbac9c52a7ac4a896e87b6d0c7a982b8e34656b4b8ad85cf",
+      "reviewNote": "Complete retrieved publisher text; options and order retained; stem paraphrased without changing the tested fact."
+    },
+    {
+      "id": "pgblazer-2011-november-54:54",
+      "source": "pgblazer-2011-november-54-retrieved.txt",
+      "sourcePages": [],
+      "examYear": 2011,
+      "examSession": "November",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://pubmed.ncbi.nlm.nih.gov/25701519/",
+      "originalSourceFingerprint": "6f4caac391155b79262ee31377bd63c77b6c611c85af36ea297a7191fe88c5b4",
+      "sourceFingerprint": "4d57c2b06abce31aef5d4696570e61dd2c86d627f841c29ac3a63ad560772462",
+      "reviewNote": "Complete retrieved publisher text; options and order retained; stem paraphrased without changing the tested fact."
+    },
+    {
+      "id": "pgblazer-2011-november-62:62",
+      "source": "pgblazer-2011-november-62-retrieved.txt",
+      "sourcePages": [],
+      "examYear": 2011,
+      "examSession": "November",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://pubmed.ncbi.nlm.nih.gov/3377576/",
+      "originalSourceFingerprint": "62497b60a6bd30270df8cc4b33f63bfb15be64f4517c5f754622dc74298acfb7",
+      "sourceFingerprint": "3ae7024ec6a72322e24664a5d1accd486036a94ed4153a1456821872c1ade1cd",
+      "reviewNote": "Complete retrieved publisher text; options and order retained; stem paraphrased without changing the tested fact."
+    },
+    {
+      "id": "pgblazer-2011-november-67:67",
+      "source": "pgblazer-2011-november-67-retrieved.txt",
+      "sourcePages": [],
+      "examYear": 2011,
+      "examSession": "November",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://pubmed.ncbi.nlm.nih.gov/10742096/",
+      "originalSourceFingerprint": "595fded479502f2f7dda3d0749fbf147bd5fad9903b3f00cddb9e137c97cc811",
+      "sourceFingerprint": "92d9aa6e478941b4f6c30551b98ea441c038d43b87ead9bf56bcdbf64166ab9c",
+      "reviewNote": "Complete retrieved publisher text; options and order retained; stem paraphrased without changing the tested fact."
+    },
+    {
+      "id": "pgblazer-2011-november-74:74",
+      "source": "pgblazer-2011-november-74-retrieved.txt",
+      "sourcePages": [],
+      "examYear": 2011,
+      "examSession": "November",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=66311f74-0472-4fa3-848a-06002ca0def5",
+      "originalSourceFingerprint": "9a3f8ea0a24ecc9a732edf7aa72b1807b1953fcc36440d5ba16e98bf04d1812c",
+      "sourceFingerprint": "a6f87f017beaad4b46a72d768c8a5421e92a2566e977955b9e75b9d7c0067bec",
+      "reviewNote": "Complete retrieved publisher text; options and order retained; stem paraphrased without changing the tested fact."
+    },
+    {
+      "id": "pgblazer-2011-november-76:76",
+      "source": "pgblazer-2011-november-76-retrieved.txt",
+      "sourcePages": [],
+      "examYear": 2011,
+      "examSession": "November",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://www.ninds.nih.gov/health-information/disorders/brown-sequard-syndrome",
+      "originalSourceFingerprint": "4b4e79424027db3808a458e7c92613b1b4d40c88899c1247f0b550c04d704261",
+      "sourceFingerprint": "892830bf88b0ec471a7d01ce1690715036ed551b19808bb7dcef2ff22f35106d",
+      "reviewNote": "Complete retrieved publisher text; options and order retained; stem paraphrased without changing the tested fact."
+    },
+    {
+      "id": "pgblazer-2011-november-81:81",
+      "source": "pgblazer-2011-november-81-retrieved.txt",
+      "sourcePages": [],
+      "examYear": 2011,
+      "examSession": "November",
+      "suppliedKey": null,
+      "reviewedAnswer": "A",
+      "answerOrigin": "editorial_key_primary_reference_checked",
+      "conceptReference": "https://www.endocrine.org/clinical-practice-guidelines/congenital-adrenal-hyperplasia-guideline-resources",
+      "originalSourceFingerprint": "a27fdb9a9933f918b237c27432420c9b834540777070c99d9d35ae9be52d01c8",
+      "sourceFingerprint": "840009a116abf61a5bcdc8db76b954d1e248c7c2eded90fa62c3688043308b02",
+      "reviewNote": "Complete retrieved publisher text; options and order retained; stem paraphrased without changing the tested fact."
+    },
+    {
+      "id": "pgblazer-2011-november-86:86",
+      "source": "pgblazer-2011-november-86-retrieved.txt",
+      "sourcePages": [],
+      "examYear": 2011,
+      "examSession": "November",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://pubmed.ncbi.nlm.nih.gov/6992571/",
+      "originalSourceFingerprint": "bdb5f932bbf410f653e90221dc920417189d4b35f6cdb913b75ad629946d2a41",
+      "sourceFingerprint": "4ce38cf33aeb98cb5581686ffcb6caf517d0825453752617c0fdf169e84c6374",
+      "reviewNote": "Complete retrieved publisher text; options and order retained; stem paraphrased without changing the tested fact."
+    },
+    {
+      "id": "pgblazer-2011-november-89:89",
+      "source": "pgblazer-2011-november-89-retrieved.txt",
+      "sourcePages": [],
+      "examYear": 2011,
+      "examSession": "November",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://pubmed.ncbi.nlm.nih.gov/15181400/",
+      "originalSourceFingerprint": "95e6b17307699e0399d57747369f7bb3bbb5f34348f2e9fae6749132cfcd6fee",
+      "sourceFingerprint": "6803552453b1ae2ce2300f19f45bc4d40fb99461cb763666f9c32dab2910b5f0",
+      "reviewNote": "Complete retrieved publisher text; options and order retained; stem paraphrased without changing the tested fact."
+    },
+    {
+      "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:11",
+      "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+      "sourcePages": [
+        4,
+        5
+      ],
+      "examYear": 2022,
+      "examSession": "November",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://professional.heart.org/en/science-news/-/media/PHD-Files-2/Science-News/2/2023/2023_chronic_coronary_disease_guideline_slide_set.pdf",
+      "sourceFingerprint": "79b488e34a083c0fc789ffb2fa6c056ab6d74b9dd118fb6ead226f0f5d300b1f",
+      "reviewNote": "Original PDF question, four options and key inspected; stem paraphrased; no omitted image or invented distractor."
+    },
+    {
+      "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:14",
+      "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+      "sourcePages": [
+        5
+      ],
+      "examYear": 2022,
+      "examSession": "November",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=5529733c-1e3b-e590-e063-6294a90a765c&type=display",
+      "sourceFingerprint": "3b432a776d48481b90c319268d5bda5b0277dd3c54b8dd653988f8442e111a9a",
+      "reviewNote": "Original PDF question, four options and key inspected; stem paraphrased; no omitted image or invented distractor."
+    },
+    {
+      "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:23",
+      "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+      "sourcePages": [
+        7
+      ],
+      "examYear": 2022,
+      "examSession": "November",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/",
+      "sourceFingerprint": "ffc545a43334fbc3773c6418883f870727048be182a7bc11af0c9bdf2e4e6334",
+      "reviewNote": "Original PDF question, four options and key inspected; stem paraphrased; no omitted image or invented distractor."
+    },
+    {
+      "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:29",
+      "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+      "sourcePages": [
+        9
+      ],
+      "examYear": 2022,
+      "examSession": "November",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://gi.org/journals-publications/ebgi/schoenfeld_sep2024/",
+      "sourceFingerprint": "927f8c5dea6d08a5e67685cd3e85687a2be349744f0b8ace3826fa9eb709ac2f",
+      "reviewNote": "Original PDF question, four options and key inspected; stem paraphrased; no omitted image or invented distractor."
+    },
+    {
+      "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:30",
+      "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+      "sourcePages": [
+        9
+      ],
+      "examYear": 2022,
+      "examSession": "November",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://www.pathologystudent.com/absolute-vs-corrected-reticulocyte-count/",
+      "sourceFingerprint": "211a8d6cd7b87ee71ad6fb1adade7c9c4a18d84fb9a34973d315db56b077d1d6",
+      "reviewNote": "Original PDF question, four options and key inspected; stem paraphrased; no omitted image or invented distractor."
+    },
+    {
+      "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:36",
+      "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+      "sourcePages": [
+        11
+      ],
+      "examYear": 2022,
+      "examSession": "November",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://pubmed.ncbi.nlm.nih.gov/16606841/",
+      "sourceFingerprint": "fd92bdda72d5f8f64c68bc8f41870c438c77736c1be86173589fe5a430a15c7f",
+      "reviewNote": "Original PDF question, four options and key inspected; stem paraphrased; no omitted image or invented distractor."
+    },
+    {
+      "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:67",
+      "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+      "sourcePages": [
+        19
+      ],
+      "examYear": 2022,
+      "examSession": "November",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "answerOrigin": "publisher_key_author_checked",
+      "conceptReference": "https://www.ninds.nih.gov/health-information/disorders/syringomyelia",
+      "sourceFingerprint": "795bc5284d4969ae90162583726b16dbc58555c94cf7f44b141f3990196ccd6e",
+      "reviewNote": "Original PDF question, four options and key inspected; stem paraphrased; no omitted image or invented distractor."
+    }
+  ],
+  "newHolds": [
+    {
+      "id": "pgblazer-2011-november-52:52",
+      "reason": "Both apraclonidine and brimonidine can cause lid retraction; the unqualified stem does not identify a unique answer.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    },
+    {
+      "id": "pgblazer-2011-november-60:60",
+      "reason": "The historical SIADH question treats water loading as a routine diagnostic test; this is unsafe or inappropriate in many hyponatraemic patients.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    },
+    {
+      "id": "pgblazer-2011-november-64:64",
+      "reason": "Mutation-detection methods and mutation type are insufficiently specified; no publisher key.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    },
+    {
+      "id": "pgblazer-2011-november-68:68",
+      "reason": "The absolute earliest-wasting muscle claim is insufficiently supported across knee-osteoarthritis presentations.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    },
+    {
+      "id": "pgblazer-2011-november-69:69",
+      "reason": "The source includes incorrect 25-alpha hydroxylation terminology and disputed vitamin-D requirements; do not repair distractors silently.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    },
+    {
+      "id": "pgblazer-2011-november-80:80",
+      "reason": "Mixed-phenotype leukaemia classification needs lineage-marker intensity and context beyond this fragment; no publisher key.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    },
+    {
+      "id": "pgblazer-2011-november-85:85",
+      "reason": "Fourth choice unrecalled; two displayed depression choices overlap.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    },
+    {
+      "id": "pgblazer-2011-november-87:87",
+      "reason": "Aortic-stenosis intervention decision lacks mean gradient, valve area, LV function and adequate symptom context.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    },
+    {
+      "id": "pgblazer-2011-november-88:88",
+      "reason": "A universal two-hour PT handling requirement is not established without the laboratory protocol and anticoagulant context.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    },
+    {
+      "id": "pgblazer-2011-november-95:95",
+      "reason": "Historical PMTCT choices do not represent a complete contemporary maternal/infant regimen and several listed drugs can participate in ART.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    },
+    {
+      "id": "pgblazer-2011-november-97:97",
+      "reason": "Fourth distractor is unrecalled.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    },
+    {
+      "id": "pgblazer-2011-november-35:35",
+      "reason": "Historical investigational erectile-dysfunction use would be confused with the current approved bremelanotide indication by this unqualified stem.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    },
+    {
+      "id": "pgblazer-2011-november-43:43",
+      "reason": "Endothelial-cell-loss percentage lacks a follow-up time and technique, both of which materially change the answer.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    },
+    {
+      "id": "pgblazer-2011-november-44:44",
+      "reason": "Bacitracin susceptibility is a presumptive historic discriminator, not definitive establishment of group-A streptococcal diagnosis.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    },
+    {
+      "id": "pgblazer-2011-november-3:3",
+      "reason": "Shearing and avulsion overlap in flaying/degloving; the alternatives mix mechanism and resulting injury.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    },
+    {
+      "id": "pgblazer-2011-november-11:11",
+      "reason": "Very marked microcytosis and high ferritin do not uniquely discriminate chronic-inflammation anaemia from thalassaemia or mixed disease.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    },
+    {
+      "id": "pgblazer-2011-november-14:14",
+      "reason": "The aplastic-leukaemia option is corrupted; it is not silently replaced with aplastic anaemia.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    },
+    {
+      "id": "inicetmay25-obgyn:4",
+      "reason": "Supplied letter B conflicts with the accompanying serous-carcinoma answer text and displayed option order.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    },
+    {
+      "id": "inicetmay25-opthalmology:7",
+      "reason": "Anterior-chamber cells and flare alone at two weeks do not uniquely establish postoperative endophthalmitis or its organism.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    },
+    {
+      "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:47",
+      "reason": "Same numerical reticulocyte item as source question30, with additional corrupted wording; retain only question30.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    },
+    {
+      "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:39",
+      "reason": "Same losartan/hyperkalaemia decision as source question14; one representative retained.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    },
+    {
+      "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:61",
+      "reason": "Same vitamin-D/tetany exception as source question23; one representative retained.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    },
+    {
+      "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:75",
+      "reason": "Hamman-type sounds can occur with other thoracic air collections, including a listed pneumopericardium alternative; unqualified seen-in stem held.",
+      "reviewDate": "2026-10-23",
+      "reviewBatch": "continued-review-2"
+    }
+  ],
+  "overlapReview": [
+    {
+      "id": "pgblazer-2011-november-6:6",
+      "suggestions": [
+        {
+          "id": "aglasem-74aff46a-b5c8-11ed-b820-0a5e36bc6706:2",
+          "score": 0.056,
+          "question": "Which theory classically explains pain relief from transcutaneous electrical nerve stimulation?"
+        },
+        {
+          "id": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706:16",
+          "score": 0.054,
+          "question": "32 years old female with Grave diseases with eye signs and enlarged thyroid is planned for total thyroidectomy. What can be given in the preoperative period to reduce intraoperative bleeding in the patient"
+        },
+        {
+          "id": "prepladder-aiims-2020-jun-pharma:11",
+          "score": 0.046,
+          "question": "Progressive narrowing of peripheral vision develops during prolonged antiseizure treatment. Which drug best explains this toxicity?"
+        }
+      ],
+      "decision": "Distinct tested fact after manual question and correct-answer review; no overlap imported."
+    },
+    {
+      "id": "pgblazer-2011-november-10:10",
+      "suggestions": [
+        {
+          "id": "inicetmay25-pathology:5",
+          "score": 0.084,
+          "question": "All the following are seen in Turner’s syndrome EXCEPT?"
+        },
+        {
+          "id": "inicetmay25-pathology:6",
+          "score": 0.076,
+          "question": "All the following are aneuploidy disorders EXCEPT?"
+        },
+        {
+          "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:8",
+          "score": 0.068,
+          "question": "Congenital absence of seminal vesicles and vas deferens is seen in"
+        }
+      ],
+      "decision": "Distinct tested fact after manual question and correct-answer review; no overlap imported."
+    },
+    {
+      "id": "pgblazer-2011-november-12:12",
+      "suggestions": [
+        {
+          "id": "ini-2020-01:4",
+          "score": 0.061,
+          "question": "What is true about the Hayflick limit?"
+        },
+        {
+          "id": "aiims-2018-may:17",
+          "score": 0.058,
+          "question": "Klenow fragment lacks the activity of?"
+        },
+        {
+          "id": "diginerve-ini-2025:14",
+          "score": 0.046,
+          "question": "The 2025 physiology or medicine Nobel recognised discoveries concerning which immune process?"
+        }
+      ],
+      "decision": "Distinct tested fact after manual question and correct-answer review; no overlap imported."
+    },
+    {
+      "id": "pgblazer-2011-november-36:36",
+      "suggestions": [
+        {
+          "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:6",
+          "score": 0.051,
+          "question": "All are used as first line treatment in rheumatoid arthritis except"
+        },
+        {
+          "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:10",
+          "score": 0.043,
+          "question": "Which of the following is not a feature of a complicated Cataract?"
+        },
+        {
+          "id": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408:5",
+          "score": 0.037,
+          "question": "Which antileprosy medicine causes pigmentation?"
+        }
+      ],
+      "decision": "Distinct tested fact after manual question and correct-answer review; no overlap imported."
+    },
+    {
+      "id": "pgblazer-2011-november-51:51",
+      "suggestions": [
+        {
+          "id": "ini-2025-01:11",
+          "score": 0.149,
+          "question": "Which of the following nerves gives sensory supply to the orbit?"
+        },
+        {
+          "id": "aiims-2010-eo:8",
+          "score": 0.084,
+          "question": "Which cranial nerve supplies tensor tympani?"
+        },
+        {
+          "id": "aiims-2010-eo:3",
+          "score": 0.076,
+          "question": "Lacrimation is lost after a lesion of which nerve?"
+        }
+      ],
+      "decision": "Distinct tested fact after manual question and correct-answer review; no overlap imported."
+    },
+    {
+      "id": "pgblazer-2011-november-54:54",
+      "suggestions": [
+        {
+          "id": "inicetmay25-psm:14",
+          "score": 0.073,
+          "question": "Which test compares the same diabetic patients’ weights before and after nutritional counselling?"
+        },
+        {
+          "id": "inicetmay25-opthalmology:6",
+          "score": 0.05,
+          "question": "Which is the best test to visualize all layers of the retina?"
+        },
+        {
+          "id": "aiims-2015-may:6",
+          "score": 0.048,
+          "question": "Which test is most reliable among these for Eustachian tube dysfunction?"
+        }
+      ],
+      "decision": "Distinct tested fact after manual question and correct-answer review; no overlap imported."
+    },
+    {
+      "id": "pgblazer-2011-november-62:62",
+      "suggestions": [
+        {
+          "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:10",
+          "score": 0.114,
+          "question": "Which listed condition usually causes peripheral rather than central cyanosis?"
+        },
+        {
+          "id": "aglasem-74aff46a-b5c8-11ed-b820-0a5e36bc6706:1",
+          "score": 0.078,
+          "question": "Which sequence lists inhalational anaesthetics from greater to lesser potency?"
+        },
+        {
+          "id": "aiims-2016-nov:4",
+          "score": 0.066,
+          "question": "Why is oxygen administered after nitrous oxide is discontinued during emergence from anaesthesia?"
+        }
+      ],
+      "decision": "Distinct tested fact after manual question and correct-answer review; no overlap imported."
+    },
+    {
+      "id": "pgblazer-2011-november-67:67",
+      "suggestions": [
+        {
+          "id": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706:2",
+          "score": 0.045,
+          "question": "Which listed neurodevelopmental disorder predominantly affects females?"
+        },
+        {
+          "id": "inicetmay25-pathology:6",
+          "score": 0.04,
+          "question": "All the following are aneuploidy disorders EXCEPT?"
+        },
+        {
+          "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:12",
+          "score": 0.039,
+          "question": "Which listed tool is preferred for screening many inherited metabolic diseases in children?"
+        }
+      ],
+      "decision": "Distinct tested fact after manual question and correct-answer review; no overlap imported."
+    },
+    {
+      "id": "pgblazer-2011-november-74:74",
+      "suggestions": [
+        {
+          "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:8",
+          "score": 0.06,
+          "question": "How does two, three BPG decrease the affinity of hemoglobin to oxygen?"
+        },
+        {
+          "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:3",
+          "score": 0.054,
+          "question": "ACTH is used in the treatment of:"
+        },
+        {
+          "id": "ini-2023-02:14",
+          "score": 0.048,
+          "question": "Which enzyme deficiency causes Pompe’s disease?"
+        }
+      ],
+      "decision": "Distinct tested fact after manual question and correct-answer review; no overlap imported."
+    },
+    {
+      "id": "pgblazer-2011-november-76:76",
+      "suggestions": [
+        {
+          "id": "pgblazer-2015-may-19:19",
+          "score": 0.033,
+          "question": "Jersey finger is seen in rupture of?"
+        },
+        {
+          "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:6",
+          "score": 0.029,
+          "question": "Is the following feature not a feature of optic disc in Glaucoma?"
+        },
+        {
+          "id": "aiims-2019-may:1",
+          "score": 0.024,
+          "question": "Finger with two dorsal interossei attached?"
+        }
+      ],
+      "decision": "Distinct tested fact after manual question and correct-answer review; no overlap imported."
+    },
+    {
+      "id": "pgblazer-2011-november-81:81",
+      "suggestions": [
+        {
+          "id": "reflex-ini-2024-may:52",
+          "score": 0.058,
+          "question": "What is the correct dose regimen for antenatal corticosteroids?"
+        },
+        {
+          "id": "aiims-2019-may:18",
+          "score": 0.044,
+          "question": "In female adrenal gland secretes which hormone?"
+        },
+        {
+          "id": "pgblazer-2015-may-34:34",
+          "score": 0.044,
+          "question": "Topical drug which can induce heterochromia iridis is?"
+        }
+      ],
+      "decision": "Distinct tested fact after manual question and correct-answer review; no overlap imported."
+    },
+    {
+      "id": "pgblazer-2011-november-86:86",
+      "suggestions": [
+        {
+          "id": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408:2",
+          "score": 0.062,
+          "question": "Which type of vitiligo usually stabilizes rather than progressing over the long term?"
+        },
+        {
+          "id": "prepladder-aiims-2020-jun-pharma:11",
+          "score": 0.056,
+          "question": "Progressive narrowing of peripheral vision develops during prolonged antiseizure treatment. Which drug best explains this toxicity?"
+        },
+        {
+          "id": "inicetmay25-pathology:1",
+          "score": 0.042,
+          "question": "In a patient with diabetic kidney disease, which of the following is not considered a typical glomerular lesion?"
+        }
+      ],
+      "decision": "Distinct tested fact after manual question and correct-answer review; no overlap imported."
+    },
+    {
+      "id": "pgblazer-2011-november-89:89",
+      "suggestions": [
+        {
+          "id": "aiims-2010-eo:17",
+          "score": 0.069,
+          "question": "Why does carbon dioxide diffuse much more readily than oxygen?"
+        },
+        {
+          "id": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706:1",
+          "score": 0.04,
+          "question": "Hypogonadotropic hypogonadism in an infertile man can be associated with:"
+        },
+        {
+          "id": "pgblazer-2015-may-20:20",
+          "score": 0.034,
+          "question": "Which of the following anaesthetic agents cause pain on intravenous administration?"
+        }
+      ],
+      "decision": "Distinct tested fact after manual question and correct-answer review; no overlap imported."
+    },
+    {
+      "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:11",
+      "suggestions": [
+        {
+          "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:7",
+          "score": 0.123,
+          "question": "All are the features of Complicated malaria except"
+        },
+        {
+          "id": "reflex-ini-2024-may:52",
+          "score": 0.113,
+          "question": "What is the correct dose regimen for antenatal corticosteroids?"
+        },
+        {
+          "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:14",
+          "score": 0.091,
+          "question": "Which statement about memantine is correct?"
+        }
+      ],
+      "decision": "Distinct tested fact after manual question and correct-answer review; no overlap imported."
+    },
+    {
+      "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:14",
+      "suggestions": [
+        {
+          "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:9",
+          "score": 0.07,
+          "question": "Which listed agent is not a standard emergency treatment for hyperkalaemia?"
+        },
+        {
+          "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:33",
+          "score": 0.07,
+          "question": "Which listed drug can precipitate haemolysis in G6PD deficiency?"
+        },
+        {
+          "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:20",
+          "score": 0.059,
+          "question": "Urinary alkalinisation is most useful in toxicity from which listed drug?"
+        }
+      ],
+      "decision": "Distinct tested fact after manual question and correct-answer review; no overlap imported."
+    },
+    {
+      "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:23",
+      "suggestions": [
+        {
+          "id": "aiims-2010-eo:17",
+          "score": 0.066,
+          "question": "Why does carbon dioxide diffuse much more readily than oxygen?"
+        },
+        {
+          "id": "inicetmay25-microbiology:3",
+          "score": 0.059,
+          "question": "A HIV-positive patient presents with dysphagia and odynophagia. Esophagus shows white plaque. What is the most likely cause of this from the following?"
+        },
+        {
+          "id": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706:1",
+          "score": 0.057,
+          "question": "Hypogonadotropic hypogonadism in an infertile man can be associated with:"
+        }
+      ],
+      "decision": "Distinct tested fact after manual question and correct-answer review; no overlap imported."
+    },
+    {
+      "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:29",
+      "suggestions": [
+        {
+          "id": "inicetmay25-psm:14",
+          "score": 0.188,
+          "question": "Which test compares the same diabetic patients’ weights before and after nutritional counselling?"
+        },
+        {
+          "id": "aiims-2015-may:6",
+          "score": 0.123,
+          "question": "Which test is most reliable among these for Eustachian tube dysfunction?"
+        },
+        {
+          "id": "aiims-2019-may:24",
+          "score": 0.081,
+          "question": "Anatomical dead space measured by –"
+        }
+      ],
+      "decision": "Distinct tested fact after manual question and correct-answer review; no overlap imported."
+    },
+    {
+      "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:30",
+      "suggestions": [
+        {
+          "id": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706:9",
+          "score": 0.081,
+          "question": "During nonoperative management of grade 3 splenic trauma, which new finding most strongly indicates laparotomy?"
+        },
+        {
+          "id": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706:13",
+          "score": 0.071,
+          "question": "First deformity corrected in CTEV?"
+        },
+        {
+          "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:7",
+          "score": 0.048,
+          "question": "All are the features of Complicated malaria except"
+        }
+      ],
+      "decision": "Distinct tested fact after manual question and correct-answer review; no overlap imported."
+    },
+    {
+      "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:36",
+      "suggestions": [
+        {
+          "id": "ini-2021-02:20",
+          "score": 0.218,
+          "question": "Which of the following causes aplastic crisis in hereditary spherocytosis?"
+        },
+        {
+          "id": "pgblazer-2015-may-32:32",
+          "score": 0.114,
+          "question": "Causative organism of tropical spastic paraparesis is?"
+        },
+        {
+          "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:8",
+          "score": 0.101,
+          "question": "How does two, three BPG decrease the affinity of hemoglobin to oxygen?"
+        }
+      ],
+      "decision": "Distinct tested fact after manual question and correct-answer review; no overlap imported."
+    },
+    {
+      "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:67",
+      "suggestions": [
+        {
+          "id": "aiims-2020-jun:4",
+          "score": 0.095,
+          "question": "Level of decussation of superior cerebellar peduncle:"
+        },
+        {
+          "id": "aiims-1999-nov:1",
+          "score": 0.063,
+          "question": "If a missile enters just above the pubic ramus through the anterior abdominal wall, which structure will it most likely pierce?"
+        },
+        {
+          "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:1",
+          "score": 0.054,
+          "question": "Which statement about a normal placenta and cord is false?"
+        }
+      ],
+      "decision": "Distinct tested fact after manual question and correct-answer review; no overlap imported."
+    }
+  ],
+  "sourceWordsAfterSelection": {
+    "pgblazer-2011-november-6-retrieved.txt": 16,
+    "pgblazer-2011-november-51-retrieved.txt": 16,
+    "pgblazer-2011-november-76-retrieved.txt": 26,
+    "pgblazer-2011-november-67-retrieved.txt": 16,
+    "pgblazer-2011-november-86-retrieved.txt": 26,
+    "pgblazer-2011-november-54-retrieved.txt": 17,
+    "pgblazer-2011-november-10-retrieved.txt": 37,
+    "pgblazer-2011-november-81-retrieved.txt": 20,
+    "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf": 198,
+    "pgblazer-2011-november-62-retrieved.txt": 15,
+    "pgblazer-2011-november-74-retrieved.txt": 21,
+    "pgblazer-2011-november-36-retrieved.txt": 16,
+    "pgblazer-2011-november-12-retrieved.txt": 21,
+    "pgblazer-2011-november-89-retrieved.txt": 26
+  },
+  "preservation": {
+    "previousCompleteRecords": 429,
+    "neetQuestions": 2078,
+    "neetBytesUnchanged": true
+  },
+  "limitations": [
+    "Partial publisher recalls, not authenticated official exam wording.",
+    "One complete no-key recall has a visibly labelled editorial answer supported by Endocrine Society guidance.",
+    "Thirteen new source receipts are separate article snapshots, not thirteen new exam sittings.",
+    "One existing PDF contributes seven selections; its bytes match the existing manifest hash.",
+    "No publisher explanations or images distributed."
+  ],
+  "validation": {
+    "sourceExtensionTests": 11,
+    "extractorRegressionTests": 5,
+    "offlineRecords": 449,
+    "neetYearJoins": 2078,
+    "previousRecordsExactPreserved": 429,
+    "neetBytesUnchanged": true,
+    "productionWebBuild": "passed",
+    "androidJavaScriptBundle": "passed",
+    "rootAndMobileTypeScript": "passed",
+    "mobileQuietEslint": "passed",
+    "digestiveCoverage": "103/108, original95% floor",
+    "browser": "Passed actual assembled production browser at360/390/430; new CAH/editorial and statin/November2022 reveals also pass after service-worker offline reload. Screenshots visually inspected.",
+    "rawBankBytes": 314839,
+    "gzipBankBytes": 78465,
+    "repository39PathGuard": "passed"
+  }
+}

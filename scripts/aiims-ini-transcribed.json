@@ -4665,5 +4665,265 @@
       "Lipophilic substances"
     ],
     "key": "A"
+  },
+  {
+    "id": "pgblazer-2011-november-6:6",
+    "source": "pgblazer-2011-november-6-retrieved.txt",
+    "source_number": 6,
+    "question": "Which listed antithyroid drug lacks the peripheral deiodination inhibition seen with propylthiouracil?",
+    "options": [
+      "Propanolol",
+      "Propylthiouracil",
+      "Methimazole",
+      "Amiodarone"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "pgblazer-2011-november-10:10",
+    "source": "pgblazer-2011-november-10-retrieved.txt",
+    "source_number": 10,
+    "question": "A 16-year-old with primary amenorrhoea has developed breasts but no axillary or pubic hair. Bilateral inguinal hernias accompany an absent uterus and a blind-ending vagina. Which diagnosis fits?",
+    "options": [
+      "Turner syndrome",
+      "Mullerian agenesis",
+      "Star syndrome",
+      "Androgen insensitivity syndrome"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "pgblazer-2011-november-12:12",
+    "source": "pgblazer-2011-november-12-retrieved.txt",
+    "source_number": 12,
+    "question": "Which listed enzyme belongs to transcription rather than the machinery that translates an mRNA?",
+    "options": [
+      "RNA polymerase",
+      "Aminoacyl transferase",
+      "Ribosomes",
+      "Peptidyl transferase"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "pgblazer-2011-november-36:36",
+    "source": "pgblazer-2011-november-36-retrieved.txt",
+    "source_number": 36,
+    "question": "Which medicine was investigated for noninfectious uveitis in the historical LUMINATE programme?",
+    "options": [
+      "Cyclosporin",
+      "Infliximab",
+      "Methotrexate",
+      "Voclosporin"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "pgblazer-2011-november-51:51",
+    "source": "pgblazer-2011-november-51-retrieved.txt",
+    "source_number": 51,
+    "question": "Which finding is least consistent with an oculomotor nerve palsy?",
+    "options": [
+      "Ptosis",
+      "Diplopia",
+      "Miosis",
+      "Eye move laterally"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "pgblazer-2011-november-54:54",
+    "source": "pgblazer-2011-november-54-retrieved.txt",
+    "source_number": 54,
+    "question": "Which listed test best demonstrates a suspected pharyngeal pouch of Zenker?",
+    "options": [
+      "Endoscopy",
+      "Barium swallow",
+      "MRI",
+      "Oesophageal manometry"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "pgblazer-2011-november-62:62",
+    "source": "pgblazer-2011-november-62-retrieved.txt",
+    "source_number": 62,
+    "question": "Which listed condition characteristically suppresses cerebral electrical activity during anaesthesia?",
+    "options": [
+      "Hypothermia",
+      "Early hypoxia",
+      "Ketamine",
+      "N2O"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "pgblazer-2011-november-67:67",
+    "source": "pgblazer-2011-november-67-retrieved.txt",
+    "source_number": 67,
+    "question": "Which listed gene is an established cause of inherited steroid-resistant nephrotic syndrome?",
+    "options": [
+      "PAX",
+      "NPHS2",
+      "ALE",
+      "HOXII"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "pgblazer-2011-november-74:74",
+    "source": "pgblazer-2011-november-74-retrieved.txt",
+    "source_number": 74,
+    "question": "Which listed interferon is used as a disease-modifying treatment for relapsing multiple sclerosis?",
+    "options": [
+      "Interferon alpha",
+      "Interferon beta",
+      "Interferon gamma",
+      "Infliximab A"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "pgblazer-2011-november-76:76",
+    "source": "pgblazer-2011-november-76-retrieved.txt",
+    "source_number": 76,
+    "question": "Which feature contradicts the usual tract pattern in Brown-Sequard spinal hemisection?",
+    "options": [
+      "Ipsilateral pyramidal tract involvement",
+      "Contralateral dorsal column involvement",
+      "Contralateral spinothalmic involvement",
+      "Ipsilateral extensor plantar reflex"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "pgblazer-2011-november-81:81",
+    "source": "pgblazer-2011-november-81-retrieved.txt",
+    "source_number": 81,
+    "question": "Which listed glucocorticoid is preferred for replacement therapy in an infant with classic congenital adrenal hyperplasia?",
+    "options": [
+      "Hydrocortisone",
+      "Dexamethasone",
+      "Betamethasone",
+      "Prednisolone"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "pgblazer-2011-november-86:86",
+    "source": "pgblazer-2011-november-86-retrieved.txt",
+    "source_number": 86,
+    "question": "Substantial proteinuria develops in someone with established reflux nephropathy. Which glomerular process is the best explanation?",
+    "options": [
+      "Membranoproliferative glomerulonephritis",
+      "Focal segmental glomerulosclerosis",
+      "Membranous glomerulonephritis",
+      "Rapidly progressive glomerulonephritis"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "pgblazer-2011-november-89:89",
+    "source": "pgblazer-2011-november-89-retrieved.txt",
+    "source_number": 89,
+    "question": "Which statement misdescribes the kinetics of xenon as an inhaled anaesthetic?",
+    "options": [
+      "Non explosive",
+      "Minimal cardiovascular side effects",
+      "Slow induction and slow recovery",
+      "Low blood gas solubility"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:11",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "source_number": 11,
+    "question": "A 60-year-old with previous MI and type 2 diabetes has LDL 130, HDL 40 and triglycerides 270 mg/dL. Which listed regimen provides appropriate secondary-prevention lipid therapy?",
+    "options": [
+      "Atorvastatin 80 mg",
+      "Atorvastatin 20 mg",
+      "Rosuvastation 10 mg",
+      "Fenofibrate"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:14",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "source_number": 14,
+    "question": "Hyperkalaemia and worsening renal function develop during antihypertensive treatment. Which listed drug should be withheld for assessment?",
+    "options": [
+      "Furosemide",
+      "Amlodipine",
+      "Losartan",
+      "Propranolol"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:23",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "source_number": 23,
+    "question": "Which listed exposure is least likely to cause hypocalcaemic tetany?",
+    "options": [
+      "Pancreatitis",
+      "Vit D toxicity",
+      "Low Mg",
+      "None of the above"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:29",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "source_number": 29,
+    "question": "After H. pylori treatment, which listed noninvasive test is most suitable to document eradication?",
+    "options": [
+      "Biopsy urease test",
+      "Upper GI endoscopy",
+      "Breath urea test",
+      "Serology"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:30",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "source_number": 30,
+    "question": "For haemoglobin 5 g/dL and reticulocytes 9%, what is the corrected reticulocyte percentage?",
+    "options": [
+      "3",
+      "4",
+      "5",
+      "6"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:36",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "source_number": 36,
+    "question": "Which B-cell surface molecule binds Epstein-Barr virus?",
+    "options": [
+      "CD20",
+      "CD21",
+      "CD19",
+      "Cd23"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:67",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "source_number": 67,
+    "question": "A central spinal-cord cavity accompanies impaired pain and temperature sensation with preserved touch. Which diagnosis fits?",
+    "options": [
+      "Syringomyelia",
+      "Brown Sequard syndrome",
+      "Tabes dorsalis",
+      "None of the above"
+    ],
+    "key": "A"
   }
 ]

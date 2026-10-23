@@ -43,14 +43,14 @@ try {
   await label('Return to NEET PG library').click();
   for(const width of [360,390,430]){
     await page.setViewportSize({width,height:844});
-    await choose('AIIMS PG',128);
+    await choose('AIIMS PG',141);
     for(const name of ['NEET-PG','AIIMS PG','INI-CET']){
       const box=await label('Open '+name+' practice').boundingBox();assert.ok(box&&box.x>=0&&box.x+box.width<=width+1&&box.height>=43.5);
     }
-    await choose('INI-CET',301);
+    await choose('INI-CET',308);
   }
   await page.setViewportSize({width:390,height:844});
-  await choose('AIIMS PG',128);
+  await choose('AIIMS PG',141);
   await page.screenshot({path:path.join(evidence,'aiims-library.png')});
   await label('Search offline AIIMS PG questions').fill('Adding verapamil');
   await label('Open AIIMS PG question 1').click();
@@ -67,7 +67,7 @@ try {
   await page.getByText('AIIMS PG 2017 · November · Recall',{exact:true}).waitFor();
   await label('Save this AIIMS PG question').click();
   await label('Return to AIIMS PG library').click();
-  await choose('INI-CET',301);
+  await choose('INI-CET',308);
   await page.screenshot({path:path.join(evidence,'ini-library.png')});
   await page.getByText('0 saved',{exact:true}).waitFor();
   await label('Search offline INI-CET questions').fill('SGLT1');
@@ -103,7 +103,7 @@ try {
   await label('Show answer and explanation').click();
   await page.getByText('Answer: A',{exact:true}).waitFor();
   await label('Return to INI-CET library').click();
-  await choose('AIIMS PG',128);
+  await choose('AIIMS PG',141);
   await label('Search offline AIIMS PG questions').fill('Semantic memory');
   await label('Open AIIMS PG question 1').click();
   await page.getByText('AIIMS PG 2016 · May · Recall',{exact:true}).waitFor();
@@ -124,7 +124,7 @@ try {
   await label('Show answer and explanation').click();
   await page.getByText('Answer: C',{exact:true}).waitFor();
   await label('Return to AIIMS PG library').click();
-  await choose('INI-CET',301);
+  await choose('INI-CET',308);
   await label('Search offline INI-CET questions').fill('doxorubicin');
   await label('Open INI-CET question 1').click();
   await page.getByText('INI-CET 2023 · November · Recall',{exact:true}).waitFor();
@@ -168,7 +168,7 @@ try {
   await page.getByText('Answer: C',{exact:true}).waitFor();
   await page.screenshot({path:path.join(evidence,'ini-repaired-research-sequence.png')});
   await label('Return to INI-CET library').click();
-  await choose('AIIMS PG',128);
+  await choose('AIIMS PG',141);
   await label('Search offline AIIMS PG questions').fill('');
   await label('Search offline AIIMS PG questions').fill('thermodilution');
   await label('Open AIIMS PG question 1').click();
@@ -177,7 +177,7 @@ try {
   await page.getByText('Answer: B',{exact:true}).waitFor();
   await page.screenshot({path:path.join(evidence,'aiims-2012-thermodilution.png')});
   await label('Return to AIIMS PG library').click();
-  await choose('INI-CET',301);
+  await choose('INI-CET',308);
   await label('Search offline INI-CET questions').fill('antenatal corticosteroids');
   await label('Open INI-CET question 1').click();
   await page.getByText('INI-CET 2024 · May · Recall',{exact:true}).waitFor();
@@ -185,7 +185,7 @@ try {
   await page.getByText('Answer: A',{exact:true}).waitFor();
   await page.screenshot({path:path.join(evidence,'ini-2024-steroid-regimen.png')});
   await label('Return to INI-CET library').click();
-  await choose('AIIMS PG',128);
+  await choose('AIIMS PG',141);
   await label('Search offline AIIMS PG questions').fill('multiple clotting factor');
   await label('Open AIIMS PG question 1').click();
   await page.getByText('AIIMS PG 2015 · May · Recall',{exact:true}).waitFor();
@@ -195,7 +195,7 @@ try {
   await page.screenshot({path:path.join(evidence,'aiims-2015-editorial-plasma.png')});
   await label('Return to AIIMS PG library').click();
   await label('Search offline AIIMS PG questions').fill('');
-  await choose('INI-CET',301);
+  await choose('INI-CET',308);
   await label('Search offline INI-CET questions').fill('2025 physiology or medicine Nobel');
   await label('Open INI-CET question 1').click();
   await page.getByText('INI-CET 2025 · Recall',{exact:true}).waitFor();
@@ -205,7 +205,7 @@ try {
   await page.screenshot({path:path.join(evidence,'ini-2025-immune-tolerance.png')});
   await label('Return to INI-CET library').click();
   await label('Search offline INI-CET questions').fill('');
-  await choose('INI-CET',301);
+  await choose('INI-CET',308);
   await label('Search offline INI-CET questions').fill('brief hypnosis');
   await label('Open INI-CET question 1').click();
   await page.getByText('INI-CET 2025 · May · Recall',{exact:true}).waitFor();
@@ -214,7 +214,7 @@ try {
   await page.screenshot({path:path.join(evidence,'ini-2025-thiopentone.png')});
   await label('Return to INI-CET library').click();
   await label('Search offline INI-CET questions').fill('');
-  await choose('AIIMS PG',128);
+  await choose('AIIMS PG',141);
   await label('Search offline AIIMS PG questions').fill('chymotrypsinogen');
   await label('Open AIIMS PG question 1').click();
   await page.getByText('AIIMS PG 2011 · November · Recall',{exact:true}).waitFor();
@@ -239,7 +239,7 @@ try {
   await page.screenshot({path:path.join(evidence,'aiims-2011-obstructed-tapvc.png')});
   await label('Return to AIIMS PG library').click();
   await label('Search offline AIIMS PG questions').fill('');
-  await choose('INI-CET',301);
+  await choose('INI-CET',308);
   await label('Search offline INI-CET questions').fill('cycle 26');
   await label('Open INI-CET question 1').click();
   await page.getByText('INI-CET 2025 · May · Recall',{exact:true}).waitFor();
@@ -255,7 +255,7 @@ try {
   await page.screenshot({path:path.join(evidence,'ini-2025-paired-test.png')});
   await label('Return to INI-CET library').click();
   await label('Search offline INI-CET questions').fill('');
-  await choose('AIIMS PG',128);
+  await choose('AIIMS PG',141);
   await label('Search offline AIIMS PG questions').fill('paracentral');
   await label('Open AIIMS PG question 1').click();
   await page.getByText('AIIMS PG 2000 · Recall',{exact:true}).waitFor();
@@ -265,7 +265,7 @@ try {
   await page.screenshot({path:path.join(evidence,'aiims-2000-paracentral.png')});
   await label('Return to AIIMS PG library').click();
   await label('Search offline AIIMS PG questions').fill('');
-  await choose('INI-CET',301);
+  await choose('INI-CET',308);
   await label('Search offline INI-CET questions').fill('LBW/preterm');
   await label('Open INI-CET question 1').click();
   await page.getByText('INI-CET 2022 · May · Recall',{exact:true}).waitFor();
@@ -277,7 +277,7 @@ try {
   await page.screenshot({path:path.join(evidence,'ini-2022-may-donor-milk.png')});
   await label('Return to INI-CET library').click();
   await label('Search offline INI-CET questions').fill('');
-  await choose('AIIMS PG',128);
+  await choose('AIIMS PG',141);
   await label('Search offline AIIMS PG questions').fill('pulmonary diffusing capacity');
   await page.getByText('Which gas is routinely used to measure pulmonary diffusing capacity?',{exact:true}).click();
   await page.getByText('AIIMS PG 2010 · Recall',{exact:true}).waitFor();
@@ -288,7 +288,7 @@ try {
   await page.screenshot({path:path.join(evidence,'aiims-2010-dlco.png')});
   await label('Return to AIIMS PG library').click();
   await label('Search offline AIIMS PG questions').fill('');
-  await choose('INI-CET',301);
+  await choose('INI-CET',308);
   await label('Search offline INI-CET questions').fill('bland cholestasis');
   await page.getByText('Which listed drug exposure classically causes bland cholestasis?',{exact:true}).click();
   await page.getByText('INI-CET 2025 · May · Recall',{exact:true}).waitFor();
@@ -301,7 +301,7 @@ try {
   await label('Search offline INI-CET questions').fill('');
   await page.waitForFunction(()=>!!navigator.serviceWorker.controller,undefined,{timeout:120000});
   await context.setOffline(true);
-  await choose('AIIMS PG',128);
+  await choose('AIIMS PG',141);
   await label('Show saved AIIMS PG questions').click();
   await label('Open AIIMS PG question 1').click();
   await page.getByText(/Dorello/).first().waitFor();
@@ -310,8 +310,28 @@ try {
   await page.reload();
   await label('NEET-PG practice questions').click();
   await label('Search offline NEET PG questions').waitFor();
-  await choose('AIIMS PG',128);
-  await choose('INI-CET',301);
+  await choose('AIIMS PG',141);
+  await choose('INI-CET',308);
+  await choose('AIIMS PG',141);
+  await label('Search offline AIIMS PG questions').fill('congenital adrenal hyperplasia');
+  await page.getByText('Which listed glucocorticoid is preferred for replacement therapy in an infant with classic congenital adrenal hyperplasia?',{exact:true}).click();
+  await page.getByText('AIIMS PG 2011 · November · Recall',{exact:true}).waitFor();
+  await label('Show answer and explanation').click();
+  await page.getByText('Answer: A',{exact:true}).waitFor();
+  await page.getByText(/Editorial answer: the recall source provides no answer key/).waitFor();
+  await page.waitForTimeout(500);
+  await page.screenshot({path:path.join(evidence,'aiims-2011-cah-editorial.png')});
+  await label('Return to AIIMS PG library').click();
+  await choose('INI-CET',308);
+  await label('Search offline INI-CET questions').fill('secondary-prevention');
+  await page.getByText('A 60-year-old with previous MI and type 2 diabetes has LDL 130, HDL 40 and triglycerides 270 mg/dL. Which listed regimen provides appropriate secondary-prevention lipid therapy?',{exact:true}).click();
+  await page.getByText('INI-CET 2022 · November · Recall',{exact:true}).waitFor();
+  await label('Show answer and explanation').click();
+  await page.getByText('Answer: A',{exact:true}).waitFor();
+  await page.getByText(/Established coronary disease calls for a high-intensity statin/).waitFor();
+  await page.waitForTimeout(500);
+  await page.screenshot({path:path.join(evidence,'ini-2022-statin.png')});
+  await label('Return to INI-CET library').click();
   assert.deepEqual(errors,[]);
   console.log('PASS 360/390/430 exam controls; separate counts, source-key reveal, bookmark isolation, offline switching and unchanged NEET bank.');
 } finally {await browser.close();await new Promise(resolve=>server.close(resolve));}

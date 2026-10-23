@@ -964,5 +964,143 @@
     "source": "inicetmay25-opthalmology.pdf",
     "sourceNumber": 5,
     "reason": "Blindness definitions depend on presenting/best-corrected acuity and the applicable classification; source does not specify the framework."
+  },
+  {
+    "id": "pgblazer-2011-november-52:52",
+    "reason": "Both apraclonidine and brimonidine can cause lid retraction; the unqualified stem does not identify a unique answer.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-60:60",
+    "reason": "The historical SIADH question treats water loading as a routine diagnostic test; this is unsafe or inappropriate in many hyponatraemic patients.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-64:64",
+    "reason": "Mutation-detection methods and mutation type are insufficiently specified; no publisher key.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-68:68",
+    "reason": "The absolute earliest-wasting muscle claim is insufficiently supported across knee-osteoarthritis presentations.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-69:69",
+    "reason": "The source includes incorrect 25-alpha hydroxylation terminology and disputed vitamin-D requirements; do not repair distractors silently.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-80:80",
+    "reason": "Mixed-phenotype leukaemia classification needs lineage-marker intensity and context beyond this fragment; no publisher key.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-85:85",
+    "reason": "Fourth choice unrecalled; two displayed depression choices overlap.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-87:87",
+    "reason": "Aortic-stenosis intervention decision lacks mean gradient, valve area, LV function and adequate symptom context.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-88:88",
+    "reason": "A universal two-hour PT handling requirement is not established without the laboratory protocol and anticoagulant context.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-95:95",
+    "reason": "Historical PMTCT choices do not represent a complete contemporary maternal/infant regimen and several listed drugs can participate in ART.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-97:97",
+    "reason": "Fourth distractor is unrecalled.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-35:35",
+    "reason": "Historical investigational erectile-dysfunction use would be confused with the current approved bremelanotide indication by this unqualified stem.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-43:43",
+    "reason": "Endothelial-cell-loss percentage lacks a follow-up time and technique, both of which materially change the answer.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-44:44",
+    "reason": "Bacitracin susceptibility is a presumptive historic discriminator, not definitive establishment of group-A streptococcal diagnosis.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-3:3",
+    "reason": "Shearing and avulsion overlap in flaying/degloving; the alternatives mix mechanism and resulting injury.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-11:11",
+    "reason": "Very marked microcytosis and high ferritin do not uniquely discriminate chronic-inflammation anaemia from thalassaemia or mixed disease.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "pgblazer-2011-november-14:14",
+    "reason": "The aplastic-leukaemia option is corrupted; it is not silently replaced with aplastic anaemia.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "inicetmay25-obgyn:4",
+    "reason": "Supplied letter B conflicts with the accompanying serous-carcinoma answer text and displayed option order.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "inicetmay25-opthalmology:7",
+    "reason": "Anterior-chamber cells and flare alone at two weeks do not uniquely establish postoperative endophthalmitis or its organism.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:47",
+    "reason": "Same numerical reticulocyte item as source question30, with additional corrupted wording; retain only question30.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:39",
+    "reason": "Same losartan/hyperkalaemia decision as source question14; one representative retained.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:61",
+    "reason": "Same vitamin-D/tetany exception as source question23; one representative retained.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:75",
+    "reason": "Hamman-type sounds can occur with other thoracic air collections, including a listed pneumopericardium alternative; unqualified seen-in stem held.",
+    "reviewDate": "2026-10-23",
+    "reviewBatch": "continued-review-2"
   }
 ]
