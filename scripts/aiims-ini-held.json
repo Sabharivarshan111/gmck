@@ -572,5 +572,77 @@
     "source": "pgblazer-2010-november-category-retrieved.txt",
     "sourceNumber": 3,
     "reason": "Adult-size-before-birth wording conflicts with published human ossicle measurements (PMID2268059); source key not imported."
+  },
+  {
+    "id": "inicetmay25-psychiatry:7",
+    "source": "inicetmay25-psychiatry.pdf",
+    "sourceNumber": 7,
+    "reason": "Low self-esteem/confidence is an ICD-10 depressive symptom, so the supplied exclusion key is not accepted."
+  },
+  {
+    "id": "inicetmay25-opthalmology:2",
+    "source": "inicetmay25-opthalmology.pdf",
+    "sourceNumber": 2,
+    "reason": "Strabismus surgery can facilitate management in selected amblyopia cases; the absolute therapy exclusion is too broad."
+  },
+  {
+    "id": "inicetmay25-opthalmology:4",
+    "source": "inicetmay25-opthalmology.pdf",
+    "sourceNumber": 4,
+    "reason": "Optic neuritis can show optic-disc oedema; the unqualified normal-fundus statement is not universally true."
+  },
+  {
+    "id": "inicetmay25-radiology:1",
+    "source": "inicetmay25-radiology.pdf",
+    "sourceNumber": 1,
+    "reason": "CT is not absolutely contraindicated in pregnancy when clinically indicated."
+  },
+  {
+    "id": "inicetmay25-pediatrics:2",
+    "source": "inicetmay25-pediatrics.pdf",
+    "sourceNumber": 2,
+    "reason": "Inability to sit without support at nine months warrants developmental assessment rather than automatic reassurance."
+  },
+  {
+    "id": "inicetmay25-pediatrics:8",
+    "source": "inicetmay25-pediatrics.pdf",
+    "sourceNumber": 8,
+    "reason": "Same sphingomyelinase clinical concept as selected biochemistry question3."
+  },
+  {
+    "id": "inicetmay25-pathology:2",
+    "source": "inicetmay25-pathology.pdf",
+    "sourceNumber": 2,
+    "reason": "Excess adiposity is associated with multiple myeloma; supplied exception is not accepted."
+  },
+  {
+    "id": "inicetmay25-pathology:9",
+    "source": "inicetmay25-pathology.pdf",
+    "sourceNumber": 9,
+    "reason": "Stem asks NOT true but the supplied combination collects true free-radical statements."
+  },
+  {
+    "id": "inicetmay25-psm:5",
+    "source": "inicetmay25-psm.pdf",
+    "sourceNumber": 5,
+    "reason": "The denominator is earning members rather than the stated working-age population; not silently equated."
+  },
+  {
+    "id": "inicetmay25-psm:7",
+    "source": "inicetmay25-psm.pdf",
+    "sourceNumber": 7,
+    "reason": "Truck drivers are a recognised bridge population; a literal not-high-risk claim lacks the intended programme classification."
+  },
+  {
+    "id": "inicetmay25-physiology:7",
+    "source": "inicetmay25-physiology.pdf",
+    "sourceNumber": 7,
+    "reason": "The supplied ADH exception does not resolve the separate contradictory NaCl option."
+  },
+  {
+    "id": "inicetmay25-physiology:9",
+    "source": "inicetmay25-physiology.pdf",
+    "sourceNumber": 9,
+    "reason": "Temperature regulation includes feedback and feed-forward components; the bare label is too broad."
   }
 ]

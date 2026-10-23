@@ -3495,5 +3495,135 @@
       "Obstruction in aorta"
     ],
     "key": "C"
+  },
+  {
+    "id": "inicetmay25-biochemistry:3",
+    "source": "inicetmay25-biochemistry.pdf",
+    "source_number": 3,
+    "question": "A four-year-old has hepatosplenomegaly, developmental regression and a cherry-red macula. Which enzyme deficiency explains this?",
+    "options": [
+      "Sphingomyelinase",
+      "Hexosaminidase A",
+      "Glucose 6 phosphate",
+      "Aryl sulphatase B"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "inicetmay25-biochemistry:6",
+    "source": "inicetmay25-biochemistry.pdf",
+    "source_number": 6,
+    "question": "Under ideal PCR doubling, which cycle yields half as many DNA copies as cycle 26?",
+    "options": [
+      "25",
+      "12",
+      "13",
+      "27"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "inicetmay25-biochemistry:7",
+    "source": "inicetmay25-biochemistry.pdf",
+    "source_number": 7,
+    "question": "In G6PD deficiency, which pattern is expected for direct bilirubin, indirect bilirubin and urobilinogen, respectively?",
+    "options": [
+      "Normal – Increased – Increased",
+      "Increased – Normal – Absent",
+      "Normal – Normal – Normal",
+      "Decreased – Decreased – Increased"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "inicetmay25-psm:6",
+    "source": "inicetmay25-psm.pdf",
+    "source_number": 6,
+    "question": "Of 100 children, ten had measles previously and twenty develop it for the first time this year. What is the incidence proportion?",
+    "options": [
+      "10%",
+      "20%",
+      "22.2%",
+      "15%"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "inicetmay25-psm:10",
+    "source": "inicetmay25-psm.pdf",
+    "source_number": 10,
+    "question": "A 24-year-old man has purulent urethral discharge. The penicillin-resistant organism appears as intracellular Gram-negative diplococci. Which listed antibiotic is appropriate?",
+    "options": [
+      "Ceftriaxone",
+      "Vancomycin",
+      "Amoxicillin",
+      "Tetracycline"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "inicetmay25-psm:11",
+    "source": "inicetmay25-psm.pdf",
+    "source_number": 11,
+    "question": "Patients are grouped by mild, moderate and severe disease, then some are selected from each group. Which sampling method is intended?",
+    "options": [
+      "Simple random sampling",
+      "Systematic random sampling",
+      "Stratified random sampling",
+      "Simple sampling"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "inicetmay25-psm:14",
+    "source": "inicetmay25-psm.pdf",
+    "source_number": 14,
+    "question": "Which test compares the same diabetic patients’ weights before and after nutritional counselling?",
+    "options": [
+      "ANOVA",
+      "Chi-square test",
+      "Paired t-test",
+      "Unpaired t-test"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "inicetmay25-psm:17",
+    "source": "inicetmay25-psm.pdf",
+    "source_number": 17,
+    "question": "A gene pool describes the genetic variation of which unit?",
+    "options": [
+      "Population",
+      "Individual",
+      "Community",
+      "Family"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "inicetmay25-physiology:8",
+    "source": "inicetmay25-physiology.pdf",
+    "source_number": 8,
+    "question": "Which findings form the Bezold-Jarisch reflex? 1. Hypotension; 2. Bradycardia; 3. Bradypnoea; 4. Tachycardia.",
+    "options": [
+      "1, 2",
+      "1, 2, 3",
+      "3, 4",
+      "1, 4"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-physiology:10",
+    "source": "inicetmay25-physiology.pdf",
+    "source_number": 10,
+    "question": "During which listed process does alveolar surface tension increase?",
+    "options": [
+      "Inspiration",
+      "Expiration",
+      "Stands from supine position",
+      "Goes from standing to supine position"
+    ],
+    "key": "A"
   }
 ]

@@ -3058,5 +3058,95 @@
     "answer": "C",
     "answerOrigin": "editorial_key_primary_reference_checked",
     "explanation": "Editorial answer: the recall source provides no answer key. Increasing pulmonary flow with prostaglandin E1 can aggravate pulmonary venous congestion and oedema when anomalous pulmonary venous return is obstructed. Duct-dependent pulmonary or systemic outflow lesions may benefit from maintaining ductal patency. This risk is not a blanket prohibition on empiric prostaglandin in every undiagnosed cyanotic neonate; specialist assessment determines management."
+  },
+  {
+    "id": "inicetmay25-biochemistry:3",
+    "source": "inicetmay25-biochemistry.pdf",
+    "sourceNumber": 3,
+    "sourceFingerprint": "4fc8f15d99b38ab645dc4ec80c50f575bf58bb06ec95059f47770787433c2325",
+    "chapterId": "first-year/biochemistry/paper-1/lipid-metabolism",
+    "answer": "A",
+    "explanation": "Acid sphingomyelinase deficiency causes a Niemann-Pick disease phenotype with visceral lipid storage and, in neurovisceral forms, neurological deterioration and a cherry-red macula. Hepatosplenomegaly helps distinguish this pattern from classic Tay-Sachs disease."
+  },
+  {
+    "id": "inicetmay25-biochemistry:6",
+    "source": "inicetmay25-biochemistry.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "848520093f1fe5bc0bde469003620d589ac56fdf8d150dc4cbeea5bdc58d21dc",
+    "chapterId": "first-year/biochemistry/paper-2/molecular-biology",
+    "answer": "A",
+    "explanation": "With ideal amplification, each completed cycle doubles the DNA count. Cycle 25 therefore has half the copies of cycle 26. Real PCR efficiency can fall below this ideal, especially near the plateau."
+  },
+  {
+    "id": "inicetmay25-biochemistry:7",
+    "source": "inicetmay25-biochemistry.pdf",
+    "sourceNumber": 7,
+    "sourceFingerprint": "de9e0c4cf1495ec0940ba4f9a2f3407e6f33da96a90e99aa3556727cda72684d",
+    "chapterId": "first-year/physiology/paper-1/haematology",
+    "answer": "A",
+    "explanation": "During haemolysis, increased haem breakdown raises unconjugated bilirubin and intestinal urobilinogen formation. Direct bilirubin is usually not disproportionately raised when hepatic and biliary function are intact. G6PD-deficient individuals can have normal results between haemolytic episodes."
+  },
+  {
+    "id": "inicetmay25-psm:6",
+    "source": "inicetmay25-psm.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "8980ad1b5a52c447407171f26ec3d0ffc2836cff7a635cd4b44a1b4f9712716a",
+    "chapterId": "third-year/community-medicine/paper-1/principles-methods-epidemiology",
+    "answer": "C",
+    "explanation": "Exclude the ten previously affected children from the susceptible denominator in this simplified example. The risk is 20 divided by 90, or about 22.2%. This is an incidence proportion, not a person-time incidence rate."
+  },
+  {
+    "id": "inicetmay25-psm:10",
+    "source": "inicetmay25-psm.pdf",
+    "sourceNumber": 10,
+    "sourceFingerprint": "c5455bb0caba93a1673ea77963373137eb43323d73da4c1b0cd2efe213567b1e",
+    "chapterId": "second-year/microbiology/paper-2/genito-urinary-sexually-transmitted-infections",
+    "answer": "A",
+    "explanation": "The findings support gonococcal urethritis. Ceftriaxone is the appropriate listed agent; penicillin resistance makes amoxicillin unsuitable. Clinical care also includes testing and treatment for chlamydia when not excluded, assessment for other STIs and partner management."
+  },
+  {
+    "id": "inicetmay25-psm:11",
+    "source": "inicetmay25-psm.pdf",
+    "sourceNumber": 11,
+    "sourceFingerprint": "877455814f5ab652e1769ed998698638762e8a1cdfe9a3badf4d5d418f53f47b",
+    "chapterId": "third-year/community-medicine/paper-1/health-information-and-medical-statistics",
+    "answer": "C",
+    "explanation": "The severity groups act as strata, with sampling carried out within each. Stratified random sampling additionally requires random selection within those strata; dividing patients into groups alone does not establish randomisation."
+  },
+  {
+    "id": "inicetmay25-psm:14",
+    "source": "inicetmay25-psm.pdf",
+    "sourceNumber": 14,
+    "sourceFingerprint": "8806386c49fb65a463f0a1264461bb95d3e5de9212847bbf08423950ee94acda",
+    "chapterId": "third-year/community-medicine/paper-1/health-information-and-medical-statistics",
+    "answer": "C",
+    "explanation": "A paired t-test analyses the within-person weight differences. It tests their mean against zero, with the usual assumptions about independence between patients and approximate normality of the differences; an unpaired test discards the pairing."
+  },
+  {
+    "id": "inicetmay25-psm:17",
+    "source": "inicetmay25-psm.pdf",
+    "sourceNumber": 17,
+    "sourceFingerprint": "84d55ba6bcee929b0ecd38869dae573433b60317335be4803f6b514d9e4e4d31",
+    "chapterId": "third-year/community-medicine/paper-2/genetics-and-health",
+    "answer": "A",
+    "explanation": "A gene pool comprises the genes and alleles present in an interbreeding population. An individual has a genotype, while a community may include multiple species and their separate populations."
+  },
+  {
+    "id": "inicetmay25-physiology:8",
+    "source": "inicetmay25-physiology.pdf",
+    "sourceNumber": 8,
+    "sourceFingerprint": "7dbc3399f66929cb1963f1822cc4351ed08936d65d328d57a3762a32fd2efd04",
+    "chapterId": "first-year/physiology/paper-2/cardiovascular-physiology",
+    "answer": "B",
+    "explanation": "The inhibitory cardiopulmonary reflex produces hypotension and bradycardia with respiratory inhibition, which may present as bradypnoea or apnoea. Tachycardia is not part of its defining response."
+  },
+  {
+    "id": "inicetmay25-physiology:10",
+    "source": "inicetmay25-physiology.pdf",
+    "sourceNumber": 10,
+    "sourceFingerprint": "0e6e2f4794af2957e529596103674fd4051a9b4b8e6b2654c5b1cb38afdef8fd",
+    "chapterId": "first-year/physiology/paper-2/respiratory-physiology",
+    "answer": "A",
+    "explanation": "During inspiration, expansion spreads the surfactant film over a larger alveolar surface and surface tension rises relative to expiration. Film compression during expiration lowers surface tension and helps prevent alveolar collapse."
   }
 ]

@@ -2534,3 +2534,17 @@ Do not promote the five new pharmacology holds, manufacture missing options, imp
 **DO NOT:**Import missing distractors or disputed ossicle absolute; treat absent publisher keys as supplied; weaken assertions or coverage thresholds to clear CI.
 
 **VERIFIED:**Assembled production web build and Android production JS bundle pass. Actual browser PG flow360/390/430 passes both new editorial key reveals, visible editorial attribution, source year/session labels, saved-question isolation and offline reload. New screenshots inspected. Corrected AI-chat regression passes390/800/1280 after the final production build. Repo/release-import guards pass. Exact tested/published tree and new remoteCI results are recorded in PR122 to avoid circular commit receipts.
+
+## 2026-10-23 — Ten additional INI-CET May 2025 questions
+
+**DONE:**122 AIIMS/235 INI=357. Ten supplied-key selections from biochemistry/PSM/physiology;11 PDFs reacquired with exact hashes, selected pages rendered and visually inspected. Full source choices/keys, original explanations, real chapter/year/session labels. All347 prior complete records and NEET2078/year bytes preserved;14 problematic candidates held. See docs/AIIMS_INI_ADDITIONS_20261023_BATCH6.md and scripts/aiims-ini-additions-20261023-batch6.json. No new source-document count inflation.
+
+**DONE:**11 extension tests,357 content/offline/fingerprint/key/chapter checks,2078 year joins, production web and AndroidJS builds pass. Digestive dossier103/108 with95% floor unchanged. Browser verification/publication receipt follows.
+
+**NEXT:**Continue source-level review; runtime payload248310bytes is near unchanged250000 guard, so further expansion needs a documented budget decision. Previous e5b4d74 CI passed both Web builds, all Android builds, PG/integrity/provenance and iOS web checks; simulator mobile browser E2E remains failing separately. No main merge, Play upload or device claim.
+
+**DO NOT:**Import disputed source keys or duplicate sphingomyelinase questions; lower anatomy threshold; equate discovered candidates with approved questions.
+
+**VERIFIED:**Final production browser PG flow360/390/430 passes new PCR keyA and paired-test keyC, May2025 attribution, existing keys/bookmarks and service-worker offline reload. Both new screenshots visually inspected. Publishing exact tested tree to PR122; new CI pending.
+
+**OWNER TARGET:**Latest request targets509 additional questions across AIIMS PG and INI-CET combined. Treat357 as current reviewed total; no assertion that509 further unique/reusable candidates are already verified. Continue larger source/backlog audit after this checkpoint.

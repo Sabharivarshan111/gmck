@@ -47,7 +47,7 @@ try {
     for(const name of ['NEET-PG','AIIMS PG','INI-CET']){
       const box=await label('Open '+name+' practice').boundingBox();assert.ok(box&&box.x>=0&&box.x+box.width<=width+1&&box.height>=43.5);
     }
-    await choose('INI-CET',225);
+    await choose('INI-CET',235);
   }
   await page.setViewportSize({width:390,height:844});
   await choose('AIIMS PG',122);
@@ -67,7 +67,7 @@ try {
   await page.getByText('AIIMS PG 2017 · November · Recall',{exact:true}).waitFor();
   await label('Save this AIIMS PG question').click();
   await label('Return to AIIMS PG library').click();
-  await choose('INI-CET',225);
+  await choose('INI-CET',235);
   await page.screenshot({path:path.join(evidence,'ini-library.png')});
   await page.getByText('0 saved',{exact:true}).waitFor();
   await label('Search offline INI-CET questions').fill('SGLT1');
@@ -124,7 +124,7 @@ try {
   await label('Show answer and explanation').click();
   await page.getByText('Answer: C',{exact:true}).waitFor();
   await label('Return to AIIMS PG library').click();
-  await choose('INI-CET',225);
+  await choose('INI-CET',235);
   await label('Search offline INI-CET questions').fill('doxorubicin');
   await label('Open INI-CET question 1').click();
   await page.getByText('INI-CET 2023 · November · Recall',{exact:true}).waitFor();
@@ -177,7 +177,7 @@ try {
   await page.getByText('Answer: B',{exact:true}).waitFor();
   await page.screenshot({path:path.join(evidence,'aiims-2012-thermodilution.png')});
   await label('Return to AIIMS PG library').click();
-  await choose('INI-CET',225);
+  await choose('INI-CET',235);
   await label('Search offline INI-CET questions').fill('antenatal corticosteroids');
   await label('Open INI-CET question 1').click();
   await page.getByText('INI-CET 2024 · May · Recall',{exact:true}).waitFor();
@@ -195,7 +195,7 @@ try {
   await page.screenshot({path:path.join(evidence,'aiims-2015-editorial-plasma.png')});
   await label('Return to AIIMS PG library').click();
   await label('Search offline AIIMS PG questions').fill('');
-  await choose('INI-CET',225);
+  await choose('INI-CET',235);
   await label('Search offline INI-CET questions').fill('2025 physiology or medicine Nobel');
   await label('Open INI-CET question 1').click();
   await page.getByText('INI-CET 2025 · Recall',{exact:true}).waitFor();
@@ -205,7 +205,7 @@ try {
   await page.screenshot({path:path.join(evidence,'ini-2025-immune-tolerance.png')});
   await label('Return to INI-CET library').click();
   await label('Search offline INI-CET questions').fill('');
-  await choose('INI-CET',225);
+  await choose('INI-CET',235);
   await label('Search offline INI-CET questions').fill('brief hypnosis');
   await label('Open INI-CET question 1').click();
   await page.getByText('INI-CET 2025 · May · Recall',{exact:true}).waitFor();
@@ -239,6 +239,22 @@ try {
   await page.screenshot({path:path.join(evidence,'aiims-2011-obstructed-tapvc.png')});
   await label('Return to AIIMS PG library').click();
   await label('Search offline AIIMS PG questions').fill('');
+  await choose('INI-CET',235);
+  await label('Search offline INI-CET questions').fill('cycle 26');
+  await label('Open INI-CET question 1').click();
+  await page.getByText('INI-CET 2025 · May · Recall',{exact:true}).waitFor();
+  await label('Show answer and explanation').click();
+  await page.getByText('Answer: A',{exact:true}).waitFor();
+  await page.getByText(/Cycle 25 therefore has half/).waitFor();
+  await page.screenshot({path:path.join(evidence,'ini-2025-pcr-half-copies.png')});
+  await label('Return to INI-CET library').click();
+  await label('Search offline INI-CET questions').fill('nutritional counselling');
+  await label('Open INI-CET question 1').click();
+  await label('Show answer and explanation').click();
+  await page.getByText('Answer: C',{exact:true}).waitFor();
+  await page.screenshot({path:path.join(evidence,'ini-2025-paired-test.png')});
+  await label('Return to INI-CET library').click();
+  await label('Search offline INI-CET questions').fill('');
   await page.waitForFunction(()=>!!navigator.serviceWorker.controller,undefined,{timeout:120000});
   await context.setOffline(true);
   await choose('AIIMS PG',122);
@@ -251,7 +267,7 @@ try {
   await label('NEET-PG practice questions').click();
   await label('Search offline NEET PG questions').waitFor();
   await choose('AIIMS PG',122);
-  await choose('INI-CET',225);
+  await choose('INI-CET',235);
   assert.deepEqual(errors,[]);
   console.log('PASS 360/390/430 exam controls; separate counts, source-key reveal, bookmark isolation, offline switching and unchanged NEET bank.');
 } finally {await browser.close();await new Promise(resolve=>server.close(resolve));}

@@ -1,0 +1,296 @@
+{
+  "date": "2026-10-23",
+  "baselineCounts": {
+    "aiims-pg": 122,
+    "ini-cet": 225
+  },
+  "newQuestions": 10,
+  "newCounts": {
+    "aiims-pg": 0,
+    "ini-cet": 10
+  },
+  "questionReviews": [
+    {
+      "id": "inicetmay25-biochemistry:3",
+      "source": "inicetmay25-biochemistry.pdf",
+      "sourceNumber": 3,
+      "sourcePages": [
+        2
+      ],
+      "sourceFingerprint": "4fc8f15d99b38ab645dc4ec80c50f575bf58bb06ec95059f47770787433c2325",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "conceptReference": "https://www.ncbi.nlm.nih.gov/books/NBK1370/",
+      "nearestExisting": [
+        {
+          "similarity": 0.195,
+          "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:5"
+        },
+        {
+          "similarity": 0.164,
+          "id": "inicetmay25-biochemistry:10"
+        },
+        {
+          "similarity": 0.135,
+          "id": "ini-2023-02:14"
+        }
+      ],
+      "duplicateReview": "No matching complete question concept in the inspected 347-record baseline."
+    },
+    {
+      "id": "inicetmay25-biochemistry:6",
+      "source": "inicetmay25-biochemistry.pdf",
+      "sourceNumber": 6,
+      "sourcePages": [
+        3
+      ],
+      "sourceFingerprint": "848520093f1fe5bc0bde469003620d589ac56fdf8d150dc4cbeea5bdc58d21dc",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "conceptReference": "https://www.genome.gov/about-genomics/fact-sheets/Polymerase-Chain-Reaction-Fact-Sheet",
+      "nearestExisting": [
+        {
+          "similarity": 0.061,
+          "id": "aiims-2017-nov:11"
+        },
+        {
+          "similarity": 0.061,
+          "id": "aiims-2005-eo:2"
+        },
+        {
+          "similarity": 0.059,
+          "id": "aiims-2018-may:18"
+        }
+      ],
+      "duplicateReview": "No matching complete question concept in the inspected 347-record baseline."
+    },
+    {
+      "id": "inicetmay25-biochemistry:7",
+      "source": "inicetmay25-biochemistry.pdf",
+      "sourceNumber": 7,
+      "sourcePages": [
+        4
+      ],
+      "sourceFingerprint": "de9e0c4cf1495ec0940ba4f9a2f3407e6f33da96a90e99aa3556727cda72684d",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "conceptReference": "https://www.ncbi.nlm.nih.gov/books/NBK470315/",
+      "nearestExisting": [
+        {
+          "similarity": 0.192,
+          "id": "gmu-2024-9674994c-68dc-4adb-bf75-b110e4d8d977:2"
+        },
+        {
+          "similarity": 0.148,
+          "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:33"
+        },
+        {
+          "similarity": 0.133,
+          "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:10"
+        }
+      ],
+      "duplicateReview": "No matching complete question concept in the inspected 347-record baseline."
+    },
+    {
+      "id": "inicetmay25-psm:6",
+      "source": "inicetmay25-psm.pdf",
+      "sourceNumber": 6,
+      "sourcePages": [
+        3
+      ],
+      "sourceFingerprint": "8980ad1b5a52c447407171f26ec3d0ffc2836cff7a635cd4b44a1b4f9712716a",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "conceptReference": "https://archive.cdc.gov/www_cdc_gov/csels/dsepd/ss1978/lesson3/section2.html",
+      "nearestExisting": [
+        {
+          "similarity": 0.167,
+          "id": "ini-2021-01:6"
+        },
+        {
+          "similarity": 0.125,
+          "id": "reflex-ini-2024-may:52"
+        },
+        {
+          "similarity": 0.114,
+          "id": "inicetmay25-psychiatry:2"
+        }
+      ],
+      "duplicateReview": "No matching complete question concept in the inspected 347-record baseline."
+    },
+    {
+      "id": "inicetmay25-psm:10",
+      "source": "inicetmay25-psm.pdf",
+      "sourceNumber": 10,
+      "sourcePages": [
+        5
+      ],
+      "sourceFingerprint": "c5455bb0caba93a1673ea77963373137eb43323d73da4c1b0cd2efe213567b1e",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "conceptReference": "https://www.cdc.gov/std/treatment-guidelines/gonorrhea-adults.htm",
+      "nearestExisting": [
+        {
+          "similarity": 0.133,
+          "id": "reflex-ini-2024-may:49"
+        },
+        {
+          "similarity": 0.123,
+          "id": "faculty-ini-2022-may-psm:9"
+        },
+        {
+          "similarity": 0.114,
+          "id": "aglasem-7259d24e-b5c8-11ed-9bac-0a5e36bc6706:4"
+        }
+      ],
+      "duplicateReview": "No matching complete question concept in the inspected 347-record baseline."
+    },
+    {
+      "id": "inicetmay25-psm:11",
+      "source": "inicetmay25-psm.pdf",
+      "sourceNumber": 11,
+      "sourcePages": [
+        5
+      ],
+      "sourceFingerprint": "877455814f5ab652e1769ed998698638762e8a1cdfe9a3badf4d5d418f53f47b",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "conceptReference": "https://www.epa.gov/quality/selecting-sampling-design",
+      "nearestExisting": [
+        {
+          "similarity": 0.098,
+          "id": "aglasem-68fa49d6-b5c8-11ed-880a-0a5e36bc6706:18"
+        },
+        {
+          "similarity": 0.089,
+          "id": "aiims-2010-eo:1"
+        },
+        {
+          "similarity": 0.089,
+          "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:14"
+        }
+      ],
+      "duplicateReview": "No matching complete question concept in the inspected 347-record baseline."
+    },
+    {
+      "id": "inicetmay25-psm:14",
+      "source": "inicetmay25-psm.pdf",
+      "sourceNumber": 14,
+      "sourcePages": [
+        6,
+        7
+      ],
+      "sourceFingerprint": "8806386c49fb65a463f0a1264461bb95d3e5de9212847bbf08423950ee94acda",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "conceptReference": "https://www.itl.nist.gov/div898/handbook/prc/section3/prc311.htm",
+      "nearestExisting": [
+        {
+          "similarity": 0.103,
+          "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:1"
+        },
+        {
+          "similarity": 0.1,
+          "id": "ini-2023-01:13"
+        },
+        {
+          "similarity": 0.097,
+          "id": "ini-2026-may:27"
+        }
+      ],
+      "duplicateReview": "No matching complete question concept in the inspected 347-record baseline."
+    },
+    {
+      "id": "inicetmay25-psm:17",
+      "source": "inicetmay25-psm.pdf",
+      "sourceNumber": 17,
+      "sourcePages": [
+        8
+      ],
+      "sourceFingerprint": "84d55ba6bcee929b0ecd38869dae573433b60317335be4803f6b514d9e4e4d31",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "conceptReference": "https://www.genome.gov/genetics-glossary/Gene-Pool",
+      "nearestExisting": [
+        {
+          "similarity": 0.182,
+          "id": "aiims-2017-nov:9"
+        },
+        {
+          "similarity": 0.16,
+          "id": "ini-2026-may:27"
+        },
+        {
+          "similarity": 0.16,
+          "id": "ini-2021-02:8"
+        }
+      ],
+      "duplicateReview": "No matching complete question concept in the inspected 347-record baseline."
+    },
+    {
+      "id": "inicetmay25-physiology:8",
+      "source": "inicetmay25-physiology.pdf",
+      "sourceNumber": 8,
+      "sourcePages": [
+        3
+      ],
+      "sourceFingerprint": "7dbc3399f66929cb1963f1822cc4351ed08936d65d328d57a3762a32fd2efd04",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "conceptReference": "https://pubmed.ncbi.nlm.nih.gov/38449945/",
+      "nearestExisting": [
+        {
+          "similarity": 0.227,
+          "id": "aiims-2017-may:11"
+        },
+        {
+          "similarity": 0.207,
+          "id": "inicetmay25-psychiatry:8"
+        },
+        {
+          "similarity": 0.207,
+          "id": "inicetmay25-anatomy:2"
+        }
+      ],
+      "duplicateReview": "No matching complete question concept in the inspected 347-record baseline."
+    },
+    {
+      "id": "inicetmay25-physiology:10",
+      "source": "inicetmay25-physiology.pdf",
+      "sourceNumber": 10,
+      "sourcePages": [
+        4
+      ],
+      "sourceFingerprint": "0e6e2f4794af2957e529596103674fd4051a9b4b8e6b2654c5b1cb38afdef8fd",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "conceptReference": "https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2020.00941/full",
+      "nearestExisting": [
+        {
+          "similarity": 0.125,
+          "id": "pgblazer-2011-may-40:40"
+        },
+        {
+          "similarity": 0.111,
+          "id": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706:2"
+        },
+        {
+          "similarity": 0.103,
+          "id": "prepladder-aiims-2020-jun-pharma:6"
+        }
+      ],
+      "duplicateReview": "No matching complete question concept in the inspected 347-record baseline."
+    }
+  ],
+  "sourceWordsAfterSelection": {
+    "inicetmay25-biochemistry.pdf": 136,
+    "inicetmay25-physiology.pdf": 152,
+    "inicetmay25-psm.pdf": 179
+  },
+  "acquisition": "Eleven original faculty PDFs redownloaded; all eleven match existing manifest hashes. Selected source pages rendered and visually inspected.",
+  "limitations": [
+    "Publisher May2025 recall attribution, not authenticated original exam wording.",
+    "All answers are supplied by the source and concept-checked; explanations are original.",
+    "No figures, publisher explanations, missing distractors or generic dataset imported."
+  ]
+}
