@@ -2697,3 +2697,16 @@ Owner removed the500/509 quota. Added3AIIMS/13INI from9hash-matched existing PDF
 ### 2026-10-23 — Continued open-ended source review;20 further questions
 
 Added13AIIMS/7INI; candidate141AIIMS/308INI=449. All429 old complete records and NEET2078/year bytes unchanged. Thirteen separate November2011article snapshots plus one hash-matched existing November2022medicinePDF contribute. Nineteen supplied keys and one explicitly labelled editorial CAHkey; source choices/order retained, original explanations, source labels and chapters.23newholds and manual concept comparison preserve duplicate/clinical gates; sourcewordsmax198. Report docs/AIIMS_INI_CONTINUED_REVIEW2_20261023.md and audit scripts/aiims-ini-continued-review2-20261023.json. Data/year/tests/type/lint/web/AndroidJS/repo/anatomy guards pass. Actual production-layout360/390/430browser and offline reload pass, including new editorial attribution and statin answer; screenshots inspected. No fixed500cap, main merge, signed build or device claim. Latest resume/PR122 carries exact publication and CI status.
+
+
+## 2026-10-23 — Compact native daily-ad offer
+
+**DONE:** Shortened all native placement messages to “A short sponsored ad plays once daily here to support ORBIT.” Here means the current placement: caps remain three independent buckets. Native UnlockCard now says “Unlock ORBIT Premium”, “Go ad-free. Explore 3D Anatomy, Patient Simulator & Auscultation.” and “Explore Premium”. Card width, padding, font sizes, borders and colors retained; increased invisible touch slop to meet target size. Existing Lovable /unlock destination and LINK_OUT owner choice unchanged. Added preview-only adpromptdemo rendering actual Dialog and UnlockCard without enabling ads.
+
+**VERIFIED:** Actual RN-web browser at 360/412px: card101px at both versus old118/101px respectively; new dialog328px, no runtime errors; click calls window.open with exact https://mbbsqbank-questor.lovable.app/unlock (navigation intercepted; remote checkout/payment not tested). Native+preview TypeScript, full quiet ESLint, payments/ads/billing/version/repo/xp/reminder/edges/diagrams/apkg/kotlin guards and Android production JS bundle pass. Full legacy smoke has missing Themes/Settings/Menu selectors and is not green. No physical-device, signed APK or live-payment claim.
+
+**HALF-DONE:** Vault tools currently have no paid bundle gate; this copy deliberately says Explore, not that a purchase unlocks the tools. New six/twelve-month Vault access, free Notes migration and November offer deadline remain a separate payment/entitlement project. Legacy Lovable preview has separate unpublised ad-copy/callback edits; credit exhaustion prevented its final360px correction. It is not the native app.
+
+**NEXT:** Build/release native popup after review; implement/test backend Vault entitlements before advertising paid Vault unlock.
+
+**DO NOT:** Publish a claim that payment unlocks Vault before that behavior exists; alter ad caps, pricing, entitlement rows, applicationId, signing, or version for this copy-only task.
