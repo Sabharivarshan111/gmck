@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Linking,
   ScrollView,
@@ -16,14 +16,11 @@ import {
   angleLabel,
   boundedAngles,
   clamp,
-  coronaryTree,
   CORONARY_REFERENCES,
   CORONARY_VIEWS,
-  crossingCount,
-  foreshortening,
   type Angles,
-  type Dominance,
 } from '@/lib/coronaryLab';
+import { CORONARY_MESH_GROUPS } from '@/lib/coronaryModel';
 import { space, radius } from '@/theme/tokens';
 import { typeScale } from '@/theme/typography';
 
@@ -34,7 +31,7 @@ const challenges = [
     stem: 'In a left-dominant circulation, which artery gives rise to the PDA?',
     options: ['Circumflex artery', 'LAD', 'Acute marginal branch'],
     answer: 0,
-    why: 'The posterior descending artery arises from the circumflex in left dominance. Switch dominance in Vessels and follow the PDA back to its parent.',
+    why: 'The PDA arises from the circumflex in left dominance. The current fixed reference mesh shows an RCA-supplied PDA; it does not include every anatomical variant.',
   },
   {
     stem: 'A vessel points towards the detector. What happens to its projected length?',
@@ -58,11 +55,23 @@ const challenges = [
   },
 ];
 
-function LabFrame({ short, children }: { short: boolean; children: React.ReactNode }) {
-  return short ? <ScrollView style={{flex:1}} contentContainerStyle={{flexGrow:1}}>{children}</ScrollView> : <View style={{flex:1}}>{children}</View>;
+function LabFrame({
+  short,
+  children,
+}: {
+  short: boolean;
+  children: React.ReactNode;
+}) {
+  return short ? (
+    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+      {children}
+    </ScrollView>
+  ) : (
+    <View style={{ flex: 1 }}>{children}</View>
+  );
 }
 
-/** Offline native learning tool. Original design, authored schematic and projection engine. */
+/** Original native interface around a locally bundled real-time WebGL model. */
 export default function NativeCoronaryLab({
   onBack,
   theme = 'dark',
@@ -96,8 +105,7 @@ export default function NativeCoronaryLab({
         on: '#ffffff',
       };
   const [angles, setAngles] = useState<Angles>({ oblique: 45, tilt: -30 });
-  const [orbit, setOrbit] = useState<Angles>({ oblique: -15, tilt: 12 });
-  const [dominance, setDominance] = useState<Dominance>('right');
+  const [resetSeed, setResetSeed] = useState(0);
   const [system, setSystem] = useState<'both' | 'left' | 'right'>('both');
   const [selected, setSelected] = useState('LM');
   const [panel, setPanel] = useState<Panel>('Views');
@@ -108,21 +116,12 @@ export default function NativeCoronaryLab({
   const [question, setQuestion] = useState(0),
     [answer, setAnswer] = useState<number | null>(null);
   const [linkError, setLinkError] = useState(false);
-  const drag = useRef<{ x: number; y: number; angles: Angles } | null>(null);
-  const tree = useMemo(() => coronaryTree(dominance), [dominance]);
+  const tree = CORONARY_MESH_GROUPS;
   const vessels = useMemo(
     () => tree.filter(v => system === 'both' || v.system === system),
     [tree, system],
   );
   const active = vessels.find(v => v.id === selected) ?? vessels[0];
-  const shortening = useMemo(
-    () => foreshortening(active.points, angles),
-    [active, angles],
-  );
-  const crossings = useMemo(
-    () => crossingCount(active, vessels, angles),
-    [active, vessels, angles],
-  );
   const preset = CORONARY_VIEWS.find(
     v => v.oblique === angles.oblique && v.tilt === angles.tilt,
   );
@@ -131,10 +130,9 @@ export default function NativeCoronaryLab({
     wide = width >= 720;
   const reset = () => {
     setAngles({ oblique: 45, tilt: -30 });
-    setOrbit({ oblique: -15, tilt: 12 });
+    setResetSeed(n => n + 1);
     setZoom(1);
     setMode('anatomy');
-    setDominance('right');
     setSystem('both');
     setSelected('LM');
     setShell(true);
@@ -143,7 +141,7 @@ export default function NativeCoronaryLab({
   const chooseSystem = (s: typeof system) => {
     setSystem(s);
     if (s !== 'both' && tree.find(v => v.id === selected)?.system !== s)
-      setSelected(s === 'left' ? 'LM' : 'pRCA');
+      setSelected(s === 'left' ? 'LM' : 'RCA');
   };
   const button = (
     label: string,
@@ -180,46 +178,17 @@ export default function NativeCoronaryLab({
     <View
       style={{ flex: 1, minHeight: 0 }}
       testID={`coronary-${sceneMode}-scene`}
-      onStartShouldSetResponder={() => false}
-      onMoveShouldSetResponder={() => sceneMode === 'anatomy'}
-      onResponderGrant={e => {
-        drag.current = {
-          x: e.nativeEvent.pageX,
-          y: e.nativeEvent.pageY,
-          angles: orbit,
-        };
-      }}
-      onResponderMove={e => {
-        const d = drag.current;
-        if (d)
-          setOrbit(
-            boundedAngles({
-              oblique: Math.round(
-                d.angles.oblique + (e.nativeEvent.pageX - d.x) * 0.55,
-              ),
-              tilt: Math.round(
-                d.angles.tilt - (e.nativeEvent.pageY - d.y) * 0.4,
-              ),
-            }),
-          );
-      }}
-      onResponderRelease={() => {
-        drag.current = null;
-      }}
-      onResponderTerminate={() => {
-        drag.current = null;
-      }}
     >
       <CoronaryLabScene
-        vessels={vessels}
         selected={active.id}
         onSelect={setSelected}
         angles={angles}
-        orbit={orbit}
         mode={sceneMode}
         shell={shell}
         labels={labels}
         zoom={zoom}
+        system={system}
+        reset={resetSeed}
       />
     </View>
   );
@@ -289,10 +258,7 @@ export default function NativeCoronaryLab({
             { height: wide ? 340 : compact ? 218 : 280, borderColor: c.border },
           ]}
         >
-          <View style={{ flex: 1, flexDirection: 'row' }}>
-            {stage(mode)}
-            {wide && mode === 'anatomy' && stage('projection')}
-          </View>
+          <View style={{ flex: 1, flexDirection: 'row' }}>{stage(mode)}</View>
         </View>
         <View style={styles.modeRow}>
           {(['anatomy', 'projection', 'room'] as const).map(m =>
@@ -361,6 +327,7 @@ export default function NativeCoronaryLab({
           ))}
         </View>
         <ScrollView
+          testID="coronary-learning-panel"
           nestedScrollEnabled
           style={{ flex: 1 }}
           contentContainerStyle={styles.panel}
@@ -379,7 +346,7 @@ export default function NativeCoronaryLab({
                     () => {
                       setAngles({ oblique: v.oblique, tilt: v.tilt });
                       setSystem(v.system);
-                      setSelected(v.system === 'left' ? 'LM' : 'pRCA');
+                      setSelected(v.system === 'left' ? 'LM' : 'RCA');
                     },
                     preset?.id === v.id,
                   ),
@@ -428,24 +395,10 @@ export default function NativeCoronaryLab({
                   system === 'right',
                 )}
               </View>
-              <View style={styles.wrap}>
-                {button(
-                  'Right dominant',
-                  () => {
-                    setDominance('right');
-                    if (selected === 'dLCx') setSelected('LCx');
-                  },
-                  dominance === 'right',
-                )}
-                {button(
-                  'Left dominant',
-                  () => setDominance('left'),
-                  dominance === 'left',
-                )}
-              </View>
               <Text style={[typeScale.caption, { color: c.muted }]}>
-                Dominance here follows the artery supplying the PDA. Co-dominant
-                and other anatomical variants are not modelled.
+                BodyParts3D reference · 54 real coronary source meshes. This
+                fixed model has an RCA-supplied PDA. Other dominance variants
+                are not included.
               </Text>
               {vessels.map(v => (
                 <Touchable
@@ -495,20 +448,15 @@ export default function NativeCoronaryLab({
               >
                 <Text
                   style={[typeScale.title2, { color: c.accent }]}
-                  testID="coronary-foreshortening"
+                  testID="coronary-source-count"
                 >
-                  {Math.round(shortening)}%
+                  {active.sourceIds.length}
                 </Text>
                 <Text style={[typeScale.caption, { color: c.muted, flex: 1 }]}>
-                  Model foreshortening · loss of centreline length in this
-                  parallel projection.
+                  Source mesh parts in this selection. Rotate and change the
+                  detector angle to inspect their actual 3D shape.
                 </Text>
               </View>
-              <Text style={[typeScale.caption, { color: c.muted }]}>
-                {crossings} other visible branch{crossings === 1 ? '' : 'es'}{' '}
-                cross this centreline on the projection. This counts model
-                crossings, not the percentage of a real vessel obscured.
-              </Text>
               <Text style={[typeScale.bodyStrong, { color: c.ink }]}>
                 Follow the geometry
               </Text>
@@ -520,11 +468,12 @@ export default function NativeCoronaryLab({
                 projection.
               </Text>
               <Text style={[typeScale.caption, { color: c.muted }]}>
-                Original schematic in arbitrary units. Vessel sizes, branch
-                count, heart surface and measurements are illustrative. No
-                stenosis grading, acquired angiograms, dose calculation or
-                clinical validation. Coronary anatomy and useful angles vary by
-                patient.
+                Real BodyParts3D 4.0 geometry, bundled via OrganUI Heart. Model
+                adapted for materials, source-part selection and live
+                projection. BodyParts3D © DBCLS, CC BY 4.0. Source reference
+                anatomy has omissions and is not clinically validated. No
+                acquired angiograms, stenosis grading, dose calculation or
+                validated haemodynamics.
               </Text>
               {CORONARY_REFERENCES.map(ref => (
                 <Touchable

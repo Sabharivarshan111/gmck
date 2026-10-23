@@ -2469,3 +2469,9 @@ DO NOT:Restore search-preview draft questions, held duplicates, changed source h
 **NEXT:** Publish tested source branch/PR and inspect hosted checks. Review anatomy with a cardiologist, then compile/test a new Android build on hardware. Retain the explicit clinical/model limitations.
 
 **DO NOT:** Claim legal immunity, perfect anatomy, real fluoroscopy or signed/device validation. A new independently authored UI does not itself provide legal clearance. Keep competitor assets out. Preserve concurrent PG work.
+
+## 2026-10-23 — Real coronary WebGL supersedes schematic version
+
+**DONE:** Owner demanded real-time 3D, no SVG anatomy, open-source permitted. Replaced prior scene with Three.js/BodyParts3D real meshes through a local native WebView; browser uses same generated document. 54 original coronary source meshes, 11 provenance-backed groups, real orbit/raycast/projection/C-arm. Deleted procedural anatomy and unsupported dominance/percentage claims. Pinned upstream/hash and retained full notices. Source topology, native+preview+renderer types, ESLint and 360/390/430/900 real-component browser flows pass; screenshots captured. See docs/CORONARY_LAB_AUDIT_20261023.md. Final build/publication receipt follows.
+
+**NEXT:** Verify current branch CI and real 3 GB Android gestures/GPU/memory before release. General web gate's unrelated digestive coverage must not be lowered. No signed APK/device/clinical/legal-clearance assertion. Build HTML from mobile/scripts/build-coronary-renderer.mjs after renderer changes.

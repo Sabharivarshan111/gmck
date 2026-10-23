@@ -1,4 +1,22 @@
-# Coronary Lab hosted verification — 23 October 2026
+# Coronary Lab real WebGL verification — 23 October 2026
+
+Current implementation replaces the schematic SVG described in the historical
+receipt below. It uses the pinned BodyParts3D/OrganUI GLB, 54 real coronary
+source meshes and a locally bundled Three.js renderer shared by native WebView
+and browser hosts. See CORONARY_LAB_AUDIT_20261023.md for full scope/licensing.
+
+Current local verification passes: pinned model/source topology, native,
+preview and renderer TypeScript, full mobile source ESLint, real WebGL/pixel
+interaction tests at 360/390/430/900 px, discovery/back, landscape, offline,
+idle rendering, live source filtering, Android release JavaScript bundle and
+production browser build. The head's hosted CI result is recorded separately
+once available. No physical-device, signed APK or clinical clearance claim.
+
+## Historical schematic implementation receipt
+
+The following hosted runs tested the earlier schematic version only. They are
+preserved as history and must not be treated as WebGL verification.
+
 
 PR: https://github.com/Sabharivarshan111/gmck/pull/123
 Tested runtime commit: 6c72f3e0bad15b26f3d91a6d4b91b5ee40d730e1
