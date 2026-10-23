@@ -2456,3 +2456,16 @@ DO NOT:Restore search-preview draft questions, held duplicates, changed source h
 **NEXT:** Complete final reader/screenshot inspection, publish branch/PR, verify tested tree and actual public90/213 banks plus SW. Continue remaining source review separately.
 
 **DO NOT:** Add held thiopentone/LP/DES keys or truncate numbered statements; fill missing choices; infer a session from collection01/02; treat historical2277 as approved/unique. Leave existing anatomy/iOS gates and version/signing/ad configuration unchanged.
+
+
+## 2026-10-23 — Website Razorpay checkout and secure access sync
+
+**DONE:** Production browser /unlock, same-origin links and Google return, six/twelve-month launch plans, restore/receipt/order recovery, and live server payment hardening. See docs/ORBIT_PAYMENT_FLOW_20261023.md.
+
+**VERIFIED:** 27 authorization/provider cases, rollback-only live180-day/idempotency/owner/price DB checks, native account/cache/expiry fixture, assembled browser purchase/reload/failure/restore/interruption flows, live CORS/auth/fake-signature rejection, TypeScript/lint/build.
+
+**HALF-DONE:** No real Google/Razorpay charge or physical-device test. No webhook dashboard configuration verified. Vault paid bundle is not implemented; checkout accurately sells ad-free only.
+
+**NEXT:** Check deployment/CI receipts and perform one same-account real captured purchase on website then reopen Android.
+
+**DO NOT:** Claim a fixture is a live payment, charge a card without authorization, bypass provider verification, or claim Play enrollment/paid Vault gating.

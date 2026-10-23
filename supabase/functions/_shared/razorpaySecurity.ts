@@ -1,8 +1,8 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.112.3';
 export const PLANS: Record<string, { amount: number; days: number; label: string }> = {
   adfree_monthly: { amount: 5000, days: 30, label: 'Ad-free — 1 month' },
-  adfree_6m: { amount: 15000, days: 180, label: 'Ad-free — 6 months' },
-  adfree_1y: { amount: 30000, days: 365, label: 'Ad-free — 1 year' },
+  adfree_6m: { amount: 15000, days: 180, label: 'ORBIT Premium — 6 months ad-free' },
+  adfree_1y: { amount: 30000, days: 365, label: 'ORBIT Premium — 1 year ad-free' },
   notes_fmspm: { amount: 5000, days: 30, label: 'FM + SPM revision notes' },
   notes_pharmac: { amount: 5000, days: 30, label: 'Pharmacology full-subject notes' },
 };

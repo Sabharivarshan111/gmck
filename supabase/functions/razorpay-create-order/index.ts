@@ -6,6 +6,9 @@ Deno.serve(secureEndpoint(async (req: Request) => {
   const body = await req.json().catch(() => null);
   const key = planFor(body?.plan);
   if (!Object.hasOwn(PLANS, key)) return json({ error: 'Unknown plan.' }, 400);
+  // Retired plans remain verifiable/restorable, but cannot be sold again.
+  if (!['adfree_6m', 'adfree_1y'].includes(key)) return json({ error: 'This plan is no longer available. Choose the six-month or one-year plan.' }, 400);
+  if (Date.now() > new Date('2026-11-30T23:59:59+05:30').getTime()) return json({ error: 'The launch offer has ended. Existing paid access remains valid.' }, 409);
   const plan = PLANS[key];
   const order = await provider('orders', { amount: plan.amount, currency: 'INR',
     receipt: `${key.slice(0, 12)}_${Date.now()}`, notes: { user_id: user.id, purpose: key } });

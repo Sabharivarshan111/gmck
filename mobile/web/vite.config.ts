@@ -30,6 +30,7 @@ export default defineConfig({
       name: 'orbit-browser-platform',
       enforce: 'pre',
       resolveId(source, importer) {
+        if (importer?.includes('/mobile/') && /(?:^|\/)unlock$/.test(source)) return path.resolve(__dirname, 'adapters/unlock.ts');
         if (importer?.includes('/mobile/') && /(?:^|\/)googleAuth$/.test(source)) return path.resolve(__dirname, 'adapters/google-auth.ts');
         if (importer?.includes('/mobile/') && /(?:^|\/)adsMode$/.test(source)) return path.resolve(__dirname, 'adapters/ads-mode.ts');
       },
