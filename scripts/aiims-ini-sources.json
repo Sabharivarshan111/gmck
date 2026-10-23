@@ -76,7 +76,7 @@
     "bytes": 567776,
     "exam": "aiims-pg",
     "year": 2000,
-    "required": false
+    "required": true
   },
   {
     "file": "aiims-2001-eo.pdf",
@@ -121,7 +121,9 @@
     "bytes": 646627,
     "exam": "aiims-pg",
     "year": 2005,
-    "required": true
+    "required": true,
+    "identityStatus": "held_manipal2002_misattributed_aiims2005",
+    "identityEvidence": "Rendered PDF page25: AIPPG.com Manipal2002 recollected questions, copyright2002. No AIIMS2005 identity established."
   },
   {
     "file": "aiims-2006-eo.pdf",

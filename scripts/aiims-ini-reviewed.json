@@ -822,46 +822,6 @@
     "explanation": "An uncomplicated isolated atrial septal defect produces a low-pressure shunt and has a relatively low endocarditis risk. High-velocity jets and abnormal valves promote endothelial injury and vegetation formation."
   },
   {
-    "id": "aiims-2005-eo:2",
-    "source": "aiims-2005-eo.pdf",
-    "sourceNumber": 2,
-    "sourceFingerprint": "379d076d15468f302ac2538e594b6243d4d2d635dd42f455c6ad85e46194ef07",
-    "chapterId": "second-year/pharmacology/paper-1/general-pharmacology",
-    "answer": "D",
-    "answerOrigin": "author_checked",
-    "explanation": "Elimination half-life helps estimate how rapidly drug concentration falls and informs the dosing interval. It does not by itself establish drug potency, clinical efficacy or toxicity thresholds."
-  },
-  {
-    "id": "aiims-2005-eo:3",
-    "source": "aiims-2005-eo.pdf",
-    "sourceNumber": 3,
-    "sourceFingerprint": "0c93df2c633e0fe05a0932d7b4995b12cf82217c0849f8ec346d1d0b68ba1c7b",
-    "chapterId": "second-year/microbiology/paper-2/genito-urinary-sexually-transmitted-infections",
-    "answer": "C",
-    "answerOrigin": "author_checked",
-    "explanation": "HPV16 is a high-risk oncogenic type associated with cervical cancer. HPV6 and HPV11 are usually low-risk types associated with anogenital warts."
-  },
-  {
-    "id": "aiims-2005-eo:4",
-    "source": "aiims-2005-eo.pdf",
-    "sourceNumber": 4,
-    "sourceFingerprint": "754f30f946338af07a6fada4f5c6df8897d235a95ed77eba709a95754be92e13",
-    "chapterId": "third-year/ophthalmology/glaucoma",
-    "answer": "B",
-    "answerOrigin": "author_checked",
-    "explanation": "Gonioscopy uses a contact lens to overcome total internal reflection and visualise the anterior chamber angle. It helps distinguish open-angle from angle-closure mechanisms."
-  },
-  {
-    "id": "aiims-2005-eo:7",
-    "source": "aiims-2005-eo.pdf",
-    "sourceNumber": 7,
-    "sourceFingerprint": "684aff4276a7c929455dee0389c23c72a4ad7017890de18e71228c5b69d012ba",
-    "chapterId": "final-year/general-surgery/abdominal-wall-hernia",
-    "answer": "C",
-    "answerOrigin": "author_checked",
-    "explanation": "A Littre hernia contains a Meckel diverticulum within the hernia sac. A Richter hernia instead traps only part of the bowel circumference."
-  },
-  {
     "id": "aiims-2010-eo:1",
     "source": "aiims-2010-eo.pdf",
     "sourceNumber": 1,
@@ -1430,38 +1390,6 @@
     "answer": "B",
     "sourceFingerprint": "49ed8b78ab23bc2e98ac6f6aec346e8b017067a00fe1d8673b0a512db6f48a32",
     "explanation": "Optical coherence tomography provides high-resolution cross-sectional images of retinal layers. Perimetry assesses visual fields rather than retinal microanatomy."
-  },
-  {
-    "id": "aiims-2005-eo:5",
-    "chapterId": "second-year/pharmacology/paper-2/anti-microbial-drugs",
-    "answer": "A",
-    "sourceFingerprint": "b93877b5478ec3817f5f89e0bee99e71a072945dc2f9fd81decd07d4cfe65edf",
-    "explanation": "Mebendazole interferes with helminth microtubules and glucose utilisation. It is used against several intestinal nematodes, whereas amoebiasis requires an antiamoebic regimen.",
-    "answerOrigin": "author_checked"
-  },
-  {
-    "id": "aiims-2005-eo:6",
-    "chapterId": "second-year/microbiology/paper-2/parasitology",
-    "answer": "A",
-    "sourceFingerprint": "e36bb54e2ed8ca55b1d7dfe3347523981ff6137e6e9dfe6c96fb00a2b85d4db6",
-    "explanation": "Toxocara larvae can migrate through human tissues after ingestion of infective eggs. Humans are accidental hosts and do not complete the normal intestinal adult-worm cycle.",
-    "answerOrigin": "author_checked"
-  },
-  {
-    "id": "aiims-2005-eo:14",
-    "chapterId": "first-year/biochemistry/paper-2/protein-metabolism",
-    "answer": "A",
-    "sourceFingerprint": "b5d7e31ef7caad3f4785356b0bf7eb8c3c908415f7f5d790a34c4e9ee2b7a767",
-    "explanation": "Wheat protein is relatively deficient in lysine compared with reference amino-acid requirements. Combining cereal and pulse proteins can improve the overall amino-acid pattern.",
-    "answerOrigin": "author_checked"
-  },
-  {
-    "id": "aiims-2005-eo:20",
-    "chapterId": "final-year/general-surgery/upper-lower-limb",
-    "answer": "B",
-    "sourceFingerprint": "6508d0b6f38b3d0ffd50400a4cac85982c5e28e6eacc4f8cf5cf8d3cb4f555cc",
-    "explanation": "Kienbock disease is osteonecrosis of the lunate. The other eponyms refer to different bones, including the femoral head in Perthes disease.",
-    "answerOrigin": "author_checked"
   },
   {
     "id": "aiims-2012:2",
@@ -3148,5 +3076,581 @@
     "chapterId": "first-year/physiology/paper-2/respiratory-physiology",
     "answer": "A",
     "explanation": "During inspiration, expansion spreads the surfactant film over a larger alveolar surface and surface tension rises relative to expiration. Film compression during expiration lowers surface tension and helps prevent alveolar collapse."
+  },
+  {
+    "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:3",
+    "source": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+    "sourceNumber": 3,
+    "sourceFingerprint": "fefcaa253b4b5284a50101e392d30bc9aee9f51e241bfd49907a54124048d210",
+    "chapterId": "first-year/physiology/paper-2/central-nervous-system",
+    "answer": "A",
+    "explanation": "Cerebral perfusion pressure is approximated by mean arterial pressure minus intracranial pressure. Raised intracranial pressure therefore reduces the pressure gradient driving cerebral blood flow."
+  },
+  {
+    "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:5",
+    "source": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+    "sourceNumber": 5,
+    "sourceFingerprint": "5dd87c2eee2d611b2d3fdce2b137ea1a9aabd9a7698df71608b636cd60d8a6e3",
+    "chapterId": "first-year/physiology/paper-1/renal-physiology",
+    "answer": "A",
+    "explanation": "The proximal tubule reabsorbs solute and water approximately together, leaving tubular fluid roughly isotonic to plasma. ADH mainly changes water permeability in the late distal nephron and collecting ducts."
+  },
+  {
+    "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:8",
+    "source": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+    "sourceNumber": 8,
+    "sourceFingerprint": "25c86497eb0b3683d802d1383c887680a2bb39fc69444875920f4e5b92512481",
+    "chapterId": "first-year/physiology/paper-2/respiratory-physiology",
+    "answer": "B",
+    "explanation": "2,3-BPG binds in the central cavity between the beta chains of deoxygenated adult haemoglobin. It stabilises the low-affinity state, favouring oxygen release to tissues."
+  },
+  {
+    "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:11",
+    "source": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+    "sourceNumber": 11,
+    "sourceFingerprint": "66636909d004a9b3bd16f9c962c2f7747ea58d4882b7c0349d3d6a9490bbec68",
+    "chapterId": "second-year/pharmacology/paper-1/autonomic-nervous-system",
+    "answer": "C",
+    "explanation": "Parasympathetic M3 receptors on ciliary smooth muscle activate Gq, phospholipase C and IP3-mediated calcium release. Ciliary contraction allows the lens to become more convex for near vision."
+  },
+  {
+    "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:12",
+    "source": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+    "sourceNumber": 12,
+    "sourceFingerprint": "88bec8500175e4dbe57f494b234780e838019257aa2d7124d3be5f712971db04",
+    "chapterId": "first-year/physiology/paper-1/renal-physiology",
+    "answer": "C",
+    "explanation": "Macula densa cells lie where the thick ascending limb reaches the distal tubule near its own glomerulus. They sense tubular sodium chloride delivery and participate in tubuloglomerular feedback."
+  },
+  {
+    "id": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706:4",
+    "source": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+    "sourceNumber": 4,
+    "sourceFingerprint": "7841e05a7953526313dacca2bf2d992328de7aaabb00353b78ad6e769a5bad08",
+    "chapterId": "final-year/general-surgery/shock-burns-trauma",
+    "answer": "D",
+    "explanation": "Tension pneumothorax can rapidly impair both ventilation and venous return. It is an immediately life-threatening problem sought during the breathing assessment and treated promptly when clinically diagnosed."
+  },
+  {
+    "id": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706:10",
+    "source": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+    "sourceNumber": 10,
+    "sourceFingerprint": "b87e39d64d3446661037f8496e2eb9946fdb2fa4c39734a07cc79d2cfdb36fcf",
+    "chapterId": "final-year/general-surgery/shock-burns-trauma",
+    "answer": "A",
+    "explanation": "Loss of sympathetic vascular tone causes hypotension in neurogenic shock. Associated interruption of cardiac sympathetic input can produce bradycardia, unlike the usual tachycardia of hypovolaemic shock."
+  },
+  {
+    "id": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706:12",
+    "source": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+    "sourceNumber": 12,
+    "sourceFingerprint": "ad5902c4b0071833cbb830f8c158e2acea8bf590fe27b875d7e375b28861d5d5",
+    "chapterId": "final-year/general-surgery/shock-burns-trauma",
+    "answer": "A",
+    "explanation": "The historical SIRS criteria include tachycardia above 90/min, tachypnoea, abnormal temperature and abnormal white-cell count. A heart rate below 80/min is not one of these criteria. SIRS alone is not the current definition of sepsis."
+  },
+  {
+    "id": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706:16",
+    "source": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+    "sourceNumber": 16,
+    "sourceFingerprint": "6ce5e97c4d949b2365f87f0e92528d42ebd0044ff8e07cbfe889852b7b2aed84",
+    "chapterId": "final-year/general-surgery/neck-thyroid-parathyroid",
+    "answer": "A",
+    "explanation": "Short-course inorganic iodide reduces thyroid hormone release and gland vascularity before selected Graves thyroidectomies. It is part of supervised preoperative preparation, generally after thionamide therapy."
+  },
+  {
+    "id": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706:13",
+    "source": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706.pdf",
+    "sourceNumber": 13,
+    "sourceFingerprint": "27e39dfc6750cb6e305798912e320435b3570105a1fa307d74f1c8d837c0323b",
+    "chapterId": "final-year/general-surgery/ctev-bone-tumors",
+    "answer": "A",
+    "explanation": "In Ponseti correction of clubfoot, cavus is corrected first by aligning the forefoot with the hindfoot. Adduction and varus are then corrected together; equinus is addressed last."
+  },
+  {
+    "id": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706:16",
+    "source": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706.pdf",
+    "sourceNumber": 16,
+    "sourceFingerprint": "05b552361ae12e7d2fda9fbe9884ff4d28945c07f364d3e2e9f8a1b10debd953",
+    "chapterId": "final-year/general-surgery/trauma-and-fractures",
+    "answer": "D",
+    "explanation": "The classic unhappy triad comprises the anterior cruciate ligament, medial collateral ligament and medial meniscus. Actual acute injury patterns vary, but this is the conventional named combination in the recall."
+  },
+  {
+    "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:6",
+    "source": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "eb3bec17a1c062b81bcb3ad01d92b6305957f327cffd3b32424de4a6efff3984",
+    "chapterId": "third-year/ophthalmology/glaucoma",
+    "answer": "A",
+    "explanation": "A Roenne nasal step is a visual-field defect. Increased cupping, vessel bayoneting and altered vessel position are optic-disc findings, so the field defect is the exception."
+  },
+  {
+    "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:8",
+    "source": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+    "sourceNumber": 8,
+    "sourceFingerprint": "8f0138bbb02afaad440050f1b4198be0e3fd71cda476795476203e3e1865c057",
+    "chapterId": "third-year/ophthalmology/diseases-of-cornea",
+    "answer": "C",
+    "explanation": "Haab striae are horizontal breaks in Descemet membrane associated with congenital glaucoma. Keratoconus instead produces irregular astigmatism, a scissoring retinoscopy reflex and, in advanced disease, Munson sign."
+  },
+  {
+    "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:9",
+    "source": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+    "sourceNumber": 9,
+    "sourceFingerprint": "049dae42ea360e159ad343493d9cfaed4cf08742542ce57822b0fb9a6d2abc6f",
+    "chapterId": "third-year/ophthalmology/diseases-of-conjuctiva",
+    "answer": "C",
+    "explanation": "Pterygium shows elastotic stromal degeneration and has a head, neck and body. Simple bare-sclera excision has a substantial recurrence risk; a claimed 95% reduction in recurrence is not a feature."
+  },
+  {
+    "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:10",
+    "source": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+    "sourceNumber": 10,
+    "sourceFingerprint": "d2ebfa584d6707c9b8452e2323be53bcfed6c9a2fe4bb04400d9c09dd4c966dc",
+    "chapterId": "third-year/ophthalmology/diseases-of-lens",
+    "answer": "C",
+    "explanation": "A Krukenberg spindle is pigment deposited on the corneal endothelium, classically in pigment dispersion. It is not a lens opacity; complicated cataract may follow uveitis and show polychromatic lustre."
+  },
+  {
+    "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:13",
+    "source": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+    "sourceNumber": 13,
+    "sourceFingerprint": "a3a9f07301f42c18ef27f63c9c0b3d9c2c6c9ff053e5b78febe09b4f19da55d7",
+    "chapterId": "third-year/ophthalmology/optics-and-refraction",
+    "answer": "B",
+    "explanation": "A standard Snellen optotype subtends five minutes of arc at its designated testing distance. Each critical stroke or gap subtends one minute of arc."
+  },
+  {
+    "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:5",
+    "source": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+    "sourceNumber": 5,
+    "sourceFingerprint": "88525a8a047ba58f2be3af51be95be66b5fef8641bb3b583b37d443649ac48f7",
+    "chapterId": "third-year/community-medicine/paper-2/demography-and-family-planning",
+    "answer": "B",
+    "explanation": "Female sterilisation is intended as permanent contraception. Injections, implants and intrauterine devices are reversible, although injections are not usually grouped with user-independent LARC methods in modern classifications."
+  },
+  {
+    "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:7",
+    "source": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+    "sourceNumber": 7,
+    "sourceFingerprint": "d27fec43a4c0f1339750b7a324216620eca5932e3568238d90405ea8cab27bb3",
+    "chapterId": "final-year/obstetrics-gynaecology/pregnancy-complications",
+    "answer": "B",
+    "explanation": "Loss of deep-tendon reflexes is an early clinical warning of magnesium toxicity, preceding respiratory depression at higher concentrations. Monitoring also includes breathing and urine output."
+  },
+  {
+    "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:11",
+    "source": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+    "sourceNumber": 11,
+    "sourceFingerprint": "c63bcd334ba253c3ab2d3c0b07a2b65bdc1c8d697c9ca9e8740e9fd459e00771",
+    "chapterId": "final-year/obstetrics-gynaecology/physiology-pregnancy",
+    "answer": "D",
+    "explanation": "The standard biophysical profile combines a nonstress test with ultrasound assessment of fetal breathing, movement, tone and amniotic fluid. Daily fetal movement counting is useful surveillance but is not one of its five scored components."
+  },
+  {
+    "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:17",
+    "source": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+    "sourceNumber": 17,
+    "sourceFingerprint": "47c8e09adb08c767b8adfda8497cf0c294244baf5ac2981b174e86a0888a04ea",
+    "chapterId": "third-year/community-medicine/paper-2/demography-and-family-planning",
+    "answer": "A",
+    "explanation": "Oral contraceptives do not protect against sexually transmitted infections, including HIV. They reduce the risk of ovarian and endometrial cancer; preventing pregnancy also reduces the absolute risk of ectopic pregnancy."
+  },
+  {
+    "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:19",
+    "source": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+    "sourceNumber": 19,
+    "sourceFingerprint": "38da23bfc9723ef555339bff0cd6320a67f22fcb5a0ef2954c7b7a6066ea09a4",
+    "chapterId": "final-year/obstetrics-gynaecology/pregnancy-complications",
+    "answer": "D",
+    "explanation": "Placenta praevia classically causes recurrent, painless vaginal warning bleeds. Painful bleeding with uterine tenderness suggests placental abruption instead."
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:15",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "sourceNumber": 15,
+    "sourceFingerprint": "ec39603addd0b2d362298bd86e7ca3038201e96f7319c5f4129fbb7ba7983c50",
+    "chapterId": "final-year/general-medicine/rheumatic-and-bone-diseases",
+    "answer": "C",
+    "explanation": "Anti-Smith antibodies are highly specific for systemic lupus erythematosus, although their sensitivity is limited. ANA is a sensitive screening marker; anti-dsDNA also has high specificity and can track selected disease manifestations."
+  },
+  {
+    "id": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706:7",
+    "source": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+    "sourceNumber": 7,
+    "sourceFingerprint": "09a7a3473c140f21c3d5b52d6c951c1706c6d0425b04e097271bf6508fe4de9c",
+    "chapterId": "second-year/microbiology/paper-1/immunology",
+    "answer": "B",
+    "explanation": "Classic hereditary angioedema types I and II involve deficient or dysfunctional C1 esterase inhibitor. Excess bradykinin causes recurrent non-urticarial swelling. Other hereditary angioedema forms can have normal C1 inhibitor."
+  },
+  {
+    "id": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706:9",
+    "source": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+    "sourceNumber": 9,
+    "sourceFingerprint": "8cf6915a7783dfcceb1067299072c7b8d87d266e4c8cf3cec8f6a1f149114c48",
+    "chapterId": "second-year/microbiology/paper-1/immunology",
+    "answer": "A",
+    "explanation": "IL-4 favours Th2 differentiation rather than the Th1 response. IL-12 promotes Th1 development, and IFN-gamma is a characteristic Th1 effector cytokine."
+  },
+  {
+    "id": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706:17",
+    "source": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+    "sourceNumber": 17,
+    "sourceFingerprint": "90dbbeb91225c6fa829efbfa24ec290c0536ca6e62715bcf05e67133d9376d9b",
+    "chapterId": "second-year/microbiology/paper-2/infections",
+    "answer": "D",
+    "explanation": "Parvovirus B19 causes erythema infectiosum, transient aplastic crises in haemolytic disorders, fetal hydrops and adult arthropathy. Polymyalgia rheumatica is not its characteristic young-adult rheumatic presentation."
+  },
+  {
+    "id": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706:18",
+    "source": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+    "sourceNumber": 18,
+    "sourceFingerprint": "ec3f780af698721f914a605705498b9289d51c474cf93401bf222d077c9265d0",
+    "chapterId": "second-year/microbiology/paper-2/infections",
+    "answer": "A",
+    "explanation": "Hand, foot and mouth disease commonly produces vesicles on the hands and feet with oral lesions. The other listed infections more typically cause non-vesicular exanthems."
+  },
+  {
+    "id": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706:4",
+    "source": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706.pdf",
+    "sourceNumber": 4,
+    "sourceFingerprint": "85d144aef836b72a7a81d7482cdeb666f2245efb4248490296c70189d335ae2f",
+    "chapterId": "third-year/forensic-medicine/mechanical-asphyxia",
+    "answer": "C",
+    "explanation": "A garrotte can use a ligature tightened with a twisting stick or similar mechanism, traditionally called the Spanish windlass. Throttling is manual neck compression; mugging uses an arm around the neck."
+  },
+  {
+    "id": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706:17",
+    "source": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706.pdf",
+    "sourceNumber": 17,
+    "sourceFingerprint": "dc7ca4cc89b0612d9111bd9ac92d6a0f95902ff0d500d3a3f0b21eebf8254de4",
+    "chapterId": "third-year/forensic-medicine/abortion-and-infant-deaths",
+    "answer": "A",
+    "explanation": "Vagitus uterinus refers to crying before complete delivery while the fetus is still within the uterus. Vagitus vaginalis describes crying while the head is still within the vagina."
+  },
+  {
+    "id": "aglasem-5cd670f8-c103-11ed-97fb-0a5e36bc6706:15",
+    "source": "aglasem-5cd670f8-c103-11ed-97fb-0a5e36bc6706.pdf",
+    "sourceNumber": 15,
+    "sourceFingerprint": "fc4fd032fec8478df558d25085cfdc78eb3c1b6b2c8d52269429242078d6a303",
+    "chapterId": "second-year/microbiology/paper-2/genito-urinary-sexually-transmitted-infections",
+    "answer": "D",
+    "explanation": "The Jarisch-Herxheimer reaction is an acute inflammatory response after treatment of some spirochaetal infections. Proinflammatory mediators include TNF-alpha, IL-6 and IL-8; it is distinct from an immediate drug allergy."
+  },
+  {
+    "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:1",
+    "source": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+    "sourceNumber": 1,
+    "sourceFingerprint": "399fe7e8a6ac54dccc4849712f44d16d690d4bfcc815ee8fc050f387d113c814",
+    "chapterId": "first-year/biochemistry/paper-1/lipid-metabolism",
+    "answer": "B",
+    "explanation": "Tangier disease results from biallelic ABCA1 dysfunction and impaired cellular cholesterol efflux to apolipoprotein A-I. Plasma HDL cholesterol is markedly reduced."
+  },
+  {
+    "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:10",
+    "source": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+    "sourceNumber": 10,
+    "sourceFingerprint": "2be354f4227f20e55c57b1c59643bf636b3196d3c2ecd1fa9e7fe4e6b47ec04f",
+    "chapterId": "first-year/biochemistry/paper-2/minerals",
+    "answer": "A",
+    "explanation": "Glutathione peroxidases, iodothyronine deiodinases and thioredoxin reductases include selenocysteine-containing enzymes. Glutathione synthetase is not one of these selenoenzymes."
+  },
+  {
+    "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:12",
+    "source": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+    "sourceNumber": 12,
+    "sourceFingerprint": "16bedd75588991c8e825083286324b7a5faef0141a474f55080bbe2ed6d57678",
+    "chapterId": "first-year/biochemistry/paper-2/miscellaneous-topics",
+    "answer": "A",
+    "explanation": "Zellweger spectrum disorders are peroxisome-biogenesis disorders, usually caused by pathogenic variants in PEX genes. Multiple peroxisomal metabolic pathways are affected."
+  },
+  {
+    "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:14",
+    "source": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+    "sourceNumber": 14,
+    "sourceFingerprint": "ab5f861eb91a051d8661b9c8104b867c1e0bde0e4e80909410869a0dbba9831b",
+    "chapterId": "first-year/biochemistry/paper-1/carbohydrate-metabolism",
+    "answer": "D",
+    "explanation": "Fructosamine measures glycated circulating proteins, predominantly albumin, and reflects roughly the preceding two to three weeks. Altered red-cell survival can make HbA1c misleading, while albumin turnover can affect fructosamine."
+  },
+  {
+    "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:6",
+    "source": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "f9229596e7eb9dfa77760bbaed6c5ea0f831d97ceab8db8869ff4f8add063371",
+    "chapterId": "final-year/general-medicine/psychiatry-medicine",
+    "answer": "D",
+    "explanation": "Stress describes emotional, cognitive, physiological and autonomic responses to demands or threats. The other options describe more specific anxiety or illness-preoccupation experiences."
+  },
+  {
+    "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:15",
+    "source": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+    "sourceNumber": 15,
+    "sourceFingerprint": "6e598058d4bfd45aa19d4f03baa541d3b39ed0cdc01aba12bc81af860e79c638",
+    "chapterId": "final-year/general-medicine/psychiatry-medicine",
+    "answer": "B",
+    "explanation": "Oxazepam undergoes glucuronidation and has no long-lived active metabolites, making it a common benzodiazepine choice when alcohol withdrawal coexists with significant liver dysfunction. Withdrawal severity and monitoring still guide treatment."
+  },
+  {
+    "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:8",
+    "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+    "sourceNumber": 8,
+    "sourceFingerprint": "a7dd3ec86bb9a555dca9389f7390de646823ad6026f0d5c15943f8fbb603b9ac",
+    "chapterId": "second-year/pharmacology/paper-1/central-nervous-system",
+    "answer": "B",
+    "explanation": "Lorazepam is an intravenous benzodiazepine used for acute seizures. Its glucuronidation and lack of active oxidative metabolites are useful in liver dysfunction; airway monitoring remains essential."
+  },
+  {
+    "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:22",
+    "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+    "sourceNumber": 22,
+    "sourceFingerprint": "0d7fb64fa4eadd30cef37f16fccdbee7131ffedcfb9e86a0f7a12f02319fa936",
+    "chapterId": "second-year/pharmacology/paper-2/anti-microbial-drugs",
+    "answer": "C",
+    "explanation": "Bedaquiline inhibits mycobacterial ATP synthase, and isoniazid inhibits mycolic-acid synthesis. Rifampicin has indications beyond tuberculosis, and pyrazinamide is not the classic hepatic enzyme inducer in this regimen."
+  },
+  {
+    "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:23",
+    "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+    "sourceNumber": 23,
+    "sourceFingerprint": "2d8e2ea5cfa081008fcabdd3ca7863bb4e44c1aaa1ebd5eda3cc30c91c05322d",
+    "chapterId": "second-year/pharmacology/paper-2/anti-microbial-drugs",
+    "answer": "C",
+    "explanation": "Meropenem covers many organisms causing complicated intra-abdominal infection, febrile neutropenia and selected diabetic-foot infections. It does not provide reliable MRSA coverage; these diagnoses do not mean every patient requires a carbapenem."
+  },
+  {
+    "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:28",
+    "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+    "sourceNumber": 28,
+    "sourceFingerprint": "0f5c7fbdf65c04f99e3b61086c694be1170cd859f7f1c5e1e733b212d1308c43",
+    "chapterId": "second-year/pathology/paper-1/cell-injury",
+    "answer": "C",
+    "explanation": "Metastatic calcification reflects abnormal calcium-phosphate metabolism and may occur in renal failure, hyperparathyroidism or vitamin D excess. Calcium deposited in damaged metastatic nodes is ordinarily dystrophic calcification."
+  },
+  {
+    "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:31",
+    "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+    "sourceNumber": 31,
+    "sourceFingerprint": "6c97fc4410368f2fc56a93a42451f1c40c24343fbba51fe37ce3ce674bd69b8b",
+    "chapterId": "second-year/pathology/paper-1/red-blood-cells",
+    "answer": "B",
+    "explanation": "Perls Prussian blue reaction demonstrates ferric iron in haemosiderin. Masson trichrome highlights collagen, PAS detects carbohydrate-rich substances, and Fite stain is used for mycobacteria."
+  },
+  {
+    "id": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706:2",
+    "source": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+    "sourceNumber": 2,
+    "sourceFingerprint": "655c11d04ca6c5dde5aaa41eae45706394d80e668450564b92613be64ace5c33",
+    "chapterId": "final-year/paediatrics/growth-and-development",
+    "answer": "A",
+    "explanation": "Arm span can provide an alternative estimate of stature when standing height cannot be measured reliably. The relationship varies with age and body proportions, so it is an estimate rather than an exact replacement."
+  },
+  {
+    "id": "aiims-2000-eo:1",
+    "source": "aiims-2000-eo.pdf",
+    "sourceNumber": 1,
+    "sourceFingerprint": "2439b4d4455c0f18d4cad04130c4c7b05ba001aa309d4a0e63ac33f38490bc24",
+    "chapterId": "first-year/anatomy/paper-2/brain-and-cranial-nerves",
+    "answer": "D",
+    "explanation": "The medial primary motor cortex in the paracentral lobule represents the contralateral lower limb and perineal region. A left-sided lesion therefore affects the right leg region."
+  },
+  {
+    "id": "aiims-2000-eo:3",
+    "source": "aiims-2000-eo.pdf",
+    "sourceNumber": 3,
+    "sourceFingerprint": "42232706eb86cce919298c000cb4c89a4990c3813a6be11563ef51cace6d58e0",
+    "chapterId": "first-year/anatomy/paper-2/thorax",
+    "answer": "A",
+    "explanation": "The aortic hiatus transmits the aorta and thoracic duct. The azygos vein commonly passes with them, although its route can vary; the vagal trunks accompany the oesophagus."
+  },
+  {
+    "id": "aiims-2000-eo:4",
+    "source": "aiims-2000-eo.pdf",
+    "sourceNumber": 4,
+    "sourceFingerprint": "8eb9619c21606f35fab72998b635dceeb34ffff0c22af62ead411ec0aa084731",
+    "chapterId": "first-year/anatomy/paper-1/lower-limb",
+    "answer": "A",
+    "explanation": "The obturator nerve supplies most medial-compartment thigh adductors. The hamstring part of adductor magnus is supplied by the tibial division of the sciatic nerve."
+  },
+  {
+    "id": "aiims-2001-may:9",
+    "source": "aiims-2001-may.pdf",
+    "sourceNumber": 9,
+    "sourceFingerprint": "bc653192e18850953c1ceacc962edad21c04fee96248289ea0cd8cf951bbc10f",
+    "chapterId": "second-year/pathology/paper-1/red-blood-cells",
+    "answer": "A",
+    "explanation": "Polycythaemia vera usually has increased red-cell mass and may have thrombocytosis or leucocytosis. Thrombosis, visual symptoms and bleeding can occur; thrombocytopenia is not typical of its usual proliferative phase."
+  },
+  {
+    "id": "aiims-2001-may:10",
+    "source": "aiims-2001-may.pdf",
+    "sourceNumber": 10,
+    "sourceFingerprint": "e5e97179447c298ae220b42f6e1e47d215fe6b81d3eabcba3554014f9843d8bb",
+    "chapterId": "second-year/pathology/paper-1/red-blood-cells",
+    "answer": "C",
+    "explanation": "Paroxysmal nocturnal haemoglobinuria is an acquired clonal stem-cell disorder. A GPI-anchor defect can affect multiple blood-cell lineages, with complement-mediated haemolysis and a risk of thrombosis."
+  },
+  {
+    "id": "aiims-2001-may:17",
+    "source": "aiims-2001-may.pdf",
+    "sourceNumber": 17,
+    "sourceFingerprint": "8461b0d6a49a038fbb16d62f502c0a175a718746503903b708096a4b24386ca8",
+    "chapterId": "second-year/pathology/paper-2/respiratory-system",
+    "answer": "B",
+    "explanation": "Small-cell lung carcinoma is strongly associated with smoking and commonly disseminates early. Its rapid growth and early metastatic tendency are characteristic, although other lung cancers can also behave aggressively."
+  },
+  {
+    "id": "aiims-2001-may:18",
+    "source": "aiims-2001-may.pdf",
+    "sourceNumber": 18,
+    "sourceFingerprint": "3341d6ee1eab0e164c00bd97671f873a427cf6833c99cb99db946d031e36fb7a",
+    "chapterId": "second-year/microbiology/paper-2/genito-urinary-sexually-transmitted-infections",
+    "answer": "A",
+    "explanation": "Neisseria gonorrhoeae is a Gram-negative diplococcus, not a Gram-positive coccus. Ascending infection and urethral complications can occur; ceftriaxone remains a recommended treatment, with additional management determined by current guidance."
+  },
+  {
+    "id": "aiims-2001-may:31",
+    "source": "aiims-2001-may.pdf",
+    "sourceNumber": 31,
+    "sourceFingerprint": "078b0c294d767afc214acd9b1cc6376d77e73ba1d509ea3f8c5a963faa564754",
+    "chapterId": "second-year/pathology/paper-2/endocrinology",
+    "answer": "C",
+    "explanation": "Primary adrenal insufficiency raises ACTH and related melanocortin activity. Hyperpigmentation can involve oral mucosa, palmar creases, pressure areas and scars; oral sparing is therefore the false statement."
+  },
+  {
+    "id": "aiims-2010-eo:8",
+    "source": "aiims-2010-eo.pdf",
+    "sourceNumber": 8,
+    "sourceFingerprint": "b0c65724e72474f8ba5648b76647683b92d86c6917930b4c8e2dd84fe7cba259",
+    "chapterId": "first-year/anatomy/paper-2/head-and-neck",
+    "answer": "A",
+    "explanation": "Tensor tympani receives motor fibres from the mandibular division of the trigeminal nerve through the nerve to medial pterygoid. Stapedius is supplied by the facial nerve."
+  },
+  {
+    "id": "aiims-2010-eo:13",
+    "source": "aiims-2010-eo.pdf",
+    "sourceNumber": 13,
+    "sourceFingerprint": "45e551391c07cf5bfc387a184a34ef6834583f8cfe31f7b952c1dbd0178ab923",
+    "chapterId": "first-year/physiology/paper-2/respiratory-physiology",
+    "answer": "B",
+    "explanation": "Haemoglobin concentration strongly affects arterial oxygen content, but not the partial pressure of dissolved oxygen itself. Inspired oxygen, altitude and alveolar carbon dioxide influence the alveolar and arterial oxygen pressures."
+  },
+  {
+    "id": "aiims-2010-eo:15",
+    "source": "aiims-2010-eo.pdf",
+    "sourceNumber": 15,
+    "sourceFingerprint": "55361d79e6eb9d64ff274f2c51c64bfe5e02b29b718ee92819c843151235271b",
+    "chapterId": "first-year/physiology/paper-1/renal-physiology",
+    "answer": "D",
+    "explanation": "The proximal tubule reabsorbs filtered glucose, most bicarbonate and much phosphate. Hydrogen ions are secreted into the lumen, helping reclaim bicarbonate and excrete acid."
+  },
+  {
+    "id": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706:9",
+    "source": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706.pdf",
+    "sourceNumber": 9,
+    "sourceFingerprint": "7c3d3bd72f48364f45474b7e4458309e0ed721453ee0610d459ad8c1f3edcb43",
+    "chapterId": "second-year/pharmacology/paper-2/neoplastic-drugs",
+    "answer": "D",
+    "explanation": "Cyclophosphamide is activated by hepatic oxidation to 4-hydroxycyclophosphamide, which equilibrates with aldophosphamide. Subsequent breakdown produces the cytotoxic phosphoramide mustard and acrolein."
+  },
+  {
+    "id": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706:11",
+    "source": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706.pdf",
+    "sourceNumber": 11,
+    "sourceFingerprint": "3259fd4694208aa434c1d1749199b0cc1f0a2e236bf3040881a5f47aa01a10a7",
+    "chapterId": "second-year/pharmacology/paper-2/anti-microbial-drugs",
+    "answer": "A",
+    "explanation": "Isoniazid is a prodrug activated by the mycobacterial KatG catalase-peroxidase. Its active products inhibit mycolic-acid synthesis; changes in KatG can confer resistance."
+  },
+  {
+    "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:2",
+    "source": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+    "sourceNumber": 2,
+    "sourceFingerprint": "560e03f2744b718c00581b07514b430f6bce9bff1816f84b82713f5fc8edf0aa",
+    "chapterId": "final-year/paediatrics/newborn-infants",
+    "answer": "D",
+    "explanation": "When a preterm or low-birthweight infant cannot receive sufficient mother's own milk, screened donor human milk is generally preferred where available. Fortification and nutritional monitoring depend on the infant's needs."
+  },
+  {
+    "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:7",
+    "source": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+    "sourceNumber": 7,
+    "sourceFingerprint": "fde542de2d1e4b5efa82d928fa4bbb414942b981dfb124511ecbe1d467f0375b",
+    "chapterId": "final-year/paediatrics/rheumatology-and-genetics",
+    "answer": "A",
+    "explanation": "Classic Rett syndrome is commonly associated with pathogenic MECP2 variants and an X-linked dominant pattern. Most cases arise de novo. OTC deficiency and Duchenne muscular dystrophy are X-linked recessive conditions."
+  },
+  {
+    "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:8",
+    "source": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+    "sourceNumber": 8,
+    "sourceFingerprint": "8460ab70a945852636717b5714f32d66149116d461e49d3801fda6ae10d20c37",
+    "chapterId": "final-year/paediatrics/rheumatology-and-genetics",
+    "answer": "A",
+    "explanation": "CFTR-related disease can cause congenital bilateral absence of the vas deferens, often with absent or hypoplastic seminal vesicles. This can occur with classic cystic fibrosis or a more limited CFTR-related phenotype."
+  },
+  {
+    "id": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706:4",
+    "source": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706.pdf",
+    "sourceNumber": 4,
+    "sourceFingerprint": "8a4a4653482005eee00ffedbbdc3125d987e5169023e203a12aebb6718721073",
+    "chapterId": "final-year/obstetrics-gynaecology/disorders-of-menstruation",
+    "answer": "B",
+    "explanation": "Kallmann syndrome combines congenital hypogonadotropic hypogonadism with impaired smell, ranging from hyposmia to anosmia. It reflects abnormal development or migration of GnRH neurons and associated olfactory pathways."
+  },
+  {
+    "id": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706:5",
+    "source": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706.pdf",
+    "sourceNumber": 5,
+    "sourceFingerprint": "baf2621360f56cd696f903ad52cfe816b151b7af7cad14bcfcb95484dc0499e1",
+    "chapterId": "final-year/obstetrics-gynaecology/physiology-pregnancy",
+    "answer": "A",
+    "explanation": "The modified biophysical profile combines a nonstress test with assessment of amniotic fluid volume, traditionally the amniotic fluid index. The full profile additionally scores fetal breathing, movement and tone."
+  },
+  {
+    "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:6",
+    "source": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "7374e70c2271f50069668c2507887552d7f331e9bc509b3a63af3c64637e839b",
+    "chapterId": "final-year/general-medicine/rheumatic-and-bone-diseases",
+    "answer": "D",
+    "explanation": "Methotrexate, sulfasalazine and hydroxychloroquine are conventional DMARDs used in initial rheumatoid arthritis treatment according to disease activity and patient factors. Azathioprine is not a usual first-line RA DMARD."
+  },
+  {
+    "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:7",
+    "source": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+    "sourceNumber": 7,
+    "sourceFingerprint": "2aa7d31d5b42a6d52e8702cc9ef511c33863e867886029d6ea8a5ec1638b3bae",
+    "chapterId": "final-year/general-medicine/infective-diseases",
+    "answer": "A",
+    "explanation": "Severe malaria can involve coma, hypoglycaemia, acute kidney injury and metabolic acidosis. A pH above 7.25 is not the acidosis criterion; severe acidosis is associated with lower pH or equivalent biochemical evidence."
+  },
+  {
+    "id": "aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706:8",
+    "source": "aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706.pdf",
+    "sourceNumber": 8,
+    "sourceFingerprint": "a0150de240f97630faa4d600529ee8ee0337aba26e9c76000a22ff9056d32fac",
+    "chapterId": "first-year/biochemistry/paper-2/molecular-biology",
+    "answer": "B",
+    "explanation": "DNA footprinting identifies a DNA region protected from cleavage by a bound protein. DNA fingerprinting distinguishes DNA profiles, while Northern blotting detects RNA."
+  },
+  {
+    "id": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706:6",
+    "source": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "516c88bbd1b9057fb5940516524e8b30b5444f4eba31763a1dae1ebec1b301e2",
+    "chapterId": "first-year/anatomy/paper-2/head-and-neck",
+    "answer": "D",
+    "explanation": "The foramen lacerum lies at the junction of sphenoid, petrous temporal and basilar occipital bones. It is largely filled by cartilage in life; the internal carotid artery passes across its superior aspect."
+  },
+  {
+    "id": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706:7",
+    "source": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706.pdf",
+    "sourceNumber": 7,
+    "sourceFingerprint": "e983ea054e4a1d264f361425c5adc5b9d1c201bf232c0710374bbd75c9895af2",
+    "chapterId": "first-year/anatomy/paper-2/head-and-neck",
+    "answer": "B",
+    "explanation": "The glossopharyngeal nerve occupies a separate anterior compartment of the jugular foramen, divided from the vagus and accessory nerves by a fibrous septum. The hypoglossal nerve exits through the hypoglossal canal."
   }
 ]

@@ -1,12 +1,14 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
+import {gzipSync} from 'node:zlib';
 import {build} from '../mobile/node_modules/esbuild/lib/main.js';
 
 const output = await build({entryPoints:['src/lib/neetPgOffline.ts'],bundle:true,write:false,format:'esm',platform:'node'});
 const {createOfflineReader,validateOfflineBank} = await import('data:text/javascript;base64,'+Buffer.from(output.outputFiles[0].text).toString('base64'));
 const read = path => JSON.parse(fs.readFileSync(path,'utf8'));
 const reviewed = read('scripts/aiims-ini-reviewed.json');
+const payloadBudget = read('scripts/aiims-ini-payload-budget.json');
 const receipts = read('docs/AIIMS_INI_RELEASE_CANDIDATE_20261021.json');
 const chapters = new Map(read('mobile/src/lib/neetPgStudyData.json').chapters.map(c=>[c.id,c]));
 // 'Marked leucocytosis' is a severity descriptor, not a reference to a figure.
@@ -16,10 +18,10 @@ assert.equal(missingFigureReference.test('Identify the marked structure'),true);
 const fetchBefore = globalThis.fetch;
 globalThis.fetch=()=>{throw Error('Offline bank attempted networking');};
 try {
-  for (const [file,count] of [['aiimsPgBank.json',122],['iniCetBank.json',235]]) {
+  for (const [file,count] of [['aiimsPgBank.json',125],['iniCetBank.json',288]]) {
     const bank=read('mobile/src/lib/'+file);validateOfflineBank(bank);
     const reader=createOfflineReader(bank);assert.equal(reader.total,count);
-    assert.equal(fs.statSync('mobile/src/lib/'+file).size<175000,true);
+    assert.equal(fs.statSync('mobile/src/lib/'+file).size<payloadBudget.maxBankBytes,true);
     const rows=[];
     for(let offset=0;offset<reader.total;offset+=40)rows.push(...reader.search({offset}).records);
     assert.equal(rows.length,count);assert.equal(new Set(rows.map(r=>r.id)).size,count);
@@ -50,8 +52,8 @@ try {
   const repaired=ini.records.find(r=>r.id==='inicetmay25-psm:4');
   for(const statement of ['1. Conduct data analysis','2. Selecting population','3. Setting research question','4. Setting research objective'])assert.ok(repaired.question.includes(statement));
   assert.equal(repaired.sourceAnswer,'C');
-  assert.equal(receipts.totalQuestions,357);
-  assert.equal(receipts.questionProvenance.length,357);
+  assert.equal(receipts.totalQuestions,413);
+  assert.equal(receipts.questionProvenance.length,413);
   const fresh=read('scripts/aiims-ini-missing-papers-import-20261022.json');
   assert.equal(fresh.newQuestions,52);
   for(const review of fresh.questionReviews){
@@ -61,7 +63,27 @@ try {
   assert.equal(ini.records.find(r=>r.id==='inicetmay25-anaesthesia:1').sourceAnswer,'A');
   const arsenic=ini.records.find(r=>r.id==='aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706:6');
   for(const n of ['1.','2.','3.','4.','5.'])assert.ok(arsenic.question.includes(n));
-  assert.equal(fs.statSync('mobile/src/lib/aiimsPgBank.json').size+fs.statSync('mobile/src/lib/iniCetBank.json').size<250000,true);
+  assert.equal(fs.statSync('mobile/src/lib/aiimsPgBank.json').size+fs.statSync('mobile/src/lib/iniCetBank.json').size<payloadBudget.maxCombinedBytes,true);
+  const bankPaths=['mobile/src/lib/aiimsPgBank.json','mobile/src/lib/iniCetBank.json'];
+  assert.ok(bankPaths.reduce((n,p)=>n+gzipSync(fs.readFileSync(p),{level:9}).length,0)<payloadBudget.maxCombinedGzipBytes);
+  const scaleAudit=read('scripts/aiims-ini-scale500-20261023.json');
+  assert.equal(scaleAudit.questionReviews.length,64);
+  assert.equal(scaleAudit.withdrawals.length,8);
+  assert.equal(scaleAudit.baselineTotal+scaleAudit.newQuestions-scaleAudit.withdrawnQuestions,receipts.totalQuestions);
+  for(const audit of scaleAudit.questionReviews){
+    const row=bankPaths.flatMap(p=>read(p).records).find(r=>r.id===audit.id);assert.ok(row);
+    assert.match(audit.sourceKeyText,/^[A-D]$/);assert.equal(row.sourceAnswer,audit.sourceKeyText);
+    assert.ok(audit.sourcePages.length>0);
+    assert.equal(receipts.questionProvenance.find(p=>p.id===audit.id).answerOrigin,'publisher_key_author_checked');
+  }
+  for(const duplicate of scaleAudit.semanticDuplicatesHeld) assert.equal(reviewed.some(r=>r.id===duplicate.id),false);
+  const heldSource=read('scripts/aiims-ini-sources.json').find(s=>s.file==='aiims-2005-eo.pdf');
+  assert.ok(heldSource.identityStatus.startsWith('held_'));
+  for(const old of scaleAudit.withdrawals){
+    assert.equal(reviewed.some(r=>r.id===old.id),false);
+    assert.equal(bankPaths.some(p=>read(p).records.some(r=>r.id===old.id)),false);
+    const hold=read('scripts/aiims-ini-held.json').find(r=>r.id===old.id);assert.ok(hold?.reason.includes('Manipal'));
+  }
   const nextBatch=read('scripts/aiims-ini-additions-20261023-batch2.json');
   const aiims=read('mobile/src/lib/aiimsPgBank.json');
   for(const audit of nextBatch.questionReviews){
@@ -116,4 +138,4 @@ try {
   const neet=read('mobile/src/lib/neetPgBank.json');assert.equal(neet.records.length,2078);
   assert.equal(neet.records.some(r=>used.has(r.id)),false);
 } finally {globalThis.fetch=fetchBefore;}
-console.log('PASS: 357 source-fingerprinted recall items, original explanations, real syllabus paths, offline search/filter/answers, mutation isolation and unchanged 2,078-item NEET bank.');
+console.log('PASS: 413 source-fingerprinted recall items, original explanations, real syllabus paths, offline search/filter/answers, mutation isolation and unchanged 2,078-item NEET bank.');

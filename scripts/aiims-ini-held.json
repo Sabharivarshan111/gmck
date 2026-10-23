@@ -644,5 +644,223 @@
     "source": "inicetmay25-physiology.pdf",
     "sourceNumber": 9,
     "reason": "Temperature regulation includes feedback and feed-forward components; the bare label is too broad."
+  },
+  {
+    "id": "aiims-2005-eo:2",
+    "source": "aiims-2005-eo.pdf",
+    "sourceNumber": 2,
+    "sourceFingerprint": "379d076d15468f302ac2538e594b6243d4d2d635dd42f455c6ad85e46194ef07",
+    "chapterId": "second-year/pharmacology/paper-1/general-pharmacology",
+    "answer": "D",
+    "answerOrigin": "author_checked",
+    "explanation": "Elimination half-life helps estimate how rapidly drug concentration falls and informs the dosing interval. It does not by itself establish drug potency, clinical efficacy or toxicity thresholds.",
+    "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity."
+  },
+  {
+    "id": "aiims-2005-eo:3",
+    "source": "aiims-2005-eo.pdf",
+    "sourceNumber": 3,
+    "sourceFingerprint": "0c93df2c633e0fe05a0932d7b4995b12cf82217c0849f8ec346d1d0b68ba1c7b",
+    "chapterId": "second-year/microbiology/paper-2/genito-urinary-sexually-transmitted-infections",
+    "answer": "C",
+    "answerOrigin": "author_checked",
+    "explanation": "HPV16 is a high-risk oncogenic type associated with cervical cancer. HPV6 and HPV11 are usually low-risk types associated with anogenital warts.",
+    "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity."
+  },
+  {
+    "id": "aiims-2005-eo:4",
+    "source": "aiims-2005-eo.pdf",
+    "sourceNumber": 4,
+    "sourceFingerprint": "754f30f946338af07a6fada4f5c6df8897d235a95ed77eba709a95754be92e13",
+    "chapterId": "third-year/ophthalmology/glaucoma",
+    "answer": "B",
+    "answerOrigin": "author_checked",
+    "explanation": "Gonioscopy uses a contact lens to overcome total internal reflection and visualise the anterior chamber angle. It helps distinguish open-angle from angle-closure mechanisms.",
+    "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity."
+  },
+  {
+    "id": "aiims-2005-eo:7",
+    "source": "aiims-2005-eo.pdf",
+    "sourceNumber": 7,
+    "sourceFingerprint": "684aff4276a7c929455dee0389c23c72a4ad7017890de18e71228c5b69d012ba",
+    "chapterId": "final-year/general-surgery/abdominal-wall-hernia",
+    "answer": "C",
+    "answerOrigin": "author_checked",
+    "explanation": "A Littre hernia contains a Meckel diverticulum within the hernia sac. A Richter hernia instead traps only part of the bowel circumference.",
+    "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity."
+  },
+  {
+    "id": "aiims-2005-eo:5",
+    "chapterId": "second-year/pharmacology/paper-2/anti-microbial-drugs",
+    "answer": "A",
+    "sourceFingerprint": "b93877b5478ec3817f5f89e0bee99e71a072945dc2f9fd81decd07d4cfe65edf",
+    "explanation": "Mebendazole interferes with helminth microtubules and glucose utilisation. It is used against several intestinal nematodes, whereas amoebiasis requires an antiamoebic regimen.",
+    "answerOrigin": "author_checked",
+    "source": "aiims-2005-eo.pdf",
+    "sourceNumber": 5,
+    "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity."
+  },
+  {
+    "id": "aiims-2005-eo:6",
+    "chapterId": "second-year/microbiology/paper-2/parasitology",
+    "answer": "A",
+    "sourceFingerprint": "e36bb54e2ed8ca55b1d7dfe3347523981ff6137e6e9dfe6c96fb00a2b85d4db6",
+    "explanation": "Toxocara larvae can migrate through human tissues after ingestion of infective eggs. Humans are accidental hosts and do not complete the normal intestinal adult-worm cycle.",
+    "answerOrigin": "author_checked",
+    "source": "aiims-2005-eo.pdf",
+    "sourceNumber": 6,
+    "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity."
+  },
+  {
+    "id": "aiims-2005-eo:14",
+    "chapterId": "first-year/biochemistry/paper-2/protein-metabolism",
+    "answer": "A",
+    "sourceFingerprint": "b5d7e31ef7caad3f4785356b0bf7eb8c3c908415f7f5d790a34c4e9ee2b7a767",
+    "explanation": "Wheat protein is relatively deficient in lysine compared with reference amino-acid requirements. Combining cereal and pulse proteins can improve the overall amino-acid pattern.",
+    "answerOrigin": "author_checked",
+    "source": "aiims-2005-eo.pdf",
+    "sourceNumber": 14,
+    "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity."
+  },
+  {
+    "id": "aiims-2005-eo:20",
+    "chapterId": "final-year/general-surgery/upper-lower-limb",
+    "answer": "B",
+    "sourceFingerprint": "6508d0b6f38b3d0ffd50400a4cac85982c5e28e6eacc4f8cf5cf8d3cb4f555cc",
+    "explanation": "Kienbock disease is osteonecrosis of the lunate. The other eponyms refer to different bones, including the femoral head in Perthes disease.",
+    "answerOrigin": "author_checked",
+    "source": "aiims-2005-eo.pdf",
+    "sourceNumber": 20,
+    "reason": "PDF page25 identifies the collection as AIPPG.com Manipal 2002 recollected questions, not AIIMS2005. Archive filename/year cannot establish AIIMS examination identity."
+  },
+  {
+    "id": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706:11",
+    "source": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706.pdf",
+    "sourceNumber": 11,
+    "reason": "Publisher prints C,D; not a single answer, and lower-trunk palsy does not cause the upper-trunk posture."
+  },
+  {
+    "id": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706:14",
+    "source": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+    "sourceNumber": 14,
+    "reason": "Publisher answer is the sequence A-B-D-C, not optionA. Single-answer extraction would truncate the sequence."
+  },
+  {
+    "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:17",
+    "source": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+    "sourceNumber": 17,
+    "reason": "Nicotinamide can inhibit SIRT1 in vitro but stimulate activity through salvage pathways in cells; bare stimulation claim lacks context."
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:17",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "sourceNumber": 17,
+    "reason": "Treatment-choice stem has incomplete kidney-function context; not silently rewritten into a different pharmacokinetic question."
+  },
+  {
+    "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:20",
+    "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+    "sourceNumber": 20,
+    "reason": "The t(11;14) option is not a conventional B-ALL risk rearrangement; the supplied favourable-hyperdiploidy answer does not resolve the defective distractor."
+  },
+  {
+    "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:13",
+    "source": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+    "sourceNumber": 13,
+    "reason": "Prepubertal versus adolescent depression sex differences make the child option insufficiently age-specific."
+  },
+  {
+    "id": "aglasem-68a4b930-b5c8-11ed-a822-0a5e36bc6706:5",
+    "source": "aglasem-68a4b930-b5c8-11ed-a822-0a5e36bc6706.pdf",
+    "sourceNumber": 5,
+    "reason": "Repeated source question number; no silent merging of distinct questions under one identity."
+  },
+  {
+    "id": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706:6",
+    "source": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706.pdf",
+    "sourceNumber": 6,
+    "reason": "Contains withdrawn voxelotor and a source-key claim that all listed treatments are useful; outdated/incorrect distractor wording not imported."
+  },
+  {
+    "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:15",
+    "source": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+    "sourceNumber": 15,
+    "reason": "Both canagliflozin and rosiglitazone have fracture-risk associations; supplied exclusive key is not accepted."
+  },
+  {
+    "id": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706:10",
+    "source": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706.pdf",
+    "sourceNumber": 10,
+    "reason": "Both canagliflozin and rosiglitazone have fracture-risk associations; supplied exclusive key is not accepted."
+  },
+  {
+    "id": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706:16",
+    "source": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706.pdf",
+    "sourceNumber": 16,
+    "sourceFingerprint": "0c22a173e51932bee2c2c6efd194b1a9da557ebd346a61bd4aaeb86f2557dd1b",
+    "chapterId": "third-year/forensic-medicine/toxicology",
+    "answer": "A",
+    "explanation": "Hooch outbreaks classically involve methanol-contaminated illicit alcohol. Toxic metabolites produce metabolic acidosis and visual toxicity; ethanol alone does not explain the characteristic methanol syndrome.",
+    "reason": "Semantic duplicate of existing aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:18. Held after TF-IDF and concept review; wording/options differences do not create a new learning concept."
+  },
+  {
+    "id": "aglasem-5cd670f8-c103-11ed-97fb-0a5e36bc6706:18",
+    "source": "aglasem-5cd670f8-c103-11ed-97fb-0a5e36bc6706.pdf",
+    "sourceNumber": 18,
+    "sourceFingerprint": "1cd63941094b24ccab61c6e2ee40db7fcfe2d94c3d3c7950d043c269974edcf6",
+    "chapterId": "final-year/general-medicine/dermatology",
+    "answer": "B",
+    "explanation": "Finasteride inhibits type II 5-alpha reductase, reducing conversion of testosterone to dihydrotestosterone. This reduces androgen signalling in susceptible scalp follicles.",
+    "reason": "Semantic duplicate of existing aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706:2. Held after TF-IDF and concept review; wording/options differences do not create a new learning concept."
+  },
+  {
+    "id": "aglasem-68a4b930-b5c8-11ed-a822-0a5e36bc6706:7",
+    "source": "aglasem-68a4b930-b5c8-11ed-a822-0a5e36bc6706.pdf",
+    "sourceNumber": 7,
+    "sourceFingerprint": "bfff780097b43fc52dfd809999b8016b12de4650cd20aaa1af44549bb71ad9bb",
+    "chapterId": "first-year/physiology/paper-2/respiratory-physiology",
+    "answer": "D",
+    "explanation": "Hypothermia commonly produces peripheral cyanosis through vasoconstriction and reduced peripheral flow. High altitude, pulmonary arteriovenous shunting and methaemoglobinaemia can cause central cyanosis.",
+    "reason": "Semantic duplicate of existing aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:10. Held after TF-IDF and concept review; wording/options differences do not create a new learning concept."
+  },
+  {
+    "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:5",
+    "source": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+    "sourceNumber": 5,
+    "sourceFingerprint": "20328d110d873b3f1e5aa8c46680c22098ef0f480a7d7f56e8e36e18f23724e4",
+    "chapterId": "final-year/paediatrics/endocrine-and-metabolic-disorders",
+    "answer": "D",
+    "explanation": "Maple syrup urine disease impairs branched-chain amino-acid catabolism. Leucine, isoleucine and valine require controlled dietary provision; methionine is not one of the branched-chain amino acids.",
+    "reason": "Semantic duplicate of existing aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706:1. Held after TF-IDF and concept review; wording/options differences do not create a new learning concept."
+  },
+  {
+    "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:9",
+    "source": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+    "sourceNumber": 9,
+    "sourceFingerprint": "096e3e690e98e9873a39f278fedc895bcffdec683b4f810b789530be81db6732",
+    "chapterId": "final-year/paediatrics/cns",
+    "answer": "B",
+    "explanation": "Spinal muscular atrophy affects lower motor neurons and may produce tongue fasciculations with weakness and hypotonia. Duchenne dystrophy is a primary muscle disorder rather than a lower-motor-neuron disease.",
+    "reason": "Semantic duplicate of existing aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:8. Held after TF-IDF and concept review; wording/options differences do not create a new learning concept."
+  },
+  {
+    "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:16",
+    "source": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+    "sourceNumber": 16,
+    "sourceFingerprint": "1a4c8f2ea7e4a058d3d06a06bc3cade54acaaa9763129ed53e2f6438f4c0853c",
+    "chapterId": "final-year/general-medicine/infective-diseases",
+    "answer": "D",
+    "explanation": "Kaposi sarcoma, invasive cervical carcinoma and specified non-Hodgkin lymphomas are AIDS-defining cancers. Melanoma can occur in people with HIV but is not classified as an AIDS-defining malignancy.",
+    "reason": "Semantic duplicate of existing aglasem-704ed580-b5c8-11ed-aa20-0a5e36bc6706:5. Held after TF-IDF and concept review; wording/options differences do not create a new learning concept."
+  },
+  {
+    "id": "aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706:4",
+    "source": "aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706.pdf",
+    "sourceNumber": 4,
+    "sourceFingerprint": "157f076b28794a1cf184f8e153910c5a85333863744a25802b24f4bbbc521dbc",
+    "chapterId": "first-year/biochemistry/paper-2/molecular-biology",
+    "answer": "B",
+    "explanation": "Spontaneous deamination converts 5-methylcytosine to thymine. Deamination of unmethylated cytosine produces uracil, explaining why methylated CpG sites are important mutation hotspots.",
+    "reason": "Semantic duplicate of existing ini-2022-01:16. Held after TF-IDF and concept review; wording/options differences do not create a new learning concept."
   }
 ]

@@ -1,0 +1,6 @@
+{
+  "maxBankBytes": 750000,
+  "maxCombinedBytes": 1000000,
+  "maxCombinedGzipBytes": 250000,
+  "reason": "Owner requested 500 additional reviewed AIIMS/INI questions from the 357-question baseline. The original 250KB combined/175KB per-bank limits sized the earlier partial import. This bounded 1MB text-bank allowance accommodates the larger target while staying well below the owner's 10MB question-data requirement; compressed transfer has its own 250KB ceiling. Source, answer, duplicate and provenance gates are unchanged."
+}

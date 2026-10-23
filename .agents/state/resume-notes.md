@@ -2548,3 +2548,19 @@ Do not promote the five new pharmacology holds, manufacture missing options, imp
 **VERIFIED:**Final production browser PG flow360/390/430 passes new PCR keyA and paired-test keyC, May2025 attribution, existing keys/bookmarks and service-worker offline reload. Both new screenshots visually inspected. Publishing exact tested tree to PR122; new CI pending.
 
 **OWNER TARGET:**Latest request targets509 additional questions across AIIMS PG and INI-CET combined. Treat357 as current reviewed total; no assertion that509 further unique/reusable candidates are already verified. Continue larger source/backlog audit after this checkpoint.
+
+## 2026-10-23 — Larger source review toward500 net additions
+
+**OWNER TARGET:**500 (corrected from509) additional AIIMS/INI questions combined, from357baseline to857. Current413 is not completion:56net added,444remaining.
+
+**DONE:**All100 manifest source PDFs reacquired/hash-matched,1669pages. OCR23scanned documents/101content pages. Private strict extractor finds709rows/705source identities over36AglaSemdocs;560without parser flags are not approved questions. Raw PDFs/OCR/candidates remain private. Receipts scripts/aiims-ini-scale500-acquisition-20261023.json.
+
+**DONE:**64 selected additions (11AIIMS/53INI); all complete supplied keys/pages visually checked, original explanations and exact options/order. Seven semantic overlaps excluded after TF-IDF/manual concept pass. Five extractor regressions prevent truncated multikey/sequence answers and silent duplicate-number merging. Selected question-level audit scripts/aiims-ini-scale500-20261023.json.
+
+**CORRECTION:**aiims-2005-eo.pdf page25 explicitly says Manipal2002, not AIIMS2005. Source identity held;8earlier selections withdrawn with full before-record/provenance retained. All349 other full old records and NEET2078/year bytes unchanged. Candidate125AIIMS/288INI=413.
+
+**DONE:**Updated bounded question-data budget750KB/bank,1MB combined raw,250KB combined gzip under owner500-question expansion; not a full-app10MB claim. No source/clinical/duplicate/geometry gates relaxed. Report docs/AIIMS_INI_SCALE500_20261023.md.11extension+5parser tests,413content/offline checks and2078year joins pass. Final web/AndroidJS builds pass after duplicates excluded; type/lint/browser/publication final receipt follows.
+
+**NEXT:**Continue toward444 net remaining additions, review private candidate suggestions and new eligible sources; do not claim500already found or approved. Preserve all holds and inspect original pages, including complete keys/continuations. No main merge, Play upload or device claim.
+
+**VERIFIED:**Final assembled web and AndroidJS builds pass after all7overlaps are held. Root/mobile TypeScript and quiet mobile ESLint pass; repository39path guard and digestive103/108 floor pass. Final production browser360/390/430 passes new AIIMS2000 paracentral keyD and INI2022May donor-milk keyD, exact source labels, older reader/bookmark/offline reload checks. Both new screenshots visually inspected after animation completion.349 prior complete records and NEETbytes exact-preserved. New five parser tests are wired into existing iOS regression workflow. Previous remote2f487e4 passed both Web builds, allAndroid and PG/integrity/provenance; separate WebKit iOS-regression step and simulator browser E2E failed. Latest exact tree/head and new CI belong to PR122; no merge/live claim.

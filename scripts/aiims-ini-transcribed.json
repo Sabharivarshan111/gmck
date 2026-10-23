@@ -3625,5 +3625,837 @@
       "Goes from standing to supine position"
     ],
     "key": "A"
+  },
+  {
+    "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:3",
+    "source": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+    "source_number": 3,
+    "question": "How do you calculate cerebral perfusion pressure?",
+    "options": [
+      "MAP - ICP",
+      "SBP - ICP",
+      "MAP/ICP",
+      "SBP + ICP"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:5",
+    "source": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+    "source_number": 5,
+    "question": "Fluid leaving the PCT in the absence of ADH is?",
+    "options": [
+      "Isotonic",
+      "Hypotonic",
+      "Hypertonic",
+      "Depends on fluid intake"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:8",
+    "source": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+    "source_number": 8,
+    "question": "How does two, three BPG decrease the affinity of hemoglobin to oxygen?",
+    "options": [
+      "Binds to Alpha chain",
+      "Binds to beta chain",
+      "Binds to gamma chain",
+      "Binds to both alpha and beta chain"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:11",
+    "source": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+    "source_number": 11,
+    "question": "The primary secondary messengers involved in the contraction of ciliary muscles during focusing on a near object is?",
+    "options": [
+      "cAMP",
+      "cGMP",
+      "IP3",
+      "Na inflow through a channel"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706:12",
+    "source": "aglasem-57d76ddc-c103-11ed-a156-0a5e36bc6706.pdf",
+    "source_number": 12,
+    "question": "Macula densa is made of specialized cells located at?",
+    "options": [
+      "Junction of thick descending Limb and DCT",
+      "Junction of thick descending limb and PCT",
+      "Junction of thick ascending Limb and DCT",
+      "Junction of DCT and collecting duct"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706:4",
+    "source": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+    "source_number": 4,
+    "question": "Which of these is the most life threatening injury that can be identified while assessing the breathing component of the patient?",
+    "options": [
+      "Laryngotracheal injury",
+      "Cervical spine injury",
+      "Blunt cardiac injury",
+      "Tension pneumothorax"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706:10",
+    "source": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+    "source_number": 10,
+    "question": "Which of the following is seen in neurogenic shock?",
+    "options": [
+      "Hypotension and bradycardia",
+      "Hypertension and bradycardia",
+      "Hypotension and tachycardia",
+      "Hypertension and tachycardia"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706:12",
+    "source": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+    "source_number": 12,
+    "question": "Not a criteria for SIRS",
+    "options": [
+      "HR < 80 / min",
+      "RR > 20 / mins",
+      "TLC > 12000 / cumm",
+      "Temp > 38 degrees"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706:16",
+    "source": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706.pdf",
+    "source_number": 16,
+    "question": "32 years old female with Grave diseases with eye signs and enlarged thyroid is planned for total thyroidectomy. What can be given in the preoperative period to reduce intraoperative bleeding in the patient",
+    "options": [
+      "Lugol’s iodine",
+      "Propranolol",
+      "Propylthiouracil",
+      "Betamethasone"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706:13",
+    "source": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706.pdf",
+    "source_number": 13,
+    "question": "First deformity corrected in CTEV?",
+    "options": [
+      "Cavus",
+      "Forefoot adduction",
+      "Varus",
+      "Equinus"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706:16",
+    "source": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706.pdf",
+    "source_number": 16,
+    "question": "Terrible triad includes injury to?",
+    "options": [
+      "ACL alone",
+      "ACL and Medial collateral ligament",
+      "Lateral Collateral ligament",
+      "ACL, Medial collateral ligament and Medial Meniscus"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:6",
+    "source": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+    "source_number": 6,
+    "question": "Is the following feature not a feature of optic disc in Glaucoma?",
+    "options": [
+      "Roenne nasal step",
+      "Bayonetting sign",
+      "Increase in cup-disc ratio",
+      "Baring of the nasal arteries"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:8",
+    "source": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+    "source_number": 8,
+    "question": "Which of the following is not a part of keratoconus?",
+    "options": [
+      "Irregular astigmatism",
+      "Munson’s sign",
+      "Haab’s striae",
+      "Scissoring reflex"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:9",
+    "source": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+    "source_number": 9,
+    "question": "Which of the following is not a feature of pterygium?",
+    "options": [
+      "Elastotic degeneration of stromal collagen",
+      "Parts are head neck body",
+      "simple excision reduce 95% recurrence",
+      "Progressive and regressive type"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:10",
+    "source": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+    "source_number": 10,
+    "question": "Which of the following is not a feature of a complicated Cataract?",
+    "options": [
+      "Polychromatic lustre",
+      "Occurs after uveitis",
+      "Krukenberg spindle",
+      "Breadcrumb app"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:13",
+    "source": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706.pdf",
+    "source_number": 13,
+    "question": "Angle subtended by each optotype for 6/6 vision on a snellen chart at 6m?",
+    "options": [
+      "15 min of arc",
+      "5 min of arc",
+      "10 min of arc",
+      "20 min of arc"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:5",
+    "source": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+    "source_number": 5,
+    "question": "All are long term reversible methods of contraception except",
+    "options": [
+      "Progestin injection",
+      "Female sterilization",
+      "Levonorgestrel and copper containing intrauterine devices",
+      "Subcutaneous progestin implants"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:7",
+    "source": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+    "source_number": 7,
+    "question": "A woman with eclampsia is started on magnesium sulphate, what is the first sign of MgSO4 toxicity?",
+    "options": [
+      "Hypotension",
+      "loss of knee jerk",
+      "Reduced muscle tone",
+      "Respiratory depression"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:11",
+    "source": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+    "source_number": 11,
+    "question": "Not a component of biophysical profile:",
+    "options": [
+      "Amniotic fluid volume",
+      "Fetal tone",
+      "NST",
+      "DFMC"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:17",
+    "source": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+    "source_number": 17,
+    "question": "The non contraceptive uses of oral contraceptives include all except",
+    "options": [
+      "Protects against STDs including HIV",
+      "Reduces the risk of ovarian Ca",
+      "Ectopic pregnancy",
+      "Reduces the risk of endometrial Ca"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:19",
+    "source": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706.pdf",
+    "source_number": 19,
+    "question": "Placenta previa will show",
+    "options": [
+      "Dark painful bleeding",
+      "Uterine tenderness",
+      "Increased/large uterine size",
+      "Warning bleeds"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706:15",
+    "source": "aglasem-5b37c544-c103-11ed-80a9-0a5e36bc6706.pdf",
+    "source_number": 15,
+    "question": "Which of the following is most specific antibody for SLE",
+    "options": [
+      "ANA",
+      "Anti DS DNA",
+      "Anti smith",
+      "Anti centromere"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706:7",
+    "source": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+    "source_number": 7,
+    "question": "Hereditary angioneurotic edema is due to deficiency of which of the following?",
+    "options": [
+      "C5 - C9",
+      "C1 inhibitor",
+      "DAF",
+      "CD59"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706:9",
+    "source": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+    "source_number": 9,
+    "question": "Which of the following cytokines is not involved in our Th1 response ?",
+    "options": [
+      "IL - 4",
+      "IL - 2",
+      "IL - 12",
+      "IFN - Gamma"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706:17",
+    "source": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+    "source_number": 17,
+    "question": "Incorrect regarding Parvovirus B19 disease association with respective patients-",
+    "options": [
+      "Child - Erythema infectiosum",
+      "Hemolytic anemia - Aplastic crisis",
+      "Pregnant - Non immune fetal hydrops",
+      "Young females - Polymyalgia rheumatica"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706:18",
+    "source": "aglasem-5b68bcd0-c103-11ed-9ef1-0a5e36bc6706.pdf",
+    "source_number": 18,
+    "question": "Vesicular rash is seen in -",
+    "options": [
+      "HFMD",
+      "Roseola infantum",
+      "Dengue",
+      "Zika"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706:4",
+    "source": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706.pdf",
+    "source_number": 4,
+    "question": "Spanish windlass is a type of strangulation mentioned below ?",
+    "options": [
+      "Bansdola",
+      "Mugging",
+      "Garrotting",
+      "Throttling"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706:17",
+    "source": "aglasem-5b91a956-c103-11ed-a1ff-0a5e36bc6706.pdf",
+    "source_number": 17,
+    "question": "Cry of the fetus was heard by doctor before delivery, this is:",
+    "options": [
+      "Vagitus uterinus",
+      "Vaginal infection",
+      "Infection of uterus",
+      "Infection of uterus and vagina"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-5cd670f8-c103-11ed-97fb-0a5e36bc6706:15",
+    "source": "aglasem-5cd670f8-c103-11ed-97fb-0a5e36bc6706.pdf",
+    "source_number": 15,
+    "question": "Jarisch Herxheimer reaction is due to 1. IFN-Alpha 2. IL-6 3. TNF-Alpha 4. IL-8",
+    "options": [
+      "1,2",
+      "1",
+      "2",
+      "2,3,4"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:1",
+    "source": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+    "source_number": 1,
+    "question": "Markedly reduced HDL with an ABCA1 mutation suggests which disease?",
+    "options": [
+      "Abetalipaprotenemia",
+      "Tangier’s disease",
+      "Apolipaprotienemia",
+      "Wolman’s disease"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:10",
+    "source": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+    "source_number": 10,
+    "question": "Consider the following enzymes. 1. Glutathione peroxidase 2. Glutathione synthetase 3. Deiodinase 4. Thioredoxin reductase Which of the following enzymes used Selenocysteine?",
+    "options": [
+      "1,3,4",
+      "1,2,3",
+      "2,3,4",
+      "1,2,4"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:12",
+    "source": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+    "source_number": 12,
+    "question": "Zellweger is a defect in biogenesis of",
+    "options": [
+      "Peroxisomes",
+      "Lysosome",
+      "Mitochondria",
+      "Nucleus"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706:14",
+    "source": "aglasem-5d79a87c-c103-11ed-b3df-0a5e36bc6706.pdf",
+    "source_number": 14,
+    "question": "Long term glycemic control in patients with hemolysis, is assessed by fructosamine. Fructosamine is a glycated product of",
+    "options": [
+      "fructose",
+      "urea",
+      "glycosaminoglycans",
+      "albumin"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:6",
+    "source": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+    "source_number": 6,
+    "question": "Which of the following characteristics is true about stress?",
+    "options": [
+      "Impending doom",
+      "Constant worry about negative consequences",
+      "Preoccupation with illness",
+      "An emotional, cognitive, physiological and autonomic response"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:15",
+    "source": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706.pdf",
+    "source_number": 15,
+    "question": "A patient of alcohol dependence with the deranged LFTs, comes in a withdrawal state. What should be given in his treatment?",
+    "options": [
+      "Diazepam",
+      "Oxazepam",
+      "Alprazolam",
+      "Clonazepam"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:8",
+    "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+    "source_number": 8,
+    "question": "A patient is brought with altered sensorium and seizures. Attender shows the laboratory report which reveals elevated transaminases. Which of the following can be used in this condition?",
+    "options": [
+      "Diazepam",
+      "Lorazepam",
+      "Alprazolam",
+      "Midazolam"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:22",
+    "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+    "source_number": 22,
+    "question": "Which of the following statements are true: A. Bedaquiline inhibits mycobacterial ATP synthase B. Pyrazinamide in enzyme inducer C. Rifampicin is used only in TB D. Isoniazid inhibits mycolic acid synthesis",
+    "options": [
+      "A,B,C,D",
+      "A,B,C",
+      "A,D",
+      "B,C"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:23",
+    "source": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706.pdf",
+    "source_number": 23,
+    "question": "Meropenem is indicated in treatment of A. Intra Abdominal infections B. MRSA C. Febrile neutropenia D. Diabetic foot",
+    "options": [
+      "A,B,C,D",
+      "A,B,C",
+      "A,C,D",
+      "A,D"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:28",
+    "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+    "source_number": 28,
+    "question": "Metastatic calcification can be seen in all these conditions except:",
+    "options": [
+      "Renal failure",
+      "Vit D disorder",
+      "Metastatic lymph node",
+      "Hyperparathyroidism"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:31",
+    "source": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706.pdf",
+    "source_number": 31,
+    "question": "Iron in the tissues is stained by",
+    "options": [
+      "Masson’s trichrome",
+      "Prussian blue",
+      "Fite faraco",
+      "PAS"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706:2",
+    "source": "aglasem-598c16fa-c103-11ed-9631-0a5e36bc6706.pdf",
+    "source_number": 2,
+    "question": "Alternate procedure for height measurement in a 5 year old child?",
+    "options": [
+      "Arm span",
+      "CRL",
+      "HC",
+      "Knee height"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2000-eo:1",
+    "source": "aiims-2000-eo.pdf",
+    "source_number": 1,
+    "question": "Injury to the left paracentral lobule most directly causes weakness in which region?",
+    "options": [
+      "Left face",
+      "Right neck and scapular region",
+      "Right shoulder and trunk",
+      "Right leg and perineum"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aiims-2000-eo:3",
+    "source": "aiims-2000-eo.pdf",
+    "source_number": 3,
+    "question": "Which listed structures pass through the aortic hiatus?",
+    "options": [
+      "Thoracic duct and Azygous vein",
+      "Thoracic duct and Hemiazygous vein",
+      "Thoracic duct and Left gastric artery",
+      "Vagus nerve and Azygous vein"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2000-eo:4",
+    "source": "aiims-2000-eo.pdf",
+    "source_number": 4,
+    "question": "The obturator nerve chiefly supplies which thigh compartment?",
+    "options": [
+      "Adductor compartment",
+      "Abductor compartment",
+      "Flexor compartment",
+      "Extensor compartment"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2001-may:9",
+    "source": "aiims-2001-may.pdf",
+    "source_number": 9,
+    "question": "Which is not a typical feature of polycythaemia vera?",
+    "options": [
+      "thrombocytopenia",
+      "increased GI bleed",
+      "thrombosis",
+      "Transient visual loss"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2001-may:10",
+    "source": "aiims-2001-may.pdf",
+    "source_number": 10,
+    "question": "Which stem-cell disorder can affect red cells, white cells and platelets?",
+    "options": [
+      "Hemolytic anemia",
+      "Paroxysmal cold haemoglobinuria",
+      "PNH",
+      "Blackfan Diamond syndrome"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aiims-2001-may:17",
+    "source": "aiims-2001-may.pdf",
+    "source_number": 17,
+    "question": "Which listed lung carcinoma is characteristically aggressive and prone to early metastasis in a smoker?",
+    "options": [
+      "Squamous cell Carcinoma",
+      "Small cell Carcinoma",
+      "Adenocarcinoma",
+      "Large cell Carcinoma"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aiims-2001-may:18",
+    "source": "aiims-2001-may.pdf",
+    "source_number": 18,
+    "question": "Which statement about Neisseria gonorrhoeae is false?",
+    "options": [
+      "Gram positive cocci",
+      "causes stricture urethra",
+      "Involves seminal vesicles and spreads to epididymis",
+      "drug of choice is Ceftriaxone"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2001-may:31",
+    "source": "aiims-2001-may.pdf",
+    "source_number": 31,
+    "question": "Which statement about pigmentation in Addison disease is false?",
+    "options": [
+      "involves moles and scars",
+      "involves palmar creases",
+      "does not involve oral mucosa",
+      "involves sole pads"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "aiims-2010-eo:8",
+    "source": "aiims-2010-eo.pdf",
+    "source_number": 8,
+    "question": "Which cranial nerve supplies tensor tympani?",
+    "options": [
+      "Trigeminal nerve",
+      "Facial nerve",
+      "Glossopharyngeal nerve",
+      "Vagus nerve"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2010-eo:13",
+    "source": "aiims-2010-eo.pdf",
+    "source_number": 13,
+    "question": "Which listed factor does not directly determine arterial oxygen partial pressure?",
+    "options": [
+      "FiO2",
+      "Hb",
+      "PaCO2",
+      "High altitude"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aiims-2010-eo:15",
+    "source": "aiims-2010-eo.pdf",
+    "source_number": 15,
+    "question": "Which listed substance is normally secreted rather than reabsorbed in the proximal tubule?",
+    "options": [
+      "Bicarbonate",
+      "Phosphate",
+      "Glucose",
+      "H+"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706:9",
+    "source": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706.pdf",
+    "source_number": 9,
+    "question": "Find out the active metabolite of cyclophosphamide",
+    "options": [
+      "N acetyl cyclophosphamide",
+      "N methyl cyclophosphamide",
+      "4 acetyl cyclophosphamide",
+      "4 hydroxy cyclophosphamide"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706:11",
+    "source": "aglasem-6c98950c-b5c8-11ed-844e-0a5e36bc6706.pdf",
+    "source_number": 11,
+    "question": "Which of the following ATT acts by inhibiting mycolic acid synthesis with the need of catalase enzyme?",
+    "options": [
+      "INH",
+      "Rifampicin",
+      "Streptomycin",
+      "Pyrazinamide"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:2",
+    "source": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+    "source_number": 2,
+    "question": "Best alternative to mother’s breast milk in a LBW/preterm child?",
+    "options": [
+      "Cow milk",
+      "Preterm formula",
+      "Term formula",
+      "Human Donor Breast Milk"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:7",
+    "source": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+    "source_number": 7,
+    "question": "Which of the following diseases is X linked dominant?",
+    "options": [
+      "Rett syndrome",
+      "OTC deficiency",
+      "Spinal Muscular Atrophy",
+      "Duchenne’s Muscular Dystrophy"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:8",
+    "source": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706.pdf",
+    "source_number": 8,
+    "question": "Congenital absence of seminal vesicles and vas deferens is seen in",
+    "options": [
+      "Cystic fibrosis",
+      "Klinefelter syndrome",
+      "Kallman syndrome",
+      "Chromosomal microdeletion"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706:4",
+    "source": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706.pdf",
+    "source_number": 4,
+    "question": "Which of the following is more commonly associated with Kallmans syndrome?",
+    "options": [
+      "Syndactyly in males",
+      "Anosmia",
+      "Precocious puberty in females",
+      "White forelock"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706:5",
+    "source": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706.pdf",
+    "source_number": 5,
+    "question": "Which one of the following constitutes the Modified Biophysical Profile?",
+    "options": [
+      "AFI + NST",
+      "NST + Gross body movement",
+      "NST + Fetal tone",
+      "NST + Fetal Breathing"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:6",
+    "source": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+    "source_number": 6,
+    "question": "All are used as first line treatment in rheumatoid arthritis except",
+    "options": [
+      "Sulphasalazine",
+      "Methotrexate",
+      "HCQS",
+      "Azathioprine"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:7",
+    "source": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706.pdf",
+    "source_number": 7,
+    "question": "All are the features of Complicated malaria except",
+    "options": [
+      "Ph > 7.25",
+      "Unarousable coma",
+      "Glucose < 40",
+      "Serum creatinine 5.2 mg/dl"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706:8",
+    "source": "aglasem-74878f7a-b5c8-11ed-beb5-0a5e36bc6706.pdf",
+    "source_number": 8,
+    "question": "Technique to study DNA protein interactions?",
+    "options": [
+      "DNA fingerprinting",
+      "DNA footprinting",
+      "ELISA",
+      "Northern blot"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706:6",
+    "source": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706.pdf",
+    "source_number": 6,
+    "question": "Which is formed by three bones?",
+    "options": [
+      "Foramen magnum",
+      "Foramen jugulare",
+      "Foramen rotundum",
+      "Foramen Lacerum"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706:7",
+    "source": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706.pdf",
+    "source_number": 7,
+    "question": "Which of following structure passes via jugular foramen has separate canal :",
+    "options": [
+      "12 N",
+      "9 N",
+      "10 N",
+      "11 N"
+    ],
+    "key": "B"
   }
 ]
