@@ -1,0 +1,41 @@
+name: Coronary Lab geometry and native UI
+on:
+  workflow_dispatch:
+  pull_request:
+    paths: ['mobile/src/lib/coronaryLab.ts', 'mobile/src/components/*Coronary*', 'mobile/src/screens/SimulatorScreen.tsx', 'mobile/src/components/NativeClinicalStudio.tsx', 'mobile/preview/coronary-lab-check.mjs', 'mobile/scripts/coronary-lab-check.mjs', '.github/workflows/coronary-lab.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci --legacy-peer-deps --ignore-scripts
+      - run: npm ci --prefix mobile --legacy-peer-deps --ignore-scripts
+      - name: Check geometry and types
+        working-directory: mobile
+        run: |
+          npm run check:coronary-lab
+          npx tsc --noEmit
+          npx tsc --noEmit -p preview/tsconfig.json
+          npx eslint src --quiet
+      - name: Install browser
+        working-directory: mobile
+        run: npx playwright-core install --with-deps chromium
+      - name: Exercise native components in browser
+        working-directory: mobile
+        env:
+          CORONARY_SHOTS: ${{ github.workspace }}/coronary-shots
+        run: npm run check:coronary-lab-ui
+      - name: Build Android JavaScript
+        working-directory: mobile
+        run: npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output /tmp/coronary.android.js --max-workers 2
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coronary-lab-browser-evidence
+          path: coronary-shots/

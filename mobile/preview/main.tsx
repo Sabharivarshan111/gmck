@@ -7,6 +7,9 @@ import '@fontsource-variable/roboto';
 import React from 'react';
 import NativeRadiologyViewer from '@/components/NativeRadiologyViewer';
 import NativeClubbingTrainer from '@/components/NativeClubbingTrainer';
+import NativeCoronaryLab from '@/components/NativeCoronaryLab';
+import SimulatorScreen from '@/screens/SimulatorScreen';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createRoot } from 'react-dom/client';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
@@ -1127,6 +1130,9 @@ function UserNotesDemo() {
   );
 }
 
+const SimulatorDemoStack = createNativeStackNavigator();
+function SimulatorDemoScreen() { return <SimulatorScreen onExit={() => {}} />; }
+
 function Shell() {
   const { theme, colors } = useTheme();
   React.useEffect(() => {
@@ -1366,6 +1372,8 @@ function Shell() {
   }
   if (screen === 'native-radiology') return <NativeRadiologyViewer onBack={() => {}} />;
   if (screen === 'native-clubbing') return <NativeClubbingTrainer onBack={() => {}} />;
+  if (screen === 'native-coronary') return <NativeCoronaryLab onBack={() => {}} />;
+  if (screen === 'native-clinical-studio') return <NavigationContainer theme={navTheme}><SimulatorDemoStack.Navigator screenOptions={{headerShown:false}}><SimulatorDemoStack.Screen name="Studio" component={SimulatorDemoScreen}/></SimulatorDemoStack.Navigator></NavigationContainer>;
   if (screen === 'native-update') {
     return <NativeUpdateDemo />;
   }

@@ -2456,3 +2456,16 @@ DO NOT:Restore search-preview draft questions, held duplicates, changed source h
 **NEXT:** Complete final reader/screenshot inspection, publish branch/PR, verify tested tree and actual public90/213 banks plus SW. Continue remaining source review separately.
 
 **DO NOT:** Add held thiopentone/LP/DES keys or truncate numbered statements; fill missing choices; infer a session from collection01/02; treat historical2277 as approved/unique. Leave existing anatomy/iOS gates and version/signing/ad configuration unchanged.
+
+
+## 2026-10-23 — Original native Coronary Lab
+
+**DONE:** Owner requested a coronary angiography teaching module using reference screenshots, with an independently designed UI. Added native Clinical Studio discovery and local React Native/SVG tool. Original authored 3D centrelines, two dominance patterns with PDA parent changes, detector basis/projection, view presets, shell/labels, C-arm/table illustration, model shortening/crossings, branch notes and quiz. No competitor runtime/assets/text/model downloaded or copied. Detailed scope/provenance: docs/CORONARY_LAB_AUDIT_20261023.md. Legacy src simulator, questions, billing, ads, signing and version28 untouched.
+
+**DONE:** Geometry invariants across91 angle combinations, branch junctions and dominance tests pass. Real components at360/390/430/900px pass projection/preset/drag/button/shell/dominance/PDA/quiz/theme/reset/offline checks. Actual SimulatorScreen discovery/open/back and landscape console pass. Inspected actual screenshots. TypeScript/native+preview, full mobile source lint, browser build and Android JS bundle pass; simulator/edge/version/repo/preview guards pass. General smoke cannot start due environment uv_interface_addresses error; not claimed green. New dedicated CI workflow captures screenshots and checks geometry/UI/bundle.
+
+**HALF-DONE:** Publication receipt pending. No new APK/AAB, device/TalkBack/performance testing or clinical validation. First version is an explicitly labelled schematic, not a patient-derived model or clinical angiography/dose/collision simulator.
+
+**NEXT:** Publish tested source branch/PR and inspect hosted checks. Review anatomy with a cardiologist, then compile/test a new Android build on hardware. Retain the explicit clinical/model limitations.
+
+**DO NOT:** Claim legal immunity, perfect anatomy, real fluoroscopy or signed/device validation. A new independently authored UI does not itself provide legal clearance. Keep competitor assets out. Preserve concurrent PG work.
