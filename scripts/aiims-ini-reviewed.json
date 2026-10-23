@@ -3652,5 +3652,149 @@
     "chapterId": "first-year/anatomy/paper-2/head-and-neck",
     "answer": "B",
     "explanation": "The glossopharyngeal nerve occupies a separate anterior compartment of the jugular foramen, divided from the vagus and accessory nerves by a fibrous septum. The hypoglossal nerve exits through the hypoglossal canal."
+  },
+  {
+    "id": "inicetmay25-ent:5",
+    "source": "inicetmay25-ent.pdf",
+    "sourceNumber": 5,
+    "sourceFingerprint": "18841b84794ec17f2321f1f8e41976e4934b6c2b6a462fc5d08ca65b53d87150",
+    "chapterId": "third-year/ent/larynx-and-trachea",
+    "answer": "A",
+    "explanation": "Laryngomalacia and congenital subglottic stenosis can present with neonatal stridor. Laryngeal papillomatosis generally presents later, while a haemorrhagic vocal-cord polyp is not a usual neonatal cause."
+  },
+  {
+    "id": "inicetmay25-forensic-medicine:6",
+    "source": "inicetmay25-forensic-medicine.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "4bd3205313e9185c2c63a665e4ea0caeeef8ba089c5d07be2fb90109f7d18ab9",
+    "chapterId": "third-year/forensic-medicine/toxicology",
+    "answer": "B",
+    "explanation": "In the usual Indian snakebite classification, cobra and krait envenoming is chiefly associated with neurotoxicity, not predominantly myotoxicity. Some elapids, especially sea snakes, are important myotoxic exceptions; venom effects can overlap."
+  },
+  {
+    "id": "inicetmay25-forensic-medicine:8",
+    "source": "inicetmay25-forensic-medicine.pdf",
+    "sourceNumber": 8,
+    "sourceFingerprint": "44f1ee478e594726ed59736ee71e760320e9544054c24f8c8542bda1ca603ccd",
+    "chapterId": "third-year/forensic-medicine/mechanical-injuries",
+    "answer": "D",
+    "explanation": "A typical firearm entrance wound combines a penetrating or punctured laceration with an abrasion collar and surrounding contusion. Appearance varies with weapon, range and intervening material; the triad is a classic description rather than a universal rule."
+  },
+  {
+    "id": "inicetmay25-forensic-medicine:9",
+    "source": "inicetmay25-forensic-medicine.pdf",
+    "sourceNumber": 9,
+    "sourceFingerprint": "bc4096d3be3273cde3ddc00031847d6d22351199651b41236df822a0b299fd4f",
+    "chapterId": "third-year/forensic-medicine/abortion-and-infant-deaths",
+    "answer": "B",
+    "explanation": "Section 3(2)(b) covers pregnancies exceeding 20 weeks but not exceeding 24 weeks in prescribed eligible categories, with opinions from at least two registered medical practitioners. Separate provisions address emergencies and specified fetal abnormalities; the interval alone does not establish eligibility."
+  },
+  {
+    "id": "inicetmay25-medicine:7",
+    "source": "inicetmay25-medicine.pdf",
+    "sourceNumber": 7,
+    "sourceFingerprint": "b0dedbfaaf6ca1979eea970c1b81e0ed92730264481a2909b0841dd8081bd094",
+    "chapterId": "final-year/general-medicine/respiratory-medicine",
+    "answer": "A",
+    "explanation": "Procalcitonin trends may support a decision to discontinue antibiotics together with clinical assessment. They should not independently confirm VAP or select the empirical agent. The benefit is less clear when an appropriately short course is already routine."
+  },
+  {
+    "id": "inicetmay25-medicine:9",
+    "source": "inicetmay25-medicine.pdf",
+    "sourceNumber": 9,
+    "sourceFingerprint": "ba0a2befcda7ad71f8fc155d015ada4674a6f969a53ddb5da637a731da778ab5",
+    "chapterId": "final-year/general-medicine/hematology",
+    "answer": "B",
+    "explanation": "Erythropoiesis-stimulating agents are used in selected patients with CKD-related anaemia and selected lower-risk myelodysplastic syndromes. Iron status, endogenous erythropoietin, symptoms and risks guide selection; an ESA is not the primary treatment for a simple nutritional deficiency or aplastic anaemia."
+  },
+  {
+    "id": "inicetmay25-microbiology:8",
+    "source": "inicetmay25-microbiology.pdf",
+    "sourceNumber": 8,
+    "sourceFingerprint": "5466d3809dc567a4a6fd96636d45182b957a0ec6609e108db5d8ebe8bf41024b",
+    "chapterId": "second-year/microbiology/paper-2/mycology",
+    "answer": "D",
+    "explanation": "Congo red is routinely used to demonstrate amyloid rather than to identify an infecting organism. GMS and PAS help demonstrate fungi, and Fontana-Masson can highlight melanin in organisms such as Cryptococcus."
+  },
+  {
+    "id": "inicetmay25-orthopaedics:6",
+    "source": "inicetmay25-orthopaedics.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "87868c965b6f21cbe4b2623cec8ec6406f097d5f82a36b09b67d53220f42fae4",
+    "chapterId": "final-year/general-surgery/trauma-and-fractures",
+    "answer": "B",
+    "explanation": "MRI can be considered for early definitive imaging of a clinically suspected scaphoid fracture after thorough examination. Immobilisation is appropriate while assessment is arranged; a normal early radiograph does not reliably exclude an occult fracture."
+  },
+  {
+    "id": "inicetmay25-pharmacology:6",
+    "source": "inicetmay25-pharmacology.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "e5a9223020d4437ad2dc0b50727c24bb58e18ced10093cbd41444c7e81a07a4b",
+    "chapterId": "second-year/pharmacology/paper-1/central-nervous-system",
+    "answer": "C",
+    "explanation": "Both drugs have antimuscarinic activity and can cause dry mouth, blurred vision, constipation and urinary retention. Imipramine is a tricyclic antidepressant; diphenhydramine is a first-generation H1 antihistamine."
+  },
+  {
+    "id": "inicetmay25-pharmacology:10",
+    "source": "inicetmay25-pharmacology.pdf",
+    "sourceNumber": 10,
+    "sourceFingerprint": "f63c473d68acb6c376686080054b7d96dc2ac1cd0e13364262347c31f0ef6284",
+    "chapterId": "second-year/pharmacology/paper-2/miscellaneous-drugs",
+    "answer": "D",
+    "explanation": "Estrogens and anabolic androgenic steroids can produce bland canalicular cholestasis with little inflammatory change. Amoxicillin-clavulanate can also cause cholestatic injury, but its usual pattern is not the classic bland steroid-associated lesion."
+  },
+  {
+    "id": "inicetmay25-psychiatry:6",
+    "source": "inicetmay25-psychiatry.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "ebfbfbbc1fb119526a2f7db8790ec06feb6a967f0206ae7762e8a2cdb9e45a1c",
+    "chapterId": "final-year/general-medicine/psychiatry-medicine",
+    "answer": "D",
+    "explanation": "Flumazenil antagonises benzodiazepine effects and can precipitate seizures or acute withdrawal in susceptible patients. It is not long-term alcohol-withdrawal treatment. Opioid withdrawal is usually not fatal in otherwise healthy adults, although complications can occur in vulnerable patients."
+  },
+  {
+    "id": "inicetmay25-surgery:2",
+    "source": "inicetmay25-surgery.pdf",
+    "sourceNumber": 2,
+    "sourceFingerprint": "7f7105aee76091da0fc2f7ada2b93ff5e705dd6658f85b69b2a84abdf40cd11b",
+    "chapterId": "final-year/general-surgery/breast",
+    "answer": "D",
+    "explanation": "Disease confined to one quadrant does not itself rule out breast conservation when clear margins and appropriate radiotherapy are feasible. Persistently positive margins and major radiotherapy constraints require further treatment planning."
+  },
+  {
+    "id": "inicetmay25-surgery:6",
+    "source": "inicetmay25-surgery.pdf",
+    "sourceNumber": 6,
+    "sourceFingerprint": "08b98e220be53a4cb4a85cabcaaa15d27c90bff673e5456b7bd6a8fe91038b4e",
+    "chapterId": "final-year/general-surgery/shock-burns-trauma",
+    "answer": "D",
+    "explanation": "A simple pneumothorax can progress to tension physiology when air enters the pleural space but cannot escape. Positive-pressure ventilation can accelerate this process, impairing ventilation and venous return."
+  },
+  {
+    "id": "aiims-2010-eo:17",
+    "source": "aiims-2010-eo.pdf",
+    "sourceNumber": 17,
+    "sourceFingerprint": "37f12b55031f968a29ef2e8ebd8c2a320c91fde8376f2b92a99dc1dd5ac9b20d",
+    "chapterId": "first-year/physiology/paper-2/respiratory-physiology",
+    "answer": "A",
+    "explanation": "Gas diffusion depends on solubility as well as molecular mass. The much greater solubility of carbon dioxide outweighs its higher molecular mass, giving it substantially greater diffusibility than oxygen."
+  },
+  {
+    "id": "aiims-2010-eo:18",
+    "source": "aiims-2010-eo.pdf",
+    "sourceNumber": 18,
+    "sourceFingerprint": "95629cee966f7f8fb84fa3c85a23791bf6a6291e28db8b59063e9800cd657c2f",
+    "chapterId": "first-year/physiology/paper-2/respiratory-physiology",
+    "answer": "B",
+    "explanation": "The DLCO test uses a small concentration of carbon monoxide. Its high haemoglobin affinity keeps pulmonary capillary CO partial pressure very low, allowing uptake to reflect the alveolar-capillary diffusion process, with appropriate correction for relevant patient factors."
+  },
+  {
+    "id": "aiims-2010-eo:19",
+    "source": "aiims-2010-eo.pdf",
+    "sourceNumber": 19,
+    "sourceFingerprint": "f22dd2da6bdae9b82de4adb47a0468d2f9b08bd89973191640dd69ff5ab2e618",
+    "chapterId": "first-year/physiology/paper-2/central-nervous-system",
+    "answer": "A",
+    "explanation": "Most circulating plasma proteins cross the intact blood-brain barrier poorly compared with gases, water and many lipid-soluble molecules. This is a general permeability distinction; selected proteins have specific transport mechanisms."
   }
 ]

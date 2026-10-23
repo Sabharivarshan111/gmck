@@ -862,5 +862,107 @@
     "answer": "B",
     "explanation": "Spontaneous deamination converts 5-methylcytosine to thymine. Deamination of unmethylated cytosine produces uracil, explaining why methylated CpG sites are important mutation hotspots.",
     "reason": "Semantic duplicate of existing ini-2022-01:16. Held after TF-IDF and concept review; wording/options differences do not create a new learning concept."
+  },
+  {
+    "id": "inicetmay25-biochemistry:8",
+    "source": "inicetmay25-biochemistry.pdf",
+    "sourceNumber": 8,
+    "reason": "Semantic duplicate of ini-2025-01:4, Warburg effect."
+  },
+  {
+    "id": "aiims-2010-eo:20",
+    "source": "aiims-2010-eo.pdf",
+    "sourceNumber": 20,
+    "reason": "Semantic duplicate of aiims-2019-may:17, inspiratory rhythm generation."
+  },
+  {
+    "id": "inicetmay25-ent:2",
+    "source": "inicetmay25-ent.pdf",
+    "sourceNumber": 2,
+    "reason": "Cochlear implantation can be indicated in far-advanced otosclerosis; its blanket exclusion is not accepted."
+  },
+  {
+    "id": "inicetmay25-microbiology:7",
+    "source": "inicetmay25-microbiology.pdf",
+    "sourceNumber": 7,
+    "reason": "Naegleria has three forms, but Acanthamoeba and Giardia ordinarily have two; supplied >2 forms key is not accepted."
+  },
+  {
+    "id": "inicetmay25-orthopaedics:2",
+    "source": "inicetmay25-orthopaedics.pdf",
+    "sourceNumber": 2,
+    "reason": "Multiple options about peripheral/facial nerve grafting and fibrin glue can be true; exclusive supplied key not accepted."
+  },
+  {
+    "id": "inicetmay25-orthopaedics:4",
+    "source": "inicetmay25-orthopaedics.pdf",
+    "sourceNumber": 4,
+    "reason": "Tuberculous osteomyelitis is a chronic bone infection; the unqualified rare-organism exception is not accepted."
+  },
+  {
+    "id": "inicetmay25-orthopaedics:9",
+    "source": "inicetmay25-orthopaedics.pdf",
+    "sourceNumber": 9,
+    "reason": "Clear-cell renal carcinoma can metastasise to bone; rare childhood occurrence does not justify cannot."
+  },
+  {
+    "id": "inicetmay25-pediatrics:5",
+    "source": "inicetmay25-pediatrics.pdf",
+    "sourceNumber": 5,
+    "reason": "Vomiting/poor weight gain alone do not sufficiently distinguish reflux from cow-milk-protein allergy in the stated choices."
+  },
+  {
+    "id": "inicetmay25-pediatrics:6",
+    "source": "inicetmay25-pediatrics.pdf",
+    "sourceNumber": 6,
+    "reason": "Platelet count and skin bleeding alone do not establish that a child requires IVIG; important bleeding/severity context is absent."
+  },
+  {
+    "id": "inicetmay25-pediatrics:10",
+    "source": "inicetmay25-pediatrics.pdf",
+    "sourceNumber": 10,
+    "reason": "Unconjugated bilirubin, late onset and beta-glucuronidase can all describe breast-milk jaundice; supplied single key is not exclusive."
+  },
+  {
+    "id": "inicetmay25-pharmacology:3",
+    "source": "inicetmay25-pharmacology.pdf",
+    "sourceNumber": 3,
+    "reason": "Magnesium sulphate is not given to prevent placental abruption; supplied combination includes this unsupported use."
+  },
+  {
+    "id": "inicetmay25-surgery:3",
+    "source": "inicetmay25-surgery.pdf",
+    "sourceNumber": 3,
+    "reason": "Z-plasty is both a scar-lengthening technique and a local transposition flap; choices overlap."
+  },
+  {
+    "id": "inicetmay25-surgery:19",
+    "source": "inicetmay25-surgery.pdf",
+    "sourceNumber": 19,
+    "reason": "Choices mix Dukes, Astler-Coller and TNM stage labels; muscularis-propria invasion is not the supplied StageIIa label."
+  },
+  {
+    "id": "inicetmay25-medicine:6",
+    "source": "inicetmay25-medicine.pdf",
+    "sourceNumber": 6,
+    "reason": "No resistance/ESBL or other severity context establishes meropenem as the universal best initial treatment for the stated complicatedUTI."
+  },
+  {
+    "id": "inicetmay25-medicine:11",
+    "source": "inicetmay25-medicine.pdf",
+    "sourceNumber": 11,
+    "reason": "P-wave timing concerns presystolic accentuation in sinus rhythm, not the whole mitral stenosis murmur."
+  },
+  {
+    "id": "inicetmay25-forensic-medicine:4",
+    "source": "inicetmay25-forensic-medicine.pdf",
+    "sourceNumber": 4,
+    "reason": "Minimum age forMTP is not18: adult consent and guardian consent for minors are different questions."
+  },
+  {
+    "id": "inicetmay25-opthalmology:5",
+    "source": "inicetmay25-opthalmology.pdf",
+    "sourceNumber": 5,
+    "reason": "Blindness definitions depend on presenting/best-corrected acuity and the applicable classification; source does not specify the framework."
   }
 ]

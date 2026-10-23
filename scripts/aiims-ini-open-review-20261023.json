@@ -1,0 +1,601 @@
+{
+  "date": "2026-10-23",
+  "scope": "Open-ended reviewed expansion; owner removed the fixed500/509 target.",
+  "baselineCounts": {
+    "aiims-pg": 125,
+    "ini-cet": 288
+  },
+  "baselineTotal": 413,
+  "newQuestions": 16,
+  "newCounts": {
+    "aiims-pg": 3,
+    "ini-cet": 13
+  },
+  "resultCounts": {
+    "aiims-pg": 128,
+    "ini-cet": 301
+  },
+  "resultTotal": 429,
+  "questionReviews": [
+    {
+      "id": "inicetmay25-ent:5",
+      "source": "inicetmay25-ent.pdf",
+      "sourceNumber": 5,
+      "sourcePages": [
+        2
+      ],
+      "sourceFingerprint": "18841b84794ec17f2321f1f8e41976e4934b6c2b6a462fc5d08ca65b53d87150",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "examYear": 2025,
+      "examSession": "May",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "inicetmay25-pediatrics:9",
+          "similarity": 0.118
+        },
+        {
+          "id": "aglasem-6e299e8e-b5c8-11ed-99c1-0a5e36bc6706:4",
+          "similarity": 0.093
+        },
+        {
+          "id": "aglasem-594e1a76-c103-11ed-991c-0a5e36bc6706:28",
+          "similarity": 0.088
+        }
+      ],
+      "duplicateReview": "Top lexical/correct-answer overlaps and related concepts reviewed; no matching complete question concept.",
+      "conceptReferences": [],
+      "reviewNotes": "Original options, their order and all numbered statements preserved; question wording may be clarified."
+    },
+    {
+      "id": "inicetmay25-forensic-medicine:6",
+      "source": "inicetmay25-forensic-medicine.pdf",
+      "sourceNumber": 6,
+      "sourcePages": [
+        3
+      ],
+      "sourceFingerprint": "4bd3205313e9185c2c63a665e4ea0caeeef8ba089c5d07be2fb90109f7d18ab9",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "examYear": 2025,
+      "examSession": "May",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "inicetmay25-psm:11",
+          "similarity": 0.079
+        },
+        {
+          "id": "aglasem-5cd670f8-c103-11ed-97fb-0a5e36bc6706:2",
+          "similarity": 0.066
+        },
+        {
+          "id": "reflex-ini-2024-may:61",
+          "similarity": 0.0
+        }
+      ],
+      "duplicateReview": "Top lexical/correct-answer overlaps and related concepts reviewed; no matching complete question concept.",
+      "conceptReferences": [],
+      "reviewNotes": "Original options, their order and all numbered statements preserved; question wording may be clarified."
+    },
+    {
+      "id": "inicetmay25-forensic-medicine:8",
+      "source": "inicetmay25-forensic-medicine.pdf",
+      "sourceNumber": 8,
+      "sourcePages": [
+        3
+      ],
+      "sourceFingerprint": "44f1ee478e594726ed59736ee71e760320e9544054c24f8c8542bda1ca603ccd",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "examYear": 2025,
+      "examSession": "May",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aglasem-5a8ea69e-c103-11ed-97f4-0a5e36bc6706:16",
+          "similarity": 0.187
+        },
+        {
+          "id": "aiims-2020-jun:8",
+          "similarity": 0.106
+        },
+        {
+          "id": "aglasem-5d9ef32a-c103-11ed-8570-0a5e36bc6706:29",
+          "similarity": 0.094
+        }
+      ],
+      "duplicateReview": "Top lexical/correct-answer overlaps and related concepts reviewed; no matching complete question concept.",
+      "conceptReferences": [],
+      "reviewNotes": "Original options, their order and all numbered statements preserved; question wording may be clarified."
+    },
+    {
+      "id": "inicetmay25-forensic-medicine:9",
+      "source": "inicetmay25-forensic-medicine.pdf",
+      "sourceNumber": 9,
+      "sourcePages": [
+        4
+      ],
+      "sourceFingerprint": "bc4096d3be3273cde3ddc00031847d6d22351199651b41236df822a0b299fd4f",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "examYear": 2025,
+      "examSession": "May",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "ini-2025-01:9",
+          "similarity": 0.084
+        },
+        {
+          "id": "diginerve-ini-2025:55",
+          "similarity": 0.081
+        },
+        {
+          "id": "aiims-2001-may:4",
+          "similarity": 0.08
+        }
+      ],
+      "duplicateReview": "Top lexical/correct-answer overlaps and related concepts reviewed; no matching complete question concept.",
+      "conceptReferences": [
+        "https://nhm.gov.in/index1.php?lang=1&level=2&lid=218&sublinkid=822",
+        "https://www.pib.gov.in/PressReleasePage.aspx?PRID=1787361&lang=2&reg=48"
+      ],
+      "reviewNotes": "Original options, their order and all numbered statements preserved; question wording may be clarified."
+    },
+    {
+      "id": "inicetmay25-medicine:7",
+      "source": "inicetmay25-medicine.pdf",
+      "sourceNumber": 7,
+      "sourcePages": [
+        3
+      ],
+      "sourceFingerprint": "b0dedbfaaf6ca1979eea970c1b81e0ed92730264481a2909b0841dd8081bd094",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "examYear": 2025,
+      "examSession": "May",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "faculty-aiims-2016-may-psychiatry:5",
+          "similarity": 0.142
+        },
+        {
+          "id": "ini-2024-01:14",
+          "similarity": 0.08
+        },
+        {
+          "id": "inicetmay25-pathology:7",
+          "similarity": 0.079
+        }
+      ],
+      "duplicateReview": "Top lexical/correct-answer overlaps and related concepts reviewed; no matching complete question concept.",
+      "conceptReferences": [
+        "https://www.idsociety.org/practice-guideline/hap_vap/"
+      ],
+      "reviewNotes": "Original options, their order and all numbered statements preserved; question wording may be clarified."
+    },
+    {
+      "id": "inicetmay25-medicine:9",
+      "source": "inicetmay25-medicine.pdf",
+      "sourceNumber": 9,
+      "sourcePages": [
+        3
+      ],
+      "sourceFingerprint": "ba0a2befcda7ad71f8fc155d015ada4674a6f969a53ddb5da637a731da778ab5",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "examYear": 2025,
+      "examSession": "May",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aglasem-687ac148-b5c8-11ed-9b49-0a5e36bc6706:7",
+          "similarity": 0.117
+        },
+        {
+          "id": "ini-2021-02:20",
+          "similarity": 0.081
+        },
+        {
+          "id": "inicetmay25-psm:14",
+          "similarity": 0.054
+        }
+      ],
+      "duplicateReview": "Top lexical/correct-answer overlaps and related concepts reviewed; no matching complete question concept.",
+      "conceptReferences": [
+        "https://www.niddk.nih.gov/health-information/kidney-disease/anemia",
+        "https://www.cancer.gov/types/myeloproliferative/hp/myelodysplastic-treatment-pdq"
+      ],
+      "reviewNotes": "Original options, their order and all numbered statements preserved; question wording may be clarified."
+    },
+    {
+      "id": "inicetmay25-microbiology:8",
+      "source": "inicetmay25-microbiology.pdf",
+      "sourceNumber": 8,
+      "sourcePages": [
+        3
+      ],
+      "sourceFingerprint": "5466d3809dc567a4a6fd96636d45182b957a0ec6609e108db5d8ebe8bf41024b",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "examYear": 2025,
+      "examSession": "May",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "gmu-2024-5573f47e-9cad-4728-af8c-2c6b9b89302c:9",
+          "similarity": 0.154
+        },
+        {
+          "id": "inicetmay25-pathology:3",
+          "similarity": 0.133
+        },
+        {
+          "id": "diginerve-ini-2025:31",
+          "similarity": 0.103
+        }
+      ],
+      "duplicateReview": "Top lexical/correct-answer overlaps and related concepts reviewed; no matching complete question concept.",
+      "conceptReferences": [],
+      "reviewNotes": "Redundant histology illustration omitted; the question asks which listed stain is not used for routine organism identification, not identification of the image."
+    },
+    {
+      "id": "inicetmay25-orthopaedics:6",
+      "source": "inicetmay25-orthopaedics.pdf",
+      "sourceNumber": 6,
+      "sourcePages": [
+        2
+      ],
+      "sourceFingerprint": "87868c965b6f21cbe4b2623cec8ec6406f097d5f82a36b09b67d53220f42fae4",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "examYear": 2025,
+      "examSession": "May",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aiims-2018-nov:4",
+          "similarity": 0.114
+        },
+        {
+          "id": "aglasem-5ab51d7e-c103-11ed-bad9-0a5e36bc6706:6",
+          "similarity": 0.113
+        },
+        {
+          "id": "aiims-2019-may:24",
+          "similarity": 0.099
+        }
+      ],
+      "duplicateReview": "Top lexical/correct-answer overlaps and related concepts reviewed; no matching complete question concept.",
+      "conceptReferences": [
+        "https://www.nice.org.uk/guidance/ng38/chapter/recommendations"
+      ],
+      "reviewNotes": "Original options, their order and all numbered statements preserved; question wording may be clarified."
+    },
+    {
+      "id": "inicetmay25-pharmacology:6",
+      "source": "inicetmay25-pharmacology.pdf",
+      "sourceNumber": 6,
+      "sourcePages": [
+        3
+      ],
+      "sourceFingerprint": "e5a9223020d4437ad2dc0b50727c24bb58e18ced10093cbd41444c7e81a07a4b",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "examYear": 2025,
+      "examSession": "May",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "ini-2021-02:17",
+          "similarity": 0.219
+        },
+        {
+          "id": "aglasem-715beab2-b5c8-11ed-8572-0a5e36bc6706:8",
+          "similarity": 0.123
+        },
+        {
+          "id": "prepladder-aiims-2020-jun-pharma:3",
+          "similarity": 0.099
+        }
+      ],
+      "duplicateReview": "Top lexical/correct-answer overlaps and related concepts reviewed; no matching complete question concept.",
+      "conceptReferences": [],
+      "reviewNotes": "Original options, their order and all numbered statements preserved; question wording may be clarified."
+    },
+    {
+      "id": "inicetmay25-pharmacology:10",
+      "source": "inicetmay25-pharmacology.pdf",
+      "sourceNumber": 10,
+      "sourcePages": [
+        4
+      ],
+      "sourceFingerprint": "f63c473d68acb6c376686080054b7d96dc2ac1cd0e13364262347c31f0ef6284",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "examYear": 2025,
+      "examSession": "May",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aglasem-5d822ace-c103-11ed-a976-0a5e36bc6706:18",
+          "similarity": 0.122
+        },
+        {
+          "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:33",
+          "similarity": 0.098
+        },
+        {
+          "id": "aglasem-585ca6be-c103-11ed-9d15-0a5e36bc6706:20",
+          "similarity": 0.098
+        }
+      ],
+      "duplicateReview": "Top lexical/correct-answer overlaps and related concepts reviewed; no matching complete question concept.",
+      "conceptReferences": [
+        "https://www.ncbi.nlm.nih.gov/books/NBK548511/"
+      ],
+      "reviewNotes": "Original options, their order and all numbered statements preserved; question wording may be clarified."
+    },
+    {
+      "id": "inicetmay25-psychiatry:6",
+      "source": "inicetmay25-psychiatry.pdf",
+      "sourceNumber": 6,
+      "sourcePages": [
+        2
+      ],
+      "sourceFingerprint": "ebfbfbbc1fb119526a2f7db8790ec06feb6a967f0206ae7762e8a2cdb9e45a1c",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "examYear": 2025,
+      "examSession": "May",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aglasem-5abf01ea-c103-11ed-b016-0a5e36bc6706:5",
+          "similarity": 0.28
+        },
+        {
+          "id": "aglasem-57d9fa20-c103-11ed-81fa-0a5e36bc6706:15",
+          "similarity": 0.234
+        },
+        {
+          "id": "gmu-2024-da1839b8-317e-4e21-9b18-dca9000e6408:2",
+          "similarity": 0.233
+        }
+      ],
+      "duplicateReview": "Top lexical/correct-answer overlaps and related concepts reviewed; no matching complete question concept.",
+      "conceptReferences": [],
+      "reviewNotes": "Original options, their order and all numbered statements preserved; question wording may be clarified."
+    },
+    {
+      "id": "inicetmay25-surgery:2",
+      "source": "inicetmay25-surgery.pdf",
+      "sourceNumber": 2,
+      "sourcePages": [
+        1
+      ],
+      "sourceFingerprint": "7f7105aee76091da0fc2f7ada2b93ff5e705dd6658f85b69b2a84abdf40cd11b",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "examYear": 2025,
+      "examSession": "May",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aglasem-6cddafe8-b5c8-11ed-88d6-0a5e36bc6706:2",
+          "similarity": 0.166
+        },
+        {
+          "id": "faculty-ini-2022-may-psm:9",
+          "similarity": 0.11
+        },
+        {
+          "id": "aiims-2017-nov:23",
+          "similarity": 0.108
+        }
+      ],
+      "duplicateReview": "Top lexical/correct-answer overlaps and related concepts reviewed; no matching complete question concept.",
+      "conceptReferences": [],
+      "reviewNotes": "Original options, their order and all numbered statements preserved; question wording may be clarified."
+    },
+    {
+      "id": "inicetmay25-surgery:6",
+      "source": "inicetmay25-surgery.pdf",
+      "sourceNumber": 6,
+      "sourcePages": [
+        2
+      ],
+      "sourceFingerprint": "08b98e220be53a4cb4a85cabcaaa15d27c90bff673e5456b7bd6a8fe91038b4e",
+      "suppliedKey": "D",
+      "reviewedAnswer": "D",
+      "examYear": 2025,
+      "examSession": "May",
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aglasem-58543d6c-c103-11ed-bee2-0a5e36bc6706:4",
+          "similarity": 0.329
+        },
+        {
+          "id": "ini-2024-01:3",
+          "similarity": 0.167
+        },
+        {
+          "id": "aiims-2019-may:12",
+          "similarity": 0.159
+        }
+      ],
+      "duplicateReview": "Existing tension-pneumothorax item tests trauma breathing assessment; this item separately tests progression from simple to tension physiology.",
+      "conceptReferences": [],
+      "reviewNotes": "Original options, their order and all numbered statements preserved; question wording may be clarified."
+    },
+    {
+      "id": "aiims-2010-eo:17",
+      "source": "aiims-2010-eo.pdf",
+      "sourceNumber": 17,
+      "sourcePages": [
+        6
+      ],
+      "sourceFingerprint": "37f12b55031f968a29ef2e8ebd8c2a320c91fde8376f2b92a99dc1dd5ac9b20d",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "examYear": 2010,
+      "examSession": null,
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aiims-2016-nov:4",
+          "similarity": 0.161
+        },
+        {
+          "id": "aiims-2012:9",
+          "similarity": 0.114
+        },
+        {
+          "id": "pgblazer-2015-may-13:13",
+          "similarity": 0.1
+        }
+      ],
+      "duplicateReview": "Top lexical/correct-answer overlaps and related concepts reviewed; no matching complete question concept.",
+      "conceptReferences": [],
+      "reviewNotes": "Original options, their order and all numbered statements preserved; question wording may be clarified."
+    },
+    {
+      "id": "aiims-2010-eo:18",
+      "source": "aiims-2010-eo.pdf",
+      "sourceNumber": 18,
+      "sourcePages": [
+        6,
+        7
+      ],
+      "sourceFingerprint": "95629cee966f7f8fb84fa3c85a23791bf6a6291e28db8b59063e9800cd657c2f",
+      "suppliedKey": "B",
+      "reviewedAnswer": "B",
+      "examYear": 2010,
+      "examSession": null,
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aglasem-76b2b0fe-b5c8-11ed-b3fc-0a5e36bc6706:1",
+          "similarity": 0.176
+        },
+        {
+          "id": "aiims-2019-may:35",
+          "similarity": 0.158
+        },
+        {
+          "id": "faculty-ini-2022-may-psm:15",
+          "similarity": 0.132
+        }
+      ],
+      "duplicateReview": "Top lexical/correct-answer overlaps and related concepts reviewed; no matching complete question concept.",
+      "conceptReferences": [],
+      "reviewNotes": "Original options, their order and all numbered statements preserved; question wording may be clarified."
+    },
+    {
+      "id": "aiims-2010-eo:19",
+      "source": "aiims-2010-eo.pdf",
+      "sourceNumber": 19,
+      "sourcePages": [
+        7
+      ],
+      "sourceFingerprint": "f22dd2da6bdae9b82de4adb47a0468d2f9b08bd89973191640dd69ff5ab2e618",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "examYear": 2010,
+      "examSession": null,
+      "semanticDuplicateSuggestions": [
+        {
+          "id": "aglasem-7088d4f6-b5c8-11ed-aaf9-0a5e36bc6706:8",
+          "similarity": 0.122
+        },
+        {
+          "id": "ini-2022-01:22",
+          "similarity": 0.121
+        },
+        {
+          "id": "inicetmay25-physiology:3",
+          "similarity": 0.114
+        }
+      ],
+      "duplicateReview": "Top lexical/correct-answer overlaps and related concepts reviewed; no matching complete question concept.",
+      "conceptReferences": [],
+      "reviewNotes": "Original options, their order and all numbered statements preserved; question wording may be clarified."
+    }
+  ],
+  "sourceWordsAfterSelection": {
+    "aiims-2010-eo.pdf": 168,
+    "inicetmay25-ent.pdf": 147,
+    "inicetmay25-forensic-medicine.pdf": 154,
+    "inicetmay25-medicine.pdf": 176,
+    "inicetmay25-microbiology.pdf": 150,
+    "inicetmay25-orthopaedics.pdf": 108,
+    "inicetmay25-pharmacology.pdf": 175,
+    "inicetmay25-psychiatry.pdf": 136,
+    "inicetmay25-surgery.pdf": 160
+  },
+  "newHolds": [
+    {
+      "id": "inicetmay25-biochemistry:8",
+      "reason": "Semantic duplicate of ini-2025-01:4, Warburg effect."
+    },
+    {
+      "id": "aiims-2010-eo:20",
+      "reason": "Semantic duplicate of aiims-2019-may:17, inspiratory rhythm generation."
+    },
+    {
+      "id": "inicetmay25-ent:2",
+      "reason": "Cochlear implantation can be indicated in far-advanced otosclerosis; its blanket exclusion is not accepted."
+    },
+    {
+      "id": "inicetmay25-microbiology:7",
+      "reason": "Naegleria has three forms, but Acanthamoeba and Giardia ordinarily have two; supplied >2 forms key is not accepted."
+    },
+    {
+      "id": "inicetmay25-orthopaedics:2",
+      "reason": "Multiple options about peripheral/facial nerve grafting and fibrin glue can be true; exclusive supplied key not accepted."
+    },
+    {
+      "id": "inicetmay25-orthopaedics:4",
+      "reason": "Tuberculous osteomyelitis is a chronic bone infection; the unqualified rare-organism exception is not accepted."
+    },
+    {
+      "id": "inicetmay25-orthopaedics:9",
+      "reason": "Clear-cell renal carcinoma can metastasise to bone; rare childhood occurrence does not justify cannot."
+    },
+    {
+      "id": "inicetmay25-pediatrics:5",
+      "reason": "Vomiting/poor weight gain alone do not sufficiently distinguish reflux from cow-milk-protein allergy in the stated choices."
+    },
+    {
+      "id": "inicetmay25-pediatrics:6",
+      "reason": "Platelet count and skin bleeding alone do not establish that a child requires IVIG; important bleeding/severity context is absent."
+    },
+    {
+      "id": "inicetmay25-pediatrics:10",
+      "reason": "Unconjugated bilirubin, late onset and beta-glucuronidase can all describe breast-milk jaundice; supplied single key is not exclusive."
+    },
+    {
+      "id": "inicetmay25-pharmacology:3",
+      "reason": "Magnesium sulphate is not given to prevent placental abruption; supplied combination includes this unsupported use."
+    },
+    {
+      "id": "inicetmay25-surgery:3",
+      "reason": "Z-plasty is both a scar-lengthening technique and a local transposition flap; choices overlap."
+    },
+    {
+      "id": "inicetmay25-surgery:19",
+      "reason": "Choices mix Dukes, Astler-Coller and TNM stage labels; muscularis-propria invasion is not the supplied StageIIa label."
+    },
+    {
+      "id": "inicetmay25-medicine:6",
+      "reason": "No resistance/ESBL or other severity context establishes meropenem as the universal best initial treatment for the stated complicatedUTI."
+    },
+    {
+      "id": "inicetmay25-medicine:11",
+      "reason": "P-wave timing concerns presystolic accentuation in sinus rhythm, not the whole mitral stenosis murmur."
+    },
+    {
+      "id": "inicetmay25-forensic-medicine:4",
+      "reason": "Minimum age forMTP is not18: adult consent and guardian consent for minors are different questions."
+    },
+    {
+      "id": "inicetmay25-opthalmology:5",
+      "reason": "Blindness definitions depend on presenting/best-corrected acuity and the applicable classification; source does not specify the framework."
+    }
+  ],
+  "acquisition": "Reused PDFs from the preceding100-PDF acquisition. All9contributing source hashes rechecked; selected pages and continuations rendered and visually inspected.",
+  "limitations": [
+    "No fixed target or unreviewed candidate count is treated as approved questions.",
+    "All16new keys are supplied by the source; explanations are original.",
+    "No figures, publisher explanations, generic dataset or fabricated distractors imported."
+  ]
+}

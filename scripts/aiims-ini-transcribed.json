@@ -4457,5 +4457,213 @@
       "11 N"
     ],
     "key": "B"
+  },
+  {
+    "id": "inicetmay25-ent:5",
+    "source": "inicetmay25-ent.pdf",
+    "source_number": 5,
+    "question": "Stridor in a newborn is commonly seen in which of the following conditions? 1. Laryngomalacia 2. Subglottic stenosis 3. Laryngeal papilloma 4. Hemorrhagic polyp",
+    "options": [
+      "1 and 2",
+      "2 and 3",
+      "1 and 3",
+      "1 and 4"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "inicetmay25-forensic-medicine:6",
+    "source": "inicetmay25-forensic-medicine.pdf",
+    "source_number": 6,
+    "question": "Which of the following is the WRONG statement about snakebite?",
+    "options": [
+      "Viperidae is vasculotoxic & anti-snake venom has to be given in systemic envenomation",
+      "Elapidae group is mostly myotoxic",
+      "Most snake venoms contain hyaluronidase",
+      "Cobra belongs to Elapidae family"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-forensic-medicine:8",
+    "source": "inicetmay25-forensic-medicine.pdf",
+    "source_number": 8,
+    "question": "The triad of bruise, abrasion and punctured laceration is seen in:",
+    "options": [
+      "Road traffic accident (RTA)",
+      "Bomb blast injury",
+      "Strangulation",
+      "Firearm injury"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "inicetmay25-forensic-medicine:9",
+    "source": "inicetmay25-forensic-medicine.pdf",
+    "source_number": 9,
+    "question": "Under the amended Indian MTP Act, which listed gestational interval ordinarily requires opinions from at least two registered medical practitioners for eligible categories?",
+    "options": [
+      "16 to 20 weeks",
+      "20 to 24 weeks",
+      "12 to 16 weeks",
+      "<12 weeks"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-medicine:7",
+    "source": "inicetmay25-medicine.pdf",
+    "source_number": 7,
+    "question": "Alongside clinical assessment, procalcitonin can help guide which decision in ventilator-associated pneumonia?",
+    "options": [
+      "Deciding the duration of antibiotics",
+      "Choosing empirical antibiotics",
+      "Confirmation of VAP",
+      "Differentiate fungal and bacterial etiology"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "inicetmay25-medicine:9",
+    "source": "inicetmay25-medicine.pdf",
+    "source_number": 9,
+    "question": "Erythropoietin is used for which listed anaemias? 1. Nutritional anaemia; 2. CKD-related anaemia; 3. MDS-related anaemia; 4. Aplastic anaemia.",
+    "options": [
+      "1 & 4",
+      "2 & 3",
+      "1 & 3",
+      "1, 2 & 4"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-microbiology:8",
+    "source": "inicetmay25-microbiology.pdf",
+    "source_number": 8,
+    "question": "Which of the following stains is not used to identify organisms in a post renal transplantation patient?",
+    "options": [
+      "Grocott-Gomori methenamine silver (GMS)",
+      "Fontana Masson stain",
+      "Periodic Acid-Schiff (PAS)",
+      "Congo red stain"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "inicetmay25-orthopaedics:6",
+    "source": "inicetmay25-orthopaedics.pdf",
+    "source_number": 6,
+    "question": "A laborer falls on an outstretched hand and has anatomical snuffbox tenderness. What is the most appropriate next step?",
+    "options": [
+      "Prescribe NSAIDs and discharge",
+      "MRI of wrist",
+      "Thumb-spica cast and follow-up after 10–14 days",
+      "CT scan of wrist"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "inicetmay25-pharmacology:6",
+    "source": "inicetmay25-pharmacology.pdf",
+    "source_number": 6,
+    "question": "Which action is shared by imipramine and diphenhydramine?",
+    "options": [
+      "Imipramine inhibits diphenhydramine's action",
+      "Diphenhydramine inhibits imipramine's action",
+      "Both block muscarinic receptors",
+      "Both are norepinephrine reuptake inhibitors"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "inicetmay25-pharmacology:10",
+    "source": "inicetmay25-pharmacology.pdf",
+    "source_number": 10,
+    "question": "Which listed drug exposure classically causes bland cholestasis?",
+    "options": [
+      "Acetaminophen (paracetamol)",
+      "Amoxicillin-clavulanic acid",
+      "Isoniazid",
+      "Estrogen + androgen"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "inicetmay25-psychiatry:6",
+    "source": "inicetmay25-psychiatry.pdf",
+    "source_number": 6,
+    "question": "Which of the following is incorrect?",
+    "options": [
+      "Cannabis is associated with minimal withdrawal physical symptoms",
+      "Buprenorphine can be used for the management of opioid withdrawal",
+      "Opioids withdrawal is rarely fatal",
+      "I.V Flumazenil is used in alcohol withdrawal long-term"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "inicetmay25-surgery:2",
+    "source": "inicetmay25-surgery.pdf",
+    "source_number": 2,
+    "question": "Which listed finding does not itself contraindicate breast-conserving therapy?",
+    "options": [
+      "Prior chest radiation",
+      "Positive margins after resection",
+      "Scleroderma",
+      "Limited to one quadrant"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "inicetmay25-surgery:6",
+    "source": "inicetmay25-surgery.pdf",
+    "source_number": 6,
+    "question": "All the following are true regarding tension pneumothorax except:",
+    "options": [
+      "A common cause of tension pneumothorax is positive pressure ventilation (PPV)",
+      "Thoracic spine injury can cause pneumothorax",
+      "Breath sounds are absent on the affected side",
+      "Simple pneumothorax cannot convert into a tension pneumothorax"
+    ],
+    "key": "D"
+  },
+  {
+    "id": "aiims-2010-eo:17",
+    "source": "aiims-2010-eo.pdf",
+    "source_number": 17,
+    "question": "Why does carbon dioxide diffuse much more readily than oxygen?",
+    "options": [
+      "High solubility in plasma",
+      "Low PCO2 in alveoli",
+      "Low CO2 density",
+      "Low CO2 molecular weight"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "aiims-2010-eo:18",
+    "source": "aiims-2010-eo.pdf",
+    "source_number": 18,
+    "question": "Which gas is routinely used to measure pulmonary diffusing capacity?",
+    "options": [
+      "CO2",
+      "Carbon monoxide",
+      "Nitrogen",
+      "Oxygen"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "aiims-2010-eo:19",
+    "source": "aiims-2010-eo.pdf",
+    "source_number": 19,
+    "question": "The normal blood-brain barrier most strongly restricts which listed class?",
+    "options": [
+      "Proteins",
+      "Gases",
+      "Water",
+      "Lipophilic substances"
+    ],
+    "key": "A"
   }
 ]
