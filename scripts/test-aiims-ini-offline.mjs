@@ -16,7 +16,7 @@ assert.equal(missingFigureReference.test('Identify the marked structure'),true);
 const fetchBefore = globalThis.fetch;
 globalThis.fetch=()=>{throw Error('Offline bank attempted networking');};
 try {
-  for (const [file,count] of [['aiimsPgBank.json',118],['iniCetBank.json',225]]) {
+  for (const [file,count] of [['aiimsPgBank.json',122],['iniCetBank.json',225]]) {
     const bank=read('mobile/src/lib/'+file);validateOfflineBank(bank);
     const reader=createOfflineReader(bank);assert.equal(reader.total,count);
     assert.equal(fs.statSync('mobile/src/lib/'+file).size<175000,true);
@@ -50,8 +50,8 @@ try {
   const repaired=ini.records.find(r=>r.id==='inicetmay25-psm:4');
   for(const statement of ['1. Conduct data analysis','2. Selecting population','3. Setting research question','4. Setting research objective'])assert.ok(repaired.question.includes(statement));
   assert.equal(repaired.sourceAnswer,'C');
-  assert.equal(receipts.totalQuestions,343);
-  assert.equal(receipts.questionProvenance.length,343);
+  assert.equal(receipts.totalQuestions,347);
+  assert.equal(receipts.questionProvenance.length,347);
   const fresh=read('scripts/aiims-ini-missing-papers-import-20261022.json');
   assert.equal(fresh.newQuestions,52);
   for(const review of fresh.questionReviews){
@@ -89,9 +89,22 @@ try {
     assert.equal(record.sourceAnswer,audit.suppliedKey);
     assert.equal(record.examSession,record.examYear===2011?(audit.source.includes('-may-')?'May':'November'):'May');
   }
+  const fifthBatch=read('scripts/aiims-ini-additions-20261023-batch5.json');
+  assert.equal(fifthBatch.questionReviews.length,4);
+  for(const audit of fifthBatch.questionReviews){
+    const record=aiims.records.find(r=>r.id===audit.id);assert.ok(record);
+    assert.equal(record.sourceAnswer,audit.reviewedAnswer);
+    assert.equal(record.examYear,2011);assert.equal(record.examSession,'November');
+    assert.equal(receipts.questionProvenance.find(r=>r.id===audit.id).answerOrigin,audit.answerOrigin);
+    if(audit.suppliedKey===null){
+      assert.equal(audit.answerOrigin,'editorial_key_primary_reference_checked');
+      assert.ok(record.explanation.startsWith('Editorial answer: the recall source provides no answer key.'));
+      assert.ok(audit.conceptReference.startsWith('https://'));
+    } else assert.equal(record.sourceAnswer,audit.suppliedKey);
+  }
   const used = new Set(receipts.questionProvenance.map(r=>r.id));assert.deepEqual(used,new Set(reviewed.map(r=>r.id)));
   // Existing NEET payload remains separate and is not relabelled as another exam.
   const neet=read('mobile/src/lib/neetPgBank.json');assert.equal(neet.records.length,2078);
   assert.equal(neet.records.some(r=>used.has(r.id)),false);
 } finally {globalThis.fetch=fetchBefore;}
-console.log('PASS: 343 source-fingerprinted recall items, original explanations, real syllabus paths, offline search/filter/answers, mutation isolation and unchanged 2,078-item NEET bank.');
+console.log('PASS: 347 source-fingerprinted recall items, original explanations, real syllabus paths, offline search/filter/answers, mutation isolation and unchanged 2,078-item NEET bank.');

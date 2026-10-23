@@ -43,14 +43,14 @@ try {
   await label('Return to NEET PG library').click();
   for(const width of [360,390,430]){
     await page.setViewportSize({width,height:844});
-    await choose('AIIMS PG',118);
+    await choose('AIIMS PG',122);
     for(const name of ['NEET-PG','AIIMS PG','INI-CET']){
       const box=await label('Open '+name+' practice').boundingBox();assert.ok(box&&box.x>=0&&box.x+box.width<=width+1&&box.height>=43.5);
     }
     await choose('INI-CET',225);
   }
   await page.setViewportSize({width:390,height:844});
-  await choose('AIIMS PG',118);
+  await choose('AIIMS PG',122);
   await page.screenshot({path:path.join(evidence,'aiims-library.png')});
   await label('Search offline AIIMS PG questions').fill('Adding verapamil');
   await label('Open AIIMS PG question 1').click();
@@ -103,7 +103,7 @@ try {
   await label('Show answer and explanation').click();
   await page.getByText('Answer: A',{exact:true}).waitFor();
   await label('Return to INI-CET library').click();
-  await choose('AIIMS PG',118);
+  await choose('AIIMS PG',122);
   await label('Search offline AIIMS PG questions').fill('Semantic memory');
   await label('Open AIIMS PG question 1').click();
   await page.getByText('AIIMS PG 2016 · May · Recall',{exact:true}).waitFor();
@@ -168,7 +168,7 @@ try {
   await page.getByText('Answer: C',{exact:true}).waitFor();
   await page.screenshot({path:path.join(evidence,'ini-repaired-research-sequence.png')});
   await label('Return to INI-CET library').click();
-  await choose('AIIMS PG',118);
+  await choose('AIIMS PG',122);
   await label('Search offline AIIMS PG questions').fill('');
   await label('Search offline AIIMS PG questions').fill('thermodilution');
   await label('Open AIIMS PG question 1').click();
@@ -185,7 +185,7 @@ try {
   await page.getByText('Answer: A',{exact:true}).waitFor();
   await page.screenshot({path:path.join(evidence,'ini-2024-steroid-regimen.png')});
   await label('Return to INI-CET library').click();
-  await choose('AIIMS PG',118);
+  await choose('AIIMS PG',122);
   await label('Search offline AIIMS PG questions').fill('multiple clotting factor');
   await label('Open AIIMS PG question 1').click();
   await page.getByText('AIIMS PG 2015 · May · Recall',{exact:true}).waitFor();
@@ -214,7 +214,7 @@ try {
   await page.screenshot({path:path.join(evidence,'ini-2025-thiopentone.png')});
   await label('Return to INI-CET library').click();
   await label('Search offline INI-CET questions').fill('');
-  await choose('AIIMS PG',118);
+  await choose('AIIMS PG',122);
   await label('Search offline AIIMS PG questions').fill('chymotrypsinogen');
   await label('Open AIIMS PG question 1').click();
   await page.getByText('AIIMS PG 2011 · November · Recall',{exact:true}).waitFor();
@@ -223,9 +223,25 @@ try {
   await page.screenshot({path:path.join(evidence,'aiims-2011-zymogen.png')});
   await label('Return to AIIMS PG library').click();
   await label('Search offline AIIMS PG questions').fill('');
+  await label('Search offline AIIMS PG questions').fill('chromosomal change');
+  await label('Open AIIMS PG question 1').click();
+  await page.getByText('AIIMS PG 2011 · November · Recall',{exact:true}).waitFor();
+  await label('Show answer and explanation').click();
+  await page.getByText('Answer: A',{exact:true}).waitFor();
+  await page.getByText(/Editorial answer: the recall source provides no answer key/).waitFor();
+  await page.screenshot({path:path.join(evidence,'aiims-2011-down-syndrome.png')});
+  await label('Return to AIIMS PG library').click();
+  await label('Search offline AIIMS PG questions').fill('prostaglandin administration');
+  await label('Open AIIMS PG question 1').click();
+  await label('Show answer and explanation').click();
+  await page.getByText('Answer: C',{exact:true}).waitFor();
+  await page.getByText(/not a blanket prohibition/).waitFor();
+  await page.screenshot({path:path.join(evidence,'aiims-2011-obstructed-tapvc.png')});
+  await label('Return to AIIMS PG library').click();
+  await label('Search offline AIIMS PG questions').fill('');
   await page.waitForFunction(()=>!!navigator.serviceWorker.controller,undefined,{timeout:120000});
   await context.setOffline(true);
-  await choose('AIIMS PG',118);
+  await choose('AIIMS PG',122);
   await label('Show saved AIIMS PG questions').click();
   await label('Open AIIMS PG question 1').click();
   await page.getByText(/Dorello/).first().waitFor();
@@ -234,7 +250,7 @@ try {
   await page.reload();
   await label('NEET-PG practice questions').click();
   await label('Search offline NEET PG questions').waitFor();
-  await choose('AIIMS PG',118);
+  await choose('AIIMS PG',122);
   await choose('INI-CET',225);
   assert.deepEqual(errors,[]);
   console.log('PASS 360/390/430 exam controls; separate counts, source-key reveal, bookmark isolation, offline switching and unchanged NEET bank.');

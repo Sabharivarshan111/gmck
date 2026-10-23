@@ -3443,5 +3443,57 @@
       "Short elimination half-life"
     ],
     "key": "A"
+  },
+  {
+    "id": "pgblazer-2011-november-116:116",
+    "source": "pgblazer-2011-november-116-retrieved.txt",
+    "source_number": 116,
+    "question": "Which listed effect is least characteristic of hypothermia?",
+    "options": [
+      "Cardiac arrhythmias",
+      "Decreased peripheral resistance",
+      "Reversible cogulopathy",
+      "Renal failure"
+    ],
+    "key": "B"
+  },
+  {
+    "id": "pgblazer-2011-november-122:122",
+    "source": "pgblazer-2011-november-122-retrieved.txt",
+    "source_number": 122,
+    "question": "Which chromosomal change is not a recognised mechanism of Down syndrome?",
+    "options": [
+      "Deletion of 21st chromosome",
+      "Trisomy of 21st chromosome",
+      "Robertsonian translocation",
+      "Mosaic"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "pgblazer-2011-november-135:135",
+    "source": "pgblazer-2011-november-135-retrieved.txt",
+    "source_number": 135,
+    "question": "Which structure borders a femoral hernia sac immediately on its lateral side?",
+    "options": [
+      "Femoral vein",
+      "Femoral artery",
+      "Femoral nerve",
+      "Lateral cutaneous nerve of thigh"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "pgblazer-2011-november-137:137",
+    "source": "pgblazer-2011-november-137-retrieved.txt",
+    "source_number": 137,
+    "question": "Which listed cardiac lesion can worsen after prostaglandin administration?",
+    "options": [
+      "Pulmonary stenosis without ventricular septal defect",
+      "Left hypoplastic heart syndrome",
+      "Obstructive total anomalous pulmonary venous connection",
+      "Obstruction in aorta"
+    ],
+    "key": "C"
   }
 ]

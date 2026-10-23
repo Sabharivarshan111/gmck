@@ -1484,5 +1484,57 @@
     "session": "May",
     "required": true,
     "pinBytes": true
+  },
+  {
+    "file": "pgblazer-2011-november-116-retrieved.txt",
+    "url": "https://pgblazer.com/aiims-november-2011-mcq-116/",
+    "sha256": "1708690eeb9412ec033496fa06144507064b02ddcb17fa2dd6dff228b098c218",
+    "bytes": 3654,
+    "exam": "aiims-pg",
+    "year": 2011,
+    "session": "November",
+    "required": true,
+    "pinBytes": true,
+    "acquisitionMethod": "web_tool_publisher_text_snapshot",
+    "acquisitionNote": "Hash pins the retrieved publisher text, not original HTML bytes."
+  },
+  {
+    "file": "pgblazer-2011-november-122-retrieved.txt",
+    "url": "https://pgblazer.com/aiims-november-2011-mcq-122/",
+    "sha256": "85033ef25f8105a503985d53eb6327c18eb2caed693edf3404c055dd6502261c",
+    "bytes": 3621,
+    "exam": "aiims-pg",
+    "year": 2011,
+    "session": "November",
+    "required": true,
+    "pinBytes": true,
+    "acquisitionMethod": "web_tool_publisher_text_snapshot",
+    "acquisitionNote": "Hash pins the retrieved publisher text, not original HTML bytes."
+  },
+  {
+    "file": "pgblazer-2011-november-135-retrieved.txt",
+    "url": "https://pgblazer.com/aiims-november-2011-mcq-135/",
+    "sha256": "4c171f8526300ebe7d319adabe1354e01dafb691fe08f0ef697502110f97fa47",
+    "bytes": 3721,
+    "exam": "aiims-pg",
+    "year": 2011,
+    "session": "November",
+    "required": true,
+    "pinBytes": true,
+    "acquisitionMethod": "web_tool_publisher_text_snapshot",
+    "acquisitionNote": "Hash pins the retrieved publisher text, not original HTML bytes."
+  },
+  {
+    "file": "pgblazer-2011-november-137-retrieved.txt",
+    "url": "https://pgblazer.com/aiims-november-2011-mcq-137/",
+    "sha256": "dc72c411c077e3771d0177391caa5f018fd39bb9ccf511d83a891ab9087a4ba0",
+    "bytes": 3579,
+    "exam": "aiims-pg",
+    "year": 2011,
+    "session": "November",
+    "required": true,
+    "pinBytes": true,
+    "acquisitionMethod": "web_tool_publisher_text_snapshot",
+    "acquisitionNote": "Hash pins the retrieved publisher text, not original HTML bytes."
   }
 ]

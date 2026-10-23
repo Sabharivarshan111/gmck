@@ -2674,3 +2674,9 @@ Candidate114 AIIMS/224 INI=338. Eight complete DigiNerve recalls with supplied k
 118 AIIMS/225 INI=343, all338 prior full records plus NEET2078/year bytes preserved. Five new supplied-key selections: four PG Blazer2011 retrieved-text snapshots (not original-HTML hash claims), one downloaded PrepLadder May2025 PDF question. Report docs/AIIMS_INI_ADDITIONS_20261023_BATCH4.md and per-item audit.
 
 The Web CI failure was legitimate 99/108 digestive dossier reach after removing non-abdominal meshes from abdomen. Added a real submandibular/sublingual teaching dossier and exact four-mesh mappings. Coverage103/108=95.37%, floor95 unchanged; abdomen exclusions retained. See docs/ANATOMY_DIGESTIVE_COVERAGE_FIX_20261023.md. Source geometry, new browser dossier, native/web builds and PG offline flow verified; no device, signed-build or merge claim. Latest publication receipts in PR122.
+
+### 2026-10-23 — Four further AIIMS recalls and AI-chat test synchronisation
+
+Candidate122 AIIMS/225 INI=347. All343 prior full records, INI and NEET2078/year bytes preserved. Four November2011 recalls, two supplied keys and two visibly labelled editorial keys. Thirteen incomplete/disputed source leads held, including literal2010 ossicle-size wording contradicted by primary measurements. Audit scripts/aiims-ini-additions-20261023-batch5.json; report docs/AIIMS_INI_ADDITIONS_20261023_BATCH5.md.
+
+Remote previous head aa69665 passed Web build, simulator integrity, PG checks and all Android builds. Other broad UI checks failed. AI-chat failure was a stale answer-action wait; waiting for the actual second/third response passes390/800/1280 with all original assertions. No product UI or anatomy data changed. Original digestive95% floor and103/108 reach retained. Final build/publication evidence in latest resume note and PR122.

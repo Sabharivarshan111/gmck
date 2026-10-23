@@ -2518,3 +2518,19 @@ Do not promote the five new pharmacology holds, manufacture missing options, imp
 **NEXT:**Continue reviewed sources without semantic duplicates; watch PR122 Web build now that dossier gate passes locally. No signedAPK/Play upload or main merge authorized by this task.
 
 **DO NOT:**Lower digestive95% floor, restore oral glands to abdomen, describe retrieved-text hashes as original HTML hashes, or import incomplete publisher questions wholesale.
+
+## 2026-10-23 — Four additional AIIMS questions and build follow-through
+
+**DONE:**122 AIIMS/225 INI=347; all343 earlier records, INI bank and NEET2078/year bytes exact-preserved. Four November2011 recalls; two publisher and two labelled editorial keys. Four hash-pinned publisher text snapshots, reference/duplicate receipts in scripts/aiims-ini-additions-20261023-batch5.json. Complete source options retained; no invented choices. More than20 leads checked;13 incomplete/ambiguous items held, including2010 ossicle adult-size wording contradicted by PMID2268059. No new2010 coverage claim.
+
+**DONE:**Previous remote head aa69665 passed Web build, simulator integrity, PG integrity/provenance and Android debug/internal/release workflows. Separate broad simulator/production UI and AI-chat regressions failed. Fixed AI-chat test race: wait for each new answer action (second/third), not the already-visible last action from an earlier turn. All original request/context/error assertions retained;390/800/1280 real-browser checks pass. Product code unchanged. Separate simulator UI failures remain outside this data batch.
+
+**DONE:**11 integrity tests,347 offline/fingerprint/key/chapter/held checks,2078 NEET source-year joins and exact baseline preservation pass. Digestive dossier guard still passes103/108 with95% floor unchanged. Final production build, AndroidJS and extended browser verification in progress; publication/remoteCI outcome belongs to PR122.
+
+**HALF-DONE:**Publish tested tree and finish PR122 receipt after final build/browser verification.
+
+**NEXT:**Continue reviewed sources, inspect remaining broad simulator UI failures as a distinct task; use latest PR122 for exact publication status. No main merge, Play upload or fresh device verification claimed.
+
+**DO NOT:**Import missing distractors or disputed ossicle absolute; treat absent publisher keys as supplied; weaken assertions or coverage thresholds to clear CI.
+
+**VERIFIED:**Assembled production web build and Android production JS bundle pass. Actual browser PG flow360/390/430 passes both new editorial key reveals, visible editorial attribution, source year/session labels, saved-question isolation and offline reload. New screenshots inspected. Corrected AI-chat regression passes390/800/1280 after the final production build. Repo/release-import guards pass. Exact tested/published tree and new remoteCI results are recorded in PR122 to avoid circular commit receipts.

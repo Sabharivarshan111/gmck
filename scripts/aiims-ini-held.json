@@ -494,5 +494,83 @@
     "sourceNumber": 37,
     "duplicateOf": "inicetmay25-pathology:3",
     "reason": "Existing recalled concept; source not imported wholesale."
+  },
+  {
+    "id": "pgblazer-2011-november-110:110",
+    "source": "pgblazer-2011-november-110-retrieved.txt",
+    "sourceNumber": 110,
+    "reason": "The claim that glutamate is not involved in panic disorder is not sufficiently supported as an absolute exclusion."
+  },
+  {
+    "id": "pgblazer-2011-november-112:112",
+    "source": "pgblazer-2011-november-112-retrieved.txt",
+    "sourceNumber": 112,
+    "reason": "Two distractors are unrecalled."
+  },
+  {
+    "id": "pgblazer-2011-november-115:115",
+    "source": "pgblazer-2011-november-115-retrieved.txt",
+    "sourceNumber": 115,
+    "reason": "Fourth distractor is unrecalled and the Apgar timing wording is problematic."
+  },
+  {
+    "id": "pgblazer-2011-november-118:118",
+    "source": "pgblazer-2011-november-118-retrieved.txt",
+    "sourceNumber": 118,
+    "reason": "Complete choices are absent."
+  },
+  {
+    "id": "pgblazer-2011-november-119:119",
+    "source": "pgblazer-2011-november-119-retrieved.txt",
+    "sourceNumber": 119,
+    "reason": "Fourth distractor is absent; historical IPC context also needs a date-specific legal review."
+  },
+  {
+    "id": "pgblazer-2011-november-124:124",
+    "source": "pgblazer-2011-november-124-retrieved.txt",
+    "sourceNumber": 124,
+    "reason": "The exposed anatomical site is unspecified; both pH and lysozyme can be chemical barriers."
+  },
+  {
+    "id": "pgblazer-2011-november-133:133",
+    "source": "pgblazer-2011-november-133-retrieved.txt",
+    "sourceNumber": 133,
+    "reason": "Recalled sodium citrate concentration is inconsistent with usual coagulation sampling concentrations; not silently corrected."
+  },
+  {
+    "id": "pgblazer-2011-november-140:140",
+    "source": "pgblazer-2011-november-140-retrieved.txt",
+    "sourceNumber": 140,
+    "reason": "Fourth distractor is absent."
+  },
+  {
+    "id": "pgblazer-2011-november-145:145",
+    "source": "pgblazer-2011-november-145-retrieved.txt",
+    "sourceNumber": 145,
+    "reason": "Fourth distractor is absent."
+  },
+  {
+    "id": "pgblazer-2011-november-146:146",
+    "source": "pgblazer-2011-november-146-retrieved.txt",
+    "sourceNumber": 146,
+    "reason": "Only a topic fragment is recalled."
+  },
+  {
+    "id": "pgblazer-2011-november-147:147",
+    "source": "pgblazer-2011-november-147-retrieved.txt",
+    "sourceNumber": 147,
+    "reason": "Only a definition is present; no complete question/options."
+  },
+  {
+    "id": "pgblazer-2011-november-149:149",
+    "source": "pgblazer-2011-november-149-retrieved.txt",
+    "sourceNumber": 149,
+    "reason": "Most-common-cause ranking depends on population and period; no publisher key."
+  },
+  {
+    "id": "pgblazer-2010-november-3:3",
+    "source": "pgblazer-2010-november-category-retrieved.txt",
+    "sourceNumber": 3,
+    "reason": "Adult-size-before-birth wording conflicts with published human ossicle measurements (PMID2268059); source key not imported."
   }
 ]

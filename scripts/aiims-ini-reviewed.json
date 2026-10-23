@@ -3018,5 +3018,45 @@
     "chapterId": "final-year/general-surgery/anaesthesia",
     "answer": "A",
     "explanation": "After a single bolus, thiopentone rapidly enters the brain and then redistributes into other tissues, reducing its brain concentration. This initial recovery differs from elimination; repeated doses or prolonged infusion can accumulate and prolong recovery."
+  },
+  {
+    "id": "pgblazer-2011-november-116:116",
+    "source": "pgblazer-2011-november-116-retrieved.txt",
+    "sourceNumber": 116,
+    "sourceFingerprint": "30590aa514b6937b74a7baf9c8460c8010b2f87bc579e2db139e63b84ed11828",
+    "chapterId": "final-year/general-surgery/shock-burns-trauma",
+    "answer": "B",
+    "answerOrigin": "publisher_key_author_checked",
+    "explanation": "Cold exposure generally produces peripheral vasoconstriction and increased vascular resistance. Arrhythmias, impaired coagulation and renal injury can complicate hypothermia. This comparison describes the usual cold response; advanced circulatory failure or rewarming can instead cause vasodilatation and hypotension."
+  },
+  {
+    "id": "pgblazer-2011-november-122:122",
+    "source": "pgblazer-2011-november-122-retrieved.txt",
+    "sourceNumber": 122,
+    "sourceFingerprint": "4972d1346ce76028348d5de9efcbf189d80557a532150d7539a2015101204f29",
+    "chapterId": "second-year/pathology/paper-1/genetic-disorders",
+    "answer": "A",
+    "answerOrigin": "editorial_key_primary_reference_checked",
+    "explanation": "Editorial answer: the recall source provides no answer key. Down syndrome results from additional chromosome-21 material, usually free trisomy, an unbalanced translocation, or mosaic trisomy. Deletion removes chromosome material and is not the mechanism of Down syndrome."
+  },
+  {
+    "id": "pgblazer-2011-november-135:135",
+    "source": "pgblazer-2011-november-135-retrieved.txt",
+    "sourceNumber": 135,
+    "sourceFingerprint": "ce590143d63287d5d0d0e905fecb946086e0438024ce8709dff71ca95d63220f",
+    "chapterId": "first-year/anatomy/paper-1/lower-limb",
+    "answer": "A",
+    "answerOrigin": "publisher_key_author_checked",
+    "explanation": "A femoral hernia passes through the femoral canal, the medial compartment of the femoral sheath. The femoral vein lies immediately lateral to the canal; the artery is farther lateral and the femoral nerve lies outside the sheath."
+  },
+  {
+    "id": "pgblazer-2011-november-137:137",
+    "source": "pgblazer-2011-november-137-retrieved.txt",
+    "sourceNumber": 137,
+    "sourceFingerprint": "86af62342bb7a306ad50425a1f3bba24d584e06e6ec99969adaa024d51dbbf9e",
+    "chapterId": "final-year/paediatrics/cvs",
+    "answer": "C",
+    "answerOrigin": "editorial_key_primary_reference_checked",
+    "explanation": "Editorial answer: the recall source provides no answer key. Increasing pulmonary flow with prostaglandin E1 can aggravate pulmonary venous congestion and oedema when anomalous pulmonary venous return is obstructed. Duct-dependent pulmonary or systemic outflow lesions may benefit from maintaining ductal patency. This risk is not a blanket prohibition on empiric prostaglandin in every undiagnosed cyanotic neonate; specialist assessment determines management."
   }
 ]
