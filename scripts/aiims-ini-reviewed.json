@@ -2973,5 +2973,50 @@
     "chapterId": "second-year/pathology/paper-2/liver-gallbladder-pancreas",
     "answer": "B",
     "explanation": "Primary sclerosing cholangitis can show concentric periductal fibrosis. This classic onion-skin pattern is often absent from small biopsy samples and is not completely specific; diagnosis also depends on the clinical and cholangiographic findings."
+  },
+  {
+    "id": "pgblazer-2011-november-105:105",
+    "source": "pgblazer-2011-november-105-retrieved.txt",
+    "sourceNumber": 105,
+    "sourceFingerprint": "a03375ad960487ee81b5437d2b0c2cbe866dae392b1b6c5e572646a7b644a93b",
+    "chapterId": "second-year/pharmacology/paper-1/general-pharmacology",
+    "answer": "C",
+    "explanation": "Adrenergic and dopamine receptors are G-protein-coupled receptors with seven transmembrane helices. Their subtypes couple to different intracellular signalling pathways, but share this membrane topology."
+  },
+  {
+    "id": "pgblazer-2011-november-106:106",
+    "source": "pgblazer-2011-november-106-retrieved.txt",
+    "sourceNumber": 106,
+    "sourceFingerprint": "ab99b1200ef279e7b8749a72ef49dbc7f24c0c82be965c18d69e047e45d6fcd6",
+    "chapterId": "first-year/biochemistry/paper-1/lipid-metabolism",
+    "answer": "A",
+    "explanation": "Malonyl-CoA inhibits carnitine palmitoyltransferase I at the outer mitochondrial membrane. This coordinates increased fatty-acid synthesis with reduced mitochondrial entry of long-chain acyl groups for oxidation."
+  },
+  {
+    "id": "pgblazer-2011-november-108:108",
+    "source": "pgblazer-2011-november-108-retrieved.txt",
+    "sourceNumber": 108,
+    "sourceFingerprint": "818e21d88034edb9bcb34b997c0188df8d794fd477323ea06cf28f3a755cbb4a",
+    "chapterId": "first-year/biochemistry/paper-1/enzymology",
+    "answer": "A",
+    "explanation": "Chymotrypsinogen is a zymogen, an inactive precursor of chymotrypsin. Proteolytic activation in the intestinal lumen enables its digestive protease activity."
+  },
+  {
+    "id": "pgblazer-2011-may-40:40",
+    "source": "pgblazer-2011-may-40-retrieved.txt",
+    "sourceNumber": 40,
+    "sourceFingerprint": "52459f3826c9c4b6f9ab48170cce1dfd066090be831c2baaf595e41591426305",
+    "chapterId": "first-year/anatomy/paper-1/upper-limb",
+    "answer": "A",
+    "explanation": "The coracoacromial ligament spans the coracoid and acromion of the same scapula, forming a protective arch over the humeral head. The load pathway toward the axial skeleton instead involves the acromioclavicular and sternoclavicular articulations and their stabilising ligaments."
+  },
+  {
+    "id": "prepladder-ini-2025-may-recall:27",
+    "source": "prepladder-ini-2025-may-recall.pdf",
+    "sourceNumber": 27,
+    "sourceFingerprint": "82dd699396dbc4a8462cbece74fefc6425cfb401a2aa829438935c58cc4a5356",
+    "chapterId": "final-year/general-surgery/anaesthesia",
+    "answer": "A",
+    "explanation": "After a single bolus, thiopentone rapidly enters the brain and then redistributes into other tissues, reducing its brain concentration. This initial recovery differs from elimination; repeated doses or prolonged infusion can accumulate and prolong recovery."
   }
 ]

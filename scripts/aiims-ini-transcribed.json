@@ -3378,5 +3378,70 @@
       "Acute cholecystitis"
     ],
     "key": "B"
+  },
+  {
+    "id": "pgblazer-2011-november-105:105",
+    "source": "pgblazer-2011-november-105-retrieved.txt",
+    "source_number": 105,
+    "question": "What membrane-spanning receptor architecture mediates adrenaline, noradrenaline and dopamine signalling?",
+    "options": [
+      "Two pass receptor",
+      "Ligand gated channel",
+      "Seven pass receptor",
+      "One pass receptor"
+    ],
+    "key": "C"
+  },
+  {
+    "id": "pgblazer-2011-november-106:106",
+    "source": "pgblazer-2011-november-106-retrieved.txt",
+    "source_number": 106,
+    "question": "After feeding, which metabolite suppresses mitochondrial entry of long-chain fatty acids through the carnitine shuttle?",
+    "options": [
+      "Malonyl CoA",
+      "Acetyl CoA",
+      "Pyruvate",
+      "Glucose"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "pgblazer-2011-november-108:108",
+    "source": "pgblazer-2011-november-108-retrieved.txt",
+    "source_number": 108,
+    "question": "How is the inactive pancreatic precursor chymotrypsinogen classified?",
+    "options": [
+      "Zymogen",
+      "Carboxypeptidase",
+      "Transaminase",
+      "Elastase"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "pgblazer-2011-may-40:40",
+    "source": "pgblazer-2011-may-40-retrieved.txt",
+    "source_number": 40,
+    "question": "Which listed ligament does not transmit upper-limb load to the axial skeleton?",
+    "options": [
+      "Coracoacromial ligament",
+      "Claviculoclavicular [interclavicular] ligament",
+      "Costoclavicular ligament",
+      "Acromioclavicular ligament"
+    ],
+    "key": "A"
+  },
+  {
+    "id": "prepladder-ini-2025-may-recall:27",
+    "source": "prepladder-ini-2025-may-recall.pdf",
+    "source_number": 27,
+    "question": "Which process chiefly ends the brief hypnosis after a single intravenous thiopentone dose?",
+    "options": [
+      "Rapid redistribution",
+      "Metabolism",
+      "Excretion",
+      "Short elimination half-life"
+    ],
+    "key": "A"
   }
 ]

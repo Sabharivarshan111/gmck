@@ -445,5 +445,54 @@
     "source": "diginerve-ini-2025.html",
     "sourceNumber": 51,
     "reason": "Biosafety-level statement does not distinguish culture manipulation from lower-risk diagnostic work."
+  },
+  {
+    "id": "prepladder-ini-2025-may-recall:1",
+    "source": "prepladder-ini-2025-may-recall.pdf",
+    "sourceNumber": 1,
+    "duplicateOf": "ini-2025-01:1",
+    "reason": "Existing recalled concept; source not imported wholesale."
+  },
+  {
+    "id": "prepladder-ini-2025-may-recall:4",
+    "source": "prepladder-ini-2025-may-recall.pdf",
+    "sourceNumber": 4,
+    "duplicateOf": "ini-2025-01:4",
+    "reason": "Existing recalled concept; source not imported wholesale."
+  },
+  {
+    "id": "prepladder-ini-2025-may-recall:8",
+    "source": "prepladder-ini-2025-may-recall.pdf",
+    "sourceNumber": 8,
+    "duplicateOf": "inicetmay25-physiology:2",
+    "reason": "Existing recalled concept; source not imported wholesale."
+  },
+  {
+    "id": "prepladder-ini-2025-may-recall:17",
+    "source": "prepladder-ini-2025-may-recall.pdf",
+    "sourceNumber": 17,
+    "duplicateOf": "inicetmay25-surgery:5",
+    "reason": "Existing recalled concept; source not imported wholesale."
+  },
+  {
+    "id": "prepladder-ini-2025-may-recall:25",
+    "source": "prepladder-ini-2025-may-recall.pdf",
+    "sourceNumber": 25,
+    "duplicateOf": "inicetmay25-surgery:5",
+    "reason": "Existing recalled concept; source not imported wholesale."
+  },
+  {
+    "id": "prepladder-ini-2025-may-recall:30",
+    "source": "prepladder-ini-2025-may-recall.pdf",
+    "sourceNumber": 30,
+    "duplicateOf": "inicetmay25-psychiatry:4",
+    "reason": "Existing recalled concept; source not imported wholesale."
+  },
+  {
+    "id": "prepladder-ini-2025-may-recall:37",
+    "source": "prepladder-ini-2025-may-recall.pdf",
+    "sourceNumber": 37,
+    "duplicateOf": "inicetmay25-pathology:3",
+    "reason": "Existing recalled concept; source not imported wholesale."
   }
 ]

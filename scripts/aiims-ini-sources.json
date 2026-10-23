@@ -1421,5 +1421,68 @@
     "year": 2025,
     "required": true,
     "pinBytes": true
+  },
+  {
+    "file": "pgblazer-2011-november-105-retrieved.txt",
+    "url": "https://pgblazer.com/aiims-november-2011-mcq-105/",
+    "sha256": "a806bc7269c4f08f198c12962aa200c5e011173a66b80f2d0a9542f9427c049a",
+    "bytes": 3813,
+    "exam": "aiims-pg",
+    "year": 2011,
+    "session": "November",
+    "required": true,
+    "pinBytes": true,
+    "acquisitionMethod": "web_tool_publisher_text_snapshot",
+    "acquisitionNote": "Direct HTML returned 403/406. Hash pins the retrieved publisher text, not original HTML bytes."
+  },
+  {
+    "file": "pgblazer-2011-november-106-retrieved.txt",
+    "url": "https://pgblazer.com/aiims-november-2011-mcq-106/",
+    "sha256": "2ca584ac3fdde77993f4ae7ddb5ef4fff3e0dadc8eacd53818ee14916b648434",
+    "bytes": 3877,
+    "exam": "aiims-pg",
+    "year": 2011,
+    "session": "November",
+    "required": true,
+    "pinBytes": true,
+    "acquisitionMethod": "web_tool_publisher_text_snapshot",
+    "acquisitionNote": "Direct HTML returned 403/406. Hash pins the retrieved publisher text, not original HTML bytes."
+  },
+  {
+    "file": "pgblazer-2011-november-108-retrieved.txt",
+    "url": "https://pgblazer.com/aiims-november-2011-mcq-108/",
+    "sha256": "c7deae0305aa236f5ce27f0ffb16154d28d5727b3b23f7f911d517bf0f4a5fa4",
+    "bytes": 3632,
+    "exam": "aiims-pg",
+    "year": 2011,
+    "session": "November",
+    "required": true,
+    "pinBytes": true,
+    "acquisitionMethod": "web_tool_publisher_text_snapshot",
+    "acquisitionNote": "Direct HTML returned 403/406. Hash pins the retrieved publisher text, not original HTML bytes."
+  },
+  {
+    "file": "pgblazer-2011-may-40-retrieved.txt",
+    "url": "https://pgblazer.com/aiims-may-2011-mcq-40/",
+    "sha256": "aaaeb9c899245c7dcb8c2e795083e58f18041cfa538783a36e00e1592f8dd588",
+    "bytes": 3891,
+    "exam": "aiims-pg",
+    "year": 2011,
+    "session": "May",
+    "required": true,
+    "pinBytes": true,
+    "acquisitionMethod": "web_tool_publisher_text_snapshot",
+    "acquisitionNote": "Direct HTML returned 403/406. Hash pins the retrieved publisher text, not original HTML bytes."
+  },
+  {
+    "file": "prepladder-ini-2025-may-recall.pdf",
+    "url": "https://image.prepladder.com/content/INI-CET-May-2025-Question-Paper-with-solutions.pdf",
+    "sha256": "5c26506a22d124dd0b39915effa1208253f64f666e7656ce3b34e1c551b68af6",
+    "bytes": 14253759,
+    "exam": "ini-cet",
+    "year": 2025,
+    "session": "May",
+    "required": true,
+    "pinBytes": true
   }
 ]

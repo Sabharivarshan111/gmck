@@ -1,0 +1,9 @@
+# Five additional recalls — 23 October 2026
+
+Candidate totals: **118 AIIMS PG + 225 INI-CET = 343**. Four AIIMS 2011 selections cover catecholamine receptor topology, malonyl-CoA regulation, chymotrypsinogen and upper-limb load transmission. One May 2025 INI-CET selection covers recovery after a thiopentone bolus. All 338 previous complete records and both NEET bank/year files are unchanged.
+
+The four PG Blazer pages were accessible through web retrieval while direct HTML requests returned 403/406. Their manifest hashes explicitly pin private retrieved-text snapshots, **not original HTML bytes**. The new PrepLadder May 2025 PDF downloaded successfully at 14,253,759 bytes, below the acquisition ceiling. The selected question is on page 33; its document ordinal counts lines starting Q., not original exam order. All five retain four supplied choices and publisher keys; concise factual stems and explanations are original. Per-question URL/hash/chapter/key/reference receipts: `scripts/aiims-ini-additions-20261023-batch4.json`.
+
+Seven duplicate PrepLadder candidates are held, including repeated stone questions. Its ambiguous specimen, pregnancy-imaging and clinical-management material was not imported. Other searched leads include inaccessible PG Blazer pages and Cerebellum November 2025 OBG (403). Earlier oversized PDFs remain discovery leads, not imports. No complete publisher explanation or illustration is distributed.
+
+The original 338 fingerprints and full records are preserved. Eleven builder integrity tests, all 343 offline source/answer/chapter checks, all 2,078 NEET source-year joins and production browser checks pass. Browser evidence includes the new 2011 November zymogen and 2025 May thiopentone answers, existing session labels, bookmarks, offline switching and reload. Production web/Android JS, TypeScript and quiet native ESLint pass. No signed build or device claim.

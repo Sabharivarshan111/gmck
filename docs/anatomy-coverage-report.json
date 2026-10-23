@@ -36,10 +36,11 @@
     "ovary",
     "fallopian_tube",
     "placenta",
+    "oral_salivary_glands",
     "abdomen",
     "peripheral_nerves"
   ],
-  "targetCount": 57,
+  "targetCount": 58,
   "targets": {
     "heart": {
       "bodyParts3DStatus": "resolved",
@@ -258,7 +259,7 @@
         {
           "type": "source",
           "source": "BodyParts3D",
-          "meshCount": 296
+          "meshCount": 292
         },
         {
           "type": "source-supplement",
@@ -564,6 +565,18 @@
       ],
       "coverage": "source-backed"
     },
+    "oral_salivary_glands": {
+      "bodyParts3DStatus": "resolved",
+      "bodyParts3DReason": null,
+      "sources": [
+        {
+          "type": "source",
+          "source": "BodyParts3D",
+          "meshCount": 4
+        }
+      ],
+      "coverage": "source-backed"
+    },
     "abdomen": {
       "bodyParts3DStatus": "resolved",
       "bodyParts3DReason": null,
@@ -571,7 +584,7 @@
         {
           "type": "source",
           "source": "BodyParts3D",
-          "meshCount": 236
+          "meshCount": 230
         },
         {
           "type": "source-supplement",
@@ -832,7 +845,7 @@
     }
   },
   "summary": {
-    "source-backed": 53,
+    "source-backed": 54,
     "schematic-only": 2,
     "clinical-overlay": 2
   }

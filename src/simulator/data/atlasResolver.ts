@@ -521,6 +521,11 @@ const RULES: readonly AtlasRule[] = [
     when: ['lung', 'lungs', 'pulmonary', 'bronchus', 'bronchial', 'respiratory', 'trachea', 'airway'],
     select: selectLungs,
   },
+  {
+    id: 'oral-salivary-glands',
+    when: ['oral salivary glands', 'submandibular gland', 'sublingual gland'],
+    select: (p) => p.system === 'digestive' && anyTerm(p.name, ['submandibular gland', 'sublingual gland']),
+  },
   { id: 'abdomen', when: ['abdomen', 'abdominal', 'abdominal cavity'], select: selectAbdomen },
   { id: 'brain', when: ['brain', 'cranium', 'cerebrum', 'cerebral', 'cns'], select: selectBrain },
   { id: 'kidney', when: ['kidney', 'kidneys', 'renal'], select: selectKidney },
@@ -1143,6 +1148,7 @@ export function resolvePartToOrganKey(part?: Part | null, atlas?: Atlas | null):
   }
 
   // Oral mucosa has no individual clinical dossier; keep its exact source identity.
+  if (anyTerm(name, ['submandibular gland', 'sublingual gland'])) return 'oral_salivary_glands';
   if (hasTerm(name, 'gingiva')) return part.id;
   if (sys === 'digestive') return 'abdomen';
   return part.id;

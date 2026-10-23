@@ -2668,3 +2668,9 @@ Candidate114 AIIMS/216 INI=330. Six new May2015 recalls preserve all324 earlier 
 ### 2026-10-23 — Eight INI-CET 2025 selections
 
 Candidate114 AIIMS/224 INI=338. Eight complete DigiNerve recalls with supplied keys, original explanations and reference/duplicate receipts; all330 previous records and NEET2078/year bytes preserved. The source names2025 but omits exam month; no month inferred. Three other source leads audited without import (403, incomplete article, oversizedPDF). Report docs/AIIMS_INI_ADDITIONS_20261023_BATCH3.md; latest resume entry and PR122 carry validation/publication receipt. Existing anatomy CI gate remains untouched.
+
+### 2026-10-23 — Five recalls and digestive dossier coverage repaired
+
+118 AIIMS/225 INI=343, all338 prior full records plus NEET2078/year bytes preserved. Five new supplied-key selections: four PG Blazer2011 retrieved-text snapshots (not original-HTML hash claims), one downloaded PrepLadder May2025 PDF question. Report docs/AIIMS_INI_ADDITIONS_20261023_BATCH4.md and per-item audit.
+
+The Web CI failure was legitimate 99/108 digestive dossier reach after removing non-abdominal meshes from abdomen. Added a real submandibular/sublingual teaching dossier and exact four-mesh mappings. Coverage103/108=95.37%, floor95 unchanged; abdomen exclusions retained. See docs/ANATOMY_DIGESTIVE_COVERAGE_FIX_20261023.md. Source geometry, new browser dossier, native/web builds and PG offline flow verified; no device, signed-build or merge claim. Latest publication receipts in PR122.

@@ -554,6 +554,16 @@ for (const name of ['gingiva', 'tongue', 'sublingual gland', 'submandibular glan
   mustNotContain('abdomen', name, 'mouth/throat structures stretch abdominal framing to the head');
 }
 
+// These glands must have a real teaching target after their removal from abdomen.
+const oralGlands = describeAtlasTarget('oral_salivary_glands', atlas);
+const expectedOralGlands = ['FJ2765', 'FJ2766', 'FJ2767', 'FJ2768'];
+if (oralGlands.ids.size !== 4) fail('oral salivary gland target must contain exactly four source meshes');
+for (const id of expectedOralGlands) {
+  if (!oralGlands.ids.has(id)) fail(`oral salivary glands omit ${id}`);
+  if (resolvePartToOrganKey(byId.get(id)) !== 'oral_salivary_glands') fail(`${id} must open the salivary teaching dossier`);
+}
+for (const term of ['tongue', 'gingiva', 'esophagus', 'liver']) mustNotContain('oral_salivary_glands', term, 'salivary selection must remain anatomically specific');
+
 // ---------------------------------------------------------------------------
 // Report
 // ---------------------------------------------------------------------------

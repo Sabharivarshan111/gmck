@@ -2504,3 +2504,17 @@ Do not promote the five new pharmacology holds, manufacture missing options, imp
 **NEXT:** Continue source-level review with exact provenance; do not infer month from publication date or import known conflicting keys. PR122 remains the review target; unrelated anatomy CI failure is not bypassed. No signed APK or physical-device claim.
 
 **VERIFIED:** Assembled production web build and Android production JS bundle pass. Actual browser at360/390/430 passes new2025 no-month attribution, immune-tolerance keyA and explanation, existing labels/keys/bookmark isolation, service-worker offline switching and reload. New screenshot inspected. Updated branch publication goes to PR122; no merge/live claim. Exact published SHA/tree recorded in PR metadata to avoid a circular committed receipt.
+
+## 2026-10-23 — Five further recalls and digestive dossier regression fix
+
+**DONE:**118 AIIMS/225 INI=343;5 additions,338 earlier complete records and NEET2078/year bytes unchanged. Four PG Blazer2011 pages acquired as web-retrieved publisher text (direct HTML403/406); manifest acquisitionMethod makes this explicit. PrepLadder May2025 PDF14,253,759bytes, selected page33 single-bolus thiopentone recovery. Seven duplicates held. Audit scripts/aiims-ini-additions-20261023-batch4.json and report docs/AIIMS_INI_ADDITIONS_20261023_BATCH4.md.
+
+**DONE:**Diagnosed CI anatomy regression99/108 digestive reach: correct abdomen exclusions removed oral/thoracic structures but four glands lacked a teaching dossier. Added shared oral_salivary_glands dossier, exact FJ2765–2768 rule and tap mapping. Coverage103/108=95.37% with original95% floor. Abdomen stays correct. Regression assertions cover all four gland ids and exclusions. Docs/ANATOMY_DIGESTIVE_COVERAGE_FIX_20261023.md explains references and five remaining digestive dossier gaps.
+
+**DONE:**11 extension integrity tests,343 offline/key/fingerprint/chapter/held checks,2078 NEET year joins; simulator organ/dossier/all-organ/mobile guards; deploy/repo guards; root/mobile TypeScript; quiet mobile ESLint; production assembled web and Android JS bundle. Browser360/390/430 offline PG flow includes new zymogen and thiopentone keys. Browser390px opens gland teaching panel; software raster source geometry inspected (4meshes,924triangles). XP/version/reminder/edges/diagrams/APKG/Kotlin guards pass. No physical-device or full WebGL rendering claim.
+
+**HALF-DONE:**Publishing tested tree and updating PR122 receipt; new remote CI outcome still needs checking.
+
+**NEXT:**Continue reviewed sources without semantic duplicates; watch PR122 Web build now that dossier gate passes locally. No signedAPK/Play upload or main merge authorized by this task.
+
+**DO NOT:**Lower digestive95% floor, restore oral glands to abdomen, describe retrieved-text hashes as original HTML hashes, or import incomplete publisher questions wholesale.

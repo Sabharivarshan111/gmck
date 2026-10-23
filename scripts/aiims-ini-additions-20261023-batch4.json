@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-23",
+  "baselineCounts": {
+    "aiims-pg": 114,
+    "ini-cet": 224
+  },
+  "newQuestions": 5,
+  "newCounts": {
+    "aiims-pg": 4,
+    "ini-cet": 1
+  },
+  "questionReviews": [
+    {
+      "id": "pgblazer-2011-november-105:105",
+      "source": "pgblazer-2011-november-105-retrieved.txt",
+      "sourceNumber": 105,
+      "sourceFingerprint": "a03375ad960487ee81b5437d2b0c2cbe866dae392b1b6c5e572646a7b644a93b",
+      "suppliedKey": "C",
+      "reviewedAnswer": "C",
+      "conceptReference": "https://www.ncbi.nlm.nih.gov/books/NBK538242/",
+      "duplicateReview": "No matching concept in the inspected 338-record baseline."
+    },
+    {
+      "id": "pgblazer-2011-november-106:106",
+      "source": "pgblazer-2011-november-106-retrieved.txt",
+      "sourceNumber": 106,
+      "sourceFingerprint": "ab99b1200ef279e7b8749a72ef49dbc7f24c0c82be965c18d69e047e45d6fcd6",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "conceptReference": "https://www.jci.org/articles/view/15715",
+      "duplicateReview": "No matching concept in the inspected 338-record baseline."
+    },
+    {
+      "id": "pgblazer-2011-november-108:108",
+      "source": "pgblazer-2011-november-108-retrieved.txt",
+      "sourceNumber": 108,
+      "sourceFingerprint": "818e21d88034edb9bcb34b997c0188df8d794fd477323ea06cf28f3a755cbb4a",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "conceptReference": "https://www.ncbi.nlm.nih.gov/mesh/68002918",
+      "duplicateReview": "No matching concept in the inspected 338-record baseline."
+    },
+    {
+      "id": "pgblazer-2011-may-40:40",
+      "source": "pgblazer-2011-may-40-retrieved.txt",
+      "sourceNumber": 40,
+      "sourceFingerprint": "52459f3826c9c4b6f9ab48170cce1dfd066090be831c2baaf595e41591426305",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "conceptReference": "https://pgblazer.com/aiims-may-2011-mcq-40/",
+      "duplicateReview": "No matching concept in the inspected 338-record baseline."
+    },
+    {
+      "id": "prepladder-ini-2025-may-recall:27",
+      "source": "prepladder-ini-2025-may-recall.pdf",
+      "sourceNumber": 27,
+      "sourcePages": [
+        33
+      ],
+      "sourceFingerprint": "82dd699396dbc4a8462cbece74fefc6425cfb401a2aa829438935c58cc4a5356",
+      "suppliedKey": "A",
+      "reviewedAnswer": "A",
+      "conceptReference": "https://www.medicines.org.uk/emc/product/9376/smpc",
+      "duplicateReview": "Existing benzodiazepine/barbiturate combination item tests several statements; it does not directly test single-bolus recovery as this item does."
+    }
+  ],
+  "limitations": [
+    "PG Blazer source hashes pin web-retrieved text snapshots because direct original HTML retrieval was blocked.",
+    "PG Blazer dates are publisher recall labels, not authenticated exam wording.",
+    "PrepLadder numbering is an ordinal across Q. labels; selected item appears on PDF page33.",
+    "Only individually reviewed factual paraphrases, full source options and original explanations are distributed."
+  ]
+}
