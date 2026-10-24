@@ -1,8 +1,9 @@
 import { supabase } from '@/lib/supabase';
 
-export type PlanCode = 'adfree_6m' | 'adfree_1y';
+export type PlanCode = 'adfree_6m' | 'adfree_1y' | 'notes_fmspm' | 'notes_pharmac';
+const PLAN_PRICES: Record<PlanCode, number> = { adfree_6m: 15000, adfree_1y: 30000, notes_fmspm: 15000, notes_pharmac: 15000 };
 export type PaymentReceipt = { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string };
-export type PaymentResult = { success?: boolean; error?: string; expires_at?: string; adfree_until?: string; restored?: boolean; payment_id?: string; order_id?: string };
+export type PaymentResult = { success?: boolean; plan?: PlanCode; error?: string; expires_at?: string; adfree_until?: string; restored?: boolean; payment_id?: string; order_id?: string };
 export type CheckoutOrder = { order_id: string; amount: number; currency: string; key_id: string; plan: PlanCode; label: string };
 type Options = { key: string; order_id: string; amount: number; currency: string; name: string; description: string; prefill: { email: string }; theme: { color: string }; handler: (receipt: PaymentReceipt) => void; modal: { ondismiss: () => void } };
 type RazorpayInstance = { open(): void; on(event: string, listener: (event: { error?: { description?: string } }) => void): void };
@@ -65,8 +66,8 @@ export async function pay(plan: PlanCode): Promise<PaymentResult> {
   const old = pendingReceipt(user.id);
   if (old) return verifyReceipt(user.id, old);
   await loadRazorpay();
-  const order = await invokePayment<CheckoutOrder>('razorpay-create-order', { plan });
-  if (!/^order_[A-Za-z0-9]+$/.test(order.order_id) || !order.key_id || order.currency !== 'INR' || order.plan !== plan || !Number.isSafeInteger(order.amount) || order.amount <= 0) throw new Error('The checkout order is invalid. No payment was started.');
+  const order = await invokePayment<CheckoutOrder>('razorpay-create-order', { plan, ...(plan.startsWith('notes_') ? { catalog_version: '2' } : {}) });
+  if (!/^order_[A-Za-z0-9]+$/.test(order.order_id) || !order.key_id || order.currency !== 'INR' || order.plan !== plan || order.amount !== PLAN_PRICES[plan]) throw new Error('The checkout order is invalid. No payment was started.');
   try { localStorage.setItem(PENDING_ORDER, JSON.stringify({ userId: user.id, orderId: order.order_id })); } catch { /* Older payments remain recoverable via Restore. */ }
   return new Promise((resolve, reject) => {
     let verifying = false;

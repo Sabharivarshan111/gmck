@@ -40,3 +40,9 @@ export function VaultAccessProvider({ children }: { children: React.ReactNode })
     </dialog>
   </Context.Provider>;
 }
+
+export function VaultTrialBanner({ kind }: { kind: 'practice' | 'proforma' }) {
+  const access = useVaultAccess();
+  if (access.active) return null;
+  return <aside className="simulator-sample-banner"><span><strong>Free preview</strong> · {kind === 'practice' ? '10 questions per exam' : 'CVS master case proforma'}</span><button onClick={() => access.requestPurchase(kind === 'practice' ? 'all practice questions' : 'all case proformas')}>Unlock all →</button></aside>;
+}

@@ -2679,3 +2679,7 @@ The recovered17-PDF coverage batch now contributes52 individually checked text r
 **NEXT:** Finish CI, merge PR124, publish and verify orbitmbbs.site/unlock and the free direct simulator paywall.
 
 **DO NOT:** Restore ad sales copy on website, lock Notes, pretend fixtures are a live charge, or change native release/version/signing for this website-only patch.
+
+## 2026-10-24 — Checkout note packs and free Vault previews
+
+See docs/ORBIT_CHECKOUT_SAMPLES_20261024.md. Website checkout sells ₹150 lifetime FM/SPM and Pharmacology notes below Premium; current note prompts updated. General Notes remain free. Free previews replace entry locks for anatomy (heart/lungs/brain), normal auscultation, CVS proforma and ten fixed questions per exam. Native code is adapted only at web build; simulator context defaults preserve native behavior. Hardened payment endpoints now41/39/22; provider catalogue version pins new ₹150 and legacy ₹50 note restores. Old unpublished Lovable ₹50 UI is prevented from opening a mismatched payment amount. Lovable redesign saved f663645, but publishing is BLOCKED on owner adding workspace credits. Do not claim public Lovable, Android APK/device or real charge verification. Current source/types/build/security/rollback-only DB checks pass; see PR receipt for final browser/publication status.

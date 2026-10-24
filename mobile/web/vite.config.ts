@@ -36,6 +36,7 @@ export default defineConfig({
         if (importer?.includes('/mobile/') && /(?:^|\/)adsMode$/.test(source)) return path.resolve(__dirname, 'adapters/ads-mode.ts');
       },
       transform(code, id) {
+        const original = code;
         code = transformWebsitePremium(code, id, path.resolve(__dirname, 'VaultAccess.tsx'));
         if (id.endsWith('/mobile/App.tsx')) return code.replace('<NavigationContainer', `<NavigationContainer linking={{ prefixes: [], config: { screens: { Home: { screens: { HomeMain: '', BrowseHome: 'browse/:year?', BrowseNode: { path: 'browse/:year/:path', parse: { path: value => value.split(',') }, stringify: { path: value => value.join(',') } } } }, Notes: 'notes', Timer: 'timer', AskAI: 'ask-ai', Progress: 'progress' } } }}`);
         if (id.endsWith('/mobile/src/components/Text.tsx')) return "import { renderEmoji } from '" + path.resolve(__dirname, 'adapters/emoji.tsx') + "';\n" + code.replace('{...rest}', '{...rest} children={renderEmoji(rest.children)}');
@@ -74,6 +75,7 @@ export default defineConfig({
           .replace('with either option below', 'with the file picker below')
           .replace(/Not sure\? Choose Save a copy\. Either way the (music|file) stays on this phone — nothing is\s+uploaded\./, 'The copy stays in this browser. Nothing is uploaded. Clearing site data removes local files.')
           .replaceAll('your phone', 'your device').replaceAll('this phone', 'this device');
+        return code === original ? undefined : code;
       },
     },
     react(),

@@ -38,6 +38,13 @@ function load(file, extra = {}) {
     [order,{...payment,order_id:'order_other'},'user-a'],[{...order,notes:{user_id:'user-a',purpose:'unknown'}},payment,'user-a'],
     [{...order,amount_paid:0},payment,'user-a'],[{...order,status:'created'},payment,'user-a'],
   ]) { assert.equal(verifiedPurchase(o,p,u),null); checks++; }
+  // Notes use the provider-recorded catalogue, preserving historical purchases.
+  for (const plan of ['notes_fmspm','notes_pharmac']) {
+    for (const [version,amount,expected] of [[undefined,5000,true],['2',15000,true],['2',5000,false],[undefined,15000,false],['9',15000,false]]) {
+      const o={...order,notes:{user_id:'user-a',purpose:plan,...(version?{catalog_version:version}:{})},amount,amount_paid:amount};
+      assert.equal(!!verifiedPurchase(o,{...payment,amount},'user-a'),expected);checks++;
+    }
+  }
   // Execute the production verifier: even a signed-in caller cannot pick a better plan.
   const key=await webcrypto.subtle.importKey('raw',new TextEncoder().encode('dummy-test-key'),{name:'HMAC',hash:'SHA-256'},false,['sign']);
   const signature=Buffer.from(await webcrypto.subtle.sign('HMAC',key,new TextEncoder().encode(order.id+'|'+payment.id))).toString('hex');
@@ -57,12 +64,13 @@ function load(file, extra = {}) {
     signedInUser:async()=>({id:'user-a',email:'fixture@example.invalid'}),
     provider:async(_path,body)=>{created++;assert.equal(body.notes.user_id,'user-a');return {id:'order_fixture',amount:body.amount,currency:'INR'};},
   });
-  for (const [plan,amount] of [['adfree_6m',15000],['adfree_1y',30000],['adfree_6months',15000]]) {
-    const result=await createEdge(new Request('https://fixture.invalid',{method:'POST',body:JSON.stringify({plan,amount:1,uid:'victim'})}));
+  for (const [plan,amount] of [['adfree_6m',15000],['adfree_1y',30000],['adfree_6months',15000],['notes_fmspm',15000],['notes_pharmac',15000]]) {
+    const result=await createEdge(new Request('https://fixture.invalid',{method:'POST',body:JSON.stringify({plan,amount:1,uid:'victim',...(plan.startsWith('notes_')?{catalog_version:'2'}:{})})}));
     assert.equal(result.status,200);assert.equal((await result.json()).amount,amount);checks++;
   }
+  assert.equal((await createEdge(new Request('https://fixture.invalid',{method:'POST',body:JSON.stringify({plan:'notes_fmspm'})}))).status,409);checks++;
   const oldCount=created;
-  for(const plan of ['adfree_monthly','notes_fmspm','notes_pharmac']) {
+  for(const plan of ['adfree_monthly','adfree_1m']) {
     assert.equal((await createEdge(new Request('https://fixture.invalid',{method:'POST',body:JSON.stringify({plan})}))).status,400);checks++;
   }
   assert.equal(created,oldCount);

@@ -1,18 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-export type NotesPlan = "notes_fmspm" | "notes_pharmac";
-
-export const PREMIUM_NOTES_DRIVE_URL =
-  "https://drive.google.com/drive/folders/1TbgyHOkdrfYd8-4nl1jTup3LSkkimzvv";
-
-/** "Premium 2nd year" Drive folder — Pharmacology full-subject notes. */
-export const PHARMAC_NOTES_DRIVE_URL =
-  "https://drive.google.com/drive/folders/1HuMtYbqTnWO-bQ-uGNlrrdCPp6pA4pch";
-
+import { NOTE_PRODUCTS, type NotesPlan } from '@/lib/note-products';
+export type { NotesPlan } from '@/lib/note-products';
+export const PREMIUM_NOTES_DRIVE_URL = NOTE_PRODUCTS.notes_fmspm.url;
+export const PHARMAC_NOTES_DRIVE_URL = NOTE_PRODUCTS.notes_pharmac.url;
 export const NOTES_DRIVE_URL: Record<NotesPlan, string> = {
-  notes_fmspm: PREMIUM_NOTES_DRIVE_URL,
-  notes_pharmac: PHARMAC_NOTES_DRIVE_URL,
+  notes_fmspm: PREMIUM_NOTES_DRIVE_URL, notes_pharmac: PHARMAC_NOTES_DRIVE_URL,
 };
 
 /** Has the signed-in user bought the given notes bundle? */
@@ -35,7 +29,7 @@ export function useNotesPurchase(plan: NotesPlan = "notes_fmspm") {
         .order("expires_at", { ascending: false })
         .limit(1)
         .maybeSingle();
-      const exp = (data as any)?.expires_at ?? null;
+      const exp = data?.expires_at ?? null;
       setOwned(!!exp && new Date(exp).getTime() > Date.now());
     } finally {
       setLoading(false);
