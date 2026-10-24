@@ -50,6 +50,22 @@ function load(file, extra = {}) {
   });
   const response = await edge(new Request('https://fixture.invalid', {method:'POST', body:JSON.stringify({razorpay_order_id:order.id,razorpay_payment_id:payment.id,razorpay_signature:signature,plan:'adfree_1y'})}));
   assert.equal(response.status,200); assert.equal(grants,1); checks++;
+  // New sales use only the launch plans; client identity and amount are ignored.
+  let createEdge, created = 0;
+  load('supabase/functions/razorpay-create-order/index.ts', { ...helpers, secureEndpoint:guard,
+    Deno:{env:{get:()=> 'dummy-test-key'},serve:fn=>{createEdge=fn;}},
+    signedInUser:async()=>({id:'user-a',email:'fixture@example.invalid'}),
+    provider:async(_path,body)=>{created++;assert.equal(body.notes.user_id,'user-a');return {id:'order_fixture',amount:body.amount,currency:'INR'};},
+  });
+  for (const [plan,amount] of [['adfree_6m',15000],['adfree_1y',30000],['adfree_6months',15000]]) {
+    const result=await createEdge(new Request('https://fixture.invalid',{method:'POST',body:JSON.stringify({plan,amount:1,uid:'victim'})}));
+    assert.equal(result.status,200);assert.equal((await result.json()).amount,amount);checks++;
+  }
+  const oldCount=created;
+  for(const plan of ['adfree_monthly','notes_fmspm','notes_pharmac']) {
+    assert.equal((await createEdge(new Request('https://fixture.invalid',{method:'POST',body:JSON.stringify({plan})}))).status,400);checks++;
+  }
+  assert.equal(created,oldCount);
   // Guest transfer must verify both identities, and never trust body uid/device id.
   let merge, rpcCalls=0;
   load('supabase/functions/merge-guest-account/index.ts', {secureEndpoint:guard,

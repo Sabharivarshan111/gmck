@@ -9,6 +9,10 @@
       "destination": "/index.html"
     },
     {
+      "source": "/unlock",
+      "destination": "/index.html"
+    },
+    {
       "source": "/notes",
       "destination": "/index.html"
     },
