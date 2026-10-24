@@ -99,6 +99,11 @@ async function scenario(width,signedIn=true,verificationFails=false,interrupted=
    assert.equal(await page.getByText('Unlock PG Practice',{exact:true}).count(),0);
    await page.goto(origin+'/simulator');await page.locator('[data-simulator-root]').waitFor();
    assert.equal(await page.getByRole('heading',{name:'Unlock Simulator & Anatomy',exact:true}).count(),0);
+   await page.getByRole('button',{name:'12-lead ECG',exact:false}).click();
+   await page.getByTestId('diagnostic-ecg12').waitFor();
+   await page.goto(origin+'/simulator?organ=liver&mode=anatomy');
+   await page.getByTestId('organ-detail-drawer').waitFor();
+   assert.equal(await page.getByRole('button',{name:'Continue free preview',exact:true}).count(),0);
   }
   assert(!/sponsored ad|remove ads|ad-free/i.test(await page.locator('body').innerText()));
   assert.deepEqual(errors,[]);

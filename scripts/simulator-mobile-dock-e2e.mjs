@@ -1,3 +1,5 @@
+// Full-content regression uses a test-only paid provider; free boundaries are tested in payment-flow-e2e.
+import { installPremiumTestAccount } from '../mobile/web/test-premium-fixture.mjs';
 import { chromium } from 'playwright';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -6,6 +8,7 @@ const out = 'artifacts/mobile-dock';
 fs.mkdirSync(out, { recursive: true });
 const browser = await chromium.launch({ args: ['--enable-webgl','--ignore-gpu-blocklist','--use-angle=swiftshader'] });
 const page = await browser.newPage({ viewport: { width: 393, height: 789 }, isMobile: true, hasTouch: true });
+  await installPremiumTestAccount(page.context());
 const checks = [];
 const assert = (ok, message) => { if (!ok) throw Error(message); };
 const box = id => page.locator(`[data-testid="${id}"]:visible`).boundingBox();
