@@ -3,7 +3,7 @@ import { getStructureDetail } from '../data/structureDetails';
 import { OrganConnections } from './OrganConnections';
 import { getOrganConnection, getNodeConnection } from '../data/organConnections';
 import { BoneAttachments } from './BoneAttachments';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   X,
   Scissors,
@@ -138,9 +138,14 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
     setActiveTab('overview'); setIsMobileExpanded(false);
   }, [organId]);
 
-  if (!organId) return null;
-
   const currentNavId = navHistory[navHistory.length - 1] || organId || 'heart';
+  const contentRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    // A newly selected structure starts at its own origin/attachments.
+    if (contentRef.current) contentRef.current.scrollTop = 0;
+  }, [currentNavId, activeTab]);
+
+  if (!organId) return null;
 
   // Resolve organ data, including source-specific HRA target ids.
   const hraOrganTarget = getHraOrganTarget(currentNavId);
@@ -479,7 +484,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
         </div>}
 
         {/* Scrollable Content Body */}
-        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-5 pb-[calc(16px+env(safe-area-inset-bottom))]">
+        <div ref={contentRef} data-testid="organ-detail-content" className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-5 pb-[calc(16px+env(safe-area-inset-bottom))]">
           {sourcePart?.system === 'skeletal' && <BoneAttachments name={sourcePart.name} onMuscle={navigateToStructure} />}
           {structureDetail && (!hasDossier || activeTab === 'overview') && <StructureDetails detail={structureDetail} onInspect={id => { navigateToStructure(id); onIsolateStructure?.(id, organKey); }} />}
           {!hasDossier && !structureDetail && <p className="text-sm leading-relaxed rounded-xl border p-3">This named structure can be viewed, isolated and dissected. A dedicated blood supply, innervation and clinical dossier is not yet available for this structure.</p>}

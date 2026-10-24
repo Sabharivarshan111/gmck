@@ -1,10 +1,12 @@
+import { installPremiumTestAccount } from '../mobile/web/test-premium-fixture.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createRequire} from 'node:module';
 const runtime=process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES;
 const {chromium}=runtime?createRequire(runtime+'/__entry.js')('playwright'):await import('playwright');
-const browser=await chromium.launch({headless:true,...runtime?{executablePath:'/tmp/orbit-chromium'}:{},args:['--no-sandbox','--no-zygote','--single-process','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+const browser=await chromium.launch({headless:true,...process.env.CHROME_PATH?{executablePath:process.env.CHROME_PATH}:runtime?{executablePath:'/tmp/orbit-chromium'}:{},args:['--no-sandbox','--no-zygote','--single-process','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+await installPremiumTestAccount(page.context());
 const targets={heart:'heart',kidney:'kidney',liver:'hra_liver_overview',lungs:'hra_lung_overview'};
 const base=process.env.SIMULATOR_BASE_URL||'http://127.0.0.1:4180';
 const out='artifacts/direct-organ-open';fs.mkdirSync(out,{recursive:true});
@@ -28,6 +30,8 @@ try{
  await page.goto(base+'/simulator?organ=heart&isolate=heart');await loaded();
  await page.getByTestId('organ-detail-drawer').getByRole('tab',{name:'Supply',exact:true}).click();
  await page.getByTestId('inspect-connection_19').click();
+ await page.getByTestId('structure-specific-details').waitFor();
+ await page.getByTestId('organ-detail-drawer').getByRole('button',{name:'Close',exact:true}).click();
  await page.getByTestId('organ-detail-drawer').waitFor({state:'hidden'});
  await page.getByTestId('connection-leaders').waitFor();
  await page.waitForFunction(()=>document.querySelector('[data-testid="anatomy-renderer"]')?.getAttribute('data-visible-atlas-systems')?.includes('cardiac'));
@@ -41,6 +45,7 @@ try{
  await page.goto(base+'/simulator?organ=abdomen&isolate=abdomen');await loaded();
  const d=page.getByTestId('organ-detail-drawer');await d.getByRole('tab',{name:'Supply',exact:true}).click();
  await page.getByTestId('inspect-connection_412').click();
+ await d.getByRole('button',{name:'Close',exact:true}).click();
  await d.waitFor({state:'hidden'});
  await page.getByTestId('connection-leaders').waitFor({timeout:15000});
  assert.equal(await page.getByRole('button',{name:'Hide organ context',exact:true}).getAttribute('aria-pressed'),'true');
