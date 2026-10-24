@@ -22,6 +22,7 @@ jobs:
       - run: npm --prefix mobile run typecheck:web
       - run: node scripts/security-checklist-repairs.cjs
       - run: node scripts/payment-entitlement-check.cjs
+      - run: node scripts/vault-samples-check.cjs
       - run: npm run build:vercel
       - run: node mobile/node_modules/playwright-core/cli.js install --with-deps chromium
       - run: node scripts/payment-flow-e2e.mjs

@@ -1,0 +1,13 @@
+const fs=require('fs'),vm=require('vm'),ts=require('typescript'),assert=require('assert/strict');
+const source=fs.readFileSync('src/lib/vault-samples.ts','utf8').replace(/^import .*;$/gm,'');
+const ctx={exports:{}};vm.runInNewContext(ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,ctx);
+const records=Array.from({length:25},(_,i)=>({id:'q'+i,chapterId:i<5?'a':'b',imageIds:['img'+i]}));
+const bank={file:{fileId:'fixture',name:'fixture',size:0},reader:{id:'fixture',total:25,chapters:()=>[{id:'a',count:5},{id:'b',count:20}],image:id=>({id}),search:(f={})=>{const r=records.filter(q=>!f.ids||f.ids.includes(q.id)).filter(q=>!f.chapterId||q.chapterId===f.chapterId);return {total:r.length,records:r.slice(f.offset??0,(f.offset??0)+(f.limit??40))};}}};
+const sample=ctx.exports.samplePracticeBank(bank).reader;
+assert.equal(sample.total,10);assert.equal(sample.search().total,10);
+assert.equal(sample.search({chapterId:'b'}).total,5);
+assert.equal(sample.search({ids:['q24']}).total,0);
+assert.equal(sample.search({offset:10}).records.length,0);
+assert.equal(sample.image('img24'),undefined);assert.equal(sample.image('img0').id,'img0');
+assert.equal(sample.chapters().reduce((n,c)=>n+c.count,0),10);assert.notEqual(sample.id,bank.reader.id);assert.equal(bank.reader.total,25);
+console.log('Fixed ten-question preview: search, chapter, saved IDs, pagination, images and separate study state passed.');

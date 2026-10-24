@@ -1,3 +1,4 @@
+import { useSimulatorAccess, useSampleState, SimulatorSampleBanner } from '../simulator/SimulatorAccess';
 import { ORGAN_ANATOMY_DATABASE } from '@/simulator/data/organAnatomyData';
 import { getOrganConnection } from '@/simulator/data/organConnections';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
@@ -54,9 +55,11 @@ import {
 } from '../simulator/data/preferredAnatomyReferences';
 
 export const Simulator: React.FC = () => {
+  const sampleAccess = useSimulatorAccess();
+  const sampleOrgan = (id: string | null) => !id || ['heart', 'lungs', 'brain'].includes(getVerifiedReferenceOrganKey(id) || getOrganConnection(id)?.owner || id);
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedScenario = searchParams.get('scenario');
-  const initialScenario = SCENARIOS.some(scenario => scenario.id === requestedScenario) ? requestedScenario! : 'normal';
+  const initialScenario = (sampleAccess.active || requestedScenario === 'normal') && SCENARIOS.some(scenario => scenario.id === requestedScenario) ? requestedScenario! : 'normal';
   const requestedTool = searchParams.get('tool');
   const initialTool: DiagnosticToolType = ['pupil', 'ultrasound', 'stethoscope', 'ecg12', 'piccled', 'radiology'].includes(requestedTool || '') ? requestedTool as DiagnosticToolType : 'none';
   const initialLayer = (searchParams.get('layer') as AnatomicalLayer) || 'glass';
@@ -69,11 +72,11 @@ export const Simulator: React.FC = () => {
   const kernel = kernelRef.current;
 
   // React state synchronized with engine
-  const [currentScenarioId, setCurrentScenarioId] = useState<string>(initialScenario);
+  const [currentScenarioId, setCurrentScenarioId] = useSampleState<string>(initialScenario, 'normal', id => id === 'normal', 'patient cases');
   const [vitals, setVitals] = useState<PatientVitals>({ ...kernel.vitals });
   const [pathology, setPathology] = useState<PatientPathologyState>({ ...kernel.pathology });
   const [activeLayer, setActiveLayer] = useState<AnatomicalLayer>(initialLayer);
-  const [activeTool, setActiveTool] = useState<DiagnosticToolType>(initialTool);
+  const [activeTool, setActiveTool] = useSampleState<DiagnosticToolType>(initialTool, 'none', id => id === 'none' || id === 'stethoscope', 'clinical tools');
   const [logs, setLogs] = useState<string[]>([...kernel.logs]);
 
   // Clean White Medical Studio vs ICU Dark Mode (Default: light matching ashemag/human-atlas)
@@ -84,13 +87,13 @@ export const Simulator: React.FC = () => {
 
   // Mobile navigation tab state
   const [mobileTab, setMobileTab] = useState<'studio' | '3d' | 'telemetry' | 'interventions'>(searchParams.get('mode') === 'telemetry' ? 'telemetry' : searchParams.get('mode') === 'case' ? 'interventions' : searchParams.get('mode') === 'anatomy' || searchParams.get('organ') || searchParams.get('layer') || searchParams.get('isolate') ? '3d' : 'studio');
-  const [clubbingOpen, setClubbingOpen] = useState(searchParams.get('tool') === 'clubbing');
+  const [clubbingOpen, setClubbingOpen] = useSampleState(searchParams.get('tool') === 'clubbing', false, value => !value, 'clubbing trainer');
   const [mobilePanel, setMobilePanel] = useState<'browse' | 'tools' | null>(null);
   const [renderQuality, setRenderQuality] = useState<'smooth' | 'crisp'>('crisp');
   const [cameraAction, setCameraAction] = useState<{kind: 'in' | 'out' | 'left' | 'right' | 'up' | 'down' | 'reset'; id: number}>({kind: 'in', id: 0});
 
   // Selected Organ for Deep Anatomical Sheet
-  const [selectedOrganId, setSelectedOrganId] = useState<string | null>(searchParams.get('organ') || null);
+  const [selectedOrganId, setSelectedOrganId] = useSampleState<string | null>(searchParams.get('organ') || null, null, sampleOrgan, 'all anatomy organs');
 
   const isDesktopLayout = useIsDesktopLayout();
   const mobileDockRef = useRef<HTMLDivElement>(null);
@@ -131,9 +134,7 @@ export const Simulator: React.FC = () => {
   const [hiddenPartIds, setHiddenPartIds] = useState<string[]>([]);
   // Only one of the two layouts may hold a 3D view; see use-desktop-layout.ts.
   const [dissectedParts, setDissectedParts] = useState<Part[]>([]);
-  const [isolatedPartId, setIsolatedPartId] = useState<string | null>(
-    getPreferredAnatomyIsolationTarget(searchParams.get('isolate'))
-  );
+  const [isolatedPartId, setIsolatedPartId] = useSampleState<string | null>(getPreferredAnatomyIsolationTarget(searchParams.get('isolate')), null, sampleOrgan, 'all anatomy structures');
   const [contextOrganId, setContextOrganId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -158,6 +159,7 @@ export const Simulator: React.FC = () => {
 
   // Dissection Handlers
   const handleDissectPart = (part: Part) => {
+    if (!sampleAccess.active) { sampleAccess.requestPurchase('dissection tools'); return; }
     if (toolMode === 'isolate') {
       const organKey = resolvePartToOrganKey(part);
       const target =
@@ -246,15 +248,17 @@ export const Simulator: React.FC = () => {
   };
 
   const handleSelectCatalogPart = useCallback((id: string) => {
+    if (!sampleAccess.active && !sampleOrgan(id)) { sampleAccess.requestPurchase('all anatomy structures'); return; }
     setMobilePanel(null);
     setIsolatedPartId(id); setSelectedOrganId(null); setContextOrganId(null); setExplodeAmount(0); setToolMode('inspect');
-  }, []);
+  }, [sampleAccess.active, sampleAccess.requestPurchase]);
 
   const handleChangeRegion = (region: 'anterior' | 'head' | 'thorax' | 'abdomen') => {
     setCameraPreset(region); setIsolatedPartId(null); setSelectedOrganId(null); setContextOrganId(null); setExplodeAmount(0); setToolMode('inspect');
   };
 
   const handleSelect3DOrgan = useCallback((organId: string) => {
+    if (!sampleAccess.active && !sampleOrgan(organId)) { sampleAccess.requestPurchase('all anatomy organs'); return; }
     const preferredTarget = getPreferredAnatomyIsolationTarget(organId) || organId;
     // A model tap opens the model. The information control opens its dossier.
     setSelectedOrganId(null);
@@ -272,7 +276,7 @@ export const Simulator: React.FC = () => {
     else if (lower.includes('brain') || lower.includes('head')) setCameraPreset('head');
     else if (lower.includes('heart') || lower.includes('lung') || lower.includes('aorta')) setCameraPreset('thorax');
     else if (lower.includes('liver') || lower.includes('abdomen') || lower.includes('kidney') || lower.includes('stomach') || lower.includes('spleen')) setCameraPreset('abdomen');
-  }, [toolMode]);
+  }, [toolMode, sampleAccess.active, sampleAccess.requestPurchase]);
 
   // Isolation and full exploded inventory are mutually exclusive interaction
   // modes. Any isolate request from the dossier/deep-inspector reassembles the
@@ -315,7 +319,7 @@ export const Simulator: React.FC = () => {
   // Initial action from searchParams if provided
   useEffect(() => {
     const action = searchParams.get('action');
-    if (action && kernelRef.current) {
+    if (sampleAccess.active && action && kernelRef.current) {
       kernelRef.current.applyAction(action);
       setVitals({ ...kernelRef.current.vitals });
       setPathology({ ...kernelRef.current.pathology });
@@ -342,8 +346,11 @@ export const Simulator: React.FC = () => {
     });
   }, [mobileTab, activeTool]);
 
+  useEffect(() => { if (!sampleAccess.active && kernelRef.current) { kernelRef.current.setScenario('normal'); setCurrentScenarioId('normal'); setVitals({ ...kernelRef.current.vitals }); setPathology({ ...kernelRef.current.pathology }); } }, [sampleAccess.active]);
+
   // Scenario switch handler
   const handleSelectScenario = (scenarioId: string) => {
+    if (!sampleAccess.active && scenarioId !== 'normal') { sampleAccess.requestPurchase('patient cases'); return; }
     if (!kernelRef.current) return;
     kernelRef.current.setScenario(scenarioId);
     setCurrentScenarioId(scenarioId);
@@ -354,6 +361,7 @@ export const Simulator: React.FC = () => {
 
   // Action intervention handler
   const handleApplyAction = (actionId: string) => {
+    if (!sampleAccess.active) { sampleAccess.requestPurchase('patient interventions'); return; }
     if (!kernelRef.current) return;
     kernelRef.current.applyAction(actionId);
     setVitals({ ...kernelRef.current.vitals });
@@ -372,6 +380,7 @@ export const Simulator: React.FC = () => {
   const isLight = theme === 'light';
 
   if (mobileTab === 'studio') return <div data-simulator-root data-active-tab="studio" data-simulator-theme={theme}>
+    <SimulatorSampleBanner />
     <SimulatorStudio theme={theme} onToggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} scenarioId={currentScenarioId} onScenario={handleSelectScenario}
       onAnatomy={() => { handleSelectScenario('normal'); setMobileTab('3d'); }}
       onCase={id => { handleSelectScenario(id); setMobileTab('interventions'); }}
@@ -392,6 +401,7 @@ export const Simulator: React.FC = () => {
         isLight ? 'bg-[#f8fafc] text-slate-900' : 'bg-[#05070d] text-slate-100'
       }`}
     >
+      <SimulatorSampleBanner />
       {/* 1. Header Bar (Responsive & Clean)
           Header and the mobile tab bar are ONE sticky block. The tab bar used
           to be stuck at a hardcoded 53-pixel offset, which is this header's
@@ -735,6 +745,7 @@ export const Simulator: React.FC = () => {
                 key={item.id}
                 data-testid={`deep-inspector-${item.id}`}
                 onClick={() => {
+                  if (!sampleAccess.active && item.id !== 'full' && !sampleOrgan(item.id)) { sampleAccess.requestPurchase('all anatomy organs'); return; }
                   if (item.id === 'full') {
                     setIsolatedPartId(null);
                     setSelectedOrganId(null);
