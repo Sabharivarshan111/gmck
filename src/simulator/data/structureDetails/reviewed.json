@@ -1,0 +1,107 @@
+{
+  "coronary_arteries": {
+    "kind": "artery",
+    "name": "Coronary arteries",
+    "origin": "Right coronary artery: right aortic sinus. Left coronary artery: left aortic sinus of the ascending aorta.",
+    "course": "Epicardial vessels follow the atrioventricular and interventricular grooves.",
+    "branches": "Left main divides into LAD and circumflex. RCA gives atrial, nodal, marginal and ventricular branches. PDA origin depends on dominance.",
+    "supply": "Myocardium; territories overlap and vary.",
+    "source": "https://www.ncbi.nlm.nih.gov/books/NBK534790/",
+    "links": [
+      {
+        "id": "FJ2737",
+        "name": "Left coronary trunk"
+      },
+      {
+        "id": "FJ2723",
+        "name": "Right coronary trunk"
+      },
+      {
+        "id": "FJ2631",
+        "name": "LAD / anterior interventricular artery"
+      },
+      {
+        "id": "lcx_artery",
+        "name": "Circumflex artery"
+      }
+    ]
+  },
+  "left coronary artery": {
+    "kind": "artery",
+    "name": "Left coronary artery",
+    "origin": "Left aortic sinus of ascending aorta",
+    "branches": "LAD and circumflex; ramus intermedius may occur",
+    "source": "https://en.wikipedia.org/wiki/Left_coronary_artery"
+  },
+  "right coronary artery": {
+    "kind": "artery",
+    "name": "Right coronary artery",
+    "origin": "Right aortic sinus of ascending aorta",
+    "course": "Right atrioventricular groove towards the crux",
+    "branches": "Conus, atrial, right marginal and ventricular branches; nodal supply varies. PDA and posterolateral branches in right dominance.",
+    "source": "https://en.wikipedia.org/wiki/Right_coronary_artery"
+  },
+  "left anterior descending artery": {
+    "kind": "artery",
+    "name": "LAD / anterior interventricular artery",
+    "origin": "Left coronary artery",
+    "course": "Anterior interventricular groove towards apex",
+    "branches": "Diagonal and septal perforating branches",
+    "supply": "Anterior LV and anterior septum",
+    "source": "https://en.wikipedia.org/wiki/Left_anterior_descending_artery"
+  },
+  "circumflex artery": {
+    "kind": "artery",
+    "name": "Circumflex artery",
+    "origin": "Left coronary artery",
+    "course": "Left atrioventricular groove",
+    "branches": "Left marginal, atrial and posterior LV branches; PDA in left dominance",
+    "source": "https://en.wikipedia.org/wiki/Circumflex_artery"
+  },
+  "portal vein": {
+    "kind": "vein",
+    "name": "Portal vein",
+    "origin": "Union of superior mesenteric and splenic veins behind pancreatic neck",
+    "tributaries": "Gastric, cystic, paraumbilical and other portal tributaries; IMV usually joins splenic vein",
+    "drainsTo": "Right and left portal branches, then hepatic sinusoids",
+    "course": "Portal inflow to liver, distinct from hepatic venous outflow",
+    "source": "https://en.wikipedia.org/wiki/Portal_vein"
+  },
+  "papillary_left": {
+    "kind": "muscle",
+    "name": "Left ventricular papillary muscles",
+    "origin": "Left ventricular myocardium",
+    "insertion": "Chordae tendineae to mitral valve leaflets",
+    "innervation": "Cardiac conduction system; autonomic modulation, not somatic motor innervation",
+    "action": "Tenses chordae during systole, limiting leaflet prolapse",
+    "source": "https://www.ncbi.nlm.nih.gov/books/NBK557802/"
+  },
+  "papillary_right": {
+    "kind": "muscle",
+    "name": "Right ventricular papillary muscles",
+    "origin": "Right ventricular myocardium",
+    "insertion": "Chordae tendineae to tricuspid valve leaflets",
+    "innervation": "Cardiac conduction system; autonomic modulation, not somatic motor innervation",
+    "action": "Tenses chordae during systole, limiting leaflet prolapse",
+    "source": "https://www.ncbi.nlm.nih.gov/books/NBK557802/"
+  },
+  "perineal_group": {
+    "kind": "muscle",
+    "name": "Superficial perineal muscle group",
+    "origin": "Component-specific attachments in ischial and perineal regions",
+    "insertion": "Component-specific perineal-body or erectile-tissue attachments",
+    "innervation": "Pudendal perineal branches; inferior rectal branches for external anal sphincter",
+    "action": "Perineal support and component-specific sphincter/sexual functions",
+    "scopeNote": "FMA19728 is a muscle class, not one uniquely identified transverse muscle.",
+    "source": "https://ifaa.unifr.ch/Public/TNAEntryPage/auto/unit/LAEN/TAH10485%20Unit%20EN.htm"
+  },
+  "great saphenous vein": {
+    "kind": "vein",
+    "name": "Great saphenous vein",
+    "origin": "Medial marginal vein of foot, continuing the medial dorsal venous arch",
+    "tributaries": "Superficial epigastric, superficial circumflex iliac, superficial external pudendal and accessory saphenous veins; communicating channels vary",
+    "drainsTo": "Femoral vein at the saphenofemoral junction",
+    "course": "Anterior to medial malleolus, then medial leg and thigh",
+    "source": "https://en.wikipedia.org/wiki/Great_saphenous_vein"
+  }
+}
