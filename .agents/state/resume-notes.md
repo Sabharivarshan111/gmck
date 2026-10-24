@@ -2602,3 +2602,13 @@ Do not promote the five new pharmacology holds, manufacture missing options, imp
 **NEXT:** Build/release native popup after review; implement/test backend Vault entitlements before advertising paid Vault unlock.
 
 **DO NOT:** Publish a claim that payment unlocks Vault before that behavior exists; alter ad caps, pricing, entitlement rows, applicationId, signing, or version for this copy-only task.
+
+## 2026-10-24 — Native Premium preview follow-up
+
+**DONE:** Account-bound observable Premium state, paid ad-popup/play suppression, free anatomy/normal-auscultation/CVS/ten-question previews, website checkout link and shared renderer membership handoff.180/365day ad-module fixtures pass with zero prompts/ads; source-backed shared anatomy changes merged three-way. Generic promotion migration is live and copied here, with no influencer address in source.
+
+**HALF-DONE:** Final native renderer/Metro/browser guards, native branch integration and automated signed build receipts. PR125 website correction still requires merge/live verification. Lovable redesign saved but public publication blocked on workspace credits. No real payment/device verification.
+
+**NEXT:** Finish checks before merging native branch. Finish website PR. Follow docs/ORBIT_NATIVE_PREMIUM_20261024.md. Promotion auto-activates365days on the approved email's first verified Google sign-in.
+
+**DO NOT:** Overwrite current payment functions with old source, lock general Notes, fake a Razorpay receipt or claim a device test from RN-web.

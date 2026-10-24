@@ -42,7 +42,7 @@ export function UnlockCard() {
         <Text style={[styles.note, { color: colors.textMuted }]}>
           {LINK_OUT
             ? 'Go ad-free. Explore 3D Anatomy, Patient Simulator & Auscultation.'
-            : 'Explore Premium at mbbsqbank-questor.lovable.app. Sign in with the same Google account.'}
+            : 'Explore Premium on our website, orbitmbbs.site. Sign in with the same Google account.'}
         </Text>
         {LINK_OUT ? (
           <Touchable

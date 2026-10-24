@@ -80,7 +80,7 @@ check(
     'decoupled behind a 3.5s race so a slow consent service cannot stall ads.',
 );
 
-const showBody = code.slice(code.indexOf('export function showRewardedAd'));
+const showBody = code.slice(code.search(/export (?:async )?function showRewardedAd/));
 check(
   /waiters\.delete\(waiter\);/.test(showBody) && !/unsubscribeLoaded\(\);/.test(showBody),
   'The wait timeout tears the load down again. Dropping the waiter is right; ' +

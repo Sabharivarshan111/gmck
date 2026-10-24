@@ -1,3 +1,4 @@
+import { VaultPremiumProvider } from '@/components/VaultPremium';
 // Android renders the app in Roboto (React Native's default face, and the same
 // font the web app inherits from Tailwind's stack). Desktop Linux has no
 // Roboto, so the preview would otherwise fall back to Liberation Sans and
@@ -32,7 +33,7 @@ import { FirstRun } from '@/components/FirstRun';
 import { UpdateNotice } from '@/components/UpdateNotice';
 import { startTour } from '@/tour/store';
 import type { ChapterId } from '@/tour/script';
-import { hydratePremium } from '@/lib/premium';
+import { hydratePremium, usePremiumSync } from '@/lib/premium';
 import { hydrateWallpaper } from '@/hooks/useWallpaper';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ScrollView, Text, TextInput, View } from 'react-native';
@@ -1129,6 +1130,7 @@ function UserNotesDemo() {
 }
 
 function Shell() {
+  usePremiumSync();
   const { theme, colors } = useTheme();
   React.useEffect(() => {
     hydrateProgress();
@@ -1432,7 +1434,7 @@ createRoot(document.getElementById('root')!).render(
   <ErrorBoundary>
     <SafeAreaProvider initialMetrics={METRICS}>
       <ThemeProvider initialPreference={themeParam}>
-        <Shell />
+        <VaultPremiumProvider><Shell /></VaultPremiumProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   </ErrorBoundary>,

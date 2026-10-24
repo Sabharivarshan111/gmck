@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 import { AppState, type AppStateStatus } from 'react-native';
 import { secureStorage } from './secureStorage';
 import { supabase } from './supabase';
@@ -21,6 +21,18 @@ let cachedOwner: string | null = null;
 const STORAGE_KEY = 'orbit:premium-until';
 
 let expiresAt: string | null = null;
+let checkedAt = 0;
+let known = false;
+const listeners = new Set<() => void>();
+export function subscribePremium(listener: () => void): () => void { listeners.add(listener); return () => { listeners.delete(listener); }; }
+const notify = () => { for (const listener of listeners) listener(); };
+export function usePremiumStatus(): string | null { return useSyncExternalStore(subscribePremium, premiumExpiresAt); }
+/** Unknown membership defers ads; an existing paid cache stays usable offline. */
+export async function mayShowAds(): Promise<boolean> {
+  if (isPremiumCached()) return false;
+  if (!known || Date.now() - checkedAt > 30000) await syncPremiumCache();
+  return known && !isPremiumCached();
+}
 
 /** Synchronous check used by the ad layer. */
 export function isPremiumCached(): boolean {
@@ -37,6 +49,7 @@ export function premiumExpiresAt(): string | null {
 async function cache(value: string | null, userId: string | null = null): Promise<void> {
   expiresAt = value;
   cachedOwner = value ? userId : null;
+  notify();
   try {
     if (value) {
       await secureStorage.setItem(OWNER_KEY, userId!);
@@ -53,15 +66,13 @@ async function cache(value: string | null, userId: string | null = null): Promis
 /** Load the last known expiry so the first ad check is correct offline. */
 export async function hydratePremium(): Promise<void> {
   try {
-    const { data } = await supabase.auth.getSession();
-    const owner = await secureStorage.getItem(OWNER_KEY);
-    // A legacy unbound expiry is refreshed from the server before it is trusted.
+    const [{ data }, owner, until] = await Promise.all([supabase.auth.getSession(), secureStorage.getItem(OWNER_KEY), secureStorage.getItem(STORAGE_KEY)]);
+    // A late disk read must not replace a freshly verified purchase.
+    if (known) return;
     cachedOwner = owner;
-    expiresAt = owner && owner === data.session?.user.id
-      ? await secureStorage.getItem(STORAGE_KEY) : null;
-  } catch {
-    expiresAt = null;
-  }
+    expiresAt = owner && owner === data.session?.user.id ? until : null;
+  } catch { if (!known) expiresAt = null; }
+  finally { notify(); }
 }
 
 /**
@@ -75,6 +86,7 @@ export async function syncPremiumCache(): Promise<string | null> {
     const userId = sessionData.session?.user?.id;
     if (!userId) {
       // Signed out — no entitlement to speak of.
+      known = true; checkedAt = Date.now();
       await cache(null);
       return null;
     }
@@ -82,6 +94,7 @@ export async function syncPremiumCache(): Promise<string | null> {
     if (cachedOwner !== userId) {
       expiresAt = null;
       cachedOwner = userId;
+      known = false; notify();
     }
     const { data, error } = await supabase
       .from('premium_subscriptions')
@@ -93,6 +106,7 @@ export async function syncPremiumCache(): Promise<string | null> {
       .maybeSingle();
 
     if (error) {
+      known = false;
       // Keep whatever was cached; do not punish a paying user for a bad request.
       return premiumExpiresAt();
     }
@@ -101,9 +115,11 @@ export async function syncPremiumCache(): Promise<string | null> {
     const active = !!expiry && new Date(expiry).getTime() > Date.now();
     const current = (await supabase.auth.getSession()).data.session?.user.id;
     if (current !== userId) return null;
+    known = true; checkedAt = Date.now();
     await cache(active ? expiry : null, userId);
     return active ? expiry : null;
   } catch {
+    known = false;
     return premiumExpiresAt();
   }
 }
@@ -117,8 +133,9 @@ export function usePremiumSync(): void {
   useEffect(() => {
     syncPremiumCache().catch(() => undefined);
 
-    const { data: authSub } = supabase.auth.onAuthStateChange(() => {
-      syncPremiumCache().catch(() => undefined);
+    const { data: authSub } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (cachedOwner !== session?.user.id) { expiresAt = null; cachedOwner = session?.user.id ?? null; known = false; notify(); }
+      setTimeout(() => { void syncPremiumCache(); }, 0);
     });
 
     const onAppState = (state: AppStateStatus) => {
@@ -127,10 +144,12 @@ export function usePremiumSync(): void {
       }
     };
     const appSub = AppState.addEventListener('change', onAppState);
+    const timer = setInterval(() => { notify(); if (AppState.currentState === 'active') void syncPremiumCache(); }, 30000);
 
     return () => {
       authSub.subscription.unsubscribe();
       appSub.remove();
+      clearInterval(timer);
     };
   }, []);
 }

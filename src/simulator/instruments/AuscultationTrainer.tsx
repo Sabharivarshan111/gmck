@@ -1,3 +1,4 @@
+import { useSimulatorAccess } from '../SimulatorAccess';
 import { lazy, Suspense, useState } from 'react';
 import type { RefObject } from 'react';
 import { AUSCULTATION_SITES, SOUND_LIBRARY, MURMUR_GUIDE } from './auscultationSites';
@@ -15,6 +16,7 @@ export function AuscultationTrainer({ theme, site, mode, volume, listening, over
   onLung: (sound: LungSoundPreset | null) => void;
   onVolume: (volume: number) => void; onListen: () => void; onSound: (sound: HeartSoundPreset | null) => void;
 }) {
+  const access = useSimulatorAccess();
   const [lungSide, setLungSide] = useState<'right' | 'left'>('right');
   const [back, setBack] = useState(false);
   const [xray, setXray] = useState(true);
@@ -36,6 +38,7 @@ export function AuscultationTrainer({ theme, site, mode, volume, listening, over
     onSound(next);
   };
   const nextQuestion = () => {
+    if (!access.active) { access.requestPurchase('auscultation training'); return; }
     const candidates = SOUND_LIBRARY.filter(s => s.id !== override);
     const sound = candidates[Math.floor(Math.random() * candidates.length)];
     setAnswer(''); setRevealed(false); setSearch(''); chooseSound(sound.id);
@@ -53,7 +56,7 @@ export function AuscultationTrainer({ theme, site, mode, volume, listening, over
   return <section className="ausc-trainer" data-theme={theme} aria-label="Auscultation trainer">
     <div className="ausc-tabs" aria-label="Learning mode">
       <button aria-pressed={!training} onClick={() => { setTraining(false); setRevealed(false); chooseSound(null); onLung(null); }}>Explore</button>
-      <button aria-pressed={training} onClick={() => { setTraining(true); nextQuestion(); }}>Train · heart sounds</button>
+      <button aria-pressed={training} onClick={() => { if (!access.active) { access.requestPurchase('auscultation training'); return; } setTraining(true); nextQuestion(); }}>Train · heart sounds</button>
     </div>
     <div className="ausc-visual">
       <div className="ausc-modes" style={{marginBottom:8}}>
@@ -85,12 +88,12 @@ export function AuscultationTrainer({ theme, site, mode, volume, listening, over
       <select aria-label="Sound demonstration" value={override || ''} onChange={e => chooseSound((e.target.value || null) as HeartSoundPreset | null)}>
         <option value="">Current patient case</option>
         {override && !filtered.some(s => s.id === override) && <option value={override}>{SOUND_LIBRARY.find(s => s.id === override)?.title || override}</option>}
-        {filtered.map(s => <option key={s.id} value={s.id}>{s.title}</option>)}
+        {filtered.map(s => <option key={s.id} value={s.id}>{s.title}{!access.active && s.id !== 'normal' ? ' · Premium' : ''}</option>)}
       </select>
       {!filtered.length && <p className="ausc-note" role="status">No matching heart demonstration.</p>}
     </div> : <div className="ausc-library">
       <label htmlFor="ausc-answer">Listen, then identify the heart sound</label>
-      <select id="ausc-answer" value={answer} onChange={e => setAnswer(e.target.value)} disabled={revealed}><option value="">Choose your answer</option>{SOUND_LIBRARY.map(s => <option key={s.id} value={s.id}>{s.title}</option>)}</select>
+      <select id="ausc-answer" value={answer} onChange={e => setAnswer(e.target.value)} disabled={revealed}><option value="">Choose your answer</option>{SOUND_LIBRARY.map(s => <option key={s.id} value={s.id}>{s.title}{!access.active && s.id !== 'normal' ? ' · Premium' : ''}</option>)}</select>
       <button disabled={!answer || revealed || pulmonary} onClick={() => setRevealed(true)}>Check answer</button>
       {pulmonary && <p className="ausc-note">Choose Heart to answer this heart-sound exercise.</p>}
       {revealed && <p role="status" className="ausc-point-label">{answer === override ? 'Correct.' : 'Listen again.'} {SOUND_LIBRARY.find(s => s.id === override)?.title}</p>}

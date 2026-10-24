@@ -2710,3 +2710,7 @@ Added13AIIMS/7INI; candidate141AIIMS/308INI=449. All429 old complete records and
 **NEXT:** Build/release native popup after review; implement/test backend Vault entitlements before advertising paid Vault unlock.
 
 **DO NOT:** Publish a claim that payment unlocks Vault before that behavior exists; alter ad caps, pricing, entitlement rows, applicationId, signing, or version for this copy-only task.
+
+## 2026-10-24 — Native Premium samples and ad suppression
+
+See docs/ORBIT_NATIVE_PREMIUM_20261024.md. Native preview policy and cached membership observers added, with pre-prompt/pre-play Premium checks and raw ad-entry suppression. Actual180/365day fixture users receive zero ad prompts/plays, including offline paid cache; unknown membership defers ads. Checkout URL now orbitmbbs.site/unlock. Shared WebGL limits preserve prior anatomy work. Type/lint and remaining renderer/build/publication results belong in the final PR receipt. Influencer promotion is pending verified Google identity, not a fake paid transaction. No new signed/device/Play claim yet.

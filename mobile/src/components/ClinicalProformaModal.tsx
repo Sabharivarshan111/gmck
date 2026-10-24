@@ -1,3 +1,4 @@
+import { useVaultPremium, VaultTrialBanner } from '@/components/VaultPremium';
 import { guidePoints } from '@/lib/guidePoints';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -109,17 +110,20 @@ export function ClinicalProformaModal({
   initialProformaId,
 }: ClinicalProformaModalProps) {
   const { colors } = useTheme();
+  const premium = useVaultPremium();
   const insets = useSafeAreaInsets();
 
   const [selectedSystem, setSelectedSystem] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeProforma, setActiveProforma] = useState<ClinicalProforma | null>(() => {
+  const [storedProforma, setStoredProforma] = useState<ClinicalProforma | null>(() => {
     if (initialProformaId) {
       return CLINICAL_PROFORMAS.find(p => p.id === initialProformaId) ?? null;
     }
     return null;
   });
 
+  const activeProforma = premium.active || storedProforma?.id === 'cvs_proforma' ? storedProforma : null;
+  const setActiveProforma = (value: ClinicalProforma | null) => { if (value && value.id !== 'cvs_proforma' && !premium.active) { premium.requestPurchase('all case proformas'); return; } setStoredProforma(value); };
   const [activeTab, setActiveTab] = useState<DetailTab>('guide');
   /* Collapsed by default. Every proforma carries this same block, so left
    * open it would push each case's own sections a screen and a half down —
@@ -1667,6 +1671,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
               })}
             </ScrollView>
 
+            <VaultTrialBanner kind="proforma" />
             {/* Proforma Cards, grouped by department */}
             {groupedProformas.map(group => (
               <View key={group.system}>
@@ -1716,7 +1721,7 @@ Provide a concise, high-yield, examiner-grade response suitable for bedside MBBS
                   </View>
                   <View style={styles.cardContent}>
                     <Text style={[styles.cardTitle, { color: colors.text }]}>
-                      {proforma.title}
+                      {proforma.title}{!premium.active ? proforma.id === 'cvs_proforma' ? ' · Free sample' : ' · Premium' : ''}
                     </Text>
                     <View style={styles.cardMetaRow}>
                       <Text style={[styles.cardDept, { color: colors.accent }]}>

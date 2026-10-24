@@ -1,3 +1,4 @@
+import { useVaultPremium, VaultTrialBanner } from '@/components/VaultPremium';
 import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, AppState, BackHandler, StatusBar, StyleSheet, View } from 'react-native';
 import LocalSimulator from '@/native/LocalSimulator';
@@ -28,6 +29,7 @@ import { nativeClinicalRoute } from '@/lib/nativeSimulatorRouting';
  */
 export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   const { colors } = useTheme();
+  const premium = useVaultPremium();
   const insets = useSafeAreaInsets();
   const focused = useIsFocused();
   const caseEngine = useRef<PhysiologyKernel | null>(null);
@@ -58,6 +60,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   }, []);
 
   const onStudioScenarioChange = (id: string) => {
+    if (!premium.active && id !== 'normal') { premium.requestPurchase('patient cases'); return; }
     setStudioScenarioId(id);
     caseEngine.current = new PhysiologyKernel(id);
   };
@@ -91,17 +94,19 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
     return () => sub.remove();
   }, [focused, onExit, url, nativeMode, failed]);
 
+  useEffect(() => { if (!premium.active) { setNativeMode(null); setUrl(null); setStudioScenarioId('normal'); caseEngine.current = new PhysiologyKernel('normal'); } }, [premium.active]);
+
   if (nativeMode?.kind === 'monitor') return wrap(<NativeIcuMonitor scenarioId={nativeMode.scenarioId} engine={caseEngine.current || undefined}
     theme={studioTheme} onToggleTheme={onToggleStudioTheme} onExit={onExit} onBack={returnToNativeStudio} onSkills={returnToNativeStudio}
-    onCase={patient => { caseEngine.current = patient; setNativeMode({ kind: 'case', scenarioId: patient.currentScenario.id }); }}
+    onCase={patient => { if (!premium.active) { premium.requestPurchase('patient cases'); return; } caseEngine.current = patient; setNativeMode({ kind: 'case', scenarioId: patient.currentScenario.id }); }}
     onAnatomy={patient => {
       caseEngine.current = patient;
-      setNativeMode({ kind: 'case', scenarioId: patient.currentScenario.id });
+      setNativeMode(premium.active ? { kind: 'case', scenarioId: patient.currentScenario.id } : null);
       setRendererTheme(studioTheme); setInitialPatient(JSON.stringify(patient));
       setBackRequest(0); setFailed(false); setLoading(true);
       setUrl('https://orbitmbbs.vercel.app/simulator?' + new URLSearchParams({ mode: 'anatomy', scenario: patient.currentScenario.id }).toString());
     }} />);
-  if (nativeMode?.kind === 'ecg') return wrap(<NativeEcgTwelveLead scenarioId={nativeMode.scenarioId} theme={studioTheme} engine={caseEngine.current || undefined} onBack={returnToNativeStudio} />);
+  if (premium.active && nativeMode?.kind === 'ecg') return wrap(<NativeEcgTwelveLead scenarioId={nativeMode.scenarioId} theme={studioTheme} engine={caseEngine.current || undefined} onBack={returnToNativeStudio} />);
   if (nativeMode?.kind === 'case' && !url) return wrap(<NativeClinicalCase scenarioId={nativeMode.scenarioId}
     engine={caseEngine.current || undefined} onExit={onExit} theme={studioTheme} onToggleTheme={onToggleStudioTheme}
     onScenarioChange={id => { setStudioScenarioId(id); setNativeMode({ kind: 'case', scenarioId: id }); }}
@@ -112,13 +117,14 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
       setUrl('https://orbitmbbs.vercel.app/simulator?' + query);
     }} onBack={returnToNativeStudio} />);
 
-  if (nativeMode?.kind === 'radiology') return wrap(<NativeRadiologyViewer theme={studioTheme} onBack={returnToNativeStudio} />);
+  if (premium.active && nativeMode?.kind === 'radiology') return wrap(<NativeRadiologyViewer theme={studioTheme} onBack={returnToNativeStudio} />);
 
   // The canonical clubbing sheet is white in both studio themes.
-  if (nativeMode?.kind === 'clubbing') return wrap(<NativeClubbingTrainer onBack={returnToNativeStudio} />);
+  if (premium.active && nativeMode?.kind === 'clubbing') return wrap(<NativeClubbingTrainer onBack={returnToNativeStudio} />);
 
   if (!url) {
-    return wrap(<NativeClinicalStudio onExit={onExit} scenarioId={studioScenarioId} onScenarioChange={onStudioScenarioChange} theme={studioTheme} onToggleTheme={onToggleStudioTheme} onOpen={destination => {
+    return wrap(<><VaultTrialBanner kind="simulator" /><NativeClinicalStudio onExit={onExit} scenarioId={studioScenarioId} onScenarioChange={onStudioScenarioChange} theme={studioTheme} onToggleTheme={onToggleStudioTheme} onOpen={destination => {
+      if (!premium.active && (destination.kind === 'case' || destination.kind === 'tool' && destination.id !== 'stethoscope')) { premium.requestPurchase(destination.kind === 'case' ? 'patient cases' : 'clinical tools'); return; }
       if (destination.kind === 'monitor') {
         if (!caseEngine.current || caseEngine.current.currentScenario.id !== studioScenarioId) caseEngine.current = new PhysiologyKernel(studioScenarioId);
         setNativeMode({ kind: 'monitor', scenarioId: studioScenarioId });
@@ -152,7 +158,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
       setLoading(true);
       setBackRequest(0);
       setUrl(nativeClinicalRoute(destination));
-    }} />);
+    }} /></>);
   }
 
   return wrap(
@@ -161,12 +167,13 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
         <View style={styles.screen}>
           <LocalSimulator
             testID="orbit-local-anatomy-renderer"
-            route={url.replace('https://orbitmbbs.vercel.app', '') + '&nativeTheme=' + rendererTheme}
+            route={url.replace('https://orbitmbbs.vercel.app', '') + '&nativeTheme=' + rendererTheme + '&premium=' + (premium.active ? '1' : '0')}
             initialPatient={initialPatient}
             active={focused && active}
             backRequest={backRequest}
             style={[styles.screen, { backgroundColor: colors.background }]}
             onStatus={({ nativeEvent }) => {
+              if (nativeEvent.status === 'premium') { premium.requestPurchase(nativeEvent.patient || 'all simulator features'); return; }
               if (nativeEvent.status === 'vault') onExit();
               if (nativeEvent.status === 'patient' && nativeEvent.patient) {
                 try {

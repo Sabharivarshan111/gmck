@@ -1,3 +1,4 @@
+import { useVaultPremium } from '@/components/VaultPremium';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -86,6 +87,7 @@ type View_ =
 
 /** Port of src/components/handwritten/HandwrittenNotesHub.tsx. */
 export default function NotesScreen() {
+  const premium = useVaultPremium();
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const { year: profileYear, university } = useProfile();
@@ -191,6 +193,7 @@ export default function NotesScreen() {
     });
   }, [topicsViewFor]);
 
+  if (!premium.active && (flashcards || datasetCasesOpen || caseLibraryOpen)) return <View style={{flex:1,justifyContent:'center',padding:24}}><Touchable label="Explore Premium" onPress={() => premium.requestPurchase('ORBIT Vault')}><Text>Explore Premium to unlock this feature</Text></Touchable><Touchable label="Back to Vault" onPress={() => { setFlashcards(false); setDatasetCasesOpen(false); setCaseLibraryOpen(false); }}><Text>Back to Vault</Text></Touchable></View>;
   if (simulatorOpen) return <SimulatorScreen onExit={() => setSimulatorOpen(false)} />;
 
   if (flashcards) {
@@ -311,6 +314,7 @@ export default function NotesScreen() {
 function VaultView({ onNotes, onPgPractice, onSimulator, onProformas, onFlashcards }: { onNotes: () => void; onPgPractice: () => void; onSimulator: () => void; onProformas: () => void; onFlashcards: () => void }) {
   const { colors } = useTheme();
   const textScale = useTextScale();
+  const premium = useVaultPremium();
   const entries = [
     { title: 'Notes', hint: 'Years, subjects & handwritten notes', emoji: '📚', open: onNotes },
     { title: 'PG Practice', label: 'NEET-PG practice questions', hint: 'NEET-PG · AIIMS PG · INI-CET', emoji: '📝', open: onPgPractice },
@@ -322,11 +326,11 @@ function VaultView({ onNotes, onPgPractice, onSimulator, onProformas, onFlashcar
     <Text style={[styles.title, { color: colors.text }]}>Vault</Text>
     <Text style={[styles.subtitle, { color: colors.textMuted }]}>Your study space. Choose what you want to do.</Text>
     <View style={styles.yearGrid}>
-      {entries.map(({ title, hint, emoji, open, ...entry }) => <Touchable key={title} testID={`vault-card-${title}`} label={entry.label || title} onPress={open} scaleTo={0.97} style={[styles.vaultCard, { height: 220 * Math.max(1, textScale), backgroundColor: colors.card, borderColor: colors.border }]}>
+      {entries.map(({ title, hint, emoji, open, ...entry }) => <Touchable key={title} testID={`vault-card-${title}`} label={entry.label || title} onPress={() => { if (title === 'Anki flashcards' && !premium.active) premium.requestPurchase(title); else open(); }} scaleTo={0.97} style={[styles.vaultCard, { height: 220 * Math.max(1, textScale), backgroundColor: colors.card, borderColor: colors.border }]}>
         <View style={{ height: 58 * textScale }}><Text accessible={false} style={styles.yearEmoji}>{emoji}</Text></View>
         <View style={{ height: 50 * textScale }}><Text numberOfLines={2} style={[styles.yearName, { lineHeight: 22, color: colors.text }]}>{title}</Text></View>
         <View style={{ flex: 1 }}><Text numberOfLines={3} style={[styles.yearHint, { lineHeight: 18, color: colors.textMuted }]}>{hint}</Text></View>
-        <ChevronRight size={18} color={colors.accent} />
+        {title !== 'Notes' && !premium.active ? <Text style={[typeScale.caption, {color:colors.accent}]}>{title === 'Anki flashcards' ? 'Premium' : 'Free preview'}</Text> : <ChevronRight size={18} color={colors.accent} />}
       </Touchable>)}
     </View>
   </>;

@@ -1,0 +1,13 @@
+# Native Premium previews and ad suppression — 24 October 2026
+
+DONE: Native Vault now offers fixed ten-question samples per exam, free CVS case proforma and free simulator entry. Local canonical renderer receives the app's account-bound membership flag and applies the same heart/lungs/brain and normal auscultation preview limits as the website. Other tools/cases and Anki show the existing native Dialog with an external checkout link. General Notes remain free. Existing native anatomy work is retained through a three-way merge of the shared preview changes.
+
+DONE: Six-month/year server grants use the existing adfree_monthly cache contract. Premium is observable, refreshed on foreground/auth changes and every30seconds while active. Daily-ad requests and acceptance verify membership before prompting/playing. Paid activation dismisses an already-open popup. Rewarded/interstitial entry points independently suppress ads, including a Premium activation while an ad is loading. Unknown/offline membership defers ads; account-bound valid cached Premium remains usable offline. A late disk hydration cannot replace a freshly verified grant. Native checkout links now use the owner's orbitmbbs.site/unlock where the current four-product catalogue is available; old installed Lovable links remain separate.
+
+VERIFIED: Production entitlement/ad module fixtures cover180/365days, paid offline cache, unknown offline state and free users; paid scenarios have zero popup and ad calls, and raw ad entry points never initialize the fixture SDK. Types and focused lint pass; final renderer/Metro and broader source guards are tracked in the PR receipt. Tests do not initialize live AdMob or charge a payment.
+
+HALF-DONE: Final native renderer/preview/browser, signed build and physical device acceptance. No Play upload authorized/performed. Lovable public checkout publication remains blocked on workspace credits. Shared current payment functions and generic migration sources are preserved; do not deploy an older source version over the live hardened endpoints.
+
+NEXT: Finish native checks, merge into claude/native-app-sync and inspect the automatically triggered Android build outcomes. Finish PR125 to main and verify the canonical website. The owner-approved influencer grant is pending first verified Google sign-in; its address is only in the private database, not public source. It creates source=promotion, zero-amount entitlements without fake Razorpay receipts.
+
+DO NOT: Claim a fixture or JS build is a real payment/device check, serve live ads in debug/internal builds, change applicationId/signing, or lock general Vault Notes.
