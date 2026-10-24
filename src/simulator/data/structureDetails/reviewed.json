@@ -51,11 +51,10 @@
     "source": "https://en.wikipedia.org/wiki/Left_anterior_descending_artery"
   },
   "circumflex artery": {
+    "name": "Circumflex Artery",
     "kind": "artery",
-    "name": "Circumflex artery",
     "origin": "Left coronary artery",
-    "course": "Left atrioventricular groove",
-    "branches": "Left marginal, atrial and posterior LV branches; PDA in left dominance",
+    "branches": "Left marginal, atrial and posterior ventricular branches; PDA in left dominance",
     "source": "https://en.wikipedia.org/wiki/Circumflex_artery"
   },
   "portal vein": {
@@ -103,5 +102,436 @@
     "drainsTo": "Femoral vein at the saphenofemoral junction",
     "course": "Anterior to medial malleolus, then medial leg and thigh",
     "source": "https://en.wikipedia.org/wiki/Great_saphenous_vein"
+  },
+  "posterior interventricular artery": {
+    "name": "Posterior Interventricular Artery",
+    "kind": "artery",
+    "origin": "RCA in right dominance; circumflex in left dominance",
+    "branches": "Posterior septal and ventricular branches",
+    "source": "https://en.wikipedia.org/wiki/Posterior_interventricular_artery"
+  },
+  "conus artery": {
+    "name": "Conus Artery",
+    "kind": "artery",
+    "origin": "Usually proximal RCA; separate aortic origin may occur",
+    "branches": "Small infundibular branches",
+    "source": "https://en.wikipedia.org/wiki/Conus_artery"
+  },
+  "anterior communicating artery": {
+    "name": "Anterior Communicating Artery",
+    "kind": "artery",
+    "origin": "Connects the anterior cerebral arteries",
+    "branches": "Small basal forebrain and hypothalamic perforators",
+    "source": "https://en.wikipedia.org/wiki/Anterior_communicating_artery"
+  },
+  "posterior communicating artery": {
+    "name": "Posterior Communicating Artery",
+    "kind": "artery",
+    "origin": "Internal carotid artery",
+    "branches": "Hypothalamic and other perforating branches; connects with PCA",
+    "source": "https://en.wikipedia.org/wiki/Posterior_communicating_artery"
+  },
+  "callosomarginal artery": {
+    "name": "Callosomarginal Artery",
+    "kind": "artery",
+    "origin": "Anterior cerebral arterial system",
+    "branches": "Medial frontal and paracentral branches; pattern varies",
+    "source": "https://en.wikipedia.org/wiki/Callosomarginal_artery"
+  },
+  "pericallosal artery": {
+    "name": "Pericallosal Artery",
+    "kind": "artery",
+    "origin": "Anterior cerebral artery continuation",
+    "branches": "Callosomarginal and other medial cortical branches",
+    "source": "https://en.wikipedia.org/wiki/Pericallosal_artery"
+  },
+  "lateral occipital artery": {
+    "name": "Lateral Occipital Artery",
+    "kind": "artery",
+    "origin": "Posterior cerebral artery",
+    "branches": "Temporal cortical branches",
+    "source": "https://en.wikipedia.org/wiki/Lateral_occipital_artery"
+  },
+  "medial occipital artery": {
+    "name": "Medial Occipital Artery",
+    "kind": "artery",
+    "origin": "Posterior cerebral artery",
+    "branches": "Calcarine and parieto-occipital branches",
+    "source": "https://en.wikipedia.org/wiki/Medial_occipital_artery"
+  },
+  "posterior medial choroidal artery": {
+    "name": "Posterior Medial Choroidal Artery",
+    "kind": "artery",
+    "origin": "Posterior cerebral artery",
+    "branches": "Choroidal twigs",
+    "source": "https://en.wikipedia.org/wiki/Posterior_medial_choroidal_artery"
+  },
+  "thalamoperforating artery": {
+    "name": "Thalamoperforating Artery",
+    "kind": "artery",
+    "origin": "Posterior cerebral or posterior communicating arterial system, depending on branch",
+    "branches": "Small perforators",
+    "source": "https://en.wikipedia.org/wiki/Thalamoperforating_artery"
+  },
+  "thoracoacromial artery": {
+    "name": "Thoracoacromial Artery",
+    "kind": "artery",
+    "origin": "Second part of axillary artery",
+    "branches": "Pectoral, deltoid, acromial and clavicular branches",
+    "source": "https://en.wikipedia.org/wiki/Thoracoacromial_artery"
+  },
+  "anterior circumflex humeral artery": {
+    "name": "Anterior Circumflex Humeral Artery",
+    "kind": "artery",
+    "origin": "Third part of axillary artery",
+    "branches": "Ascending, muscular and articular branches",
+    "source": "https://en.wikipedia.org/wiki/Anterior_circumflex_humeral_artery"
+  },
+  "posterior circumflex humeral artery": {
+    "name": "Posterior Circumflex Humeral Artery",
+    "kind": "artery",
+    "origin": "Third part of axillary artery",
+    "branches": "Deltoid and articular branches",
+    "source": "https://en.wikipedia.org/wiki/Posterior_circumflex_humeral_artery"
+  },
+  "musculophrenic artery": {
+    "name": "Musculophrenic Artery",
+    "kind": "artery",
+    "origin": "Internal thoracic artery",
+    "branches": "Anterior intercostal and diaphragmatic branches",
+    "source": "https://en.wikipedia.org/wiki/Musculophrenic_artery"
+  },
+  "superior intercostal artery": {
+    "name": "Superior Intercostal Artery",
+    "kind": "artery",
+    "origin": "Costocervical trunk",
+    "branches": "First and second posterior intercostal arteries",
+    "source": "https://en.wikipedia.org/wiki/Superior_intercostal_artery"
+  },
+  "superficial cervical artery": {
+    "name": "Superficial Cervical Artery",
+    "kind": "artery",
+    "origin": "Usually transverse cervical arterial system",
+    "branches": "Superficial muscular branches",
+    "source": "https://en.wikipedia.org/wiki/Superficial_cervical_artery"
+  },
+  "dorsal scapular artery": {
+    "name": "Dorsal Scapular Artery",
+    "kind": "artery",
+    "origin": "Subclavian artery or deep transverse cervical branch",
+    "branches": "Rhomboid and levator scapulae branches",
+    "source": "https://en.wikipedia.org/wiki/Dorsal_scapular_artery"
+  },
+  "gastroduodenal artery": {
+    "name": "Gastroduodenal Artery",
+    "kind": "artery",
+    "origin": "Common hepatic artery",
+    "branches": "Right gastro-omental and superior pancreaticoduodenal arteries",
+    "source": "https://en.wikipedia.org/wiki/Gastroduodenal_artery"
+  },
+  "left gastric artery": {
+    "name": "Left Gastric Artery",
+    "kind": "artery",
+    "origin": "Celiac trunk",
+    "branches": "Esophageal and gastric branches",
+    "source": "https://en.wikipedia.org/wiki/Left_gastric_artery"
+  },
+  "right gastric artery": {
+    "name": "Right Gastric Artery",
+    "kind": "artery",
+    "origin": "Usually hepatic artery proper; origin varies",
+    "branches": "Gastric branches",
+    "source": "https://en.wikipedia.org/wiki/Right_gastric_artery"
+  },
+  "left gastroepiploic artery": {
+    "name": "Left Gastroepiploic Artery",
+    "kind": "artery",
+    "origin": "Splenic artery",
+    "branches": "Gastric and omental branches",
+    "source": "https://en.wikipedia.org/wiki/Left_gastroepiploic_artery"
+  },
+  "right gastroepiploic artery": {
+    "name": "Right Gastroepiploic Artery",
+    "kind": "artery",
+    "origin": "Gastroduodenal artery",
+    "branches": "Gastric and omental branches",
+    "source": "https://en.wikipedia.org/wiki/Right_gastroepiploic_artery"
+  },
+  "superior pancreaticoduodenal artery": {
+    "name": "Superior Pancreaticoduodenal Artery",
+    "kind": "artery",
+    "origin": "Gastroduodenal artery",
+    "branches": "Anterior and posterior branches",
+    "source": "https://en.wikipedia.org/wiki/Superior_pancreaticoduodenal_artery"
+  },
+  "inferior pancreaticoduodenal artery": {
+    "name": "Inferior Pancreaticoduodenal Artery",
+    "kind": "artery",
+    "origin": "Superior mesenteric artery; sometimes jejunal source",
+    "branches": "Anterior and posterior branches",
+    "source": "https://en.wikipedia.org/wiki/Inferior_pancreaticoduodenal_artery"
+  },
+  "caudal pancreatic artery": {
+    "name": "Caudal Pancreatic Artery",
+    "kind": "artery",
+    "origin": "Usually splenic arterial system",
+    "branches": "Small pancreatic tail branches",
+    "source": "https://en.wikipedia.org/wiki/Caudal_pancreatic_artery"
+  },
+  "inferior pancreatic artery": {
+    "name": "Inferior Pancreatic Artery",
+    "kind": "artery",
+    "origin": "Usually dorsal pancreatic arterial system",
+    "branches": "Pancreatic body branches",
+    "source": "https://en.wikipedia.org/wiki/Inferior_pancreatic_artery"
+  },
+  "sigmoid arteries": {
+    "name": "Sigmoid Arteries",
+    "kind": "artery",
+    "origin": "Inferior mesenteric artery",
+    "branches": "Sigmoid branches and anastomoses",
+    "source": "https://en.wikipedia.org/wiki/Sigmoid_arteries"
+  },
+  "arcuate artery of the foot": {
+    "name": "Arcuate Artery Of The Foot",
+    "kind": "artery",
+    "origin": "Dorsalis pedis artery",
+    "branches": "Dorsal metatarsal arteries",
+    "source": "https://en.wikipedia.org/wiki/Arcuate_artery_of_the_foot"
+  },
+  "inferior lateral genicular artery": {
+    "name": "Inferior Lateral Genicular Artery",
+    "kind": "artery",
+    "origin": "Popliteal artery",
+    "branches": "Genicular articular branches",
+    "source": "https://en.wikipedia.org/wiki/Inferior_lateral_genicular_artery"
+  },
+  "recurrent interosseous artery": {
+    "name": "Recurrent Interosseous Artery",
+    "kind": "artery",
+    "origin": "Posterior interosseous artery",
+    "branches": "Muscular and articular elbow branches",
+    "source": "https://en.wikipedia.org/wiki/Recurrent_interosseous_artery"
+  },
+  "proper palmar digital arteries": {
+    "name": "Proper Palmar Digital Arteries",
+    "kind": "artery",
+    "origin": "Common palmar digital arteries or named radial digital sources, according to digit",
+    "branches": "Small digital branches",
+    "source": "https://en.wikipedia.org/wiki/Proper_palmar_digital_arteries"
+  },
+  "common palmar digital arteries": {
+    "name": "Common Palmar Digital Arteries",
+    "kind": "artery",
+    "origin": "Superficial palmar arch",
+    "branches": "Proper palmar digital arteries",
+    "source": "https://en.wikipedia.org/wiki/Common_palmar_digital_arteries"
+  },
+  "dorsal digital arteries": {
+    "name": "Dorsal Digital Arteries",
+    "kind": "artery",
+    "origin": "Dorsal metacarpal or metatarsal arteries according to region",
+    "branches": "Small digital branches",
+    "source": "https://en.wikipedia.org/wiki/Dorsal_digital_arteries"
+  },
+  "coronary sinus": {
+    "name": "Coronary Sinus",
+    "kind": "vein",
+    "origin": "Continuation of great cardiac vein with oblique vein contribution",
+    "tributaries": "Great, middle, small cardiac and posterior LV/marginal tributaries",
+    "drainsTo": "Right atrium",
+    "source": "https://en.wikipedia.org/wiki/Coronary_sinus"
+  },
+  "posterior vein of the left ventricle": {
+    "name": "Posterior Vein Of The Left Ventricle",
+    "kind": "vein",
+    "origin": "Posterior left ventricular venous channels",
+    "tributaries": "Posterior ventricular tributaries",
+    "drainsTo": "Coronary sinus, sometimes via great cardiac vein",
+    "source": "https://en.wikipedia.org/wiki/Posterior_vein_of_the_left_ventricle"
+  },
+  "anterior cardiac veins": {
+    "name": "Anterior Cardiac Veins",
+    "kind": "vein",
+    "origin": "Anterior right ventricular venous channels",
+    "tributaries": "Small anterior ventricular tributaries",
+    "drainsTo": "Directly to right atrium",
+    "source": "https://en.wikipedia.org/wiki/Anterior_cardiac_veins"
+  },
+  "hepatic veins": {
+    "name": "Hepatic Veins",
+    "kind": "vein",
+    "origin": "Intrahepatic venous channels collecting sinusoidal outflow",
+    "tributaries": "Segmental hepatic tributaries",
+    "drainsTo": "Inferior vena cava",
+    "source": "https://en.wikipedia.org/wiki/Hepatic_veins"
+  },
+  "middle hepatic vein": {
+    "name": "Middle Hepatic Vein",
+    "kind": "vein",
+    "origin": "Central hepatic venous channels",
+    "tributaries": "Adjacent central liver segmental tributaries",
+    "drainsTo": "IVC, often in common trunk with left hepatic vein",
+    "source": "https://en.wikipedia.org/wiki/Middle_hepatic_vein"
+  },
+  "suprarenal vein": {
+    "name": "Suprarenal Vein",
+    "kind": "vein",
+    "origin": "Adrenal venous channels",
+    "tributaries": "Adrenal tributaries",
+    "drainsTo": "Right: IVC. Left: left renal vein, usually after joining inferior phrenic vein",
+    "source": "https://en.wikipedia.org/wiki/Suprarenal_vein"
+  },
+  "superficial dorsal vein of the penis": {
+    "name": "Superficial Dorsal Vein Of The Penis",
+    "kind": "vein",
+    "origin": "Superficial penile venous plexus",
+    "tributaries": "Superficial skin and preputial tributaries",
+    "drainsTo": "Superficial external pudendal venous system",
+    "source": "https://en.wikipedia.org/wiki/Superficial_dorsal_vein_of_the_penis"
+  },
+  "deep dorsal vein of the penis": {
+    "name": "Deep Dorsal Vein Of The Penis",
+    "kind": "vein",
+    "origin": "Deep penile venous drainage",
+    "tributaries": "Circumflex and emissary tributaries",
+    "drainsTo": "Prostatic venous plexus",
+    "source": "https://en.wikipedia.org/wiki/Deep_dorsal_vein_of_the_penis"
+  },
+  "musculophrenic vein": {
+    "name": "Musculophrenic Vein",
+    "kind": "vein",
+    "origin": "Lower anterior thoracic and diaphragmatic venous channels",
+    "tributaries": "Anterior intercostal and diaphragmatic tributaries",
+    "drainsTo": "Internal thoracic vein",
+    "source": "https://en.wikipedia.org/wiki/Musculophrenic_vein"
+  },
+  "subscapular vein": {
+    "name": "Subscapular Vein",
+    "kind": "vein",
+    "origin": "Posterior axillary venous channels",
+    "tributaries": "Thoracodorsal and circumflex scapular tributaries",
+    "drainsTo": "Axillary vein",
+    "source": "https://en.wikipedia.org/wiki/Subscapular_vein"
+  },
+  "circumflex scapular vein": {
+    "name": "Circumflex Scapular Vein",
+    "kind": "vein",
+    "origin": "Scapular venous network",
+    "tributaries": "Small scapular tributaries",
+    "drainsTo": "Subscapular vein",
+    "source": "https://en.wikipedia.org/wiki/Circumflex_scapular_vein"
+  },
+  "thoracodorsal vein": {
+    "name": "Thoracodorsal Vein",
+    "kind": "vein",
+    "origin": "Latissimus-dorsi region venous channels",
+    "tributaries": "Muscular tributaries",
+    "drainsTo": "Subscapular vein",
+    "source": "https://en.wikipedia.org/wiki/Thoracodorsal_vein"
+  },
+  "anterior circumflex humeral vein": {
+    "name": "Anterior Circumflex Humeral Vein",
+    "kind": "vein",
+    "origin": "Proximal humeral venous channels",
+    "tributaries": "Muscular and articular tributaries",
+    "drainsTo": "Axillary venous system",
+    "source": "https://en.wikipedia.org/wiki/Anterior_circumflex_humeral_vein"
+  },
+  "lateral circumflex femoral vein": {
+    "name": "Lateral Circumflex Femoral Vein",
+    "kind": "vein",
+    "origin": "Lateral thigh muscular venous channels",
+    "tributaries": "Muscular tributaries",
+    "drainsTo": "Deep femoral or femoral vein; termination varies",
+    "source": "https://en.wikipedia.org/wiki/Lateral_circumflex_femoral_vein"
+  },
+  "medial circumflex femoral vein": {
+    "name": "Medial Circumflex Femoral Vein",
+    "kind": "vein",
+    "origin": "Proximal medial femoral venous channels",
+    "tributaries": "Muscular and periarticular tributaries",
+    "drainsTo": "Deep femoral or femoral vein; termination varies",
+    "source": "https://en.wikipedia.org/wiki/Medial_circumflex_femoral_vein"
+  },
+  "subcostal vein": {
+    "name": "Subcostal Vein",
+    "kind": "vein",
+    "origin": "Venous drainage below rib 12",
+    "tributaries": "Posterior body-wall tributaries",
+    "drainsTo": "Right: azygos system. Left: hemiazygos system",
+    "source": "https://en.wikipedia.org/wiki/Subcostal_vein"
+  },
+  "median sacral vein": {
+    "name": "Median Sacral Vein",
+    "kind": "vein",
+    "origin": "Sacral venous plexus",
+    "tributaries": "Small sacral tributaries",
+    "drainsTo": "Common iliac venous system, often left common iliac vein",
+    "source": "https://en.wikipedia.org/wiki/Median_sacral_vein"
+  },
+  "internal pudendal vein": {
+    "name": "Internal Pudendal Vein",
+    "kind": "vein",
+    "origin": "Perineal venous channels",
+    "tributaries": "Perineal tributaries",
+    "drainsTo": "Internal iliac vein",
+    "source": "https://en.wikipedia.org/wiki/Internal_pudendal_vein"
+  },
+  "gastric vein": {
+    "name": "Gastric Vein",
+    "kind": "vein",
+    "origin": "Stomach venous channels",
+    "tributaries": "Gastric and esophageal tributaries depend on named vessel",
+    "drainsTo": "Portal or splenic venous system according to named gastric vein",
+    "source": "https://en.wikipedia.org/wiki/Gastric_vein"
+  },
+  "gastroepiploic vein": {
+    "name": "Gastroepiploic Vein",
+    "kind": "vein",
+    "origin": "Greater-curvature and omental venous channels",
+    "tributaries": "Gastric and omental tributaries",
+    "drainsTo": "Right: superior mesenteric system. Left: splenic vein",
+    "source": "https://en.wikipedia.org/wiki/Gastroepiploic_vein"
+  },
+  "common palmar digital vein": {
+    "name": "Common Palmar Digital Vein",
+    "kind": "vein",
+    "origin": "Proper palmar digital veins",
+    "tributaries": "Digital tributaries",
+    "drainsTo": "Palmar venous arches",
+    "source": "https://en.wikipedia.org/wiki/Common_palmar_digital_vein"
+  },
+  "deep palmar venous arch": {
+    "name": "Deep Palmar Venous Arch",
+    "kind": "vein",
+    "origin": "Deep palmar metacarpal venous channels",
+    "tributaries": "Deep palmar tributaries",
+    "drainsTo": "Radial and ulnar venae comitantes",
+    "source": "https://en.wikipedia.org/wiki/Deep_palmar_venous_arch"
+  },
+  "plantar venous arch": {
+    "name": "Plantar Venous Arch",
+    "kind": "vein",
+    "origin": "Plantar metatarsal and digital venous channels",
+    "tributaries": "Plantar tributaries",
+    "drainsTo": "Medial/lateral plantar and posterior tibial venous system",
+    "source": "https://en.wikipedia.org/wiki/Plantar_venous_arch"
+  },
+  "proper palmar digital vein": {
+    "name": "Proper Palmar Digital Vein",
+    "kind": "vein",
+    "origin": "Small finger venous channels",
+    "tributaries": "Digital tributaries",
+    "drainsTo": "Common palmar digital veins and communicating dorsal channels",
+    "source": "https://en.wikipedia.org/wiki/Proper_palmar_digital_vein"
+  },
+  "dorsal digital veins": {
+    "name": "Dorsal Digital Veins",
+    "kind": "vein",
+    "origin": "Finger or toe venous channels",
+    "tributaries": "Small digital tributaries",
+    "drainsTo": "Dorsal metacarpal/metatarsal venous networks",
+    "source": "https://en.wikipedia.org/wiki/Dorsal_digital_veins"
   }
 }

@@ -26,7 +26,7 @@ function withSource(d:StructureDetail):StructureDetail{
 function profileDetail(id:string,key:string,name?:string):StructureDetail|null{const p=profiles[key];return p?withSource({...p,id,name:name||p.name}):null;}
 export function getStructureDetail(id:string|null|undefined,sourcePart?:Part,connection?:OrganConnection|null):StructureDetail|null{
  if(!id)return null;const raw=id.replace(/^atlas:/,'');
- if(raw.includes(',')){const members=raw.split(',').map(x=>parts[x]);if(members.every(Boolean)&&new Set(members.map(p=>p.profile)).size===1&&members[0].profile){const first=getStructureDetail(raw.split(',')[0]);return first?{...first,id,name:members[0].name}:null;}}
+ if(raw.includes(',')){const members=raw.split(',').map(x=>parts[x]);if(members.every(Boolean)&&(new Set(members.map(p=>p.profile)).size===1||new Set(members.map(p=>p.name)).size===1)&&members[0].profile){const first=getStructureDetail(raw.split(',')[0]);return first?{...first,id,name:members[0].name}:null;}}
  const b=parts[raw];if(b){const p=b.profile&&profiles[b.profile];const d:StructureDetail={...(p||{kind:b.kind}),id:raw,name:b.name,conceptId:b.conceptId};
   if(b.scope==='regional'){d.scope='Regional anatomy reference';d.referenceName=p?.name;}
   if(b.wholeMuscle||b.scope==='parent'){d.scope=b.scope==='parent'?'Parent vessel reference':'Whole-muscle reference';d.referenceName=p?.name;
