@@ -1,0 +1,7264 @@
+{
+  "profiles": {
+    "coronary_arteries": {
+      "kind": "artery",
+      "name": "Coronary arteries",
+      "origin": "Right coronary artery: right aortic sinus. Left coronary artery: left aortic sinus of the ascending aorta.",
+      "course": "Epicardial vessels follow the atrioventricular and interventricular grooves.",
+      "branches": "Left main divides into LAD and circumflex. RCA gives atrial, nodal, marginal and ventricular branches. PDA origin depends on dominance.",
+      "supply": "Myocardium; territories overlap and vary.",
+      "source": "https://www.ncbi.nlm.nih.gov/books/NBK534790/",
+      "links": [
+        {
+          "id": "FJ2737",
+          "name": "Left coronary trunk"
+        },
+        {
+          "id": "FJ2723",
+          "name": "Right coronary trunk"
+        },
+        {
+          "id": "FJ2631",
+          "name": "LAD / anterior interventricular artery"
+        },
+        {
+          "id": "lcx_artery",
+          "name": "Circumflex artery"
+        }
+      ]
+    },
+    "left coronary artery": {
+      "kind": "artery",
+      "name": "Left coronary artery",
+      "origin": "Left aortic sinus of ascending aorta",
+      "branches": "LAD and circumflex; ramus intermedius may occur",
+      "source": "https://en.wikipedia.org/wiki/Left_coronary_artery"
+    },
+    "right coronary artery": {
+      "kind": "artery",
+      "name": "Right coronary artery",
+      "origin": "Right aortic sinus of ascending aorta",
+      "course": "Right atrioventricular groove towards the crux",
+      "branches": "Conus, atrial, right marginal and ventricular branches; nodal supply varies. PDA and posterolateral branches in right dominance.",
+      "source": "https://en.wikipedia.org/wiki/Right_coronary_artery"
+    },
+    "left anterior descending artery": {
+      "kind": "artery",
+      "name": "LAD / anterior interventricular artery",
+      "origin": "Left coronary artery",
+      "course": "Anterior interventricular groove towards apex",
+      "branches": "Diagonal and septal perforating branches",
+      "supply": "Anterior LV and anterior septum",
+      "source": "https://en.wikipedia.org/wiki/Left_anterior_descending_artery"
+    },
+    "circumflex artery": {
+      "kind": "artery",
+      "name": "Circumflex artery",
+      "origin": "Left coronary artery",
+      "course": "Left atrioventricular groove",
+      "branches": "Left marginal, atrial and posterior LV branches; PDA in left dominance",
+      "source": "https://en.wikipedia.org/wiki/Circumflex_artery"
+    },
+    "portal vein": {
+      "kind": "vein",
+      "name": "Portal vein",
+      "origin": "Union of superior mesenteric and splenic veins behind pancreatic neck",
+      "tributaries": "Gastric, cystic, paraumbilical and other portal tributaries; IMV usually joins splenic vein",
+      "drainsTo": "Right and left portal branches, then hepatic sinusoids",
+      "course": "Portal inflow to liver, distinct from hepatic venous outflow",
+      "source": "https://en.wikipedia.org/wiki/Portal_vein"
+    }
+  },
+  "parts": {
+    "FJ1294": {
+      "name": "Left inferior oblique",
+      "conceptId": "FMA49051",
+      "kind": "muscle"
+    },
+    "FJ1295": {
+      "name": "Left inferior rectus",
+      "conceptId": "FMA49047",
+      "kind": "muscle"
+    },
+    "FJ1304": {
+      "name": "Left lateral rectus",
+      "conceptId": "FMA49055",
+      "kind": "muscle"
+    },
+    "FJ1306": {
+      "name": "Left levator palpebrae superioris",
+      "conceptId": "FMA49049",
+      "kind": "muscle"
+    },
+    "FJ1308": {
+      "name": "Left medial rectus",
+      "conceptId": "FMA49057",
+      "kind": "muscle"
+    },
+    "FJ1322": {
+      "name": "Left superior oblique",
+      "conceptId": "FMA49053",
+      "kind": "muscle"
+    },
+    "FJ1323": {
+      "name": "Left superior rectus",
+      "conceptId": "FMA49045",
+      "kind": "muscle"
+    },
+    "FJ1345": {
+      "name": "Right inferior oblique",
+      "conceptId": "FMA49050",
+      "kind": "muscle"
+    },
+    "FJ1346": {
+      "name": "Right inferior rectus",
+      "conceptId": "FMA49046",
+      "kind": "muscle"
+    },
+    "FJ1355": {
+      "name": "Right lateral rectus",
+      "conceptId": "FMA49054",
+      "kind": "muscle"
+    },
+    "FJ1357": {
+      "name": "Right levator palpebrae superioris",
+      "conceptId": "FMA49048",
+      "kind": "muscle"
+    },
+    "FJ1359": {
+      "name": "Right medial rectus",
+      "conceptId": "FMA49056",
+      "kind": "muscle"
+    },
+    "FJ1373": {
+      "name": "Right superior oblique",
+      "conceptId": "FMA49052",
+      "kind": "muscle"
+    },
+    "FJ1374": {
+      "name": "Right superior rectus",
+      "conceptId": "FMA49044",
+      "kind": "muscle"
+    },
+    "FJ1383": {
+      "name": "First lumbrical of right foot",
+      "conceptId": "FMA37717",
+      "kind": "muscle"
+    },
+    "FJ1383M": {
+      "name": "First lumbrical of left foot",
+      "conceptId": "FMA37718",
+      "kind": "muscle"
+    },
+    "FJ1384": {
+      "name": "First plantar interosseous of right foot",
+      "conceptId": "FMA37745",
+      "kind": "muscle"
+    },
+    "FJ1384M": {
+      "name": "First plantar interosseous of left foot",
+      "conceptId": "FMA37746",
+      "kind": "muscle"
+    },
+    "FJ1385": {
+      "name": "Second lumbrical of right foot",
+      "conceptId": "FMA37719",
+      "kind": "muscle"
+    },
+    "FJ1385M": {
+      "name": "Second lumbrical of left foot",
+      "conceptId": "FMA37720",
+      "kind": "muscle"
+    },
+    "FJ1386": {
+      "name": "Second plantar interosseous of right foot",
+      "conceptId": "FMA37743",
+      "kind": "muscle"
+    },
+    "FJ1386M": {
+      "name": "Second plantar interosseous of left foot",
+      "conceptId": "FMA37744",
+      "kind": "muscle"
+    },
+    "FJ1387": {
+      "name": "Third lumbrical of right foot",
+      "conceptId": "FMA37485",
+      "kind": "muscle"
+    },
+    "FJ1387M": {
+      "name": "Third lumbrical of left foot",
+      "conceptId": "FMA37486",
+      "kind": "muscle"
+    },
+    "FJ1388": {
+      "name": "Third plantar interosseous of right foot",
+      "conceptId": "FMA37741",
+      "kind": "muscle"
+    },
+    "FJ1388M": {
+      "name": "Third plantar interosseous of left foot",
+      "conceptId": "FMA37742",
+      "kind": "muscle"
+    },
+    "FJ1389": {
+      "name": "Fourth lumbrical of right foot",
+      "conceptId": "FMA37483",
+      "kind": "muscle"
+    },
+    "FJ1389M": {
+      "name": "Fourth lumbrical of left foot",
+      "conceptId": "FMA37484",
+      "kind": "muscle"
+    },
+    "FJ1390": {
+      "name": "Abductor digiti minimi of right foot",
+      "conceptId": "FMA37463",
+      "kind": "muscle"
+    },
+    "FJ1390M": {
+      "name": "Abductor digiti minimi of left foot",
+      "conceptId": "FMA37464",
+      "kind": "muscle"
+    },
+    "FJ1391": {
+      "name": "Flexor digiti minimi brevis of right foot",
+      "conceptId": "FMA37471",
+      "kind": "muscle"
+    },
+    "FJ1391M": {
+      "name": "Flexor digiti minimi brevis of left foot",
+      "conceptId": "FMA37472",
+      "kind": "muscle"
+    },
+    "FJ1393": {
+      "name": "Lateral head of right flexor hallucis brevis",
+      "conceptId": "FMA45973",
+      "kind": "muscle"
+    },
+    "FJ1393M": {
+      "name": "Lateral head of left flexor hallucis brevis",
+      "conceptId": "FMA45974",
+      "kind": "muscle"
+    },
+    "FJ1394": {
+      "name": "Lateral head of right gastrocnemius",
+      "conceptId": "FMA45960",
+      "kind": "muscle"
+    },
+    "FJ1394M": {
+      "name": "Lateral head of left gastrocnemius",
+      "conceptId": "FMA45961",
+      "kind": "muscle"
+    },
+    "FJ1395": {
+      "name": "Long head of right biceps femoris",
+      "conceptId": "FMA45888",
+      "kind": "muscle"
+    },
+    "FJ1395M": {
+      "name": "Long head of left biceps femoris",
+      "conceptId": "FMA45889",
+      "kind": "muscle"
+    },
+    "FJ1396": {
+      "name": "Medial head of right flexor hallucis brevis",
+      "conceptId": "FMA45971",
+      "kind": "muscle"
+    },
+    "FJ1396M": {
+      "name": "Medial head of left flexor hallucis brevis",
+      "conceptId": "FMA45972",
+      "kind": "muscle"
+    },
+    "FJ1397": {
+      "name": "Medial head of right gastrocnemius",
+      "conceptId": "FMA45957",
+      "kind": "muscle"
+    },
+    "FJ1397M": {
+      "name": "Medial head of left gastrocnemius",
+      "conceptId": "FMA45958",
+      "kind": "muscle"
+    },
+    "FJ1398": {
+      "name": "Oblique head of right adductor hallucis",
+      "conceptId": "FMA46018",
+      "kind": "muscle"
+    },
+    "FJ1398M": {
+      "name": "Oblique head of left adductor hallucis",
+      "conceptId": "FMA46019",
+      "kind": "muscle"
+    },
+    "FJ1399": {
+      "name": "Opponens digiti minimi of right foot",
+      "conceptId": "FMA86034",
+      "kind": "muscle"
+    },
+    "FJ1399M": {
+      "name": "Opponens digiti minimi of left foot",
+      "conceptId": "FMA86035",
+      "kind": "muscle"
+    },
+    "FJ1400": {
+      "name": "Right abductor hallucis",
+      "conceptId": "FMA37459",
+      "kind": "muscle"
+    },
+    "FJ1400M": {
+      "name": "Left abductor hallucis",
+      "conceptId": "FMA37460",
+      "kind": "muscle"
+    },
+    "FJ1401": {
+      "name": "Right adductor brevis",
+      "conceptId": "FMA22452",
+      "kind": "muscle"
+    },
+    "FJ1401M": {
+      "name": "Left adductor brevis",
+      "conceptId": "FMA22454",
+      "kind": "muscle"
+    },
+    "FJ1402": {
+      "name": "Right adductor longus",
+      "conceptId": "FMA22456",
+      "kind": "muscle"
+    },
+    "FJ1402M": {
+      "name": "Left adductor longus",
+      "conceptId": "FMA22457",
+      "kind": "muscle"
+    },
+    "FJ1403": {
+      "name": "Right adductor magnus",
+      "conceptId": "FMA22459",
+      "kind": "muscle"
+    },
+    "FJ1403M": {
+      "name": "Left adductor magnus",
+      "conceptId": "FMA22460",
+      "kind": "muscle"
+    },
+    "FJ1404": {
+      "name": "Right adductor minimus",
+      "conceptId": "FMA43886",
+      "kind": "muscle"
+    },
+    "FJ1404M": {
+      "name": "Left adductor minimus",
+      "conceptId": "FMA43887",
+      "kind": "muscle"
+    },
+    "FJ1406": {
+      "name": "Right extensor digitorum longus",
+      "conceptId": "FMA22548",
+      "kind": "muscle"
+    },
+    "FJ1406M": {
+      "name": "Left extensor digitorum longus",
+      "conceptId": "FMA22549",
+      "kind": "muscle"
+    },
+    "FJ1407": {
+      "name": "Right extensor hallucis brevis",
+      "conceptId": "FMA51144",
+      "kind": "muscle"
+    },
+    "FJ1407M": {
+      "name": "Left extensor hallucis brevis",
+      "conceptId": "FMA51145",
+      "kind": "muscle"
+    },
+    "FJ1408": {
+      "name": "Right extensor hallucis longus",
+      "conceptId": "FMA22546",
+      "kind": "muscle"
+    },
+    "FJ1408M": {
+      "name": "Left extensor hallucis longus",
+      "conceptId": "FMA22547",
+      "kind": "muscle"
+    },
+    "FJ1412": {
+      "name": "Right flexor accessorius",
+      "conceptId": "FMA37465",
+      "kind": "muscle"
+    },
+    "FJ1412M": {
+      "name": "Left flexor accessorius",
+      "conceptId": "FMA37466",
+      "kind": "muscle"
+    },
+    "FJ1413": {
+      "name": "Right flexor digitorum brevis",
+      "conceptId": "FMA37461",
+      "kind": "muscle"
+    },
+    "FJ1413M": {
+      "name": "Left flexor digitorum brevis",
+      "conceptId": "FMA37462",
+      "kind": "muscle"
+    },
+    "FJ1414": {
+      "name": "Right flexor digitorum longus",
+      "conceptId": "FMA65016",
+      "kind": "muscle"
+    },
+    "FJ1414M": {
+      "name": "Left flexor digitorum longus",
+      "conceptId": "FMA65017",
+      "kind": "muscle"
+    },
+    "FJ1415": {
+      "name": "Right flexor hallucis longus",
+      "conceptId": "FMA65014",
+      "kind": "muscle"
+    },
+    "FJ1415M": {
+      "name": "Left flexor hallucis longus",
+      "conceptId": "FMA65015",
+      "kind": "muscle"
+    },
+    "FJ1416": {
+      "name": "Right gemellus inferior",
+      "conceptId": "FMA22336",
+      "kind": "muscle"
+    },
+    "FJ1416M": {
+      "name": "Left gemellus inferior",
+      "conceptId": "FMA22337",
+      "kind": "muscle"
+    },
+    "FJ1417": {
+      "name": "Right gemellus superior",
+      "conceptId": "FMA22334",
+      "kind": "muscle"
+    },
+    "FJ1417M": {
+      "name": "Left gemellus superior",
+      "conceptId": "FMA22335",
+      "kind": "muscle"
+    },
+    "FJ1418": {
+      "name": "Right gluteus maximus",
+      "conceptId": "FMA22328",
+      "kind": "muscle"
+    },
+    "FJ1418M": {
+      "name": "Left gluteus maximus",
+      "conceptId": "FMA22329",
+      "kind": "muscle"
+    },
+    "FJ1419": {
+      "name": "Right gluteus medius",
+      "conceptId": "FMA22330",
+      "kind": "muscle"
+    },
+    "FJ1419M": {
+      "name": "Left gluteus medius",
+      "conceptId": "FMA22331",
+      "kind": "muscle"
+    },
+    "FJ1420": {
+      "name": "Right gluteus minimus",
+      "conceptId": "FMA22332",
+      "kind": "muscle"
+    },
+    "FJ1420M": {
+      "name": "Left gluteus minimus",
+      "conceptId": "FMA22333",
+      "kind": "muscle"
+    },
+    "FJ1421": {
+      "name": "Right gracilis",
+      "conceptId": "FMA43883",
+      "kind": "muscle"
+    },
+    "FJ1421M": {
+      "name": "Left gracilis",
+      "conceptId": "FMA43884",
+      "kind": "muscle"
+    },
+    "FJ1422": {
+      "name": "Right iliacus",
+      "conceptId": "FMA22322",
+      "kind": "muscle"
+    },
+    "FJ1422M": {
+      "name": "Left iliacus",
+      "conceptId": "FMA22323",
+      "kind": "muscle"
+    },
+    "FJ1425": {
+      "name": "Right obturator externus",
+      "conceptId": "FMA22326",
+      "kind": "muscle"
+    },
+    "FJ1425M": {
+      "name": "Left obturator externus",
+      "conceptId": "FMA22327",
+      "kind": "muscle"
+    },
+    "FJ1426": {
+      "name": "Right obturator internus",
+      "conceptId": "FMA22324",
+      "kind": "muscle"
+    },
+    "FJ1426M": {
+      "name": "Left obturator internus",
+      "conceptId": "FMA22325",
+      "kind": "muscle"
+    },
+    "FJ1427": {
+      "name": "Right pectineus",
+      "conceptId": "FMA22450",
+      "kind": "muscle"
+    },
+    "FJ1427M": {
+      "name": "Left pectineus",
+      "conceptId": "FMA22451",
+      "kind": "muscle"
+    },
+    "FJ1428": {
+      "name": "Right piriformis",
+      "conceptId": "FMA22340",
+      "kind": "muscle"
+    },
+    "FJ1428M": {
+      "name": "Left piriformis",
+      "conceptId": "FMA22341",
+      "kind": "muscle"
+    },
+    "FJ1429": {
+      "name": "Right plantaris",
+      "conceptId": "FMA22560",
+      "kind": "muscle"
+    },
+    "FJ1429M": {
+      "name": "Left plantaris",
+      "conceptId": "FMA22561",
+      "kind": "muscle"
+    },
+    "FJ1430": {
+      "name": "Right popliteus",
+      "conceptId": "FMA22591",
+      "kind": "muscle"
+    },
+    "FJ1430M": {
+      "name": "Left popliteus",
+      "conceptId": "FMA22592",
+      "kind": "muscle"
+    },
+    "FJ1431": {
+      "name": "Right psoas major",
+      "conceptId": "FMA22342",
+      "kind": "muscle"
+    },
+    "FJ1431M": {
+      "name": "Left psoas major",
+      "conceptId": "FMA22343",
+      "kind": "muscle"
+    },
+    "FJ1432": {
+      "name": "Right quadratus femoris",
+      "conceptId": "FMA22338",
+      "kind": "muscle"
+    },
+    "FJ1432M": {
+      "name": "Left quadratus femoris",
+      "conceptId": "FMA22339",
+      "kind": "muscle"
+    },
+    "FJ1433": {
+      "name": "Right rectus femoris",
+      "conceptId": "FMA38928",
+      "kind": "muscle"
+    },
+    "FJ1433M": {
+      "name": "Left rectus femoris",
+      "conceptId": "FMA38929",
+      "kind": "muscle"
+    },
+    "FJ1434": {
+      "name": "Right sartorius",
+      "conceptId": "FMA22354",
+      "kind": "muscle"
+    },
+    "FJ1434M": {
+      "name": "Left sartorius",
+      "conceptId": "FMA22355",
+      "kind": "muscle"
+    },
+    "FJ1435": {
+      "name": "Right semimembranosus",
+      "conceptId": "FMA22448",
+      "kind": "muscle"
+    },
+    "FJ1435M": {
+      "name": "Left semimembranosus",
+      "conceptId": "FMA22449",
+      "kind": "muscle"
+    },
+    "FJ1436": {
+      "name": "Right semitendinosus",
+      "conceptId": "FMA22358",
+      "kind": "muscle"
+    },
+    "FJ1436M": {
+      "name": "Left semitendinosus",
+      "conceptId": "FMA22359",
+      "kind": "muscle"
+    },
+    "FJ1437": {
+      "name": "Right soleus",
+      "conceptId": "FMA22558",
+      "kind": "muscle"
+    },
+    "FJ1437M": {
+      "name": "Left soleus",
+      "conceptId": "FMA22559",
+      "kind": "muscle"
+    },
+    "FJ1441": {
+      "name": "Right vastus intermedius",
+      "conceptId": "FMA38934",
+      "kind": "muscle"
+    },
+    "FJ1441M": {
+      "name": "Left vastus intermedius",
+      "conceptId": "FMA38935",
+      "kind": "muscle"
+    },
+    "FJ1442": {
+      "name": "Right vastus lateralis",
+      "conceptId": "FMA38930",
+      "kind": "muscle"
+    },
+    "FJ1442M": {
+      "name": "Left vastus lateralis",
+      "conceptId": "FMA38931",
+      "kind": "muscle"
+    },
+    "FJ1443": {
+      "name": "Right vastus medialis",
+      "conceptId": "FMA38932",
+      "kind": "muscle"
+    },
+    "FJ1443M": {
+      "name": "Left vastus medialis",
+      "conceptId": "FMA38933",
+      "kind": "muscle"
+    },
+    "FJ1444": {
+      "name": "Short head of right biceps femoris",
+      "conceptId": "FMA45891",
+      "kind": "muscle"
+    },
+    "FJ1444M": {
+      "name": "Short head of left biceps femoris",
+      "conceptId": "FMA45892",
+      "kind": "muscle"
+    },
+    "FJ1445": {
+      "name": "Transverse head of right adductor hallucis",
+      "conceptId": "FMA46020",
+      "kind": "muscle"
+    },
+    "FJ1445M": {
+      "name": "Transverse head of left adductor hallucis",
+      "conceptId": "FMA46021",
+      "kind": "muscle"
+    },
+    "FJ1446": {
+      "name": "Abdominal part of right pectoralis major",
+      "conceptId": "FMA45874",
+      "kind": "muscle"
+    },
+    "FJ1446M": {
+      "name": "Abdominal part of left pectoralis major",
+      "conceptId": "FMA45875",
+      "kind": "muscle"
+    },
+    "FJ1447": {
+      "name": "Clavicular part of right pectoralis major",
+      "conceptId": "FMA34690",
+      "kind": "muscle"
+    },
+    "FJ1447M": {
+      "name": "Clavicular part of left pectoralis major",
+      "conceptId": "FMA34691",
+      "kind": "muscle"
+    },
+    "FJ1449M": {
+      "name": "Left coccygeus",
+      "conceptId": "FMA46444",
+      "kind": "muscle"
+    },
+    "FJ1450": {
+      "name": "superficial perineal muscle",
+      "conceptId": "FMA19728",
+      "kind": "muscle"
+    },
+    "FJ1450M": {
+      "name": "External anal sphincter",
+      "conceptId": "FMA21930",
+      "kind": "muscle"
+    },
+    "FJ1451": {
+      "name": "external intercostal muscle",
+      "conceptId": "FMA9756",
+      "kind": "muscle"
+    },
+    "FJ1451M": {
+      "name": "External intercostal muscle",
+      "conceptId": "FMA9756",
+      "kind": "muscle"
+    },
+    "FJ1452": {
+      "name": "Right external oblique",
+      "conceptId": "FMA13336",
+      "kind": "muscle"
+    },
+    "FJ1452M": {
+      "name": "Left external oblique",
+      "conceptId": "FMA13337",
+      "kind": "muscle"
+    },
+    "FJ1453M": {
+      "name": "Left iliococcygeus",
+      "conceptId": "FMA45859",
+      "kind": "muscle"
+    },
+    "FJ1454": {
+      "name": "innermost intercostal muscle",
+      "conceptId": "FMA9758",
+      "kind": "muscle"
+    },
+    "FJ1454M": {
+      "name": "Innermost intercostal muscle",
+      "conceptId": "FMA9758",
+      "kind": "muscle"
+    },
+    "FJ1455": {
+      "name": "internal intercostal muscle",
+      "conceptId": "FMA9757",
+      "kind": "muscle"
+    },
+    "FJ1455M": {
+      "name": "Internal intercostal muscle",
+      "conceptId": "FMA9757",
+      "kind": "muscle"
+    },
+    "FJ1456": {
+      "name": "Right pectoralis minor",
+      "conceptId": "FMA13375",
+      "kind": "muscle"
+    },
+    "FJ1456M": {
+      "name": "Left pectoralis minor",
+      "conceptId": "FMA13376",
+      "kind": "muscle"
+    },
+    "FJ1457M": {
+      "name": "Left pubococcygeus",
+      "conceptId": "FMA45855",
+      "kind": "muscle"
+    },
+    "FJ1458M": {
+      "name": "Left puborectalis",
+      "conceptId": "FMA45857",
+      "kind": "muscle"
+    },
+    "FJ1459": {
+      "name": "Right serratus anterior",
+      "conceptId": "FMA13398",
+      "kind": "muscle"
+    },
+    "FJ1459M": {
+      "name": "Left serratus anterior",
+      "conceptId": "FMA13399",
+      "kind": "muscle"
+    },
+    "FJ1460": {
+      "name": "Right subclavius",
+      "conceptId": "FMA13412",
+      "kind": "muscle"
+    },
+    "FJ1460M": {
+      "name": "Left subclavius",
+      "conceptId": "FMA13411",
+      "kind": "muscle"
+    },
+    "FJ1461": {
+      "name": "Right transversus thoracis",
+      "conceptId": "FMA9761",
+      "kind": "muscle"
+    },
+    "FJ1461M": {
+      "name": "Left transversus thoracis",
+      "conceptId": "FMA9762",
+      "kind": "muscle"
+    },
+    "FJ1462": {
+      "name": "Set of right levatores costarum breves",
+      "conceptId": "FMA74077",
+      "kind": "muscle"
+    },
+    "FJ1462M": {
+      "name": "Set of left levatores costarum breves",
+      "conceptId": "FMA74078",
+      "kind": "muscle"
+    },
+    "FJ1463": {
+      "name": "Set of right levatores costarum longi",
+      "conceptId": "FMA74075",
+      "kind": "muscle"
+    },
+    "FJ1463M": {
+      "name": "Set of left levatores costarum longi",
+      "conceptId": "FMA74076",
+      "kind": "muscle"
+    },
+    "FJ1464": {
+      "name": "Sternocostal part of right pectoralis major",
+      "conceptId": "FMA79979",
+      "kind": "muscle"
+    },
+    "FJ1464M": {
+      "name": "Sternocostal part of left pectoralis major",
+      "conceptId": "FMA79980",
+      "kind": "muscle"
+    },
+    "FJ1466": {
+      "name": "Abductor digiti minimi of right hand",
+      "conceptId": "FMA37396",
+      "kind": "muscle"
+    },
+    "FJ1466M": {
+      "name": "Abductor digiti minimi of left hand",
+      "conceptId": "FMA37397",
+      "kind": "muscle"
+    },
+    "FJ1467": {
+      "name": "Acromial part of right deltoid",
+      "conceptId": "FMA34682",
+      "kind": "muscle"
+    },
+    "FJ1467M": {
+      "name": "Acromial part of left deltoid",
+      "conceptId": "FMA34683",
+      "kind": "muscle"
+    },
+    "FJ1468": {
+      "name": "Clavicular part of right deltoid",
+      "conceptId": "FMA34680",
+      "kind": "muscle"
+    },
+    "FJ1468M": {
+      "name": "Clavicular part of left deltoid",
+      "conceptId": "FMA34681",
+      "kind": "muscle"
+    },
+    "FJ1469": {
+      "name": "Left flexor pollicis brevis",
+      "conceptId": "FMA37389",
+      "kind": "muscle"
+    },
+    "FJ1469M": {
+      "name": "Right flexor pollicis brevis",
+      "conceptId": "FMA37388",
+      "kind": "muscle"
+    },
+    "FJ1470": {
+      "name": "Flexor digiti minimi brevis of right hand",
+      "conceptId": "FMA37398",
+      "kind": "muscle"
+    },
+    "FJ1470M": {
+      "name": "Flexor digiti minimi brevis of left hand",
+      "conceptId": "FMA37399",
+      "kind": "muscle"
+    },
+    "FJ1472": {
+      "name": "Right extensor carpi ulnaris",
+      "conceptId": "FMA38507",
+      "kind": "muscle"
+    },
+    "FJ1472M": {
+      "name": "Left extensor carpi ulnaris",
+      "conceptId": "FMA38508",
+      "kind": "muscle"
+    },
+    "FJ1473": {
+      "name": "Humeral head of right flexor carpi ulnaris",
+      "conceptId": "FMA38617",
+      "kind": "muscle"
+    },
+    "FJ1473M": {
+      "name": "Humeral head of left flexor carpi ulnaris",
+      "conceptId": "FMA38618",
+      "kind": "muscle"
+    },
+    "FJ1474": {
+      "name": "Humeral head of right pronator teres",
+      "conceptId": "FMA38560",
+      "kind": "muscle"
+    },
+    "FJ1474M": {
+      "name": "Humeral head of left pronator teres",
+      "conceptId": "FMA38561",
+      "kind": "muscle"
+    },
+    "FJ1475": {
+      "name": "Right flexor digitorum superficialis",
+      "conceptId": "FMA38470",
+      "kind": "muscle"
+    },
+    "FJ1475M": {
+      "name": "Left flexor digitorum superficialis",
+      "conceptId": "FMA38471",
+      "kind": "muscle"
+    },
+    "FJ1477": {
+      "name": "Lateral head of right triceps brachii",
+      "conceptId": "FMA37697",
+      "kind": "muscle"
+    },
+    "FJ1477M": {
+      "name": "Lateral head of left triceps brachii",
+      "conceptId": "FMA37698",
+      "kind": "muscle"
+    },
+    "FJ1478": {
+      "name": "Long head of right biceps brachii",
+      "conceptId": "FMA37686",
+      "kind": "muscle"
+    },
+    "FJ1478M": {
+      "name": "Long head of left biceps brachii",
+      "conceptId": "FMA37687",
+      "kind": "muscle"
+    },
+    "FJ1479": {
+      "name": "Long head of right triceps brachii",
+      "conceptId": "FMA37699",
+      "kind": "muscle"
+    },
+    "FJ1479M": {
+      "name": "Long head of left triceps brachii",
+      "conceptId": "FMA37700",
+      "kind": "muscle"
+    },
+    "FJ1480": {
+      "name": "Medial head of right triceps brachii",
+      "conceptId": "FMA37695",
+      "kind": "muscle"
+    },
+    "FJ1480M": {
+      "name": "Medial head of left triceps brachii",
+      "conceptId": "FMA37696",
+      "kind": "muscle"
+    },
+    "FJ1481": {
+      "name": "Oblique head of right adductor pollicis",
+      "conceptId": "FMA46121",
+      "kind": "muscle"
+    },
+    "FJ1481M": {
+      "name": "Oblique head of left adductor pollicis",
+      "conceptId": "FMA46122",
+      "kind": "muscle"
+    },
+    "FJ1482": {
+      "name": "Opponens digiti minimi of right hand",
+      "conceptId": "FMA37400",
+      "kind": "muscle"
+    },
+    "FJ1482M": {
+      "name": "Opponens digiti minimi of left hand",
+      "conceptId": "FMA37401",
+      "kind": "muscle"
+    },
+    "FJ1483": {
+      "name": "Right abductor pollicis brevis",
+      "conceptId": "FMA37386",
+      "kind": "muscle"
+    },
+    "FJ1483M": {
+      "name": "Left abductor pollicis brevis",
+      "conceptId": "FMA37387",
+      "kind": "muscle"
+    },
+    "FJ1484": {
+      "name": "Right abductor pollicis longus",
+      "conceptId": "FMA38516",
+      "kind": "muscle"
+    },
+    "FJ1484M": {
+      "name": "Left abductor pollicis longus",
+      "conceptId": "FMA38517",
+      "kind": "muscle"
+    },
+    "FJ1485": {
+      "name": "Right anconeus",
+      "conceptId": "FMA37705",
+      "kind": "muscle"
+    },
+    "FJ1485M": {
+      "name": "Left anconeus",
+      "conceptId": "FMA37706",
+      "kind": "muscle"
+    },
+    "FJ1486": {
+      "name": "Right brachialis",
+      "conceptId": "FMA37668",
+      "kind": "muscle"
+    },
+    "FJ1486M": {
+      "name": "Left brachialis",
+      "conceptId": "FMA37669",
+      "kind": "muscle"
+    },
+    "FJ1487": {
+      "name": "Right brachioradialis",
+      "conceptId": "FMA38486",
+      "kind": "muscle"
+    },
+    "FJ1487M": {
+      "name": "Left brachioradialis",
+      "conceptId": "FMA38487",
+      "kind": "muscle"
+    },
+    "FJ1488": {
+      "name": "Right coracobrachialis",
+      "conceptId": "FMA37665",
+      "kind": "muscle"
+    },
+    "FJ1488M": {
+      "name": "Left coracobrachialis",
+      "conceptId": "FMA37666",
+      "kind": "muscle"
+    },
+    "FJ1489": {
+      "name": "Right extensor carpi radialis brevis",
+      "conceptId": "FMA38498",
+      "kind": "muscle"
+    },
+    "FJ1489M": {
+      "name": "Left extensor carpi radialis brevis",
+      "conceptId": "FMA38499",
+      "kind": "muscle"
+    },
+    "FJ1490": {
+      "name": "Right extensor carpi radialis longus",
+      "conceptId": "FMA38495",
+      "kind": "muscle"
+    },
+    "FJ1490M": {
+      "name": "Left extensor carpi radialis longus",
+      "conceptId": "FMA38496",
+      "kind": "muscle"
+    },
+    "FJ1491": {
+      "name": "Right extensor digiti minimi",
+      "conceptId": "FMA38504",
+      "kind": "muscle"
+    },
+    "FJ1491M": {
+      "name": "Left extensor digiti minimi",
+      "conceptId": "FMA38505",
+      "kind": "muscle"
+    },
+    "FJ1492": {
+      "name": "Right extensor digitorum",
+      "conceptId": "FMA38501",
+      "kind": "muscle"
+    },
+    "FJ1492M": {
+      "name": "Left extensor digitorum",
+      "conceptId": "FMA38502",
+      "kind": "muscle"
+    },
+    "FJ1493": {
+      "name": "Right extensor indicis",
+      "conceptId": "FMA38525",
+      "kind": "muscle"
+    },
+    "FJ1493M": {
+      "name": "Left extensor indicis",
+      "conceptId": "FMA38526",
+      "kind": "muscle"
+    },
+    "FJ1494": {
+      "name": "Right extensor pollicis brevis",
+      "conceptId": "FMA38519",
+      "kind": "muscle"
+    },
+    "FJ1494M": {
+      "name": "Left extensor pollicis brevis",
+      "conceptId": "FMA38520",
+      "kind": "muscle"
+    },
+    "FJ1495": {
+      "name": "Right extensor pollicis longus",
+      "conceptId": "FMA38522",
+      "kind": "muscle"
+    },
+    "FJ1495M": {
+      "name": "Left extensor pollicis longus",
+      "conceptId": "FMA38523",
+      "kind": "muscle"
+    },
+    "FJ1496": {
+      "name": "Right flexor carpi radialis",
+      "conceptId": "FMA38460",
+      "kind": "muscle"
+    },
+    "FJ1496M": {
+      "name": "Left flexor carpi radialis",
+      "conceptId": "FMA38461",
+      "kind": "muscle"
+    },
+    "FJ1497": {
+      "name": "Right flexor digitorum profundus",
+      "conceptId": "FMA38479",
+      "kind": "muscle"
+    },
+    "FJ1497M": {
+      "name": "Left flexor digitorum profundus",
+      "conceptId": "FMA38480",
+      "kind": "muscle"
+    },
+    "FJ1498": {
+      "name": "Right flexor pollicis longus",
+      "conceptId": "FMA38482",
+      "kind": "muscle"
+    },
+    "FJ1498M": {
+      "name": "Left flexor pollicis longus",
+      "conceptId": "FMA38484",
+      "kind": "muscle"
+    },
+    "FJ1499": {
+      "name": "Right flexor digitorum superficialis",
+      "conceptId": "FMA38470",
+      "kind": "muscle"
+    },
+    "FJ1499M": {
+      "name": "Left flexor digitorum superficialis",
+      "conceptId": "FMA38471",
+      "kind": "muscle"
+    },
+    "FJ1500": {
+      "name": "Right infraspinatus muscle",
+      "conceptId": "FMA32547",
+      "kind": "muscle"
+    },
+    "FJ1500M": {
+      "name": "Left infraspinatus muscle",
+      "conceptId": "FMA32548",
+      "kind": "muscle"
+    },
+    "FJ1501": {
+      "name": "Right opponens pollicis",
+      "conceptId": "FMA37390",
+      "kind": "muscle"
+    },
+    "FJ1501M": {
+      "name": "Left opponens pollicis",
+      "conceptId": "FMA37391",
+      "kind": "muscle"
+    },
+    "FJ1502": {
+      "name": "Right palmaris longus",
+      "conceptId": "FMA38463",
+      "kind": "muscle"
+    },
+    "FJ1502M": {
+      "name": "Left palmaris longus",
+      "conceptId": "FMA38464",
+      "kind": "muscle"
+    },
+    "FJ1503": {
+      "name": "Right pronator quadratus",
+      "conceptId": "FMA38454",
+      "kind": "muscle"
+    },
+    "FJ1503M": {
+      "name": "Left pronator quadratus",
+      "conceptId": "FMA38455",
+      "kind": "muscle"
+    },
+    "FJ1505": {
+      "name": "Right supinator",
+      "conceptId": "FMA38513",
+      "kind": "muscle"
+    },
+    "FJ1505M": {
+      "name": "Left supinator",
+      "conceptId": "FMA38514",
+      "kind": "muscle"
+    },
+    "FJ1506": {
+      "name": "Right supraspinatus",
+      "conceptId": "FMA32544",
+      "kind": "muscle"
+    },
+    "FJ1506M": {
+      "name": "Left supraspinatus",
+      "conceptId": "FMA32545",
+      "kind": "muscle"
+    },
+    "FJ1507": {
+      "name": "Right teres major",
+      "conceptId": "FMA32551",
+      "kind": "muscle"
+    },
+    "FJ1507M": {
+      "name": "Left teres major",
+      "conceptId": "FMA32552",
+      "kind": "muscle"
+    },
+    "FJ1508": {
+      "name": "Right teres minor",
+      "conceptId": "FMA32553",
+      "kind": "muscle"
+    },
+    "FJ1508M": {
+      "name": "Left teres minor",
+      "conceptId": "FMA32554",
+      "kind": "muscle"
+    },
+    "FJ1509": {
+      "name": "Set of dorsal interossei of right hand",
+      "conceptId": "FMA42404",
+      "kind": "muscle"
+    },
+    "FJ1509M": {
+      "name": "Set of dorsal interossei of left hand",
+      "conceptId": "FMA42405",
+      "kind": "muscle"
+    },
+    "FJ1510": {
+      "name": "Set of lumbricals of right hand",
+      "conceptId": "FMA42398",
+      "kind": "muscle"
+    },
+    "FJ1510M": {
+      "name": "Set of lumbricals of left hand",
+      "conceptId": "FMA42399",
+      "kind": "muscle"
+    },
+    "FJ1511": {
+      "name": "Set of palmar interossei of right hand",
+      "conceptId": "FMA42402",
+      "kind": "muscle"
+    },
+    "FJ1511M": {
+      "name": "Set of palmar interossei of left hand",
+      "conceptId": "FMA42403",
+      "kind": "muscle"
+    },
+    "FJ1512": {
+      "name": "Short head of right biceps brachii",
+      "conceptId": "FMA37684",
+      "kind": "muscle"
+    },
+    "FJ1512M": {
+      "name": "Short head of left biceps brachii",
+      "conceptId": "FMA37685",
+      "kind": "muscle"
+    },
+    "FJ1513": {
+      "name": "Spinal part of right deltoid",
+      "conceptId": "FMA34684",
+      "kind": "muscle"
+    },
+    "FJ1513M": {
+      "name": "Spinal part of left deltoid",
+      "conceptId": "FMA34685",
+      "kind": "muscle"
+    },
+    "FJ1514": {
+      "name": "Superficial head of right flexor pollicis brevis",
+      "conceptId": "FMA65198",
+      "kind": "muscle"
+    },
+    "FJ1514M": {
+      "name": "Superficial head of left flexor pollicis brevis",
+      "conceptId": "FMA65199",
+      "kind": "muscle"
+    },
+    "FJ1515": {
+      "name": "Transverse head of right adductor pollicis",
+      "conceptId": "FMA46123",
+      "kind": "muscle"
+    },
+    "FJ1515M": {
+      "name": "Transverse head of left adductor pollicis",
+      "conceptId": "FMA46124",
+      "kind": "muscle"
+    },
+    "FJ1516": {
+      "name": "Ulnar head of right pronator teres",
+      "conceptId": "FMA38562",
+      "kind": "muscle"
+    },
+    "FJ1516M": {
+      "name": "Ulnar head of left pronator teres",
+      "conceptId": "FMA38563",
+      "kind": "muscle"
+    },
+    "FJ1517": {
+      "name": "Right extensor carpi ulnaris",
+      "conceptId": "FMA38507",
+      "kind": "muscle"
+    },
+    "FJ1517M": {
+      "name": "Left extensor carpi ulnaris",
+      "conceptId": "FMA38508",
+      "kind": "muscle"
+    },
+    "FJ1518": {
+      "name": "Ulnar head of right flexor carpi ulnaris",
+      "conceptId": "FMA38619",
+      "kind": "muscle"
+    },
+    "FJ1518M": {
+      "name": "Ulnar head of left flexor carpi ulnaris",
+      "conceptId": "FMA38620",
+      "kind": "muscle"
+    },
+    "FJ1520": {
+      "name": "Ascending part of right trapezius",
+      "conceptId": "FMA33581",
+      "kind": "muscle"
+    },
+    "FJ1520M": {
+      "name": "Ascending part of left trapezius",
+      "conceptId": "FMA33583",
+      "kind": "muscle"
+    },
+    "FJ1521": {
+      "name": "Descending part of right trapezius",
+      "conceptId": "FMA33586",
+      "kind": "muscle"
+    },
+    "FJ1521M": {
+      "name": "Descending part of left trapezius",
+      "conceptId": "FMA33587",
+      "kind": "muscle"
+    },
+    "FJ1522": {
+      "name": "Right lumbar rotator",
+      "conceptId": "FMA23089",
+      "kind": "muscle"
+    },
+    "FJ1522M": {
+      "name": "Left lumbar rotator",
+      "conceptId": "FMA23090",
+      "kind": "muscle"
+    },
+    "FJ1524": {
+      "name": "Right cervical rotator",
+      "conceptId": "FMA81752",
+      "kind": "muscle"
+    },
+    "FJ1524M": {
+      "name": "Left cervical rotator",
+      "conceptId": "FMA81753",
+      "kind": "muscle"
+    },
+    "FJ1525": {
+      "name": "thoracic rotator",
+      "conceptId": "FMA23083",
+      "kind": "muscle"
+    },
+    "FJ1525M": {
+      "name": "Thoracic rotator",
+      "conceptId": "FMA23083",
+      "kind": "muscle"
+    },
+    "FJ1526": {
+      "name": "Right iliocostalis cervicis",
+      "conceptId": "FMA22744",
+      "kind": "muscle"
+    },
+    "FJ1526M": {
+      "name": "Left iliocostalis cervicis",
+      "conceptId": "FMA22745",
+      "kind": "muscle"
+    },
+    "FJ1527": {
+      "name": "Right iliocostalis lumborum",
+      "conceptId": "FMA22740",
+      "kind": "muscle"
+    },
+    "FJ1527M": {
+      "name": "Left iliocostalis lumborum",
+      "conceptId": "FMA22741",
+      "kind": "muscle"
+    },
+    "FJ1528": {
+      "name": "Right iliocostalis thoracis",
+      "conceptId": "FMA22742",
+      "kind": "muscle"
+    },
+    "FJ1528M": {
+      "name": "Left iliocostalis thoracis",
+      "conceptId": "FMA22743",
+      "kind": "muscle"
+    },
+    "FJ1533": {
+      "name": "Right longissimus capitis",
+      "conceptId": "FMA22754",
+      "kind": "muscle"
+    },
+    "FJ1533M": {
+      "name": "Left longissimus capitis",
+      "conceptId": "FMA22756",
+      "kind": "muscle"
+    },
+    "FJ1534": {
+      "name": "Right longissimus cervicis",
+      "conceptId": "FMA22757",
+      "kind": "muscle"
+    },
+    "FJ1534M": {
+      "name": "Left longissimus cervicis",
+      "conceptId": "FMA22758",
+      "kind": "muscle"
+    },
+    "FJ1535": {
+      "name": "Right longissimus thoracis",
+      "conceptId": "FMA22751",
+      "kind": "muscle"
+    },
+    "FJ1535M": {
+      "name": "Left longissimus thoracis",
+      "conceptId": "FMA22753",
+      "kind": "muscle"
+    },
+    "FJ1536": {
+      "name": "Right rhomboid major",
+      "conceptId": "FMA13381",
+      "kind": "muscle"
+    },
+    "FJ1536M": {
+      "name": "Left rhomboid major",
+      "conceptId": "FMA13382",
+      "kind": "muscle"
+    },
+    "FJ1537": {
+      "name": "Right rhomboid minor",
+      "conceptId": "FMA13383",
+      "kind": "muscle"
+    },
+    "FJ1537M": {
+      "name": "Left rhomboid minor",
+      "conceptId": "FMA13384",
+      "kind": "muscle"
+    },
+    "FJ1538": {
+      "name": "Right semispinalis capitis",
+      "conceptId": "FMA22876",
+      "kind": "muscle"
+    },
+    "FJ1538M": {
+      "name": "Left semispinalis capitis",
+      "conceptId": "FMA22877",
+      "kind": "muscle"
+    },
+    "FJ1539": {
+      "name": "Right semispinalis cervicis",
+      "conceptId": "FMA22874",
+      "kind": "muscle"
+    },
+    "FJ1539M": {
+      "name": "Left semispinalis cervicis",
+      "conceptId": "FMA22875",
+      "kind": "muscle"
+    },
+    "FJ1540": {
+      "name": "Right semispinalis thoracis",
+      "conceptId": "FMA22872",
+      "kind": "muscle"
+    },
+    "FJ1540M": {
+      "name": "Left semispinalis thoracis",
+      "conceptId": "FMA22873",
+      "kind": "muscle"
+    },
+    "FJ1541": {
+      "name": "Right serratus posterior inferior",
+      "conceptId": "FMA13405",
+      "kind": "muscle"
+    },
+    "FJ1541M": {
+      "name": "Left serratus posterior inferior",
+      "conceptId": "FMA13406",
+      "kind": "muscle"
+    },
+    "FJ1542": {
+      "name": "Right serratus posterior superior",
+      "conceptId": "FMA13403",
+      "kind": "muscle"
+    },
+    "FJ1542M": {
+      "name": "Left serratus posterior superior",
+      "conceptId": "FMA13404",
+      "kind": "muscle"
+    },
+    "FJ1543": {
+      "name": "spinalis",
+      "conceptId": "FMA77179",
+      "kind": "muscle"
+    },
+    "FJ1543M": {
+      "name": "Spinalis",
+      "conceptId": "FMA77179",
+      "kind": "muscle"
+    },
+    "FJ1544": {
+      "name": "Right spinalis thoracis",
+      "conceptId": "FMA22779",
+      "kind": "muscle"
+    },
+    "FJ1544M": {
+      "name": "Left spinalis thoracis",
+      "conceptId": "FMA22780",
+      "kind": "muscle"
+    },
+    "FJ1545": {
+      "name": "Right splenius capitis",
+      "conceptId": "FMA22728",
+      "kind": "muscle"
+    },
+    "FJ1545M": {
+      "name": "Left splenius capitis",
+      "conceptId": "FMA22729",
+      "kind": "muscle"
+    },
+    "FJ1546": {
+      "name": "Right splenius cervicis",
+      "conceptId": "FMA22726",
+      "kind": "muscle"
+    },
+    "FJ1546M": {
+      "name": "Left splenius cervicis",
+      "conceptId": "FMA22727",
+      "kind": "muscle"
+    },
+    "FJ1547": {
+      "name": "lateral lumbar intertransversarius",
+      "conceptId": "FMA22850",
+      "kind": "muscle"
+    },
+    "FJ1547M": {
+      "name": "Lateral lumbar intertransversarius",
+      "conceptId": "FMA22850",
+      "kind": "muscle"
+    },
+    "FJ1548": {
+      "name": "medial lumbar intertransversarius",
+      "conceptId": "FMA22851",
+      "kind": "muscle"
+    },
+    "FJ1548M": {
+      "name": "Medial lumbar intertransversarius",
+      "conceptId": "FMA22851",
+      "kind": "muscle"
+    },
+    "FJ1549": {
+      "name": "set of anterior cervical intertransversarii",
+      "conceptId": "FMA71442",
+      "kind": "muscle"
+    },
+    "FJ1549M": {
+      "name": "Set of anterior cervical intertransversarii",
+      "conceptId": "FMA71442",
+      "kind": "muscle"
+    },
+    "FJ1550": {
+      "name": "set of interspinales lumborum",
+      "conceptId": "FMA71307",
+      "kind": "muscle"
+    },
+    "FJ1550M": {
+      "name": "Set of interspinales lumborum",
+      "conceptId": "FMA71307",
+      "kind": "muscle"
+    },
+    "FJ1551": {
+      "name": "Right interspinalis thoracis",
+      "conceptId": "FMA22890",
+      "kind": "muscle"
+    },
+    "FJ1551M": {
+      "name": "Left interspinalis thoracis",
+      "conceptId": "FMA22891",
+      "kind": "muscle"
+    },
+    "FJ1552": {
+      "name": "set of interspinales cervicis",
+      "conceptId": "FMA71309",
+      "kind": "muscle"
+    },
+    "FJ1552M": {
+      "name": "Set of interspinales cervicis",
+      "conceptId": "FMA71309",
+      "kind": "muscle"
+    },
+    "FJ1553": {
+      "name": "set of posterior cervical intertransversarii",
+      "conceptId": "FMA71443",
+      "kind": "muscle"
+    },
+    "FJ1553M": {
+      "name": "Set of posterior cervical intertransversarii",
+      "conceptId": "FMA71443",
+      "kind": "muscle"
+    },
+    "FJ1554": {
+      "name": "Transverse part of right trapezius",
+      "conceptId": "FMA33584",
+      "kind": "muscle"
+    },
+    "FJ1554M": {
+      "name": "Transverse part of left trapezius",
+      "conceptId": "FMA33585",
+      "kind": "muscle"
+    },
+    "FJ1555": {
+      "name": "Left digastric",
+      "conceptId": "FMA46293",
+      "kind": "muscle"
+    },
+    "FJ1556": {
+      "name": "Right digastric",
+      "conceptId": "FMA46292",
+      "kind": "muscle"
+    },
+    "FJ1557": {
+      "name": "Inferior oblique part of left longus colli",
+      "conceptId": "FMA46288",
+      "kind": "muscle"
+    },
+    "FJ1558": {
+      "name": "Left platysma",
+      "conceptId": "FMA45740",
+      "kind": "muscle"
+    },
+    "FJ1559": {
+      "name": "Left geniohyoid",
+      "conceptId": "FMA46327",
+      "kind": "muscle"
+    },
+    "FJ1560": {
+      "name": "Left digastric",
+      "conceptId": "FMA46293",
+      "kind": "muscle"
+    },
+    "FJ1561": {
+      "name": "Left longus capitis",
+      "conceptId": "FMA46310",
+      "kind": "muscle"
+    },
+    "FJ1562": {
+      "name": "Left mylohyoid",
+      "conceptId": "FMA46322",
+      "kind": "muscle"
+    },
+    "FJ1563": {
+      "name": "Left obliquus capitis inferior",
+      "conceptId": "FMA32537",
+      "kind": "muscle"
+    },
+    "FJ1564": {
+      "name": "Left obliquus capitis superior",
+      "conceptId": "FMA32535",
+      "kind": "muscle"
+    },
+    "FJ1565": {
+      "name": "Left omohyoid",
+      "conceptId": "FMA13349",
+      "kind": "muscle"
+    },
+    "FJ1566": {
+      "name": "Left rectus capitis anterior",
+      "conceptId": "FMA46314",
+      "kind": "muscle"
+    },
+    "FJ1567": {
+      "name": "Left rectus capitis posterior major",
+      "conceptId": "FMA32531",
+      "kind": "muscle"
+    },
+    "FJ1568": {
+      "name": "Left rectus capitis posterior minor",
+      "conceptId": "FMA32533",
+      "kind": "muscle"
+    },
+    "FJ1569": {
+      "name": "Left rectus capitis lateralis",
+      "conceptId": "FMA46318",
+      "kind": "muscle"
+    },
+    "FJ1570": {
+      "name": "Left scalenus anterior",
+      "conceptId": "FMA13393",
+      "kind": "muscle"
+    },
+    "FJ1571": {
+      "name": "Left scalenus medius",
+      "conceptId": "FMA13391",
+      "kind": "muscle"
+    },
+    "FJ1572": {
+      "name": "Left scalenus posterior",
+      "conceptId": "FMA13389",
+      "kind": "muscle"
+    },
+    "FJ1573": {
+      "name": "Left sternocleidomastoid",
+      "conceptId": "FMA13409",
+      "kind": "muscle"
+    },
+    "FJ1574": {
+      "name": "Left sternohyoid",
+      "conceptId": "FMA13347",
+      "kind": "muscle"
+    },
+    "FJ1575": {
+      "name": "Left sternothyroid",
+      "conceptId": "FMA13351",
+      "kind": "muscle"
+    },
+    "FJ1576": {
+      "name": "Left stylohyoid",
+      "conceptId": "FMA45827",
+      "kind": "muscle"
+    },
+    "FJ1577": {
+      "name": "Left thyrohyoid",
+      "conceptId": "FMA13353",
+      "kind": "muscle"
+    },
+    "FJ1578": {
+      "name": "Left digastric",
+      "conceptId": "FMA46293",
+      "kind": "muscle"
+    },
+    "FJ1579": {
+      "name": "Right digastric",
+      "conceptId": "FMA46292",
+      "kind": "muscle"
+    },
+    "FJ1580": {
+      "name": "Right geniohyoid",
+      "conceptId": "FMA46326",
+      "kind": "muscle"
+    },
+    "FJ1582": {
+      "name": "Right longus capitis",
+      "conceptId": "FMA46309",
+      "kind": "muscle"
+    },
+    "FJ1583": {
+      "name": "Right mylohyoid",
+      "conceptId": "FMA46321",
+      "kind": "muscle"
+    },
+    "FJ1584": {
+      "name": "Right obliquus capitis inferior",
+      "conceptId": "FMA32536",
+      "kind": "muscle"
+    },
+    "FJ1585": {
+      "name": "Right obliquus capitis superior",
+      "conceptId": "FMA32534",
+      "kind": "muscle"
+    },
+    "FJ1586": {
+      "name": "Right omohyoid",
+      "conceptId": "FMA13348",
+      "kind": "muscle"
+    },
+    "FJ1587": {
+      "name": "Right platysma",
+      "conceptId": "FMA45739",
+      "kind": "muscle"
+    },
+    "FJ1588": {
+      "name": "Right rectus capitis anterior",
+      "conceptId": "FMA46313",
+      "kind": "muscle"
+    },
+    "FJ1589": {
+      "name": "Right rectus capitis posterior major",
+      "conceptId": "FMA32530",
+      "kind": "muscle"
+    },
+    "FJ1590": {
+      "name": "Right rectus capitis posterior minor",
+      "conceptId": "FMA32532",
+      "kind": "muscle"
+    },
+    "FJ1591": {
+      "name": "Right rectus capitis lateralis",
+      "conceptId": "FMA46317",
+      "kind": "muscle"
+    },
+    "FJ1592": {
+      "name": "Right scalenus anterior",
+      "conceptId": "FMA13392",
+      "kind": "muscle"
+    },
+    "FJ1593": {
+      "name": "Right scalenus medius",
+      "conceptId": "FMA13390",
+      "kind": "muscle"
+    },
+    "FJ1594": {
+      "name": "Right scalenus posterior",
+      "conceptId": "FMA13388",
+      "kind": "muscle"
+    },
+    "FJ1595": {
+      "name": "Right sternocleidomastoid",
+      "conceptId": "FMA13408",
+      "kind": "muscle"
+    },
+    "FJ1596": {
+      "name": "Right sternohyoid",
+      "conceptId": "FMA13346",
+      "kind": "muscle"
+    },
+    "FJ1597": {
+      "name": "Right sternothyroid",
+      "conceptId": "FMA13350",
+      "kind": "muscle"
+    },
+    "FJ1598": {
+      "name": "Right stylohyoid",
+      "conceptId": "FMA45826",
+      "kind": "muscle"
+    },
+    "FJ1599": {
+      "name": "Right thyrohyoid",
+      "conceptId": "FMA13352",
+      "kind": "muscle"
+    },
+    "FJ1600": {
+      "name": "Superior oblique part of left longus colli",
+      "conceptId": "FMA46284",
+      "kind": "muscle"
+    },
+    "FJ1601": {
+      "name": "Vertical intermediate part of left longus colli",
+      "conceptId": "FMA46286",
+      "kind": "muscle"
+    },
+    "FJ1654": {
+      "name": "Right anterior cerebral artery",
+      "conceptId": "FMA50029",
+      "kind": "artery"
+    },
+    "FJ1654M": {
+      "name": "Left anterior cerebral artery",
+      "conceptId": "FMA50030",
+      "kind": "artery"
+    },
+    "FJ1655": {
+      "name": "Anterior communicating artery",
+      "conceptId": "FMA50169",
+      "kind": "artery"
+    },
+    "FJ1656": {
+      "name": "anterior inferior cerebellar artery",
+      "conceptId": "FMA50544",
+      "kind": "artery"
+    },
+    "FJ1656M": {
+      "name": "Anterior inferior cerebellar artery",
+      "conceptId": "FMA50544",
+      "kind": "artery"
+    },
+    "FJ1657": {
+      "name": "Right anterior spinal artery",
+      "conceptId": "FMA50532",
+      "kind": "artery"
+    },
+    "FJ1657M": {
+      "name": "Left anterior spinal artery",
+      "conceptId": "FMA50533",
+      "kind": "artery"
+    },
+    "FJ1658": {
+      "name": "Right anterior choroidal artery",
+      "conceptId": "FMA50088",
+      "kind": "artery"
+    },
+    "FJ1658M": {
+      "name": "Left anterior choroidal artery",
+      "conceptId": "FMA50089",
+      "kind": "artery"
+    },
+    "FJ1659": {
+      "name": "Right anterior temporal artery",
+      "conceptId": "FMA50383",
+      "kind": "artery"
+    },
+    "FJ1659M": {
+      "name": "Left anterior temporal artery",
+      "conceptId": "FMA50384",
+      "kind": "artery"
+    },
+    "FJ1660": {
+      "name": "Insular part of right middle cerebral artery",
+      "conceptId": "FMA50369",
+      "kind": "artery"
+    },
+    "FJ1660M": {
+      "name": "Insular part of left middle cerebral artery",
+      "conceptId": "FMA50370",
+      "kind": "artery"
+    },
+    "FJ1661": {
+      "name": "Anterior temporal branch of right lateral occipital artery",
+      "conceptId": "FMA50678",
+      "kind": "artery"
+    },
+    "FJ1661M": {
+      "name": "Anterior temporal branch of left lateral occipital artery",
+      "conceptId": "FMA50679",
+      "kind": "artery"
+    },
+    "FJ1662": {
+      "name": "Anterolateral central branch of right middle cerebral artery",
+      "conceptId": "FMA50377",
+      "kind": "artery"
+    },
+    "FJ1662M": {
+      "name": "Anterolateral central branch of left middle cerebral artery",
+      "conceptId": "FMA50378",
+      "kind": "artery"
+    },
+    "FJ1663": {
+      "name": "Anterolateral central branch of right middle cerebral artery",
+      "conceptId": "FMA50377",
+      "kind": "artery"
+    },
+    "FJ1663M": {
+      "name": "Anterolateral central branch of left middle cerebral artery",
+      "conceptId": "FMA50378",
+      "kind": "artery"
+    },
+    "FJ1664": {
+      "name": "artery of central sulcus",
+      "conceptId": "FMA77439",
+      "kind": "artery"
+    },
+    "FJ1664M": {
+      "name": "Artery of central sulcus",
+      "conceptId": "FMA77439",
+      "kind": "artery"
+    },
+    "FJ1665": {
+      "name": "artery of central sulcus",
+      "conceptId": "FMA77439",
+      "kind": "artery"
+    },
+    "FJ1665M": {
+      "name": "Artery of central sulcus",
+      "conceptId": "FMA77439",
+      "kind": "artery"
+    },
+    "FJ1666": {
+      "name": "Artery of right postcentral sulcus",
+      "conceptId": "FMA50483",
+      "kind": "artery"
+    },
+    "FJ1666M": {
+      "name": "Artery of left postcentral sulcus",
+      "conceptId": "FMA50484",
+      "kind": "artery"
+    },
+    "FJ1667": {
+      "name": "Right anterior parietal artery",
+      "conceptId": "FMA50486",
+      "kind": "artery"
+    },
+    "FJ1667M": {
+      "name": "Left anterior parietal artery",
+      "conceptId": "FMA50487",
+      "kind": "artery"
+    },
+    "FJ1668": {
+      "name": "Artery of right precentral sulcus",
+      "conceptId": "FMA50480",
+      "kind": "artery"
+    },
+    "FJ1668M": {
+      "name": "Artery of left precentral sulcus",
+      "conceptId": "FMA50481",
+      "kind": "artery"
+    },
+    "FJ1669": {
+      "name": "Artery of right precentral sulcus",
+      "conceptId": "FMA50480",
+      "kind": "artery"
+    },
+    "FJ1669M": {
+      "name": "Artery of left precentral sulcus",
+      "conceptId": "FMA50481",
+      "kind": "artery"
+    },
+    "FJ1670": {
+      "name": "Artery of right precentral sulcus",
+      "conceptId": "FMA50480",
+      "kind": "artery"
+    },
+    "FJ1670M": {
+      "name": "Artery of left precentral sulcus",
+      "conceptId": "FMA50481",
+      "kind": "artery"
+    },
+    "FJ1671": {
+      "name": "Precuneal branch of right pericallosal artery",
+      "conceptId": "FMA50361",
+      "kind": "artery"
+    },
+    "FJ1671M": {
+      "name": "Precuneal branch of left pericallosal artery",
+      "conceptId": "FMA50362",
+      "kind": "artery"
+    },
+    "FJ1672": {
+      "name": "Basilar artery",
+      "conceptId": "FMA50542",
+      "kind": "artery"
+    },
+    "FJ1673": {
+      "name": "Branch of right middle cerebral artery to right angular gyrus",
+      "conceptId": "FMA50476",
+      "kind": "artery"
+    },
+    "FJ1673M": {
+      "name": "Branch of left middle cerebral artery to left angular gyrus",
+      "conceptId": "FMA50477",
+      "kind": "artery"
+    },
+    "FJ1674": {
+      "name": "Branch of right anterior choroidal artery to posterior limb of right internal capsule",
+      "conceptId": "FMA50146",
+      "kind": "artery"
+    },
+    "FJ1674M": {
+      "name": "Branch of left anterior choroidal artery to posterior limb of left internal capsule",
+      "conceptId": "FMA50147",
+      "kind": "artery"
+    },
+    "FJ1675": {
+      "name": "Right thalamogeniculate artery",
+      "conceptId": "FMA50670",
+      "kind": "artery"
+    },
+    "FJ1675M": {
+      "name": "Left thalamogeniculate artery",
+      "conceptId": "FMA50671",
+      "kind": "artery"
+    },
+    "FJ1676": {
+      "name": "Right callosomarginal artery",
+      "conceptId": "FMA50347",
+      "kind": "artery"
+    },
+    "FJ1676M": {
+      "name": "Left callosomarginal artery",
+      "conceptId": "FMA50348",
+      "kind": "artery"
+    },
+    "FJ1677": {
+      "name": "Right splenial artery",
+      "conceptId": "FMA50684",
+      "kind": "artery"
+    },
+    "FJ1677M": {
+      "name": "Left splenial artery",
+      "conceptId": "FMA50685",
+      "kind": "artery"
+    },
+    "FJ1678": {
+      "name": "Right splenial artery",
+      "conceptId": "FMA50684",
+      "kind": "artery"
+    },
+    "FJ1678M": {
+      "name": "Left splenial artery",
+      "conceptId": "FMA50685",
+      "kind": "artery"
+    },
+    "FJ1679": {
+      "name": "Hypothalamic branch of right posterior communicating artery",
+      "conceptId": "FMA50428",
+      "kind": "artery"
+    },
+    "FJ1679M": {
+      "name": "Hypothalamic branch of left posterior communicating artery",
+      "conceptId": "FMA50429",
+      "kind": "artery"
+    },
+    "FJ1680": {
+      "name": "Middle temporal branch of right lateral occipital artery",
+      "conceptId": "FMA50680",
+      "kind": "artery"
+    },
+    "FJ1680M": {
+      "name": "Middle temporal branch of left lateral occipital artery",
+      "conceptId": "FMA50681",
+      "kind": "artery"
+    },
+    "FJ1681": {
+      "name": "Intermediomedial branch of right callosomarginal artery",
+      "conceptId": "FMA50351",
+      "kind": "artery"
+    },
+    "FJ1681M": {
+      "name": "Intermediomedial branch of left callosomarginal artery",
+      "conceptId": "FMA50352",
+      "kind": "artery"
+    },
+    "FJ1682": {
+      "name": "Right internal carotid artery",
+      "conceptId": "FMA3949",
+      "kind": "artery"
+    },
+    "FJ1682M": {
+      "name": "Left internal carotid artery",
+      "conceptId": "FMA4062",
+      "kind": "artery"
+    },
+    "FJ1683": {
+      "name": "Lateral branch of right superior cerebellar artery",
+      "conceptId": "FMA50578",
+      "kind": "artery"
+    },
+    "FJ1683M": {
+      "name": "Lateral branch of left superior cerebellar artery",
+      "conceptId": "FMA50579",
+      "kind": "artery"
+    },
+    "FJ1684": {
+      "name": "Lateral branch of right pontine artery",
+      "conceptId": "FMA50568",
+      "kind": "artery"
+    },
+    "FJ1684M": {
+      "name": "Lateral branch of left pontine artery",
+      "conceptId": "FMA50569",
+      "kind": "artery"
+    },
+    "FJ1685": {
+      "name": "Right lateral frontobasal artery",
+      "conceptId": "FMA50443",
+      "kind": "artery"
+    },
+    "FJ1685M": {
+      "name": "Left lateral frontobasal artery",
+      "conceptId": "FMA50444",
+      "kind": "artery"
+    },
+    "FJ1686": {
+      "name": "Right lateral frontobasal artery",
+      "conceptId": "FMA50443",
+      "kind": "artery"
+    },
+    "FJ1686M": {
+      "name": "Left lateral frontobasal artery",
+      "conceptId": "FMA50444",
+      "kind": "artery"
+    },
+    "FJ1687": {
+      "name": "Right lateral occipital artery",
+      "conceptId": "FMA50643",
+      "kind": "artery"
+    },
+    "FJ1687M": {
+      "name": "Left lateral occipital artery",
+      "conceptId": "FMA50644",
+      "kind": "artery"
+    },
+    "FJ1688": {
+      "name": "Medial branch of right superior cerebellar artery",
+      "conceptId": "FMA50581",
+      "kind": "artery"
+    },
+    "FJ1688M": {
+      "name": "Medial branch of left superior cerebellar artery",
+      "conceptId": "FMA50582",
+      "kind": "artery"
+    },
+    "FJ1689": {
+      "name": "Medial branch of right pontine artery",
+      "conceptId": "FMA50566",
+      "kind": "artery"
+    },
+    "FJ1689M": {
+      "name": "Medial branch of left pontine artery",
+      "conceptId": "FMA50567",
+      "kind": "artery"
+    },
+    "FJ1690": {
+      "name": "Right medial frontobasal artery",
+      "conceptId": "FMA50343",
+      "kind": "artery"
+    },
+    "FJ1690M": {
+      "name": "Left medial frontobasal artery",
+      "conceptId": "FMA50344",
+      "kind": "artery"
+    },
+    "FJ1691": {
+      "name": "Right medial occipital artery",
+      "conceptId": "FMA50645",
+      "kind": "artery"
+    },
+    "FJ1691M": {
+      "name": "Left medial occipital artery",
+      "conceptId": "FMA50646",
+      "kind": "artery"
+    },
+    "FJ1692": {
+      "name": "Sphenoid part of right middle cerebral artery",
+      "conceptId": "FMA50366",
+      "kind": "artery"
+    },
+    "FJ1692M": {
+      "name": "Sphenoid part of left middle cerebral artery",
+      "conceptId": "FMA50367",
+      "kind": "artery"
+    },
+    "FJ1693": {
+      "name": "Middle temporal branch of right middle cerebral artery",
+      "conceptId": "FMA50467",
+      "kind": "artery"
+    },
+    "FJ1693M": {
+      "name": "Middle temporal branch of left middle cerebral artery",
+      "conceptId": "FMA50468",
+      "kind": "artery"
+    },
+    "FJ1694": {
+      "name": "Insular part of right middle cerebral artery",
+      "conceptId": "FMA50369",
+      "kind": "artery"
+    },
+    "FJ1694M": {
+      "name": "Insular part of left middle cerebral artery",
+      "conceptId": "FMA50370",
+      "kind": "artery"
+    },
+    "FJ1695": {
+      "name": "Right ophthalmic artery",
+      "conceptId": "FMA49869",
+      "kind": "artery"
+    },
+    "FJ1695M": {
+      "name": "Left ophthalmic artery",
+      "conceptId": "FMA49870",
+      "kind": "artery"
+    },
+    "FJ1696": {
+      "name": "Paracentral branch of right callosomarginal artery",
+      "conceptId": "FMA50357",
+      "kind": "artery"
+    },
+    "FJ1696M": {
+      "name": "Paracentral branch of left callosomarginal artery",
+      "conceptId": "FMA50358",
+      "kind": "artery"
+    },
+    "FJ1697": {
+      "name": "Paracentral branch of right callosomarginal artery",
+      "conceptId": "FMA50357",
+      "kind": "artery"
+    },
+    "FJ1697M": {
+      "name": "Paracentral branch of left callosomarginal artery",
+      "conceptId": "FMA50358",
+      "kind": "artery"
+    },
+    "FJ1698": {
+      "name": "Paracentral branch of right callosomarginal artery",
+      "conceptId": "FMA50357",
+      "kind": "artery"
+    },
+    "FJ1698M": {
+      "name": "Paracentral branch of left callosomarginal artery",
+      "conceptId": "FMA50358",
+      "kind": "artery"
+    },
+    "FJ1699": {
+      "name": "Right pericallosal artery",
+      "conceptId": "FMA50359",
+      "kind": "artery"
+    },
+    "FJ1699M": {
+      "name": "Left pericallosal artery",
+      "conceptId": "FMA50360",
+      "kind": "artery"
+    },
+    "FJ1700": {
+      "name": "Right posterior inferior cerebellar artery",
+      "conceptId": "FMA50519",
+      "kind": "artery"
+    },
+    "FJ1700M": {
+      "name": "Left posterior inferior cerebellar artery",
+      "conceptId": "FMA50520",
+      "kind": "artery"
+    },
+    "FJ1701": {
+      "name": "Right posterior inferior cerebellar artery",
+      "conceptId": "FMA50519",
+      "kind": "artery"
+    },
+    "FJ1701M": {
+      "name": "Left posterior inferior cerebellar artery",
+      "conceptId": "FMA50520",
+      "kind": "artery"
+    },
+    "FJ1702": {
+      "name": "Right posterior inferior cerebellar artery",
+      "conceptId": "FMA50519",
+      "kind": "artery"
+    },
+    "FJ1702M": {
+      "name": "Left posterior inferior cerebellar artery",
+      "conceptId": "FMA50520",
+      "kind": "artery"
+    },
+    "FJ1703": {
+      "name": "Right posterior inferior cerebellar artery",
+      "conceptId": "FMA50519",
+      "kind": "artery"
+    },
+    "FJ1703M": {
+      "name": "Left posterior inferior cerebellar artery",
+      "conceptId": "FMA50520",
+      "kind": "artery"
+    },
+    "FJ1704": {
+      "name": "Right posterior inferior cerebellar artery",
+      "conceptId": "FMA50519",
+      "kind": "artery"
+    },
+    "FJ1704M": {
+      "name": "Left posterior inferior cerebellar artery",
+      "conceptId": "FMA50520",
+      "kind": "artery"
+    },
+    "FJ1705": {
+      "name": "Right posterior inferior cerebellar artery",
+      "conceptId": "FMA50519",
+      "kind": "artery"
+    },
+    "FJ1705M": {
+      "name": "Left posterior inferior cerebellar artery",
+      "conceptId": "FMA50520",
+      "kind": "artery"
+    },
+    "FJ1706": {
+      "name": "Right posterior inferior cerebellar artery",
+      "conceptId": "FMA50519",
+      "kind": "artery"
+    },
+    "FJ1706M": {
+      "name": "Left posterior inferior cerebellar artery",
+      "conceptId": "FMA50520",
+      "kind": "artery"
+    },
+    "FJ1707": {
+      "name": "Right posterior inferior cerebellar artery",
+      "conceptId": "FMA50519",
+      "kind": "artery"
+    },
+    "FJ1707M": {
+      "name": "Left posterior inferior cerebellar artery",
+      "conceptId": "FMA50520",
+      "kind": "artery"
+    },
+    "FJ1708": {
+      "name": "Right posterior inferior cerebellar artery",
+      "conceptId": "FMA50519",
+      "kind": "artery"
+    },
+    "FJ1708M": {
+      "name": "Left posterior inferior cerebellar artery",
+      "conceptId": "FMA50520",
+      "kind": "artery"
+    },
+    "FJ1709": {
+      "name": "Right posterior inferior cerebellar artery",
+      "conceptId": "FMA50519",
+      "kind": "artery"
+    },
+    "FJ1709M": {
+      "name": "Left posterior inferior cerebellar artery",
+      "conceptId": "FMA50520",
+      "kind": "artery"
+    },
+    "FJ1710": {
+      "name": "Right posterior inferior cerebellar artery",
+      "conceptId": "FMA50519",
+      "kind": "artery"
+    },
+    "FJ1710M": {
+      "name": "Left posterior inferior cerebellar artery",
+      "conceptId": "FMA50520",
+      "kind": "artery"
+    },
+    "FJ1711": {
+      "name": "Right posterior inferior cerebellar artery",
+      "conceptId": "FMA50519",
+      "kind": "artery"
+    },
+    "FJ1711M": {
+      "name": "Left posterior inferior cerebellar artery",
+      "conceptId": "FMA50520",
+      "kind": "artery"
+    },
+    "FJ1712": {
+      "name": "Right polar temporal artery",
+      "conceptId": "FMA50380",
+      "kind": "artery"
+    },
+    "FJ1712M": {
+      "name": "Left polar temporal artery",
+      "conceptId": "FMA50381",
+      "kind": "artery"
+    },
+    "FJ1713": {
+      "name": "Right posterior communicating artery",
+      "conceptId": "FMA50085",
+      "kind": "artery"
+    },
+    "FJ1713M": {
+      "name": "Left posterior communicating artery",
+      "conceptId": "FMA50086",
+      "kind": "artery"
+    },
+    "FJ1714": {
+      "name": "Postcommunicating part of right posterior cerebral artery",
+      "conceptId": "FMA50641",
+      "kind": "artery"
+    },
+    "FJ1714M": {
+      "name": "Postcommunicating part of left posterior cerebral artery",
+      "conceptId": "FMA50642",
+      "kind": "artery"
+    },
+    "FJ1715": {
+      "name": "Right posterior inferior cerebellar artery",
+      "conceptId": "FMA50519",
+      "kind": "artery"
+    },
+    "FJ1715M": {
+      "name": "Left posterior inferior cerebellar artery",
+      "conceptId": "FMA50520",
+      "kind": "artery"
+    },
+    "FJ1716": {
+      "name": "Right posterior parietal artery",
+      "conceptId": "FMA50489",
+      "kind": "artery"
+    },
+    "FJ1716M": {
+      "name": "Left posterior parietal artery",
+      "conceptId": "FMA50490",
+      "kind": "artery"
+    },
+    "FJ1717": {
+      "name": "Posterior temporal branch of right middle cerebral artery",
+      "conceptId": "FMA50470",
+      "kind": "artery"
+    },
+    "FJ1717M": {
+      "name": "Posterior temporal branch of left middle cerebral artery",
+      "conceptId": "FMA50471",
+      "kind": "artery"
+    },
+    "FJ1718": {
+      "name": "Trunk of inferior terminal branch of right middle cerebral artery",
+      "conceptId": "FMA76128",
+      "kind": "artery"
+    },
+    "FJ1718M": {
+      "name": "Trunk of inferior terminal branch of left middle cerebral artery",
+      "conceptId": "FMA76129",
+      "kind": "artery"
+    },
+    "FJ1719": {
+      "name": "set of posterior temporal branches of lateral occipital artery",
+      "conceptId": "FMA71502",
+      "kind": "artery"
+    },
+    "FJ1719M": {
+      "name": "Set of posterior temporal branches of lateral occipital artery",
+      "conceptId": "FMA71502",
+      "kind": "artery"
+    },
+    "FJ1720": {
+      "name": "Right thalamoperforating artery",
+      "conceptId": "FMA50664",
+      "kind": "artery"
+    },
+    "FJ1720M": {
+      "name": "Left thalamoperforating artery",
+      "conceptId": "FMA50665",
+      "kind": "artery"
+    },
+    "FJ1721": {
+      "name": "Posteromedial central branch of right posterior cerebral artery",
+      "conceptId": "FMA50660",
+      "kind": "artery"
+    },
+    "FJ1721M": {
+      "name": "Posteromedial central branch of left posterior cerebral artery",
+      "conceptId": "FMA50661",
+      "kind": "artery"
+    },
+    "FJ1722": {
+      "name": "Posteromedial branch of right callosomarginal artery",
+      "conceptId": "FMA50353",
+      "kind": "artery"
+    },
+    "FJ1722M": {
+      "name": "Posteromedial branch of left callosomarginal artery",
+      "conceptId": "FMA50354",
+      "kind": "artery"
+    },
+    "FJ1723": {
+      "name": "Precommunicating part of right posterior cerebral artery",
+      "conceptId": "FMA50639",
+      "kind": "artery"
+    },
+    "FJ1723M": {
+      "name": "Precommunicating part of left posterior cerebral artery",
+      "conceptId": "FMA50640",
+      "kind": "artery"
+    },
+    "FJ1724": {
+      "name": "Right prefrontal artery",
+      "conceptId": "FMA50445",
+      "kind": "artery"
+    },
+    "FJ1724M": {
+      "name": "Left prefrontal artery",
+      "conceptId": "FMA50478",
+      "kind": "artery"
+    },
+    "FJ1725": {
+      "name": "Right vertebral artery",
+      "conceptId": "FMA3958",
+      "kind": "artery"
+    },
+    "FJ1725M": {
+      "name": "Left vertebral artery",
+      "conceptId": "FMA4066",
+      "kind": "artery"
+    },
+    "FJ1726": {
+      "name": "Right superior cerebellar artery",
+      "conceptId": "FMA50574",
+      "kind": "artery"
+    },
+    "FJ1726M": {
+      "name": "Left superior cerebellar artery",
+      "conceptId": "FMA50575",
+      "kind": "artery"
+    },
+    "FJ1727": {
+      "name": "Right posterior medial choroidal artery",
+      "conceptId": "FMA50672",
+      "kind": "artery"
+    },
+    "FJ1727M": {
+      "name": "Left posterior medial choroidal artery",
+      "conceptId": "FMA50673",
+      "kind": "artery"
+    },
+    "FJ1728": {
+      "name": "Superior vermian branch of medial branch of right superior cerebellar artery",
+      "conceptId": "FMA50696",
+      "kind": "artery"
+    },
+    "FJ1728M": {
+      "name": "Superior vermian branch of medial branch of left superior cerebellar artery",
+      "conceptId": "FMA50697",
+      "kind": "artery"
+    },
+    "FJ1729": {
+      "name": "Temporo-occipital branch of right middle cerebral artery",
+      "conceptId": "FMA50473",
+      "kind": "artery"
+    },
+    "FJ1729M": {
+      "name": "Temporo-occipital branch of left middle cerebral artery",
+      "conceptId": "FMA50474",
+      "kind": "artery"
+    },
+    "FJ1844": {
+      "name": "Basilar artery",
+      "conceptId": "FMA50542",
+      "kind": "artery"
+    },
+    "FJ1846": {
+      "name": "Celiac artery",
+      "conceptId": "FMA50737",
+      "kind": "artery"
+    },
+    "FJ1853": {
+      "name": "Hepatic portal vein",
+      "conceptId": "FMA50735",
+      "kind": "vein"
+    },
+    "FJ1867": {
+      "name": "Tributary of middle hepatic vein",
+      "conceptId": "FMA15793",
+      "kind": "vein"
+    },
+    "FJ1874": {
+      "name": "Left lobe branch of left hepatic artery",
+      "conceptId": "FMA71710",
+      "kind": "artery"
+    },
+    "FJ1893": {
+      "name": "Left portal vein",
+      "conceptId": "FMA15415",
+      "kind": "vein"
+    },
+    "FJ1913": {
+      "name": "Right portal vein",
+      "conceptId": "FMA15414",
+      "kind": "vein"
+    },
+    "FJ1914": {
+      "name": "Caudate lobe branch of right portal vein",
+      "conceptId": "FMA82706",
+      "kind": "vein"
+    },
+    "FJ1916": {
+      "name": "Caudate lobe branch of right hepatic artery",
+      "conceptId": "FMA70447",
+      "kind": "artery"
+    },
+    "FJ1924": {
+      "name": "Right lobe branch of right hepatic artery",
+      "conceptId": "FMA71708",
+      "kind": "artery"
+    },
+    "FJ1928": {
+      "name": "Superior mesenteric artery",
+      "conceptId": "FMA14749",
+      "kind": "artery"
+    },
+    "FJ1931": {
+      "name": "Descending thoracic aorta",
+      "conceptId": "FMA87217",
+      "kind": "artery"
+    },
+    "FJ1932": {
+      "name": "Abdominal aorta",
+      "conceptId": "FMA3789",
+      "kind": "artery"
+    },
+    "FJ1933": {
+      "name": "Bronchial artery",
+      "conceptId": "FMA68109",
+      "kind": "artery"
+    },
+    "FJ1934": {
+      "name": "Esophageal artery",
+      "conceptId": "FMA4149",
+      "kind": "artery"
+    },
+    "FJ1935": {
+      "name": "Right superior intercostal artery",
+      "conceptId": "FMA5042",
+      "kind": "artery"
+    },
+    "FJ1936": {
+      "name": "Right superior epigastric artery",
+      "conceptId": "FMA3988",
+      "kind": "artery"
+    },
+    "FJ1937": {
+      "name": "Right internal thoracic artery",
+      "conceptId": "FMA3969",
+      "kind": "artery"
+    },
+    "FJ1938": {
+      "name": "Right lateral thoracic artery",
+      "conceptId": "FMA22675",
+      "kind": "artery"
+    },
+    "FJ1939": {
+      "name": "Right first posterior intercostal artery",
+      "conceptId": "FMA66242",
+      "kind": "artery"
+    },
+    "FJ1950": {
+      "name": "Right second posterior intercostal artery",
+      "conceptId": "FMA5041",
+      "kind": "artery"
+    },
+    "FJ1961": {
+      "name": "Posterior intercostal arteries",
+      "conceptId": "FMA63822",
+      "kind": "artery"
+    },
+    "FJ1967": {
+      "name": "Right subcostal artery",
+      "conceptId": "FMA4634",
+      "kind": "artery"
+    },
+    "FJ1969": {
+      "name": "Right musculophrenic artery",
+      "conceptId": "FMA10692",
+      "kind": "artery"
+    },
+    "FJ1970": {
+      "name": "Left superior intercostal artery",
+      "conceptId": "FMA4088",
+      "kind": "artery"
+    },
+    "FJ1971": {
+      "name": "Left superior epigastric artery",
+      "conceptId": "FMA4083",
+      "kind": "artery"
+    },
+    "FJ1972": {
+      "name": "Left internal thoracic artery",
+      "conceptId": "FMA4068",
+      "kind": "artery"
+    },
+    "FJ1973": {
+      "name": "Left first posterior intercostal artery",
+      "conceptId": "FMA66243",
+      "kind": "artery"
+    },
+    "FJ1974": {
+      "name": "Left second posterior intercostal artery",
+      "conceptId": "FMA4112",
+      "kind": "artery"
+    },
+    "FJ1975": {
+      "name": "Posterior intercostal arteries",
+      "conceptId": "FMA63822",
+      "kind": "artery"
+    },
+    "FJ1976": {
+      "name": "Left lateral thoracic artery",
+      "conceptId": "FMA22676",
+      "kind": "artery"
+    },
+    "FJ1977": {
+      "name": "Left subcostal artery",
+      "conceptId": "FMA4654",
+      "kind": "artery"
+    },
+    "FJ1979": {
+      "name": "Left musculophrenic artery",
+      "conceptId": "FMA4077",
+      "kind": "artery"
+    },
+    "FJ1981": {
+      "name": "Accessory hemiazygos vein",
+      "conceptId": "FMA5011",
+      "kind": "vein"
+    },
+    "FJ1985": {
+      "name": "Set of anterior intercostal veins",
+      "conceptId": "FMA70839",
+      "kind": "vein"
+    },
+    "FJ1986": {
+      "name": "Left superior intercostal vein",
+      "conceptId": "FMA4797",
+      "kind": "vein"
+    },
+    "FJ1987": {
+      "name": "Left subcostal vein",
+      "conceptId": "FMA4951",
+      "kind": "vein"
+    },
+    "FJ1988": {
+      "name": "Left musculophrenic vein",
+      "conceptId": "FMA4786",
+      "kind": "vein"
+    },
+    "FJ1991": {
+      "name": "Right superior intercostal vein",
+      "conceptId": "FMA4877",
+      "kind": "vein"
+    },
+    "FJ1993": {
+      "name": "Right internal thoracic vein",
+      "conceptId": "FMA4758",
+      "kind": "vein"
+    },
+    "FJ1994": {
+      "name": "Set of anterior intercostal veins",
+      "conceptId": "FMA70839",
+      "kind": "vein"
+    },
+    "FJ1995": {
+      "name": "Right subcostal vein",
+      "conceptId": "FMA4844",
+      "kind": "vein"
+    },
+    "FJ1996": {
+      "name": "Right musculophrenic vein",
+      "conceptId": "FMA4772",
+      "kind": "vein"
+    },
+    "FJ2011": {
+      "name": "Superior mesenteric artery",
+      "conceptId": "FMA14749",
+      "kind": "artery"
+    },
+    "FJ2013": {
+      "name": "Celiac artery",
+      "conceptId": "FMA50737",
+      "kind": "artery"
+    },
+    "FJ2025": {
+      "name": "Marginal colic artery",
+      "conceptId": "FMA14824",
+      "kind": "artery"
+    },
+    "FJ2034": {
+      "name": "Ileal branch of inferior branch of ileocolic artery",
+      "conceptId": "FMA14819",
+      "kind": "artery"
+    },
+    "FJ2038": {
+      "name": "Right renal artery",
+      "conceptId": "FMA14752",
+      "kind": "artery"
+    },
+    "FJ2041": {
+      "name": "Right anterior segmental artery",
+      "conceptId": "FMA8620",
+      "kind": "artery"
+    },
+    "FJ2042": {
+      "name": "Superior segmental branch of right renal artery",
+      "conceptId": "FMA86340",
+      "kind": "artery"
+    },
+    "FJ2043": {
+      "name": "Inferior segmental branch of right renal artery",
+      "conceptId": "FMA86346",
+      "kind": "artery"
+    },
+    "FJ2044": {
+      "name": "Right anterior segmental artery",
+      "conceptId": "FMA8620",
+      "kind": "artery"
+    },
+    "FJ2045": {
+      "name": "Posterior segmental branch of right renal artery",
+      "conceptId": "FMA86348",
+      "kind": "artery"
+    },
+    "FJ2046": {
+      "name": "Left renal artery",
+      "conceptId": "FMA14753",
+      "kind": "artery"
+    },
+    "FJ2049": {
+      "name": "Inferior segmental branch of left renal artery",
+      "conceptId": "FMA86347",
+      "kind": "artery"
+    },
+    "FJ2052": {
+      "name": "Superior segmental branch of left renal artery",
+      "conceptId": "FMA86341",
+      "kind": "artery"
+    },
+    "FJ2053": {
+      "name": "Posterior segmental branch of left renal artery",
+      "conceptId": "FMA86349",
+      "kind": "artery"
+    },
+    "FJ2054": {
+      "name": "Posterior segmental branch of left renal artery",
+      "conceptId": "FMA86349",
+      "kind": "artery"
+    },
+    "FJ2055": {
+      "name": "Right dorsalis pedis artery",
+      "conceptId": "FMA43916",
+      "kind": "artery"
+    },
+    "FJ2056": {
+      "name": "Deep dorsal vein of penis",
+      "conceptId": "FMA21354",
+      "kind": "vein"
+    },
+    "FJ2057": {
+      "name": "Descending branch of right lateral circumflex femoral artery",
+      "conceptId": "FMA21422",
+      "kind": "artery"
+    },
+    "FJ2058": {
+      "name": "Distal perforating artery",
+      "conceptId": "FMA69517",
+      "kind": "artery"
+    },
+    "FJ2059": {
+      "name": "Dorsal venous arch of left foot",
+      "conceptId": "FMA44882",
+      "kind": "vein"
+    },
+    "FJ2060": {
+      "name": "Dorsal venous arch of left foot",
+      "conceptId": "FMA44882",
+      "kind": "vein"
+    },
+    "FJ2061": {
+      "name": "Dorsal venous arch of right foot",
+      "conceptId": "FMA44881",
+      "kind": "vein"
+    },
+    "FJ2062": {
+      "name": "Dorsal venous arch of right foot",
+      "conceptId": "FMA44881",
+      "kind": "vein"
+    },
+    "FJ2063": {
+      "name": "Descending branch of left lateral circumflex femoral artery",
+      "conceptId": "FMA21423",
+      "kind": "artery"
+    },
+    "FJ2064": {
+      "name": "Distal perforating artery",
+      "conceptId": "FMA69517",
+      "kind": "artery"
+    },
+    "FJ2065": {
+      "name": "Left anterior tibial artery",
+      "conceptId": "FMA43897",
+      "kind": "artery"
+    },
+    "FJ2066": {
+      "name": "Left anterior tibial recurrent artery",
+      "conceptId": "FMA43908",
+      "kind": "artery"
+    },
+    "FJ2067": {
+      "name": "Left arcuate artery",
+      "conceptId": "FMA69495",
+      "kind": "artery"
+    },
+    "FJ2068": {
+      "name": "Left deep plantar artery",
+      "conceptId": "FMA69515",
+      "kind": "artery"
+    },
+    "FJ2069": {
+      "name": "Left descending genicular artery",
+      "conceptId": "FMA22508",
+      "kind": "artery"
+    },
+    "FJ2072": {
+      "name": "Dorsal digital artery of foot",
+      "conceptId": "FMA44660",
+      "kind": "artery"
+    },
+    "FJ2073": {
+      "name": "Left dorsalis pedis artery",
+      "conceptId": "FMA43917",
+      "kind": "artery"
+    },
+    "FJ2074": {
+      "name": "Left femoral artery",
+      "conceptId": "FMA70250",
+      "kind": "artery"
+    },
+    "FJ2076": {
+      "name": "Left inferior lateral genicular artery",
+      "conceptId": "FMA43893",
+      "kind": "artery"
+    },
+    "FJ2077": {
+      "name": "Left inferior medial genicular artery",
+      "conceptId": "FMA43891",
+      "kind": "artery"
+    },
+    "FJ2078": {
+      "name": "Left lateral circumflex femoral artery",
+      "conceptId": "FMA20802",
+      "kind": "artery"
+    },
+    "FJ2079": {
+      "name": "Left lateral plantar artery",
+      "conceptId": "FMA43932",
+      "kind": "artery"
+    },
+    "FJ2080": {
+      "name": "Left lateral superior genicular artery",
+      "conceptId": "FMA22589",
+      "kind": "artery"
+    },
+    "FJ2081": {
+      "name": "Left lateral tarsal artery",
+      "conceptId": "FMA69491",
+      "kind": "artery"
+    },
+    "FJ2082": {
+      "name": "Left medial plantar artery",
+      "conceptId": "FMA43930",
+      "kind": "artery"
+    },
+    "FJ2083": {
+      "name": "Left medial superior genicular artery",
+      "conceptId": "FMA22587",
+      "kind": "artery"
+    },
+    "FJ2084": {
+      "name": "Left middle genicular artery",
+      "conceptId": "FMA22563",
+      "kind": "artery"
+    },
+    "FJ2085": {
+      "name": "Left plantar arch",
+      "conceptId": "FMA43944",
+      "kind": "artery"
+    },
+    "FJ2086": {
+      "name": "Left popliteal artery",
+      "conceptId": "FMA77381",
+      "kind": "artery"
+    },
+    "FJ2087": {
+      "name": "Left posterior tibial artery",
+      "conceptId": "FMA43899",
+      "kind": "artery"
+    },
+    "FJ2089": {
+      "name": "Left superficial medial plantar artery",
+      "conceptId": "FMA43938",
+      "kind": "artery"
+    },
+    "FJ2090": {
+      "name": "Set of perforating arteries",
+      "conceptId": "FMA70815",
+      "kind": "artery"
+    },
+    "FJ2091": {
+      "name": "Set of calcaneal branches of posterior tibial artery",
+      "conceptId": "FMA71562",
+      "kind": "artery"
+    },
+    "FJ2092": {
+      "name": "Set of common plantar digital arteries",
+      "conceptId": "FMA70821",
+      "kind": "artery"
+    },
+    "FJ2093": {
+      "name": "Set of dorsal digital arteries",
+      "conceptId": "FMA70801",
+      "kind": "artery"
+    },
+    "FJ2094": {
+      "name": "Set of perforating arteries",
+      "conceptId": "FMA70815",
+      "kind": "artery"
+    },
+    "FJ2095": {
+      "name": "Set of plantar digital arteries proper",
+      "conceptId": "FMA71564",
+      "kind": "artery"
+    },
+    "FJ2096": {
+      "name": "Plantar metatarsal artery",
+      "conceptId": "FMA43956",
+      "kind": "artery"
+    },
+    "FJ2097": {
+      "name": "Left anterior tibial vein",
+      "conceptId": "FMA44337",
+      "kind": "vein"
+    },
+    "FJ2099": {
+      "name": "Left deep femoral vein",
+      "conceptId": "FMA51043",
+      "kind": "vein"
+    },
+    "FJ2100": {
+      "name": "Set of perforating veins",
+      "conceptId": "FMA70922",
+      "kind": "vein"
+    },
+    "FJ2102": {
+      "name": "Left femoral vein",
+      "conceptId": "FMA21189",
+      "kind": "vein"
+    },
+    "FJ2103": {
+      "name": "Left great saphenous vein",
+      "conceptId": "FMA21380",
+      "kind": "vein"
+    },
+    "FJ2107": {
+      "name": "Left genicular vein",
+      "conceptId": "FMA44888",
+      "kind": "vein"
+    },
+    "FJ2108": {
+      "name": "Left genicular vein",
+      "conceptId": "FMA44888",
+      "kind": "vein"
+    },
+    "FJ2113": {
+      "name": "Tributary of plantar venous arch",
+      "conceptId": "FMA44499",
+      "kind": "vein"
+    },
+    "FJ2115": {
+      "name": "Tributary of plantar venous arch",
+      "conceptId": "FMA44499",
+      "kind": "vein"
+    },
+    "FJ2117": {
+      "name": "Left popliteal vein",
+      "conceptId": "FMA44329",
+      "kind": "vein"
+    },
+    "FJ2118": {
+      "name": "Left posterior tibial vein",
+      "conceptId": "FMA44339",
+      "kind": "vein"
+    },
+    "FJ2119": {
+      "name": "Set of perforating veins",
+      "conceptId": "FMA70922",
+      "kind": "vein"
+    },
+    "FJ2120": {
+      "name": "Set of plantar digital veins",
+      "conceptId": "FMA70919",
+      "kind": "vein"
+    },
+    "FJ2121": {
+      "name": "Left small saphenous vein",
+      "conceptId": "FMA44335",
+      "kind": "vein"
+    },
+    "FJ2122": {
+      "name": "Left superficial epigastric vein",
+      "conceptId": "FMA44341",
+      "kind": "vein"
+    },
+    "FJ2124": {
+      "name": "Left genicular vein",
+      "conceptId": "FMA44888",
+      "kind": "vein"
+    },
+    "FJ2125": {
+      "name": "Left genicular vein",
+      "conceptId": "FMA44888",
+      "kind": "vein"
+    },
+    "FJ2127": {
+      "name": "Set of perforating arteries",
+      "conceptId": "FMA70815",
+      "kind": "artery"
+    },
+    "FJ2128": {
+      "name": "Plantar venous arch of left foot",
+      "conceptId": "FMA44884",
+      "kind": "vein"
+    },
+    "FJ2129": {
+      "name": "Plantar venous arch of right foot",
+      "conceptId": "FMA44883",
+      "kind": "vein"
+    },
+    "FJ2130": {
+      "name": "Right anterior tibial artery",
+      "conceptId": "FMA43896",
+      "kind": "artery"
+    },
+    "FJ2131": {
+      "name": "Right anterior tibial recurrent artery",
+      "conceptId": "FMA43907",
+      "kind": "artery"
+    },
+    "FJ2132": {
+      "name": "Right anterior tibial vein",
+      "conceptId": "FMA44336",
+      "kind": "vein"
+    },
+    "FJ2133": {
+      "name": "Right arcuate artery",
+      "conceptId": "FMA69494",
+      "kind": "artery"
+    },
+    "FJ2135": {
+      "name": "Right deep femoral vein",
+      "conceptId": "FMA51042",
+      "kind": "vein"
+    },
+    "FJ2136": {
+      "name": "Right deep plantar artery",
+      "conceptId": "FMA69514",
+      "kind": "artery"
+    },
+    "FJ2137": {
+      "name": "Right descending genicular artery",
+      "conceptId": "FMA22507",
+      "kind": "artery"
+    },
+    "FJ2138": {
+      "name": "Set of perforating veins",
+      "conceptId": "FMA70922",
+      "kind": "vein"
+    },
+    "FJ2141": {
+      "name": "Dorsal digital artery of foot",
+      "conceptId": "FMA44660",
+      "kind": "artery"
+    },
+    "FJ2143": {
+      "name": "Right femoral artery",
+      "conceptId": "FMA70249",
+      "kind": "artery"
+    },
+    "FJ2144": {
+      "name": "Right femoral vein",
+      "conceptId": "FMA21188",
+      "kind": "vein"
+    },
+    "FJ2145": {
+      "name": "Right great saphenous vein",
+      "conceptId": "FMA21379",
+      "kind": "vein"
+    },
+    "FJ2150": {
+      "name": "Right inferior lateral genicular artery",
+      "conceptId": "FMA43892",
+      "kind": "artery"
+    },
+    "FJ2151": {
+      "name": "Right genicular vein",
+      "conceptId": "FMA44887",
+      "kind": "vein"
+    },
+    "FJ2152": {
+      "name": "Right inferior medial genicular artery",
+      "conceptId": "FMA43890",
+      "kind": "artery"
+    },
+    "FJ2153": {
+      "name": "Right genicular vein",
+      "conceptId": "FMA44887",
+      "kind": "vein"
+    },
+    "FJ2158": {
+      "name": "Right lateral circumflex femoral artery",
+      "conceptId": "FMA20801",
+      "kind": "artery"
+    },
+    "FJ2159": {
+      "name": "Right lateral plantar artery",
+      "conceptId": "FMA43931",
+      "kind": "artery"
+    },
+    "FJ2160": {
+      "name": "Tributary of plantar venous arch",
+      "conceptId": "FMA44499",
+      "kind": "vein"
+    },
+    "FJ2162": {
+      "name": "Right lateral superior genicular artery",
+      "conceptId": "FMA22588",
+      "kind": "artery"
+    },
+    "FJ2163": {
+      "name": "Right lateral tarsal artery",
+      "conceptId": "FMA69490",
+      "kind": "artery"
+    },
+    "FJ2164": {
+      "name": "Right medial plantar artery",
+      "conceptId": "FMA43929",
+      "kind": "artery"
+    },
+    "FJ2165": {
+      "name": "Tributary of plantar venous arch",
+      "conceptId": "FMA44499",
+      "kind": "vein"
+    },
+    "FJ2166": {
+      "name": "Right medial superior genicular artery",
+      "conceptId": "FMA22586",
+      "kind": "artery"
+    },
+    "FJ2167": {
+      "name": "Right middle genicular artery",
+      "conceptId": "FMA22562",
+      "kind": "artery"
+    },
+    "FJ2169": {
+      "name": "Right plantar arch",
+      "conceptId": "FMA43943",
+      "kind": "artery"
+    },
+    "FJ2170": {
+      "name": "Right popliteal artery",
+      "conceptId": "FMA77380",
+      "kind": "artery"
+    },
+    "FJ2171": {
+      "name": "Right popliteal vein",
+      "conceptId": "FMA44328",
+      "kind": "vein"
+    },
+    "FJ2172": {
+      "name": "Right posterior tibial artery",
+      "conceptId": "FMA43898",
+      "kind": "artery"
+    },
+    "FJ2173": {
+      "name": "Right posterior tibial vein",
+      "conceptId": "FMA44338",
+      "kind": "vein"
+    },
+    "FJ2174": {
+      "name": "Set of perforating veins",
+      "conceptId": "FMA70922",
+      "kind": "vein"
+    },
+    "FJ2175": {
+      "name": "Set of plantar digital veins",
+      "conceptId": "FMA70919",
+      "kind": "vein"
+    },
+    "FJ2176": {
+      "name": "Right small saphenous vein",
+      "conceptId": "FMA44334",
+      "kind": "vein"
+    },
+    "FJ2178": {
+      "name": "Right superficial epigastric vein",
+      "conceptId": "FMA44340",
+      "kind": "vein"
+    },
+    "FJ2179": {
+      "name": "Right superficial medial plantar artery",
+      "conceptId": "FMA43937",
+      "kind": "artery"
+    },
+    "FJ2181": {
+      "name": "Right genicular vein",
+      "conceptId": "FMA44887",
+      "kind": "vein"
+    },
+    "FJ2182": {
+      "name": "Right genicular vein",
+      "conceptId": "FMA44887",
+      "kind": "vein"
+    },
+    "FJ2183": {
+      "name": "Left anterior tibial vein",
+      "conceptId": "FMA44337",
+      "kind": "vein"
+    },
+    "FJ2184": {
+      "name": "Left fibular vein",
+      "conceptId": "FMA44886",
+      "kind": "vein"
+    },
+    "FJ2185": {
+      "name": "Set of dorsal digital veins",
+      "conceptId": "FMA70917",
+      "kind": "vein"
+    },
+    "FJ2186": {
+      "name": "Dorsal metacarpal vein",
+      "conceptId": "FMA22954",
+      "kind": "vein"
+    },
+    "FJ2187": {
+      "name": "Left fibular vein",
+      "conceptId": "FMA44886",
+      "kind": "vein"
+    },
+    "FJ2188": {
+      "name": "Left lateral circumflex femoral vein",
+      "conceptId": "FMA44922",
+      "kind": "vein"
+    },
+    "FJ2189": {
+      "name": "Left medial circumflex femoral vein",
+      "conceptId": "FMA44919",
+      "kind": "vein"
+    },
+    "FJ2190": {
+      "name": "Right fibular vein",
+      "conceptId": "FMA44885",
+      "kind": "vein"
+    },
+    "FJ2191": {
+      "name": "Plantar metatarsal vein",
+      "conceptId": "FMA44504",
+      "kind": "vein"
+    },
+    "FJ2192": {
+      "name": "Set of perforating veins",
+      "conceptId": "FMA70922",
+      "kind": "vein"
+    },
+    "FJ2193": {
+      "name": "Right anterior tibial vein",
+      "conceptId": "FMA44336",
+      "kind": "vein"
+    },
+    "FJ2194": {
+      "name": "Right fibular vein",
+      "conceptId": "FMA44885",
+      "kind": "vein"
+    },
+    "FJ2195": {
+      "name": "Set of calcaneal branches of posterior tibial artery",
+      "conceptId": "FMA71562",
+      "kind": "artery"
+    },
+    "FJ2196": {
+      "name": "Set of common plantar digital arteries",
+      "conceptId": "FMA70821",
+      "kind": "artery"
+    },
+    "FJ2197": {
+      "name": "Set of dorsal digital arteries",
+      "conceptId": "FMA70801",
+      "kind": "artery"
+    },
+    "FJ2198": {
+      "name": "Set of dorsal digital veins",
+      "conceptId": "FMA70917",
+      "kind": "vein"
+    },
+    "FJ2199": {
+      "name": "Dorsal metacarpal vein",
+      "conceptId": "FMA22954",
+      "kind": "vein"
+    },
+    "FJ2200": {
+      "name": "Right fibular vein",
+      "conceptId": "FMA44885",
+      "kind": "vein"
+    },
+    "FJ2201": {
+      "name": "Right lateral circumflex femoral vein",
+      "conceptId": "FMA44920",
+      "kind": "vein"
+    },
+    "FJ2202": {
+      "name": "Right medial circumflex femoral vein",
+      "conceptId": "FMA44918",
+      "kind": "vein"
+    },
+    "FJ2203": {
+      "name": "Set of perforating arteries",
+      "conceptId": "FMA70815",
+      "kind": "artery"
+    },
+    "FJ2204": {
+      "name": "Set of plantar digital arteries proper",
+      "conceptId": "FMA71564",
+      "kind": "artery"
+    },
+    "FJ2205": {
+      "name": "Set of plantar digital arteries proper",
+      "conceptId": "FMA71564",
+      "kind": "artery"
+    },
+    "FJ2206": {
+      "name": "Plantar metatarsal artery",
+      "conceptId": "FMA43956",
+      "kind": "artery"
+    },
+    "FJ2207": {
+      "name": "Plantar metatarsal vein",
+      "conceptId": "FMA44504",
+      "kind": "vein"
+    },
+    "FJ2208": {
+      "name": "Superficial dorsal vein of penis",
+      "conceptId": "FMA21384",
+      "kind": "vein"
+    },
+    "FJ2209": {
+      "name": "Right inferior thyroid artery",
+      "conceptId": "FMA10697",
+      "kind": "artery"
+    },
+    "FJ2210": {
+      "name": "Left inferior thyroid artery",
+      "conceptId": "FMA10680",
+      "kind": "artery"
+    },
+    "FJ2211": {
+      "name": "Acromial branch of left thoraco-acromial artery",
+      "conceptId": "FMA23069",
+      "kind": "artery"
+    },
+    "FJ2212": {
+      "name": "Left anterior circumflex humeral artery",
+      "conceptId": "FMA22683",
+      "kind": "artery"
+    },
+    "FJ2213": {
+      "name": "Left anterior circumflex humeral vein",
+      "conceptId": "FMA77955",
+      "kind": "vein"
+    },
+    "FJ2214": {
+      "name": "Left anterior interosseous artery",
+      "conceptId": "FMA22813",
+      "kind": "artery"
+    },
+    "FJ2215": {
+      "name": "Left inferior ulnar collateral artery",
+      "conceptId": "FMA22713",
+      "kind": "artery"
+    },
+    "FJ2216": {
+      "name": "Left axillary artery",
+      "conceptId": "FMA22656",
+      "kind": "artery"
+    },
+    "FJ2217": {
+      "name": "Left axillary vein",
+      "conceptId": "FMA13331",
+      "kind": "vein"
+    },
+    "FJ2218": {
+      "name": "Left basilic vein",
+      "conceptId": "FMA22910",
+      "kind": "vein"
+    },
+    "FJ2219": {
+      "name": "Left brachial artery",
+      "conceptId": "FMA22692",
+      "kind": "artery"
+    },
+    "FJ2220": {
+      "name": "Left cephalic vein",
+      "conceptId": "FMA13326",
+      "kind": "vein"
+    },
+    "FJ2221": {
+      "name": "Left circumflex scapular artery",
+      "conceptId": "FMA23181",
+      "kind": "artery"
+    },
+    "FJ2222": {
+      "name": "Left circumflex scapular vein",
+      "conceptId": "FMA77950",
+      "kind": "vein"
+    },
+    "FJ2223": {
+      "name": "Left common interosseous artery",
+      "conceptId": "FMA22808",
+      "kind": "artery"
+    },
+    "FJ2224": {
+      "name": "Left costocervical trunk",
+      "conceptId": "FMA4086",
+      "kind": "artery"
+    },
+    "FJ2225": {
+      "name": "Left deep brachial artery",
+      "conceptId": "FMA22697",
+      "kind": "artery"
+    },
+    "FJ2226": {
+      "name": "Left deep cervical artery",
+      "conceptId": "FMA4134",
+      "kind": "artery"
+    },
+    "FJ2227": {
+      "name": "Left deep palmar arch",
+      "conceptId": "FMA22840",
+      "kind": "artery"
+    },
+    "FJ2228": {
+      "name": "Dorsal venous network of left hand",
+      "conceptId": "FMA62507",
+      "kind": "vein"
+    },
+    "FJ2229": {
+      "name": "Left deep palmar venous arch",
+      "conceptId": "FMA22913",
+      "kind": "vein"
+    },
+    "FJ2230": {
+      "name": "Deltoid branch of left thoraco-acromial artery",
+      "conceptId": "FMA23073",
+      "kind": "artery"
+    },
+    "FJ2231": {
+      "name": "Dorsal carpal branch of left radial artery",
+      "conceptId": "FMA22773",
+      "kind": "artery"
+    },
+    "FJ2232": {
+      "name": "Left dorsal scapular artery",
+      "conceptId": "FMA10552",
+      "kind": "artery"
+    },
+    "FJ2233": {
+      "name": "Left lateral thoracic vein",
+      "conceptId": "FMA71212",
+      "kind": "vein"
+    },
+    "FJ2234": {
+      "name": "Left median antebrachial vein",
+      "conceptId": "FMA22969",
+      "kind": "vein"
+    },
+    "FJ2235": {
+      "name": "Left median cubital vein",
+      "conceptId": "FMA22965",
+      "kind": "vein"
+    },
+    "FJ2236": {
+      "name": "Left dorsal carpal branch of ulnar artery",
+      "conceptId": "FMA22822",
+      "kind": "artery"
+    },
+    "FJ2237": {
+      "name": "Left palmar metacarpal artery",
+      "conceptId": "FMA22865",
+      "kind": "artery"
+    },
+    "FJ2238": {
+      "name": "Left palmar metacarpal vein",
+      "conceptId": "FMA22921",
+      "kind": "vein"
+    },
+    "FJ2239": {
+      "name": "Left posterior circumflex humeral artery",
+      "conceptId": "FMA22687",
+      "kind": "artery"
+    },
+    "FJ2240": {
+      "name": "Left posterior circumflex humeral artery",
+      "conceptId": "FMA22687",
+      "kind": "artery"
+    },
+    "FJ2241": {
+      "name": "Left posterior ulnar recurrent artery",
+      "conceptId": "FMA22805",
+      "kind": "artery"
+    },
+    "FJ2242": {
+      "name": "Left radial artery",
+      "conceptId": "FMA22734",
+      "kind": "artery"
+    },
+    "FJ2243": {
+      "name": "Left radial recurrent artery",
+      "conceptId": "FMA22766",
+      "kind": "artery"
+    },
+    "FJ2244": {
+      "name": "Left radial vein",
+      "conceptId": "FMA22949",
+      "kind": "vein"
+    },
+    "FJ2245": {
+      "name": "Left recurrent interosseous artery",
+      "conceptId": "FMA268669",
+      "kind": "artery"
+    },
+    "FJ2246": {
+      "name": "Left subscapular artery",
+      "conceptId": "FMA22679",
+      "kind": "artery"
+    },
+    "FJ2247": {
+      "name": "Left subscapular vein",
+      "conceptId": "FMA23115",
+      "kind": "vein"
+    },
+    "FJ2248": {
+      "name": "Left superficial palmar arterial arch",
+      "conceptId": "FMA22837",
+      "kind": "artery"
+    },
+    "FJ2249": {
+      "name": "Left superficial palmar venous arch",
+      "conceptId": "FMA22916",
+      "kind": "vein"
+    },
+    "FJ2250": {
+      "name": "Left suprascapular vein",
+      "conceptId": "FMA50860",
+      "kind": "vein"
+    },
+    "FJ2251": {
+      "name": "Left suprascapular artery",
+      "conceptId": "FMA10681",
+      "kind": "artery"
+    },
+    "FJ2252": {
+      "name": "Trunk of left thoraco-acromial artery",
+      "conceptId": "FMA66564",
+      "kind": "artery"
+    },
+    "FJ2253": {
+      "name": "Left thoracodorsal artery",
+      "conceptId": "FMA66322",
+      "kind": "artery"
+    },
+    "FJ2254": {
+      "name": "Left thoracodorsal vein",
+      "conceptId": "FMA71215",
+      "kind": "vein"
+    },
+    "FJ2255": {
+      "name": "Left thyrocervical trunk",
+      "conceptId": "FMA4084",
+      "kind": "artery"
+    },
+    "FJ2256": {
+      "name": "Left superficial cervical artery",
+      "conceptId": "FMA10683",
+      "kind": "artery"
+    },
+    "FJ2257": {
+      "name": "Left transverse cervical artery",
+      "conceptId": "FMA10682",
+      "kind": "artery"
+    },
+    "FJ2258": {
+      "name": "Left ulnar artery",
+      "conceptId": "FMA22798",
+      "kind": "artery"
+    },
+    "FJ2259": {
+      "name": "Left anterior ulnar recurrent artery",
+      "conceptId": "FMA22802",
+      "kind": "artery"
+    },
+    "FJ2260": {
+      "name": "Left ulnar vein",
+      "conceptId": "FMA22952",
+      "kind": "vein"
+    },
+    "FJ2261": {
+      "name": "Radial collateral branch of left deep brachial artery",
+      "conceptId": "FMA23127",
+      "kind": "artery"
+    },
+    "FJ2262": {
+      "name": "Radial collateral branch of right deep brachial artery",
+      "conceptId": "FMA23126",
+      "kind": "artery"
+    },
+    "FJ2263": {
+      "name": "Acromial branch of right thoraco-acromial artery",
+      "conceptId": "FMA23068",
+      "kind": "artery"
+    },
+    "FJ2264": {
+      "name": "Right anterior circumflex humeral artery",
+      "conceptId": "FMA22682",
+      "kind": "artery"
+    },
+    "FJ2265": {
+      "name": "Right anterior circumflex humeral vein",
+      "conceptId": "FMA77954",
+      "kind": "vein"
+    },
+    "FJ2266": {
+      "name": "Right anterior interosseous artery",
+      "conceptId": "FMA22812",
+      "kind": "artery"
+    },
+    "FJ2267": {
+      "name": "Right inferior ulnar collateral artery",
+      "conceptId": "FMA22712",
+      "kind": "artery"
+    },
+    "FJ2268": {
+      "name": "Right axillary artery",
+      "conceptId": "FMA22655",
+      "kind": "artery"
+    },
+    "FJ2269": {
+      "name": "Right axillary vein",
+      "conceptId": "FMA13330",
+      "kind": "vein"
+    },
+    "FJ2270": {
+      "name": "Right basilic vein",
+      "conceptId": "FMA22909",
+      "kind": "vein"
+    },
+    "FJ2271": {
+      "name": "Right brachial artery",
+      "conceptId": "FMA22691",
+      "kind": "artery"
+    },
+    "FJ2272": {
+      "name": "Right cephalic vein",
+      "conceptId": "FMA13325",
+      "kind": "vein"
+    },
+    "FJ2273": {
+      "name": "Right circumflex scapular artery",
+      "conceptId": "FMA23180",
+      "kind": "artery"
+    },
+    "FJ2274": {
+      "name": "Right circumflex scapular vein",
+      "conceptId": "FMA77949",
+      "kind": "vein"
+    },
+    "FJ2275": {
+      "name": "Right common interosseous artery",
+      "conceptId": "FMA22807",
+      "kind": "artery"
+    },
+    "FJ2276": {
+      "name": "Right costocervical trunk",
+      "conceptId": "FMA5039",
+      "kind": "artery"
+    },
+    "FJ2277": {
+      "name": "Right deep brachial artery",
+      "conceptId": "FMA22696",
+      "kind": "artery"
+    },
+    "FJ2278": {
+      "name": "Right deep cervical artery",
+      "conceptId": "FMA10660",
+      "kind": "artery"
+    },
+    "FJ2279": {
+      "name": "Right deep palmar arch",
+      "conceptId": "FMA22839",
+      "kind": "artery"
+    },
+    "FJ2280": {
+      "name": "Dorsal venous network of right hand",
+      "conceptId": "FMA62506",
+      "kind": "vein"
+    },
+    "FJ2281": {
+      "name": "Right deep palmar venous arch",
+      "conceptId": "FMA22912",
+      "kind": "vein"
+    },
+    "FJ2282": {
+      "name": "Deltoid branch of right thoraco-acromial artery",
+      "conceptId": "FMA23072",
+      "kind": "artery"
+    },
+    "FJ2283": {
+      "name": "Dorsal carpal branch of right radial artery",
+      "conceptId": "FMA22772",
+      "kind": "artery"
+    },
+    "FJ2284": {
+      "name": "Right dorsal scapular artery",
+      "conceptId": "FMA4057",
+      "kind": "artery"
+    },
+    "FJ2285": {
+      "name": "Right lateral thoracic vein",
+      "conceptId": "FMA71211",
+      "kind": "vein"
+    },
+    "FJ2286": {
+      "name": "Right median antebrachial vein",
+      "conceptId": "FMA22968",
+      "kind": "vein"
+    },
+    "FJ2287": {
+      "name": "Right median cubital vein",
+      "conceptId": "FMA22964",
+      "kind": "vein"
+    },
+    "FJ2288": {
+      "name": "Right dorsal carpal branch of ulnar artery",
+      "conceptId": "FMA22821",
+      "kind": "artery"
+    },
+    "FJ2289": {
+      "name": "Right palmar metacarpal artery",
+      "conceptId": "FMA22864",
+      "kind": "artery"
+    },
+    "FJ2290": {
+      "name": "Right palmar metacarpal vein",
+      "conceptId": "FMA22920",
+      "kind": "vein"
+    },
+    "FJ2291": {
+      "name": "Right posterior circumflex humeral artery",
+      "conceptId": "FMA22685",
+      "kind": "artery"
+    },
+    "FJ2292": {
+      "name": "Right posterior circumflex humeral artery",
+      "conceptId": "FMA22685",
+      "kind": "artery"
+    },
+    "FJ2293": {
+      "name": "Right posterior ulnar recurrent artery",
+      "conceptId": "FMA22804",
+      "kind": "artery"
+    },
+    "FJ2294": {
+      "name": "Right radial artery",
+      "conceptId": "FMA22733",
+      "kind": "artery"
+    },
+    "FJ2295": {
+      "name": "Right radial recurrent artery",
+      "conceptId": "FMA22764",
+      "kind": "artery"
+    },
+    "FJ2296": {
+      "name": "Right radial vein",
+      "conceptId": "FMA22948",
+      "kind": "vein"
+    },
+    "FJ2297": {
+      "name": "Right recurrent interosseous artery",
+      "conceptId": "FMA268667",
+      "kind": "artery"
+    },
+    "FJ2298": {
+      "name": "Right subscapular artery",
+      "conceptId": "FMA22678",
+      "kind": "artery"
+    },
+    "FJ2299": {
+      "name": "Right subscapular vein",
+      "conceptId": "FMA23114",
+      "kind": "vein"
+    },
+    "FJ2300": {
+      "name": "Right superficial palmar arterial arch",
+      "conceptId": "FMA22835",
+      "kind": "artery"
+    },
+    "FJ2301": {
+      "name": "Right superficial palmar venous arch",
+      "conceptId": "FMA22915",
+      "kind": "vein"
+    },
+    "FJ2302": {
+      "name": "Right suprascapular vein",
+      "conceptId": "FMA50859",
+      "kind": "vein"
+    },
+    "FJ2303": {
+      "name": "Right suprascapular artery",
+      "conceptId": "FMA10698",
+      "kind": "artery"
+    },
+    "FJ2304": {
+      "name": "Trunk of right thoraco-acromial artery",
+      "conceptId": "FMA66563",
+      "kind": "artery"
+    },
+    "FJ2305": {
+      "name": "Right thoracodorsal artery",
+      "conceptId": "FMA66321",
+      "kind": "artery"
+    },
+    "FJ2306": {
+      "name": "Right thoracodorsal vein",
+      "conceptId": "FMA71214",
+      "kind": "vein"
+    },
+    "FJ2307": {
+      "name": "Right thyrocervical trunk",
+      "conceptId": "FMA3992",
+      "kind": "artery"
+    },
+    "FJ2308": {
+      "name": "Right superficial cervical artery",
+      "conceptId": "FMA10700",
+      "kind": "artery"
+    },
+    "FJ2309": {
+      "name": "Right transverse cervical artery",
+      "conceptId": "FMA10699",
+      "kind": "artery"
+    },
+    "FJ2310": {
+      "name": "Right ulnar artery",
+      "conceptId": "FMA22797",
+      "kind": "artery"
+    },
+    "FJ2311": {
+      "name": "Right anterior ulnar recurrent artery",
+      "conceptId": "FMA22801",
+      "kind": "artery"
+    },
+    "FJ2312": {
+      "name": "Right ulnar vein",
+      "conceptId": "FMA22951",
+      "kind": "vein"
+    },
+    "FJ2313": {
+      "name": "Left medial brachial vein",
+      "conceptId": "FMA22936",
+      "kind": "vein"
+    },
+    "FJ2314": {
+      "name": "Left arteria radialis indicis",
+      "conceptId": "FMA22778",
+      "kind": "artery"
+    },
+    "FJ2315": {
+      "name": "Left first common palmar digital artery",
+      "conceptId": "FMA85118",
+      "kind": "artery"
+    },
+    "FJ2316": {
+      "name": "Left second common palmar digital artery",
+      "conceptId": "FMA85120",
+      "kind": "artery"
+    },
+    "FJ2317": {
+      "name": "Left third common palmar digital artery",
+      "conceptId": "FMA85122",
+      "kind": "artery"
+    },
+    "FJ2318": {
+      "name": "Set of dorsal digital arteries",
+      "conceptId": "FMA70801",
+      "kind": "artery"
+    },
+    "FJ2319": {
+      "name": "Proper palmar digital vein of left little finger",
+      "conceptId": "FMA85103",
+      "kind": "vein"
+    },
+    "FJ2320": {
+      "name": "Left palmar metacarpal vein",
+      "conceptId": "FMA22921",
+      "kind": "vein"
+    },
+    "FJ2321": {
+      "name": "Proper palmar digital vein of left little finger",
+      "conceptId": "FMA85103",
+      "kind": "vein"
+    },
+    "FJ2322": {
+      "name": "Common palmar digital vein",
+      "conceptId": "FMA22923",
+      "kind": "vein"
+    },
+    "FJ2323": {
+      "name": "Left palmar metacarpal vein",
+      "conceptId": "FMA22921",
+      "kind": "vein"
+    },
+    "FJ2324": {
+      "name": "Proper palmar digital vein of left index finger",
+      "conceptId": "FMA85097",
+      "kind": "vein"
+    },
+    "FJ2325": {
+      "name": "Proper palmar digital vein of left index finger",
+      "conceptId": "FMA85097",
+      "kind": "vein"
+    },
+    "FJ2326": {
+      "name": "Proper palmar digital vein of left middle finger",
+      "conceptId": "FMA85099",
+      "kind": "vein"
+    },
+    "FJ2327": {
+      "name": "Proper palmar digital vein of left ring finger",
+      "conceptId": "FMA85101",
+      "kind": "vein"
+    },
+    "FJ2328": {
+      "name": "Proper palmar digital vein of left ring finger",
+      "conceptId": "FMA85101",
+      "kind": "vein"
+    },
+    "FJ2329": {
+      "name": "Proper palmar digital vein of left little finger",
+      "conceptId": "FMA85103",
+      "kind": "vein"
+    },
+    "FJ2330": {
+      "name": "Pectoral branch of left thoraco-acromial artery",
+      "conceptId": "FMA23064",
+      "kind": "artery"
+    },
+    "FJ2331": {
+      "name": "Middle collateral branch of left deep brachial artery",
+      "conceptId": "FMA23125",
+      "kind": "artery"
+    },
+    "FJ2332": {
+      "name": "Left arteria radialis indicis",
+      "conceptId": "FMA22778",
+      "kind": "artery"
+    },
+    "FJ2333": {
+      "name": "Medial proper palmar digital artery of left index finger",
+      "conceptId": "FMA23051",
+      "kind": "artery"
+    },
+    "FJ2334": {
+      "name": "Lateral proper palmar digital artery of left middle finger",
+      "conceptId": "FMA22860",
+      "kind": "artery"
+    },
+    "FJ2335": {
+      "name": "Lateral proper palmar digital artery of left ring finger",
+      "conceptId": "FMA85116",
+      "kind": "artery"
+    },
+    "FJ2336": {
+      "name": "Lateral proper palmar digital artery of left little finger",
+      "conceptId": "FMA23055",
+      "kind": "artery"
+    },
+    "FJ2337": {
+      "name": "Left fourth common palmar digital artery",
+      "conceptId": "FMA85124",
+      "kind": "artery"
+    },
+    "FJ2338": {
+      "name": "Left arteria princeps pollicis",
+      "conceptId": "FMA22907",
+      "kind": "artery"
+    },
+    "FJ2339": {
+      "name": "Left arteria princeps pollicis",
+      "conceptId": "FMA22907",
+      "kind": "artery"
+    },
+    "FJ2340": {
+      "name": "Proper palmar digital vein of left middle finger",
+      "conceptId": "FMA85099",
+      "kind": "vein"
+    },
+    "FJ2341": {
+      "name": "Right medial brachial vein",
+      "conceptId": "FMA22935",
+      "kind": "vein"
+    },
+    "FJ2342": {
+      "name": "Right arteria radialis indicis",
+      "conceptId": "FMA22777",
+      "kind": "artery"
+    },
+    "FJ2343": {
+      "name": "Right first common palmar digital artery",
+      "conceptId": "FMA22856",
+      "kind": "artery"
+    },
+    "FJ2344": {
+      "name": "Right second common palmar digital artery",
+      "conceptId": "FMA85119",
+      "kind": "artery"
+    },
+    "FJ2345": {
+      "name": "Right third common palmar digital artery",
+      "conceptId": "FMA85121",
+      "kind": "artery"
+    },
+    "FJ2346": {
+      "name": "Set of dorsal digital arteries",
+      "conceptId": "FMA70801",
+      "kind": "artery"
+    },
+    "FJ2347": {
+      "name": "Set of dorsal metacarpal arteries",
+      "conceptId": "FMA70800",
+      "kind": "artery"
+    },
+    "FJ2348": {
+      "name": "Set of dorsal metacarpal arteries",
+      "conceptId": "FMA70800",
+      "kind": "artery"
+    },
+    "FJ2349": {
+      "name": "Proper palmar digital vein of right little finger",
+      "conceptId": "FMA85102",
+      "kind": "vein"
+    },
+    "FJ2350": {
+      "name": "Right palmar metacarpal vein",
+      "conceptId": "FMA22920",
+      "kind": "vein"
+    },
+    "FJ2351": {
+      "name": "Proper palmar digital vein of right little finger",
+      "conceptId": "FMA85102",
+      "kind": "vein"
+    },
+    "FJ2352": {
+      "name": "Common palmar digital vein",
+      "conceptId": "FMA22923",
+      "kind": "vein"
+    },
+    "FJ2353": {
+      "name": "Right palmar metacarpal vein",
+      "conceptId": "FMA22920",
+      "kind": "vein"
+    },
+    "FJ2354": {
+      "name": "Proper palmar digital vein of right index finger",
+      "conceptId": "FMA85096",
+      "kind": "vein"
+    },
+    "FJ2355": {
+      "name": "Proper palmar digital vein of right index finger",
+      "conceptId": "FMA85096",
+      "kind": "vein"
+    },
+    "FJ2356": {
+      "name": "Proper palmar digital vein of right middle finger",
+      "conceptId": "FMA85098",
+      "kind": "vein"
+    },
+    "FJ2357": {
+      "name": "Proper palmar digital vein of right middle finger",
+      "conceptId": "FMA85098",
+      "kind": "vein"
+    },
+    "FJ2358": {
+      "name": "Proper palmar digital vein of right ring finger",
+      "conceptId": "FMA85100",
+      "kind": "vein"
+    },
+    "FJ2359": {
+      "name": "Proper palmar digital vein of right ring finger",
+      "conceptId": "FMA85100",
+      "kind": "vein"
+    },
+    "FJ2360": {
+      "name": "Proper palmar digital vein of right little finger",
+      "conceptId": "FMA85102",
+      "kind": "vein"
+    },
+    "FJ2361": {
+      "name": "Pectoral branch of right thoraco-acromial artery",
+      "conceptId": "FMA23063",
+      "kind": "artery"
+    },
+    "FJ2362": {
+      "name": "Middle collateral branch of right deep brachial artery",
+      "conceptId": "FMA23124",
+      "kind": "artery"
+    },
+    "FJ2363": {
+      "name": "Right arteria radialis indicis",
+      "conceptId": "FMA22777",
+      "kind": "artery"
+    },
+    "FJ2364": {
+      "name": "Medial proper palmar digital artery of right index finger",
+      "conceptId": "FMA23050",
+      "kind": "artery"
+    },
+    "FJ2365": {
+      "name": "Lateral proper palmar digital artery of right middle finger",
+      "conceptId": "FMA22858",
+      "kind": "artery"
+    },
+    "FJ2366": {
+      "name": "Lateral proper palmar digital artery of right ring finger",
+      "conceptId": "FMA85115",
+      "kind": "artery"
+    },
+    "FJ2367": {
+      "name": "Medial proper palmar digital artery of right middle finger",
+      "conceptId": "FMA85112",
+      "kind": "artery"
+    },
+    "FJ2368": {
+      "name": "Lateral proper palmar digital artery of right little finger",
+      "conceptId": "FMA23054",
+      "kind": "artery"
+    },
+    "FJ2369": {
+      "name": "Medial proper palmar digital artery of right ring finger",
+      "conceptId": "FMA23052",
+      "kind": "artery"
+    },
+    "FJ2370": {
+      "name": "Right fourth common palmar digital artery",
+      "conceptId": "FMA85123",
+      "kind": "artery"
+    },
+    "FJ2371": {
+      "name": "Right arteria princeps pollicis",
+      "conceptId": "FMA22905",
+      "kind": "artery"
+    },
+    "FJ2372": {
+      "name": "Right arteria princeps pollicis",
+      "conceptId": "FMA22905",
+      "kind": "artery"
+    },
+    "FJ2373": {
+      "name": "Right superior ulnar collateral artery",
+      "conceptId": "FMA22707",
+      "kind": "artery"
+    },
+    "FJ2374": {
+      "name": "Left superior ulnar collateral artery",
+      "conceptId": "FMA22708",
+      "kind": "artery"
+    },
+    "FJ2386": {
+      "name": "Caudate lobe branch of right hepatic artery",
+      "conceptId": "FMA70447",
+      "kind": "artery"
+    },
+    "FJ2394": {
+      "name": "Right lobe branch of right hepatic artery",
+      "conceptId": "FMA71708",
+      "kind": "artery"
+    },
+    "FJ2404": {
+      "name": "Left portal vein",
+      "conceptId": "FMA15415",
+      "kind": "vein"
+    },
+    "FJ2405": {
+      "name": "Right portal vein",
+      "conceptId": "FMA15414",
+      "kind": "vein"
+    },
+    "FJ2414": {
+      "name": "Middle hepatic vein",
+      "conceptId": "FMA14340",
+      "kind": "vein"
+    },
+    "FJ2415": {
+      "name": "Left hepatic vein",
+      "conceptId": "FMA14339",
+      "kind": "vein"
+    },
+    "FJ2416": {
+      "name": "Right hepatic vein",
+      "conceptId": "FMA14338",
+      "kind": "vein"
+    },
+    "FJ2418": {
+      "name": "Anterolateral head of lateral papillary muscle of left ventricle",
+      "conceptId": "FMA7265",
+      "kind": "muscle"
+    },
+    "FJ2419": {
+      "name": "Anterior papillary muscle of right ventricle",
+      "conceptId": "FMA7260",
+      "kind": "muscle"
+    },
+    "FJ2429": {
+      "name": "Lateral papillary muscle of left ventricle",
+      "conceptId": "FMA7264",
+      "kind": "muscle"
+    },
+    "FJ2430": {
+      "name": "Posterior papillary muscle of right ventricle",
+      "conceptId": "FMA7261",
+      "kind": "muscle"
+    },
+    "FJ2437": {
+      "name": "Septal papillary muscle of right ventricle",
+      "conceptId": "FMA7262",
+      "kind": "muscle"
+    },
+    "FJ2542": {
+      "name": "Left coccygeus",
+      "conceptId": "FMA46444",
+      "kind": "muscle"
+    },
+    "FJ2543": {
+      "name": "External anal sphincter",
+      "conceptId": "FMA21930",
+      "kind": "muscle"
+    },
+    "FJ2544": {
+      "name": "Left iliococcygeus",
+      "conceptId": "FMA45859",
+      "kind": "muscle"
+    },
+    "FJ2545": {
+      "name": "Left pubococcygeus",
+      "conceptId": "FMA45855",
+      "kind": "muscle"
+    },
+    "FJ2546": {
+      "name": "Left puborectalis",
+      "conceptId": "FMA45857",
+      "kind": "muscle"
+    },
+    "FJ2547": {
+      "name": "Right coccygeus",
+      "conceptId": "FMA46443",
+      "kind": "muscle"
+    },
+    "FJ2548": {
+      "name": "External anal sphincter",
+      "conceptId": "FMA21930",
+      "kind": "muscle"
+    },
+    "FJ2549": {
+      "name": "Right iliococcygeus",
+      "conceptId": "FMA45858",
+      "kind": "muscle"
+    },
+    "FJ2550": {
+      "name": "Right pubococcygeus",
+      "conceptId": "FMA45854",
+      "kind": "muscle"
+    },
+    "FJ2551": {
+      "name": "Right puborectalis",
+      "conceptId": "FMA45856",
+      "kind": "muscle"
+    },
+    "FJ2562": {
+      "name": "Splenic artery",
+      "conceptId": "FMA14773",
+      "kind": "artery"
+    },
+    "FJ2631": {
+      "name": "Trunk of anterior interventricular branch of left coronary artery",
+      "conceptId": "FMA74912",
+      "kind": "artery",
+      "profile": "left anterior descending artery"
+    },
+    "FJ2632": {
+      "name": "First right anterior branch of anterior interventricular branch of left coronary artery",
+      "conceptId": "FMA3872",
+      "kind": "artery"
+    },
+    "FJ2633": {
+      "name": "Diagonal branch of anterior descending branch of left coronary artery",
+      "conceptId": "FMA3860",
+      "kind": "artery"
+    },
+    "FJ2634": {
+      "name": "Diagonal branch of anterior descending branch of left coronary artery",
+      "conceptId": "FMA3860",
+      "kind": "artery"
+    },
+    "FJ2635": {
+      "name": "Diagonal branch of anterior descending branch of left coronary artery",
+      "conceptId": "FMA3860",
+      "kind": "artery"
+    },
+    "FJ2636": {
+      "name": "Diagonal branch of anterior descending branch of left coronary artery",
+      "conceptId": "FMA3860",
+      "kind": "artery"
+    },
+    "FJ2637": {
+      "name": "Diagonal branch of anterior descending branch of left coronary artery",
+      "conceptId": "FMA3860",
+      "kind": "artery"
+    },
+    "FJ2638": {
+      "name": "Diagonal branch of anterior descending branch of left coronary artery",
+      "conceptId": "FMA3860",
+      "kind": "artery"
+    },
+    "FJ2639": {
+      "name": "Diagonal branch of anterior descending branch of left coronary artery",
+      "conceptId": "FMA3860",
+      "kind": "artery"
+    },
+    "FJ2640": {
+      "name": "Diagonal branch of anterior descending branch of left coronary artery",
+      "conceptId": "FMA3860",
+      "kind": "artery"
+    },
+    "FJ2641": {
+      "name": "Third right anterior branch of anterior interventricular branch of left coronary artery",
+      "conceptId": "FMA3876",
+      "kind": "artery"
+    },
+    "FJ2642": {
+      "name": "Diagonal branch of anterior descending branch of left coronary artery",
+      "conceptId": "FMA3860",
+      "kind": "artery"
+    },
+    "FJ2643": {
+      "name": "Conus branch of anterior interventricular branch of left coronary artery",
+      "conceptId": "FMA3868",
+      "kind": "artery"
+    },
+    "FJ2644": {
+      "name": "Conus branch of anterior interventricular branch of left coronary artery",
+      "conceptId": "FMA3868",
+      "kind": "artery"
+    },
+    "FJ2645": {
+      "name": "First right anterior branch of anterior interventricular branch of left coronary artery",
+      "conceptId": "FMA3872",
+      "kind": "artery"
+    },
+    "FJ2646": {
+      "name": "Second right anterior branch of anterior interventricular branch of left coronary artery",
+      "conceptId": "FMA3874",
+      "kind": "artery"
+    },
+    "FJ2647": {
+      "name": "Third right anterior branch of anterior interventricular branch of left coronary artery",
+      "conceptId": "FMA3876",
+      "kind": "artery"
+    },
+    "FJ2648": {
+      "name": "Diagonal branch of anterior descending branch of left coronary artery",
+      "conceptId": "FMA3860",
+      "kind": "artery"
+    },
+    "FJ2649": {
+      "name": "Circumflex branch of left coronary artery",
+      "conceptId": "FMA3895",
+      "kind": "artery",
+      "profile": "circumflex artery"
+    },
+    "FJ2650": {
+      "name": "Circumflex branch of left coronary artery",
+      "conceptId": "FMA3895",
+      "kind": "artery",
+      "profile": "circumflex artery"
+    },
+    "FJ2651": {
+      "name": "Circumflex branch of left coronary artery",
+      "conceptId": "FMA3895",
+      "kind": "artery",
+      "profile": "circumflex artery"
+    },
+    "FJ2652": {
+      "name": "Circumflex branch of left coronary artery",
+      "conceptId": "FMA3895",
+      "kind": "artery",
+      "profile": "circumflex artery"
+    },
+    "FJ2653": {
+      "name": "Circumflex branch of left coronary artery",
+      "conceptId": "FMA3895",
+      "kind": "artery",
+      "profile": "circumflex artery"
+    },
+    "FJ2654": {
+      "name": "Circumflex branch of left coronary artery",
+      "conceptId": "FMA3895",
+      "kind": "artery",
+      "profile": "circumflex artery"
+    },
+    "FJ2655": {
+      "name": "Coronary sinus",
+      "conceptId": "FMA4706",
+      "kind": "vein"
+    },
+    "FJ2656": {
+      "name": "Great cardiac vein",
+      "conceptId": "FMA4707",
+      "kind": "vein"
+    },
+    "FJ2657": {
+      "name": "Anterior interventricular vein",
+      "conceptId": "FMA66403",
+      "kind": "vein"
+    },
+    "FJ2658": {
+      "name": "Anterior interventricular vein",
+      "conceptId": "FMA66403",
+      "kind": "vein"
+    },
+    "FJ2659": {
+      "name": "Anterior interventricular vein",
+      "conceptId": "FMA66403",
+      "kind": "vein"
+    },
+    "FJ2660": {
+      "name": "Anterior interventricular vein",
+      "conceptId": "FMA66403",
+      "kind": "vein"
+    },
+    "FJ2661": {
+      "name": "Anterior interventricular vein",
+      "conceptId": "FMA66403",
+      "kind": "vein"
+    },
+    "FJ2662": {
+      "name": "Anterior interventricular vein",
+      "conceptId": "FMA66403",
+      "kind": "vein"
+    },
+    "FJ2663": {
+      "name": "Anterior interventricular vein",
+      "conceptId": "FMA66403",
+      "kind": "vein"
+    },
+    "FJ2664": {
+      "name": "Anterior interventricular vein",
+      "conceptId": "FMA66403",
+      "kind": "vein"
+    },
+    "FJ2665": {
+      "name": "Anterior interventricular vein",
+      "conceptId": "FMA66403",
+      "kind": "vein"
+    },
+    "FJ2667": {
+      "name": "Marginal branch of right coronary artery",
+      "conceptId": "FMA3818",
+      "kind": "artery"
+    },
+    "FJ2668": {
+      "name": "Marginal branch of right coronary artery",
+      "conceptId": "FMA3818",
+      "kind": "artery"
+    },
+    "FJ2670": {
+      "name": "Right conus artery",
+      "conceptId": "FMA3807",
+      "kind": "artery"
+    },
+    "FJ2671": {
+      "name": "First anterior ventricular branch of right coronary artery",
+      "conceptId": "FMA3815",
+      "kind": "artery"
+    },
+    "FJ2672": {
+      "name": "Marginal branch of right coronary artery",
+      "conceptId": "FMA3818",
+      "kind": "artery"
+    },
+    "FJ2673": {
+      "name": "First anterior ventricular branch of right coronary artery",
+      "conceptId": "FMA3815",
+      "kind": "artery"
+    },
+    "FJ2674": {
+      "name": "Marginal branch of right coronary artery",
+      "conceptId": "FMA3818",
+      "kind": "artery"
+    },
+    "FJ2675": {
+      "name": "Marginal branch of right coronary artery",
+      "conceptId": "FMA3818",
+      "kind": "artery"
+    },
+    "FJ2676": {
+      "name": "Right conus artery",
+      "conceptId": "FMA3807",
+      "kind": "artery"
+    },
+    "FJ2677": {
+      "name": "First anterior ventricular branch of right coronary artery",
+      "conceptId": "FMA3815",
+      "kind": "artery"
+    },
+    "FJ2678": {
+      "name": "Middle cardiac vein",
+      "conceptId": "FMA4713",
+      "kind": "vein"
+    },
+    "FJ2679": {
+      "name": "Middle cardiac vein",
+      "conceptId": "FMA4713",
+      "kind": "vein"
+    },
+    "FJ2680": {
+      "name": "Middle cardiac vein",
+      "conceptId": "FMA4713",
+      "kind": "vein"
+    },
+    "FJ2681": {
+      "name": "Middle cardiac vein",
+      "conceptId": "FMA4713",
+      "kind": "vein"
+    },
+    "FJ2682": {
+      "name": "Middle cardiac vein",
+      "conceptId": "FMA4713",
+      "kind": "vein"
+    },
+    "FJ2683": {
+      "name": "Middle cardiac vein",
+      "conceptId": "FMA4713",
+      "kind": "vein"
+    },
+    "FJ2684": {
+      "name": "Middle cardiac vein",
+      "conceptId": "FMA4713",
+      "kind": "vein"
+    },
+    "FJ2685": {
+      "name": "Middle cardiac vein",
+      "conceptId": "FMA4713",
+      "kind": "vein"
+    },
+    "FJ2686": {
+      "name": "Middle cardiac vein",
+      "conceptId": "FMA4713",
+      "kind": "vein"
+    },
+    "FJ2687": {
+      "name": "Middle cardiac vein",
+      "conceptId": "FMA4713",
+      "kind": "vein"
+    },
+    "FJ2688": {
+      "name": "Middle cardiac vein",
+      "conceptId": "FMA4713",
+      "kind": "vein"
+    },
+    "FJ2689": {
+      "name": "Middle cardiac vein",
+      "conceptId": "FMA4713",
+      "kind": "vein"
+    },
+    "FJ2690": {
+      "name": "Middle cardiac vein",
+      "conceptId": "FMA4713",
+      "kind": "vein"
+    },
+    "FJ2691": {
+      "name": "Middle cardiac vein",
+      "conceptId": "FMA4713",
+      "kind": "vein"
+    },
+    "FJ2692": {
+      "name": "Posterior interventricular branch of right coronary artery",
+      "conceptId": "FMA3840",
+      "kind": "artery"
+    },
+    "FJ2693": {
+      "name": "Posterior interventricular branch of right coronary artery",
+      "conceptId": "FMA3840",
+      "kind": "artery"
+    },
+    "FJ2694": {
+      "name": "Posterior interventricular branch of right coronary artery",
+      "conceptId": "FMA3840",
+      "kind": "artery"
+    },
+    "FJ2695": {
+      "name": "Posterior interventricular branch of right coronary artery",
+      "conceptId": "FMA3840",
+      "kind": "artery"
+    },
+    "FJ2696": {
+      "name": "Posterior interventricular branch of right coronary artery",
+      "conceptId": "FMA3840",
+      "kind": "artery"
+    },
+    "FJ2697": {
+      "name": "Posterior interventricular branch of right coronary artery",
+      "conceptId": "FMA3840",
+      "kind": "artery"
+    },
+    "FJ2698": {
+      "name": "Posterior interventricular branch of right coronary artery",
+      "conceptId": "FMA3840",
+      "kind": "artery"
+    },
+    "FJ2699": {
+      "name": "Posterior interventricular branch of right coronary artery",
+      "conceptId": "FMA3840",
+      "kind": "artery"
+    },
+    "FJ2700": {
+      "name": "Posterior interventricular branch of right coronary artery",
+      "conceptId": "FMA3840",
+      "kind": "artery"
+    },
+    "FJ2701": {
+      "name": "Posterior vein of left ventricle",
+      "conceptId": "FMA4712",
+      "kind": "vein"
+    },
+    "FJ2702": {
+      "name": "Posterior vein of left ventricle",
+      "conceptId": "FMA4712",
+      "kind": "vein"
+    },
+    "FJ2703": {
+      "name": "Left marginal vein",
+      "conceptId": "FMA4708",
+      "kind": "vein"
+    },
+    "FJ2704": {
+      "name": "Left marginal vein",
+      "conceptId": "FMA4708",
+      "kind": "vein"
+    },
+    "FJ2705": {
+      "name": "Left marginal vein",
+      "conceptId": "FMA4708",
+      "kind": "vein"
+    },
+    "FJ2706": {
+      "name": "Posterior vein of left ventricle",
+      "conceptId": "FMA4712",
+      "kind": "vein"
+    },
+    "FJ2707": {
+      "name": "Posterior vein of left ventricle",
+      "conceptId": "FMA4712",
+      "kind": "vein"
+    },
+    "FJ2708": {
+      "name": "Posterior vein of left ventricle",
+      "conceptId": "FMA4712",
+      "kind": "vein"
+    },
+    "FJ2709": {
+      "name": "Posterior vein of left ventricle",
+      "conceptId": "FMA4712",
+      "kind": "vein"
+    },
+    "FJ2710": {
+      "name": "Posterior vein of left ventricle",
+      "conceptId": "FMA4712",
+      "kind": "vein"
+    },
+    "FJ2711": {
+      "name": "Posterior vein of left ventricle",
+      "conceptId": "FMA4712",
+      "kind": "vein"
+    },
+    "FJ2712": {
+      "name": "Posterior vein of left ventricle",
+      "conceptId": "FMA4712",
+      "kind": "vein"
+    },
+    "FJ2713": {
+      "name": "Posterior vein of left ventricle",
+      "conceptId": "FMA4712",
+      "kind": "vein"
+    },
+    "FJ2714": {
+      "name": "First posterior ventricular branch of right coronary artery",
+      "conceptId": "FMA3837",
+      "kind": "artery"
+    },
+    "FJ2715": {
+      "name": "First posterior ventricular branch of right coronary artery",
+      "conceptId": "FMA3837",
+      "kind": "artery"
+    },
+    "FJ2716": {
+      "name": "First posterior ventricular branch of right coronary artery",
+      "conceptId": "FMA3837",
+      "kind": "artery"
+    },
+    "FJ2717": {
+      "name": "First posterior ventricular branch of right coronary artery",
+      "conceptId": "FMA3837",
+      "kind": "artery"
+    },
+    "FJ2718": {
+      "name": "First posterior ventricular branch of right coronary artery",
+      "conceptId": "FMA3837",
+      "kind": "artery"
+    },
+    "FJ2719": {
+      "name": "First posterior ventricular branch of right coronary artery",
+      "conceptId": "FMA3837",
+      "kind": "artery"
+    },
+    "FJ2720": {
+      "name": "First posterior ventricular branch of right coronary artery",
+      "conceptId": "FMA3837",
+      "kind": "artery"
+    },
+    "FJ2721": {
+      "name": "First posterior ventricular branch of right coronary artery",
+      "conceptId": "FMA3837",
+      "kind": "artery"
+    },
+    "FJ2722": {
+      "name": "First posterior ventricular branch of right coronary artery",
+      "conceptId": "FMA3837",
+      "kind": "artery"
+    },
+    "FJ2723": {
+      "name": "Trunk of right coronary artery",
+      "conceptId": "FMA3802",
+      "kind": "artery",
+      "profile": "right coronary artery"
+    },
+    "FJ2724": {
+      "name": "Small cardiac vein",
+      "conceptId": "FMA4714",
+      "kind": "vein"
+    },
+    "FJ2725": {
+      "name": "Anterior cardiac vein",
+      "conceptId": "FMA76767",
+      "kind": "vein"
+    },
+    "FJ2727": {
+      "name": "Right marginal vein",
+      "conceptId": "FMA4716",
+      "kind": "vein"
+    },
+    "FJ2728": {
+      "name": "Right marginal vein",
+      "conceptId": "FMA4716",
+      "kind": "vein"
+    },
+    "FJ2729": {
+      "name": "Right marginal vein",
+      "conceptId": "FMA4716",
+      "kind": "vein"
+    },
+    "FJ2730": {
+      "name": "Anterior cardiac vein",
+      "conceptId": "FMA76767",
+      "kind": "vein"
+    },
+    "FJ2731": {
+      "name": "Small cardiac vein",
+      "conceptId": "FMA4714",
+      "kind": "vein"
+    },
+    "FJ2732": {
+      "name": "Septal branch of anterior interventricular artery",
+      "conceptId": "FMA3892",
+      "kind": "artery"
+    },
+    "FJ2733": {
+      "name": "Septal branch of anterior interventricular artery",
+      "conceptId": "FMA3892",
+      "kind": "artery"
+    },
+    "FJ2734": {
+      "name": "Septal branch of anterior interventricular artery",
+      "conceptId": "FMA3892",
+      "kind": "artery"
+    },
+    "FJ2735": {
+      "name": "First septal branch of right posterior interventricular artery",
+      "conceptId": "FMA3847",
+      "kind": "artery"
+    },
+    "FJ2736": {
+      "name": "Second septal branch of right posterior interventricular artery",
+      "conceptId": "FMA3848",
+      "kind": "artery"
+    },
+    "FJ2737": {
+      "name": "Trunk of left coronary artery",
+      "conceptId": "FMA3855",
+      "kind": "artery",
+      "profile": "left coronary artery"
+    },
+    "FJ2738": {
+      "name": "Left genioglossus",
+      "conceptId": "FMA46702",
+      "kind": "muscle"
+    },
+    "FJ2739": {
+      "name": "Left hyoglossus",
+      "conceptId": "FMA46704",
+      "kind": "muscle"
+    },
+    "FJ2741": {
+      "name": "Left levator veli palatini",
+      "conceptId": "FMA46729",
+      "kind": "muscle"
+    },
+    "FJ2748": {
+      "name": "Left tensor veli palatini",
+      "conceptId": "FMA46732",
+      "kind": "muscle"
+    },
+    "FJ2750": {
+      "name": "Right genioglossus",
+      "conceptId": "FMA46698",
+      "kind": "muscle"
+    },
+    "FJ2751": {
+      "name": "Right hyoglossus",
+      "conceptId": "FMA46703",
+      "kind": "muscle"
+    },
+    "FJ2753": {
+      "name": "Right levator veli palatini",
+      "conceptId": "FMA46728",
+      "kind": "muscle"
+    },
+    "FJ2760": {
+      "name": "Right tensor veli palatini",
+      "conceptId": "FMA46731",
+      "kind": "muscle"
+    },
+    "FJ2762": {
+      "name": "Uvular muscle",
+      "conceptId": "FMA46733",
+      "kind": "muscle"
+    },
+    "FJ2774": {
+      "name": "Left aryepiglotticus",
+      "conceptId": "FMA46605",
+      "kind": "muscle"
+    },
+    "FJ2778": {
+      "name": "Left lateral crico-arytenoid",
+      "conceptId": "FMA46581",
+      "kind": "muscle"
+    },
+    "FJ2780": {
+      "name": "Left oblique arytenoid",
+      "conceptId": "FMA46585",
+      "kind": "muscle"
+    },
+    "FJ2781": {
+      "name": "Oblique part of left cricothyroid",
+      "conceptId": "FMA46614",
+      "kind": "muscle"
+    },
+    "FJ2782": {
+      "name": "Left posterior crico-arytenoid",
+      "conceptId": "FMA46578",
+      "kind": "muscle"
+    },
+    "FJ2783": {
+      "name": "Straight part of left cricothyroid",
+      "conceptId": "FMA46612",
+      "kind": "muscle"
+    },
+    "FJ2784": {
+      "name": "Left thyro-arytenoid",
+      "conceptId": "FMA46590",
+      "kind": "muscle"
+    },
+    "FJ2785": {
+      "name": "Left thyro-arytenoid",
+      "conceptId": "FMA46590",
+      "kind": "muscle"
+    },
+    "FJ2788": {
+      "name": "Left vocalis",
+      "conceptId": "FMA46593",
+      "kind": "muscle"
+    },
+    "FJ2791": {
+      "name": "Right aryepiglotticus",
+      "conceptId": "FMA46604",
+      "kind": "muscle"
+    },
+    "FJ2796": {
+      "name": "Right lateral crico-arytenoid",
+      "conceptId": "FMA46580",
+      "kind": "muscle"
+    },
+    "FJ2798": {
+      "name": "Right oblique arytenoid",
+      "conceptId": "FMA46584",
+      "kind": "muscle"
+    },
+    "FJ2799": {
+      "name": "Oblique part of right cricothyroid",
+      "conceptId": "FMA46613",
+      "kind": "muscle"
+    },
+    "FJ2800": {
+      "name": "Right posterior crico-arytenoid",
+      "conceptId": "FMA46577",
+      "kind": "muscle"
+    },
+    "FJ2801": {
+      "name": "Straight part of right cricothyroid",
+      "conceptId": "FMA46611",
+      "kind": "muscle"
+    },
+    "FJ2802": {
+      "name": "Right thyro-arytenoid",
+      "conceptId": "FMA46589",
+      "kind": "muscle"
+    },
+    "FJ2803": {
+      "name": "Right thyro-arytenoid",
+      "conceptId": "FMA46589",
+      "kind": "muscle"
+    },
+    "FJ2806": {
+      "name": "Right vocalis",
+      "conceptId": "FMA46592",
+      "kind": "muscle"
+    },
+    "FJ2809": {
+      "name": "Transverse arytenoid",
+      "conceptId": "FMA46582",
+      "kind": "muscle"
+    },
+    "FJ2881": {
+      "name": "Left posterior basal segmental artery",
+      "conceptId": "FMA8647",
+      "kind": "artery"
+    },
+    "FJ2882": {
+      "name": "Left lateral basal segmental artery",
+      "conceptId": "FMA8646",
+      "kind": "artery"
+    },
+    "FJ2883": {
+      "name": "Left anterior basal segmental artery",
+      "conceptId": "FMA8645",
+      "kind": "artery"
+    },
+    "FJ2884": {
+      "name": "Left medial basal segmental artery",
+      "conceptId": "FMA8644",
+      "kind": "artery"
+    },
+    "FJ2885": {
+      "name": "Left medial basal segmental artery",
+      "conceptId": "FMA8644",
+      "kind": "artery"
+    },
+    "FJ2886": {
+      "name": "Left anterior basal segmental artery",
+      "conceptId": "FMA8645",
+      "kind": "artery"
+    },
+    "FJ2887": {
+      "name": "Left anterior basal segmental artery",
+      "conceptId": "FMA8645",
+      "kind": "artery"
+    },
+    "FJ2888": {
+      "name": "Left superior segmental artery",
+      "conceptId": "FMA8642",
+      "kind": "artery"
+    },
+    "FJ2889": {
+      "name": "Left superior segmental artery",
+      "conceptId": "FMA8642",
+      "kind": "artery"
+    },
+    "FJ2890": {
+      "name": "Left superior segmental artery",
+      "conceptId": "FMA8642",
+      "kind": "artery"
+    },
+    "FJ2891": {
+      "name": "Left superior segmental artery",
+      "conceptId": "FMA8642",
+      "kind": "artery"
+    },
+    "FJ2892": {
+      "name": "Left posterior basal segmental artery",
+      "conceptId": "FMA8647",
+      "kind": "artery"
+    },
+    "FJ2893": {
+      "name": "Left superior segmental artery",
+      "conceptId": "FMA8642",
+      "kind": "artery"
+    },
+    "FJ2894": {
+      "name": "Left superior segmental artery",
+      "conceptId": "FMA8642",
+      "kind": "artery"
+    },
+    "FJ2895": {
+      "name": "Left superior segmental artery",
+      "conceptId": "FMA8642",
+      "kind": "artery"
+    },
+    "FJ2896": {
+      "name": "Inferior lingular artery",
+      "conceptId": "FMA8640",
+      "kind": "artery"
+    },
+    "FJ2897": {
+      "name": "Inferior lingular artery",
+      "conceptId": "FMA8640",
+      "kind": "artery"
+    },
+    "FJ2898": {
+      "name": "Superior lingular artery",
+      "conceptId": "FMA8639",
+      "kind": "artery"
+    },
+    "FJ2899": {
+      "name": "Superior lingular artery",
+      "conceptId": "FMA8639",
+      "kind": "artery"
+    },
+    "FJ2900": {
+      "name": "Superior lingular artery",
+      "conceptId": "FMA8639",
+      "kind": "artery"
+    },
+    "FJ2901": {
+      "name": "Superior lingular artery",
+      "conceptId": "FMA8639",
+      "kind": "artery"
+    },
+    "FJ2902": {
+      "name": "Left anterior segmental artery",
+      "conceptId": "FMA13279",
+      "kind": "artery"
+    },
+    "FJ2903": {
+      "name": "Left posterior basal segmental artery",
+      "conceptId": "FMA8647",
+      "kind": "artery"
+    },
+    "FJ2904": {
+      "name": "Left anterior segmental artery",
+      "conceptId": "FMA13279",
+      "kind": "artery"
+    },
+    "FJ2905": {
+      "name": "Left anterior segmental artery",
+      "conceptId": "FMA13279",
+      "kind": "artery"
+    },
+    "FJ2906": {
+      "name": "Left anterior segmental artery",
+      "conceptId": "FMA13279",
+      "kind": "artery"
+    },
+    "FJ2907": {
+      "name": "Left anterior segmental artery",
+      "conceptId": "FMA13279",
+      "kind": "artery"
+    },
+    "FJ2908": {
+      "name": "Left anterior segmental artery",
+      "conceptId": "FMA13279",
+      "kind": "artery"
+    },
+    "FJ2909": {
+      "name": "Left anterior segmental artery",
+      "conceptId": "FMA13279",
+      "kind": "artery"
+    },
+    "FJ2910": {
+      "name": "Left anterior segmental artery",
+      "conceptId": "FMA13279",
+      "kind": "artery"
+    },
+    "FJ2911": {
+      "name": "Left posterior segmental artery",
+      "conceptId": "FMA8635",
+      "kind": "artery"
+    },
+    "FJ2912": {
+      "name": "Left posterior segmental artery",
+      "conceptId": "FMA8635",
+      "kind": "artery"
+    },
+    "FJ2913": {
+      "name": "Left posterior segmental artery",
+      "conceptId": "FMA8635",
+      "kind": "artery"
+    },
+    "FJ2914": {
+      "name": "Left posterior basal segmental artery",
+      "conceptId": "FMA8647",
+      "kind": "artery"
+    },
+    "FJ2915": {
+      "name": "Left apical segmental artery",
+      "conceptId": "FMA8634",
+      "kind": "artery"
+    },
+    "FJ2916": {
+      "name": "Left apical segmental artery",
+      "conceptId": "FMA8634",
+      "kind": "artery"
+    },
+    "FJ2917": {
+      "name": "Left apical segmental artery",
+      "conceptId": "FMA8634",
+      "kind": "artery"
+    },
+    "FJ2918": {
+      "name": "Left apical segmental artery",
+      "conceptId": "FMA8634",
+      "kind": "artery"
+    },
+    "FJ2919": {
+      "name": "Left posterior basal segmental artery",
+      "conceptId": "FMA8647",
+      "kind": "artery"
+    },
+    "FJ2920": {
+      "name": "Left posterior basal segmental artery",
+      "conceptId": "FMA8647",
+      "kind": "artery"
+    },
+    "FJ2921": {
+      "name": "Left lateral basal segmental artery",
+      "conceptId": "FMA8646",
+      "kind": "artery"
+    },
+    "FJ2922": {
+      "name": "Left lateral basal segmental artery",
+      "conceptId": "FMA8646",
+      "kind": "artery"
+    },
+    "FJ2923": {
+      "name": "Left lateral basal segmental artery",
+      "conceptId": "FMA8646",
+      "kind": "artery"
+    },
+    "FJ2924": {
+      "name": "Left pulmonary artery",
+      "conceptId": "FMA50873",
+      "kind": "artery"
+    },
+    "FJ2925": {
+      "name": "Left superior pulmonary vein",
+      "conceptId": "FMA49916",
+      "kind": "vein"
+    },
+    "FJ2926": {
+      "name": "Left posterior segmental vein",
+      "conceptId": "FMA9438",
+      "kind": "vein"
+    },
+    "FJ2927": {
+      "name": "Left posterior segmental vein",
+      "conceptId": "FMA9438",
+      "kind": "vein"
+    },
+    "FJ2928": {
+      "name": "Left posterior segmental vein",
+      "conceptId": "FMA9438",
+      "kind": "vein"
+    },
+    "FJ2929": {
+      "name": "Left posterior segmental vein",
+      "conceptId": "FMA9438",
+      "kind": "vein"
+    },
+    "FJ2930": {
+      "name": "Left anterior segmental vein",
+      "conceptId": "FMA8667",
+      "kind": "vein"
+    },
+    "FJ2931": {
+      "name": "Left anterior segmental vein",
+      "conceptId": "FMA8667",
+      "kind": "vein"
+    },
+    "FJ2932": {
+      "name": "Left anterior segmental vein",
+      "conceptId": "FMA8667",
+      "kind": "vein"
+    },
+    "FJ2933": {
+      "name": "Left superior pulmonary vein",
+      "conceptId": "FMA49916",
+      "kind": "vein"
+    },
+    "FJ2934": {
+      "name": "Inferior lingular vein",
+      "conceptId": "FMA8669",
+      "kind": "vein"
+    },
+    "FJ2935": {
+      "name": "Inferior lingular vein",
+      "conceptId": "FMA8669",
+      "kind": "vein"
+    },
+    "FJ2936": {
+      "name": "Left apical segmental vein",
+      "conceptId": "FMA9437",
+      "kind": "vein"
+    },
+    "FJ2937": {
+      "name": "Superior lingular vein",
+      "conceptId": "FMA8668",
+      "kind": "vein"
+    },
+    "FJ2938": {
+      "name": "Superior lingular vein",
+      "conceptId": "FMA8668",
+      "kind": "vein"
+    },
+    "FJ2939": {
+      "name": "Left posterior segmental vein",
+      "conceptId": "FMA9438",
+      "kind": "vein"
+    },
+    "FJ2940": {
+      "name": "Left posterior segmental vein",
+      "conceptId": "FMA9438",
+      "kind": "vein"
+    },
+    "FJ2941": {
+      "name": "Left posterior segmental vein",
+      "conceptId": "FMA9438",
+      "kind": "vein"
+    },
+    "FJ2942": {
+      "name": "Left posterior segmental vein",
+      "conceptId": "FMA9438",
+      "kind": "vein"
+    },
+    "FJ2943": {
+      "name": "Left posterior segmental vein",
+      "conceptId": "FMA9438",
+      "kind": "vein"
+    },
+    "FJ2944": {
+      "name": "Left inferior pulmonary vein",
+      "conceptId": "FMA49913",
+      "kind": "vein"
+    },
+    "FJ2945": {
+      "name": "Left posterior basal segmental vein",
+      "conceptId": "FMA9451",
+      "kind": "vein"
+    },
+    "FJ2946": {
+      "name": "Left posterior basal segmental vein",
+      "conceptId": "FMA9451",
+      "kind": "vein"
+    },
+    "FJ2947": {
+      "name": "Left apical segmental vein",
+      "conceptId": "FMA9437",
+      "kind": "vein"
+    },
+    "FJ2948": {
+      "name": "Left posterior basal segmental vein",
+      "conceptId": "FMA9451",
+      "kind": "vein"
+    },
+    "FJ2949": {
+      "name": "Left posterior basal segmental vein",
+      "conceptId": "FMA9451",
+      "kind": "vein"
+    },
+    "FJ2950": {
+      "name": "Left inferior pulmonary vein",
+      "conceptId": "FMA49913",
+      "kind": "vein"
+    },
+    "FJ2951": {
+      "name": "Left lateral basal segmental vein",
+      "conceptId": "FMA9450",
+      "kind": "vein"
+    },
+    "FJ2952": {
+      "name": "Left lateral basal segmental vein",
+      "conceptId": "FMA9450",
+      "kind": "vein"
+    },
+    "FJ2953": {
+      "name": "Left lateral basal segmental vein",
+      "conceptId": "FMA9450",
+      "kind": "vein"
+    },
+    "FJ2954": {
+      "name": "Left lateral basal segmental vein",
+      "conceptId": "FMA9450",
+      "kind": "vein"
+    },
+    "FJ2955": {
+      "name": "Left inferior pulmonary vein",
+      "conceptId": "FMA49913",
+      "kind": "vein"
+    },
+    "FJ2956": {
+      "name": "Left anterior basal segmental vein",
+      "conceptId": "FMA8678",
+      "kind": "vein"
+    },
+    "FJ2957": {
+      "name": "Left anterior basal segmental vein",
+      "conceptId": "FMA8678",
+      "kind": "vein"
+    },
+    "FJ2958": {
+      "name": "Left apical segmental vein",
+      "conceptId": "FMA9437",
+      "kind": "vein"
+    },
+    "FJ2959": {
+      "name": "Left anterior basal segmental vein",
+      "conceptId": "FMA8678",
+      "kind": "vein"
+    },
+    "FJ2960": {
+      "name": "Left anterior basal segmental vein",
+      "conceptId": "FMA8678",
+      "kind": "vein"
+    },
+    "FJ2961": {
+      "name": "Left apical segmental vein",
+      "conceptId": "FMA9437",
+      "kind": "vein"
+    },
+    "FJ2962": {
+      "name": "Left apical segmental vein",
+      "conceptId": "FMA9437",
+      "kind": "vein"
+    },
+    "FJ2963": {
+      "name": "Left apical segmental vein",
+      "conceptId": "FMA9437",
+      "kind": "vein"
+    },
+    "FJ2964": {
+      "name": "Left apical segmental vein",
+      "conceptId": "FMA9437",
+      "kind": "vein"
+    },
+    "FJ2965": {
+      "name": "Left posterior segmental vein",
+      "conceptId": "FMA9438",
+      "kind": "vein"
+    },
+    "FJ2966": {
+      "name": "Pulmonary trunk",
+      "conceptId": "FMA8612",
+      "kind": "artery"
+    },
+    "FJ2967": {
+      "name": "Apical part of right apical segmental artery",
+      "conceptId": "FMA68662",
+      "kind": "artery"
+    },
+    "FJ2968": {
+      "name": "Apical part of right posterior segmental artery",
+      "conceptId": "FMA68670",
+      "kind": "artery"
+    },
+    "FJ2969": {
+      "name": "Apical part of right posterior segmental artery",
+      "conceptId": "FMA68670",
+      "kind": "artery"
+    },
+    "FJ2970": {
+      "name": "Posterior part of right posterior segmental artery",
+      "conceptId": "FMA68673",
+      "kind": "artery"
+    },
+    "FJ2971": {
+      "name": "Posterior part of right posterior segmental artery",
+      "conceptId": "FMA68673",
+      "kind": "artery"
+    },
+    "FJ2972": {
+      "name": "Posterior part of right posterior segmental artery",
+      "conceptId": "FMA68673",
+      "kind": "artery"
+    },
+    "FJ2973": {
+      "name": "Right upper lobar artery",
+      "conceptId": "FMA68197",
+      "kind": "artery"
+    },
+    "FJ2974": {
+      "name": "Posterior branch of right anterior segmental artery",
+      "conceptId": "FMA68677",
+      "kind": "artery"
+    },
+    "FJ2975": {
+      "name": "Anterior branch of right anterior segmental artery",
+      "conceptId": "FMA68683",
+      "kind": "artery"
+    },
+    "FJ2976": {
+      "name": "Anterior branch of right anterior segmental artery",
+      "conceptId": "FMA68683",
+      "kind": "artery"
+    },
+    "FJ2977": {
+      "name": "Anterior branch of right anterior segmental artery",
+      "conceptId": "FMA68683",
+      "kind": "artery"
+    },
+    "FJ2978": {
+      "name": "Anterior part of right apical segmental artery",
+      "conceptId": "FMA68665",
+      "kind": "artery"
+    },
+    "FJ2979": {
+      "name": "Anterior branch of right anterior segmental artery",
+      "conceptId": "FMA68683",
+      "kind": "artery"
+    },
+    "FJ2980": {
+      "name": "Posterior branch of right anterior segmental artery",
+      "conceptId": "FMA68677",
+      "kind": "artery"
+    },
+    "FJ2981": {
+      "name": "Posterior branch of right anterior segmental artery",
+      "conceptId": "FMA68677",
+      "kind": "artery"
+    },
+    "FJ2982": {
+      "name": "Anterior branch of lateral segmental artery",
+      "conceptId": "FMA68691",
+      "kind": "artery"
+    },
+    "FJ2983": {
+      "name": "Posterior branch of lateral segmental artery",
+      "conceptId": "FMA68690",
+      "kind": "artery"
+    },
+    "FJ2984": {
+      "name": "Posterior branch of lateral segmental artery",
+      "conceptId": "FMA68690",
+      "kind": "artery"
+    },
+    "FJ2985": {
+      "name": "Anterior branch of lateral segmental artery",
+      "conceptId": "FMA68691",
+      "kind": "artery"
+    },
+    "FJ2986": {
+      "name": "Superior branch of medial segmental artery",
+      "conceptId": "FMA68693",
+      "kind": "artery"
+    },
+    "FJ2987": {
+      "name": "Inferior branch of medial segmental artery",
+      "conceptId": "FMA68694",
+      "kind": "artery"
+    },
+    "FJ2988": {
+      "name": "Inferior branch of medial segmental artery",
+      "conceptId": "FMA68694",
+      "kind": "artery"
+    },
+    "FJ2989": {
+      "name": "Anterior part of right apical segmental artery",
+      "conceptId": "FMA68665",
+      "kind": "artery"
+    },
+    "FJ2990": {
+      "name": "Superior branch of medial segmental artery",
+      "conceptId": "FMA68693",
+      "kind": "artery"
+    },
+    "FJ2991": {
+      "name": "Lateral branch of right superior segmental artery",
+      "conceptId": "FMA68712",
+      "kind": "artery"
+    },
+    "FJ2992": {
+      "name": "Lateral branch of right superior segmental artery",
+      "conceptId": "FMA68712",
+      "kind": "artery"
+    },
+    "FJ2993": {
+      "name": "Lateral branch of right superior segmental artery",
+      "conceptId": "FMA68712",
+      "kind": "artery"
+    },
+    "FJ2994": {
+      "name": "Medial branch of right superior segmental artery",
+      "conceptId": "FMA68706",
+      "kind": "artery"
+    },
+    "FJ2995": {
+      "name": "Medial branch of right superior segmental artery",
+      "conceptId": "FMA68706",
+      "kind": "artery"
+    },
+    "FJ2996": {
+      "name": "Medial branch of right superior segmental artery",
+      "conceptId": "FMA68706",
+      "kind": "artery"
+    },
+    "FJ2997": {
+      "name": "Superior branch of right superior segmental artery",
+      "conceptId": "FMA68709",
+      "kind": "artery"
+    },
+    "FJ2998": {
+      "name": "Superior branch of right superior segmental artery",
+      "conceptId": "FMA68709",
+      "kind": "artery"
+    },
+    "FJ2999": {
+      "name": "Superior branch of right superior segmental artery",
+      "conceptId": "FMA68709",
+      "kind": "artery"
+    },
+    "FJ3000": {
+      "name": "Anterior part of right apical segmental artery",
+      "conceptId": "FMA68665",
+      "kind": "artery"
+    },
+    "FJ3001": {
+      "name": "Lateral branch of right anterior basal segmental artery",
+      "conceptId": "FMA68725",
+      "kind": "artery"
+    },
+    "FJ3002": {
+      "name": "Basal branch of right anterior basal segmental artery",
+      "conceptId": "FMA68723",
+      "kind": "artery"
+    },
+    "FJ3003": {
+      "name": "Basal branch of right anterior basal segmental artery",
+      "conceptId": "FMA68723",
+      "kind": "artery"
+    },
+    "FJ3004": {
+      "name": "Lateral branch of right lateral basal segmental artery",
+      "conceptId": "FMA68728",
+      "kind": "artery"
+    },
+    "FJ3005": {
+      "name": "Lateral branch of right lateral basal segmental artery",
+      "conceptId": "FMA68728",
+      "kind": "artery"
+    },
+    "FJ3006": {
+      "name": "Lateral branch of right lateral basal segmental artery",
+      "conceptId": "FMA68728",
+      "kind": "artery"
+    },
+    "FJ3007": {
+      "name": "Lateral branch of right lateral basal segmental artery",
+      "conceptId": "FMA68728",
+      "kind": "artery"
+    },
+    "FJ3008": {
+      "name": "Mediobasal branch of right posterior basal segmental artery",
+      "conceptId": "FMA68741",
+      "kind": "artery"
+    },
+    "FJ3009": {
+      "name": "Accessory subsuperior branch of right posterior basal segmental artery",
+      "conceptId": "FMA68735",
+      "kind": "artery"
+    },
+    "FJ3010": {
+      "name": "Accessory subsuperior branch of right posterior basal segmental artery",
+      "conceptId": "FMA68735",
+      "kind": "artery"
+    },
+    "FJ3011": {
+      "name": "Anterior part of right apical segmental artery",
+      "conceptId": "FMA68665",
+      "kind": "artery"
+    },
+    "FJ3012": {
+      "name": "Mediobasal branch of right posterior basal segmental artery",
+      "conceptId": "FMA68741",
+      "kind": "artery"
+    },
+    "FJ3013": {
+      "name": "Laterobasal branch of right posterior basal segmental artery",
+      "conceptId": "FMA68738",
+      "kind": "artery"
+    },
+    "FJ3014": {
+      "name": "Laterobasal branch of right posterior basal segmental artery",
+      "conceptId": "FMA68738",
+      "kind": "artery"
+    },
+    "FJ3015": {
+      "name": "Apical part of right apical segmental artery",
+      "conceptId": "FMA68662",
+      "kind": "artery"
+    },
+    "FJ3016": {
+      "name": "Apical part of right apical segmental artery",
+      "conceptId": "FMA68662",
+      "kind": "artery"
+    },
+    "FJ3017": {
+      "name": "Apical part of right apical segmental artery",
+      "conceptId": "FMA68662",
+      "kind": "artery"
+    },
+    "FJ3018": {
+      "name": "Apical part of right posterior segmental artery",
+      "conceptId": "FMA68670",
+      "kind": "artery"
+    },
+    "FJ3019": {
+      "name": "Right pulmonary artery",
+      "conceptId": "FMA50872",
+      "kind": "artery"
+    },
+    "FJ3020": {
+      "name": "Right superior pulmonary vein",
+      "conceptId": "FMA49914",
+      "kind": "vein"
+    },
+    "FJ3021": {
+      "name": "Inferior part of right anterior segmental vein",
+      "conceptId": "FMA68928",
+      "kind": "vein"
+    },
+    "FJ3022": {
+      "name": "Right posterior segmental vein",
+      "conceptId": "FMA8663",
+      "kind": "vein"
+    },
+    "FJ3023": {
+      "name": "Right posterior segmental vein",
+      "conceptId": "FMA8663",
+      "kind": "vein"
+    },
+    "FJ3024": {
+      "name": "Right posterior segmental vein",
+      "conceptId": "FMA8663",
+      "kind": "vein"
+    },
+    "FJ3025": {
+      "name": "Right posterior segmental vein",
+      "conceptId": "FMA8663",
+      "kind": "vein"
+    },
+    "FJ3026": {
+      "name": "Right posterior segmental vein",
+      "conceptId": "FMA8663",
+      "kind": "vein"
+    },
+    "FJ3027": {
+      "name": "Superior part of right anterior segmental vein",
+      "conceptId": "FMA68926",
+      "kind": "vein"
+    },
+    "FJ3028": {
+      "name": "Right anterior segmental vein",
+      "conceptId": "FMA8662",
+      "kind": "vein"
+    },
+    "FJ3029": {
+      "name": "Right anterior segmental vein",
+      "conceptId": "FMA8662",
+      "kind": "vein"
+    },
+    "FJ3030": {
+      "name": "Superior part of medial segmental vein",
+      "conceptId": "FMA68982",
+      "kind": "vein"
+    },
+    "FJ3031": {
+      "name": "Trunk of right apical segmental vein",
+      "conceptId": "FMA68880",
+      "kind": "vein"
+    },
+    "FJ3032": {
+      "name": "Inferior part of medial segmental vein",
+      "conceptId": "FMA68983",
+      "kind": "vein"
+    },
+    "FJ3033": {
+      "name": "Inferior part of medial segmental vein",
+      "conceptId": "FMA68983",
+      "kind": "vein"
+    },
+    "FJ3034": {
+      "name": "Anterior part of lateral segmental vein",
+      "conceptId": "FMA68945",
+      "kind": "vein"
+    },
+    "FJ3035": {
+      "name": "Anterior part of lateral segmental vein",
+      "conceptId": "FMA68945",
+      "kind": "vein"
+    },
+    "FJ3036": {
+      "name": "Anterior part of lateral segmental vein",
+      "conceptId": "FMA68945",
+      "kind": "vein"
+    },
+    "FJ3037": {
+      "name": "Posterior part of lateral segmental vein",
+      "conceptId": "FMA68944",
+      "kind": "vein"
+    },
+    "FJ3038": {
+      "name": "Posterior part of lateral segmental vein",
+      "conceptId": "FMA68944",
+      "kind": "vein"
+    },
+    "FJ3039": {
+      "name": "Posterior part of lateral segmental vein",
+      "conceptId": "FMA68944",
+      "kind": "vein"
+    },
+    "FJ3040": {
+      "name": "Right inferior pulmonary vein",
+      "conceptId": "FMA49911",
+      "kind": "vein"
+    },
+    "FJ3041": {
+      "name": "Right posterior basal segmental vein",
+      "conceptId": "FMA9428",
+      "kind": "vein"
+    },
+    "FJ3042": {
+      "name": "Anterior part of right apical segmental vein",
+      "conceptId": "FMA68921",
+      "kind": "vein"
+    },
+    "FJ3043": {
+      "name": "Right posterior basal segmental vein",
+      "conceptId": "FMA9428",
+      "kind": "vein"
+    },
+    "FJ3044": {
+      "name": "Right posterior basal segmental vein",
+      "conceptId": "FMA9428",
+      "kind": "vein"
+    },
+    "FJ3045": {
+      "name": "Right posterior basal segmental vein",
+      "conceptId": "FMA9428",
+      "kind": "vein"
+    },
+    "FJ3046": {
+      "name": "Right posterior basal segmental vein",
+      "conceptId": "FMA9428",
+      "kind": "vein"
+    },
+    "FJ3047": {
+      "name": "Right posterior basal segmental vein",
+      "conceptId": "FMA9428",
+      "kind": "vein"
+    },
+    "FJ3048": {
+      "name": "Right posterior basal segmental vein",
+      "conceptId": "FMA9428",
+      "kind": "vein"
+    },
+    "FJ3049": {
+      "name": "Right anterior basal segmental vein",
+      "conceptId": "FMA8673",
+      "kind": "vein"
+    },
+    "FJ3050": {
+      "name": "Right superior segmental vein",
+      "conceptId": "FMA8670",
+      "kind": "vein"
+    },
+    "FJ3051": {
+      "name": "Right superior segmental vein",
+      "conceptId": "FMA8670",
+      "kind": "vein"
+    },
+    "FJ3052": {
+      "name": "Right superior segmental vein",
+      "conceptId": "FMA8670",
+      "kind": "vein"
+    },
+    "FJ3053": {
+      "name": "Anterior part of right apical segmental vein",
+      "conceptId": "FMA68921",
+      "kind": "vein"
+    },
+    "FJ3054": {
+      "name": "Right medial basal segmental vein",
+      "conceptId": "FMA9422",
+      "kind": "vein"
+    },
+    "FJ3055": {
+      "name": "Right medial basal segmental vein",
+      "conceptId": "FMA9422",
+      "kind": "vein"
+    },
+    "FJ3056": {
+      "name": "Right anterior basal segmental vein",
+      "conceptId": "FMA8673",
+      "kind": "vein"
+    },
+    "FJ3057": {
+      "name": "Right posterior basal segmental vein",
+      "conceptId": "FMA9428",
+      "kind": "vein"
+    },
+    "FJ3058": {
+      "name": "Right posterior basal segmental vein",
+      "conceptId": "FMA9428",
+      "kind": "vein"
+    },
+    "FJ3059": {
+      "name": "Right lateral basal segmental vein",
+      "conceptId": "FMA9425",
+      "kind": "vein"
+    },
+    "FJ3060": {
+      "name": "Right lateral basal segmental vein",
+      "conceptId": "FMA9425",
+      "kind": "vein"
+    },
+    "FJ3061": {
+      "name": "Right lateral basal segmental vein",
+      "conceptId": "FMA9425",
+      "kind": "vein"
+    },
+    "FJ3062": {
+      "name": "Right lateral basal segmental vein",
+      "conceptId": "FMA9425",
+      "kind": "vein"
+    },
+    "FJ3063": {
+      "name": "Right superior segmental vein",
+      "conceptId": "FMA8670",
+      "kind": "vein"
+    },
+    "FJ3064": {
+      "name": "Apical part of right apical segmental vein",
+      "conceptId": "FMA8681",
+      "kind": "vein"
+    },
+    "FJ3065": {
+      "name": "Right superior segmental vein",
+      "conceptId": "FMA8670",
+      "kind": "vein"
+    },
+    "FJ3066": {
+      "name": "Right superior segmental vein",
+      "conceptId": "FMA8670",
+      "kind": "vein"
+    },
+    "FJ3067": {
+      "name": "Apical part of right apical segmental vein",
+      "conceptId": "FMA8681",
+      "kind": "vein"
+    },
+    "FJ3068": {
+      "name": "Apical part of right apical segmental vein",
+      "conceptId": "FMA8681",
+      "kind": "vein"
+    },
+    "FJ3069": {
+      "name": "Right posterior segmental vein",
+      "conceptId": "FMA8663",
+      "kind": "vein"
+    },
+    "FJ3070": {
+      "name": "Right posterior segmental vein",
+      "conceptId": "FMA8663",
+      "kind": "vein"
+    },
+    "FJ3073": {
+      "name": "Anterior superior segmental branch of right portal vein",
+      "conceptId": "FMA15420",
+      "kind": "vein"
+    },
+    "FJ3074": {
+      "name": "Anterior inferior segmental branch of right portal vein",
+      "conceptId": "FMA15421",
+      "kind": "vein"
+    },
+    "FJ3075": {
+      "name": "Anterior inferior segmental hepatic artery",
+      "conceptId": "FMA70443",
+      "kind": "artery"
+    },
+    "FJ3076": {
+      "name": "Anterior superior segmental hepatic artery",
+      "conceptId": "FMA70442",
+      "kind": "artery"
+    },
+    "FJ3077": {
+      "name": "Caudate lobe branch of left hepatic artery",
+      "conceptId": "FMA70455",
+      "kind": "artery"
+    },
+    "FJ3078": {
+      "name": "Common hepatic artery",
+      "conceptId": "FMA14771",
+      "kind": "artery"
+    },
+    "FJ3081": {
+      "name": "Hepatic artery proper",
+      "conceptId": "FMA14772",
+      "kind": "artery"
+    },
+    "FJ3082": {
+      "name": "Pre-hepatic portal vein",
+      "conceptId": "FMA71904",
+      "kind": "vein"
+    },
+    "FJ3083": {
+      "name": "Anterior inferior segmental tributary of middle hepatic vein",
+      "conceptId": "FMA15800",
+      "kind": "vein"
+    },
+    "FJ3084": {
+      "name": "Medial inferior segmental tributary of middle hepatic vein",
+      "conceptId": "FMA15801",
+      "kind": "vein"
+    },
+    "FJ3085": {
+      "name": "Medial inferior segmental tributary of middle hepatic vein",
+      "conceptId": "FMA15801",
+      "kind": "vein"
+    },
+    "FJ3086": {
+      "name": "Anterior inferior segmental tributary of middle hepatic vein",
+      "conceptId": "FMA15800",
+      "kind": "vein"
+    },
+    "FJ3091": {
+      "name": "Lateral superior segmental hepatic artery",
+      "conceptId": "FMA70452",
+      "kind": "artery"
+    },
+    "FJ3092": {
+      "name": "Lateral inferior segmental hepatic artery",
+      "conceptId": "FMA70453",
+      "kind": "artery"
+    },
+    "FJ3093": {
+      "name": "Lateral superior segmental hepatic artery",
+      "conceptId": "FMA70452",
+      "kind": "artery"
+    },
+    "FJ3095": {
+      "name": "Trunk of left hepatic artery",
+      "conceptId": "FMA70457",
+      "kind": "artery"
+    },
+    "FJ3097": {
+      "name": "Lateral inferior segmental tributary of left hepatic vein",
+      "conceptId": "FMA15804",
+      "kind": "vein"
+    },
+    "FJ3098": {
+      "name": "Lateral superior segmental tributary of left hepatic vein",
+      "conceptId": "FMA15803",
+      "kind": "vein"
+    },
+    "FJ3099": {
+      "name": "Lateral inferior segmental tributary of left hepatic vein",
+      "conceptId": "FMA15804",
+      "kind": "vein"
+    },
+    "FJ3100": {
+      "name": "Lateral inferior segmental tributary of left hepatic vein",
+      "conceptId": "FMA15804",
+      "kind": "vein"
+    },
+    "FJ3101": {
+      "name": "Medial superior segmental tributary of left hepatic vein",
+      "conceptId": "FMA15802",
+      "kind": "vein"
+    },
+    "FJ3102": {
+      "name": "Trunk of left portal vein",
+      "conceptId": "FMA82697",
+      "kind": "vein"
+    },
+    "FJ3106": {
+      "name": "Medial inferior segmental hepatic artery",
+      "conceptId": "FMA70450",
+      "kind": "artery"
+    },
+    "FJ3107": {
+      "name": "Medial superior segmental hepatic artery",
+      "conceptId": "FMA70449",
+      "kind": "artery"
+    },
+    "FJ3111": {
+      "name": "Posterior inferior segmental branch of right portal vein",
+      "conceptId": "FMA15424",
+      "kind": "vein"
+    },
+    "FJ3112": {
+      "name": "Posterior superior segmental branch of right portal vein",
+      "conceptId": "FMA15423",
+      "kind": "vein"
+    },
+    "FJ3113": {
+      "name": "Posterior superior segmental branch of right portal vein",
+      "conceptId": "FMA15423",
+      "kind": "vein"
+    },
+    "FJ3114": {
+      "name": "Posterior inferior segmental hepatic artery",
+      "conceptId": "FMA70446",
+      "kind": "artery"
+    },
+    "FJ3115": {
+      "name": "Posterior superior segmental hepatic artery",
+      "conceptId": "FMA70445",
+      "kind": "artery"
+    },
+    "FJ3116": {
+      "name": "Posterior superior segmental hepatic artery",
+      "conceptId": "FMA70445",
+      "kind": "artery"
+    },
+    "FJ3117": {
+      "name": "Trunk of right hepatic artery",
+      "conceptId": "FMA70456",
+      "kind": "artery"
+    },
+    "FJ3118": {
+      "name": "Posterior inferior segmental tributary of right hepatic vein",
+      "conceptId": "FMA15797",
+      "kind": "vein"
+    },
+    "FJ3119": {
+      "name": "Posterior superior segmental tributary of right hepatic vein",
+      "conceptId": "FMA15796",
+      "kind": "vein"
+    },
+    "FJ3120": {
+      "name": "Posterior inferior segmental tributary of right hepatic vein",
+      "conceptId": "FMA15797",
+      "kind": "vein"
+    },
+    "FJ3121": {
+      "name": "Anterior superior segmental tributary of right hepatic vein",
+      "conceptId": "FMA15798",
+      "kind": "vein"
+    },
+    "FJ3122": {
+      "name": "Trunk of right portal vein",
+      "conceptId": "FMA82695",
+      "kind": "vein"
+    },
+    "FJ3124": {
+      "name": "Caudate lobe branch of left portal vein",
+      "conceptId": "FMA15425",
+      "kind": "vein"
+    },
+    "FJ3125": {
+      "name": "Lateral inferior segmental branch of left portal vein",
+      "conceptId": "FMA15432",
+      "kind": "vein"
+    },
+    "FJ3126": {
+      "name": "Lateral superior segmental branch of left portal vein",
+      "conceptId": "FMA15431",
+      "kind": "vein"
+    },
+    "FJ3127": {
+      "name": "Medial superior segmental branch of left portal vein",
+      "conceptId": "FMA15428",
+      "kind": "vein"
+    },
+    "FJ3128": {
+      "name": "Medial inferior segmental branch of left portal vein",
+      "conceptId": "FMA15429",
+      "kind": "vein"
+    },
+    "FJ3131": {
+      "name": "Diaphragm",
+      "conceptId": "FMA13295",
+      "kind": "muscle"
+    },
+    "FJ3399": {
+      "name": "Ascending branch of left colic artery",
+      "conceptId": "FMA14828",
+      "kind": "artery"
+    },
+    "FJ3400": {
+      "name": "Left colic vein",
+      "conceptId": "FMA15394",
+      "kind": "vein"
+    },
+    "FJ3401": {
+      "name": "Anterior inferior pancreaticoduodenal artery",
+      "conceptId": "FMA70479",
+      "kind": "artery"
+    },
+    "FJ3406": {
+      "name": "Anterior cecal artery",
+      "conceptId": "FMA14816",
+      "kind": "artery"
+    },
+    "FJ3409": {
+      "name": "Anterior superior pancreaticoduodenal artery",
+      "conceptId": "FMA14782",
+      "kind": "artery"
+    },
+    "FJ3410": {
+      "name": "Appendicular artery",
+      "conceptId": "FMA14818",
+      "kind": "artery"
+    },
+    "FJ3411": {
+      "name": "Arch of aorta",
+      "conceptId": "FMA3768",
+      "kind": "artery"
+    },
+    "FJ3413": {
+      "name": "Ascending aorta",
+      "conceptId": "FMA3736",
+      "kind": "artery"
+    },
+    "FJ3414": {
+      "name": "Ascending branch of inferior branch of ileocolic artery",
+      "conceptId": "FMA14820",
+      "kind": "artery"
+    },
+    "FJ3415": {
+      "name": "Ileocolic vein",
+      "conceptId": "FMA15408",
+      "kind": "vein"
+    },
+    "FJ3416": {
+      "name": "Azygos vein",
+      "conceptId": "FMA4838",
+      "kind": "vein"
+    },
+    "FJ3417": {
+      "name": "Brachiocephalic artery",
+      "conceptId": "FMA3932",
+      "kind": "artery"
+    },
+    "FJ3418": {
+      "name": "Bronchial branch of arch of aorta",
+      "conceptId": "FMA14177",
+      "kind": "artery"
+    },
+    "FJ3419": {
+      "name": "Caudal pancreatic artery",
+      "conceptId": "FMA14793",
+      "kind": "artery"
+    },
+    "FJ3420": {
+      "name": "Splenic artery",
+      "conceptId": "FMA14773",
+      "kind": "artery"
+    },
+    "FJ3421": {
+      "name": "Celiac trunk",
+      "conceptId": "FMA14812",
+      "kind": "artery"
+    },
+    "FJ3426": {
+      "name": "Left superficial dorsal vein of penis",
+      "conceptId": "FMA21386",
+      "kind": "vein"
+    },
+    "FJ3427": {
+      "name": "Descending aorta",
+      "conceptId": "FMA3784",
+      "kind": "artery"
+    },
+    "FJ3428": {
+      "name": "Descending branch of left colic artery",
+      "conceptId": "FMA14829",
+      "kind": "artery"
+    },
+    "FJ3429": {
+      "name": "Left colic vein",
+      "conceptId": "FMA15394",
+      "kind": "vein"
+    },
+    "FJ3430": {
+      "name": "Dorsal pancreatic artery",
+      "conceptId": "FMA14787",
+      "kind": "artery"
+    },
+    "FJ3431": {
+      "name": "Set of oesophageal branches of thoracic aorta",
+      "conceptId": "FMA71537",
+      "kind": "artery"
+    },
+    "FJ3432": {
+      "name": "Trunk of gastroduodenal artery",
+      "conceptId": "FMA76574",
+      "kind": "artery"
+    },
+    "FJ3433": {
+      "name": "Great pancreatic artery",
+      "conceptId": "FMA14792",
+      "kind": "artery"
+    },
+    "FJ3434": {
+      "name": "Hemiazygos vein",
+      "conceptId": "FMA4944",
+      "kind": "vein"
+    },
+    "FJ3437": {
+      "name": "Ileal artery",
+      "conceptId": "FMA14809",
+      "kind": "artery"
+    },
+    "FJ3438": {
+      "name": "Ileal vein",
+      "conceptId": "FMA15405",
+      "kind": "vein"
+    },
+    "FJ3439": {
+      "name": "Ileocolic artery",
+      "conceptId": "FMA14815",
+      "kind": "artery"
+    },
+    "FJ3440": {
+      "name": "Ileocolic vein",
+      "conceptId": "FMA15408",
+      "kind": "vein"
+    },
+    "FJ3441": {
+      "name": "Inferior vena cava",
+      "conceptId": "FMA10951",
+      "kind": "vein"
+    },
+    "FJ3442": {
+      "name": "Inferior mesenteric artery",
+      "conceptId": "FMA14750",
+      "kind": "artery"
+    },
+    "FJ3443": {
+      "name": "Inferior mesenteric vein",
+      "conceptId": "FMA15391",
+      "kind": "vein"
+    },
+    "FJ3444": {
+      "name": "Inferior pancreatic artery",
+      "conceptId": "FMA14790",
+      "kind": "artery"
+    },
+    "FJ3446": {
+      "name": "Inferior pancreaticoduodenal artery",
+      "conceptId": "FMA14805",
+      "kind": "artery"
+    },
+    "FJ3447": {
+      "name": "Inferior phrenic vein",
+      "conceptId": "FMA68068",
+      "kind": "vein"
+    },
+    "FJ3448": {
+      "name": "Inferior phrenic vein",
+      "conceptId": "FMA68068",
+      "kind": "vein"
+    },
+    "FJ3449": {
+      "name": "Inferior phrenic vein",
+      "conceptId": "FMA68068",
+      "kind": "vein"
+    },
+    "FJ3450": {
+      "name": "Inferior phrenic vein",
+      "conceptId": "FMA68068",
+      "kind": "vein"
+    },
+    "FJ3451": {
+      "name": "Inferior phrenic vein",
+      "conceptId": "FMA68068",
+      "kind": "vein"
+    },
+    "FJ3452": {
+      "name": "Inferior phrenic vein",
+      "conceptId": "FMA68068",
+      "kind": "vein"
+    },
+    "FJ3458": {
+      "name": "Anterior division of left renal artery",
+      "conceptId": "FMA70487",
+      "kind": "artery"
+    },
+    "FJ3459": {
+      "name": "Anterior division of left renal artery",
+      "conceptId": "FMA70487",
+      "kind": "artery"
+    },
+    "FJ3460": {
+      "name": "Anterior division of left renal artery",
+      "conceptId": "FMA70487",
+      "kind": "artery"
+    },
+    "FJ3461": {
+      "name": "Anterior division of left renal artery",
+      "conceptId": "FMA70487",
+      "kind": "artery"
+    },
+    "FJ3462": {
+      "name": "Anterior division of left renal artery",
+      "conceptId": "FMA70487",
+      "kind": "artery"
+    },
+    "FJ3463": {
+      "name": "Anterior division of left renal artery",
+      "conceptId": "FMA70487",
+      "kind": "artery"
+    },
+    "FJ3464": {
+      "name": "Left common iliac artery",
+      "conceptId": "FMA14766",
+      "kind": "artery"
+    },
+    "FJ3465": {
+      "name": "Left common iliac vein",
+      "conceptId": "FMA21388",
+      "kind": "vein"
+    },
+    "FJ3466": {
+      "name": "Left external iliac artery",
+      "conceptId": "FMA18807",
+      "kind": "artery"
+    },
+    "FJ3467": {
+      "name": "Left inferior suprarenal artery",
+      "conceptId": "FMA69266",
+      "kind": "artery"
+    },
+    "FJ3468": {
+      "name": "Left internal iliac artery",
+      "conceptId": "FMA18810",
+      "kind": "artery"
+    },
+    "FJ3469": {
+      "name": "Left internal iliac vein",
+      "conceptId": "FMA18888",
+      "kind": "vein"
+    },
+    "FJ3470": {
+      "name": "Left internal iliac vein",
+      "conceptId": "FMA18888",
+      "kind": "vein"
+    },
+    "FJ3471": {
+      "name": "Left internal iliac vein",
+      "conceptId": "FMA18888",
+      "kind": "vein"
+    },
+    "FJ3472": {
+      "name": "Left middle suprarenal artery",
+      "conceptId": "FMA14756",
+      "kind": "artery"
+    },
+    "FJ3473": {
+      "name": "Posterior division of left renal artery",
+      "conceptId": "FMA70490",
+      "kind": "artery"
+    },
+    "FJ3474": {
+      "name": "Posterior division of left renal artery",
+      "conceptId": "FMA70490",
+      "kind": "artery"
+    },
+    "FJ3475": {
+      "name": "Posterior division of left renal artery",
+      "conceptId": "FMA70490",
+      "kind": "artery"
+    },
+    "FJ3476": {
+      "name": "Trunk of left renal artery",
+      "conceptId": "FMA66364",
+      "kind": "artery"
+    },
+    "FJ3477": {
+      "name": "Left renal vein",
+      "conceptId": "FMA14336",
+      "kind": "vein"
+    },
+    "FJ3478": {
+      "name": "Left renal vein",
+      "conceptId": "FMA14336",
+      "kind": "vein"
+    },
+    "FJ3479": {
+      "name": "Left subclavian artery",
+      "conceptId": "FMA4694",
+      "kind": "artery"
+    },
+    "FJ3480": {
+      "name": "Left suprarenal vein",
+      "conceptId": "FMA14349",
+      "kind": "vein"
+    },
+    "FJ3481": {
+      "name": "Ureteric segment of left renal artery",
+      "conceptId": "FMA70493",
+      "kind": "artery"
+    },
+    "FJ3482": {
+      "name": "Left brachiocephalic vein",
+      "conceptId": "FMA4761",
+      "kind": "vein"
+    },
+    "FJ3483": {
+      "name": "Left common carotid artery",
+      "conceptId": "FMA4058",
+      "kind": "artery"
+    },
+    "FJ3484": {
+      "name": "Left external iliac vein",
+      "conceptId": "FMA18886",
+      "kind": "vein"
+    },
+    "FJ3485": {
+      "name": "Left internal jugular vein",
+      "conceptId": "FMA4762",
+      "kind": "vein"
+    },
+    "FJ3486": {
+      "name": "Left subclavian vein",
+      "conceptId": "FMA4763",
+      "kind": "vein"
+    },
+    "FJ3493": {
+      "name": "Left ascending lumbar vein",
+      "conceptId": "FMA4950",
+      "kind": "vein"
+    },
+    "FJ3494": {
+      "name": "Left colic artery",
+      "conceptId": "FMA14826",
+      "kind": "artery"
+    },
+    "FJ3495": {
+      "name": "Left colic vein",
+      "conceptId": "FMA15394",
+      "kind": "vein"
+    },
+    "FJ3496": {
+      "name": "Left dorsal artery of penis",
+      "conceptId": "FMA20819",
+      "kind": "artery"
+    },
+    "FJ3497": {
+      "name": "Left dorsal artery of penis",
+      "conceptId": "FMA20819",
+      "kind": "artery"
+    },
+    "FJ3499": {
+      "name": "Left gastric artery",
+      "conceptId": "FMA14768",
+      "kind": "artery"
+    },
+    "FJ3500": {
+      "name": "Left gastric vein",
+      "conceptId": "FMA15399",
+      "kind": "vein"
+    },
+    "FJ3501": {
+      "name": "Left gastro-epiploic artery",
+      "conceptId": "FMA14796",
+      "kind": "artery"
+    },
+    "FJ3502": {
+      "name": "Left gastroepiploic vein",
+      "conceptId": "FMA15390",
+      "kind": "vein"
+    },
+    "FJ3510": {
+      "name": "Left iliolumbar vein",
+      "conceptId": "FMA18904",
+      "kind": "vein"
+    },
+    "FJ3511": {
+      "name": "Left inferior epigastric artery",
+      "conceptId": "FMA20689",
+      "kind": "artery"
+    },
+    "FJ3512": {
+      "name": "Left inferior epigastric vein",
+      "conceptId": "FMA21164",
+      "kind": "vein"
+    },
+    "FJ3513": {
+      "name": "Left inferior gluteal vein",
+      "conceptId": "FMA18913",
+      "kind": "vein"
+    },
+    "FJ3514": {
+      "name": "Left inferior phrenic artery",
+      "conceptId": "FMA14747",
+      "kind": "artery"
+    },
+    "FJ3515": {
+      "name": "Left inferior phrenic artery",
+      "conceptId": "FMA14747",
+      "kind": "artery"
+    },
+    "FJ3516": {
+      "name": "Left inferior phrenic artery",
+      "conceptId": "FMA14747",
+      "kind": "artery"
+    },
+    "FJ3517": {
+      "name": "Left inferior phrenic artery",
+      "conceptId": "FMA14747",
+      "kind": "artery"
+    },
+    "FJ3518": {
+      "name": "Left inferior phrenic artery",
+      "conceptId": "FMA14747",
+      "kind": "artery"
+    },
+    "FJ3519": {
+      "name": "Left inferior phrenic artery",
+      "conceptId": "FMA14747",
+      "kind": "artery"
+    },
+    "FJ3520": {
+      "name": "Left inferior phrenic artery",
+      "conceptId": "FMA14747",
+      "kind": "artery"
+    },
+    "FJ3522": {
+      "name": "Left external iliac vein",
+      "conceptId": "FMA18886",
+      "kind": "vein"
+    },
+    "FJ3523": {
+      "name": "Left external iliac vein",
+      "conceptId": "FMA18886",
+      "kind": "vein"
+    },
+    "FJ3524": {
+      "name": "Left external iliac vein",
+      "conceptId": "FMA18886",
+      "kind": "vein"
+    },
+    "FJ3525": {
+      "name": "Left internal pudendal vein",
+      "conceptId": "FMA18919",
+      "kind": "vein"
+    },
+    "FJ3526": {
+      "name": "Left lateral sacral vein",
+      "conceptId": "FMA18907",
+      "kind": "vein"
+    },
+    "FJ3527": {
+      "name": "Left obturator vein",
+      "conceptId": "FMA18916",
+      "kind": "vein"
+    },
+    "FJ3529": {
+      "name": "Left superficial epigastric artery",
+      "conceptId": "FMA20736",
+      "kind": "artery"
+    },
+    "FJ3530": {
+      "name": "Left superior epigastric vein",
+      "conceptId": "FMA4785",
+      "kind": "vein"
+    },
+    "FJ3531": {
+      "name": "Left superior gluteal vein",
+      "conceptId": "FMA18910",
+      "kind": "vein"
+    },
+    "FJ3532": {
+      "name": "Left testicular artery",
+      "conceptId": "FMA14760",
+      "kind": "artery"
+    },
+    "FJ3533": {
+      "name": "Left testicular vein",
+      "conceptId": "FMA14345",
+      "kind": "vein"
+    },
+    "FJ3534": {
+      "name": "Marginal artery of colon",
+      "conceptId": "FMA14831",
+      "kind": "artery"
+    },
+    "FJ3541": {
+      "name": "Median sacral vein",
+      "conceptId": "FMA77168",
+      "kind": "vein"
+    },
+    "FJ3542": {
+      "name": "Middle colic artery",
+      "conceptId": "FMA14810",
+      "kind": "artery"
+    },
+    "FJ3543": {
+      "name": "Middle colic vein",
+      "conceptId": "FMA15406",
+      "kind": "vein"
+    },
+    "FJ3544": {
+      "name": "Splenic artery",
+      "conceptId": "FMA14773",
+      "kind": "artery"
+    },
+    "FJ3545": {
+      "name": "Pancreaticoduodenal vein",
+      "conceptId": "FMA15398",
+      "kind": "vein"
+    },
+    "FJ3546": {
+      "name": "Posterior inferior pancreaticoduodenal artery",
+      "conceptId": "FMA70480",
+      "kind": "artery"
+    },
+    "FJ3553": {
+      "name": "Posterior cecal artery",
+      "conceptId": "FMA14817",
+      "kind": "artery"
+    },
+    "FJ3557": {
+      "name": "Posterior superior pancreaticoduodenal artery",
+      "conceptId": "FMA14784",
+      "kind": "artery"
+    },
+    "FJ3558": {
+      "name": "Anterior division of right renal artery",
+      "conceptId": "FMA70486",
+      "kind": "artery"
+    },
+    "FJ3559": {
+      "name": "Anterior division of right renal artery",
+      "conceptId": "FMA70486",
+      "kind": "artery"
+    },
+    "FJ3560": {
+      "name": "Anterior division of right renal artery",
+      "conceptId": "FMA70486",
+      "kind": "artery"
+    },
+    "FJ3561": {
+      "name": "Anterior division of right renal artery",
+      "conceptId": "FMA70486",
+      "kind": "artery"
+    },
+    "FJ3562": {
+      "name": "Anterior division of right renal artery",
+      "conceptId": "FMA70486",
+      "kind": "artery"
+    },
+    "FJ3563": {
+      "name": "Anterior division of right renal artery",
+      "conceptId": "FMA70486",
+      "kind": "artery"
+    },
+    "FJ3564": {
+      "name": "Right common carotid artery",
+      "conceptId": "FMA3941",
+      "kind": "artery"
+    },
+    "FJ3565": {
+      "name": "Right common iliac artery",
+      "conceptId": "FMA14765",
+      "kind": "artery"
+    },
+    "FJ3566": {
+      "name": "Right common iliac vein",
+      "conceptId": "FMA21387",
+      "kind": "vein"
+    },
+    "FJ3567": {
+      "name": "Right external iliac artery",
+      "conceptId": "FMA18806",
+      "kind": "artery"
+    },
+    "FJ3568": {
+      "name": "Right external iliac vein",
+      "conceptId": "FMA18885",
+      "kind": "vein"
+    },
+    "FJ3569": {
+      "name": "Right internal iliac artery",
+      "conceptId": "FMA18809",
+      "kind": "artery"
+    },
+    "FJ3570": {
+      "name": "Right internal iliac vein",
+      "conceptId": "FMA18887",
+      "kind": "vein"
+    },
+    "FJ3571": {
+      "name": "Right internal iliac vein",
+      "conceptId": "FMA18887",
+      "kind": "vein"
+    },
+    "FJ3572": {
+      "name": "Right internal iliac vein",
+      "conceptId": "FMA18887",
+      "kind": "vein"
+    },
+    "FJ3573": {
+      "name": "Posterior division of right renal artery",
+      "conceptId": "FMA70489",
+      "kind": "artery"
+    },
+    "FJ3574": {
+      "name": "Posterior division of right renal artery",
+      "conceptId": "FMA70489",
+      "kind": "artery"
+    },
+    "FJ3575": {
+      "name": "Posterior division of right renal artery",
+      "conceptId": "FMA70489",
+      "kind": "artery"
+    },
+    "FJ3576": {
+      "name": "Trunk of right renal artery",
+      "conceptId": "FMA66363",
+      "kind": "artery"
+    },
+    "FJ3577": {
+      "name": "Right renal vein",
+      "conceptId": "FMA14335",
+      "kind": "vein"
+    },
+    "FJ3578": {
+      "name": "Right renal vein",
+      "conceptId": "FMA14335",
+      "kind": "vein"
+    },
+    "FJ3579": {
+      "name": "Right subclavian artery",
+      "conceptId": "FMA3953",
+      "kind": "artery"
+    },
+    "FJ3580": {
+      "name": "Right suprarenal vein",
+      "conceptId": "FMA14343",
+      "kind": "vein"
+    },
+    "FJ3581": {
+      "name": "Ureteric segment of right renal artery",
+      "conceptId": "FMA70492",
+      "kind": "artery"
+    },
+    "FJ3582": {
+      "name": "Ureteric segment of right renal artery",
+      "conceptId": "FMA70492",
+      "kind": "artery"
+    },
+    "FJ3583": {
+      "name": "Right brachiocephalic vein",
+      "conceptId": "FMA4751",
+      "kind": "vein"
+    },
+    "FJ3584": {
+      "name": "Right inferior suprarenal artery",
+      "conceptId": "FMA69265",
+      "kind": "artery"
+    },
+    "FJ3585": {
+      "name": "Right internal jugular vein",
+      "conceptId": "FMA4754",
+      "kind": "vein"
+    },
+    "FJ3586": {
+      "name": "Right middle suprarenal artery",
+      "conceptId": "FMA14755",
+      "kind": "artery"
+    },
+    "FJ3587": {
+      "name": "Right subclavian vein",
+      "conceptId": "FMA4755",
+      "kind": "vein"
+    },
+    "FJ3589": {
+      "name": "Right ascending lumbar vein",
+      "conceptId": "FMA4843",
+      "kind": "vein"
+    },
+    "FJ3590": {
+      "name": "Right colic artery",
+      "conceptId": "FMA14811",
+      "kind": "artery"
+    },
+    "FJ3591": {
+      "name": "Right colic vein",
+      "conceptId": "FMA15407",
+      "kind": "vein"
+    },
+    "FJ3592": {
+      "name": "Right dorsal artery of penis",
+      "conceptId": "FMA20818",
+      "kind": "artery"
+    },
+    "FJ3593": {
+      "name": "Right dorsal artery of penis",
+      "conceptId": "FMA20818",
+      "kind": "artery"
+    },
+    "FJ3594": {
+      "name": "Right gastric artery",
+      "conceptId": "FMA14776",
+      "kind": "artery"
+    },
+    "FJ3595": {
+      "name": "Right gastric vein",
+      "conceptId": "FMA15400",
+      "kind": "vein"
+    },
+    "FJ3596": {
+      "name": "Right gastro-epiploic artery",
+      "conceptId": "FMA14781",
+      "kind": "artery"
+    },
+    "FJ3597": {
+      "name": "Right gastroepiploic vein",
+      "conceptId": "FMA15397",
+      "kind": "vein"
+    },
+    "FJ3603": {
+      "name": "Right iliolumbar vein",
+      "conceptId": "FMA18903",
+      "kind": "vein"
+    },
+    "FJ3604": {
+      "name": "Right inferior epigastric artery",
+      "conceptId": "FMA20688",
+      "kind": "artery"
+    },
+    "FJ3605": {
+      "name": "Right inferior epigastric vein",
+      "conceptId": "FMA21163",
+      "kind": "vein"
+    },
+    "FJ3606": {
+      "name": "Right inferior gluteal vein",
+      "conceptId": "FMA18912",
+      "kind": "vein"
+    },
+    "FJ3607": {
+      "name": "Right internal iliac vein",
+      "conceptId": "FMA18887",
+      "kind": "vein"
+    },
+    "FJ3608": {
+      "name": "Right internal iliac vein",
+      "conceptId": "FMA18887",
+      "kind": "vein"
+    },
+    "FJ3609": {
+      "name": "Right internal iliac vein",
+      "conceptId": "FMA18887",
+      "kind": "vein"
+    },
+    "FJ3610": {
+      "name": "Right internal pudendal vein",
+      "conceptId": "FMA18918",
+      "kind": "vein"
+    },
+    "FJ3611": {
+      "name": "Right lateral sacral vein",
+      "conceptId": "FMA18906",
+      "kind": "vein"
+    },
+    "FJ3612": {
+      "name": "Right obturator vein",
+      "conceptId": "FMA18915",
+      "kind": "vein"
+    },
+    "FJ3614": {
+      "name": "Right superficial epigastric artery",
+      "conceptId": "FMA20735",
+      "kind": "artery"
+    },
+    "FJ3615": {
+      "name": "Right superior epigastric vein",
+      "conceptId": "FMA4771",
+      "kind": "vein"
+    },
+    "FJ3616": {
+      "name": "Right superior gluteal vein",
+      "conceptId": "FMA18909",
+      "kind": "vein"
+    },
+    "FJ3617": {
+      "name": "Right testicular artery",
+      "conceptId": "FMA14759",
+      "kind": "artery"
+    },
+    "FJ3618": {
+      "name": "Right testicular vein",
+      "conceptId": "FMA14341",
+      "kind": "vein"
+    },
+    "FJ3619": {
+      "name": "Right inferior phrenic artery",
+      "conceptId": "FMA14746",
+      "kind": "artery"
+    },
+    "FJ3620": {
+      "name": "Right inferior phrenic artery",
+      "conceptId": "FMA14746",
+      "kind": "artery"
+    },
+    "FJ3621": {
+      "name": "Right inferior phrenic artery",
+      "conceptId": "FMA14746",
+      "kind": "artery"
+    },
+    "FJ3622": {
+      "name": "Right inferior phrenic artery",
+      "conceptId": "FMA14746",
+      "kind": "artery"
+    },
+    "FJ3623": {
+      "name": "Right inferior phrenic artery",
+      "conceptId": "FMA14746",
+      "kind": "artery"
+    },
+    "FJ3624": {
+      "name": "Right inferior phrenic artery",
+      "conceptId": "FMA14746",
+      "kind": "artery"
+    },
+    "FJ3625": {
+      "name": "Right inferior phrenic artery",
+      "conceptId": "FMA14746",
+      "kind": "artery"
+    },
+    "FJ3626": {
+      "name": "Right inferior phrenic artery",
+      "conceptId": "FMA14746",
+      "kind": "artery"
+    },
+    "FJ3631": {
+      "name": "Lumbar vein",
+      "conceptId": "FMA15370",
+      "kind": "vein"
+    },
+    "FJ3632": {
+      "name": "Lumbar artery",
+      "conceptId": "FMA14735",
+      "kind": "artery"
+    },
+    "FJ3635": {
+      "name": "Lumbar vein",
+      "conceptId": "FMA15370",
+      "kind": "vein"
+    },
+    "FJ3636": {
+      "name": "Lumbar artery",
+      "conceptId": "FMA14735",
+      "kind": "artery"
+    },
+    "FJ3637": {
+      "name": "Right superficial dorsal vein of penis",
+      "conceptId": "FMA21385",
+      "kind": "vein"
+    },
+    "FJ3638": {
+      "name": "Sigmoid artery",
+      "conceptId": "FMA14830",
+      "kind": "artery"
+    },
+    "FJ3639": {
+      "name": "Sigmoid vein",
+      "conceptId": "FMA15395",
+      "kind": "vein"
+    },
+    "FJ3640": {
+      "name": "Splenic artery",
+      "conceptId": "FMA14773",
+      "kind": "artery"
+    },
+    "FJ3641": {
+      "name": "Splenic vein",
+      "conceptId": "FMA14331",
+      "kind": "vein"
+    },
+    "FJ3644": {
+      "name": "Trunk of superior mesenteric artery",
+      "conceptId": "FMA66358",
+      "kind": "artery"
+    },
+    "FJ3645": {
+      "name": "Superior vena cava",
+      "conceptId": "FMA4720",
+      "kind": "vein"
+    },
+    "FJ3646": {
+      "name": "Pancreaticoduodenal vein",
+      "conceptId": "FMA15398",
+      "kind": "vein"
+    },
+    "FJ3647": {
+      "name": "Superior mesenteric vein",
+      "conceptId": "FMA14332",
+      "kind": "vein"
+    },
+    "FJ3648": {
+      "name": "Superior phrenic vein",
+      "conceptId": "FMA78121",
+      "kind": "vein"
+    },
+    "FJ3649": {
+      "name": "Superior phrenic vein",
+      "conceptId": "FMA78121",
+      "kind": "vein"
+    },
+    "FJ3650": {
+      "name": "Superior phrenic vein",
+      "conceptId": "FMA78121",
+      "kind": "vein"
+    },
+    "FJ3651": {
+      "name": "Superior phrenic vein",
+      "conceptId": "FMA78121",
+      "kind": "vein"
+    },
+    "FJ3652": {
+      "name": "Superior phrenic vein",
+      "conceptId": "FMA78121",
+      "kind": "vein"
+    },
+    "FJ3653": {
+      "name": "Superior phrenic vein",
+      "conceptId": "FMA78121",
+      "kind": "vein"
+    },
+    "FJ3654": {
+      "name": "Superior phrenic vein",
+      "conceptId": "FMA78121",
+      "kind": "vein"
+    },
+    "FJ3655": {
+      "name": "Pancreaticoduodenal vein",
+      "conceptId": "FMA15398",
+      "kind": "vein"
+    },
+    "FJ3656": {
+      "name": "Superior rectal artery",
+      "conceptId": "FMA14832",
+      "kind": "artery"
+    },
+    "FJ3657": {
+      "name": "Superior rectal vein",
+      "conceptId": "FMA15393",
+      "kind": "vein"
+    },
+    "FJ3658": {
+      "name": "Ascending lumbar vein",
+      "conceptId": "FMA12858",
+      "kind": "vein"
+    },
+    "FJ3659": {
+      "name": "Inferior vena cava",
+      "conceptId": "FMA10951",
+      "kind": "vein"
+    }
+  },
+  "sources": {}
+}
