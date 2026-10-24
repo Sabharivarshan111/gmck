@@ -43,6 +43,11 @@ const DAY = {
   accent: '#8c279d', onAccent: '#ffffff',
 };
 type Palette = typeof NIGHT;
+// Native-only additions live outside the generated legacy parity catalogue.
+const STUDIO_SKILLS = [...NATIVE_CLINICAL_SKILLS, {
+  id: 'coronary', title: 'Coronary Lab',
+  hint: 'Explore coronary anatomy, detector angles & projections · offline', emoji: '🫀',
+}];
 
 function AnatomyStudioIcon() {
   return <Svg width={48} height={64} viewBox="0 0 60 80" accessibilityLabel="Anatomy">
@@ -71,7 +76,7 @@ export default function NativeClinicalStudio({ onExit, onOpen, scenarioId, onSce
   const activeScenario = NATIVE_CLINICAL_SCENARIOS.find(s => s.id === scenarioId) || NATIVE_CLINICAL_SCENARIOS[0];
   const normal = scenarioId === 'normal';
   const q = query.trim().toLowerCase();
-  const skills = useMemo(() => NATIVE_CLINICAL_SKILLS.filter(s => `${s.title} ${s.hint}`.toLowerCase().includes(q)), [q]);
+  const skills = useMemo(() => STUDIO_SKILLS.filter(s => `${s.title} ${s.hint}`.toLowerCase().includes(q)), [q]);
   const cases = useMemo(() => NATIVE_CLINICAL_SCENARIOS.filter(s => s.id !== 'normal' && `${s.title} ${s.category}`.toLowerCase().includes(q)), [q]);
   // Same CSS breakpoints as the canonical web .studio-grid.
   const columns = width <= 340 ? 1 : width >= 640 ? 3 : 2;

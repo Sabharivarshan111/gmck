@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
+import {
+  InlineCoronarySurface,
+  type InlineCoronaryHandle,
+} from '../../browser/InlineCoronarySurface';
+import { CORONARY_SCENE_HTML } from '../../src/generated/coronarySceneHtml';
 import { StyleSheet, View } from 'react-native';
 
 /**
- * A WebView, absent.
+ * Video previews retain the existing placeholder. The trusted, locally bundled
+ * coronary document renders the exact production WebGL scene in an iframe.
  *
  * The preview is react-native-web, where `react-native-webview` resolves to a
  * real `<iframe>` — and an iframe pointing at YouTube inside a harness that has
@@ -15,14 +21,19 @@ import { StyleSheet, View } from 'react-native';
  * player, that the URL built for it is the no-cookie embed with the right
  * timestamp — is true either way, and `check:note-links` covers the URL itself.
  */
-export function WebView(props: { style?: unknown }) {
+export const WebView = forwardRef<InlineCoronaryHandle, any>(function WebView(
+  props,
+  ref,
+) {
+  if (props.source?.html === CORONARY_SCENE_HTML)
+    return <InlineCoronarySurface {...props} ref={ref} />;
   return (
     <View
       accessibilityLabel="Video player"
       style={[styles.stand, props.style as never]}
     />
   );
-}
+});
 
 export default { WebView };
 
