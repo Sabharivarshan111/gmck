@@ -1,3 +1,5 @@
+// Test-only paid account for full-content regressions; free preview has separate denial tests.
+import { installPremiumTestAccount } from '../mobile/web/test-premium-fixture.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
@@ -6,6 +8,7 @@ const runtime=process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES;
 const { chromium }=runtime?createRequire(runtime+'/__entry.js')('playwright'):await import('playwright');
 const browser=await chromium.launch({headless:true,...runtime?{executablePath:'/tmp/orbit-chromium'}:{},args:['--no-sandbox','--no-zygote','--single-process','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+  await installPremiumTestAccount(page.context());
 const group=process.env.ORGAN_CONNECTION_GROUP===undefined?null:Number(process.env.ORGAN_CONNECTION_GROUP);
 const owners=Object.keys(catalog).filter((_,index)=>group===null||index%4===group);
 const out='artifacts/organ-connections';fs.mkdirSync(out,{recursive:true});const base=process.env.SIMULATOR_BASE_URL||'http://127.0.0.1:4180';const errors=[];page.on('pageerror',e=>errors.push(e.message));const report=[];

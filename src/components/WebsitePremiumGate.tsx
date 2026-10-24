@@ -26,6 +26,7 @@ export function WebsitePremiumGate({ children }: { children: ReactNode }) {
     return () => { alive = false; clearInterval(timer); data.subscription.unsubscribe(); document.removeEventListener('visibilitychange', visible); };
   }, []);
   useEffect(() => { if (active) setFeature(null); }, [active]);
+  if (loading) return <main className="min-h-screen bg-background text-foreground grid place-items-center"><p role="status">Opening your study preview…</p></main>;
   return <SimulatorAccessContext.Provider value={{ active: active && !loading, requestPurchase: setFeature }}>
     {children}
     <dialog ref={dialog} className="rounded-2xl border border-primary/40 bg-background text-foreground p-6 max-w-sm w-[90vw] backdrop:bg-black/70" onCancel={() => setFeature(null)} aria-labelledby="simulator-premium-title">
