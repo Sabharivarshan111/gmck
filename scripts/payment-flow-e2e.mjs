@@ -60,7 +60,7 @@ async function scenario(width,signedIn=true,verificationFails=false,interrupted=
    await page.getByLabel('NEET-PG practice questions',{exact:true}).click();
    await page.getByText('10 questions per exam',{exact:false}).waitFor({timeout:5000});
    await page.getByLabel('Search offline NEET PG questions',{exact:true}).waitFor();
-   for (const [exam,label] of [['AIIMS PG','AIIMS PG'],['INI-CET','INI-CET']]) { await page.getByRole('button',{name:'Open '+exam+' practice',exact:true}).click(); await page.getByLabel('Search offline '+label+' questions',{exact:true}).waitFor(); await page.getByText('10 questions per exam',{exact:false}).waitFor(); }
+   if(featureMode==='free') for (const [exam,label] of [['AIIMS PG','AIIMS PG'],['INI-CET','INI-CET']]) { await page.getByRole('button',{name:'Open '+exam+' practice',exact:true}).click(); await page.getByLabel('Search offline '+label+' questions',{exact:true}).waitFor(); await page.getByText('10 questions per exam',{exact:false}).waitFor(); }
    await page.getByRole('button',{name:'Unlock all →',exact:true}).click();
    await page.getByRole('heading',{name:'Unlock all practice questions',exact:true}).waitFor();
    await page.getByRole('button',{name:'Not now',exact:true}).click();
@@ -90,12 +90,12 @@ async function scenario(width,signedIn=true,verificationFails=false,interrupted=
    await page.getByRole('heading',{name:'Unlock all anatomy organs',exact:true}).waitFor();
    await page.getByRole('button',{name:'Continue free preview',exact:true}).click();
    await page.getByTestId('deep-inspector-heart').click();
-   await page.getByRole('dialog',{name:'Anatomy details',exact:true}).waitFor();
+   await page.getByTestId('organ-detail-drawer').waitFor();
   }else{
    await page.getByText('Premium',{exact:true}).first().waitFor({state:'hidden'});
    await page.getByLabel('NEET-PG practice questions',{exact:true}).click();
    await page.getByLabel('Search offline NEET PG questions',{exact:true}).waitFor();
-   for (const [exam,label] of [['AIIMS PG','AIIMS PG'],['INI-CET','INI-CET']]) { await page.getByRole('button',{name:'Open '+exam+' practice',exact:true}).click(); await page.getByLabel('Search offline '+label+' questions',{exact:true}).waitFor(); await page.getByText('10 questions per exam',{exact:false}).waitFor(); }
+   if(featureMode==='free') for (const [exam,label] of [['AIIMS PG','AIIMS PG'],['INI-CET','INI-CET']]) { await page.getByRole('button',{name:'Open '+exam+' practice',exact:true}).click(); await page.getByLabel('Search offline '+label+' questions',{exact:true}).waitFor(); await page.getByText('10 questions per exam',{exact:false}).waitFor(); }
    assert.equal(await page.getByText('Unlock PG Practice',{exact:true}).count(),0);
    await page.goto(origin+'/simulator');await page.locator('[data-simulator-root]').waitFor();
    assert.equal(await page.getByRole('heading',{name:'Unlock Simulator & Anatomy',exact:true}).count(),0);
