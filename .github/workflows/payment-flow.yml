@@ -1,0 +1,27 @@
+name: Payment checkout and entitlement flow
+on:
+  pull_request:
+    paths: ['mobile/web/**', 'mobile/src/lib/premium.ts', 'src/lib/website-premium.ts', 'src/components/WebsitePremiumGate.tsx', 'src/App.tsx', 'supabase/functions/razorpay-*/**', 'supabase/functions/_shared/razorpaySecurity.ts', 'scripts/payment-*', 'vercel.json', '.github/workflows/payment-flow.yml']
+  push:
+    branches: [main]
+    paths: ['mobile/web/**', 'mobile/src/lib/premium.ts', 'src/lib/website-premium.ts', 'src/components/WebsitePremiumGate.tsx', 'src/App.tsx', 'supabase/functions/razorpay-*/**', 'supabase/functions/_shared/razorpaySecurity.ts', 'scripts/payment-*', 'vercel.json', '.github/workflows/payment-flow.yml']
+permissions:
+  contents: read
+jobs:
+  checkout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24
+      - run: npm ci --legacy-peer-deps --ignore-scripts
+      - run: npm --prefix mobile ci --legacy-peer-deps --ignore-scripts
+      - run: npm --prefix mobile run typecheck:web
+      - run: node scripts/security-checklist-repairs.cjs
+      - run: node scripts/payment-entitlement-check.cjs
+      - run: npm run build:vercel
+      - run: node mobile/node_modules/playwright-core/cli.js install --with-deps chromium
+      - run: node scripts/payment-flow-e2e.mjs

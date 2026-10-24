@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { transformWebsitePremium } from './premium-transform';
 
 const root = path.resolve(__dirname, '..');
 
@@ -30,10 +31,12 @@ export default defineConfig({
       name: 'orbit-browser-platform',
       enforce: 'pre',
       resolveId(source, importer) {
+        if (importer?.includes('/mobile/') && /(?:^|\/)unlock$/.test(source)) return path.resolve(__dirname, 'adapters/unlock.ts');
         if (importer?.includes('/mobile/') && /(?:^|\/)googleAuth$/.test(source)) return path.resolve(__dirname, 'adapters/google-auth.ts');
         if (importer?.includes('/mobile/') && /(?:^|\/)adsMode$/.test(source)) return path.resolve(__dirname, 'adapters/ads-mode.ts');
       },
       transform(code, id) {
+        code = transformWebsitePremium(code, id, path.resolve(__dirname, 'VaultAccess.tsx'));
         if (id.endsWith('/mobile/App.tsx')) return code.replace('<NavigationContainer', `<NavigationContainer linking={{ prefixes: [], config: { screens: { Home: { screens: { HomeMain: '', BrowseHome: 'browse/:year?', BrowseNode: { path: 'browse/:year/:path', parse: { path: value => value.split(',') }, stringify: { path: value => value.join(',') } } } }, Notes: 'notes', Timer: 'timer', AskAI: 'ask-ai', Progress: 'progress' } } }}`);
         if (id.endsWith('/mobile/src/components/Text.tsx')) return "import { renderEmoji } from '" + path.resolve(__dirname, 'adapters/emoji.tsx') + "';\n" + code.replace('{...rest}', '{...rest} children={renderEmoji(rest.children)}');
         if (id.endsWith('/mobile/src/theme/typography.ts')) return code.replace("default: undefined", "default: 'Roboto Variable, Apple Color Emoji, Segoe UI Emoji, sans-serif'");

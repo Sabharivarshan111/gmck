@@ -2653,3 +2653,29 @@ The owner asked why NEET2078 exceeds AIIMS90/INI161 and requested many more pape
 ## 2026-10-22 — Import52 selected INI recalls from missing source papers
 
 The recovered17-PDF coverage batch now contributes52 individually checked text recalls from16 documents. Candidate AIIMS90/INI213=303; original251 complete records and NEET2078/year bytes preserved. Source manifest115/contributing92, all new source hashes pinned; original selected excerpts below200 words/document. Twenty-one problematic/duplicate candidates remain held. Actual selected source pages and new reader screenshots inspected; original explanations and source-supported May/November labels included. Report: docs/AIIMS_INI_MISSING_PAPERS_IMPORT_20261022.md; per-item source pages/keys and reference links: scripts/aiims-ini-missing-papers-import-20261022.json. Data/year/type/lint/native guards/web build/Android JS bundle/reader/offline/old NEET checks pass; final publication and live comparison belong in the PR receipt. No new signed build/device claim or generic dataset import. Do not regenerate unrelated legacy MedMCQA zst artifacts for its old runtime test.
+
+
+## 2026-10-23 — Website Razorpay checkout and secure access sync
+
+**DONE:** Production browser /unlock, same-origin links and Google return, six/twelve-month launch plans, restore/receipt/order recovery, and live server payment hardening. See docs/ORBIT_PAYMENT_FLOW_20261023.md.
+
+**VERIFIED:** 27 authorization/provider cases, rollback-only live180-day/idempotency/owner/price DB checks, native account/cache/expiry fixture, assembled browser purchase/reload/failure/restore/interruption flows, live CORS/auth/fake-signature rejection, TypeScript/lint/build.
+
+**HALF-DONE:** No real Google/Razorpay charge or physical-device test. No webhook dashboard configuration verified. Vault paid bundle is not implemented; checkout accurately sells ad-free only.
+
+**NEXT:** Check deployment/CI receipts and perform one same-account real captured purchase on website then reopen Android.
+
+**DO NOT:** Claim a fixture is a live payment, charge a card without authorization, bypass provider verification, or claim Play enrollment/paid Vault gating.
+
+
+## 2026-10-24 — Website Vault locks, no ad sales copy
+
+**DONE:** Website-only Premium membership context and direct simulator route guard read the authenticated user's unexpired server entitlement. All Vault features except Notes require Premium; root simulator content does not mount for unpaid accounts. Website checkout/menu text sells features, not ad removal; website AdMob stays disabled and legacy DailyAdConsent is removed. Native renderer and Android ad/cache behavior are unchanged by these browser adapters. Same ₹150/180-day and ₹300/365-day plans and November30 cutoff. Order function39 uses Premium-only display labels.
+
+**VERIFIED:** Combined production build, root/browser TypeScript, targeted quiet lint, all four locked cards, free Notes, paid PG access, direct simulator denied/allowed states, no website ad wording, five checkout/recovery browser scenarios; zero page errors. Native cache and website server-row unit fixtures reject expired/invalid/other-account and forged-cache access. PG content tests use an explicit test-only paid provider, not a runtime bypass.
+
+**HALF-DONE:** Final CI/merge/production receipt pending. Real Google/Razorpay capture and physical Android still untested. No verified webhook dashboard configuration. Client UI gates do not DRM-protect static public assets; website membership check fails closed offline.
+
+**NEXT:** Finish CI, merge PR124, publish and verify orbitmbbs.site/unlock and the free direct simulator paywall.
+
+**DO NOT:** Restore ad sales copy on website, lock Notes, pretend fixtures are a live charge, or change native release/version/signing for this website-only patch.
