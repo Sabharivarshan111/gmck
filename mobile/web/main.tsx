@@ -4,6 +4,7 @@ import { InstallApp } from './install';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from '../App';
+import { VaultAccessProvider } from './VaultAccess';
 import { hydrateFiles } from './adapters/files';
 import { completeBrowserAuth } from './adapters/google-auth';
 
@@ -24,7 +25,7 @@ async function boot() {
     const { default: CheckoutPage } = await import('./checkout/CheckoutPage');
     root.render(<CheckoutPage />);
   } else {
-    root.render(<><InstallApp /><App /></>);
+    root.render(<VaultAccessProvider><InstallApp /><App /></VaultAccessProvider>);
   }
 }
 boot().catch(error => {

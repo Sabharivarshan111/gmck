@@ -1,3 +1,4 @@
+import { installPremiumTestAccount } from './test-premium-fixture.mjs';
 /** Real production flow: bundled bank, then an original private-import fixture. */
 import fs from 'node:fs/promises';
 import http from 'node:http';
@@ -38,6 +39,7 @@ await context.addInitScript(() => {
   localStorage.setItem('orbit:last-run-version', '28');
   localStorage.setItem('orbit:theme-preference', 'blackwhite');
 });
+await installPremiumTestAccount(context);
 const page = await context.newPage();
 page.setDefaultTimeout(30000);
 const errors = [];

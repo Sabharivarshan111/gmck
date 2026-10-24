@@ -2469,3 +2469,16 @@ DO NOT:Restore search-preview draft questions, held duplicates, changed source h
 **NEXT:** Check deployment/CI receipts and perform one same-account real captured purchase on website then reopen Android.
 
 **DO NOT:** Claim a fixture is a live payment, charge a card without authorization, bypass provider verification, or claim Play enrollment/paid Vault gating.
+
+
+## 2026-10-24 — Website Vault locks, no ad sales copy
+
+**DONE:** Website-only Premium membership context and direct simulator route guard read the authenticated user's unexpired server entitlement. All Vault features except Notes require Premium; root simulator content does not mount for unpaid accounts. Website checkout/menu text sells features, not ad removal; website AdMob stays disabled and legacy DailyAdConsent is removed. Native renderer and Android ad/cache behavior are unchanged by these browser adapters. Same ₹150/180-day and ₹300/365-day plans and November30 cutoff. Order function39 uses Premium-only display labels.
+
+**VERIFIED:** Combined production build, root/browser TypeScript, targeted quiet lint, all four locked cards, free Notes, paid PG access, direct simulator denied/allowed states, no website ad wording, five checkout/recovery browser scenarios; zero page errors. Native cache and website server-row unit fixtures reject expired/invalid/other-account and forged-cache access. PG content tests use an explicit test-only paid provider, not a runtime bypass.
+
+**HALF-DONE:** Final CI/merge/production receipt pending. Real Google/Razorpay capture and physical Android still untested. No verified webhook dashboard configuration. Client UI gates do not DRM-protect static public assets; website membership check fails closed offline.
+
+**NEXT:** Finish CI, merge PR124, publish and verify orbitmbbs.site/unlock and the free direct simulator paywall.
+
+**DO NOT:** Restore ad sales copy on website, lock Notes, pretend fixtures are a live charge, or change native release/version/signing for this website-only patch.

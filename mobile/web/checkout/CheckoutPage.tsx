@@ -48,7 +48,7 @@ export default function CheckoutPage() {
       if (current && result.payment_id) clearReceipt(current.id, result.payment_id);
       if (current && result.order_id) clearOrder(current.id, result.order_id);
       setExpiry(confirmed);
-      setMessage('Payment confirmed. Your ad-free access is active. Reopen ORBIT with this same Google account.');
+      setMessage('Payment confirmed. Your Premium access is active. Reopen ORBIT with this same Google account.');
     } catch (e) { setError(e instanceof Error ? e.message : 'Could not confirm access. Please retry.'); }
     finally { locked.current = false; setBusy(null); }
   }, []);
@@ -77,18 +77,18 @@ export default function CheckoutPage() {
   return <main className="orbit-checkout">
     <div className="checkout-shell">
       <a href="/" className="checkout-back">← Back to ORBIT</a>
-      <header><div className="checkout-mark">O</div><p className="checkout-eyebrow">ORBIT MBBS</p><h1>Unlock Premium</h1><p>Ad-free study, linked to your ORBIT account.</p></header>
+      <header><div className="checkout-mark">O</div><p className="checkout-eyebrow">ORBIT MBBS</p><h1>Unlock Premium</h1><p>Unlock 3D Anatomy, Patient Simulator, Auscultation and more.</p></header>
       <section className="checkout-account" aria-label="Payment account">
         {ready ? user ? <><span>Buying for</span><strong>{user.email}</strong><p>Use this same Google account in the Android app.</p><button className="checkout-text-button" disabled={!!busy} onClick={() => { void supabase.auth.signOut().then(({ error: signOutError }) => { if (signOutError) setError(signOutError.message); else { setUser(null); setExpiry(null); setMessage(''); } }); }}>Use another account</button></> : <><strong>Sign in before paying</strong><p>Your purchase will sync to this Google account.</p><button className="checkout-primary" disabled={!!busy} onClick={() => void signIn()}>Continue with Google</button></> : <p>Checking your account…</p>}
       </section>
-      {expiry && <p className="checkout-success">Ad-free access active until {new Date(expiry).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}.</p>}
+      {expiry && <p className="checkout-success">Premium access active until {new Date(expiry).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}.</p>}
       <section aria-label="Premium plans">
         <div className="checkout-offer"><strong>{offerOpen ? 'Limited-time launch offer' : 'Launch offer ended'}</strong><span>Ends 30 November 2026 · 11:59 PM IST</span></div>
         <div className="checkout-plans">
-          <button disabled={!user || !!busy || !offerOpen} onClick={() => purchase('adfree_6m')}><span>6 months</span><strong>₹150</strong><small>180 days of ad-free access</small></button>
-          <button disabled={!user || !!busy || !offerOpen} onClick={() => purchase('adfree_1y')}><span>1 year</span><strong>₹300</strong><small>365 days of ad-free access</small></button>
+          <button disabled={!user || !!busy || !offerOpen} onClick={() => purchase('adfree_6m')}><span>6 months</span><strong>₹150</strong><small>180 days of Premium access</small></button>
+          <button disabled={!user || !!busy || !offerOpen} onClick={() => purchase('adfree_1y')}><span>1 year</span><strong>₹300</strong><small>365 days of Premium access</small></button>
         </div>
-        <p className="checkout-detail">One-time payment. No automatic renewal. Paid time is added to any existing ad-free access. Notes remain free to read.</p>
+        <p className="checkout-detail">One-time payment. No automatic renewal. Paid time is added to any existing Premium access. Notes remain free to read.</p>
       </section>
       <div role="status" aria-live="polite">{busy && <p>{busy}…</p>}{message && <p className="checkout-success">{message}</p>}</div>
       {error && <p className="checkout-error" role="alert">{error}</p>}

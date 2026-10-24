@@ -1,3 +1,4 @@
+import { installPremiumTestAccount } from './test-premium-fixture.mjs';
 /** Real shipped UI; local profile only, actual bundled questions and actual storage. */
 import fs from 'node:fs/promises';
 import http from 'node:http';
@@ -14,6 +15,7 @@ const browser=await chromium.launch({executablePath:process.env.CHROME_PATH,args
 const ctx=await browser.newContext({viewport:{width:430,height:932},deviceScaleFactor:2,isMobile:true,hasTouch:true});
 await ctx.route('**/*',r=>r.request().url().startsWith('http://127.0.0.1:5248')?r.continue():r.abort());
 await ctx.addInitScript(()=>{if(!localStorage.getItem('orbit-profile-v1')){localStorage.setItem('orbit-profile-v1',JSON.stringify({display_name:'ORBIT student',year:'first',university:'tnmgr'}));localStorage.setItem('orbit:tour-v1',JSON.stringify({seen:1}));localStorage.setItem('orbit:last-run-version','28');localStorage.setItem('orbit:theme-preference','dark');}});
+await installPremiumTestAccount(ctx);
 const page=await ctx.newPage();page.setDefaultTimeout(30000);const errors=[];page.on('pageerror',e=>errors.push(e.message));
 const label=n=>page.getByLabel(n,{exact:true});
 const settle=async()=>{await page.evaluate(()=>document.fonts.ready);await page.waitForTimeout(500);};

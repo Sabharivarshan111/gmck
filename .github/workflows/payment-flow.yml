@@ -1,10 +1,10 @@
 name: Payment checkout and entitlement flow
 on:
   pull_request:
-    paths: ['mobile/web/**', 'mobile/src/lib/premium.ts', 'supabase/functions/razorpay-*/**', 'supabase/functions/_shared/razorpaySecurity.ts', 'scripts/payment-*', 'vercel.json', '.github/workflows/payment-flow.yml']
+    paths: ['mobile/web/**', 'mobile/src/lib/premium.ts', 'src/lib/website-premium.ts', 'src/components/WebsitePremiumGate.tsx', 'src/App.tsx', 'supabase/functions/razorpay-*/**', 'supabase/functions/_shared/razorpaySecurity.ts', 'scripts/payment-*', 'vercel.json', '.github/workflows/payment-flow.yml']
   push:
     branches: [main]
-    paths: ['mobile/web/**', 'mobile/src/lib/premium.ts', 'supabase/functions/razorpay-*/**', 'supabase/functions/_shared/razorpaySecurity.ts', 'scripts/payment-*', 'vercel.json', '.github/workflows/payment-flow.yml']
+    paths: ['mobile/web/**', 'mobile/src/lib/premium.ts', 'src/lib/website-premium.ts', 'src/components/WebsitePremiumGate.tsx', 'src/App.tsx', 'supabase/functions/razorpay-*/**', 'supabase/functions/_shared/razorpaySecurity.ts', 'scripts/payment-*', 'vercel.json', '.github/workflows/payment-flow.yml']
 permissions:
   contents: read
 jobs:

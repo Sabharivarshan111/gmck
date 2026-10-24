@@ -1,3 +1,4 @@
+import { installPremiumTestAccount } from './test-premium-fixture.mjs';
 /** Production browser flow for separate AIIMS/INI banks; no database or AI service. */
 import fs from 'node:fs/promises';
 import http from 'node:http';
@@ -24,6 +25,7 @@ await context.addInitScript(()=>{
   localStorage.setItem('orbit-profile-v1',JSON.stringify({display_name:'Recall tester',year:'first',university:'tnmgr'}));
   localStorage.setItem('orbit:tour-v1',JSON.stringify({seen:1}));localStorage.setItem('orbit:last-run-version','28');localStorage.setItem('orbit:theme-preference','blackwhite');
 });
+await installPremiumTestAccount(context);
 const page=await context.newPage();page.setDefaultTimeout(30000);const errors=[];page.on('pageerror',e=>errors.push(e.message));
 const label=name=>page.getByLabel(name,{exact:true});
 const choose=async(name,count)=>{
