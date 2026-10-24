@@ -29,8 +29,18 @@ node scripts/structure-details-check.mjs
 
 Resolver regression passes all 1,436 identities, attachment/nerve/origin/destination checks, coronary/portal fixtures, grouped branch origins and stale-selection protection. Actual normal-simulator browser test passes heart → coronary → LAD → grouped branch, portal vein, infraspinatus and great saphenous vein, including phone overflow checks. Six screenshots capture these states.
 
-Production web build, simulator resolution/mobile guards, focused anatomy-component ESLint and TypeScript with ES2022 library definitions pass. Canonical Android simulator assets build passes: 3,939,764-byte entry and 110 pinned public assets. Browser uses a desktop software GPU; it does not establish physical Android performance.
+Production web build, simulator resolution/mobile guards, focused anatomy-component ESLint and the default ES2020 TypeScript configuration pass. Canonical Android simulator assets build passes: 3,939,927-byte entry and 110 pinned public assets. Browser uses a desktop software GPU; it does not establish physical Android performance.
 
-Baseline limitations: default ES2020 configuration has existing Object.hasOwn errors in neetPgOffline.ts; Simulator.tsx has existing any lint errors; unrelated digestive comprehensive-dossier coverage remains 92% against 95%. No gate was weakened. Do not claim a globally green repository.
+Baseline limitations: Simulator.tsx has existing any lint errors; unrelated digestive comprehensive-dossier coverage remains 92% against 95%. No gate was weakened. Do not claim a globally green repository.
 
 Source saved in PR #123. Dedicated CI verifies data, actual browser navigation and builds and uploads screenshots.
+
+## Follow-up: hosted checks and scrolling
+
+The first hosted normal-anatomy run stopped before navigation because the development-only Lovable plugin attempted to rewrite a protected server function. The browser harness now selects Vite test mode, preserving the production configuration and server function. Test-only paid-account fixtures run the real website entitlement gate; no runtime access bypass was added. The same fixture is used in the existing anatomy route/browser tests.
+
+The two default-configuration type errors are fixed by using Object.prototype.hasOwnProperty.call instead of Object.hasOwn, preserving own-property semantics on ES2020 targets. Existing source-extension, 2,078 NEET year-join and 303 recall/offline integrity checks pass; question content is unchanged.
+
+Visual inspection found a real scroll-position defect: entering a vessel from a link near the bottom retained the parent panel's scroll position. The detail body now resets to the beginning on structure/tab changes. The actual browser regression asserts this behavior; coronary → LAD → child, portal, muscle and vein flows pass with six updated screenshots. Capture timeout accommodates software-rendered WebGL. Navigation waits for DOM readiness and then asserts the actual anatomy fields, avoiding dependence on third-party advertising load completion. Direct real-organ taps, reopening details, coronary heart context default/hide and celiac context toggling also pass; two additional coronary screenshots show that behavior. All eight screenshots were visually inspected and saved.
+
+The broader legacy mobile E2E still fails on expectations predating the current Clinical Studio entry, eye/auscultation controls and sheet layout, plus a software-rendered capture timeout. Its last local result was 2 passed / 10 failed; this is not reported as a globally green simulator. Connected-anatomy navigation checks now explicitly close the selected detail panel to view geometry and reopen the selected structure, preserving the new behavior. Hosted receipts remain authoritative for their final status. No comprehensive-dossier coverage floor was lowered: nine digestive meshes (seven oral structures, esophagus and rectum) still lack comprehensive-dossier reach; broadening abdominal camera framing to hide that gap would be incorrect.
