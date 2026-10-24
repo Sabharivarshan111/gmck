@@ -207,6 +207,7 @@ jobs:
           npm run check:billing
           npm run check:security
           npm run check:attendance
+          npm run check:attendance-organizer
           npm run check:admin
           npm run check:simulator
           npm run check:calendar-columns

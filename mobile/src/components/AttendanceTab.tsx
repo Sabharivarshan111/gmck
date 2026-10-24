@@ -17,6 +17,7 @@ import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Sheet } from '@/components/Sheet';
+import { AttendanceOrganizer } from '@/components/AttendanceOrganizer';
 import { DatePicker } from '@/components/DatePicker';
 import { useTheme, withAlpha } from '@/theme';
 import { onColor } from '@/theme/color';
@@ -79,6 +80,23 @@ const POSTING_SUGGESTIONS = [
 ];
 
 const WEEKDAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+/** College-specific requirements beyond the quick presets. */
+function CustomAttendanceTarget({ value, onSave, label }: { value: number; onSave: (next: number) => void; label: string }) {
+  const { colors } = useTheme();
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState(String(value));
+  const valid = /^\d{1,3}$/.test(draft) && Number(draft) >= 1 && Number(draft) <= 100;
+  return <>
+    <Touchable label={label} onPress={() => { setDraft(String(value)); setOpen(true); }} style={[styles.chip, { borderColor: colors.border, minHeight: 44 }]}><Text style={{ color: colors.accent }}>Custom {value}%</Text></Touchable>
+    <Sheet visible={open} onClose={() => setOpen(false)} title="Attendance requirement">
+      <Text style={{ color: colors.textMuted }}>Enter your college requirement, from 1 to 100 percent.</Text>
+      <TextInput accessibilityLabel="Custom attendance percentage" keyboardType="number-pad" value={draft} onChangeText={setDraft} style={[styles.input, { color: colors.text, borderColor: colors.border }]} />
+      {!valid && <Text accessibilityRole="alert" style={{ color: colors.danger }}>Enter a whole number from 1 to 100.</Text>}
+      <Touchable label="Save custom attendance target" disabled={!valid} onPress={() => { onSave(Number(draft)); setOpen(false); }} style={[styles.formButton, { minHeight: 44, backgroundColor: colors.accent, opacity: valid ? 1 : 0.5 }]}><Text style={{ color: colors.onAccent }}>Save requirement</Text></Touchable>
+    </Sheet>
+  </>;
+}
 
 /** One shared picker for Android and the browser, using local calendar days. */
 function PostingDateField({label,value,onChange,minDate}:{label:string;value:string;onChange:(next:string)=>void;minDate?:number}) {
@@ -517,6 +535,7 @@ export function AttendanceTab() {
   return (
     <KeyboardSafe>
       <View style={styles.wrap}>
+        <AttendanceOrganizer />
         {/* Theory or clinical postings switcher */}
         <View style={[styles.switch, { backgroundColor: colors.cardElevated }]}>
           {(
@@ -824,6 +843,7 @@ export function AttendanceTab() {
               })}
             </View>
 
+            <CustomAttendanceTarget value={target} onSave={setTarget} label="Set custom attendance target" />
             {formError ? <Text accessibilityRole="alert" accessibilityLiveRegion="polite" style={{ color: colors.danger }}>{formError}</Text> : null}
             <View style={styles.formRow}>
               <Touchable
@@ -1356,6 +1376,7 @@ function AttendanceCard({
         </View>
       ) : null}
 
+      <CustomAttendanceTarget value={item.target} onSave={onTarget} label={`Set custom target for ${item.name}`} />
       <View style={styles.footer}>
         <View style={styles.targets}>
           {TARGETS.map(value => {

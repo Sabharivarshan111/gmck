@@ -70,6 +70,7 @@ const LOCAL_ONLY = [
    * It is a stronger reason than the calendar ever had, not a weaker one.
    */
   { file: 'src/lib/attendance.ts', what: 'which classes and postings you attended' },
+  { file: 'src/lib/attendanceOrganizer.ts', what: 'your timetable, tasks, projects and quick notes' },
   { file: 'src/lib/forest.ts', what: 'the record of when this phone was concentrating' },
   /*
    * An imported Anki deck is somebody else's copyrighted work that the reader

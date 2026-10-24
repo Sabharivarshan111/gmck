@@ -2602,3 +2602,13 @@ Do not promote the five new pharmacology holds, manufacture missing options, imp
 **NEXT:** Build/release native popup after review; implement/test backend Vault entitlements before advertising paid Vault unlock.
 
 **DO NOT:** Publish a claim that payment unlocks Vault before that behavior exists; alter ad caps, pricing, entitlement rows, applicationId, signing, or version for this copy-only task.
+
+## 2026-10-24 — Original attendance organizer
+
+**DONE:** Added original local-only organizer from Attendance → Your college week: weekly classes, linked subjects, timetable image reference, tasks, due dates, project progress, quick notes, original Ion recall break. Added custom attendance requirements 1–100% for new/existing cards. No APK executable code, artwork, fonts or UI copied. Domain test added to Android build workflows; local-only guard includes new store. Browser screenshots and implementation report under docs/attendance and screenshots/attendance-organizer.
+
+**HALF-DONE:** Exact class-time alarms/task notifications are not implemented; UI states this. Existing daily attendance warnings remain. No device or signed APK claim. Focused RN-web UI/domain tests pass; full legacy smoke attempted, stopped after pre-existing Themes/Settings selector failures.
+
+**NEXT:** Review native phone behavior; add class-time scheduling as a separate native notification feature if needed. See docs/attendance/ORGANIZER_IMPLEMENTATION_20261024.md for feature scope and tests.
+
+**DO NOT:** Copy the reference app's code/assets/layout, overwrite existing attendance data, claim full APK parity, or treat RN-web screenshots as Android device proof.

@@ -2710,3 +2710,7 @@ Added13AIIMS/7INI; candidate141AIIMS/308INI=449. All429 old complete records and
 **NEXT:** Build/release native popup after review; implement/test backend Vault entitlements before advertising paid Vault unlock.
 
 **DO NOT:** Publish a claim that payment unlocks Vault before that behavior exists; alter ad caps, pricing, entitlement rows, applicationId, signing, or version for this copy-only task.
+
+## 2026-10-24 — Attendance organizer
+
+Added the independently written organizer inside native Attendance: weekly timetable, optional timetable image, tasks, project progress, quick notes and original Ion recall game, plus custom attendance target entry. Scope, provenance, tests and limitations are documented in `docs/attendance/ORGANIZER_IMPLEMENTATION_20261024.md`. No reference-app code or assets were copied. Focused UI/domain tests pass; no class-time alarms or signed APK/device verification. Full legacy smoke remains blocked by unrelated Themes/Settings selectors. Existing attendance records and daily warnings retained.
