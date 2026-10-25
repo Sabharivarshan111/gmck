@@ -2730,3 +2730,16 @@ HALF-DONE: Owner-approved365day influencer promotion remains pending first verif
 NEXT: Device acceptance using the signed internal build and one owner-controlled test-mode payment remain the practical end-to-end acceptance steps. Preserve newer concurrent anatomy/attendance work.
 
 DO NOT: Re-add monthly sales, lock general Notes, invent a Razorpay payment for the promotion, redeploy older payment functions, or rerun already-successful builds merely to update this receipt.
+
+
+### 2026-10-25 — Combined v29 anatomy/attendance build receipts
+
+**DONE:** Native merge source1e023604d632b4076044e5a9b52558814c328262 built successfully in all three variants: Debug622/run40181790709, Internal582/run40181790677, Release764/run40181790681 (signed AAB+APK). Release assets point to exact merge SHA. New links replace Debug621/Internal581/Release763 which did not include PR123 anatomy work. Release: https://github.com/Sabharivarshan111/gmck/releases/tag/release-764 . Debug622 and Internal582 similarly published.
+
+Downloaded Debug622 and Release764 APKs and inspected ZIP payloads: native bundle contains attendance history, Coronary Lab and the actual embedded WebGL scene; packaged canonical simulator JS contains selected-structure panels, artery branches, vein drainage and muscle attachments. Release764 APK SHA256 e420b56a9afe0e4f3bbce48dd18740a7f6a77c1efdb3b5a7b06e06e29dd78951 matches published digest. AAB digest b9335b9fd15c759562cc728fbba0081fad06380aea75583b18e57de166e1e71f. No physical-device or Play upload claim.
+
+**VERIFIED:** Merge Web build1204/run40181790672 passed. Imported job-env runner.temp validation failures fixed by4a62b83f (runner step writes GITHUB_ENV); no app code changed. UX smoke initially expected selected panels to disappear/reopen parent and Vault's old close-button label.432fd8a5 updates tests to verify retained muscle/artery identity and axillary origin, explicitly close details before geometry assertions and use current reader label. Local corrected smoke7passed/0failed (14console warnings), Vault uniformity/navigation passes360/390/430. Assembled native web build passes. Hosted corrected UX run40183175658 is still running at this receipt; latest Web run40183175670 passed. All commits after1e023 through432fd8a5 alter only docs/workflows/test scripts, so app content matches the signed artifacts.
+
+**HALF-DONE:** Full original clinical-data review,177 undocumented finer arterial branch bindings, real phone GPU/touch/keyboard/performance and Play publication remain outstanding. PR123 targets main; this is its native integration, not a main merge.
+
+**NEXT:** Test the combined APK on a device and use Release764 AAB for a deliberate Play upload. Read current Actions before claiming hosted UX is green.
