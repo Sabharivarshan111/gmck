@@ -2640,3 +2640,8 @@ DO NOT: Drop organizer work, fake payment IDs, or reset influencer grant; privat
 **NEXT:** Review screenshots and test the built APK on a device. Feature mapping and date/balance rules are documented in docs/attendance/HISTORY_FEATURES_20261025.md.
 
 **DO NOT:** Guess dates for old totals, double count migrated balances, decrement dated classes via aggregate editing, copy reference UI/assets, or claim device verification from RN-web.
+
+
+## 2026-10-25 — Version 29 attendance release
+
+Owner requested integrating the attendance update into the current app and a fresh release. Based on native branch commit 194ae7f, retaining Premium and all existing features. Increased Gradle/app constants and version guard pin to 29 (0.0.0.29); package and signing unchanged. Live app_releases row 29 inserted and read back: attendance history and college-week notes, with no claim of Play publication. Attendance feature code and migration behavior are unchanged from the verified previous build. Local version/history/arithmetic/organizer/native-update/docs/repository guards and quiet lint pass. Signed Android build receipt to be checked in Actions after publication; physical device and Play Store release remain pending.
