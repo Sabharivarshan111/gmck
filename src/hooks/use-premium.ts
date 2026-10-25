@@ -50,7 +50,7 @@ export async function syncPremiumCache(): Promise<string | null> {
 export function PremiumSync() {
   useEffect(() => {
     void syncPremiumCache();
-    const { data: sub } = supabase.auth.onAuthStateChange(() => { void syncPremiumCache(); });
+    const { data: sub } = supabase.auth.onAuthStateChange(() => { setTimeout(() => { void syncPremiumCache(); }, 0); });
     const onVisible = () => { if (document.visibilityState === "visible") void syncPremiumCache(); };
     document.addEventListener("visibilitychange", onVisible);
     return () => {
@@ -80,7 +80,7 @@ export function usePremium() {
 
   useEffect(() => {
     void refresh();
-    const { data: sub } = supabase.auth.onAuthStateChange(() => { void refresh(); });
+    const { data: sub } = supabase.auth.onAuthStateChange(() => { setTimeout(() => { void refresh(); }, 0); });
     return () => sub.subscription.unsubscribe();
   }, [refresh]);
 
