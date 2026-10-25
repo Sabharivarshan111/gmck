@@ -1,0 +1,23 @@
+{
+  "meshes": 1436,
+  "byKind": {
+    "muscle": 402,
+    "artery": 639,
+    "vein": 395
+  },
+  "mapped": 1436,
+  "unmapped": [],
+  "sourceSha256": {
+    "muscles.txt": "33b7953b2eaacd5fc38b2535af4d0cfbcf3f31960f2f3e66b8f7de013ffa29d1",
+    "vessels.json": "603862043f7f2ef30c6e9a7f48ada78289cc790697fecce41552bcbce54f6bce"
+  },
+  "scopeCounts": {
+    "exact": 869,
+    "whole-muscle": 74,
+    "regional": 289,
+    "parent": 127,
+    "label": 77
+  },
+  "undocumentedFinerArterialBranches": 177,
+  "coverageMeaning": "Reference/identity coverage, not complete clinically reviewed micro-branch morphology. Whole-muscle, parent and regional scopes remain distinct."
+}

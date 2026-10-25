@@ -44,7 +44,7 @@ export function validateOfflineBank(value: unknown): asserts value is OfflineBan
     const label = String(row.sourceAnswer).trim();
     const labelledIndex = /^[A-Ha-h]$/.test(label) ? label.toUpperCase().charCodeAt(0) - 65 : /^[1-8]$/.test(label) ? Number(label) - 1 : row.options.indexOf(label);
     if ((labelledIndex >= 0 && labelledIndex !== row.answerIndex) || (labelledIndex < 0 && (row.answerIndex !== null || /^[A-Ha-h1-8]$/.test(label)))) throw new Error(`Source answer and option index disagree: ${row.id}`);
-    if (!row.imageIds.every(id => Object.hasOwn(value.images as object, id))) throw new Error(`Unresolved image reference: ${row.id}`);
+    if (!row.imageIds.every(id => Object.prototype.hasOwnProperty.call(value.images, id))) throw new Error(`Unresolved image reference: ${row.id}`);
     ids.add(row.id);
   }
 }
@@ -70,6 +70,6 @@ export function createOfflineReader(input: unknown) {
       const limit = Number.isFinite(filter.limit) ? Math.max(1, Math.min(40, Math.trunc(filter.limit!))) : 40;
       return { total: matches.length, records: matches.slice(offset, offset + limit).map(({ row }) => ({ ...row, options: [...row.options], imageIds: [...row.imageIds] })) };
     },
-    image: (id: string) => Object.hasOwn(bank.images, id) ? { ...bank.images[id] } : undefined,
+    image: (id: string) => Object.prototype.hasOwnProperty.call(bank.images, id) ? { ...bank.images[id] } : undefined,
   };
 }

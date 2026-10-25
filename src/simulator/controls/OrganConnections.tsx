@@ -3,8 +3,8 @@ import { ArrowUpRight, X } from 'lucide-react';
 import { ORGAN_CONNECTIONS, type OrganConnection } from '../data/organConnections';
 import './OrganConnections.css';
 
-interface Props { organKey:string; organName:string; mode:'supply'|'relations'; onInspect:(id:string,owner:string)=>void; light?:boolean }
-export function OrganConnections({organKey,organName,mode,onInspect,light}:Props) {
+interface Props { organKey:string; organName:string; mode:'supply'|'relations'; onInspect:(id:string,owner:string)=>void; onDetails?:(id:string)=>void; light?:boolean }
+export function OrganConnections({organKey,organName,mode,onInspect,onDetails,light}:Props) {
   const [diagram,setDiagram]=useState<OrganConnection|null>(null);
   const diagramRef=useRef<HTMLDivElement>(null);
   useEffect(()=>{if(diagram)diagramRef.current?.scrollIntoView({block:'nearest',behavior:'auto'});},[diagram]);
@@ -18,6 +18,7 @@ export function OrganConnections({organKey,organName,mode,onInspect,light}:Props
       <button type="button" className={`oc-card oc-${c.kind}`} data-testid={`inspect-${c.id}`} aria-label={`Show ${c.label} ${c.targetId?'in 3D':'diagram'}`} onClick={()=>c.targetId?onInspect(c.id,c.owner):setDiagram(c)}>
         <i aria-hidden="true"/><span><strong>{c.label}</strong><small>{c.targetId?'3D anatomy':'Teaching diagram'}</small></span><ArrowUpRight size={17} aria-hidden="true"/>
       </button>
+      {c.kind!=='relation'&&onDetails&&<button type="button" className="min-h-11 w-full rounded-xl border p-2 text-left text-xs font-semibold" aria-label={`Read anatomy: ${c.label}`} onClick={()=>onDetails(c.id)}>{c.kind==='arterial'?'Origin & branches':'Formation, tributaries & drainage'} →</button>}
       {mode==='supply'&&<details className="oc-note"><summary>Course & drainage</summary><p>{c.note}</p></details>}
     </div>)}</div></div>)}
     {diagram&&<div ref={diagramRef} className="oc-diagram" role="region" aria-label={`${diagram.label} teaching diagram`}>

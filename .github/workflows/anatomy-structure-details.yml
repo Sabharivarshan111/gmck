@@ -1,0 +1,40 @@
+name: Normal anatomy structure details
+on:
+  workflow_dispatch:
+  pull_request:
+    paths: ['src/simulator/**', 'src/pages/Simulator.tsx', 'scripts/structure-details*', 'scripts/anatomy-details/**', 'docs/anatomy-reference-snapshots/**', '.github/workflows/anatomy-structure-details.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci --legacy-peer-deps --ignore-scripts
+      - run: npm ci --prefix mobile --legacy-peer-deps --ignore-scripts
+      - name: Verify references and simulator
+        run: |
+          node scripts/structure-details-check.mjs
+          node scripts/profile-realtime-check.mjs
+          npm run check:simulator
+          npm run check:simulator-mobile
+          npx tsc --noEmit -p tsconfig.app.json --lib ES2022,DOM,DOM.Iterable
+          npx eslint src/simulator/data/structureDetails.ts src/simulator/controls/StructureDetails.tsx src/simulator/controls/OrganDetailDrawer.tsx src/simulator/controls/OrganConnections.tsx
+      - name: Install browser
+        working-directory: mobile
+        run: npx playwright-core install --with-deps chromium
+      - name: Exercise normal anatomy navigation
+        env:
+          ANATOMY_DETAIL_SHOTS: ${{ github.workspace }}/anatomy-detail-shots
+        run: node scripts/structure-details-ui-check.mjs
+      - run: npm run build
+      - run: node mobile/scripts/build-local-simulator.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: normal-anatomy-details-browser-evidence
+          path: anatomy-detail-shots/

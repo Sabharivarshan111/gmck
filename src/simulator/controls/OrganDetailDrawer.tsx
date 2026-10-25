@@ -1,7 +1,9 @@
+import { StructureDetails } from './StructureDetails';
+import { getStructureDetail } from '../data/structureDetails';
 import { OrganConnections } from './OrganConnections';
 import { getOrganConnection, getNodeConnection } from '../data/organConnections';
 import { BoneAttachments } from './BoneAttachments';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   X,
   Scissors,
@@ -136,9 +138,14 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
     setActiveTab('overview'); setIsMobileExpanded(false);
   }, [organId]);
 
-  if (!organId) return null;
-
   const currentNavId = navHistory[navHistory.length - 1] || organId || 'heart';
+  const contentRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    // A newly selected structure starts at its own origin/attachments.
+    if (contentRef.current) contentRef.current.scrollTop = 0;
+  }, [currentNavId, activeTab]);
+
+  if (!organId) return null;
 
   // Resolve organ data, including source-specific HRA target ids.
   const hraOrganTarget = getHraOrganTarget(currentNavId);
@@ -168,7 +175,8 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
         ) ||
         nodeOwnerOrganKey) || '';
 
-  const hasDossier = !!ORGAN_ANATOMY_DATABASE[organKey];
+  const structureDetail = getStructureDetail(currentNavId, sourcePart, getOrganConnection(currentNavId));
+  const hasDossier = !!ORGAN_ANATOMY_DATABASE[organKey] && (!structureDetail || !!ORGAN_ANATOMY_DATABASE[currentNavId]);
   const organ: DetailedOrganAnatomy = ORGAN_ANATOMY_DATABASE[organKey] || ORGAN_ANATOMY_DATABASE.heart;
   const isLight = theme === 'light';
 
@@ -358,18 +366,18 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
                     : 'bg-cyan-500/10 text-cyan-300 border border-cyan-500/30'
                 }`}
               >
-                {sourcePart?.system || organ.system}
+                {structureDetail?.kind || sourcePart?.system || organ.system}
               </span>
               <span
                 className={`text-[11px] font-medium italic truncate max-w-[200px] ${
                   isLight ? 'text-slate-500' : 'text-slate-400'
                 }`}
               >
-                {sourcePart ? sourcePart.conceptId : organ.latinName}
+                {structureDetail ? structureDetail.conceptId || 'Named structure' : sourcePart ? sourcePart.conceptId : organ.latinName}
               </span>
             </div>
             <h2 className="text-lg sm:text-xl md:text-2xl font-black tracking-tight flex items-center gap-2 text-slate-900 sim-dark:text-white leading-tight">
-              {sourcePart?.name || organ.name}
+              {structureDetail?.name || sourcePart?.name || organ.name}
             </h2>
             <p className={`text-xs mt-0.5 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
               {sourcePart ? `${sourcePart.conceptId} · ${sourcePart.system} · ${sourcePart.source || 'BodyParts3D'}` : organ.quadrantOrCavity}
@@ -476,9 +484,10 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
         </div>}
 
         {/* Scrollable Content Body */}
-        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-5 pb-[calc(16px+env(safe-area-inset-bottom))]">
+        <div ref={contentRef} data-testid="organ-detail-content" className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-5 pb-[calc(16px+env(safe-area-inset-bottom))]">
           {sourcePart?.system === 'skeletal' && <BoneAttachments name={sourcePart.name} onMuscle={navigateToStructure} />}
-          {!hasDossier && <p className="text-sm leading-relaxed rounded-xl border p-3">This named structure can be viewed, isolated and dissected. A dedicated blood supply, innervation and clinical dossier is not yet available for this structure.</p>}
+          {structureDetail && (!hasDossier || activeTab === 'overview') && <StructureDetails detail={structureDetail} onInspect={id => { navigateToStructure(id); onIsolateStructure?.(id, organKey); }} />}
+          {!hasDossier && !structureDetail && <p className="text-sm leading-relaxed rounded-xl border p-3">This named structure can be viewed, isolated and dissected. A dedicated blood supply, innervation and clinical dossier is not yet available for this structure.</p>}
           {hasDossier && <>
           {sourcePart && <p className="text-xs rounded-xl border p-3">Selected mesh: <strong>{sourcePart.name}</strong>. {peripheralNerveRegistrationIssue(sourcePart.id)} The sections below describe the related {organ.name} region; they are not a separately verified dossier for this individual mesh.</p>}
           {/* TAB 1: OVERVIEW & MUSCLE GRAPH */}
@@ -650,7 +659,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
 
           {/* TAB 2: VESSELS & NERVES (INTERACTIVE CLICKABLE GRAPH) */}
           {activeTab === 'vascular' && (<>
-            <OrganConnections key={organKey} organKey={organKey} organName={organ.name} light={isLight} mode="supply" onInspect={(id, owner) => onIsolateStructure?.(id, owner)} />
+            <OrganConnections key={organKey} organKey={organKey} organName={organ.name} light={isLight} mode="supply" onDetails={navigateToStructure} onInspect={(id, owner) => { navigateToStructure(id); onIsolateStructure?.(id, owner); }} />
             <details className="oc-legacy-notes"><summary>Detailed vascular and nerve notes</summary>
             <div className="space-y-4 animate-in fade-in duration-200">
               {/* Arterial Supply Cards */}
@@ -965,7 +974,7 @@ export const OrganDetailDrawer: React.FC<OrganDetailDrawerProps> = ({
           )}
 
           {/* TAB 3: 6-DIRECTION ORTHOGONAL RELATIONS COMPASS */}
-          {activeTab === 'relations' && <OrganConnections key={organKey} organKey={organKey} organName={organ.name} light={isLight} mode="relations" onInspect={(id, owner) => onIsolateStructure?.(id, owner)} />}
+          {activeTab === 'relations' && <OrganConnections key={organKey} organKey={organKey} organName={organ.name} light={isLight} mode="relations" onDetails={navigateToStructure} onInspect={(id, owner) => { navigateToStructure(id); onIsolateStructure?.(id, owner); }} />}
 
           {/* TAB 4: CLINICAL */}
           {activeTab === 'clinical' && (

@@ -2482,3 +2482,30 @@ DO NOT:Restore search-preview draft questions, held duplicates, changed source h
 **NEXT:** Finish CI, merge PR124, publish and verify orbitmbbs.site/unlock and the free direct simulator paywall.
 
 **DO NOT:** Restore ad sales copy on website, lock Notes, pretend fixtures are a live charge, or change native release/version/signing for this website-only patch.
+## 2026-10-23 — Original native Coronary Lab
+
+**DONE:** Owner requested a coronary angiography teaching module using reference screenshots, with an independently designed UI. Added native Clinical Studio discovery and local React Native/SVG tool. Original authored 3D centrelines, two dominance patterns with PDA parent changes, detector basis/projection, view presets, shell/labels, C-arm/table illustration, model shortening/crossings, branch notes and quiz. No competitor runtime/assets/text/model downloaded or copied. Detailed scope/provenance: docs/CORONARY_LAB_AUDIT_20261023.md. Legacy src simulator, questions, billing, ads, signing and version28 untouched.
+
+**DONE:** Geometry invariants across91 angle combinations, branch junctions and dominance tests pass. Real components at360/390/430/900px pass projection/preset/drag/button/shell/dominance/PDA/quiz/theme/reset/offline checks. Actual SimulatorScreen discovery/open/back and landscape console pass. Inspected actual screenshots. TypeScript/native+preview, full mobile source lint, browser build and Android JS bundle pass; simulator/edge/version/repo/preview guards pass. General smoke cannot start due environment uv_interface_addresses error; not claimed green. New dedicated CI workflow captures screenshots and checks geometry/UI/bundle.
+
+**HALF-DONE:** Publication receipt pending. No new APK/AAB, device/TalkBack/performance testing or clinical validation. First version is an explicitly labelled schematic, not a patient-derived model or clinical angiography/dose/collision simulator.
+
+**NEXT:** Publish tested source branch/PR and inspect hosted checks. Review anatomy with a cardiologist, then compile/test a new Android build on hardware. Retain the explicit clinical/model limitations.
+
+**DO NOT:** Claim legal immunity, perfect anatomy, real fluoroscopy or signed/device validation. A new independently authored UI does not itself provide legal clearance. Keep competitor assets out. Preserve concurrent PG work.
+
+## 2026-10-23 — Real coronary WebGL supersedes schematic version
+
+**DONE:** Owner demanded real-time 3D, no SVG anatomy, open-source permitted. Replaced prior scene with Three.js/BodyParts3D real meshes through a local native WebView; browser uses same generated document. 54 original coronary source meshes, 11 provenance-backed groups, real orbit/raycast/projection/C-arm. Deleted procedural anatomy and unsupported dominance/percentage claims. Pinned upstream/hash and retained full notices. Source topology, native+preview+renderer types, ESLint and 360/390/430/900 real-component browser flows pass; screenshots captured. See docs/CORONARY_LAB_AUDIT_20261023.md. Final build/publication receipt follows.
+
+**NEXT:** Verify current branch CI and real 3 GB Android gestures/GPU/memory before release. General web gate's unrelated digestive coverage must not be lowered. No signed APK/device/clinical/legal-clearance assertion. Build HTML from mobile/scripts/build-coronary-renderer.mjs after renderer changes.
+
+
+## 2026-10-24 — Normal anatomy selected structure details
+
+PR #123 includes heart → coronary → LAD → registered branch navigation retaining actual selected identity. Muscle attachment/nerve and vessel origin/tributary/drainage references bind1,436 meshes with explicit exact/whole-muscle/regional/parent/label scopes and unresolved finer-branch notices. Resolver and actual phone browser flows pass; six screenshots saved. Source snapshots, CC BY-SA attribution, rebuild scripts and dedicated CI included. See docs/ANATOMY_STRUCTURE_DETAILS_20261024.md for scope and baseline gates. No signed APK, device, production-release, clinical-completeness or legal-clearance claim. Preserve unrelated concurrent Supabase/PG work and digestive coverage gate.
+
+
+## 2026-10-24 — Anatomy follow-up checks and scroll reset
+
+PR123 follow-up fixes Vite test-mode setup, adds existing test-only paid-account fixtures to actual simulator browser checks, and restores default ES2020 type compatibility without changing question content. Actual selected-structure navigation exposed retained scroll: now a new structure/tab begins at its own origin/attachment fields; regression passes. Direct organ model taps, reopening details, coronary heart context/default/hide and celiac context toggle pass. Eight inspected screenshots saved. Canonical simulator asset entry3,939,927 bytes/110 assets. Reference+phone guards and original PG source/year/offline integrity pass. Broader old mobile E2E still2pass/10fail on stale studio/control/layout expectations and a capture timeout; comprehensive-dossier digestive gate remains92% vs95%, untouched. Final hosted status in PR123; no release/device/clinical/legal clearance claim. Read docs/ANATOMY_STRUCTURE_DETAILS_20261024.md before continuing.
