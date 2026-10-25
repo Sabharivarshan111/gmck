@@ -1,4 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  cleanAttendanceHistory,
+  historyTotals,
+  withAttendanceCounts,
+  withAttendanceDay,
+  withDatedBalance,
+  type AttendanceDay,
+} from './attendanceHistory';
 
 /**
  * Attendance — theory classes and clinical postings, and how many you can miss.
@@ -29,7 +37,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const KEY = 'orbit:attendance-v1';
 
-export type AttendanceKind = 'theory' | 'posting';
+export type AttendanceKind = 'theory' | 'lab' | 'posting';
 
 export interface MonthlyAttendance {
   held: number;
@@ -39,6 +47,9 @@ export interface MonthlyAttendance {
 }
 
 export interface AttendanceItem {
+  /** Only actually dated records; legacy aggregate counts are never assigned guessed dates. */
+  daily?: Record<string, AttendanceDay>;
+  updatedAt?: number;
   id: string;
   name: string;
   kind: AttendanceKind;
@@ -100,6 +111,7 @@ export interface AttendanceItem {
 export interface AttendanceState {
   items: AttendanceItem[];
   hydrated: boolean;
+  error?: string;
 }
 
 export const GAZETTED_HOLIDAYS: Record<string, string> = {
@@ -177,7 +189,10 @@ export function parseLocalIsoDate(isoDate: string): Date | null {
   return date;
 }
 
-export function postingEndDate(startIso: string, totalDays: number): string | null {
+export function postingEndDate(
+  startIso: string,
+  totalDays: number,
+): string | null {
   const start = parseLocalIsoDate(startIso);
   if (!start || !Number.isFinite(totalDays) || totalDays <= 0) return null;
   const end = new Date(start);
@@ -185,11 +200,18 @@ export function postingEndDate(startIso: string, totalDays: number): string | nu
   return formatLocalIsoDate(end);
 }
 
-export function postingDurationDays(startIso: string, endIso: string): number | null {
+export function postingDurationDays(
+  startIso: string,
+  endIso: string,
+): number | null {
   const start = parseLocalIsoDate(startIso);
   const end = parseLocalIsoDate(endIso);
   if (!start || !end) return null;
-  const startUtc = Date.UTC(start.getFullYear(), start.getMonth(), start.getDate());
+  const startUtc = Date.UTC(
+    start.getFullYear(),
+    start.getMonth(),
+    start.getDate(),
+  );
   const endUtc = Date.UTC(end.getFullYear(), end.getMonth(), end.getDate());
   const days = Math.floor((endUtc - startUtc) / 86400000) + 1;
   return days > 0 ? days : null;
@@ -198,11 +220,19 @@ export function postingDurationDays(startIso: string, endIso: string): number | 
 /** True only when this posting expects the student to attend on this date. */
 export function isPostingWorkingDate(item: AttendanceItem, day: Date): boolean {
   const iso = formatLocalIsoDate(day);
+  const recorded = item.daily?.[iso];
+  if (recorded?.off) return false;
+  if (recorded && recorded.present + recorded.absent > 0) return true;
   if (item.skipSundays && day.getDay() === 0) return false;
   if (item.skipSaturdays && day.getDay() === 6) return false;
   if (item.holidays?.includes(iso)) return false;
-  const officialHolidayIsWorking = item.gazettedWorkingDays?.includes(iso) ?? false;
-  if (item.prepaidHolidays && getHolidayTitle(iso) && !officialHolidayIsWorking) {
+  const officialHolidayIsWorking =
+    item.gazettedWorkingDays?.includes(iso) ?? false;
+  if (
+    item.prepaidHolidays &&
+    getHolidayTitle(iso) &&
+    !officialHolidayIsWorking
+  ) {
     return false;
   }
   return true;
@@ -229,7 +259,11 @@ export function percentOf(attended: number, held: number): number {
  * **Floor, never round.** Rounding is the version that tells somebody sitting
  * at exactly the line that they have one in hand.
  */
-export function canMiss(attended: number, held: number, target: number): number {
+export function canMiss(
+  attended: number,
+  held: number,
+  target: number,
+): number {
   const t = target / 100;
   if (t <= 0) {
     return Number.POSITIVE_INFINITY;
@@ -239,7 +273,7 @@ export function canMiss(attended: number, held: number, target: number): number 
     // above zero, so there is nothing spare whatever `held` says.
     return 0;
   }
-  return Math.max(0, Math.floor(attended / t - held));
+  return Math.max(0, Math.floor((attended * 100 - target * held) / target));
 }
 
 /**
@@ -252,15 +286,19 @@ export function canMiss(attended: number, held: number, target: number): number 
  * A target of 100 has no answer — you cannot recover from a single absence —
  * and this says so with Infinity rather than dividing by zero.
  */
-export function mustAttend(attended: number, held: number, target: number): number {
+export function mustAttend(
+  attended: number,
+  held: number,
+  target: number,
+): number {
   const t = target / 100;
   if (t >= 1) {
     return attended >= held ? 0 : Number.POSITIVE_INFINITY;
   }
-  if (attended >= t * held) {
+  if (attended * 100 >= target * held) {
     return 0;
   }
-  return Math.ceil((t * held - attended) / (1 - t));
+  return Math.ceil((target * held - attended * 100) / (100 - target));
 }
 
 /**
@@ -280,6 +318,7 @@ export function workingDays(item: AttendanceItem): number | null {
     return null;
   }
   if (
+    (!item.daily || Object.keys(item.daily).length === 0) &&
     !item.skipSundays &&
     !item.skipSaturdays &&
     !item.prepaidHolidays &&
@@ -309,14 +348,22 @@ export function workingDays(item: AttendanceItem): number | null {
  * Null before it starts and after it ends, because "day 31 of 28" is not a
  * thing to put on a card. Clamped rather than extrapolated for the same reason.
  */
-export function dayOfRotation(item: AttendanceItem, today: Date = new Date()): number | null {
+export function dayOfRotation(
+  item: AttendanceItem,
+  today: Date = new Date(),
+): number | null {
   const total = workingDays(item);
   if (total === null || !item.startDate || !item.totalDays) {
     return null;
   }
   const start = parseLocalIsoDate(item.startDate);
   if (!start) return null;
-  const now = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 12);
+  const now = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate(),
+    12,
+  );
   const end = new Date(start);
   end.setDate(start.getDate() + item.totalDays - 1);
   if (now < start || now > end) return null;
@@ -355,7 +402,7 @@ export interface AttendanceVerdict {
  */
 export function verdictFor(item: AttendanceItem): AttendanceVerdict {
   const pct = percentOf(item.attended, item.held);
-  const safe = item.held === 0 || pct >= item.target;
+  const safe = item.held === 0 || item.attended * 100 >= item.target * item.held;
   const spare = canMiss(item.attended, item.held, item.target);
   /*
    * What is LEFT of the rotation, in days somebody is expected to attend.
@@ -367,7 +414,9 @@ export function verdictFor(item: AttendanceItem): AttendanceVerdict {
    * diligently the card has been tapped.
    */
   const total =
-    item.kind === 'theory' && typeof item.totalClasses === 'number' && item.totalClasses > 0
+    item.kind !== 'posting' &&
+    typeof item.totalClasses === 'number' &&
+    item.totalClasses > 0
       ? item.totalClasses
       : workingDays(item);
   const remaining = total === null ? null : Math.max(0, total - item.held);
@@ -392,7 +441,9 @@ export function verdictFor(item: AttendanceItem): AttendanceVerdict {
  */
 export function bestPossible(item: AttendanceItem): number | null {
   const total =
-    item.kind === 'theory' && typeof item.totalClasses === 'number' && item.totalClasses > 0
+    item.kind !== 'posting' &&
+    typeof item.totalClasses === 'number' &&
+    item.totalClasses > 0
       ? item.totalClasses
       : workingDays(item);
   if (total === null) {
@@ -444,13 +495,42 @@ function sane(raw: unknown): AttendanceItem | null {
   // Attended can never exceed held. A stored file that says otherwise would
   // make every percentage above 100 and every verdict nonsense, and it is
   // cheaper to clamp here than to defend against it in six places.
-  const attended = Math.min(held, Math.max(0, Math.round(Number(item.attended) || 0)));
-  const target = Math.min(100, Math.max(1, Math.round(Number(item.target) || 75)));
+  const attended = Math.min(
+    held,
+    Math.max(0, Math.round(Number(item.attended) || 0)),
+  );
+  const target = Math.min(
+    100,
+    Math.max(
+      0,
+      Math.round(
+        typeof item.target === 'number' && Number.isFinite(item.target)
+          ? item.target
+          : 75,
+      ),
+    ),
+  );
+  const history = cleanAttendanceHistory(item.daily);
+  const known = historyTotals(history);
+  const daily =
+    known.present <= attended && known.absent <= held - attended
+      ? history
+      : undefined;
   return {
     id: item.id,
     name: item.name,
-    kind: item.kind === 'posting' ? 'posting' : 'theory',
+    kind:
+      item.kind === 'posting'
+        ? 'posting'
+        : item.kind === 'lab'
+        ? 'lab'
+        : 'theory',
     target,
+    daily,
+    updatedAt:
+      typeof item.updatedAt === 'number' && Number.isFinite(item.updatedAt)
+        ? item.updatedAt
+        : undefined,
     held,
     attended,
     totalDays:
@@ -467,23 +547,34 @@ function sane(raw: unknown): AttendanceItem | null {
     skipSaturdays: item.skipSaturdays === true ? true : undefined,
     prepaidHolidays: item.prepaidHolidays === true ? true : undefined,
     gazettedWorkingDays: Array.isArray(item.gazettedWorkingDays)
-      ? item.gazettedWorkingDays.filter((h): h is string => typeof h === 'string')
+      ? item.gazettedWorkingDays.filter(
+          (h): h is string => typeof h === 'string',
+        )
       : undefined,
     holidays: Array.isArray(item.holidays)
       ? item.holidays.filter((h): h is string => typeof h === 'string')
       : undefined,
-    lastMarkedDate: typeof item.lastMarkedDate === 'string' ? item.lastMarkedDate : undefined,
+    lastMarkedDate:
+      typeof item.lastMarkedDate === 'string' ? item.lastMarkedDate : undefined,
     lastMarkedPresent:
-      typeof item.lastMarkedPresent === 'boolean' ? item.lastMarkedPresent : undefined,
+      typeof item.lastMarkedPresent === 'boolean'
+        ? item.lastMarkedPresent
+        : undefined,
     monthly:
       typeof item.monthly === 'object' && item.monthly !== null
         ? Object.fromEntries(
             Object.entries(item.monthly as Record<string, unknown>)
-              .filter(([k, v]) => typeof k === 'string' && typeof v === 'object' && v !== null)
+              .filter(
+                ([k, v]) =>
+                  typeof k === 'string' && typeof v === 'object' && v !== null,
+              )
               .map(([k, v]) => {
                 const rec = v as Record<string, unknown>;
                 const h = Math.max(0, Math.round(Number(rec.held) || 0));
-                const a = Math.min(h, Math.max(0, Math.round(Number(rec.attended) || 0)));
+                const a = Math.min(
+                  h,
+                  Math.max(0, Math.round(Number(rec.attended) || 0)),
+                );
                 const totalClasses =
                   typeof rec.totalClasses === 'number' && rec.totalClasses > 0
                     ? Math.max(h, Math.round(rec.totalClasses))
@@ -508,7 +599,10 @@ export function getMonthlyAttendance(
   if (item.monthly && item.monthly[key]) {
     const entry = item.monthly[key];
     const held = Math.max(0, Math.round(Number(entry.held) || 0));
-    const attended = Math.min(held, Math.max(0, Math.round(Number(entry.attended) || 0)));
+    const attended = Math.min(
+      held,
+      Math.max(0, Math.round(Number(entry.attended) || 0)),
+    );
     const totalClasses =
       typeof entry.totalClasses === 'number' && entry.totalClasses > 0
         ? Math.max(held, Math.round(entry.totalClasses))
@@ -521,168 +615,213 @@ export function getMonthlyAttendance(
   return { held: 0, attended: 0 };
 }
 
-export async function hydrateAttendance(): Promise<void> {
-  try {
-    const raw = await AsyncStorage.getItem(KEY);
-    const parsed = raw ? (JSON.parse(raw) as unknown) : null;
-    const items = Array.isArray(parsed)
-      ? parsed.map(sane).filter((item): item is AttendanceItem => item !== null)
-      : [];
-    state = { items, hydrated: true };
-  } catch {
-    state = { items: [], hydrated: true };
-  }
-  emit();
+let hydration: Promise<void> | undefined;
+let writes: Promise<void> = Promise.resolve();
+
+export function hydrateAttendance(): Promise<void> {
+  if (state.hydrated && !state.error) return Promise.resolve();
+  if (!hydration)
+    hydration = (async () => {
+      try {
+        const raw = await AsyncStorage.getItem(KEY);
+        const parsed: unknown = raw ? JSON.parse(raw) : [];
+        if (!Array.isArray(parsed)) throw new Error('Invalid attendance file');
+        state = {
+          items: parsed
+            .map(sane)
+            .filter((item): item is AttendanceItem => item !== null),
+          hydrated: true,
+        };
+      } catch {
+        state = {
+          ...state,
+          hydrated: true,
+          error:
+            'Could not read saved attendance. Your data has been kept; close and reopen to retry.',
+        };
+      }
+      emit();
+    })().finally(() => {
+      hydration = undefined;
+    });
+  return hydration;
 }
 
-async function persist(items: AttendanceItem[]): Promise<void> {
-  state = { ...state, items };
-  emit();
-  try {
+/** A failed save keeps the last persisted state. All updates read the newest state in order. */
+function transact(
+  change: (items: AttendanceItem[]) => AttendanceItem[],
+): Promise<void> {
+  const job = writes.then(async () => {
+    await hydrateAttendance();
+    if (state.error) throw new Error(state.error);
+    const items = change(state.items);
     await AsyncStorage.setItem(KEY, JSON.stringify(items));
-    void import('./reminderSync').then(({ syncReminders }) => syncReminders()).catch(() => {});
-  } catch {
-    // The in-memory list still applies for this session. Losing a tap is
-    // better than losing the screen.
-  }
+    state = { items, hydrated: true };
+    emit();
+    void import('./reminderSync')
+      .then(({ syncReminders }) => syncReminders())
+      .catch(() => {});
+  });
+  writes = job.catch(() => {});
+  return job;
 }
 
-export async function addAttendance(
+export function addAttendance(
   input: Omit<AttendanceItem, 'id' | 'held' | 'attended'> &
     Partial<Pick<AttendanceItem, 'held' | 'attended'>>,
 ): Promise<void> {
-  const item: AttendanceItem = {
-    id: `att_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-    held: 0,
-    attended: 0,
-    ...input,
-  };
-  await persist([...state.items, item]);
+  return transact(items => [
+    ...items,
+    {
+      id: `att_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+      held: 0,
+      attended: 0,
+      ...input,
+      updatedAt: Date.now(),
+    },
+  ]);
 }
 
-export async function updateAttendance(
-  id: string,
-  patch: Partial<AttendanceItem>,
-): Promise<void> {
-  await persist(
-    state.items.map(item => {
-      if (item.id !== id) {
-        return item;
-      }
-      const next = { ...item, ...patch };
-      next.held = Math.max(0, Math.round(next.held));
-      next.attended = Math.min(next.held, Math.max(0, Math.round(next.attended)));
-      if (
-        next.kind === 'theory' &&
-        typeof next.totalClasses === 'number' &&
-        Number.isFinite(next.totalClasses)
-      ) {
-        next.totalClasses = Math.max(next.held, Math.round(next.totalClasses));
-      }
-      return next;
-    }),
-  );
+export function updateAttendance(id: string, patch: Partial<AttendanceItem>): Promise<void> {
+  return transact(items => items.map(item => {
+    if (item.id !== id) return item;
+    const next = { ...item, ...patch, id: item.id, updatedAt: Date.now() };
+    const dated = historyTotals(item.daily);
+    if (next.attended < dated.present || next.held - next.attended < dated.absent) throw new Error('Dated attendance is protected. Correct individual dates in History.');
+    return sane(next) ?? item;
+  }));
 }
 
-/**
- * Set the expected number of theory classes for one calendar month.
- *
- * This is intentionally independent from item.totalClasses:
- * - monthly total = classes expected in that month
- * - item.totalClasses = total number of classes across the whole course
- */
-export async function setMonthlyTotalClasses(
+export function setMonthlyTotalClasses(
   id: string,
   monthKey: string,
   totalClasses?: number,
 ): Promise<void> {
-  const item = state.items.find(entry => entry.id === id);
-  if (!item || item.kind !== 'theory') return;
-  const current = getMonthlyAttendance(item, monthKey);
-  const clean =
-    typeof totalClasses === 'number' && Number.isFinite(totalClasses) && totalClasses > 0
-      ? Math.max(current.held, Math.round(totalClasses))
-      : undefined;
-  const nextMonthly = {
-    ...(item.monthly ?? {}),
-    [monthKey]: {
-      held: current.held,
-      attended: current.attended,
-      totalClasses: clean,
-    },
-  };
-  const monthlyTotalSum = Object.values(nextMonthly).reduce(
-    (sum, entry) => sum + (entry.totalClasses ?? 0),
-    0,
+  return transact(items =>
+    items.map(item => {
+      if (item.id !== id || item.kind === 'posting') return item;
+      const current = getMonthlyAttendance(item, monthKey);
+      const clean =
+        typeof totalClasses === 'number' &&
+        Number.isFinite(totalClasses) &&
+        totalClasses > 0
+          ? Math.max(current.held, Math.round(totalClasses))
+          : undefined;
+      const monthly = {
+        ...item.monthly,
+        [monthKey]: { ...current, totalClasses: clean },
+      };
+      const total = Object.values(monthly).reduce(
+        (sum, row) => sum + (row.totalClasses ?? 0),
+        0,
+      );
+      return {
+        ...item,
+        monthly,
+        totalClasses:
+          total || item.totalClasses
+            ? Math.max(item.held, item.totalClasses ?? 0, total)
+            : undefined,
+        updatedAt: Date.now(),
+      };
+    }),
   );
-  const overallTotal =
-    monthlyTotalSum > 0 || item.totalClasses
-      ? Math.max(item.held, item.totalClasses ?? 0, monthlyTotalSum)
-      : undefined;
-  await updateAttendance(id, { monthly: nextMonthly, totalClasses: overallTotal });
 }
 
-/** One class happened, and you were there — or you were not. */
-export async function markAttendance(id: string, present: boolean): Promise<void> {
-  const item = state.items.find(entry => entry.id === id);
-  if (!item) {
-    return;
-  }
-  const today = formatLocalIsoDate(new Date());
-  const key = today.slice(0, 7);
-  const currentMonth = getMonthlyAttendance(item, key);
-  const nextMonthly = {
-    ...(item.monthly ?? {}),
-    [key]: {
-      held: currentMonth.held + 1,
-      attended: currentMonth.attended + (present ? 1 : 0),
-      totalClasses:
-        typeof currentMonth.totalClasses === 'number'
-          ? Math.max(currentMonth.totalClasses, currentMonth.held + 1)
-          : undefined,
-    },
-  };
-  await updateAttendance(id, {
-    held: item.held + 1,
-    attended: item.attended + (present ? 1 : 0),
-    lastMarkedDate: today,
-    lastMarkedPresent: present,
-    monthly: nextMonthly,
-  });
+export function setAttendanceDay(
+  id: string,
+  iso: string,
+  day: AttendanceDay,
+  fromBalance = false,
+): Promise<void> {
+  return transact(items =>
+    items.map(item =>
+      item.id === id
+        ? (fromBalance ? withDatedBalance : withAttendanceDay)(
+            item,
+            iso,
+            day,
+            formatLocalIsoDate(new Date()),
+          )
+        : item,
+    ),
+  );
 }
 
-/**
- * Take back the last mark.
- *
- * There is one Undo rather than a per-day editor because the mistake this
- * fixes is always the same one: tapping Present when you meant Absent, and
- * noticing immediately. It cannot know WHICH of the previous marks was wrong,
- * so it removes a class from the total and, when asked, an attendance with it.
- */
-export async function undoAttendance(id: string, wasPresent: boolean): Promise<void> {
-  const item = state.items.find(entry => entry.id === id);
-  if (!item || item.held === 0) {
-    return;
-  }
-  const key = formatLocalIsoDate(new Date()).slice(0, 7);
-  const currentMonth = getMonthlyAttendance(item, key);
-  const nextMonthly = {
-    ...(item.monthly ?? {}),
-    [key]: {
-      held: Math.max(0, currentMonth.held - 1),
-      attended: Math.max(0, currentMonth.attended - (wasPresent ? 1 : 0)),
-      totalClasses: currentMonth.totalClasses,
-    },
-  };
-  await updateAttendance(id, {
-    held: item.held - 1,
-    attended: Math.max(0, item.attended - (wasPresent ? 1 : 0)),
-    lastMarkedDate: undefined,
-    lastMarkedPresent: undefined,
-    monthly: nextMonthly,
-  });
+export function setAttendanceCounts(
+  id: string,
+  month: string,
+  present: number,
+  absent: number,
+): Promise<void> {
+  return transact(items =>
+    items.map(item =>
+      item.id === id
+        ? withAttendanceCounts(item, month, present, absent)
+        : item,
+    ),
+  );
 }
 
-export async function removeAttendance(id: string): Promise<void> {
-  await persist(state.items.filter(item => item.id !== id));
+/** One tap records one class on the actual local date. Multiple classes can form a mixed day. */
+export function markAttendance(id: string, present: boolean): Promise<void> {
+  return transact(items =>
+    items.map(item => {
+      if (item.id !== id) return item;
+      const today = formatLocalIsoDate(new Date());
+      const day = item.daily?.[today] ?? { present: 0, absent: 0, off: false };
+      return {
+        ...withAttendanceDay(
+          item,
+          today,
+          {
+            present: day.present + (present ? 1 : 0),
+            absent: day.absent + (present ? 0 : 1),
+            off: false,
+          },
+          today,
+        ),
+        lastMarkedDate: today,
+        lastMarkedPresent: present,
+      };
+    }),
+  );
+}
+
+/** Use the persisted date/status, including after midnight or restarting the app. */
+export function undoAttendance(
+  id: string,
+  _wasPresent?: boolean,
+): Promise<void> {
+  return transact(items =>
+    items.map(item => {
+      if (item.id !== id) return item;
+      const date = item.lastMarkedDate;
+      const present = item.lastMarkedPresent;
+      const day = date ? item.daily?.[date] : undefined;
+      if (
+        !date ||
+        typeof present !== 'boolean' ||
+        !day ||
+        (present ? day.present : day.absent) < 1
+      )
+        throw new Error(
+          'No dated mark to undo. Use History to correct a date.',
+        );
+      return withAttendanceDay(
+        item,
+        date,
+        {
+          ...day,
+          present: day.present - (present ? 1 : 0),
+          absent: day.absent - (present ? 0 : 1),
+        },
+        formatLocalIsoDate(new Date()),
+      );
+    }),
+  );
+}
+
+export function removeAttendance(id: string): Promise<void> {
+  return transact(items => items.filter(item => item.id !== id));
 }

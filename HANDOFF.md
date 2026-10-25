@@ -2724,3 +2724,7 @@ DONE: Preserved attendance organizer commit 9a151fe while resolving Premium bran
 HALF-DONE: Signed CI build and physical acceptance pending. Broad old smoke harness fails existing navigation labels (Themes/Menu/Settings); do not call it green. No real payment/Google login/device/live ads/Play upload.
 NEXT: Finish publication via PR126 to native branch and inspect signed internal build. Website PR125 remains separate.
 DO NOT: Drop organizer work, fake payment IDs, or reset influencer grant; private pending promotion activates on first verified Google sign-in. Lovable publishing still blocked by workspace credits.
+
+## 2026-10-25 — Attendance history, labs and editing
+
+Added the screenshot-visible attendance behaviors in native ORBIT: dated/mixed/off activity calendar, lab category, selected-period count steppers, rename, timestamps and swipe-revealed confirmed deletion. Preserves existing totals and key; old balances can be dated without double counting. Storage now serializes writes and reports errors; Undo uses its persisted original date/status. See `docs/attendance/HISTORY_FEATURES_20261025.md` and newest resume note for scope and proof. Screenshots are actual RN-web components with sample data; no signed APK or Android-device verification is claimed.

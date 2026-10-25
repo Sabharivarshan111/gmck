@@ -6,6 +6,7 @@ import {
   ChevronDown,
   ChevronUp,
   GraduationCap,
+  FlaskConical,
   Plus,
   Sparkles,
   Stethoscope,
@@ -18,6 +19,7 @@ import { Touchable } from '@/components/Touchable';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Sheet } from '@/components/Sheet';
 import { AttendanceOrganizer } from '@/components/AttendanceOrganizer';
+import { AttendanceHistoryPanel, SwipeAttendanceCard } from '@/components/AttendanceHistoryPanel';
 import { DatePicker } from '@/components/DatePicker';
 import { useTheme, withAlpha } from '@/theme';
 import { onColor } from '@/theme/color';
@@ -86,13 +88,13 @@ function CustomAttendanceTarget({ value, onSave, label }: { value: number; onSav
   const { colors } = useTheme();
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState(String(value));
-  const valid = /^\d{1,3}$/.test(draft) && Number(draft) >= 1 && Number(draft) <= 100;
+  const valid = /^\d{1,3}$/.test(draft) && Number(draft) >= 0 && Number(draft) <= 100;
   return <>
     <Touchable label={label} onPress={() => { setDraft(String(value)); setOpen(true); }} style={[styles.chip, { borderColor: colors.border, minHeight: 44 }]}><Text style={{ color: colors.accent }}>Custom {value}%</Text></Touchable>
     <Sheet visible={open} onClose={() => setOpen(false)} title="Attendance requirement">
-      <Text style={{ color: colors.textMuted }}>Enter your college requirement, from 1 to 100 percent.</Text>
+      <Text style={{ color: colors.textMuted }}>Enter your college requirement, from 0 to 100 percent.</Text>
       <TextInput accessibilityLabel="Custom attendance percentage" keyboardType="number-pad" value={draft} onChangeText={setDraft} style={[styles.input, { color: colors.text, borderColor: colors.border }]} />
-      {!valid && <Text accessibilityRole="alert" style={{ color: colors.danger }}>Enter a whole number from 1 to 100.</Text>}
+      {!valid && <Text accessibilityRole="alert" style={{ color: colors.danger }}>Enter a whole number from 0 to 100.</Text>}
       <Touchable label="Save custom attendance target" disabled={!valid} onPress={() => { onSave(Number(draft)); setOpen(false); }} style={[styles.formButton, { minHeight: 44, backgroundColor: colors.accent, opacity: valid ? 1 : 0.5 }]}><Text style={{ color: colors.onAccent }}>Save requirement</Text></Touchable>
     </Sheet>
   </>;
@@ -406,7 +408,7 @@ function RotationCalendar({
 export function AttendanceTab() {
   const { colors } = useTheme();
   useSyncExternalStore(subscribeAttendance, attendanceVersion, attendanceVersion);
-  const { items, hydrated } = getAttendance();
+  const { items, hydrated, error: storageError } = getAttendance();
 
   const [formError,setFormError]=useState<string|null>(null);
   const [saving, setSaving] = useState(false);
@@ -474,7 +476,7 @@ export function AttendanceTab() {
     const total = Number(days);
     const hasTotal = kind === 'posting' && Number.isFinite(total) && total > 0;
     const totalClassesNum =
-      kind === 'theory' && totalClassesStr.trim()
+      kind !== 'posting' && totalClassesStr.trim()
         ? Math.max(1, Math.round(Number(totalClassesStr) || 0))
         : undefined;
 
@@ -528,19 +530,25 @@ export function AttendanceTab() {
 
   const mark = useCallback(async (item: AttendanceItem, present: boolean) => {
     tick();
-    setLastMark(current => ({ ...current, [item.id]: present }));
-    await markAttendance(item.id, present);
+    try {
+      await markAttendance(item.id, present);
+      setLastMark(current => ({ ...current, [item.id]: present }));
+      setFormError(null);
+    } catch (err) { setFormError(err instanceof Error ? err.message : 'Could not save attendance. Try again.'); }
   }, []);
 
   return (
     <KeyboardSafe>
       <View style={styles.wrap}>
         <AttendanceOrganizer />
-        {/* Theory or clinical postings switcher */}
+        {storageError || formError ? <Text accessibilityRole="alert" style={{ color: colors.danger }}>{storageError || formError}</Text> : null}
+        <Text style={[styles.calendarSummary, { color: colors.textMuted }]}>{new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' })}</Text>
+        {/* Theory, labs or clinical postings switcher */}
         <View style={[styles.switch, { backgroundColor: colors.cardElevated }]}>
           {(
             [
               { key: 'theory' as const, label: 'Theory', Icon: GraduationCap },
+              { key: 'lab' as const, label: 'Labs', Icon: FlaskConical },
               { key: 'posting' as const, label: 'Clinical postings', Icon: Stethoscope },
             ]
           ).map(option => {
@@ -558,7 +566,7 @@ export function AttendanceTab() {
                 <Text
                   numberOfLines={1}
                   style={[styles.switchText, { color: active ? colors.text : colors.textMuted }]}>
-                  {option.label}
+                  {option.key === 'posting' ? 'Postings' : option.label}
                 </Text>
               </Touchable>
             );
@@ -568,10 +576,10 @@ export function AttendanceTab() {
         {shown.length === 0 && hydrated ? (
           <View style={[styles.empty, { borderColor: colors.border }]}>
             <Text style={[styles.emptyTitle, { color: colors.text }]}>
-              {kind === 'theory' ? 'No theory subjects yet' : 'No clinical postings yet'}
+              {kind === 'lab' ? 'No lab subjects yet' : kind !== 'posting' ? 'No theory subjects yet' : 'No clinical postings yet'}
             </Text>
             <Text style={[styles.emptyBody, { color: colors.textMuted }]}>
-              {kind === 'theory'
+              {kind !== 'posting'
                 ? 'Add a subject below, then tap Present or Absent after class. Orbit calculates your safe bunks and exam eligibility.'
                 : 'Add a rotation with start and end dates. Orbit can exclude Sundays, optional Saturdays and Tamil Nadu government holidays, lets you mark college closures, and calculates safe bunks.'}
             </Text>
@@ -589,7 +597,8 @@ export function AttendanceTab() {
             }
             onUndo={async () => {
               const was = lastMark[item.id];
-              await undoAttendance(item.id, was ?? true);
+              try { await undoAttendance(item.id, was); setFormError(null); }
+              catch (err) { setFormError(err instanceof Error ? err.message : 'Could not undo attendance.'); }
             }}
             onTarget={async next => updateAttendance(item.id, { target: next })}
             onRemove={async () => removeAttendance(item.id)}
@@ -609,7 +618,7 @@ export function AttendanceTab() {
             <View>
               <Text style={[styles.formLabel, { color: colors.textMuted }]}>QUICK SUGGESTIONS</Text>
               <View style={styles.suggestionRow}>
-                {(kind === 'theory' ? THEORY_SUGGESTIONS : POSTING_SUGGESTIONS).map(sug => (
+                {(kind !== 'posting' ? THEORY_SUGGESTIONS : POSTING_SUGGESTIONS).map(sug => (
                   <Touchable
                     key={sug}
                     onPress={() => setName(sug)}
@@ -636,13 +645,13 @@ export function AttendanceTab() {
             <TextInput
               value={name}
               onChangeText={setName}
-              placeholder={kind === 'theory' ? 'Subject, e.g. Pathology' : 'Posting, e.g. Paediatrics'}
+              placeholder={kind !== 'posting' ? 'Subject, e.g. Pathology' : 'Posting, e.g. Paediatrics'}
               placeholderTextColor={colors.textMuted}
-              accessibilityLabel={kind === 'theory' ? 'Subject name' : 'Posting name'}
+              accessibilityLabel={kind !== 'posting' ? 'Subject name' : 'Posting name'}
               style={[styles.input, { color: colors.text, borderColor: colors.border }]}
             />
 
-            {kind === 'theory' ? (
+            {kind !== 'posting' ? (
               <View style={styles.totalClassesSection}>
                 <Text style={[styles.formLabel, { color: colors.textMuted }]}>
                   TOTAL NUMBER OF CLASSES — ALL MONTHS (OPTIONAL)
@@ -862,7 +871,7 @@ export function AttendanceTab() {
               <Touchable
                 onPress={submit}
                 disabled={saving}
-                label={kind === 'theory' ? 'Add this subject' : 'Add this posting'}
+                label={kind !== 'posting' ? 'Add this subject' : 'Add this posting'}
                 style={[
                   styles.formButton,
                   { backgroundColor: colors.primary, borderColor: colors.primary },
@@ -874,11 +883,11 @@ export function AttendanceTab() {
         ) : (
           <Touchable
             onPress={() => { setFormError(null); setAdding(true); }}
-            label={kind === 'theory' ? 'Add a subject' : 'Add a posting'}
+            label={kind !== 'posting' ? 'Add a subject' : 'Add a posting'}
             style={[styles.add, { borderColor: colors.border }]}>
             <Plus size={16} color={colors.accent} />
             <Text style={[styles.addText, { color: colors.accent }]}>
-              {kind === 'theory' ? 'Add a subject' : 'Add a posting'}
+              {kind !== 'posting' ? 'Add a subject' : 'Add a posting'}
             </Text>
           </Touchable>
         )}
@@ -903,7 +912,7 @@ function AttendanceCard({
   onMark: (item: AttendanceItem, present: boolean) => void;
   onUndo: () => void;
   onTarget: (next: number) => void;
-  onRemove: () => void;
+  onRemove: () => Promise<void> | void;
   onSetTotalClasses: (count?: number) => void;
   onSetMonthlyTotalClasses: (monthKey: string, count?: number) => void;
   onUpdateHolidays: (holidays: string[]) => void;
@@ -913,13 +922,14 @@ function AttendanceCard({
   const { colors } = useTheme();
   const verdict = verdictFor(item);
   const best = bestPossible(item);
+  const canRecover = verdict.remaining === null || (item.attended + verdict.remaining) * 100 >= item.target * (item.held + verdict.remaining);
   const day = dayOfRotation(item);
   const total = workingDays(item);
   const currentMonthKey = formatLocalIsoDate(new Date()).slice(0, 7);
   const thisMonth = getMonthlyAttendance(item, currentMonthKey);
   const monthPct = percentOf(thisMonth.attended, thisMonth.held);
   const monthTone =
-    thisMonth.held === 0 || monthPct >= item.target ? colors.success : colors.danger;
+    thisMonth.held === 0 || thisMonth.attended * 100 >= item.target * thisMonth.held ? colors.success : colors.danger;
   const monthName = new Date().toLocaleString('en-US', { month: 'short' });
   const monthOptions = Array.from(
     new Set([currentMonthKey, ...Object.keys(item.monthly ?? {})]),
@@ -942,12 +952,16 @@ function AttendanceCard({
   const monthlyTotalSum = monthlyTotals.reduce((sum, value) => sum + value, 0);
 
   const [showCalendar, setShowCalendar] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
+  const [deleteBusy, setDeleteBusy] = useState(false);
   const [editDates,setEditDates]=useState(false);
   const [rangeStart,setRangeStart]=useState(item.startDate??formatLocalIsoDate(new Date()));
   const [rangeEnd,setRangeEnd]=useState(item.endDate??postingEndDate(item.startDate??formatLocalIsoDate(new Date()),item.totalDays??28)??formatLocalIsoDate(new Date()));
   const calendarDays=item.totalDays??postingDurationDays(item.startDate??'',item.endDate??'')??0;
   const openDates=()=>{const start=parseLocalIsoDate(item.startDate??'')?item.startDate!:formatLocalIsoDate(new Date());setRangeStart(start);setRangeEnd(parseLocalIsoDate(item.endDate??'')?item.endDate!:postingEndDate(start,item.totalDays??28)??start);setEditDates(true);};
   const [showSimulator, setShowSimulator] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   const tone = verdict.safe ? colors.success : colors.danger;
 
@@ -964,6 +978,7 @@ function AttendanceCard({
   };
 
   return (
+    <SwipeAttendanceCard label={item.name} onDelete={() => setDeleting(true)}>
     <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <View style={styles.cardHead}>
         <View style={styles.grow}>
@@ -971,9 +986,9 @@ function AttendanceCard({
             {item.name}
           </Text>
           <Text style={[styles.cardCount, { color: colors.textMuted }]}>
-            {item.kind === 'theory' ? 'Overall attendance: ' : ''}
+            {(item.kind === 'theory' || item.kind === 'lab') ? 'Overall attendance: ' : ''}
             {item.attended} of {item.held} {item.kind === 'posting' ? 'days' : 'classes'}
-            {item.kind === 'theory' && item.totalClasses
+            {(item.kind === 'theory' || item.kind === 'lab') && item.totalClasses
               ? ` · Total classes: ${item.totalClasses} · ${Math.max(0, item.totalClasses - item.held)} left`
               : verdict.remaining !== null
                 ? ` · ${verdict.remaining} left`
@@ -984,7 +999,7 @@ function AttendanceCard({
               {item.startDate} → {item.endDate ?? postingEndDate(item.startDate, item.totalDays ?? 0) ?? '—'}
             </Text>
           ) : null}
-          {item.kind === 'theory' ? (
+          {(item.kind === 'theory' || item.kind === 'lab') ? (
             <Text style={[styles.cardCountSub, { color: colors.accent }]}>
               This Month ({monthName}): {thisMonth.attended} of {thisMonth.held} attended
               {thisMonth.totalClasses ? ` · ${thisMonth.totalClasses} total classes this month` : ''}
@@ -1015,7 +1030,7 @@ function AttendanceCard({
               {item.held === 0 ? '—' : `${Math.round(verdict.percent)}%`}
             </Text>
           </View>
-          {item.kind === 'theory' ? (
+          {(item.kind === 'theory' || item.kind === 'lab') ? (
             <View
               style={[
                 styles.dualPctBadge,
@@ -1030,6 +1045,7 @@ function AttendanceCard({
         </View>
       </View>
 
+      <AttendanceHistoryPanel item={item} />
       {/* The bar, against the target line. */}
       <View style={[styles.track, { backgroundColor: withAlpha(colors.text, 0.12) }]}>
         <View
@@ -1044,7 +1060,7 @@ function AttendanceCard({
       </View>
 
       <Text style={[styles.verdict, { color: verdict.safe ? colors.textMuted : colors.danger }]}>
-        {item.held === 0
+        {item.target === 0 ? 'No minimum requirement set. Attendance is still recorded.' : item.held === 0
           ? `Target ${item.target}%. Mark a class to start counting.`
           : verdict.safe
             ? verdict.canMiss === 0
@@ -1052,7 +1068,7 @@ function AttendanceCard({
               : verdict.cappedByEnd
                 ? `You can miss all ${verdict.canMiss} remaining and still finish above ${item.target}%.`
                 : `You can safely miss ${verdict.canMiss} more.`
-            : best !== null && best < item.target
+            : best !== null && !canRecover
               ? `Even with 100% attendance from here, max finish is ${Math.round(best)}%.`
               : `Attend the next ${verdict.mustAttend} classes to get back above ${item.target}%.`}
       </Text>
@@ -1076,15 +1092,20 @@ function AttendanceCard({
         <Touchable
           onPress={onUndo}
           label={`Undo the last mark for ${item.name}`}
-          disabled={item.held === 0}
+          disabled={!item.lastMarkedDate || typeof item.lastMarkedPresent !== 'boolean' || !item.daily?.[item.lastMarkedDate]}
           hitSlop={8}
           style={[styles.icon, { borderColor: colors.border, opacity: item.held === 0 ? 0.4 : 1 }]}>
           <Undo2 size={15} color={colors.textMuted} />
         </Touchable>
       </View>
 
+      <Touchable label={`Attendance details for ${item.name}`} state={{ expanded: detailsOpen }} onPress={() => setDetailsOpen(value => !value)} style={[styles.accordionToggle, { borderColor: colors.border, minHeight: 44 }]}>
+        <Text style={{ color: colors.accent }}>Monthly totals, calendar & simulator</Text>
+        {detailsOpen ? <ChevronUp size={16} color={colors.textMuted} /> : <ChevronDown size={16} color={colors.textMuted} />}
+      </Touchable>
+      {detailsOpen ? <>
       {/* Theory enhancement: Option to select / change total number of classes */}
-      {item.kind === 'theory' ? (
+      {(item.kind === 'theory' || item.kind === 'lab') ? (
         <View style={styles.totalClassesSection}>
           <Text style={[styles.totalClassesLabel, { color: colors.textMuted }]}>
             Total number of classes (all months):
@@ -1121,7 +1142,7 @@ function AttendanceCard({
         </View>
       ) : null}
 
-      {item.kind === 'theory' ? (
+      {(item.kind === 'theory' || item.kind === 'lab') ? (
         <View style={styles.totalClassesSection}>
           <Text style={[styles.totalClassesLabel, { color: colors.textMuted }]}>
             Classes per month
@@ -1230,7 +1251,7 @@ function AttendanceCard({
       ) : null}
 
       {/* Theory enhancement: Bunk & target simulation tool */}
-      {item.kind === 'theory' ? (
+      {(item.kind === 'theory' || item.kind === 'lab') ? (
         <View style={styles.accordionWrap}>
           <Touchable
             onPress={() => setShowSimulator(v => !v)}
@@ -1280,7 +1301,7 @@ function AttendanceCard({
                 </Text>
               )}
               <View style={styles.simTable}>
-                {item.kind === 'theory' ? (
+                {(item.kind === 'theory' || item.kind === 'lab') ? (
                   <View style={styles.simMonthlySummary}>
                     <Text style={[styles.simMonthlyText, { color: colors.text }]}>
                       📅 <Text style={styles.boldText}>This Month ({monthName}):</Text>{' '}
@@ -1292,7 +1313,7 @@ function AttendanceCard({
                     </Text>
                   </View>
                 ) : null}
-                <Text style={[styles.simHeader, { color: colors.textMuted, marginTop: item.kind === 'theory' ? 6 : 0 }]}>
+                <Text style={[styles.simHeader, { color: colors.textMuted, marginTop: (item.kind === 'theory' || item.kind === 'lab') ? 6 : 0 }]}>
                   If you attend next:
                 </Text>
                 <View style={styles.simRow}>
@@ -1376,9 +1397,10 @@ function AttendanceCard({
         </View>
       ) : null}
 
-      <CustomAttendanceTarget value={item.target} onSave={onTarget} label={`Set custom target for ${item.name}`} />
+      </> : null}
       <View style={styles.footer}>
         <View style={styles.targets}>
+          <CustomAttendanceTarget value={item.target} onSave={onTarget} label={`Set custom target for ${item.name}`} />
           {TARGETS.map(value => {
             const active = value === item.target;
             return (
@@ -1407,14 +1429,21 @@ function AttendanceCard({
           })}
         </View>
         <Touchable
-          onPress={onRemove}
+          onPress={() => { setDeleteError(''); setDeleting(true); }}
           label={`Remove ${item.name}`}
           hitSlop={8}
           style={styles.icon}>
           <Trash2 size={15} color={colors.textMuted} />
         </Touchable>
       </View>
+      <Sheet visible={deleting} onClose={() => setDeleting(false)} title={`Remove ${item.name}?`}>
+        <Text style={{ color: colors.textMuted }}>This removes the subject and its attendance history from this device.</Text>
+        {deleteError ? <Text accessibilityRole="alert" style={{ color: colors.danger }}>{deleteError}</Text> : null}
+        <Touchable label={`Confirm remove ${item.name}`} disabled={deleteBusy} onPress={() => { if (deleteBusy) return; setDeleteBusy(true); void Promise.resolve().then(onRemove).then(() => setDeleting(false)).catch(() => setDeleteError('Could not delete. Please try again.')).finally(() => setDeleteBusy(false)); }} style={[styles.formButton, { minHeight: 44, borderColor: colors.danger }]}><Text style={{ color: colors.danger }}>{deleteBusy ? 'Removing…' : 'Remove subject and history'}</Text></Touchable>
+        <Touchable label="Keep attendance subject" onPress={() => setDeleting(false)} style={[styles.formButton, { minHeight: 44, borderColor: colors.border }]}><Text style={{ color: colors.text }}>Keep subject</Text></Touchable>
+      </Sheet>
     </View>
+    </SwipeAttendanceCard>
   );
 }
 

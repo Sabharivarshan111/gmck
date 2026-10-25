@@ -98,6 +98,27 @@ eq(fns.mustAttend(29, 40, 75), 4, 'one short of the line');
 eq(fns.mustAttend(39, 40, 100), Infinity, '100% is unrecoverable');
 eq(fns.mustAttend(40, 40, 100), 0, '100% with a perfect record is fine');
 
+// Percentage thresholds use integer-percent arithmetic: 6/8 at 80% needs
+// exactly two classes, not three from ceil(2.000000000000001).
+eq(fns.mustAttend(6, 8, 80), 2, '80% recovery boundary');
+for (let target = 1; target < 100; target += 1) {
+  for (let held = 1; held <= 60; held += 1) {
+    for (let attended = 0; attended <= held; attended += 1) {
+      const recovery = fns.mustAttend(attended, held, target);
+      if ((attended + recovery) * 100 < target * (held + recovery) ||
+          (recovery > 0 && (attended + recovery - 1) * 100 >= target * (held + recovery - 1))) {
+        failures.push(`recovery is not minimal: ${attended}/${held} at ${target}%`);
+      }
+      if (attended * 100 >= target * held) {
+        const spare = fns.canMiss(attended, held, target);
+        if (attended * 100 < target * (held + spare) || attended * 100 >= target * (held + spare + 1)) {
+          failures.push(`allowance is not maximal: ${attended}/${held} at ${target}%`);
+        }
+      }
+    }
+  }
+}
+
 // ---------------------------------------------------------------------------
 // verdictFor — and the cap that is easy to forget
 // ---------------------------------------------------------------------------
@@ -117,6 +138,8 @@ const early = fns.verdictFor({
 });
 eq(early.canMiss, 6, 'plenty of days left leaves the target as the only cap');
 eq(early.cappedByEnd, false, 'and says so');
+
+eq(fns.verdictFor({id:'threshold',name:'Exact',kind:'theory',target:58,held:50,attended:29}).safe, true, '29/50 is exactly 58%, even if its display fraction is inexact');
 
 // A theory subject has no end, so nothing caps it.
 const theory = fns.verdictFor({
@@ -230,7 +253,7 @@ check(
   'attendance.ts no longer stores anything locally',
 );
 check(
-  /Math\.min\(held, Math\.max\(0/.test(source),
+  /Math\.min\(\s*held,\s*Math\.max\(0/.test(source),
   'attended is no longer clamped to held; a stored file could make every percentage nonsense',
 );
 

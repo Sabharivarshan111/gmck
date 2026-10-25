@@ -102,6 +102,7 @@ jobs:
           npm run check:security
           npm run check:attendance
           npm run check:attendance-organizer
+          npm run check:attendance-history
           npm run check:reminder
           npm run check:study-buddy
           npm run check:admin
@@ -260,6 +261,7 @@ jobs:
           npm run check:security
           npm run check:attendance
           npm run check:attendance-organizer
+          npm run check:attendance-history
           npm run check:reminder
           npm run check:study-buddy
           npm run check:admin

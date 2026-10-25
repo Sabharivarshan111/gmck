@@ -71,6 +71,7 @@ const LOCAL_ONLY = [
    */
   { file: 'src/lib/attendance.ts', what: 'which classes and postings you attended' },
   { file: 'src/lib/attendanceOrganizer.ts', what: 'your timetable, tasks, projects and quick notes' },
+  { file: 'src/lib/attendanceHistory.ts', what: 'dated attendance and balance corrections' },
   { file: 'src/lib/forest.ts', what: 'the record of when this phone was concentrating' },
   /*
    * An imported Anki deck is somebody else's copyrighted work that the reader

@@ -2628,3 +2628,15 @@ DONE: Preserved attendance organizer commit 9a151fe while resolving Premium bran
 HALF-DONE: Signed CI build and physical acceptance pending. Broad old smoke harness fails existing navigation labels (Themes/Menu/Settings); do not call it green. No real payment/Google login/device/live ads/Play upload.
 NEXT: Finish publication via PR126 to native branch and inspect signed internal build. Website PR125 remains separate.
 DO NOT: Drop organizer work, fake payment IDs, or reset influencer grant; private pending promotion activates on first verified Google sign-in. Lovable publishing still blocked by workspace credits.
+
+## 2026-10-25 — Screenshot attendance parity: history and labs
+
+**DONE:** Added daily history with Present/Absent/Mixed/Off-day/Unmarked calendar, multi-class per-date edits and five summary metrics; distinct lab category; month/earlier-balance count steppers; subject rename; last-updated date; horizontal swipe action and confirmed removal. Target 0 explicitly means no minimum. Existing attendance totals and storage key retained. Old aggregates remain undated; a user-selected balance migration dates them without double counting. Date edits update monthly and overall totals by delta. Writes now serialize and surface storage failures; corrupt storage is not overwritten; Undo reads persisted date/status across restarts and midnight.
+
+**VERIFIED:** Domain history/arithmetic/organizer/local-only/reminder checks pass. Actual RN-web flow passes at 360/390/412 px: mixed/off editing, balance migration, monthly correction, reload/Undo, zero target, rename, lab isolation/addition, CDP touch swipe reveal and confirmation/cancellation. New history domain check added to Android workflows. Browser screenshots use sample data. Native/preview TypeScript, quiet ESLint and production JS bundle receipts checked before publication.
+
+**HALF-DONE:** No physical Android rendering, gesture timing, keyboard or signed APK verification. Old full smoke retains unrelated Themes/Settings selector failures. Exact class-time alarms remain unimplemented.
+
+**NEXT:** Review screenshots and test the built APK on a device. Feature mapping and date/balance rules are documented in docs/attendance/HISTORY_FEATURES_20261025.md.
+
+**DO NOT:** Guess dates for old totals, double count migrated balances, decrement dated classes via aggregate editing, copy reference UI/assets, or claim device verification from RN-web.

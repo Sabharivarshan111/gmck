@@ -101,7 +101,8 @@
     "web:dev": "vite --config web/vite.config.ts",
     "typecheck:web": "tsc --noEmit -p web/tsconfig.json",
     "check:premium": "node scripts/premium-access-check.mjs",
-    "check:attendance-organizer": "node scripts/attendance-organizer-check.mjs"
+    "check:attendance-organizer": "node scripts/attendance-organizer-check.mjs",
+    "check:attendance-history": "node scripts/attendance-history-check.mjs"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.1.1",
