@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { chromium } from 'playwright';
+const { chromium } = await import(process.env.ORBIT_PLAYWRIGHT_MODULE || 'playwright');
 
 const baseURL = process.env.SIMULATOR_E2E_BASE_URL || 'https://orbitmbbs.vercel.app';
 const outDir = path.resolve('artifacts/simulator-mobile-ux');
@@ -257,6 +257,8 @@ await check('isolate-handoff', async () => {
   const drawer = page.getByTestId('organ-detail-drawer');
   await visible(drawer, 'drawer before isolate');
   await drawer.getByTestId('drawer-isolate-btn').click();
+  await visible(drawer.getByRole('heading', { name: /Pectoralis Major/i }).first(), 'Selected muscle identity is retained');
+  await drawer.getByTitle('Close Drawer', { exact: true }).click();
   await drawer.waitFor({ state: 'detached' });
   const banner = page.getByTestId('mobile-isolation-banner');
   await visible(banner, 'isolation banner');
@@ -270,6 +272,8 @@ await check('restore-isolation-and-depth-peel-shows-requested-layer', async () =
   const drawer = page.getByTestId('organ-detail-drawer');
   await visible(drawer, 'Pectoralis dossier before depth peel');
   await drawer.getByTestId('drawer-isolate-btn').click();
+  await visible(drawer.getByRole('heading', { name: /Pectoralis Major/i }).first(), 'Selected muscle identity is retained');
+  await drawer.getByTitle('Close Drawer', { exact: true }).click();
   await drawer.waitFor({ state: 'detached' });
 
   const banner = page.getByTestId('mobile-isolation-banner');
@@ -310,7 +314,7 @@ await check('restore-isolation-and-depth-peel-shows-requested-layer', async () =
   fs.writeFileSync(path.join(outDir, '06-depth-peel-restores-global-layer.png'), skeletalFrame);
 });
 
-await check('thoracoacromial-reopens-pectoralis-not-heart', async () => {
+await check('thoracoacromial-reopens-selected-artery-not-heart', async () => {
   await goto('/simulator?organ=pectoralis_major');
   let drawer = page.getByTestId('organ-detail-drawer');
   await visible(drawer, 'Pectoralis dossier');
@@ -319,6 +323,8 @@ await check('thoracoacromial-reopens-pectoralis-not-heart', async () => {
   const inspect = drawer.getByTestId('arterial-node-thoracoacromial-3d');
   await visible(inspect, 'Thoracoacromial Inspect in 3D');
   await inspect.click();
+  await visible(drawer.getByTestId('structure-specific-details'), 'Selected artery details');
+  await drawer.getByTitle('Close Drawer', { exact: true }).click();
   await drawer.waitFor({ state: 'detached' });
   const banner = page.getByTestId('mobile-isolation-banner');
   await visible(banner, 'Thoracoacromial isolation banner');
@@ -326,12 +332,14 @@ await check('thoracoacromial-reopens-pectoralis-not-heart', async () => {
   assert(bannerText.includes('thoracoacromial'), 'Expected thoracoacromial child isolation, got: ' + bannerText);
   await banner.getByRole('button', { name: 'Open selected structure anatomy details' }).click();
   drawer = page.getByTestId('organ-detail-drawer');
-  await visible(drawer, 'reopened parent dossier');
+  await visible(drawer, 'reopened selected artery details');
   const heading = drawer.getByRole('heading').first();
-  await visible(heading, 'parent dossier heading');
+  await visible(heading, 'selected artery heading');
   const text = ((await heading.textContent()) || '').trim();
-  assert(/Pectoralis Major/i.test(text), 'Child structure reopened wrong dossier: ' + text);
-  await shot('07-thoracoacromial-parent-dossier');
+  assert(/thoracoacromial/i.test(text), 'Child structure reopened wrong anatomy identity: ' + text);
+  const origin = drawer.getByTestId('structure-specific-details').locator('[data-field="Origin"]');
+  assert(/axillary/i.test(await origin.textContent()), 'Selected thoracoacromial artery must retain its axillary origin');
+  await shot('07-thoracoacromial-selected-artery');
 });
 
 report.finishedAt = new Date().toISOString();
