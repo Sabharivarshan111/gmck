@@ -2612,3 +2612,19 @@ Do not promote the five new pharmacology holds, manufacture missing options, imp
 **NEXT:** Finish checks before merging native branch. Finish website PR. Follow docs/ORBIT_NATIVE_PREMIUM_20261024.md. Promotion auto-activates365days on the approved email's first verified Google sign-in.
 
 **DO NOT:** Overwrite current payment functions with old source, lock general Notes, fake a Razorpay receipt or claim a device test from RN-web.
+## 2026-10-24 — Original attendance organizer
+
+**DONE:** Added original local-only organizer from Attendance → Your college week: weekly classes, linked subjects, timetable image reference, tasks, due dates, project progress, quick notes, original Ion recall break. Added custom attendance requirements 1–100% for new/existing cards. No APK executable code, artwork, fonts or UI copied. Domain test added to Android build workflows; local-only guard includes new store. Browser screenshots and implementation report under docs/attendance and screenshots/attendance-organizer.
+
+**HALF-DONE:** Exact class-time alarms/task notifications are not implemented; UI states this. Existing daily attendance warnings remain. No device or signed APK claim. Focused RN-web UI/domain tests pass; full legacy smoke attempted, stopped after pre-existing Themes/Settings selector failures.
+
+**NEXT:** Review native phone behavior; add class-time scheduling as a separate native notification feature if needed. See docs/attendance/ORGANIZER_IMPLEMENTATION_20261024.md for feature scope and tests.
+
+**DO NOT:** Copy the reference app's code/assets/layout, overwrite existing attendance data, claim full APK parity, or treat RN-web screenshots as Android device proof.
+
+
+## 2026-10-25 Premium native continuation
+DONE: Preserved attendance organizer commit 9a151fe while resolving Premium branch conflicts. Native types, full quiet lint, Metro Android bundle, local canonical renderer and entitlement/ad/billing/Kotlin/repository/version guards pass. Actual RN-web Vault fixture opens free ten-question practice, denies extra proformas/Anki; paid account opens full practice and respiratory proforma. Both180/365day module fixtures suppress consent and ad entry points; paid cache works offline.
+HALF-DONE: Signed CI build and physical acceptance pending. Broad old smoke harness fails existing navigation labels (Themes/Menu/Settings); do not call it green. No real payment/Google login/device/live ads/Play upload.
+NEXT: Finish publication via PR126 to native branch and inspect signed internal build. Website PR125 remains separate.
+DO NOT: Drop organizer work, fake payment IDs, or reset influencer grant; private pending promotion activates on first verified Google sign-in. Lovable publishing still blocked by workspace credits.

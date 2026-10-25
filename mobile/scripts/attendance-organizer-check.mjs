@@ -1,0 +1,47 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import { transform } from 'esbuild';
+const source = await fs.readFile(new URL('../src/lib/attendanceOrganizer.ts', import.meta.url), 'utf8');
+const { code } = await transform(source, { loader: 'ts', format: 'cjs' });
+let disk = null;
+let fail = false;
+const storage = { getItem: async () => disk, setItem: async (_key, value) => { if (fail) throw new Error('storage full'); disk = value; } };
+function load() {
+  const module = { exports: {} };
+  // eslint-disable-next-line no-new-func
+  new Function('require', 'module', 'exports', code)(() => storage, module, module.exports);
+  return module.exports;
+}
+const store = load();
+assert.equal(store.validTime('23:59'), true);
+assert.equal(store.validTime('24:00'), false);
+assert.equal(store.validDue('2028-02-29'), true);
+assert.equal(store.validDue('2026-02-29'), false);
+const row = { id: 'lecture', title: 'Medicine', weekday: 1, start: '09:00', end: '10:00', room: 'Ward 3' };
+assert.equal(store.classError({ ...row, start: '10:00', end: '11:00' }, [row]), null, 'adjacent sessions may share a boundary');
+assert.match(store.classError({ ...row, start: '09:30' }, [row]), /overlaps/);
+assert.equal(store.classError(row, [row], row.id), null, 'editing a class does not clash with itself');
+assert.match(store.classError({ ...row, end: '08:00' }, []), /after/);
+assert.equal(store.cleanOrganizer({ tasks: [null, {}, { id: 'bad', title: {}, due: '' }] }).tasks.length, 0);
+await store.hydrateOrganizer();
+await store.changeOrganizer(previous => ({ ...previous, classes: [row], projects: [{ id: 'p', title: 'Case presentation', due: '' }], tasks: [{ id: 't', title: 'History', due: '2026-10-24', projectId: 'p', done: false }] }));
+await Promise.all(Array.from({ length: 10 }, () => store.changeOrganizer(previous => ({ ...previous, tasks: previous.tasks.map(task => ({ ...task, done: !task.done })) }))));
+assert.equal(store.getOrganizer().tasks[0].done, false, 'concurrent toggles serialize without lost updates');
+assert.equal(JSON.parse(disk).tasks[0].done, false, 'disk agrees with displayed state');
+fail = true;
+await assert.rejects(store.changeOrganizer(previous => ({ ...previous, notes: [{ id: 'n', title: 'Do not lose', body: 'hello' }] })));
+assert.equal(store.getOrganizer().notes.length, 0, 'failed write does not pretend to save');
+fail = false;
+await store.changeOrganizer(previous => ({ ...previous, notes: [{ id: 'n', title: 'Retry', body: 'Retained after restart' }] }));
+const restarted = load();
+await restarted.hydrateOrganizer();
+assert.equal(restarted.getOrganizer().notes[0].body, 'Retained after restart');
+assert.equal(restarted.getOrganizer().classes[0].room, 'Ward 3');
+assert.deepEqual(store.projectProgress('p', store.getOrganizer().tasks), { total: 1, done: 0 });
+assert.equal(store.cleanOrganizer({ tasks: [{ id: 't', title: 'Orphan', due: '', projectId: 'missing' }] }).tasks[0].projectId, undefined);
+disk = '{broken json';
+const broken = load();
+await assert.rejects(broken.hydrateOrganizer());
+await assert.rejects(broken.changeOrganizer(previous => ({ ...previous, notes: [] })));
+assert.equal(disk, '{broken json', 'unreadable storage is never overwritten with an empty list');
+console.log('OK organizer: schedule conflicts, date validation, corrupted data, serial writes, failure/retry and restart persistence');
