@@ -1144,7 +1144,7 @@ export const Simulator: React.FC = () => {
                 <div data-testid="mobile-isolation-banner" className="mobile-selection-card pointer-events-auto">
                   <button
                     aria-label="Open selected structure anatomy details"
-                    onClick={() => setSelectedOrganId(getOrganConnection(isolatedPartId)?.owner || isolatedPartId)}
+                    onClick={() => setSelectedOrganId(isolatedPartId)}
                     className="mobile-selection-details"
                   >
                     <span className="mobile-selection-name">
@@ -1263,7 +1263,7 @@ export const Simulator: React.FC = () => {
           setIsolatedPartId(getPreferredAnatomyIsolationTarget(structureId));
           setContextOrganId(parentOrganId || null);
           setMobileTab('3d');
-          if (!isDesktopLayout) setSelectedOrganId(null);
+          if (!isDesktopLayout) setSelectedOrganId(structureId);
         }}
         onDissectOrgan={(organKey) => {
           const fakePart: Part = atlasCatalog?.parts.find(p => p.id === organKey) || {

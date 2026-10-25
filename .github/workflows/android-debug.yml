@@ -210,6 +210,8 @@ jobs:
           npm run check:attendance
           npm run check:attendance-organizer
           npm run check:attendance-history
+          npm run check:coronary-lab
+          (cd .. && node scripts/structure-details-check.mjs)
           npm run check:admin
           npm run check:simulator
           npm run check:calendar-columns

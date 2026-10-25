@@ -2649,3 +2649,69 @@ Owner requested integrating the attendance update into the current app and a fre
 
 ### Version 29 build receipts
 Source commit 9b88bd50d0e2cfd0f5da8b8517a2ed48df485a41. Local native TypeScript, quiet ESLint and production Android JS bundle passed after restoring sparse-checkout clinical-reference inputs. All Android builds succeeded: release763/run40172632158 (signed AAB/APK, actual offline payload verification and publishing passed), internal581/run40172632163, debug621/run40172632132. Web1202/run40172632141 also passed. Published files: https://github.com/Sabharivarshan111/gmck/releases/tag/release-763 and ad-free debug https://github.com/Sabharivarshan111/gmck/releases/tag/debug-621. Release name reads v29; assets target the exact source commit. No Play Store upload or physical-device acceptance performed. Existing release APK signing uses the upload key; never advise deleting an installed Play app and its local attendance data merely to install this APK.
+
+
+## 2026-10-23 — Website Razorpay checkout and secure access sync
+
+**DONE:** Production browser /unlock, same-origin links and Google return, six/twelve-month launch plans, restore/receipt/order recovery, and live server payment hardening. See docs/ORBIT_PAYMENT_FLOW_20261023.md.
+
+**VERIFIED:** 27 authorization/provider cases, rollback-only live180-day/idempotency/owner/price DB checks, native account/cache/expiry fixture, assembled browser purchase/reload/failure/restore/interruption flows, live CORS/auth/fake-signature rejection, TypeScript/lint/build.
+
+**HALF-DONE:** No real Google/Razorpay charge or physical-device test. No webhook dashboard configuration verified. Vault paid bundle is not implemented; checkout accurately sells ad-free only.
+
+**NEXT:** Check deployment/CI receipts and perform one same-account real captured purchase on website then reopen Android.
+
+**DO NOT:** Claim a fixture is a live payment, charge a card without authorization, bypass provider verification, or claim Play enrollment/paid Vault gating.
+
+
+## 2026-10-24 — Website Vault locks, no ad sales copy
+
+**DONE:** Website-only Premium membership context and direct simulator route guard read the authenticated user's unexpired server entitlement. All Vault features except Notes require Premium; root simulator content does not mount for unpaid accounts. Website checkout/menu text sells features, not ad removal; website AdMob stays disabled and legacy DailyAdConsent is removed. Native renderer and Android ad/cache behavior are unchanged by these browser adapters. Same ₹150/180-day and ₹300/365-day plans and November30 cutoff. Order function39 uses Premium-only display labels.
+
+**VERIFIED:** Combined production build, root/browser TypeScript, targeted quiet lint, all four locked cards, free Notes, paid PG access, direct simulator denied/allowed states, no website ad wording, five checkout/recovery browser scenarios; zero page errors. Native cache and website server-row unit fixtures reject expired/invalid/other-account and forged-cache access. PG content tests use an explicit test-only paid provider, not a runtime bypass.
+
+**HALF-DONE:** Final CI/merge/production receipt pending. Real Google/Razorpay capture and physical Android still untested. No verified webhook dashboard configuration. Client UI gates do not DRM-protect static public assets; website membership check fails closed offline.
+
+**NEXT:** Finish CI, merge PR124, publish and verify orbitmbbs.site/unlock and the free direct simulator paywall.
+
+**DO NOT:** Restore ad sales copy on website, lock Notes, pretend fixtures are a live charge, or change native release/version/signing for this website-only patch.
+## 2026-10-23 — Original native Coronary Lab
+
+**DONE:** Owner requested a coronary angiography teaching module using reference screenshots, with an independently designed UI. Added native Clinical Studio discovery and local React Native/SVG tool. Original authored 3D centrelines, two dominance patterns with PDA parent changes, detector basis/projection, view presets, shell/labels, C-arm/table illustration, model shortening/crossings, branch notes and quiz. No competitor runtime/assets/text/model downloaded or copied. Detailed scope/provenance: docs/CORONARY_LAB_AUDIT_20261023.md. Legacy src simulator, questions, billing, ads, signing and version28 untouched.
+
+**DONE:** Geometry invariants across91 angle combinations, branch junctions and dominance tests pass. Real components at360/390/430/900px pass projection/preset/drag/button/shell/dominance/PDA/quiz/theme/reset/offline checks. Actual SimulatorScreen discovery/open/back and landscape console pass. Inspected actual screenshots. TypeScript/native+preview, full mobile source lint, browser build and Android JS bundle pass; simulator/edge/version/repo/preview guards pass. General smoke cannot start due environment uv_interface_addresses error; not claimed green. New dedicated CI workflow captures screenshots and checks geometry/UI/bundle.
+
+**HALF-DONE:** Publication receipt pending. No new APK/AAB, device/TalkBack/performance testing or clinical validation. First version is an explicitly labelled schematic, not a patient-derived model or clinical angiography/dose/collision simulator.
+
+**NEXT:** Publish tested source branch/PR and inspect hosted checks. Review anatomy with a cardiologist, then compile/test a new Android build on hardware. Retain the explicit clinical/model limitations.
+
+**DO NOT:** Claim legal immunity, perfect anatomy, real fluoroscopy or signed/device validation. A new independently authored UI does not itself provide legal clearance. Keep competitor assets out. Preserve concurrent PG work.
+
+## 2026-10-23 — Real coronary WebGL supersedes schematic version
+
+**DONE:** Owner demanded real-time 3D, no SVG anatomy, open-source permitted. Replaced prior scene with Three.js/BodyParts3D real meshes through a local native WebView; browser uses same generated document. 54 original coronary source meshes, 11 provenance-backed groups, real orbit/raycast/projection/C-arm. Deleted procedural anatomy and unsupported dominance/percentage claims. Pinned upstream/hash and retained full notices. Source topology, native+preview+renderer types, ESLint and 360/390/430/900 real-component browser flows pass; screenshots captured. See docs/CORONARY_LAB_AUDIT_20261023.md. Final build/publication receipt follows.
+
+**NEXT:** Verify current branch CI and real 3 GB Android gestures/GPU/memory before release. General web gate's unrelated digestive coverage must not be lowered. No signed APK/device/clinical/legal-clearance assertion. Build HTML from mobile/scripts/build-coronary-renderer.mjs after renderer changes.
+
+
+## 2026-10-24 — Normal anatomy selected structure details
+
+PR #123 includes heart → coronary → LAD → registered branch navigation retaining actual selected identity. Muscle attachment/nerve and vessel origin/tributary/drainage references bind1,436 meshes with explicit exact/whole-muscle/regional/parent/label scopes and unresolved finer-branch notices. Resolver and actual phone browser flows pass; six screenshots saved. Source snapshots, CC BY-SA attribution, rebuild scripts and dedicated CI included. See docs/ANATOMY_STRUCTURE_DETAILS_20261024.md for scope and baseline gates. No signed APK, device, production-release, clinical-completeness or legal-clearance claim. Preserve unrelated concurrent Supabase/PG work and digestive coverage gate.
+
+
+## 2026-10-24 — Anatomy follow-up checks and scroll reset
+
+PR123 follow-up fixes Vite test-mode setup, adds existing test-only paid-account fixtures to actual simulator browser checks, and restores default ES2020 type compatibility without changing question content. Actual selected-structure navigation exposed retained scroll: now a new structure/tab begins at its own origin/attachment fields; regression passes. Direct organ model taps, reopening details, coronary heart context/default/hide and celiac context toggle pass. Eight inspected screenshots saved. Canonical simulator asset entry3,939,927 bytes/110 assets. Reference+phone guards and original PG source/year/offline integrity pass. Broader old mobile E2E still2pass/10fail on stale studio/control/layout expectations and a capture timeout; comprehensive-dossier digestive gate remains92% vs95%, untouched. Final hosted status in PR123; no release/device/clinical/legal clearance claim. Read docs/ANATOMY_STRUCTURE_DETAILS_20261024.md before continuing.
+
+
+## 2026-10-25 — Merge anatomy details and Coronary Lab into native v29
+
+**DONE:** Owner explicitly asked to merge the separate anatomy work into the current app and rebuild Release/Internal/Debug. Integrated anatomy source b559d52a5ea7bdcb28389e53b0b3fb95eeb0b431 (PR123) onto native d849c7c275349f5aef0f857fe90874311b320bd8. Preserved current attendance, Premium, payment, bank and deployment files; the branch carried 27 unrelated older payment/profile/web paths which were deliberately kept at their current native versions. Combined both documentation histories. Normal anatomy now retains exact selected vessel/muscle identity and presents artery origins/branches, vein formation/tributaries/destination, muscle attachments/actions/innervation; original reference attributions and scope notices preserved. Real WebGL Coronary Lab is available in native Clinical Studio with existing Premium access checks. Release notes row29 now has both attendance and anatomy notes, read back six items. Version remains29 because this replaces the just-cut candidate; no Play upload was performed.
+
+**VERIFIED:** 1436 identity/reference checks (402 muscle,639 arterial,395 venous), pinned54source/27348triangle coronary geometry, native+preview+root+renderer TypeScript, full quiet mobile lint, focused anatomy lint, simulator/mobile/dossier checks, canonical Android asset build and production Android JS bundle pass. Digestive dossier103/108 original95%floor remains green. Actual phone browser heart→coronary→LAD→grouped branch, portal, muscle and saphenous vein pass; 360/390/430/900 coronary controls, orbit, source selection, projection, quiz, C-arm, theme, reset and offline interactions pass. Actual SimulatorScreen free denial/paid opening/back and short-landscape controls pass. Attendance/history/organizer, paid ad suppression/offline cache, version/update, keyboard, clinical snapshots and repository/docs guards pass. Three visually inspected representative screenshots committed under screenshots/anatomy-merged. Android workflows now include anatomy references and coronary geometry checks.
+
+**HALF-DONE:** Signed build receipt pending Actions. Physical-device GPU/touch/keyboard/performance and Play publishing not tested.1436 are mesh identities, not complete clinical validation;177 finer arterial branch bindings remain explicitly undocumented. Existing broad legacy smoke failures are not reported green.
+
+**NEXT:** Inspect new Debug/Internal/Release CI and asset target commits; give new build links, replacing debug621/internal581/release763 which lacked this anatomy merge. PR123 targets main and this integration is into claude/native-app-sync; do not push main.
+
+**DO NOT:** Claim all anatomical branches are fully documented, erase existing attendance, change Premium entitlements/payment handlers, or infer device acceptance from browser previews.

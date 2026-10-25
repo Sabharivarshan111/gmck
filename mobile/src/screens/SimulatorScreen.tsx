@@ -14,6 +14,7 @@ import NativeEcgTwelveLead from '@/components/NativeEcgTwelveLead';
 import NativeClinicalCase from '@/components/NativeClinicalCase';
 import NativeRadiologyViewer from '@/components/NativeRadiologyViewer';
 import NativeClubbingTrainer from '@/components/NativeClubbingTrainer';
+import NativeCoronaryLab from '@/components/NativeCoronaryLab';
 import { PhysiologyKernel } from '@simulator/engine/PhysiologyKernel';
 import { restoreClinicalSnapshot } from '@/lib/clinicalSnapshot';
 import { nativeClinicalRoute } from '@/lib/nativeSimulatorRouting';
@@ -38,7 +39,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   const [studioScenarioId, setStudioScenarioId] = useState('normal');
   const [studioTheme, setStudioTheme] = useState<'dark' | 'light'>('dark');
   const [rendererTheme, setRendererTheme] = useState<'dark' | 'light'>('dark');
-  const [nativeMode, setNativeMode] = useState<{kind: 'monitor' | 'case' | 'ecg' | 'radiology' | 'clubbing'; scenarioId: string} | null>(null);
+  const [nativeMode, setNativeMode] = useState<{kind: 'monitor' | 'case' | 'ecg' | 'radiology' | 'clubbing' | 'coronary'; scenarioId: string} | null>(null);
   const [active, setActive] = useState(AppState.currentState === 'active');
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
@@ -119,6 +120,8 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
 
   if (premium.active && nativeMode?.kind === 'radiology') return wrap(<NativeRadiologyViewer theme={studioTheme} onBack={returnToNativeStudio} />);
 
+  if (premium.active && nativeMode?.kind === 'coronary') return wrap(<NativeCoronaryLab theme={studioTheme} onToggleTheme={onToggleStudioTheme} onBack={returnToNativeStudio} />);
+
   // The canonical clubbing sheet is white in both studio themes.
   if (premium.active && nativeMode?.kind === 'clubbing') return wrap(<NativeClubbingTrainer onBack={returnToNativeStudio} />);
 
@@ -147,6 +150,10 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
       }
       if (destination.kind === 'tool' && destination.id === 'clubbing') {
         setNativeMode({ kind: 'clubbing', scenarioId: destination.scenario });
+        return;
+      }
+      if (destination.kind === 'tool' && destination.id === 'coronary') {
+        setNativeMode({ kind: 'coronary', scenarioId: 'normal' });
         return;
       }
       if (destination.kind === 'anatomy') { setStudioScenarioId('normal'); caseEngine.current = new PhysiologyKernel('normal'); }

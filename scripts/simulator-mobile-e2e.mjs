@@ -1,12 +1,14 @@
+import { installPremiumTestAccount } from '../mobile/web/test-premium-fixture.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
-import { chromium } from 'playwright';
+const { chromium } = await import(process.env.ORBIT_PLAYWRIGHT_MODULE || 'playwright');
 
 const baseURL = process.env.SIMULATOR_E2E_BASE_URL || 'http://127.0.0.1:4180';
 const outDir = path.resolve('artifacts/simulator-mobile-e2e');
 fs.mkdirSync(outDir, { recursive: true });
 
 const browser = await chromium.launch({
+  executablePath: process.env.CHROME_PATH,
   headless: true,
   args: ['--enable-webgl', '--ignore-gpu-blocklist', '--use-angle=swiftshader'],
 });
@@ -20,6 +22,7 @@ const context = await browser.newContext({
     'Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 Chrome/152.0 Mobile Safari/537.36',
 });
 
+await installPremiumTestAccount(context);
 const page = await context.newPage();
 page.setDefaultTimeout(12000);
 

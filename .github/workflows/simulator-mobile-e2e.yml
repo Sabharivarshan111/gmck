@@ -37,6 +37,8 @@ jobs:
   mobile-browser-e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      ORBIT_PLAYWRIGHT_MODULE: ${{ runner.temp }}/orbit-anatomy-browser/node_modules/playwright/index.mjs
 
     steps:
       - uses: actions/checkout@v4
@@ -51,8 +53,8 @@ jobs:
 
       - name: Install Playwright browser runner
         run: |
-          npm install --no-save --package-lock=false --legacy-peer-deps playwright@1.55.0
-          npx playwright install --with-deps chromium
+          npm install --prefix "$RUNNER_TEMP/orbit-anatomy-browser" --ignore-scripts --no-audit --no-fund playwright@1.55.0
+          node "$RUNNER_TEMP/orbit-anatomy-browser/node_modules/playwright/cli.js" install --with-deps chromium
 
       - name: Verify simulator anatomy sources and organ routing
         run: npm run check:simulator-assets

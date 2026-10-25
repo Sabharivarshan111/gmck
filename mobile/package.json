@@ -3,6 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "check:coronary-lab": "node --experimental-strip-types --no-warnings scripts/coronary-lab-check.mjs",
+    "check:coronary-lab-ui": "node preview/coronary-lab-check.mjs",
     "android": "react-native run-android",
     "lint": "eslint .",
     "start": "react-native start",
