@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useId } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Year } from "@/lib/year-subjects";
 import { validateDisplayName } from "@/lib/profanity";
@@ -69,6 +69,8 @@ export interface PendingIdentityConflict {
 }
 
 export function useProfile() {
+  // Several app-level consumers mount this hook; each owns its realtime channel.
+  const realtimeInstance = useId();
   const [local, setLocal] = useState<LocalProfile | null>(readLocal);
   const [cloud, setCloud] = useState<CloudProfile | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
@@ -115,7 +117,7 @@ export function useProfile() {
   useEffect(() => {
     if (!userId) return;
     const channel = supabase
-      .channel(`own-profile:${userId}`)
+      .channel(`own-profile:${userId}:${realtimeInstance}`)
       .on(
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "profiles", filter: `id=eq.${userId}` },
@@ -133,7 +135,7 @@ export function useProfile() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [userId]);
+  }, [userId, realtimeInstance]);
 
   // Load cloud profile + register open
   useEffect(() => {

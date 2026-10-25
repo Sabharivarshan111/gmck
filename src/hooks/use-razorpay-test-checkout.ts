@@ -67,7 +67,7 @@ export function useRazorpayTestCheckout() {
     const scriptOk = await loadRazorpay();
     if (!scriptOk) return "Could not load the payment window. Check your connection.";
 
-    const { data, error } = await supabase.functions.invoke("razorpay-create-order", { body: { plan } });
+    const { data, error } = await supabase.functions.invoke("razorpay-create-order", { body: { plan, ...(plan.startsWith("notes_") ? { catalog_version: "2" } : {}) } });
     if (error || (data as any)?.error) {
       return (await readInvokeError(error, data)) ?? "Could not start the payment.";
     }

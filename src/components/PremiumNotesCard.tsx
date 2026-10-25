@@ -3,13 +3,13 @@ import NotesPurchaseCard from "@/components/premium/NotesPurchaseCard";
 
 export { PREMIUM_NOTES_DRIVE_URL } from "@/hooks/use-notes-purchase";
 
-/** Third-year pill: FM + SPM combined revision notes (₹50). */
+/** Third-year pill: FM + SPM combined revision notes (₹150). */
 export default function PremiumNotesCard() {
   return (
     <NotesPurchaseCard
       copy={{
         plan: "notes_fmspm",
-        priceLabel: "₹50",
+        priceLabel: "₹150",
         icon: BookOpen,
         cardTitle: "All of today's FM exam questions came from our revision notes 🎯",
         cardBody: (
@@ -24,7 +24,7 @@ export default function PremiumNotesCard() {
           { text: "Today's FM paper matched", tone: "amber" },
           { text: "+ Ad-free 1 month free", tone: "emerald" },
         ],
-        dialogTitle: "FM + SPM revision notes — ₹50",
+        dialogTitle: "FM + SPM revision notes — ₹150",
         dialogBody: (
           <>
             One-time payment · lifetime access to the combined Forensic Medicine + SPM revision
@@ -39,7 +39,7 @@ export default function PremiumNotesCard() {
             &amp; predicted papers. Tap to open your Google Drive folder.
           </>
         ),
-        payLabel: "Pay ₹50 & unlock notes",
+        payLabel: "Pay ₹150 & unlock notes",
       }}
     />
   );

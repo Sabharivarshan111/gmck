@@ -1,3 +1,5 @@
+// Full-content regression uses a test-only paid provider; free boundaries are tested in payment-flow-e2e.
+import { installPremiumTestAccount } from '../mobile/web/test-premium-fixture.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
@@ -8,6 +10,7 @@ fs.mkdirSync(outDir, { recursive: true });
 
 const browser = await chromium.launch({
   headless: true,
+  ...(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {}),
   args: ['--enable-webgl', '--ignore-gpu-blocklist', '--use-angle=swiftshader'],
 });
 
@@ -21,6 +24,7 @@ const context = await browser.newContext({
 });
 
 const page = await context.newPage();
+  await installPremiumTestAccount(page.context());
 page.setDefaultTimeout(12000);
 
 const report = {
@@ -99,8 +103,10 @@ const shot = async (name) => {
 
 const goto = async (urlPath) => {
   pageErrors = [];
+  // These tests exercise the anatomy workspace; the default route now opens the skills studio.
+  if (urlPath === '/simulator') urlPath += '?mode=anatomy';
   await page.goto(baseURL + urlPath, { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.locator('body').waitFor({ state: 'visible' });
+  await page.locator('[data-simulator-root]').waitFor({ state: 'visible' });
   await page.waitForTimeout(900);
 };
 

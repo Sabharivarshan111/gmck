@@ -1,3 +1,5 @@
+// Full-content regression uses a test-only paid provider; free boundaries are tested in payment-flow-e2e.
+import { installPremiumTestAccount } from '../mobile/web/test-premium-fixture.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { chromium } from 'playwright';
@@ -8,6 +10,7 @@ const report=[];
 try {
  for (const width of [360,390,430]) {
   const page=await browser.newPage({viewport:{width,height:844},isMobile:true,hasTouch:true});
+  await installPremiumTestAccount(page.context());
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto(base+'/simulator?tool=ecg12');
   const sheet=page.getByTestId('ecg-12lead-canvas');await sheet.waitFor();

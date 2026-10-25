@@ -2482,3 +2482,13 @@ DO NOT:Restore search-preview draft questions, held duplicates, changed source h
 **NEXT:** Finish CI, merge PR124, publish and verify orbitmbbs.site/unlock and the free direct simulator paywall.
 
 **DO NOT:** Restore ad sales copy on website, lock Notes, pretend fixtures are a live charge, or change native release/version/signing for this website-only patch.
+
+## 2026-10-24 — Checkout notes + free Vault samples
+
+**DONE:** Browser checkout four products; ₹150 lifetime curated note packs; preserved existing bonuses/restores; sample anatomy/auscultation/CVS/ten questions per exam. Endpoint41/39/22 + service-only pricing migration live. Fixed-ID sample boundary and provider security checks pass; rollback-only note-grant DB checks pass. See docs/ORBIT_CHECKOUT_SAMPLES_20261024.md.
+
+**HALF-DONE:** Finish final emitted-browser checks, PR/production publish and public verification. Lovable preview f663645 exists but live publication blocked by workspace credits; old ₹50 note callers return409 before opening checkout. No real charge/Google/device test.
+
+**NEXT:** Finish current branch checks/publish. Once owner replenishes Lovable credits, apply catalogue marker2 to its note requests, align other prices/back links/account-change state and publish; never overwrite hardened backend from old Lovable source.
+
+**DO NOT:** Lock general Notes, restore a monthly sales plan, claim mock purchases are live, or claim the public Lovable page changed.

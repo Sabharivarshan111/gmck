@@ -1,9 +1,14 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState, useRef, type ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { readWebsitePremium, type PremiumClient } from '@/lib/website-premium';
 
+import { SimulatorAccessContext } from '@/simulator/SimulatorAccess';
+
 /** Protect direct website simulator URLs as well as the Vault cards. */
 export function WebsitePremiumGate({ children }: { children: ReactNode }) {
+  const [feature, setFeature] = useState<string | null>(null);
+  const dialog = useRef<HTMLDialogElement>(null);
+  useEffect(() => { if (feature) dialog.current?.showModal(); else dialog.current?.close(); }, [feature]);
   const [active, setActive] = useState(false);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -20,9 +25,15 @@ export function WebsitePremiumGate({ children }: { children: ReactNode }) {
     document.addEventListener('visibilitychange', visible);
     return () => { alive = false; clearInterval(timer); data.subscription.unsubscribe(); document.removeEventListener('visibilitychange', visible); };
   }, []);
-  if (active) return <>{children}</>;
-  return <main className="min-h-screen bg-background text-foreground grid place-items-center px-6 py-12"><section className="w-full max-w-sm rounded-2xl border border-primary/30 bg-card p-6 text-center space-y-4">
-    <h1 className="text-2xl font-bold">{loading ? 'Checking Premium access…' : 'Unlock Simulator & Anatomy'}</h1>
-    {!loading && <><p className="text-muted-foreground">Explore 3D Anatomy, Patient Simulator, Auscultation and more with ORBIT Premium.</p><p className="text-sm text-muted-foreground">Notes remain free to read.</p><a href="/unlock" className="block rounded-xl bg-primary text-primary-foreground px-4 py-3 font-semibold">View Premium plans</a><a href="/notes" className="block px-4 py-3 text-sm text-muted-foreground">Back to free Notes</a></>}
-  </section></main>;
+  useEffect(() => { if (active) setFeature(null); }, [active]);
+  if (loading) return <main className="min-h-screen bg-background text-foreground grid place-items-center"><p role="status">Opening your study preview…</p></main>;
+  return <SimulatorAccessContext.Provider value={{ active: active && !loading, requestPurchase: setFeature }}>
+    {children}
+    <dialog ref={dialog} className="rounded-2xl border border-primary/40 bg-background text-foreground p-6 max-w-sm w-[90vw] backdrop:bg-black/70" onCancel={() => setFeature(null)} aria-labelledby="simulator-premium-title">
+      <h2 id="simulator-premium-title" className="text-xl font-bold">Unlock {feature ?? 'Premium'}</h2>
+      <p className="my-4 text-sm text-muted-foreground">Keep exploring the free preview, or get Premium for all organs, sounds, patient cases and tools.</p>
+      <a className="block rounded-xl bg-primary text-primary-foreground text-center p-3 font-semibold" href="/unlock">View Premium plans</a>
+      <button className="w-full p-3 mt-2" onClick={() => setFeature(null)}>Continue free preview</button>
+    </dialog>
+  </SimulatorAccessContext.Provider>;
 }

@@ -1,13 +1,13 @@
 import { Pill } from "lucide-react";
 import NotesPurchaseCard from "@/components/premium/NotesPurchaseCard";
 
-/** Second-year pill: full-subject Pharmacology notes (₹100). */
+/** Second-year pill: full-subject Pharmacology notes (₹150). */
 export default function PharmacNotesCard() {
   return (
     <NotesPurchaseCard
       copy={{
         plan: "notes_pharmac",
-        priceLabel: "₹50",
+        priceLabel: "₹150",
         icon: Pill,
         cardTitle: "Pharmacology full-subject notes — pass guarantee 💊",
         cardBody: (
@@ -22,7 +22,7 @@ export default function PharmacNotesCard() {
           { text: "Pass mark guarantee", tone: "amber" },
           { text: "+ Ad-free 1 month free", tone: "emerald" },
         ],
-        dialogTitle: "Pharmacology notes — ₹50",
+        dialogTitle: "Pharmacology notes — ₹150",
         dialogBody: (
           <>
             One-time payment · lifetime access to the full-subject Pharmacology notes folder on
@@ -37,7 +37,7 @@ export default function PharmacNotesCard() {
             folder with all chapters.
           </>
         ),
-        payLabel: "Pay ₹100 & unlock notes",
+        payLabel: "Pay ₹150 & unlock notes",
         showRestore: false,
       }}
     />
