@@ -37,11 +37,10 @@ jobs:
   mobile-browser-e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    env:
-      ORBIT_PLAYWRIGHT_MODULE: ${{ runner.temp }}/orbit-anatomy-browser/node_modules/playwright/index.mjs
-
     steps:
       - uses: actions/checkout@v4
+      - name: Set browser module path on the runner
+        run: echo "ORBIT_PLAYWRIGHT_MODULE=$RUNNER_TEMP/orbit-anatomy-browser/node_modules/playwright/index.mjs" >> "$GITHUB_ENV"
 
       - uses: actions/setup-node@v4
         with:
