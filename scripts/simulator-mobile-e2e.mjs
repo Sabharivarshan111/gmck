@@ -10,6 +10,7 @@ fs.mkdirSync(outDir, { recursive: true });
 
 const browser = await chromium.launch({
   headless: true,
+  ...(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {}),
   args: ['--enable-webgl', '--ignore-gpu-blocklist', '--use-angle=swiftshader'],
 });
 
@@ -102,8 +103,10 @@ const shot = async (name) => {
 
 const goto = async (urlPath) => {
   pageErrors = [];
+  // These tests exercise the anatomy workspace; the default route now opens the skills studio.
+  if (urlPath === '/simulator') urlPath += '?mode=anatomy';
   await page.goto(baseURL + urlPath, { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.locator('body').waitFor({ state: 'visible' });
+  await page.locator('[data-simulator-root]').waitFor({ state: 'visible' });
   await page.waitForTimeout(900);
 };
 
