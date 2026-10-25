@@ -1,0 +1,62 @@
+{
+  "dataset_permission_observed": {
+    "commercial_reuse_of_covered_work_permitted_by_declared_licenses": true,
+    "licensor_authority_over_every_underlying_item_independently_verified": false,
+    "maintainer_statement": "A repository member states the team finalized MIT for the current dataset.",
+    "mirror_declared_license": "Apache-2.0",
+    "mirror_url": "https://huggingface.co/datasets/openlifescienceai/medmcqa",
+    "noninfringement_guarantee": false,
+    "publisher_license_url": "https://github.com/medmcqa/medmcqa/blob/main/LICENSE.md",
+    "statement_url": "https://github.com/medmcqa/medmcqa/issues/2#issuecomment-1329300257"
+  },
+  "entire_collected_bank": {
+    "dataset_split_labels": {
+      "GENERAL_MEDICAL": 182750,
+      "NEET_PG": 4180
+    },
+    "independently_medically_reviewed_answers": 0,
+    "individually_verified_exam_years": 0,
+    "ordered_id_sha256": "ffb8c455fd81f2a6804ce72c8fd3ff7cff1db0c4289b81b127c5986c067399d5",
+    "records_scanned": 186930,
+    "signal_counts": {
+      "exam_name_marker": 373,
+      "missing_image_dependency": 558,
+      "named_textbook_reference_in_explanation": 4040,
+      "no_supplied_explanation": 135388,
+      "year_like_number_in_stem": 4233
+    },
+    "structurally_quarantined_records": 1293,
+    "underlying_item_rights_chain_verified": 0
+  },
+  "interpretation": [
+    "A named textbook reference does not by itself prove copying or infringement.",
+    "An exam name or a year-like number is a review signal, not verified question-year evidence.",
+    "Absence of markers does not prove originality, permission, medical correctness or absence of exam confidentiality obligations.",
+    "Zero verified item-level rights chains is an evidence gap, not a finding that every record is unlawful.",
+    "Maintainer MIT clarification applies to the dataset; earlier descriptions treating MIT as code-only are incomplete.",
+    "Licence notices, attribution and modification notices must be preserved when applicable; permission cannot be manufactured by paraphrasing."
+  ],
+  "legal_or_criminal_immunity_guaranteed": false,
+  "packs_scanned": 76,
+  "public_release_changed": false,
+  "requested_100000_subset": {
+    "dataset_split_labels": {
+      "GENERAL_MEDICAL": 100000
+    },
+    "independently_medically_reviewed_answers": 0,
+    "individually_verified_exam_years": 0,
+    "ordered_id_sha256": "54089432643b78070a8b2695de3870e7d5d2cf247be09c8030394fd0fae2c591",
+    "records_scanned": 100000,
+    "signal_counts": {
+      "exam_name_marker": 220,
+      "missing_image_dependency": 290,
+      "named_textbook_reference_in_explanation": 2168,
+      "no_supplied_explanation": 72857,
+      "year_like_number_in_stem": 2308
+    },
+    "structurally_quarantined_records": 681,
+    "underlying_item_rights_chain_verified": 0
+  },
+  "review_date": "2026-10-12",
+  "scope": "Automated source/provenance and existing structural-quarantine screening, not a legal or clinical opinion."
+}
