@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showRewardedAd } from './ads';
-import { isPremiumCached } from './premium';
+import { isPremiumCached, mayShowAds } from './premium';
 import { ADS_ENABLED } from '@/lib/adsMode';
 
 /**
@@ -136,6 +136,7 @@ export async function requestDailyAd(reason: DailyAdReason): Promise<void> {
   if (walkthroughActive || isPremiumCached()) {
     return;
   }
+  if (!await mayShowAds()) return;
   const bucket = REASON_TO_BUCKET[reason];
   try {
     const last = await AsyncStorage.getItem(BUCKET_STORAGE_KEY[bucket]);
@@ -153,6 +154,7 @@ export async function requestDailyAd(reason: DailyAdReason): Promise<void> {
     return;
   }
 
+  if (isPremiumCached()) return;
   const { title, message } = REASON_TEXT[reason];
   for (const listener of listeners) {
     listener({ reason, title, message });
@@ -172,6 +174,7 @@ export async function declineDailyAd(reason: DailyAdReason): Promise<void> {
 
 /** Called when the user accepts the prompt. Plays ad, then marks the bucket on success. */
 export async function confirmDailyAd(reason: DailyAdReason): Promise<void> {
+  if (!await mayShowAds()) return;
   const bucket = REASON_TO_BUCKET[reason];
   try {
     const result = await showRewardedAd();

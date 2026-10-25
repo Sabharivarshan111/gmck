@@ -74,6 +74,9 @@ class SimulatorViewManager : SimpleViewManager<WebView>() {
           if (message.message().startsWith("ORBIT_NATIVE_TEACHING_CLOSED:") && Uri.parse(this@apply.url ?: "").host == HOST) {
             status(this@apply, "exit")
           }
+          if (message.message().startsWith("ORBIT_NATIVE_PREMIUM:") && Uri.parse(this@apply.url ?: "").host == HOST) {
+            status(this@apply, "premium", message.message().removePrefix("ORBIT_NATIVE_PREMIUM:").take(120))
+          }
           if (message.message().startsWith("ORBIT_NATIVE_RENDER_ERROR:")) {
             if (QA_ENABLED) android.util.Log.e("ORBIT_ANATOMY", message.message().take(1200))
             status(this@apply, "error")

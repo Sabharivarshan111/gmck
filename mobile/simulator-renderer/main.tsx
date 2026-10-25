@@ -1,3 +1,4 @@
+import { SimulatorAccessContext } from '../../src/simulator/SimulatorAccess';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -74,5 +75,5 @@ setInterval(() => {
   }
 }, 1000);
 createRoot(document.getElementById('root')!).render(
-  <RendererBoundary><ThemeProvider><BrowserRouter><Routes><Route path="*" element={<Simulator />} /></Routes></BrowserRouter></ThemeProvider></RendererBoundary>,
+  <RendererBoundary><ThemeProvider><BrowserRouter><Routes><Route path="*" element={<SimulatorAccessContext.Provider value={{ active: new URLSearchParams(location.search).get('premium') === '1', requestPurchase: feature => console.info('ORBIT_NATIVE_PREMIUM:' + feature) }}><Simulator /></SimulatorAccessContext.Provider>} /></Routes></BrowserRouter></ThemeProvider></RendererBoundary>,
 );

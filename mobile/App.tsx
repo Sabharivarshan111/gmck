@@ -1,3 +1,4 @@
+import { VaultPremiumProvider } from '@/components/VaultPremium';
 import React, { useEffect, useState } from 'react';
 import { Alert, AppState, DeviceEventEmitter, StatusBar, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -166,7 +167,7 @@ function Shell() {
       {/* Android draws edge-to-edge in RN 0.87, so the bar is translucent and
           only the icon style is ours to set. */}
       <StatusBar barStyle={theme === 'dark' ? 'light-content' : 'dark-content'} />
-      <RootNavigator />
+      <VaultPremiumProvider><RootNavigator /></VaultPremiumProvider>
       {/*
         Above everything, and before it: the app has no correct behaviour until
         it knows which year it is showing. Every screen behind this is already

@@ -100,6 +100,7 @@
     "web:build": "vite build --config web/vite.config.ts",
     "web:dev": "vite --config web/vite.config.ts",
     "typecheck:web": "tsc --noEmit -p web/tsconfig.json",
+    "check:premium": "node scripts/premium-access-check.mjs",
     "check:attendance-organizer": "node scripts/attendance-organizer-check.mjs"
   },
   "dependencies": {

@@ -2711,6 +2711,16 @@ Added13AIIMS/7INI; candidate141AIIMS/308INI=449. All429 old complete records and
 
 **DO NOT:** Publish a claim that payment unlocks Vault before that behavior exists; alter ad caps, pricing, entitlement rows, applicationId, signing, or version for this copy-only task.
 
+## 2026-10-24 — Native Premium samples and ad suppression
+
+See docs/ORBIT_NATIVE_PREMIUM_20261024.md. Native preview policy and cached membership observers added, with pre-prompt/pre-play Premium checks and raw ad-entry suppression. Actual180/365day fixture users receive zero ad prompts/plays, including offline paid cache; unknown membership defers ads. Checkout URL now orbitmbbs.site/unlock. Shared WebGL limits preserve prior anatomy work. Type/lint and remaining renderer/build/publication results belong in the final PR receipt. Influencer promotion is pending verified Google identity, not a fake paid transaction. No new signed/device/Play claim yet.
 ## 2026-10-24 — Attendance organizer
 
 Added the independently written organizer inside native Attendance: weekly timetable, optional timetable image, tasks, project progress, quick notes and original Ion recall game, plus custom attendance target entry. Scope, provenance, tests and limitations are documented in `docs/attendance/ORGANIZER_IMPLEMENTATION_20261024.md`. No reference-app code or assets were copied. Focused UI/domain tests pass; no class-time alarms or signed APK/device verification. Full legacy smoke remains blocked by unrelated Themes/Settings selectors. Existing attendance records and daily warnings retained.
+
+
+## 2026-10-25 Premium native continuation
+DONE: Preserved attendance organizer commit 9a151fe while resolving Premium branch conflicts. Native types, full quiet lint, Metro Android bundle, local canonical renderer and entitlement/ad/billing/Kotlin/repository/version guards pass. Actual RN-web Vault fixture opens free ten-question practice, denies extra proformas/Anki; paid account opens full practice and respiratory proforma. Both180/365day module fixtures suppress consent and ad entry points; paid cache works offline.
+HALF-DONE: Signed CI build and physical acceptance pending. Broad old smoke harness fails existing navigation labels (Themes/Menu/Settings); do not call it green. No real payment/Google login/device/live ads/Play upload.
+NEXT: Finish publication via PR126 to native branch and inspect signed internal build. Website PR125 remains separate.
+DO NOT: Drop organizer work, fake payment IDs, or reset influencer grant; private pending promotion activates on first verified Google sign-in. Lovable publishing still blocked by workspace credits.

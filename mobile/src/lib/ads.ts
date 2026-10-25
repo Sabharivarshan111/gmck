@@ -7,6 +7,7 @@ import mobileAds, {
   TestIds,
 } from 'react-native-google-mobile-ads';
 import { warn } from '@/lib/log';
+import { isPremiumCached, mayShowAds } from './premium';
 import { ADS_ENABLED } from '@/lib/adsMode';
 
 /**
@@ -232,14 +233,14 @@ function scheduleRetry(): void {
 }
 
 export function isRewardedReady(): boolean {
-  if (!ADS_ENABLED) {
+  if (!ADS_ENABLED || isPremiumCached()) {
     return false;
   }
   return readyAd !== null;
 }
 
 export function isInterstitialReady(): boolean {
-  if (!ADS_ENABLED) {
+  if (!ADS_ENABLED || isPremiumCached()) {
     return false;
   }
   return interstitialLoaded;
@@ -250,13 +251,14 @@ export function isInterstitialReady(): boolean {
  * `{ completed: false }` rather than rejecting when no ad is available, so
  * callers never have to gate on ad success.
  */
-export function showRewardedAd(): Promise<RewardedResult> {
+export async function showRewardedAd(): Promise<RewardedResult> {
   // Reported as completed rather than failed: whatever the ad was gating is
   // not something a build without ads should withhold.
-  if (!ADS_ENABLED) {
+  if (!ADS_ENABLED || isPremiumCached()) {
     return Promise.resolve({ completed: true, amount: 0 });
   }
 
+  if (!await mayShowAds()) return { completed: true, amount: 0 };
   return new Promise(resolve => {
     let settled = false;
     let timer: ReturnType<typeof setTimeout> | null = null;
@@ -274,6 +276,7 @@ export function showRewardedAd(): Promise<RewardedResult> {
     };
 
     const playInstance = (adInstance: RewardedAd) => {
+      if (isPremiumCached()) { finish({ completed: true, amount: 0 }); return; }
       // It is being shown, so it is no longer a preloaded ad anybody else may
       // pick up. A rewarded unit can only be shown once.
       if (readyAd === adInstance) {
@@ -346,9 +349,11 @@ export function showRewardedAd(): Promise<RewardedResult> {
 }
 
 export function showInterstitialAd(): void {
-  if (!ADS_ENABLED) {
+  if (!ADS_ENABLED || isPremiumCached()) {
     return;
   }
+  void mayShowAds().then(allowed => {
+  if (!allowed) return;
   if (!interstitial || !interstitialLoaded) {
     preloadInterstitial();
     return;
@@ -359,4 +364,5 @@ export function showInterstitialAd(): void {
     warn('Interstitial show failed:', error);
     preloadInterstitial();
   }
+  });
 }

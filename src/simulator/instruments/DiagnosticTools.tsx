@@ -1,3 +1,4 @@
+import { useSampleState } from '../SimulatorAccess';
 import React, { useState, useEffect, useRef } from 'react';
 import { DiagnosticToolType, PatientPathologyState, PatientVitals } from '../types';
 import { StethoscopeAudioEngine, HeartSoundPreset, LungSoundPreset, AuscultationSite } from './StethoscopeSynthesizer';
@@ -38,8 +39,8 @@ export const DiagnosticTools: React.FC<DiagnosticToolsProps> = ({
   const [stethVolume, setStethVolume] = useState<number>(1.2);
   const [audioError, setAudioError] = useState<string | null>(null);
   const [isListening, setIsListening] = useState<boolean>(false);
-  const [customHeartOverride, setCustomHeartOverride] = useState<HeartSoundPreset | null>(null);
-  const [customLungOverride, setCustomLungOverride] = useState<LungSoundPreset | null>(null);
+  const [customHeartOverride, setCustomHeartOverride] = useSampleState<HeartSoundPreset | null>(null, null, id => !id || id === 'normal', 'heart sounds & murmurs');
+  const [customLungOverride, setCustomLungOverride] = useSampleState<LungSoundPreset | null>(null, null, id => !id || id === 'vesicular', 'abnormal breath sounds');
   const [isTutorialOpen, setIsTutorialOpen] = useState<boolean>(false);
   const audioEngineRef = useRef<StethoscopeAudioEngine | null>(null);
 

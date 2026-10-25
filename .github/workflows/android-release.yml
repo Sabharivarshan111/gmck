@@ -155,6 +155,7 @@ jobs:
           npm run check:repo-intact
           npm run check:agent-docs
           npm run check:payments
+          npm run check:premium
           npm run check:native-sound
           npm run check:subject-cards
           npm run check:contrast

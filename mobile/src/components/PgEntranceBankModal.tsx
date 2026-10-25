@@ -1,3 +1,5 @@
+import { useVaultPremium, VaultTrialBanner } from '@/components/VaultPremium';
+import { samplePracticeBank } from '@shared/vault-samples';
 import React, {useEffect, useRef, useState} from 'react';
 import {ActivityIndicator, Alert, Modal, StyleSheet, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -21,6 +23,7 @@ const EXAMS = [
 
 export function PgEntranceBankModal({visible, onClose, initialQuestionId}: {visible: boolean; onClose: () => void; initialQuestionId?: string}) {
   const {colors} = useTheme();
+  const premium = useVaultPremium();
   const insets = useSafeAreaInsets();
   const [exam, setExam] = useState<Exam>('neet-pg');
   const [installed, setInstalled] = useState<InstalledReader | null>(null);
@@ -45,6 +48,7 @@ export function PgEntranceBankModal({visible, onClose, initialQuestionId}: {visi
     return () => {cancelled = true;};
   }, [visible, exam]);
   const install = async () => {
+    if (!premium.active) { premium.requestPurchase('full question bank'); return; }
     if (installing || exam !== 'neet-pg') return;
     setInstalling(true);
     try {
@@ -54,8 +58,9 @@ export function PgEntranceBankModal({visible, onClose, initialQuestionId}: {visi
       if (mounted.current) Alert.alert('Bank was not replaced', error instanceof Error ? error.message : 'The complete bank could not be installed.');
     } finally {if (mounted.current) setInstalling(false);}
   };
+  const availableBank = React.useMemo(() => installed && !premium.active ? samplePracticeBank(installed) : installed, [installed, premium.active]);
   if (!visible) return null;
-  const choices = <View style={styles.choices}>{EXAMS.map(item => <Touchable
+  const choices = <View><VaultTrialBanner kind="practice" /><View style={styles.choices}>{EXAMS.map(item => <Touchable
     key={item.id}
     label={'Open ' + item.label + ' practice'}
     role="button"
@@ -63,7 +68,7 @@ export function PgEntranceBankModal({visible, onClose, initialQuestionId}: {visi
     disabled={installing || !checked || loadedExam !== exam}
     onPress={() => setExam(item.id)}
     style={[styles.choice, {borderColor: exam === item.id ? colors.primary : colors.border, backgroundColor: exam === item.id ? withAlpha(colors.primary, 0.1) : colors.card}]}
-  ><Text style={[typeScale.footnote, {color: colors.text}]}>{item.label}</Text></Touchable>)}</View>;
+  ><Text style={[typeScale.footnote, {color: colors.text}]}>{item.label}</Text></Touchable>)}</View></View>;
   const loadingCurrent = !checked || loadedExam !== exam;
   if (loadingCurrent || !installed) return <Modal visible onRequestClose={onClose}><View style={[styles.loading, {paddingTop: insets.top + space.lg, paddingBottom: insets.bottom + space.lg, backgroundColor: colors.background}]}>
     {loadingCurrent ? <ActivityIndicator color={colors.primary} accessibilityLabel="Opening offline bank" /> : <Text style={{color: colors.text}}>The offline bank could not be opened.</Text>}
@@ -74,9 +79,9 @@ export function PgEntranceBankModal({visible, onClose, initialQuestionId}: {visi
   return <NeetPgOfflineModal
     key={installed.file.fileId}
     visible={visible}
-    initialQuestionId={exam === 'neet-pg' ? initialQuestionId : undefined}
+    initialQuestionId={premium.active && exam === 'neet-pg' ? initialQuestionId : undefined}
     onClose={onClose}
-    installed={installed}
+    installed={availableBank!}
     bankLabel={EXAMS.find(item => item.id === exam)!.label}
     examChoices={choices}
     onReplace={exam === 'neet-pg' ? () => {void install();} : undefined}
