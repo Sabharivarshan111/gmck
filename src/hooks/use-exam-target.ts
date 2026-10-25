@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useId, useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 
@@ -12,6 +12,7 @@ export interface ExamTarget {
 }
 
 export function useExamTarget(userId: string | null, year: string) {
+  const realtimeInstance = useId();
   const [target, setTarget] = useState<ExamTarget | null>(null);
   const [doneToday, setDoneToday] = useState(0);
 
@@ -44,7 +45,7 @@ export function useExamTarget(userId: string | null, year: string) {
     fetchDoneToday();
     if (!userId) return;
     const ch = supabase
-      .channel(`et:${userId}`)
+      .channel(`et:${userId}:${realtimeInstance}`)
       .on("postgres_changes",
         { event: "*", schema: "public", table: "exam_targets", filter: `user_id=eq.${userId}` },
         () => fetchTarget())
@@ -53,7 +54,7 @@ export function useExamTarget(userId: string | null, year: string) {
         () => fetchDoneToday())
       .subscribe();
     return () => { supabase.removeChannel(ch); };
-  }, [userId, fetchTarget, fetchDoneToday]);
+  }, [userId, fetchTarget, fetchDoneToday, realtimeInstance]);
 
   const save = useCallback(async (examDate: string, label?: string | null) => {
     if (!userId) return;

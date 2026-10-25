@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useId, useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 
@@ -13,6 +13,7 @@ export interface CalendarEvent {
 }
 
 export function useCalendarEvents(userId: string | null) {
+  const realtimeInstance = useId();
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -31,7 +32,7 @@ export function useCalendarEvents(userId: string | null) {
     fetchEvents();
     if (!userId) return;
     const channel = supabase
-      .channel(`calendar:${userId}`)
+      .channel(`calendar:${userId}:${realtimeInstance}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "calendar_events", filter: `user_id=eq.${userId}` },
@@ -39,7 +40,7 @@ export function useCalendarEvents(userId: string | null) {
       )
       .subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, [userId, fetchEvents]);
+  }, [userId, fetchEvents, realtimeInstance]);
 
   const addEvent = async (date: Date, title: string, important = false) => {
     if (!userId) return;
