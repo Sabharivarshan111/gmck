@@ -2715,3 +2715,18 @@ PR123 follow-up fixes Vite test-mode setup, adds existing test-only paid-account
 **NEXT:** Inspect new Debug/Internal/Release CI and asset target commits; give new build links, replacing debug621/internal581/release763 which lacked this anatomy merge. PR123 targets main and this integration is into claude/native-app-sync; do not push main.
 
 **DO NOT:** Claim all anatomical branches are fully documented, erase existing attendance, change Premium entitlements/payment handlers, or infer device acceptance from browser previews.
+
+
+## 2026-10-25 Premium publication completion receipt
+
+DONE: Website PR125 is live as0f3fa1a on www.orbitmbbs.site/unlock. Live browser confirmed four products (Premium180days₹150,365days₹300, both ad-free Android; two lifetime note packs₹150), no monthly option, normal auscultation free and Premium murmur selection opening upgrade dialog. General Vault Notes stay free. Final nine emitted-browser scenarios previously passed with zero runtime errors.
+
+DONE: Newer native descendant9b88bd5 retains Premium/ad/source changes and attendance history. Successful runs: Debug40172632132 ->debug-621; signed Internal40172632163 ->internal-581; Release40172632158 ->release-763 APK/AAB. Internal logs confirm all source checks and emitted offline payload verification.180/365day paid and paid-offline fixtures report zero prompts/ads. Current branch after it has further work; do not reset it to these receipt SHAs.
+
+DONE: Lovable workspace accepted the follow-up this time. Checkout corrections are saved at1f9ded273ffa3c0427b9a7eb2c0f001964b18f8a;18 fixture tests and360/412px preview checks passed. Reviewed diff: note catalogue v2, account-generation guards, deferred auth work and own-domain back links; no backend/secrets edits. Published deployment4f5a5d7c-eac8-49f7-af2a-6bf51f31b396. Live mbbsqbank-questor.lovable.app/unlock now confirmed four correct products, Android-only ad-free copy and own-domain back link. Prior Lovable credit blocker is superseded for this completed checkout task.
+
+HALF-DONE: Owner-approved365day influencer promotion remains pending first verified Google sign-in (checked privately in Supabase). No real Google login, Razorpay charge, physical device acceptance or Play Store upload performed. Broad legacy smoke/other unrelated root checks are not all green; do not convert focused success into an all-features/device certification.
+
+NEXT: Device acceptance using the signed internal build and one owner-controlled test-mode payment remain the practical end-to-end acceptance steps. Preserve newer concurrent anatomy/attendance work.
+
+DO NOT: Re-add monthly sales, lock general Notes, invent a Razorpay payment for the promotion, redeploy older payment functions, or rerun already-successful builds merely to update this receipt.
