@@ -92,7 +92,7 @@ export default function CheckoutPage() {
   return <main className="orbit-checkout">
     <div className="checkout-shell">
       <a href="/" className="checkout-back">← Back to ORBIT</a>
-      <header><div className="checkout-brand"><div className="checkout-mark">O</div><p className="checkout-eyebrow">ORBIT MBBS</p><span>Secure checkout</span></div><h1>Unlock Premium</h1><p>Learn by exploring. Practise with confidence.</p><div className="checkout-features" aria-label="Premium features"><span>3D Anatomy</span><span>Patient Simulator</span><span>Auscultation</span><span>PG Practice & more</span></div></header>
+      <header><div className="checkout-brand"><div className="checkout-mark">O</div><p className="checkout-eyebrow">ORBIT MBBS</p><span>Secure checkout</span></div><h1>Unlock Premium</h1><p>Learn by exploring. Practise with confidence.</p><div className="checkout-features" aria-label="Premium features"><span>3D Anatomy</span><span>Patient Simulator</span><span>Auscultation</span><span>PG Practice & more</span><span>Ad-free Android app</span></div></header>
       <section className="checkout-account" aria-label="Payment account">
         {ready ? user ? <><span>Buying for</span><strong>{user.email}</strong><p>Use this same Google account in the Android app.</p><button className="checkout-text-button" disabled={!!busy} onClick={() => { void supabase.auth.signOut().then(({ error: signOutError }) => { if (signOutError) setError(signOutError.message); else { setUser(null); setExpiry(null); setOwnedNotes([]); setMessage(''); } }); }}>Use another account</button></> : <><strong>Sign in before paying</strong><p>Your purchase will sync to this Google account.</p><button className="checkout-primary" disabled={!!busy} onClick={() => void signIn()}>Continue with Google</button></> : <p>Checking your account…</p>}
       </section>
@@ -100,8 +100,8 @@ export default function CheckoutPage() {
       <section aria-label="Premium plans">
         <div className="checkout-offer"><strong>{offerOpen ? 'Limited-time launch offer' : 'Launch offer ended'}</strong><span>Ends 30 November 2026 · 11:59 PM IST</span></div>
         <div className="checkout-plans">
-          <button disabled={!user || !!busy || !offerOpen} onClick={() => purchase('adfree_6m')}><span>Premium · 6 months</span><strong>₹150 <em>₹25 / month</em></strong><small>180 days · all Premium Vault tools</small><b>Choose 6 months →</b></button>
-          <button disabled={!user || !!busy || !offerOpen} onClick={() => purchase('adfree_1y')}><span>Premium · 1 year</span><strong>₹300 <em>₹25 / month</em></strong><small>365 days · all Premium Vault tools</small><b>Choose 1 year →</b></button>
+          <button disabled={!user || !!busy || !offerOpen} onClick={() => purchase('adfree_6m')}><span>Premium · 6 months</span><strong>₹150 <em>₹25 / month</em></strong><small>180 days · Premium Vault + ad-free app</small><b>Choose 6 months →</b></button>
+          <button disabled={!user || !!busy || !offerOpen} onClick={() => purchase('adfree_1y')}><span>Premium · 1 year</span><strong>₹300 <em>₹25 / month</em></strong><small>365 days · Premium Vault + ad-free app</small><b>Choose 1 year →</b></button>
         </div>
         <p className="checkout-detail">One-time payment. No automatic renewal. Paid time is added to existing access. General Vault Notes remain free. Premium also includes lifetime FM + SPM revision notes.</p>
       </section>
