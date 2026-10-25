@@ -1,7 +1,7 @@
 import { installPremiumTestAccount } from '../mobile/web/test-premium-fixture.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
-import { chromium } from 'playwright';
+const { chromium } = await import(process.env.ORBIT_PLAYWRIGHT_MODULE || 'playwright');
 
 const baseURL = process.env.SIMULATOR_E2E_BASE_URL || 'http://127.0.0.1:4180';
 const outDir = path.resolve('artifacts/simulator-mobile-e2e');

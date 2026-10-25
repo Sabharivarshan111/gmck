@@ -4,12 +4,15 @@ import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import { ORGAN_CONNECTIONS as catalog } from '../src/simulator/data/organConnections.ts';
 const runtime=process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES;
-const { chromium }=runtime?createRequire(runtime+'/__entry.js')('playwright'):await import('playwright');
+const { chromium }=process.env.ORBIT_PLAYWRIGHT_MODULE?await import(process.env.ORBIT_PLAYWRIGHT_MODULE):runtime?createRequire(runtime+'/__entry.js')('playwright'):await import('playwright');
 const browser=await chromium.launch({headless:true,...process.env.CHROME_PATH?{executablePath:process.env.CHROME_PATH}:runtime?{executablePath:'/tmp/orbit-chromium'}:{},args:['--no-sandbox','--no-zygote','--single-process','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
 await installPremiumTestAccount(page.context());
 const group=process.env.ORGAN_CONNECTION_GROUP===undefined?null:Number(process.env.ORGAN_CONNECTION_GROUP);
-const owners=Object.keys(catalog).filter((_,index)=>group===null||index%4===group);
+const groups=Number(process.env.ORGAN_CONNECTION_GROUPS||4);
+assert(Number.isInteger(groups)&&groups>0&&groups<=Object.keys(catalog).length,'Invalid connection group count');
+assert(group===null||(Number.isInteger(group)&&group>=0&&group<groups),'Invalid connection group');
+const owners=Object.keys(catalog).filter((_,index)=>group===null||index%groups===group);
 const out='artifacts/organ-connections';fs.mkdirSync(out,{recursive:true});const base=process.env.SIMULATOR_BASE_URL||'http://127.0.0.1:4180';const errors=[];page.on('pageerror',e=>errors.push(e.message));const report=[];
 async function drawer(owner){await page.goto(base+'/simulator?organ='+owner+'&isolate='+owner);const d=page.getByTestId('organ-detail-drawer');await d.waitFor();return d;}
 async function loaded(){await page.getByText(/LOADING BODYPARTS3D/).waitFor({state:'hidden',timeout:90000});}

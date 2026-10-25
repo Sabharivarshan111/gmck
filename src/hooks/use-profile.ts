@@ -5,6 +5,9 @@ import { validateDisplayName } from "@/lib/profanity";
 import { syncLocalProgressToCloud, reconcileProgressWithCloud } from "@/lib/question-progress";
 import { toast } from "@/components/ui/use-toast";
 import { isUniversity, type University } from "@/lib/university";
+import { createProfileSubscriptionHub } from "@/lib/profile-realtime";
+
+const subscribeToOwnProfile = createProfileSubscriptionHub(supabase);
 
 export interface LocalProfile {
   display_name: string;
@@ -114,25 +117,14 @@ export function useProfile() {
   // Realtime: own profile row changes
   useEffect(() => {
     if (!userId) return;
-    const channel = supabase
-      .channel(`own-profile:${userId}`)
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "profiles", filter: `id=eq.${userId}` },
-        (payload: any) => {
-          const row = payload.new;
-          if (!row) return;
-          setCloud((c) => (c ? { ...c, ...row } : (row as CloudProfile)));
-          const next: LocalProfile = { display_name: row.display_name, year: row.year as Year,
-            ...(isUniversity(row.university) ? { university: row.university } : {}) };
-          setLocal(next);
-          writeLocal(next);
-        }
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return subscribeToOwnProfile(userId, row => {
+      const profile = { ...row, university: isUniversity(row.university) ? row.university : undefined };
+      setCloud(c => c ? { ...c, ...profile } : profile);
+      const next: LocalProfile = { display_name: row.display_name, year: row.year as Year,
+        ...(isUniversity(row.university) ? { university: row.university } : {}) };
+      setLocal(next);
+      writeLocal(next);
+    });
   }, [userId]);
 
   // Load cloud profile + register open

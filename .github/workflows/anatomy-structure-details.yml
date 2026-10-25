@@ -19,6 +19,7 @@ jobs:
       - name: Verify references and simulator
         run: |
           node scripts/structure-details-check.mjs
+          node scripts/profile-realtime-check.mjs
           npm run check:simulator
           npm run check:simulator-mobile
           npx tsc --noEmit -p tsconfig.app.json --lib ES2022,DOM,DOM.Iterable
