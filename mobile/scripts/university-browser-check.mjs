@@ -25,6 +25,10 @@ try {
       { university: 'knruhs', year: 'final', yearKey: 'final-year', query: 'Intracapsular', topic: 'Trauma and fractures', reference: 'May 2024', option: '(1+1+1+2+3+2+3+2)', section: 'Part B · Essay / Long Answer Questions' },
       { university: 'knruhs', year: 'final', yearKey: 'final-year', query: 'Ponderal index', topic: 'Growth and development', reference: 'Apr 2026', option: '(d) Weight in gms / height in cm³' },
       { university: 'knruhs', year: 'final', yearKey: 'final-year', query: 'prepare for Resuscitation', topic: 'Newborn infants', reference: 'May/Jun 2024', option: '(7+8)' },
+      { university: 'knruhs', year: 'final', yearKey: 'final-year', query: 'cardinal movements', topic: 'Physiology of labor', reference: 'Apr 2026', option: '(b) Engagement, descent, flexion, internal rotation, extension, external rotation, restitution, expulsion' },
+      { university: 'knruhs', year: 'final', yearKey: 'final-year', query: 'Maximum function of corpus luteum occurs', topic: 'Anat, physio and development', reference: 'May 2024', option: '(c) 3 days after ovulation' },
+      { university: 'knruhs', year: 'first', yearKey: 'first-year', query: 'Antidote kits for cyanide poisoning contain', topic: 'Bioenergetics', reference: 'Nov 2025', option: '(d) Both A and B' },
+      { university: 'knruhs', year: 'first', yearKey: 'first-year', query: '380 mg%', topic: 'Organ function tests', reference: 'Sep 2025', option: '(3+5+3+4)' },
       { university: 'knruhs', year: 'third', yearKey: 'third-year', query: 'amikacin', topic: 'Ear', reference: 'Apr 2026', option: 'C) Outline the appropriate further management for this patient.' },
     ]) {
       const context = await browser.newContext({ viewport: { width, height: 780 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
