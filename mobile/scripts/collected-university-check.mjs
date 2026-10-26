@@ -41,10 +41,10 @@ const notes = load('src/lib/handwrittenNotes.ts', { ...common, './notesDedup': {
   './notesLimits': {}, './progress': progress });
 const resume = load('src/lib/homeResume.ts', { ...common, '@/lib/questionBank': bank });
 
-assert.equal(rows.length, 856);
+assert.equal(rows.length, 1056);
 assert.equal(new Set(rows.map(r => r.id)).size, rows.length);
-const expected = { rguhs: 22, knruhs: 818, muhs: 0, ntruhs: 12, wbuhs: 4 };
-const marks = { rguhs: 100, knruhs: 3250, ntruhs: 50, wbuhs: 40 };
+const expected = { rguhs: 22, knruhs: 1018, muhs: 0, ntruhs: 12, wbuhs: 4 };
+const marks = { rguhs: 100, knruhs: 4050, ntruhs: 50, wbuhs: 40 };
 const ids = new Set();
 for (const [university, count] of Object.entries(expected)) {
   assert.equal(bank.allSearchHits(university).length, count);
@@ -88,7 +88,7 @@ assert.ok(wb[2].question.includes('nephrosis and apoptosis'), 'Do not silently c
 assert.ok(wb[1].question.includes('any two') && wb[1].question.includes('c)'));
 assert.ok(wb[3].question.includes('any two') && wb[3].question.includes('d) Septic shock'));
 assert.ok(rows.find(r => r.university === 'knruhs').question.includes('(d) Applied anatomy'));
-console.log('PASS 856 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
+console.log('PASS 1056 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
 
 const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH02: batch02 } = await bundle('src/data/universityPapers/reviewedBatch02.ts');
 assert.equal(batch02.length, 200);
@@ -223,3 +223,34 @@ assert.equal(batch05.find(r => r.id === 'knruhs-3392389ba4dd-p1-q8').options[0].
 assert.ok(batch05.find(r => r.id === 'knruhs-d710f14304e6-p2-q25').question.includes('Branchial Plexus'), 'Printed anomaly retained');
 assert.ok(batch05.find(r => r.id === 'knruhs-837f71107a3f-p2-q19').question.includes('(1+1+1+2+3+2+3+2)'));
 console.log('PASS Batch05:203occurrences,8complete papers/800marks,3split papers,matching table,cross-page MCQs,visible superscripts and May/Jun session.');
+
+const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH06: batch06 } = await bundle('src/data/universityPapers/reviewedBatch06.ts');
+assert.equal(batch06.length, 200);
+const papers06 = new Map();
+for (const row of batch06) {
+  assert.equal(row.year, row.subjectKey === 'biochemistry' ? 'first' : 'final', 'Printed phase retained');
+  const group = papers06.get(row.sourceSha256) ?? [];group.push(row);papers06.set(row.sourceSha256, group);
+  assert.ok(!/Short Answer Questions:|Very Short Answer Questions:|Essay.*Questions:|Max Marks/.test(row.question));
+  if (row.questionFormat === 'mcq') {
+    assert.deepEqual(row.options.map(o => o.label), ['a', 'b', 'c', 'd']);
+    for (const option of row.options) assert.ok(row.question.includes(`(${option.label}) ${option.text}`));
+  }
+}
+assert.equal(papers06.size, 8);
+for (const entries of papers06.values()) {
+  assert.deepEqual(entries.map(r => Number(r.sourceQuestion)), Array.from({length:25}, (_, i) => i + 1));
+  assert.equal(entries.reduce((sum,r) => sum + r.marks, 0), 100);
+  assert.equal(entries.filter(r => r.questionFormat === 'mcq').length, 10);
+}
+assert.equal(batch06.filter(r => r.subjectKey === 'obstetrics-gynaecology').length, 150);
+assert.equal(batch06.filter(r => r.subjectKey === 'biochemistry').length, 50);
+const corpus = batch06.find(r => r.id === 'knruhs-13c1c04b6fa2-p1-q2');
+assert.equal(corpus.options[2].text, '3 days after ovulation', 'An option beginning3 must not become question3');
+assert.equal(corpus.options[3].text, '8-9 days after ovulation');
+assert.equal(batch06.find(r => r.id === 'knruhs-13f6d292ef91-p2-q10').options[3].text, 'Lumber', 'Printed typo retained');
+assert.equal(batch06.find(r => r.id === 'knruhs-1c7ce8b30a7f-p1-q9').options[0].text, 'Ck₁', 'Visible subscript retained');
+assert.equal(batch06.find(r => r.id === 'knruhs-1c7ce8b30a7f-p2-q10').options[0].text, 'Amyl nitrate');
+assert.ok(batch06.find(r => r.id === 'knruhs-0bec15b4e0e4-p2-q11').question.includes('Blood glucose = 380 mg%'));
+assert.ok(batch06.find(r => r.id === 'knruhs-9bb1c7a0ff7f-p2-q9').options[2].text.includes('life-long'));
+assert.ok(batch06.find(r => r.id === 'knruhs-76678ad73b63-p2-q12').question.includes('(2+3+4+6)'));
+console.log('PASS Batch06:200occurrences,8complete papers/800marks,80MCQs/320options,printedphase/papernumbers,numericoptions and cross-page provenance retained.');
