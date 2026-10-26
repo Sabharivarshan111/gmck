@@ -17,4 +17,5 @@ export interface ReviewedUniversityQuestion {
   sourceQuestion: string;
   marks: number;
   originalSection: string;
+  paperNumber?: string;
 }
