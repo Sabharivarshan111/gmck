@@ -93,6 +93,8 @@ export default function BrowseNodeScreen() {
    * selection, and the reader has no way to dismiss it.
    */
   const listRef = useRef<FlatList<{ index: number; question: string }>>(null);
+  const searchScrollAttempts = useRef(0);
+  const searchScrollRetry = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [flash, setFlash] = useState<string | null>(highlight ?? null);
   useEffect(() => {
     if (!highlight) {
@@ -200,6 +202,7 @@ export default function BrowseNodeScreen() {
    * which is the opposite of "this is the one you asked for".
    */
   useEffect(() => {
+    searchScrollAttempts.current = 0;
     if (!flash) {
       return;
     }
@@ -210,7 +213,10 @@ export default function BrowseNodeScreen() {
     const id = setTimeout(() => {
       listRef.current?.scrollToIndex({ index: at, animated: true, viewPosition: 0.35 });
     }, 120);
-    return () => clearTimeout(id);
+    return () => {
+      clearTimeout(id);
+      if (searchScrollRetry.current) clearTimeout(searchScrollRetry.current);
+    };
   }, [flash, visible]);
 
   const filtering = filterable && query.trim().length > 0;
@@ -518,12 +524,23 @@ export default function BrowseNodeScreen() {
         // Rows are different heights, so there is no getItemLayout to give and
         // scrollToIndex is allowed to miss and correct itself.
         onScrollToIndexFailed={info => {
-          setTimeout(() => {
+          // Measuring the first screen does not measure a distant search hit.
+          // Move near the requested row, then retry that same row after layout.
+          // Bound retries and cancel on navigation rather than rendering a whole chapter.
+          if (searchScrollAttempts.current >= 6) return;
+          searchScrollAttempts.current += 1;
+          if (searchScrollRetry.current) clearTimeout(searchScrollRetry.current);
+          listRef.current?.scrollToOffset({
+            offset: info.averageItemLength * info.index,
+            animated: false,
+          });
+          searchScrollRetry.current = setTimeout(() => {
             listRef.current?.scrollToIndex({
-              index: Math.min(info.index, info.highestMeasuredFrameIndex),
+              index: info.index,
               animated: false,
+              viewPosition: 0.35,
             });
-          }, 60);
+          }, 160);
         }}
         data={visible}
         keyExtractor={item => `${item.index}-${item.question.slice(0, 24)}`}
