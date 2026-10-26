@@ -15,6 +15,9 @@ try {
       { university: 'wbuhs', year: 'second', yearKey: 'second-year', query: 'osteolytic', topic: 'Haematology', reference: '2017' },
       { university: 'knruhs', year: 'third', yearKey: 'third-year', query: 'Taking commissions', topic: 'Thermal Injuries', reference: 'Apr 2026', option: '(c) Taking commissions from pharmaceutical companies' },
       { university: 'knruhs', year: 'third', yearKey: 'third-year', query: 'Schwalbe', topic: 'Diseases of cornea', reference: 'Apr 2026', option: '(d) Descemet’s membrane' },
+      { university: 'knruhs', year: 'third', yearKey: 'third-year', query: 'Corrected effective temperature', topic: 'Environment & Health', reference: 'Nov 2025', option: '(a) < 20℃' },
+      { university: 'knruhs', year: 'third', yearKey: 'third-year', query: 'LAQSHYA', topic: 'Health Programmes', reference: 'Apr 2026', option: '(d) Quality of care in labor room and maternity operation theatres' },
+      { university: 'knruhs', year: 'final', yearKey: 'final-year', query: 'Aniridia', topic: 'Diseases of uveal tract', reference: 'Apr 2026', option: '(c) Absence of ciliary body' },
       { university: 'knruhs', year: 'third', yearKey: 'third-year', query: 'amikacin', topic: 'Ear', reference: 'Apr 2026', option: 'C) Outline the appropriate further management for this patient.' },
     ]) {
       const context = await browser.newContext({ viewport: { width, height: 780 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
