@@ -126,7 +126,7 @@ export function deckKeyFor(
   university: University = 'tnmgr',
 ): string {
   const base = `${year}::${subject}::${subtopicKey}`;
-  return university === 'kuhs' ? `kuhs::${base}` : base;
+  return university === 'tnmgr' ? base : `${university}::${base}`;
 }
 
 function isDeckCard(value: unknown): value is DeckCard {

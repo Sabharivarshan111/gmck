@@ -18,6 +18,7 @@ import {
 import { useQuestionDone } from '@/hooks/useProgress';
 import { doubleTapPrompt, tripleTapPrompt } from '@/lib/askAi';
 import { kuhsQuestionSource, kuhsRecordedExamCount } from '@/lib/kuhsQuestionSource';
+import { collectedQuestionSource } from '@data/universityPapers/questionBankData';
 import type { ConfirmedPage } from '@/lib/pageRefs';
 
 interface Props {
@@ -100,6 +101,7 @@ function QuestionRowBase({
   const done = useQuestionDone(question);
 
   const kuhsSource = kuhsQuestionSource(question);
+  const collectedSource = collectedQuestionSource(question);
   const stars = kuhsSource ? kuhsRecordedExamCount(kuhsSource.examRefs) : countStars(question);
   const page = extractPageNumber(question);
   const importance = importanceLabel(stars);
@@ -308,6 +310,13 @@ function QuestionRowBase({
               </Text>
             ) : null}
           </View>
+
+          {collectedSource ? (
+            <Text style={[typeScale.caption, { color: colors.textMuted }]}>
+              {collectedSource.examRefs.join(' · ')}{'\n'}
+              {collectedSource.originalSection} · {collectedSource.marks} marks
+            </Text>
+          ) : null}
 
           {kuhsSource ? (
             <Text style={[typeScale.caption, { color: colors.textMuted }]}>

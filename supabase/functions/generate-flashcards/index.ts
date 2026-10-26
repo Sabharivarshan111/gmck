@@ -55,7 +55,7 @@ const BodySchema = z.object({
   subject: z.string().min(1).max(120),
   subtopicKey: z.string().min(1).max(300),
   subtopicName: z.string().min(1).max(200),
-  university: z.enum(["tnmgr", "kuhs"]).default("tnmgr"),
+  university: z.enum(["tnmgr", "kuhs", "rguhs", "knruhs", "muhs", "ntruhs", "wbuhs"]).default("tnmgr"),
   questions: z.array(z.string().max(1000)).min(1).max(400),
   regenerate: z.boolean().optional(),
   limit: z.number().int().min(6).max(60).optional(),
@@ -545,7 +545,7 @@ serve(secureEndpoint(async (req) => {
       limit ??
       Math.max(MIN_CARDS, Math.min(MAX_CARDS, Math.round(questions.length * CARDS_PER_QUESTION)));
     const baseDeckKey = `${year}::${subject}::${subtopicKey}`;
-    const deckKey = university === "kuhs" ? `kuhs::${baseDeckKey}` : baseDeckKey;
+    const deckKey = university === "tnmgr" ? baseDeckKey : `${university}::${baseDeckKey}`;
     // Bind every new shared cache entry to the exact prompt inputs. A caller
     // cannot poison another chapter by supplying its key with different questions.
     const cacheKey = deckKey + "::input:" + await hash(JSON.stringify({

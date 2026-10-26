@@ -99,7 +99,8 @@
     "check:kuhs-parity": "node scripts/kuhs-parity-check.mjs",
     "web:build": "vite build --config web/vite.config.ts",
     "web:dev": "vite --config web/vite.config.ts",
-    "typecheck:web": "tsc --noEmit -p web/tsconfig.json"
+    "typecheck:web": "tsc --noEmit -p web/tsconfig.json",
+    "check:university-import": "node scripts/collected-university-check.mjs"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.1.1",

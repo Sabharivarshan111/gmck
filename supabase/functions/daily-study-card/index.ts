@@ -28,7 +28,7 @@ async function loadPicture(url: string) {
 }
 
 async function generate(
-  university: 'tnmgr' | 'kuhs',
+  university: 'tnmgr' | 'kuhs' | 'rguhs' | 'knruhs' | 'muhs' | 'ntruhs' | 'wbuhs',
   year: string,
   kind: string,
   slot: number,
@@ -39,7 +39,7 @@ async function generate(
 
   // KUHS MCQs come from the KUHS question-bank sample the client sends. The
   // source sample contains no answers or private data — just bundled PYQ text.
-  if (university === 'kuhs' && kind === 'mcq' && sourceQuestions.length > 0) {
+  if (university !== 'tnmgr' && kind === 'mcq' && sourceQuestions.length > 0) {
     const picked = sourceQuestions[slot % sourceQuestions.length];
     row = { subject: picked.subject, question_text: picked.question };
   } else {
@@ -66,7 +66,7 @@ async function generate(
 
   if (!row) throw new Error('Could not choose a daily study source');
   parts.push({ text: `You are an undergraduate medical examiner. Create ONE accurate single-best-answer MCQ for ${labels[year]} MBBS.
-University bank: ${university === 'kuhs' ? 'KUHS' : 'TNMGR'}.
+University bank: ${university.toUpperCase()}.
 Subject: ${row.subject}. Study topic: ${row.question_text.slice(0, 700)}.
 ${kind === 'picture' ? 'The student sees the attached diagram. Test something visible in that image; do not assume details not visible.' : 'Test one concrete concept in the study topic.'}
 Use exactly four concise options, one unequivocal correctIndex from 0 to 3, and a short teaching explanation. Return JSON only.` });
@@ -113,7 +113,9 @@ Deno.serve(secureEndpoint(async req => {
   let input: Record<string, unknown>;
   try { input = await req.json(); } catch { return json({ error: 'Invalid request.' }, 400); }
   const { year, kind, date } = input;
-  const university = input.university === 'kuhs' ? 'kuhs' : input.university === 'tnmgr' || input.university === undefined ? 'tnmgr' : null;
+  const universities = ['tnmgr', 'kuhs', 'rguhs', 'knruhs', 'muhs', 'ntruhs', 'wbuhs'] as const;
+  type University = typeof universities[number];
+  const university = input.university === undefined ? 'tnmgr' : universities.includes(input.university) ? input.university as University : null;
   const rawSources = Array.isArray(input.sourceQuestions) ? input.sourceQuestions.slice(0, 60) : [];
   const sourceQuestions: SourceQuestion[] = rawSources
     .filter((item): item is Record<string, unknown> => !!item && typeof item === 'object')
