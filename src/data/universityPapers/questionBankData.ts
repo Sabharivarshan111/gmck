@@ -5,10 +5,26 @@ type Node = { name: string; questions?: string[]; subtopics?: Record<string, Nod
 const YEARS = { first: 'first-year', second: 'second-year', third: 'third-year', final: 'final-year' } as const;
 const YEAR_NAMES = { first: 'First Year', second: 'Second Year', third: 'Third Year', final: 'Final Year' } as const;
 const SUBJECT_NAMES: Record<string, string> = {
-  anatomy: 'Anatomy', biochemistry: 'Biochemistry', pathology: 'Pathology',
+  paediatrics: 'Paediatrics', anatomy: 'Anatomy', biochemistry: 'Biochemistry', pathology: 'Pathology',
   'general-medicine': 'General Medicine', 'general-surgery': 'General Surgery', 'community-medicine': 'Community Medicine', 'forensic-medicine': 'Forensic Medicine', ophthalmology: 'Ophthalmology', ent: 'ENT',
 };
 const TOPIC_NAMES: Record<string, string> = {
+  "growth-and-development": "Growth and development",
+  "electrolytes-and-nutrition": "Electrolytes and nutrition",
+  "newborn-infants": "Newborn infants",
+  "immunization": "Immunization",
+  "infections-and-infestation": "Infections and infestation",
+  "git-and-liver": "GIT and liver",
+  "hematological-disorders": "Hematological disorders",
+  "ent-and-rs": "ENT And RS",
+  "cvs": "CVS",
+  "nephrology": "Nephrology",
+  "endocrine-and-metabolic-disorders": "Endocrine and metabolic disorders",
+  "cns": "CNS",
+  "iem-critical-care-and-miscellaneous": "IEM, Critical care, and Miscellaneous",
+  "childhood-malignancies": "Childhood malignancies",
+  "rheumatology-and-genetics": "Rheumatology and genetics",
+
   "fundamentals-of-medicine": "Fundamentals of Medicine",
   "emergency-and-critical-cares": "Emergency and Critical Cares",
   "infective-diseases": "Infective Diseases",

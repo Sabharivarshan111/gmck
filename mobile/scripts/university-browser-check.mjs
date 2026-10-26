@@ -21,6 +21,10 @@ try {
       { university: 'knruhs', year: 'final', yearKey: 'final-year', query: 'amiodarone', topic: 'Endocrinology', reference: 'May 2024', option: "(d) De Quervain's thyroiditis" },
       { university: 'knruhs', year: 'final', yearKey: 'final-year', query: 'Heart Failure', topic: 'Cardiology', reference: 'Apr 2026', option: 'Describe the aetiology, clinical features, investigation and management of Heart Failure.', section: 'Part B · Essay / Long Answer Questions' },
       { university: 'knruhs', year: 'final', yearKey: 'final-year', query: 'Parkland Formula', topic: 'Shock, Burns and Trauma', reference: 'Apr 2026', option: '30 % deep burn surface area' },
+      { university: 'knruhs', year: 'final', yearKey: 'final-year', query: 'Colour Codes', topic: 'Shock, Burns and Trauma', reference: 'Jun 2025', option: '(a) 1-A, 2-C, 3-D, 4-B' },
+      { university: 'knruhs', year: 'final', yearKey: 'final-year', query: 'Intracapsular', topic: 'Trauma and fractures', reference: 'May 2024', option: '(1+1+1+2+3+2+3+2)', section: 'Part B · Essay / Long Answer Questions' },
+      { university: 'knruhs', year: 'final', yearKey: 'final-year', query: 'Ponderal index', topic: 'Growth and development', reference: 'Apr 2026', option: '(d) Weight in gms / height in cm³' },
+      { university: 'knruhs', year: 'final', yearKey: 'final-year', query: 'prepare for Resuscitation', topic: 'Newborn infants', reference: 'May/Jun 2024', option: '(7+8)' },
       { university: 'knruhs', year: 'third', yearKey: 'third-year', query: 'amikacin', topic: 'Ear', reference: 'Apr 2026', option: 'C) Outline the appropriate further management for this patient.' },
     ]) {
       const context = await browser.newContext({ viewport: { width, height: 780 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
