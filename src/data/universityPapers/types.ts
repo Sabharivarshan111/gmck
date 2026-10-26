@@ -6,7 +6,10 @@ export interface ReviewedUniversityQuestion {
   year: 'first' | 'second' | 'third' | 'final';
   subjectKey: string;
   topicKey: string;
+  /** Legacy navigation bucket; originalSection/questionFormat retain the actual exam format. */
   kind: 'essay' | 'short-notes';
+  questionFormat?: 'mcq' | 'long-answer' | 'short-answer' | 'very-short-answer';
+  options?: { label: string; text: string }[];
   question: string;
   examRefs: string[];
   pdfPage: number;

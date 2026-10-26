@@ -26,7 +26,7 @@ function load(file, mocks) {
 }
 
 const catalog = await bundle('src/lib/university.ts');
-const { REVIEWED_UNIVERSITY_QUESTIONS: rows } = await bundle('src/data/universityPapers/reviewedBatch01.ts');
+const { REVIEWED_UNIVERSITY_QUESTIONS: rows } = await bundle('src/data/universityPapers/reviewedQuestions.ts');
 const source = await bundle('src/data/universityPapers/questionBankData.ts');
 const bank = await bundle('mobile/src/lib/questionBank.ts');
 const text = await bundle('mobile/src/lib/questionText.ts');
@@ -41,10 +41,10 @@ const notes = load('src/lib/handwrittenNotes.ts', { ...common, './notesDedup': {
   './notesLimits': {}, './progress': progress });
 const resume = load('src/lib/homeResume.ts', { ...common, '@/lib/questionBank': bank });
 
-assert.equal(rows.length, 50);
+assert.equal(rows.length, 250);
 assert.equal(new Set(rows.map(r => r.id)).size, rows.length);
-const expected = { rguhs: 22, knruhs: 12, muhs: 0, ntruhs: 12, wbuhs: 4 };
-const marks = { rguhs: 100, knruhs: 50, ntruhs: 50, wbuhs: 40 };
+const expected = { rguhs: 22, knruhs: 212, muhs: 0, ntruhs: 12, wbuhs: 4 };
+const marks = { rguhs: 100, knruhs: 850, ntruhs: 50, wbuhs: 40 };
 const ids = new Set();
 for (const [university, count] of Object.entries(expected)) {
   assert.equal(bank.allSearchHits(university).length, count);
@@ -56,7 +56,7 @@ for (const [university, count] of Object.entries(expected)) {
   for (const row of uniRows) {
     assert.match(row.sourceSha256, /^[a-f0-9]{64}$/);
     assert.ok(row.id.includes(row.sourceSha256.slice(0, 12)));
-    assert.equal(row.pdfPage, 1);
+    assert.ok(row.pdfPage === 1 || row.pdfPage === 2);
     assert.ok(row.question.length > 4 && row.question.length <= 1000);
     assert.ok(row.examRefs.length > 0 && row.topicKey);
     const raw = `PYQ[${row.id}] ${row.question}`;
@@ -88,4 +88,33 @@ assert.ok(wb[2].question.includes('nephrosis and apoptosis'), 'Do not silently c
 assert.ok(wb[1].question.includes('any two') && wb[1].question.includes('c)'));
 assert.ok(wb[3].question.includes('any two') && wb[3].question.includes('d) Septic shock'));
 assert.ok(rows.find(r => r.university === 'knruhs').question.includes('(d) Applied anatomy'));
-console.log('PASS 50 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
+console.log('PASS 250 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
+
+const batch02 = rows.filter(row => row.questionFormat);
+assert.equal(batch02.length, 200);
+const sourcePapers = new Map();
+for (const row of batch02) {
+  const paper = sourcePapers.get(row.sourceSha256) ?? [];
+  paper.push(row); sourcePapers.set(row.sourceSha256, paper);
+  assert.equal(row.year, 'third', 'Printed Final Year Part-I belongs in third professional');
+  assert.ok(!/Short Answer Questions:|Very Short Answer Questions:|Essay.*Questions:|Max Marks/.test(row.question), 'Section headers leaked into question');
+  if (row.questionFormat === 'mcq') {
+    assert.deepEqual(row.options.map(option => option.label), ['a', 'b', 'c', 'd']);
+    assert.equal(row.marks, 1);
+    for (const option of row.options) assert.ok(row.question.includes(`(${option.label}) ${option.text}`));
+    assert.equal(source.collectedShortQuestionLabel([`PYQ[${row.id}] ${row.question}`]), 'Short / MCQ');
+  } else assert.equal(row.options, undefined);
+}
+assert.equal(sourcePapers.size, 8);
+for (const paper of sourcePapers.values()) {
+  assert.deepEqual(paper.map(row => Number(row.sourceQuestion)), Array.from({ length: 25 }, (_, i) => i + 1));
+  assert.equal(paper.reduce((total, row) => total + row.marks, 0), 100);
+  assert.equal(paper.filter(row => row.questionFormat === 'mcq').length, 10);
+}
+assert.equal(batch02.filter(row => row.questionFormat === 'mcq').length, 80);
+assert.equal(source.collectedShortQuestionLabel([]), 'Short Notes');
+assert.ok(batch02.find(row => row.id === 'knruhs-c6066ec7370d-p1-q4').options[2].text.includes('Taking commissions'), 'Printed anomalous option must remain');
+assert.ok(batch02.find(row => row.id === 'knruhs-76c1e1c76540-p1-q8').question.includes('efferent for corneal sensation'), 'Printed wording must remain');
+assert.equal(batch02.find(row => row.id === 'knruhs-d3849ebf741b-p2-q10').pdfPage, 2, 'Cross-page MCQ provenance must retain its actual page');
+assert.ok(batch02.find(row => row.id === 'knruhs-9ccef7949cae-p2-q19').question.includes('C) Outline the appropriate further management'));
+console.log('PASS Batch02: 8 complete paper sequences, 800 marks, 80 MCQs/320 options, source anomalies and cross-page questions preserved.');

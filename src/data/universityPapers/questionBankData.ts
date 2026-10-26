@@ -1,4 +1,4 @@
-import { REVIEWED_UNIVERSITY_QUESTIONS } from './reviewedBatch01';
+import { REVIEWED_UNIVERSITY_QUESTIONS } from './reviewedQuestions';
 import type { CollectedUniversity, ReviewedUniversityQuestion } from './types';
 
 type Node = { name: string; questions?: string[]; subtopics?: Record<string, Node> };
@@ -6,8 +6,50 @@ const YEARS = { first: 'first-year', second: 'second-year', third: 'third-year',
 const YEAR_NAMES = { first: 'First Year', second: 'Second Year', third: 'Third Year', final: 'Final Year' } as const;
 const SUBJECT_NAMES: Record<string, string> = {
   anatomy: 'Anatomy', biochemistry: 'Biochemistry', pathology: 'Pathology',
+  'forensic-medicine': 'Forensic Medicine', ophthalmology: 'Ophthalmology', ent: 'ENT',
 };
 const TOPIC_NAMES: Record<string, string> = {
+  "legal-procedures": "Legal Procedures",
+  "medical-law-ethics": "Medical Law & Ethics",
+  "identification": "Identification",
+  "medicolegal-autopsy": "Medicolegal Autopsy",
+  "death-and-its-causes": "Death and Its Causes",
+  "postmortem-changes": "Postmortem Changes",
+  "mechanical-injuries": "Mechanical Injuries",
+  "regional-injuries": "Regional Injuries",
+  "medicolegal-aspects-of-wounds": "Medicolegal Aspects of Wounds",
+  "thermal-injuries": "Thermal Injuries",
+  "mechanical-asphyxia": "Mechanical Asphyxia",
+  "sterility-virginity-pregnancy-delivery": "Sterility, Virginity, Pregnancy & Delivery",
+  "sexual-offences": "Sexual Offences",
+  "abortion-and-infant-deaths": "Abortion and Infant Death",
+  "blood-stains-artefacts-fs-laboratory": "Blood Stains, Artefacts, FS Laboratory",
+  "forensic-psychiatry": "Forensic Psychiatry",
+  "toxicology": "Toxicology",
+  "optics-and-refraction": "Optics and refraction",
+  "diseases-of-conjuctiva": "Diseases of Conjunctiva",
+  "diseases-of-cornea": "Diseases of cornea",
+  "diseases-of-sclera": "Diseases of sclera",
+  "diseases-of-uveal-tract": "Diseases of uveal tract",
+  "diseases-of-lens": "Diseases of lens",
+  "glaucoma": "Glaucoma",
+  "diseases-of-vitreous": "Diseases of vitreous",
+  "diseases-of-retina": "Diseases of retina",
+  "neuro-ophthalmology": "Neuro ophthalmology",
+  "ocular-motility": "Ocular motility",
+  "diseases-of-eyelids": "Diseases of eyelids",
+  "lacrimal-apparatus": "Lacrimal apparatus",
+  "orbital-and-ocular-injuries": "Orbital and ocular injuries",
+  "ocular-therapeutics": "Ocular therapeutics",
+  "systemic-and-community": "Systemic and community",
+  "ear": "Ear",
+  "nose": "Nose",
+  "oral-cavity-and-salivary-gland": "Oral cavity and salivary gland",
+  "pharynx": "Pharynx",
+  "larynx-and-trachea": "Larynx and trachea",
+  "esophagus": "Esophagus",
+  "miscellaneous": "Miscellaneous",
+
   'upper-limb': 'Upper Limb', neuroanatomy: 'Neuroanatomy', thorax: 'Thorax',
   embryology: 'Embryology', 'head-and-neck': 'Head and Neck', histology: 'Histology',
   'general-anatomy': 'General Anatomy', bioenergetics: 'Bioenergetics', vitamins: 'Vitamins',
@@ -45,4 +87,10 @@ const SOURCES = new Map<string, ReviewedUniversityQuestion>(REVIEWED_UNIVERSITY_
 export function collectedQuestionSource(question: string): ReviewedUniversityQuestion | undefined {
   const id = question.match(/^PYQ\[([a-z0-9-]+)\]\s/)?.[1];
   return id ? SOURCES.get(id) : undefined;
+}
+
+/** Keep MCQs identifiable while preserving the established two-tab navigation/progress contract. */
+export function collectedShortQuestionLabel(questions: string[]): string {
+  const formats = questions.map(question => collectedQuestionSource(question)?.questionFormat);
+  return formats.includes('mcq') ? 'Short / MCQ' : formats.some(Boolean) ? 'Short Answers' : 'Short Notes';
 }
