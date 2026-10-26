@@ -5,10 +5,36 @@ type Node = { name: string; questions?: string[]; subtopics?: Record<string, Nod
 const YEARS = { first: 'first-year', second: 'second-year', third: 'third-year', final: 'final-year' } as const;
 const YEAR_NAMES = { first: 'First Year', second: 'Second Year', third: 'Third Year', final: 'Final Year' } as const;
 const SUBJECT_NAMES: Record<string, string> = {
-  physiology: 'Physiology', pharmacology: 'Pharmacology', 'obstetrics-gynaecology': 'Obstetrics and Gynaecology', paediatrics: 'Paediatrics', anatomy: 'Anatomy', biochemistry: 'Biochemistry', pathology: 'Pathology',
+  microbiology: 'Microbiology', physiology: 'Physiology', pharmacology: 'Pharmacology', 'obstetrics-gynaecology': 'Obstetrics and Gynaecology', paediatrics: 'Paediatrics', anatomy: 'Anatomy', biochemistry: 'Biochemistry', pathology: 'Pathology',
   'general-medicine': 'General Medicine', 'general-surgery': 'General Surgery', 'community-medicine': 'Community Medicine', 'forensic-medicine': 'Forensic Medicine', ophthalmology: 'Ophthalmology', ent: 'ENT',
 };
 const TOPIC_NAMES: Record<string, string> = {
+  "cell-injury": "Cell Injury",
+  "inflammation-repair": "Inflammation and Repair",
+  "hemodynamic-disorders": "Hemodynamic Disorders",
+  "genetic-disorders": "Genetic Disorders",
+  "neoplasia": "Neoplasia",
+  "immunology": "Immunology",
+  "infectious-diseases": "Infectious Diseases",
+  "environmental-nutritional-disorders": "Environmental and Nutritional Disorders",
+  "red-blood-cells": "Red Blood Cells",
+  "white-blood-cells": "White Blood Cells",
+  "platelets": "Platelets",
+  "heart": "Heart",
+  "blood-vessels": "Blood Vessels",
+  "liver-gallbladder-pancreas": "Liver, Gallbladder and Pancreas",
+  "kidney": "Kidney",
+  "male-genital-tract": "Male Genital Tract",
+  "female-genital-tract": "Female Genital Tract",
+  "bones-joints-soft-tissue": "Bones, Joints and Soft Tissue",
+  "skin": "Skin",
+  "general-microbiology": "General Microbiology",
+  "hospital-infection-control": "Hospital Infection Control",
+  "bacteriology": "Bacteriology",
+  "virology": "Virology",
+  "mycology": "Mycology",
+  "parasitology": "Parasitology",
+
   "lower-limb": "Lower Limb",
   "abdomen-and-pelvis": "Abdomen and Pelvis",
   "genetics": "Genetics",

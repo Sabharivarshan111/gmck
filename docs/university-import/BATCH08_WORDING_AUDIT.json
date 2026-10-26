@@ -1,0 +1,9 @@
+{
+  "examOccurrences": 1023,
+  "distinctCompleteWordingsWithinBatch": 1014,
+  "distinctWordingsNewRelativePrior": 1006,
+  "matchingOlderWordingOccurrences": 9,
+  "comparison": "Complete normalized wording, case/whitespace insensitive; not semantic concepts",
+  "alternateScanPapersExcluded": 6,
+  "alreadyApprovedPaperSkipped": 1
+}
