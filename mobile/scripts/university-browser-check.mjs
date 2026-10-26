@@ -18,6 +18,9 @@ try {
       { university: 'knruhs', year: 'third', yearKey: 'third-year', query: 'Corrected effective temperature', topic: 'Environment & Health', reference: 'Nov 2025', option: '(a) < 20℃' },
       { university: 'knruhs', year: 'third', yearKey: 'third-year', query: 'LAQSHYA', topic: 'Health Programmes', reference: 'Apr 2026', option: '(d) Quality of care in labor room and maternity operation theatres' },
       { university: 'knruhs', year: 'final', yearKey: 'final-year', query: 'Aniridia', topic: 'Diseases of uveal tract', reference: 'Apr 2026', option: '(c) Absence of ciliary body' },
+      { university: 'knruhs', year: 'final', yearKey: 'final-year', query: 'amiodarone', topic: 'Endocrinology', reference: 'May 2024', option: "(d) De Quervain's thyroiditis" },
+      { university: 'knruhs', year: 'final', yearKey: 'final-year', query: 'Heart Failure', topic: 'Cardiology', reference: 'Apr 2026', option: 'Describe the aetiology, clinical features, investigation and management of Heart Failure.', section: 'Part B · Essay / Long Answer Questions' },
+      { university: 'knruhs', year: 'final', yearKey: 'final-year', query: 'Parkland Formula', topic: 'Shock, Burns and Trauma', reference: 'Apr 2026', option: '30 % deep burn surface area' },
       { university: 'knruhs', year: 'third', yearKey: 'third-year', query: 'amikacin', topic: 'Ear', reference: 'Apr 2026', option: 'C) Outline the appropriate further management for this patient.' },
     ]) {
       const context = await browser.newContext({ viewport: { width, height: 780 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
@@ -35,6 +38,7 @@ try {
       await switcher.waitFor();await switcher.click();
       await page.getByText(fixture.reference, { exact: false }).filter({ visible: true }).first().waitFor();
       if (fixture.option) await page.getByText(fixture.option, { exact: false }).filter({ visible: true }).first().waitFor();
+      if (fixture.section) await page.getByText(fixture.section, { exact: false }).filter({ visible: true }).first().waitFor();
       assert.ok(!(await page.locator('body').innerText()).includes('PYQ['), 'Internal source marker leaked into UI');
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), 'Horizontal overflow');
       assert.deepEqual(errors, []);

@@ -18,4 +18,5 @@ export interface ReviewedUniversityQuestion {
   marks: number;
   originalSection: string;
   paperNumber?: string;
+  examPart?: 'A' | 'B';
 }
