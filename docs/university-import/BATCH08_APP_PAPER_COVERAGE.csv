@@ -1,0 +1,42 @@
+queueIndex,sha256,printedUniversity,subjectNormalized,examYear,examMonth,examDay,paperNumber,paperCode,regulation,questionCount,totalMarks
+60,dbdd420aab8accb5f9ca9d3944056c4fdfc0b68476226d00520b18ee7e8896e9,Kaloji Narayana Rao University of Health Sciences,pharmacology,2025,Jun,,II,MB2019112,Not specified,25,100
+61,6f70a786219459c37cfcc19112444847894905e38f5dab0d1cea3d41fb6e017a,Kaloji Narayana Rao University of Health Sciences,pharmacology,2025,Aug,,II,MB2019112,Not specified,25,100
+62,ad3500b2dd56bf1bbb550496f8d75027e46a99eaae7f6381650eaba0bcd853e2,Kaloji Narayana Rao University of Health Sciences,pharmacology,2026,Jan,,II,MB2019112,Not specified,25,100
+63,253c80daac56a02c962bac3321cf25a5d2faeb4bf3937b71180a9a680f5b5b1b,Kaloji Narayana Rao University of Health Sciences,pathology,2025,Aug,,I,MB2019113,Not specified,25,100
+64,ff3dd4d16ddbccc30f9153a91fc2314c5e301fbcb51f2f22604b25572fd29720,Kaloji Narayana Rao University of Health Sciences,pathology,2026,Jan,,I,MB2019113,Not specified,25,100
+65,491cb4b6e4ae82272a8ccb5ddf38ce51eac0e33218786a9e35b8fe4c7b251f39,Kaloji Narayana Rao University of Health Sciences,pathology,2025,Jun,,I,MB2019113,Not specified,25,100
+66,89dbd5c4fb4d6d9466efe86c059799a73c18962f128270d6a7225f67dd90685e,Kaloji Narayana Rao University of Health Sciences,pathology,2025,Jun,,II,MB2019114,Not specified,25,100
+67,ec3a5c2acb914f43580ed28ba3e6f0c196a27c47564884b63509b31b6dcf1c33,Kaloji Narayana Rao University of Health Sciences,pathology,2025,Aug,,II,MB2019114,Not specified,25,100
+68,dbf41e115c516ed9added6dd5e2be0c74d5af507d08597aa8650eab5b8f77f19,Kaloji Narayana Rao University of Health Sciences,pathology,2026,Jan,,II,MB2019114,Not specified,25,100
+69,6819a8530c28f77e4d542cb7d1856e4ac13566ba96d34d80ddfc5f0c11a29eff,Kaloji Narayana Rao University of Health Sciences,microbiology,2025,Aug,,I,MB2019115,Not specified,25,100
+70,514eab02904c7ab6998b64de93fbb91a6e61de44c103ab0fd9996c1e216b0640,Kaloji Narayana Rao University of Health Sciences,microbiology,2026,Jan,,I,MB2019115,Not specified,25,100
+71,465b8cb6348ffee71d384a65b36992d91dc035fc8349663bcc907023966f96be,Kaloji Narayana Rao University of Health Sciences,microbiology,2025,Jun,,I,MB2019115,Not specified,25,100
+72,52f982a410a5d2bcfe7ecb8f821654e40574cafa2526872f7817c5e4b6f21079,Kaloji Narayana Rao University of Health Sciences,microbiology,2026,Jan,,II,MB2019116,Not specified,25,100
+73,367154a0522c329b658dcc12a3f13467d7d53069bb67d53ea2c3abcf6495a3d5,Kaloji Narayana Rao University of Health Sciences,microbiology,2025,Aug,,II,MB2019116,Not specified,25,100
+74,1eaab5b3c9e9d37b77544e0a218792c7cefb6480144f9f72795fa862e8def683,Kaloji Narayana Rao University of Health Sciences,microbiology,2025,Jun,,II,MB2019116,Not specified,25,100
+76,4057a4b8a4077c9f24c8c75b099b172fbd7247d959cead4c78a0d3119aafe17a,"Rajiv Gandhi University of Health Sciences, Karnataka",anatomy,2025,Sep,26,II,1076,RS-3,22,100
+77,38824c6d0b4b44e5eeaa195fea6f9302d6a275cb8a8f4b1309860e02b3d56c11,"Rajiv Gandhi University of Health Sciences, Karnataka",biochemistry,2025,Oct,06,I,1079,RS3,11,50
+78,fc6c85e99007beb0cfe9dc0398425c36c33f9ad9c9445ee6cc2e3909e0311524,"Rajiv Gandhi University of Health Sciences, Karnataka",biochemistry,2025,Oct,06,II,1080,RS3,11,50
+79,fc4c687cf79898ffb719bf6616b5815c619b0d67ac097e9211cfef091b48db7c,"Rajiv Gandhi University of Health Sciences, Karnataka",physiology,2025,Oct,03,II,1078,RS3,22,100
+80,824abc08aa968a3105198f0d9cb2adc75550dd6fa06b8220e144029289ed2579,"Rajiv Gandhi University of Health Sciences, Karnataka",physiology,2025,Sep,29,I,1077,RS3,22,100
+81,133b45c9e6af69614193ea313f284040178ad5d7b238677a623a2b12f8260239,"Rajiv Gandhi University of Health Sciences, Karnataka",anatomy,2024,Dec,02,I,1020,CBME / RS-4,30,100
+82,a6a9439cd4e56af1f5da5780a9fa2e80928416793f509f9218ab8f25302e2af6,"Rajiv Gandhi University of Health Sciences, Karnataka",anatomy,2024,Dec,04,II,1021,CBME / RS-4,30,100
+83,4debf3dbbd2100fe6d06bd50da9cb3c6d06114eb986580666e9f988141cb102d,"Rajiv Gandhi University of Health Sciences, Karnataka",physiology,2024,Dec,06,I,1022,CBME / RS-4,30,100
+84,b30d3ba0faf633c5e9be61d3567581c3a5811604114a9d21b4e55b13811d33d5,"Rajiv Gandhi University of Health Sciences, Karnataka",physiology,2024,Dec,09,II,1023,CBME / RS-4,30,100
+85,09cd4d03e02b58b1adc4a7e8384b530e89bb954ad5b8ec60763c3149295e93a8,"Rajiv Gandhi University of Health Sciences, Karnataka",biochemistry,2024,Dec,11,I,1024,CBME / RS-4,30,100
+86,870a39ec37d007f8579047005b7377c00091130c4481e8a3bd7ee42641b8337a,"Rajiv Gandhi University of Health Sciences, Karnataka",biochemistry,2024,Dec,13,II,1025,CBME / RS-4,30,100
+87,4773f471aed6437fd5e27489f2a7144ea6e0f6dbcac96f72072c8a8ad2dbc93e,"Rajiv Gandhi University of Health Sciences, Karnataka",anatomy,2025,Apr,07,I,1075,RS3,22,100
+88,aab257db7303d2bf17aa2c1e124c9a8a69fbea9dd627be863fded541664fa6c9,"Rajiv Gandhi University of Health Sciences, Karnataka",anatomy,2025,Apr,09,II,1076,RS-3,22,100
+89,a9b96b8cfaee3d92c174e188e2982faa25feaaa54ad61642bb57ca925c6bd5ee,"Rajiv Gandhi University of Health Sciences, Karnataka",physiology,2025,Apr,11,I,1077,RS3,22,100
+90,a9383a4db7425ee09bf55016b8760dde751489d2a0eca3103735cd126cb719d9,"Rajiv Gandhi University of Health Sciences, Karnataka",physiology,2025,Apr,15,II,1078,RS3,22,100
+91,c1f0bee3ecbcc635aaaaa7eff870d875e91719af4847db32ea7952f2e2b0caa8,"Rajiv Gandhi University of Health Sciences, Karnataka",biochemistry,2025,Apr,17,I,1079,RS3,11,50
+92,ef9411f14945f7e39717dda5cfc50d3cd3b86ab00ebc2e33431587957ffedc6d,"Rajiv Gandhi University of Health Sciences, Karnataka",biochemistry,2025,Apr,17,II,1080,RS3,11,50
+99,c97b9ec1f4ccb0dedd21f45463b3f969051159a7d93e63a4a05f1b4675627301,"Rajiv Gandhi University of Health Sciences, Karnataka",anatomy,2023,Nov,16,I,1020,CBME / RS-4,30,100
+100,6f36045e0c89df8a0c0e4f4db43b965229158427fcf24932107b6c1d29e67a73,"Rajiv Gandhi University of Health Sciences, Karnataka",anatomy,2023,Apr,25,I,1020,CBME / RS-4,30,100
+101,355fba69bd4d58cd7e200ff4457d629385efe83df1523c34a2f9235e018df088,"Rajiv Gandhi University of Health Sciences, Karnataka",anatomy,2023,Apr,27,II,1021,CBME / RS-4,30,100
+102,21b3bbf1d23a54279998ed089c1a0c6b81f81b69cab509cdb32650b30f652d9e,"Rajiv Gandhi University of Health Sciences, Karnataka",physiology,2023,Apr,29,I,1022,CBME / RS-4,30,100
+103,871eed4c42f98d9b11f6b7abf7db4433b728f1f5f196e0f58a54d3539ded086b,"Rajiv Gandhi University of Health Sciences, Karnataka",physiology,2023,May,02,II,1023,CBME / RS-4,30,100
+104,3eff922e841bbfbacbd78182e6bf618750e699ed2c8ec1510927efddb0dcb038,"Rajiv Gandhi University of Health Sciences, Karnataka",biochemistry,2023,May,04,I,1024,CBME / RS-4,30,100
+105,f0faa36b82a3f8f291804dbe04f3969bbee2d566d3dc7b8f062a63ab60d46881,"Rajiv Gandhi University of Health Sciences, Karnataka",biochemistry,2023,May,06,II,1025,CBME / RS-4,30,100
+106,fa0cd00e933a238b7b7f364af7dad4ea6a0555a61f2ecb40a90d1ed55eefd048,"Rajiv Gandhi University of Health Sciences, Karnataka",anatomy,2023,Feb,03,I,1020,CBME / RS-4,30,100
+107,4a393e3f394004689e06536bea99b70216481a1e698cbbeb3e0b48aa40afc69b,"Rajiv Gandhi University of Health Sciences, Karnataka",anatomy,2023,Feb,07,II,1021,CBME / RS-4,30,100

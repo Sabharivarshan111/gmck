@@ -1,0 +1,23 @@
+{
+  "approvedIdentities": 1556,
+  "debug": {
+    "run": 40386596907,
+    "job": 121796391713,
+    "tag": "debug-643",
+    "apkSha256": "795d03a5217121bc16632932c84c3d43162e368f9683ce2d2995adb3f8a7e49b"
+  },
+  "internal": {
+    "run": 40386597044,
+    "job": 121796393442,
+    "tag": "internal-603",
+    "apkSha256": "1103e139feb64eef6fdc5e1fd29aea340aad997c7fe5512c90ec7c3ede3c8712"
+  },
+  "release": {
+    "run": 40386597184,
+    "job": 121796392926,
+    "tag": "release-785",
+    "apkSha256": "bb4c30e77d26f19676f3706da4e07ce7756f490c582a2611051f040d4cd5377d",
+    "aabSha256": "b8a632d24314690ac3c649147a13b080aa44cadf37f007dfee8f5848b94f6d4f"
+  },
+  "status": "All three successful; actual APK/AAB1556identityguards verified. These packages do not prove2579. Version29unchanged;noPlayupload."
+}
