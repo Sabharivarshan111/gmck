@@ -41,10 +41,10 @@ const notes = load('src/lib/handwrittenNotes.ts', { ...common, './notesDedup': {
   './notesLimits': {}, './progress': progress });
 const resume = load('src/lib/homeResume.ts', { ...common, '@/lib/questionBank': bank });
 
-assert.equal(rows.length, 653);
+assert.equal(rows.length, 856);
 assert.equal(new Set(rows.map(r => r.id)).size, rows.length);
-const expected = { rguhs: 22, knruhs: 615, muhs: 0, ntruhs: 12, wbuhs: 4 };
-const marks = { rguhs: 100, knruhs: 2450, ntruhs: 50, wbuhs: 40 };
+const expected = { rguhs: 22, knruhs: 818, muhs: 0, ntruhs: 12, wbuhs: 4 };
+const marks = { rguhs: 100, knruhs: 3250, ntruhs: 50, wbuhs: 40 };
 const ids = new Set();
 for (const [university, count] of Object.entries(expected)) {
   assert.equal(bank.allSearchHits(university).length, count);
@@ -88,7 +88,7 @@ assert.ok(wb[2].question.includes('nephrosis and apoptosis'), 'Do not silently c
 assert.ok(wb[1].question.includes('any two') && wb[1].question.includes('c)'));
 assert.ok(wb[3].question.includes('any two') && wb[3].question.includes('d) Septic shock'));
 assert.ok(rows.find(r => r.university === 'knruhs').question.includes('(d) Applied anatomy'));
-console.log('PASS 653 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
+console.log('PASS 856 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
 
 const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH02: batch02 } = await bundle('src/data/universityPapers/reviewedBatch02.ts');
 assert.equal(batch02.length, 200);
@@ -186,3 +186,40 @@ assert.ok(threshold.examRefs[0].includes('Supplementary'), 'Preserve printed SUP
 assert.ok(batch04.find(row => row.id === 'knruhs-a233b89b90d7-p1-q1').question.includes('(B) Lead pipe appearance'), 'Uppercase printed option labels retained');
 assert.ok(batch04.find(row => row.id === 'knruhs-d71bdffc81ee-p2-q11').question.includes('(3+3+4+5)'), 'All clinical subparts/marks retained');
 console.log('PASS Batch04:203occurrences,8complete papers/800marks,3split papers with50marks per part,all320options and original labels.');
+
+const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH05: batch05 } = await bundle('src/data/universityPapers/reviewedBatch05.ts');
+assert.equal(batch05.length, 203);
+const papers05 = new Map();
+for (const row of batch05) {
+  assert.equal(row.year, 'final');
+  const entries = papers05.get(row.sourceSha256) ?? [];
+  entries.push(row); papers05.set(row.sourceSha256, entries);
+  assert.ok(!/Short Answer Questions:|Very Short Answer Questions:|Essay.*Questions:|Max Marks/.test(row.question));
+  if (row.questionFormat === 'mcq') {
+    assert.deepEqual(row.options.map(o => o.label.toLowerCase()), ['a', 'b', 'c', 'd']);
+    for (const option of row.options) assert.ok(row.question.includes(`(${option.label}) ${option.text}`));
+  }
+}
+assert.equal(papers05.size, 8);
+for (const entries of papers05.values()) {
+  const split = entries[0].paperNumber === 'II';
+  assert.deepEqual(entries.map(r => Number(r.sourceQuestion)), Array.from({ length: split ? 26 : 25 }, (_, i) => i + 1));
+  assert.equal(entries.reduce((sum, r) => sum + r.marks, 0), 100);
+  assert.equal(entries.filter(r => r.questionFormat === 'mcq').length, 10);
+  if (split) for (const part of ['A', 'B']) {
+    const group = entries.filter(r => r.examPart === part);
+    assert.equal(group.length, 13);
+    assert.equal(group.reduce((sum, r) => sum + r.marks, 0), 50);
+  }
+}
+assert.equal(batch05.filter(r => r.subjectKey === 'general-surgery').length, 128);
+assert.equal(batch05.filter(r => r.subjectKey === 'paediatrics').length, 75);
+const matchTriage = batch05.find(r => r.id === 'knruhs-b33dcb2a2fee-p1-q4');
+assert.ok(matchTriage.question.includes('4. Black — D. Simple fracture') && matchTriage.options[0].text === '1-A, 2-C, 3-D, 4-B', 'Matching table numbering must not truncate the MCQ');
+assert.equal(batch05.find(r => r.id === 'knruhs-f6d8f58b79ab-p2-q10').pdfPage, 2);
+assert.ok(batch05.find(r => r.id === 'knruhs-f6d8f58b79ab-p1-q1').examRefs[0].includes('May/Jun 2024'), 'Printed two-month session survives filename hint');
+assert.equal(batch05.find(r => r.id === 'knruhs-bd28d022a706-p1-q5').options[3].text, 'Weight in gms / height in cm³');
+assert.equal(batch05.find(r => r.id === 'knruhs-3392389ba4dd-p1-q8').options[0].text, '36.5°C');
+assert.ok(batch05.find(r => r.id === 'knruhs-d710f14304e6-p2-q25').question.includes('Branchial Plexus'), 'Printed anomaly retained');
+assert.ok(batch05.find(r => r.id === 'knruhs-837f71107a3f-p2-q19').question.includes('(1+1+1+2+3+2+3+2)'));
+console.log('PASS Batch05:203occurrences,8complete papers/800marks,3split papers,matching table,cross-page MCQs,visible superscripts and May/Jun session.');
