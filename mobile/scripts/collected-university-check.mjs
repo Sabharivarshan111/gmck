@@ -41,10 +41,10 @@ const notes = load('src/lib/handwrittenNotes.ts', { ...common, './notesDedup': {
   './notesLimits': {}, './progress': progress });
 const resume = load('src/lib/homeResume.ts', { ...common, '@/lib/questionBank': bank });
 
-assert.equal(rows.length, 450);
+assert.equal(rows.length, 653);
 assert.equal(new Set(rows.map(r => r.id)).size, rows.length);
-const expected = { rguhs: 22, knruhs: 412, muhs: 0, ntruhs: 12, wbuhs: 4 };
-const marks = { rguhs: 100, knruhs: 1650, ntruhs: 50, wbuhs: 40 };
+const expected = { rguhs: 22, knruhs: 615, muhs: 0, ntruhs: 12, wbuhs: 4 };
+const marks = { rguhs: 100, knruhs: 2450, ntruhs: 50, wbuhs: 40 };
 const ids = new Set();
 for (const [university, count] of Object.entries(expected)) {
   assert.equal(bank.allSearchHits(university).length, count);
@@ -88,7 +88,7 @@ assert.ok(wb[2].question.includes('nephrosis and apoptosis'), 'Do not silently c
 assert.ok(wb[1].question.includes('any two') && wb[1].question.includes('c)'));
 assert.ok(wb[3].question.includes('any two') && wb[3].question.includes('d) Septic shock'));
 assert.ok(rows.find(r => r.university === 'knruhs').question.includes('(d) Applied anatomy'));
-console.log('PASS 450 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
+console.log('PASS 653 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
 
 const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH02: batch02 } = await bundle('src/data/universityPapers/reviewedBatch02.ts');
 assert.equal(batch02.length, 200);
@@ -146,3 +146,43 @@ assert.ok(batch03.find(row => row.id === 'knruhs-aa2f4b5aeef0-p1-q3').question.s
 assert.ok(batch03.find(row => row.id === 'knruhs-663cfc584243-p1-q9').options[2].text === 'Hearing aid');
 assert.ok(batch03.find(row => row.id === 'knruhs-c411e2b77af6-p2-q24').question.includes('Human AIDS Anti Retro Viral Therapy'));
 console.log('PASS Batch03: 8 complete papers/800marks, 80MCQs/320options, SPM I/II identified, printed Part-II mapped to final year.');
+
+const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH04: batch04 } = await bundle('src/data/universityPapers/reviewedBatch04.ts');
+assert.equal(batch04.length, 203);
+const papers04 = new Map();
+for (const row of batch04) {
+  assert.equal(row.year, 'final');
+  const entries = papers04.get(row.sourceSha256) ?? [];
+  entries.push(row); papers04.set(row.sourceSha256, entries);
+  assert.ok(!/PART[-–]?[AB]\s*$|Short Answer Questions:|Very Short Answer Questions:|Essay.*Questions:|Max Marks/i.test(row.question));
+  if (row.questionFormat === 'mcq') {
+    assert.deepEqual(row.options.map(option => option.label.toLowerCase()), ['a', 'b', 'c', 'd']);
+    for (const option of row.options) assert.ok(row.question.includes(`(${option.label}) ${option.text}`));
+  }
+}
+assert.equal(papers04.size, 8);
+for (const entries of papers04.values()) {
+  const split = entries[0].subjectKey === 'general-medicine' && entries[0].paperNumber === 'II';
+  const count = split ? 26 : 25;
+  assert.deepEqual(entries.map(row => Number(row.sourceQuestion)), Array.from({ length: count }, (_, i) => i + 1));
+  assert.equal(entries.reduce((sum, row) => sum + row.marks, 0), 100);
+  if (split) {
+    for (const part of ['A', 'B']) {
+      const group = entries.filter(row => row.examPart === part);
+      assert.equal(group.length, 13);
+      assert.equal(group.reduce((sum, row) => sum + row.marks, 0), 50);
+      assert.equal(group.filter(row => row.questionFormat === 'mcq').length, 5);
+      assert.ok(group.every(row => row.originalSection.startsWith(`Part ${part} · `)));
+    }
+    assert.equal(entries.find(row => row.sourceQuestion === '19').questionFormat, 'long-answer');
+    assert.equal(entries.find(row => row.sourceQuestion === '14').questionFormat, 'mcq');
+  }
+}
+assert.equal(batch04.filter(row => row.subjectKey === 'general-medicine').length, 153);
+assert.equal(batch04.filter(row => row.questionFormat === 'mcq').length, 80);
+const threshold = batch04.find(row => row.id === 'knruhs-5f9ad511b5f1-p1-q3');
+assert.equal(threshold.options[0].text, '4 gm%', 'Numeric option must not become the next question');
+assert.ok(threshold.examRefs[0].includes('Supplementary'), 'Preserve printed SUPPELEMENTARY as supplementary status');
+assert.ok(batch04.find(row => row.id === 'knruhs-a233b89b90d7-p1-q1').question.includes('(B) Lead pipe appearance'), 'Uppercase printed option labels retained');
+assert.ok(batch04.find(row => row.id === 'knruhs-d71bdffc81ee-p2-q11').question.includes('(3+3+4+5)'), 'All clinical subparts/marks retained');
+console.log('PASS Batch04:203occurrences,8complete papers/800marks,3split papers with50marks per part,all320options and original labels.');
