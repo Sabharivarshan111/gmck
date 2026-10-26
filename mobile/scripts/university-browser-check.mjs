@@ -29,7 +29,7 @@ try {
       await switcher.waitFor();await switcher.click();
       await page.getByText(fixture.reference, { exact: false }).filter({ visible: true }).first().waitFor();
       assert.ok(!(await page.locator('body').innerText()).includes('PYQ['), 'Internal source marker leaked into UI');
-      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'Horizontal overflow');
+      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), 'Horizontal overflow');
       assert.deepEqual(errors, []);
       results.push({ width, university: fixture.university, searchAndChapterAndReference: 'passed' });
       console.log('PASS chapter/reference', width, fixture.university);
