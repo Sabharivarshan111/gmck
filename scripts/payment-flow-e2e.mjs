@@ -53,10 +53,17 @@ async function scenario(width,signedIn=true,verificationFails=false,interrupted=
   await page.getByLabel('NEET-PG practice questions',{exact:true}).waitFor();
   if(featureMode==='free'){
    await page.getByText('Free preview',{exact:true}).first().waitFor();
-   assert.equal(await page.getByText('Free preview',{exact:true}).count(),3);
+   assert.equal(await page.getByText('Free preview',{exact:true}).count(),4);
    await page.getByLabel('Anki flashcards',{exact:true}).click();
-   await page.getByRole('dialog').getByRole('heading',{name:'Unlock Anki flashcards',exact:true}).waitFor();
+   await page.getByText('Flashcards preview',{exact:true}).waitFor();
+   await page.getByText('How many chambers does the human heart have?',{exact:true}).waitFor();
+   await page.getByRole('button',{name:'Show answer',exact:false}).click();
+   await page.getByText('Four: the right atrium, right ventricle, left atrium and left ventricle.',{exact:true}).waitFor();
+   await page.getByRole('button',{name:'Good',exact:false}).click();
+   await page.getByRole('button',{name:'Unlock all →',exact:true}).click();
+   await page.getByRole('heading',{name:'Unlock all Anki flashcards',exact:true}).waitFor();
    await page.getByRole('button',{name:'Not now',exact:true}).click();
+   await page.getByRole('button',{name:'Go back',exact:true}).click();
    await page.getByLabel('NEET-PG practice questions',{exact:true}).click();
    await page.getByText('10 questions per exam',{exact:false}).waitFor({timeout:5000});
    await page.getByLabel('Search offline NEET PG questions',{exact:true}).waitFor();

@@ -2,6 +2,8 @@ import React, { createContext, useCallback, useContext, useEffect, useRef, useSt
 import { supabase } from '@/lib/supabase';
 import { readWebsitePremium, type PremiumClient } from '@shared/website-premium';
 import './checkout/checkout.css';
+import { FlashcardsPreview } from './FlashcardsPreview';
+export { FlashcardsPreview };
 
 type Access = { active: boolean; loading: boolean; expiresAt: string | null; requestPurchase(feature: string): void };
 const Context = createContext<Access>({ active: false, loading: true, expiresAt: null, requestPurchase() {} });
