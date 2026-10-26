@@ -11,7 +11,7 @@ function load(file,mocks){
 function fixture({writeFails=false,cloud=null}={}){
  const values=new Map(),storage={getItem:async k=>values.get(k)??null,setItem:async(k,v)=>{if(writeFails)throw Error('Disk full');values.set(k,v);}};
  const supabase={auth:{getSession:async()=>({data:{session:cloud?{user:{id:'own-account'}}:null}}),signInAnonymously:async()=>({error:{message:'Offline'}})},from:()=>({select:()=>({eq:()=>({maybeSingle:async()=>({data:cloud})})})}),rpc:async()=>({data:null,error:null})};
- const profile=load('src/lib/profile.ts',{'@react-native-async-storage/async-storage':{__esModule:true,default:storage},'@shared/profanity':{validateDisplayName:n=>({ok:n.trim().length>=2,reason:'Enter a display name'})},'@shared/university':{isUniversity:u=>['tnmgr','kuhs'].includes(u)},'./supabase':{supabase},'./guestMerge':{retryGuestMerge:async()=>{}},'@/lib/log':{warn:()=>{}}});
+ const profile=load('src/lib/profile.ts',{'@react-native-async-storage/async-storage':{__esModule:true,default:storage},'@shared/profanity':{validateDisplayName:n=>({ok:n.trim().length>=2,reason:'Enter a display name'})},'@shared/university':load('../src/lib/university.ts',{}),'./supabase':{supabase},'./guestMerge':{retryGuestMerge:async()=>{}},'@/lib/log':{warn:()=>{}}});
  const hook=load('src/hooks/useProfile.ts',{'react':{useCallback:f=>f,useSyncExternalStore:()=>{}},'@/lib/profile':profile,'@/lib/progress':{reconcileProgress:async()=>{}},'@/lib/streak':{currentValue:()=>0,recordToday:async()=>({})}});
  return {values,profile,hook};
 }
@@ -31,3 +31,6 @@ const exports={};vm.runInNewContext(code,{exports,localStorage,indexedDB:{open:(
 assert.equal(await exports.default.getItem('orbit-profile-v1'),JSON.stringify(clean));await exports.default.setItem('orbit-profile-v1','updated');assert.equal(values.get('orbit-profile-v1'),'updated');
 await assert.rejects(exports.default.setItem('large-file','x'.repeat(100001)));
 console.log('PASS profile validation, write failure, durable save, own cloud recovery, malformed cloud year, and Safari storage fallback.');
+
+for (const university of ['rguhs','knruhs','muhs','ntruhs','wbuhs']) { const f=fixture(); await f.hook.hydrateProfile(); await f.hook.useProfile().save({...clean,university}); assert.equal(JSON.parse(f.values.get('orbit-profile-v1')).university,university); }
+console.log('PASS all collected university choices persist offline.');

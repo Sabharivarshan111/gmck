@@ -1,0 +1,52 @@
+name: University bank import checks
+on:
+  push:
+    branches: [main, claude/native-app-sync]
+    paths:
+      - 'src/data/universityPapers/**'
+      - 'src/lib/university.ts'
+      - 'mobile/src/components/UniversityChoice.tsx'
+      - 'mobile/scripts/*university*'
+      - '.github/workflows/university-import.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/data/universityPapers/**'
+      - 'src/lib/university.ts'
+      - 'mobile/src/components/UniversityChoice.tsx'
+      - '.github/workflows/university-import.yml'
+jobs:
+  reviewed-bank-and-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install locked dependencies
+        run: npm ci --legacy-peer-deps --ignore-scripts && npm --prefix mobile ci --legacy-peer-deps --ignore-scripts
+      - name: Verify bank identities and old-bank parity
+        working-directory: mobile
+        run: npm run check:university-import && npm run check:search-index && npm run check:kuhs-parity
+      - name: Build emitted native web app
+        run: npm --prefix mobile run web:build
+      - name: Verify actual emitted question payload
+        run: python3 scripts/check-university-import-artifact.py 'dist-native/assets/*.js'
+      - name: Install test browser
+        working-directory: mobile
+        run: node node_modules/playwright-core/cli.js install --with-deps chromium
+      - name: Exercise university switching, chapter search and references
+        working-directory: mobile
+        run: |
+          npm exec vite -- preview --config web/vite.config.ts --host 127.0.0.1 --port 4184 > /tmp/university-preview.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4184 > /dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/university-browser-check.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: university-browser-results
+          path: mobile/artifacts/university-import/

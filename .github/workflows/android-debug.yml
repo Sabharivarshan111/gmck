@@ -177,6 +177,7 @@ jobs:
           npm run check:notes-schema
           npm run check:v25
           npm run check:kuhs-parity
+          npm run check:university-import
           npm run check:notes-depth
           npm run check:sync
           npm run check:cloud-ids
@@ -334,7 +335,9 @@ jobs:
 
       - name: Verify the actual offline question-bank payload
         working-directory: .
-        run: python3 scripts/check-neet-pg-artifact.py 'mobile/android/app/build/outputs/apk/**/*.apk' 'mobile/android/app/build/outputs/bundle/**/*.aab'
+        run: |
+          python3 scripts/check-neet-pg-artifact.py 'mobile/android/app/build/outputs/apk/**/*.apk' 'mobile/android/app/build/outputs/bundle/**/*.aab'
+          python3 scripts/check-university-import-artifact.py 'mobile/android/app/build/outputs/apk/**/*.apk' 'mobile/android/app/build/outputs/bundle/**/*.aab'
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
