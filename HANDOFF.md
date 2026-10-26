@@ -2821,3 +2821,11 @@ Downloaded Debug622 and Release764 APKs and inspected ZIP payloads: native bundl
 **HALF-DONE:** Full original clinical-data review,177 undocumented finer arterial branch bindings, real phone GPU/touch/keyboard/performance and Play publication remain outstanding. PR123 targets main; this is its native integration, not a main merge.
 
 **NEXT:** Test the combined APK on a device and use Release764 AAB for a deliberate Play upload. Read current Actions before claiming hosted UX is green.
+
+## 2026-10-26 — App import Batch05 (203 more)
+
+DONE: Recovered and SHA-verified fullPDFcollectionv3/appcheckpointv4 after workspace clearing. Prior Batch04Android Debug636/Internal596/Release778 succeeded; actual APK/AAB guards contain653IDs (not the new856). Continued queue24–31 completely: GeneralSurgery128,Paediatrics75;16sourcepages visually compared,8PDFSHA verified,203exam occurrences/200distinct normalized wordings,197new distinct normalized wordings relative to older653.80MCQs/320options,16long/53short/54veryshort,800marks; threeSurgeryIIpapers PartA/B50each. Printed MAY/JUNE2024session, matching table, source anomalies, visible superscript/degree signs and cross-pageMCQs retained. No official answers supplied.
+DONE: Old653IDs/rows unchanged;856total(KNRUHS818/RGUHS22/NTRUHS12/WBUHS4grouped/MUHS0disabled),68approvedsourcepages. Separate actual AndroidJS/nativewebJS856-IDguards pass; mobileTypeScript/fullquietlint,13757searchroundtrips, KUHS6916parity and requiredxp/version/reminder/edges/diagrams/apkg/kotlin/repointact pass. No new PDFs/backend/version/Play changes.
+HALF-DONE: Source publication, hosted35scenarioUI and856-IDAndroidpackages pending at this pre-push checkpoint. Do not claim these shipped until actual payloads checked. All annual coverage remains partial.
+NEXT: Publish exacttestedtree with expected-headguard, selectivewebPR preserving concurrentwork; inspect UI/builds and livepayload. Then KNRUHS OBGPaperI April2026 SHAd79143806c54290ae1b32c92290b9081e8129d2a35267437c8dfb9fc9b9ca866, Q1/page1. First32queuepapers transcribed; nextpages not visually compared. Save same privateLibraryappZIP/markdown IDs and skillcheckpoint.
+DO NOT: Import mechanical18081blocks, expose rawPDFs, infer regular/curriculum from degreeheader, overwrite olderIDs or force-push.
