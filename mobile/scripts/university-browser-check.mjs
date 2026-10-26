@@ -9,7 +9,7 @@ const results = [];
 try {
   for (const width of [360, 430]) {
     for (const fixture of [
-      { university: 'rguhs', year: 'first', yearKey: 'first-year', query: 'Ulnar', topic: 'Upper Limb', reference: '24 Sep 2025' },
+      { university: 'rguhs', year: 'first', yearKey: 'first-year', query: 'distribution and applied Anatomy of Ulnar', topic: 'Upper Limb', reference: '24 Sep 2025' },
       { university: 'knruhs', year: 'first', yearKey: 'first-year', query: 'roots, trunks and cords', topic: 'Upper Limb', reference: 'Jul 2019', option: '(b) Parts (roots, trunks and cords)' },
       { university: 'ntruhs', year: 'first', yearKey: 'first-year', query: 'respiratory chain', topic: 'Bioenergetics', reference: 'Oct/Nov 2018' },
       { university: 'wbuhs', year: 'second', yearKey: 'second-year', query: 'osteolytic', topic: 'Haematology', reference: '2017' },
@@ -34,6 +34,14 @@ try {
       { university: 'knruhs', year: 'first', yearKey: 'first-year', query: 'His hands and feet have been growing', topic: 'Endocrine Physiology', reference: 'Sep 2025', option: 'e) What could be the cause for visual defect.' },
       { university: 'knruhs', year: 'second', yearKey: 'second-year', query: 'Treatmet of choice', topic: 'Autonomic Nervous System', reference: 'Jan 2026', option: '(c) Adrenalin 0.5ml 1:10000 solution by im' },
       { university: 'knruhs', year: 'third', yearKey: 'third-year', query: 'amikacin', topic: 'Ear', reference: 'Apr 2026', option: 'C) Outline the appropriate further management for this patient.' },
+      { university: 'knruhs', year: 'second', yearKey: 'second-year', query: 'Concurrent use of the following drug', topic: 'Hormones', reference: 'Jun 2025', option: '(b) Rifampicin' },
+      { university: 'knruhs', year: 'second', yearKey: 'second-year', query: 'hair on end appearance', topic: 'Red Blood Cells', reference: 'Jan 2026', option: '(2+7+6)' },
+      { university: 'knruhs', year: 'second', yearKey: 'second-year', query: 'Granular contracted Kidney', topic: 'Kidney', reference: 'Jun 2025', option: '(d) Benign hypertension' },
+      { university: 'knruhs', year: 'second', yearKey: 'second-year', query: 'non cultivable mycobacteria', topic: 'Bacteriology', reference: 'Jan 2026', option: '(c) M bovis' },
+      { university: 'rguhs', year: 'first', yearKey: 'first-year', query: 'coenzyme forms and biochemical functions of folic', topic: 'Vitamins', reference: '06 Oct 2025', option: 'Or Creatinine clearance test' },
+      { university: 'rguhs', year: 'first', yearKey: 'first-year', query: '0.85:1', topic: 'Chemistry of amino acids and proteins', reference: '13 Dec 2024', option: '5.0 g/dl; 2.3 g/dl; 0.85:1' },
+      { university: 'rguhs', year: 'first', yearKey: 'first-year', query: 'Space of Retzius is related', topic: 'Abdomen and Pelvis', reference: '27 Apr 2023', option: '(D) Rectum' },
+      { university: 'rguhs', year: 'first', yearKey: 'first-year', query: 'Most common site of lesion to the pyramidal', topic: 'Central Nervous System', reference: '02 May 2023', option: '(D) Medulla' },
     ]) {
       const context = await browser.newContext({ viewport: { width, height: 780 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
       await context.route('**/*', route => new URL(route.request().url()).origin === new URL(base).origin ? route.continue() : route.abort());

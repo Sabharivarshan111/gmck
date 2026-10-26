@@ -41,10 +41,10 @@ const notes = load('src/lib/handwrittenNotes.ts', { ...common, './notesDedup': {
   './notesLimits': {}, './progress': progress });
 const resume = load('src/lib/homeResume.ts', { ...common, '@/lib/questionBank': bank });
 
-assert.equal(rows.length, 1556);
+assert.equal(rows.length, 2579);
 assert.equal(new Set(rows.map(r => r.id)).size, rows.length);
-const expected = { rguhs: 22, knruhs: 1518, muhs: 0, ntruhs: 12, wbuhs: 4 };
-const marks = { rguhs: 100, knruhs: 6050, ntruhs: 50, wbuhs: 40 };
+const expected = { rguhs: 670, knruhs: 1893, muhs: 0, ntruhs: 12, wbuhs: 4 };
+const marks = { rguhs: 2500, knruhs: 7550, ntruhs: 50, wbuhs: 40 };
 const ids = new Set();
 for (const [university, count] of Object.entries(expected)) {
   assert.equal(bank.allSearchHits(university).length, count);
@@ -56,8 +56,8 @@ for (const [university, count] of Object.entries(expected)) {
   for (const row of uniRows) {
     assert.match(row.sourceSha256, /^[a-f0-9]{64}$/);
     assert.ok(row.id.includes(row.sourceSha256.slice(0, 12)));
-    assert.ok(row.pdfPage === 1 || row.pdfPage === 2);
-    assert.ok(row.question.length > 4 && row.question.length <= 1000);
+    assert.ok(Number.isInteger(row.pdfPage) && row.pdfPage >= 1 && row.pdfPage <= 4);
+    assert.ok((row.question.length > 4 || (row.id === 'rguhs-fc6c85e99007-p1-q5' && row.question === 'Gout')) && row.question.length <= 1000);
     assert.ok(row.examRefs.length > 0 && row.topicKey);
     const raw = `PYQ[${row.id}] ${row.question}`;
     assert.equal(text.getCleanQuestionText(raw), row.question);
@@ -88,7 +88,7 @@ assert.ok(wb[2].question.includes('nephrosis and apoptosis'), 'Do not silently c
 assert.ok(wb[1].question.includes('any two') && wb[1].question.includes('c)'));
 assert.ok(wb[3].question.includes('any two') && wb[3].question.includes('d) Septic shock'));
 assert.ok(rows.find(r => r.university === 'knruhs').question.includes('(d) Applied anatomy'));
-console.log('PASS 1556 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
+console.log('PASS 2579 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
 
 const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH02: batch02 } = await bundle('src/data/universityPapers/reviewedBatch02.ts');
 assert.equal(batch02.length, 200);
@@ -284,3 +284,47 @@ const anaphylaxis=batch07.find(r=>r.id==='knruhs-b6cd50f0b87d-p1-q1');
 assert.ok(anaphylaxis.examRefs[0].includes('Jan 2026') && anaphylaxis.options[2].text.includes('1:10000'));
 assert.ok(batch07.find(r=>r.id==='knruhs-bf8470ea3fa7-p2-q11').question.includes('4+4+4+3 = 15'));
 console.log('PASS Batch07:500occurrences,20whole papers/2000marks,200MCQs/800options,allclinicalsubparts,sourceheadings/duplicatechoices and phases retained.');
+
+const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH08: batch08 } = await bundle('src/data/universityPapers/reviewedBatch08.ts');
+assert.equal(batch08.length, 1023);
+assert.equal(batch08.filter(r => r.university === 'rguhs').length, 648);
+assert.equal(batch08.filter(r => r.university === 'knruhs').length, 375);
+const papers08 = new Map();
+for (const row of batch08) {
+  const paper = papers08.get(row.sourceSha256) ?? [];paper.push(row);papers08.set(row.sourceSha256, paper);
+  assert.equal(row.year, row.university === 'rguhs' ? 'first' : 'second');
+  assert.ok(!/FirstRanker|Page \d of|Max[.]? Marks|SHORT ESSAYS|LONG ESSAYS/.test(row.question));
+  if (row.questionFormat === 'mcq') {
+    assert.deepEqual(row.options.map(o => o.label.toLowerCase()), ['a', 'b', 'c', 'd']);
+    assert.equal(row.marks, 1);
+    for (const option of row.options) assert.ok(row.question.includes(`(${option.label}) ${option.text}`));
+  }
+}
+assert.equal(papers08.size, 41);
+assert.equal(batch08.reduce((sum, r) => sum + r.marks, 0), 3900);
+assert.equal(batch08.filter(r => r.questionFormat === 'mcq').length, 300);
+assert.equal(batch08.reduce((sum, r) => sum + (r.options?.length ?? 0), 0), 1200);
+for (const paper of papers08.values()) {
+  if (paper[0].university === 'knruhs') {
+    assert.deepEqual(paper.map(r => r.sourceQuestion), Array.from({ length: 25 }, (_, i) => String(i + 1)));
+    assert.equal(paper.reduce((sum, r) => sum + r.marks, 0), 100);
+  } else {
+    const mcqs = paper.filter(r => r.questionFormat === 'mcq');
+    const numeric = paper.filter(r => r.questionFormat !== 'mcq');
+    assert.ok([11, 20, 22].includes(numeric.length));
+    assert.deepEqual(numeric.map(r => r.sourceQuestion), Array.from({ length: numeric.length }, (_, i) => String(i + 1)));
+    assert.deepEqual(mcqs.map(r => r.sourceQuestion), mcqs.length ? ['21i','21ii','21iii','21iv','21v','22i','22ii','22iii','22iv','22v'] : []);
+    assert.equal(paper.reduce((sum, r) => sum + r.marks, 0), numeric.length === 11 ? 50 : 100);
+  }
+}
+assert.ok(!batch08.some(r => r.sourceSha256.startsWith('26a7492ec0ae')), 'Original22RGUHSrows must not be imported again');
+for (const prefix of ['39f55126fa69','a7a194ce584a','3cd06e55f48e','c36328a5c697','d490d746141a','5b2825d51d20']) assert.ok(!batch08.some(r => r.sourceSha256.startsWith(prefix)), 'Alternate scans are source links, not new exam occurrences');
+const alternative08 = batch08.find(r => r.id === 'rguhs-fc6c85e99007-p1-q3');
+assert.ok(alternative08.question.includes('folic acid. Or Creatinine clearance test'));
+assert.ok(batch08.find(r => r.id === 'rguhs-870a39ec37d0-p1-q4').question.includes('5.0 g/dl; 2.3 g/dl; 0.85:1'));
+assert.ok(batch08.find(r => r.id === 'rguhs-b30d3ba0faf6-p1-q4').question.includes('305mOsm/kg') && batch08.find(r => r.id === 'rguhs-b30d3ba0faf6-p1-q4').question.includes('<1.005'));
+assert.equal(batch08.find(r => r.id === 'rguhs-b30d3ba0faf6-p3-q22v').options[0].text, 'More than 30kg/m²');
+assert.equal(batch08.find(r => r.id === 'knruhs-52f982a410a5-p1-q2').options[2].text, 'M bovis');
+const crossing08 = batch08.find(r => r.sourceSha256.startsWith('355fba69bd4d') && r.sourceQuestion === '22iii');
+assert.equal(crossing08.pdfPage, 2);assert.equal(crossing08.options[3].text, 'Rectum');
+console.log('PASS Batch08:41whole papers,1023new occurrences,3900marks,1200options,roman-subnumber identities,clinical tables,groupedalternatives,crosspageoptions and alternate-scan exclusion.');
