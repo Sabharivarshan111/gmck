@@ -6,10 +6,13 @@ p=argparse.ArgumentParser()
 p.add_argument('paths',nargs='+')
 a=p.parse_args()
 repo=Path(__file__).resolve().parents[1]
-source=(repo/'src/data/universityPapers/reviewedBatch01.ts').read_text()
-match=re.search(r'REVIEWED_UNIVERSITY_QUESTIONS\s*=\s*(\[.*\])\s+satisfies',source,re.S)
-assert match,'Reviewed payload must remain inspectable'
-rows=json.loads(match[1]);ids={r['id'] for r in rows}
+rows=[]
+for file in sorted((repo/'src/data/universityPapers').glob('reviewedBatch*.ts')):
+    source=file.read_text()
+    match=re.search(r'export const \w+\s*=\s*(\[.*\])\s+satisfies',source,re.S)
+    assert match,'Reviewed batch must remain inspectable: '+str(file)
+    rows.extend(json.loads(match[1]))
+ids={r['id'] for r in rows}
 assert len(rows)==len(ids) and rows
 files=[Path(f) for pattern in a.paths for f in glob.glob(pattern,recursive=True)]
 assert files,'No emitted artifact found'

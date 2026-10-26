@@ -28,6 +28,7 @@ import { QuestionRow } from '@/components/QuestionRow';
 import { FilterField } from '@/components/FilterField';
 import { hasTextbook } from '@/lib/textbooks';
 import { getCleanQuestionText } from '@/lib/questionText';
+import { collectedShortQuestionLabel } from '@data/universityPapers/questionBankData';
 import {
   collectAllQuestions,
   collectQuestions,
@@ -550,7 +551,7 @@ export default function BrowseNodeScreen() {
                 { key: 'essay' as const, label: `Essays  ${essayCount}` },
                 {
                   key: 'short-notes' as const,
-                  label: `Short Notes  ${shortNoteCount}`,
+                  label: `${collectedShortQuestionLabel(findTypeQuestions(node, 'short-notes'))}  ${shortNoteCount}`,
                 },
               ]}
               value={type}

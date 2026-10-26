@@ -13,6 +13,9 @@ try {
       { university: 'knruhs', year: 'first', yearKey: 'first-year', query: 'Brachial', topic: 'Upper Limb', reference: 'Jul 2019' },
       { university: 'ntruhs', year: 'first', yearKey: 'first-year', query: 'respiratory chain', topic: 'Bioenergetics', reference: 'Oct/Nov 2018' },
       { university: 'wbuhs', year: 'second', yearKey: 'second-year', query: 'osteolytic', topic: 'Haematology', reference: '2017' },
+      { university: 'knruhs', year: 'third', yearKey: 'third-year', query: 'Taking commissions', topic: 'Thermal Injuries', reference: 'Apr 2026', option: '(c) Taking commissions from pharmaceutical companies' },
+      { university: 'knruhs', year: 'third', yearKey: 'third-year', query: 'Schwalbe', topic: 'Diseases of cornea', reference: 'Apr 2026', option: '(d) Descemet’s membrane' },
+      { university: 'knruhs', year: 'third', yearKey: 'third-year', query: 'amikacin', topic: 'Ear', reference: 'Apr 2026', option: 'C) Outline the appropriate further management for this patient.' },
     ]) {
       const context = await browser.newContext({ viewport: { width, height: 780 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
       await context.route('**/*', route => new URL(route.request().url()).origin === new URL(base).origin ? route.continue() : route.abort());
@@ -28,6 +31,7 @@ try {
       const switcher = page.getByLabel(`Switch to ${fixture.topic}`, { exact: true });
       await switcher.waitFor();await switcher.click();
       await page.getByText(fixture.reference, { exact: false }).filter({ visible: true }).first().waitFor();
+      if (fixture.option) await page.getByText(fixture.option, { exact: false }).filter({ visible: true }).first().waitFor();
       assert.ok(!(await page.locator('body').innerText()).includes('PYQ['), 'Internal source marker leaked into UI');
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), 'Horizontal overflow');
       assert.deepEqual(errors, []);
