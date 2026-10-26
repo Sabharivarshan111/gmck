@@ -46,13 +46,13 @@ def main():
     with (out/'QUESTION_REVIEW_QUEUE.jsonl').open('w') as f:
         for d in drafts:f.write(json.dumps(d,ensure_ascii=False)+'\n')
     (out/'REVIEWED_APP_QUESTIONS.json').write_text(json.dumps(reviewed,ensure_ascii=False,indent=2))
-    stats=dict(candidate_pdfs_with_verified_local_bytes=len(papers),draft_blocks_requiring_review=len(drafts),reviewed_app_question_units=len(reviewed),reviewed_pdf_pages=sum(bool(p['reviewed_question_units']) for p in papers),university_reviewed_counts=dict(collections.Counter(r['university'] for r in reviewed)),university_candidate_pdf_counts=dict(collections.Counter(p['university'] for p in papers)),published_to_app_automatically=False)
+    stats=dict(candidate_pdfs_with_verified_local_bytes=len(papers),draft_blocks_requiring_review=len(drafts),reviewed_app_question_units=len(reviewed),reviewed_pdf_pages=len({(r['sourceSha256'],r['pdfPage']) for r in reviewed}),university_reviewed_counts=dict(collections.Counter(r['university'] for r in reviewed)),university_candidate_pdf_counts=dict(collections.Counter(p['university'] for p in papers)),published_to_app_automatically=False)
     (out/'IMPORT_SUMMARY.json').write_text(json.dumps(stats,indent=2))
     (out/'README.md').write_text('''# ORBIT university question import staging
 
 The paper queue lists SHA-verified local source PDFs. Draft blocks are only mechanical number-boundary candidates: they may include headers, grouped alternatives, OCR errors or truncated text and require comparison with the actual original page. They are not app questions and are never imported automatically. Unknown chapters remain null. Source-university uncertainty is retained.
 
-REVIEWED_APP_QUESTIONS.json contains the separately page-reviewed first batch, with all grouped WBUHS alternatives retained. The shared app data uses those reviewed rows only. Exam-paper coverage and question-import coverage are different audits; no university/year is complete. No answers were supplied in these four source pages; on-tap AI follows the existing ORBIT flow.
+REVIEWED_APP_QUESTIONS.json contains the separately page-reviewed batches, with all grouped WBUHS alternatives retained. The shared app data uses those reviewed rows only. Exam-paper coverage and question-import coverage are different audits; no university/year is complete. No answers were supplied in the approved source pages; on-tap AI follows the existing ORBIT flow.
 
 To resume, restore the saved collection, run scripts/prepare_orbit_import.py --output PATH, then review new source pages and append stable rows without changing existing IDs. Keep question wording, subparts, exam references, original question type, marks, source hash and page. Do not promote the mechanical review queue to the published bank. Original PDFs stay unchanged.
 ''')
