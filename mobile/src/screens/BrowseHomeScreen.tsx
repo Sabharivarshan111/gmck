@@ -147,7 +147,7 @@ export default function BrowseHomeScreen() {
       <View style={styles.header}>
         <BackButton onPress={() => navigation.goBack()} />
         <Text accessibilityRole="header" style={[styles.title, { color: colors.text }]}>
-          {bankUniversity === 'kuhs' ? 'KUHS Question Bank' : 'TNMGR Question Bank'}
+          {`${bankUniversity.toUpperCase()} Question Bank`}
         </Text>
       </View>
 

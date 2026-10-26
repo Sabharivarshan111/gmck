@@ -88,7 +88,7 @@ assert.match(progressNotes, /university=\{bankUniversity\}/,
 const flashcards = read('src/lib/flashcards.ts');
 assert.match(flashcards, /university: University = 'tnmgr'/,
   'Deck identity must accept a university');
-assert.match(flashcards, /university === 'kuhs' \? `kuhs::\$\{base\}` : base/,
+assert.match(flashcards, /university === 'tnmgr' \? base : `\$\{university\}::\$\{base\}`/,
   'KUHS generated decks must have a separate cache key');
 assert.match(flashcards, /map\(stripKuhsQuestionMarker\)/,
   'KUHS internal markers must be stripped before flashcard generation');
@@ -120,15 +120,15 @@ assert.match(home, /readLastQuestion\(bankUniversity\)/,
   'Home resume must read from the selected university only');
 
 const flashFn = readRepo('supabase/functions/generate-flashcards/index.ts');
-assert.match(flashFn, /university: z\.enum\(\["tnmgr", "kuhs"\]\)/,
+assert.match(flashFn, /university: z\.enum\(\["tnmgr", "kuhs", "rguhs", "knruhs", "muhs", "ntruhs", "wbuhs"\]\)/,
   'Flashcard Edge Function must validate university');
-assert.match(flashFn, /university === "kuhs" \? `kuhs::\$\{baseDeckKey\}` : baseDeckKey/,
+assert.match(flashFn, /university === "tnmgr" \? baseDeckKey : `\$\{university\}::\$\{baseDeckKey\}`/,
   'Flashcard Edge Function must namespace KUHS shared cache');
 
 const dailyFn = readRepo('supabase/functions/daily-study-card/index.ts');
 assert.match(dailyFn, /const identity = \{ university, year, kind, slot \}/,
   'Daily-card shared cache must be university-scoped');
-assert.match(dailyFn, /university === 'kuhs' && kind === 'mcq' && sourceQuestions\.length > 0/,
+assert.match(dailyFn, /university !== 'tnmgr' && kind === 'mcq' && sourceQuestions\.length > 0/,
   'KUHS daily MCQ must select from KUHS source questions');
 
 const searchHits = bank.allSearchHits('kuhs');
