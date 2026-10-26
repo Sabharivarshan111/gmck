@@ -46,9 +46,9 @@ try {
   await page.getByLabel('Settings', { exact: true }).click();
   const radios = page.getByRole('radiogroup').filter({ visible: true }).getByRole('radio');await radios.first().waitFor();
   assert.equal(await radios.count(), 7);
-  assert.equal(await radios.filter({ has: page.getByText('MUHS', { exact: true }) }).getAttribute('aria-disabled'), 'true');
-  await radios.filter({ has: page.getByText('WBUHS', { exact: true }) }).scrollIntoViewIfNeeded();
-  await radios.filter({ has: page.getByText('WBUHS', { exact: true }) }).click();
+  assert.equal(await page.getByRole('radiogroup').filter({ visible: true }).getByRole('radio', { name: /Maharashtra University/ }).getAttribute('aria-disabled'), 'true');
+  await page.getByRole('radiogroup').filter({ visible: true }).getByRole('radio', { name: /West Bengal University/ }).scrollIntoViewIfNeeded();
+  await page.getByRole('radiogroup').filter({ visible: true }).getByRole('radio', { name: /West Bengal University/ }).click();
   await page.waitForFunction(() => JSON.parse(localStorage.getItem('orbit-profile-v1') || '{}').university === 'wbuhs');
   await page.goto(`${base}/browse/second-year`);
   await page.getByText('WBUHS Question Bank', { exact: true }).waitFor();
