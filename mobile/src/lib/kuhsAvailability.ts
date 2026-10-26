@@ -1,4 +1,5 @@
 import type { University } from '@shared/university';
+import { COLLECTED_QUESTION_COUNTS } from '@data/universityPapers/questionBankData';
 
 /** TXT/app transfer and navigation verified. This flag controls app availability. */
 export const KUHS_BANK_READY = true;
@@ -6,5 +7,12 @@ export const KUHS_BANK_READY = true;
 export const KUHS_BANK_AVAILABLE = KUHS_BANK_READY || __DEV__;
 
 export function availableBankUniversity(university: University | null): University {
-  return university === 'kuhs' && KUHS_BANK_AVAILABLE ? 'kuhs' : 'tnmgr';
+  if (university === 'kuhs') return KUHS_BANK_AVAILABLE ? 'kuhs' : 'tnmgr';
+  return university && bankAvailable(university) ? university : 'tnmgr';
+}
+
+export function bankAvailable(university: University): boolean {
+  if (university === 'tnmgr') return true;
+  if (university === 'kuhs') return KUHS_BANK_AVAILABLE;
+  return COLLECTED_QUESTION_COUNTS[university] > 0;
 }

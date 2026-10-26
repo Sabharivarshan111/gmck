@@ -49,7 +49,7 @@ const {
 
 const failures = [];
 let checked = 0;
-for (const university of ['tnmgr', 'kuhs']) {
+for (const university of ['tnmgr', 'kuhs', 'rguhs', 'knruhs', 'muhs', 'ntruhs', 'wbuhs']) {
   // The index itself, not a search over it: searchQuestions() needs a
   // two-letter query, so there is no query that means "everything".
   const everything = allSearchHits(university);
@@ -115,5 +115,5 @@ if (failures.length > 0) {
   process.exit(1);
 }
 process.stdout.write(
-  `OK  ${checked} TNMGR and KUHS search hits resolve back to their own topics\n`,
+  `OK  ${checked} university search hits resolve back to their own topics\n`,
 );

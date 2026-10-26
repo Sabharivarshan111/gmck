@@ -1,0 +1,63 @@
+{
+  "questionUnits": 50,
+  "sourceDocuments": [
+    {
+      "university": "rguhs",
+      "sha256": "26a7492ec0aeb710b987bfc6db683a2046896331e8865c89b1fc96d101ad01aa",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA090326A114361/download",
+      "resolvedPdfUrl": "",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Anatomy/2025/RGUHS_Anatomy_2025_SEP_RS3_PaperI_26a7492ec0ae.pdf",
+      "review": "Whole page visually compared; wording, subparts and instructions retained; no answers supplied by source",
+      "pdfPages": [
+        1
+      ],
+      "questionUnits": 22,
+      "rights": "Publicly accessible source; no general redistribution license established; original PDF not committed to app repository"
+    },
+    {
+      "university": "knruhs",
+      "sha256": "a1ca0d260ce4018ced410a347a688e73060a58758cd090cd0432b0edd03ba195",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA130925A195041/download",
+      "resolvedPdfUrl": "",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/First_MBBS/Anatomy/2019/KNRUHS_Anatomy_2019_JULY_Unknown_PaperI_a1ca0d260ce4.pdf",
+      "review": "Whole page visually compared; wording, subparts and instructions retained; no answers supplied by source",
+      "pdfPages": [
+        1
+      ],
+      "questionUnits": 12,
+      "rights": "Publicly accessible source; no general redistribution license established; original PDF not committed to app repository"
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "f1b4f318d9b75197a322df0071be1313805adfbf696d96dfa88cc9f5274652c1",
+      "sourceUrl": "https://firstranker.com/frv2downloads.php/NTRUHS/MBBS/2018/1/Nov/NTR/500-Biochemistry",
+      "resolvedPdfUrl": "https://firstranker.com/frv2pdf.php/NTRUHS/MBBS/2018/1/Nov/NTR/500-Biochemistry/",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/NTRUHS/First_MBBS/Biochemistry/2018/NTRUHS_Biochemistry_2018_OCTOBER_NOVEMBER_Unknown_PaperI_f1b4f318d9b7.pdf",
+      "review": "Whole page visually compared; wording, subparts and instructions retained; no answers supplied by source",
+      "pdfPages": [
+        1
+      ],
+      "questionUnits": 12,
+      "rights": "Publicly accessible source; no general redistribution license established; original PDF not committed to app repository"
+    },
+    {
+      "university": "wbuhs",
+      "sha256": "5ac53317426dda06b5eefd4bab03fc91826a678ea457ca47a153084fd8c7008b",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA240323A1803529/download",
+      "resolvedPdfUrl": "",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/Second_MBBS/Pathology/2017/WBUHS_Pathology_2017_SessionUnknown_Unknown_PaperI_5ac53317426d.pdf",
+      "review": "Whole page visually compared; wording, subparts and instructions retained; no answers supplied by source",
+      "pdfPages": [
+        1
+      ],
+      "questionUnits": 4,
+      "rights": "Publicly accessible source; no general redistribution license established; original PDF not committed to app repository"
+    }
+  ],
+  "notes": [
+    "WBUHS grouped alternatives remain together, so four question units contain all original subparts.",
+    "The source literally prints nephrosis, Chrmosome and male patients; no silent factual corrections were made.",
+    "Marks are group totals for WBUHS.",
+    "MUHS has no approved rows yet; source university attribution remains unresolved."
+  ]
+}

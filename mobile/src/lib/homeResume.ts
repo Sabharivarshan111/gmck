@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { YEAR_KEYS, type YearKey } from '@/lib/questionBank';
-import { kuhsQuestionId, type University } from '@shared/university';
+import { kuhsQuestionId, isUniversity, type University } from '@shared/university';
 
 const LEGACY_KEY = 'orbit:last-question-v1';
 const keyFor = (university: University) => `orbit:last-question-v2:${university}`;
@@ -15,7 +15,7 @@ export interface LastQuestion {
 }
 
 function valid(item: LastQuestion): boolean {
-  return (item.university === 'tnmgr' || item.university === 'kuhs') &&
+  return isUniversity(item.university) &&
     typeof item.title === 'string' &&
     typeof item.question === 'string' &&
     Array.isArray(item.path) &&

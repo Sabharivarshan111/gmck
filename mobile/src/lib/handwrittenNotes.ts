@@ -296,9 +296,9 @@ export interface SingleNoteRequest {
  * has to carry the identical body, or the edge function looks at a different
  * cache row than the one on screen. Built in one place for that reason.
  */
-function singleNoteCacheKey(request: SingleNoteRequest): string {
+export function singleNoteCacheKey(request: SingleNoteRequest): string {
   const base = `${request.subjectKey}::${hashKey(request.question.trim())}`;
-  return request.university === 'kuhs' ? `single::kuhs::${base}` : `single::${base}`;
+  return request.university && request.university !== 'tnmgr' ? `single::${request.university}::${base}` : `single::${base}`;
 }
 
 function singleNoteBody(request: SingleNoteRequest): Record<string, unknown> {

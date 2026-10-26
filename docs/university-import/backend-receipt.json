@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-26",
+  "project": "pmtgeydtqypwrypshhsx",
+  "migration_version": "20261026020423",
+  "migration_name": "expand_orbit_university_bank_choices",
+  "verified_constraints": [
+    "profiles_university_check",
+    "daily_study_cards_university_check"
+  ],
+  "functions": [
+    {
+      "name": "generate-flashcards",
+      "previous_version": 20,
+      "deployed_version": 21,
+      "verify_jwt": true
+    },
+    {
+      "name": "daily-study-card",
+      "previous_version": 9,
+      "deployed_version": 10,
+      "verify_jwt": true
+    }
+  ],
+  "scope": "Allowed bank identities and university-scoped cache handling only. No question PDFs, reader data, permissions, RLS or handwritten-notes deployment changed."
+}

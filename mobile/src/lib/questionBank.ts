@@ -2,6 +2,7 @@
 // (see metro.config.js / babel.config.js). Nothing is duplicated here.
 import { QUESTION_BANK_DATA } from '@data/questionBankData';
 import { KUHS_REVIEW_BANK_DATA } from '@data/kuhs/questionBankData';
+import { COLLECTED_BANKS } from '@data/universityPapers/questionBankData';
 import type { University } from '@shared/university';
 
 export { QUESTION_BANK_DATA };
@@ -52,7 +53,7 @@ export const SUBJECT_ICON: Record<string, string> = {
 const LEAF_KEYS = new Set(['essay', 'short-notes', 'short-note']);
 
 export function getYearNode(year: YearKey, university: University = 'tnmgr'): BankNode {
-  const bank = university === 'kuhs' ? KUHS_REVIEW_BANK_DATA : QUESTION_BANK_DATA;
+  const bank = university === 'kuhs' ? KUHS_REVIEW_BANK_DATA : university === 'tnmgr' ? QUESTION_BANK_DATA : COLLECTED_BANKS[university];
   return (bank as Record<string, BankNode>)[year];
 }
 
