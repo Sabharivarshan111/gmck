@@ -5,10 +5,33 @@ type Node = { name: string; questions?: string[]; subtopics?: Record<string, Nod
 const YEARS = { first: 'first-year', second: 'second-year', third: 'third-year', final: 'final-year' } as const;
 const YEAR_NAMES = { first: 'First Year', second: 'Second Year', third: 'Third Year', final: 'Final Year' } as const;
 const SUBJECT_NAMES: Record<string, string> = {
-  'obstetrics-gynaecology': 'Obstetrics and Gynaecology', paediatrics: 'Paediatrics', anatomy: 'Anatomy', biochemistry: 'Biochemistry', pathology: 'Pathology',
+  physiology: 'Physiology', pharmacology: 'Pharmacology', 'obstetrics-gynaecology': 'Obstetrics and Gynaecology', paediatrics: 'Paediatrics', anatomy: 'Anatomy', biochemistry: 'Biochemistry', pathology: 'Pathology',
   'general-medicine': 'General Medicine', 'general-surgery': 'General Surgery', 'community-medicine': 'Community Medicine', 'forensic-medicine': 'Forensic Medicine', ophthalmology: 'Ophthalmology', ent: 'ENT',
 };
 const TOPIC_NAMES: Record<string, string> = {
+  "lower-limb": "Lower Limb",
+  "abdomen-and-pelvis": "Abdomen and Pelvis",
+  "genetics": "Genetics",
+  "general-physiology": "General Physiology",
+  "nerve-muscle-physiology": "Nerve and Muscle Physiology",
+  "gastrointestinal-physiology": "Gastrointestinal Physiology",
+  "renal-physiology": "Renal Physiology",
+  "endocrine-physiology": "Endocrine Physiology",
+  "reproductive-system": "Reproductive System",
+  "respiratory-physiology": "Respiratory Physiology",
+  "cardiovascular-physiology": "Cardiovascular Physiology",
+  "central-nervous-system": "Central Nervous System",
+  "special-senses": "Special Senses",
+  "general-pharmacology": "General Pharmacology",
+  "peripheral-nervous-system": "Peripheral Nervous System",
+  "autonomic-nervous-system": "Autonomic Nervous System",
+  "cardiovascular-system": "Cardiovascular System",
+  "respiratory-system": "Respiratory System",
+  "autacoids": "Autacoids",
+  "gastrointestinal-system": "Gastrointestinal System",
+  "anti-microbial-drugs": "Anti-microbial Drugs",
+  "miscellaneous-drugs": "Miscellaneous Drugs",
+
   "physiology-pregnancy": "Physiology of pregnancy",
   "anatomy-physiology": "Anatomy and physiology",
   "physiology-labor": "Physiology of labor",

@@ -10,7 +10,7 @@ try {
   for (const width of [360, 430]) {
     for (const fixture of [
       { university: 'rguhs', year: 'first', yearKey: 'first-year', query: 'Ulnar', topic: 'Upper Limb', reference: '24 Sep 2025' },
-      { university: 'knruhs', year: 'first', yearKey: 'first-year', query: 'Brachial', topic: 'Upper Limb', reference: 'Jul 2019' },
+      { university: 'knruhs', year: 'first', yearKey: 'first-year', query: 'roots, trunks and cords', topic: 'Upper Limb', reference: 'Jul 2019', option: '(b) Parts (roots, trunks and cords)' },
       { university: 'ntruhs', year: 'first', yearKey: 'first-year', query: 'respiratory chain', topic: 'Bioenergetics', reference: 'Oct/Nov 2018' },
       { university: 'wbuhs', year: 'second', yearKey: 'second-year', query: 'osteolytic', topic: 'Haematology', reference: '2017' },
       { university: 'knruhs', year: 'third', yearKey: 'third-year', query: 'Taking commissions', topic: 'Thermal Injuries', reference: 'Apr 2026', option: '(c) Taking commissions from pharmaceutical companies' },
@@ -29,6 +29,10 @@ try {
       { university: 'knruhs', year: 'final', yearKey: 'final-year', query: 'Maximum function of corpus luteum occurs', topic: 'Anat, physio and development', reference: 'May 2024', option: '(c) 3 days after ovulation' },
       { university: 'knruhs', year: 'first', yearKey: 'first-year', query: 'Antidote kits for cyanide poisoning contain', topic: 'Bioenergetics', reference: 'Nov 2025', option: '(d) Both A and B' },
       { university: 'knruhs', year: 'first', yearKey: 'first-year', query: '380 mg%', topic: 'Organ function tests', reference: 'Sep 2025', option: '(3+5+3+4)' },
+      { university: 'knruhs', year: 'first', yearKey: 'first-year', query: 'Suicidal enzyme', topic: 'Enzymology', reference: 'Nov 2024', option: '(d) 5- Nucleosidase' },
+      { university: 'knruhs', year: 'first', yearKey: 'first-year', query: 'mammary gland under these headings', topic: 'Upper Limb', reference: 'Nov 2024', option: 'f) Applied aspects. (2+3+2+2+3+3)' },
+      { university: 'knruhs', year: 'first', yearKey: 'first-year', query: 'His hands and feet have been growing', topic: 'Endocrine Physiology', reference: 'Sep 2025', option: 'e) What could be the cause for visual defect.' },
+      { university: 'knruhs', year: 'second', yearKey: 'second-year', query: 'Treatmet of choice', topic: 'Autonomic Nervous System', reference: 'Jan 2026', option: '(c) Adrenalin 0.5ml 1:10000 solution by im' },
       { university: 'knruhs', year: 'third', yearKey: 'third-year', query: 'amikacin', topic: 'Ear', reference: 'Apr 2026', option: 'C) Outline the appropriate further management for this patient.' },
     ]) {
       const context = await browser.newContext({ viewport: { width, height: 780 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
