@@ -2857,3 +2857,7 @@ DO NOT: Promotemechanical18081blocks,dropalternatives/options/subparts,inflateal
 ### University collection Batch09 (2026-10-27)
 
 The authorized MBBS import adds1,001complete page-reviewed RGUHS occurrences, taking the collected university bank to3,580. Raw sources stay private. Seven incomplete question units are held; duplicate pages in source119 add no Anatomy occurrences. Data, provenance, source numbering and option guards are in src/data/universityPapers and mobile/scripts/collected-university-check.mjs. Continue from source149p1Q1 using the private app checkpoint; PG work is separate. Read the latest resume entry and actual remote checks for publication/build status. No Supabase/Play changes.
+
+
+### ORBIT MBBS Batch10 — 27 October 2026
+Added 1,012 original-page-reviewed RGUHS units from 40 PDFs (71 pages compared), cumulative 4,592. 170 MCQs preserve 680 options; 12 missing/obscured units held and one alternate scan excludes 22 duplicate occurrences. Added data/provenance and bank/browser checks only; existing TNMGR/KUHS and deep-list navigation retained. Actual native web and Android JS bundle guards retain all 4,592 identities; banks, 17,493 search roundtrips, TypeScript/lint and required guards pass. Source PDFs stay private. Next review source190p1Q1. Publication/package receipts are tracked in the private Batch10 checkpoint.
