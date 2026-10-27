@@ -1,0 +1,1609 @@
+{
+  "audit": {
+    "batch": 13,
+    "newReviewed": 1015,
+    "previousApproved": 6633,
+    "totalReviewed": 7648,
+    "newByUniversity": {
+      "ntruhs": 323,
+      "knruhs": 692
+    },
+    "newBySubject": {
+      "microbiology": 158,
+      "pathology": 235,
+      "pharmacology": 22,
+      "forensic-medicine": 83,
+      "ophthalmology": 123,
+      "ent": 90,
+      "community-medicine": 304
+    },
+    "byFormat": {
+      "long-answer": 115,
+      "short-answer": 543,
+      "very-short-answer": 301,
+      "mcq": 56
+    },
+    "sourcePDFs": 61,
+    "sourcePagesCompared": 110,
+    "allQueuePagesCompared": 147,
+    "newContributingPages": 108,
+    "marks": 4556,
+    "options": 224,
+    "heldUnits": 6,
+    "excludedSources": 16,
+    "distinctNormalizedWordings": 975,
+    "distinctNotInOld": 870,
+    "newOccurrencesMatchingOld": 116,
+    "nextQueueIndex": 398,
+    "nextPage": 1,
+    "nextQuestion": "1",
+    "noUniversityYearComplete": true,
+    "cumulativeByUniversity": {
+      "rguhs": 3793,
+      "knruhs": 3516,
+      "ntruhs": 335,
+      "wbuhs": 4
+    },
+    "cumulativeMarks": {
+      "knruhs": 14919,
+      "wbuhs": 40,
+      "rguhs": 15363,
+      "ntruhs": 1560
+    }
+  },
+  "papers": [
+    {
+      "queueIndex": 321,
+      "sha256": "39cbb6dfe789d5696813c8e321ed00868a7b0f7cc71a276e1eec00c128aa3a1f",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA200223A163160/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/NTRUHS/Second_MBBS/Microbiology/2022/NTRUHS_Microbiology_2022_DECEMBER_Unknown_PaperI_39cbb6dfe789.pdf",
+      "printedUniversity": "Dr YSR University of Health Sciences, Vijayawada",
+      "printedExamDate": "Dec 2022",
+      "paperCode": "M102B030",
+      "regulation": "Not specified",
+      "subject": "microbiology",
+      "paperNumber": "I",
+      "questionCount": 12,
+      "marks": 80,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Printed issuer is DrYSR; stored in existing NTRUHS institutional bank with literal printed issuer in provenance. Theory sectionII only80marks; no20markMCQsection supplied or invented.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 322,
+      "sha256": "9039b33081858c76f7a7eb85d2825d1257cf48ea0c58471ca183dc5cdfa48660",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA200223A163163/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/NTRUHS/Second_MBBS/Microbiology/2022/NTRUHS_Microbiology_2022_DECEMBER_Unknown_PaperII_9039b3308185.pdf",
+      "printedUniversity": "Dr YSR University of Health Sciences, Vijayawada",
+      "printedExamDate": "Dec 2022",
+      "paperCode": "M102B031",
+      "regulation": "Not specified",
+      "subject": "microbiology",
+      "paperNumber": "II",
+      "questionCount": 12,
+      "marks": 80,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Theory sectionII only80marks; missingMCQsectionnotinvented.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 323,
+      "sha256": "6cde83218b53fbcf9d09add25dd8557f70d0c660687d37dbb7d7498bea93b72b",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA200223A163162/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Microbiology/2022/KNRUHS_Microbiology_2022_SEPTEMBER_NEW_REGULATION_PaperI_6cde83218b53.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Sep 2022",
+      "paperCode": "MB2019115",
+      "regulation": "New Regulation",
+      "subject": "microbiology",
+      "paperNumber": "I",
+      "questionCount": 20,
+      "marks": 90,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Printed longanswer heading2x15but individualmarksQ1(2+4+4),Q2(5+5)sum20; explicitunitmarks retained, observed90total vsprintedmax100.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 324,
+      "sha256": "0f55ab167d50e2214d8711dd81b2d34a018c1401d75c9c7f7ee86fbce16de398",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA200223A163165/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Microbiology/2022/KNRUHS_Microbiology_2022_SEPTEMBER_Unknown_PaperUnknown_0f55ab167d50.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Sep 2022",
+      "paperCode": "MB2019116",
+      "regulation": "Not specified",
+      "subject": "microbiology",
+      "paperNumber": "II",
+      "questionCount": 20,
+      "marks": 90,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Printedlongheading2x15but individualmarks(7+3)/(3+5+2)sum20; observed90retainedwithoutinventedmarks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 325,
+      "sha256": "99b4db6dee99f00114f751fe213c5956324235f783318f6cb042d8cd23f24b1a",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA010622A130434/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Microbiology/2022/KNRUHS_Microbiology_2022_APRIL_MAY_NEW_REGULATION_PaperI_99b4db6dee99.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Apr/May 2022",
+      "paperCode": "MB2019115",
+      "regulation": "New Regulation",
+      "subject": "microbiology",
+      "paperNumber": "I",
+      "questionCount": 20,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Printed A replaces4; firstveryshortnumber14(Koch),14againcandidiasis; retain14a/14b andqa; no11printed.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 326,
+      "sha256": "3ece0ccf88fedd706ac7a03b3e72f9640811804e34d34865bf70c7ae7fb62b6a",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA010622A130435/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Microbiology/2022/KNRUHS_Microbiology_2022_APRIL_MAY_NEW_REGULATION_PaperII_3ece0ccf88fe.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Apr/May 2022",
+      "paperCode": "MB2019116",
+      "regulation": "New Regulation",
+      "subject": "microbiology",
+      "paperNumber": "II",
+      "questionCount": 20,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 329,
+      "sha256": "db44df0937f2467ad1bdbd345551de8c8ba7f15006999c34235be5071b21eeec",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA200223A163161/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Microbiology/2022/KNRUHS_Microbiology_2022_JANUARY_Unknown_PaperI_db44df0937f2.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Jan 2022",
+      "paperCode": "MB113",
+      "regulation": "Not specified",
+      "subject": "microbiology",
+      "paperNumber": "I",
+      "questionCount": 11,
+      "marks": 40,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "PrintedIgE.4 retained literally.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 330,
+      "sha256": "e9256320937a87e0457a73840c588dc4966e524bef7397b08fcf69919ee8f2a2",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA200223A163164/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Microbiology/2022/KNRUHS_Microbiology_2022_JANUARY_Unknown_PaperUnknown_e9256320937a.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Jan 2022",
+      "paperCode": "MB114",
+      "regulation": "Not specified",
+      "subject": "microbiology",
+      "paperNumber": "II",
+      "questionCount": 11,
+      "marks": 40,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 331,
+      "sha256": "ee244d19365ec3053f9429aa0fbd5528e1b468cc6016a4401127b9c3bf41f5f4",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA250322A115576/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Microbiology/2021/KNRUHS_Microbiology_2021_AUGUST_Unknown_PaperI_ee244d19365e.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Aug 2021",
+      "paperCode": "MB11",
+      "regulation": "Not specified",
+      "subject": "microbiology",
+      "paperNumber": "I",
+      "questionCount": 11,
+      "marks": 40,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 332,
+      "sha256": "10a26032c77015707bbbde74bc0f35c063e756b4e6358220df1c76fa75dd436e",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA250322A115579/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Microbiology/2021/KNRUHS_Microbiology_2021_AUGUST_Unknown_PaperII_10a26032c770.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Aug 2021",
+      "paperCode": "MB114",
+      "regulation": "Not specified",
+      "subject": "microbiology",
+      "paperNumber": "II",
+      "questionCount": 11,
+      "marks": 40,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 333,
+      "sha256": "3e6072d0e7e4704342ee87e63964d95b75febb3b1e20bf1d42ee5510159f25b4",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA130925A1950431/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Microbiology/2020/KNRUHS_Microbiology_2020_NOV_Unknown_Paper1_3e6072d0e7e4.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Nov 2020",
+      "paperCode": "123",
+      "regulation": "Not specified",
+      "subject": "microbiology",
+      "paperNumber": "I",
+      "questionCount": 10,
+      "marks": 30,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Q10literallyasksdiagramofIM; preserveletterswithoutguessingIgM.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 336,
+      "sha256": "4d39f3754b1de4960177e321e826db79d3f508cf747d4e84bd093fb4b860084a",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA090326A0930522/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Pathology/2024/KNRUHS_Pathology_2024_JULY_Unknown_PaperI_4d39f3754b1d.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Jul 2024",
+      "paperCode": "Not printed",
+      "regulation": "New Scheme",
+      "subject": "pathology",
+      "paperNumber": "I",
+      "questionCount": 22,
+      "marks": 97,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Otheroddcompletechoices e.gQ6c retained literally; no source-repair from medical knowledge.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 337,
+      "sha256": "df5776d3d79a213054741a8e09c5394d55c668ab23ba9b1843ff73b050391b98",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA090326A0930526/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Pathology/2024/KNRUHS_Pathology_2024_JULY_Unknown_PaperII_df5776d3d79a.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Jul 2024",
+      "paperCode": "Not printed",
+      "regulation": "New Scheme",
+      "subject": "pathology",
+      "paperNumber": "II",
+      "questionCount": 25,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 338,
+      "sha256": "059ef1f7f197fcd75f134b66811c9bba10a6a47fe37521eb65fdf719384a6cf1",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA050425A074712/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Pathology/2023/KNRUHS_Pathology_2023_AUGUST_NEW_REGULATION_PaperI_059ef1f7f197.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Aug 2023",
+      "paperCode": "MB2019113",
+      "regulation": "New Regulation",
+      "subject": "pathology",
+      "paperNumber": "I",
+      "questionCount": 20,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 339,
+      "sha256": "38429556789f66a86a3796fbfe47db555c908d8112340f8fd0447e47cfa50ff7",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA050425A074713/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Pathology/2023/KNRUHS_Pathology_2023_AUGUST_NEW_REGULATION_PaperII_38429556789f.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Aug 2023",
+      "paperCode": "MB2019114",
+      "regulation": "New Regulation",
+      "subject": "pathology",
+      "paperNumber": "II",
+      "questionCount": 20,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 340,
+      "sha256": "6ea0620051d37e70fba66c2fdf57eff84e9b4218b01a727c2dbba1787e2e40d9",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA200223A163166/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/NTRUHS/Second_MBBS/Pathology/2022/NTRUHS_Pathology_2022_DECEMBER_Unknown_PaperI_6ea0620051d3.pdf",
+      "printedUniversity": "Dr YSR University of Health Sciences, Vijayawada",
+      "printedExamDate": "Dec 2022",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "pathology",
+      "paperNumber": "I",
+      "questionCount": 12,
+      "marks": 80,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "OnlytheorysectionII80marks supplied; absent20markMCQsnotinvented.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 341,
+      "sha256": "61dbdcd48f7408f2f4d28528fd26d7a308017ff5121637a97e625bd0ba367ae4",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA200223A1631610/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/NTRUHS/Second_MBBS/Pathology/2022/NTRUHS_Pathology_2022_DECEMBER_Unknown_PaperII_61dbdcd48f74.pdf",
+      "printedUniversity": "Dr YSR University of Health Sciences, Vijayawada",
+      "printedExamDate": "Dec 2022",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "pathology",
+      "paperNumber": "II",
+      "questionCount": 12,
+      "marks": 80,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "OnlytheorysectionII80marks supplied; absent20markMCQsnotinvented.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 342,
+      "sha256": "9d3f2bd642dfb792c526b0d05856f7009aada9cced3c54cb3bb25c5f20a5e649",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA200223A163168/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Pathology/2022/KNRUHS_Pathology_2022_SEPTEMBER_Unknown_PaperI_9d3f2bd642df.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Sep 2022",
+      "paperCode": "MB2019113",
+      "regulation": "Not specified",
+      "subject": "pathology",
+      "paperNumber": "I",
+      "questionCount": 20,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 343,
+      "sha256": "4a4653aae42360491bfd07fafea79749052aedd28bba3f2bc1a82f6701d2d0a3",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA200223A1631612/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Pathology/2022/KNRUHS_Pathology_2022_SEPTEMBER_NEW_REGULATION_PaperII_4a4653aae423.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Sep 2022",
+      "paperCode": "MB2019114",
+      "regulation": "New Regulation",
+      "subject": "pathology",
+      "paperNumber": "II",
+      "questionCount": 20,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 344,
+      "sha256": "cdee4db328c6e355d7c18679db2547df01d14846dc6bb86fb5c879741b02b423",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA010622A130432/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Pathology/2022/KNRUHS_Pathology_2022_APRIL_MAY_NEW_REGULATION_PaperI_cdee4db328c6.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Apr/May 2022",
+      "paperCode": "MB2019113",
+      "regulation": "New Regulation",
+      "subject": "pathology",
+      "paperNumber": "I",
+      "questionCount": 20,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 345,
+      "sha256": "ceab002fd23430674895579154e88a870a42628f80ce7329acb02de3c204b718",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA010622A130433/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Pathology/2022/KNRUHS_Pathology_2022_APRIL_MAY_NEW_REGULATION_PaperII_ceab002fd234.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Apr/May 2022",
+      "paperCode": "MB2019114",
+      "regulation": "New Regulation",
+      "subject": "pathology",
+      "paperNumber": "II",
+      "questionCount": 20,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 348,
+      "sha256": "7a0405438ac0b73616ba81ba73c927372e592c01d23eafa2c648675b7fd9f0dd",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA200223A163167/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Pathology/2022/KNRUHS_Pathology_2022_FEBRUARY_Unknown_PaperI_7a0405438ac0.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Feb 2022",
+      "paperCode": "MB115",
+      "regulation": "Not specified",
+      "subject": "pathology",
+      "paperNumber": "I",
+      "questionCount": 11,
+      "marks": 40,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 349,
+      "sha256": "7725cdf861568197b2536e87e46d70b8e886c6774e8821d65652f8f30a06a7a3",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA200223A1631611/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Pathology/2022/KNRUHS_Pathology_2022_FEBRUARY_Unknown_PaperII_7725cdf86156.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Feb 2022",
+      "paperCode": "MB116",
+      "regulation": "Not specified",
+      "subject": "pathology",
+      "paperNumber": "II",
+      "questionCount": 11,
+      "marks": 40,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "PrintedBoneyretainedliterally.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 350,
+      "sha256": "65150043bbb4f2426ad8cb849dd5edf8e76e71e1236dba1d0ec969fe24690916",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA250322A1155710/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Pathology/2021/KNRUHS_Pathology_2021_AUGUST_Unknown_PaperI_65150043bbb4.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Aug 2021",
+      "paperCode": "MB115",
+      "regulation": "Not specified",
+      "subject": "pathology",
+      "paperNumber": "I",
+      "questionCount": 11,
+      "marks": 40,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Clinicalunit1includesprintedsubpart2,b,ebeforesectionheading; keepgrouped, realshortnote2separate.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 351,
+      "sha256": "df146d64614fca2c927595a29c65429744668ee9e182e2cc9605dd9ca49da96d",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA250322A1155712/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Unknown/2021/KNRUHS_Unknown_2021_AUGUST_Unknown_PaperII_df146d64614f.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Aug 2021",
+      "paperCode": "MB126",
+      "regulation": "Not specified",
+      "subject": "pathology",
+      "paperNumber": "II",
+      "questionCount": 11,
+      "marks": 40,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 354,
+      "sha256": "ea45d02257573ef4e3ad6a56f3697b462f6b105f5ea34cd9d67bca944aca2481",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA250322A115577/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Pharmacology/2021/KNRUHS_Pharmacology_2021_AUG_Unknown_PaperI_ea45d0225757.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Aug 2021",
+      "paperCode": "MB111",
+      "regulation": "Not specified",
+      "subject": "pharmacology",
+      "paperNumber": "I",
+      "questionCount": 11,
+      "marks": 40,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 355,
+      "sha256": "64c5d95239c7602f6248daad17b3a72436a522a33fc0b040e499e4d473a2dff3",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA250322A115578/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Pharmacology/2021/KNRUHS_Pharmacology_2021_AUG_Unknown_PaperII_64c5d95239c7.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Aug 2021",
+      "paperCode": "MB112",
+      "regulation": "Not specified",
+      "subject": "pharmacology",
+      "paperNumber": "II",
+      "questionCount": 11,
+      "marks": 40,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 356,
+      "sha256": "6228c6ca222be523506dc0a6f88d93996df324ec7c93e5572c2c8bd7204e0370",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA250322A1155711/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Forensic_Medicine/2021/KNRUHS_Forensic_Medicine_2021_AUGUST_Unknown_PaperUnknown_6228c6ca222b.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Aug 2021",
+      "paperCode": "MB117",
+      "regulation": "Not specified",
+      "subject": "forensic-medicine",
+      "paperNumber": null,
+      "questionCount": 11,
+      "marks": 40,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 357,
+      "sha256": "77738936a8d95ffda03ad3420f39a854ec1dc10f34170737e9395facc28c5814",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA130925A1950426/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Forensic_Medicine/2020/KNRUHS_Forensic_Medicine_2020_NOVEMBER_Unknown_PaperUnknown_77738936a8d9.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Nov 2020",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "forensic-medicine",
+      "paperNumber": null,
+      "questionCount": 11,
+      "marks": 40,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 358,
+      "sha256": "7a4696da9e4581aa6f21625ba4d7b1edb6a96b502e0e21c31fea8a4edf975b3e",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA130925A1950425/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Second_MBBS/Forensic_Medicine/2020/KNRUHS_Forensic_Medicine_2020_JANUARY_FEBRUARY_Unknown_PaperUnknown_7a4696da9e45.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Jan/Feb 2020",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "forensic-medicine",
+      "paperNumber": null,
+      "questionCount": 11,
+      "marks": 40,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 363,
+      "sha256": "7e2fc20b5e646c0d2fdcd841eb6aebbdc67b1c3a237a598d28b342b5be25e8c2",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA120525A140666/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Final_MBBS/Forensic_Medicine/2025/KNRUHS_Forensic_Medicine_2025_JANUARY_Unknown_PaperUnknown_7e2fc20b5e64.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Jan 2025",
+      "paperCode": "MB2019121",
+      "regulation": "Not specified",
+      "subject": "forensic-medicine",
+      "paperNumber": null,
+      "questionCount": 25,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 364,
+      "sha256": "049002aad52434d7c5e15e686d5a7fd0da8d4222900f59edb8c04293e47a5df7",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA050425A075620/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Final_MBBS/Forensic_Medicine/2024/KNRUHS_Forensic_Medicine_2024_JAN_Unknown_PaperUnknown_049002aad524.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Jan 2024",
+      "paperCode": "MB2019121",
+      "regulation": "Not specified",
+      "subject": "forensic-medicine",
+      "paperNumber": null,
+      "questionCount": 25,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 367,
+      "sha256": "ab26140c6c703af43ffa8b97bf309c9b59f78a71198f0fa0647fc57cfed68f42",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA050425A075621/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Final_MBBS/Ophthalmology/2024/KNRUHS_Ophthalmology_2024_JAN_Unknown_PaperUnknown_ab26140c6c70.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Jan 2024",
+      "paperCode": "MB2019122",
+      "regulation": "Not specified",
+      "subject": "ophthalmology",
+      "paperNumber": null,
+      "questionCount": 25,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 368,
+      "sha256": "eae5c2ac123cab1f66d2c56dd6059fcb37803ac8907dce9efdbfa11e8cd056ef",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA130925A1950444/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Final_MBBS/Ophthalmology/2020/KNRUHS_Ophthalmology_2020_NOV_Unknown_PaperUnknown_eae5c2ac123c.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Nov 2020",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "ophthalmology",
+      "paperNumber": null,
+      "questionCount": 11,
+      "marks": 40,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 369,
+      "sha256": "2a9a799f40ff52c72c6434f26c5746601926466c193ee86ba13ef92a325228e8",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA010921A1301346/download",
+      "localPdfPath": "review_or_excluded/KNRUHS/Third_MBBS_Part_I/Ophthalmology/2018/KNRUHS_Ophthalmology_2018_FEBRUARY_Unknown_PaperUnknown_2a9a799f40ff.pdf",
+      "printedUniversity": "NTRUHS (printed vertically between the two examinations)",
+      "printedExamDate": "Multiple printed examinations; see unit dates",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "ophthalmology",
+      "paperNumber": null,
+      "questionCount": 21,
+      "marks": 70,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Two separately dated printedexamcolumns ononephysicalpage; each11units40marks. Textbookreferenceannotations excluded; examwording preserved.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 370,
+      "sha256": "2049bfd7beb962672937ab2c645289ab160c82f56cf7317167eae2cd5666c7b7",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA010921A1301341/download",
+      "localPdfPath": "review_or_excluded/KNRUHS/Third_MBBS_Part_I/Ophthalmology/2017/KNRUHS_Ophthalmology_2017_AUGUST_FEBRUARY_Unknown_PaperUnknown_2049bfd7beb9.pdf",
+      "printedUniversity": "NTRUHS (printed vertically between the two examinations)",
+      "printedExamDate": "Multiple printed examinations; see unit dates",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "ophthalmology",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 80,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Two separately dated printedexamcolumns ononephysicalpage; each11units40marks. Textbookreferenceannotations excluded; examwording preserved.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 371,
+      "sha256": "170c808b417af964646fc5aa1532db968af2a351bda6affef9cf4df845e04206",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA010921A1301337/download",
+      "localPdfPath": "review_or_excluded/KNRUHS/Third_MBBS_Part_I/Ophthalmology/2016/KNRUHS_Ophthalmology_2016_AUGUST_Unknown_PaperUnknown_170c808b417a.pdf",
+      "printedUniversity": "NTRUHS (printed vertically between the two examinations)",
+      "printedExamDate": "Multiple printed examinations; see unit dates",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "ophthalmology",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 80,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Two separately dated printedexamcolumns ononephysicalpage; each11units40marks. Textbookreferenceannotations excluded; examwording preserved.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 372,
+      "sha256": "4466180812d79eac00d818051efba5991a6ce442357a8a2f82c079e6ffbe5683",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA010921A1301333/download",
+      "localPdfPath": "review_or_excluded/KNRUHS/Third_MBBS_Part_I/Ophthalmology/Unknown/KNRUHS_Ophthalmology_Unknown_SessionUnknown_Unknown_PaperUnknown_4466180812d7.pdf",
+      "printedUniversity": "NTRUHS (printed vertically between the two examinations)",
+      "printedExamDate": "Multiple printed examinations; see unit dates",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "ophthalmology",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 80,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Two separately dated printedexamcolumns ononephysicalpage; each11units40marks. Textbookreferenceannotations excluded; examwording preserved.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 374,
+      "sha256": "c9738006124a3faf3c9ccb756855aefb836b4936e43cc564a2c49b0ff3a9b306",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA050425A075622/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Final_MBBS/ENT/2024/KNRUHS_ENT_2024_JAN_Unknown_PaperUnknown_c9738006124a.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Jan 2024",
+      "paperCode": "MB2019123",
+      "regulation": "Not specified",
+      "subject": "ent",
+      "paperNumber": null,
+      "questionCount": 24,
+      "marks": 99,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Q4left/rightsourceinconsistenciesretainedinprivateheldunit; no medical repair.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 375,
+      "sha256": "7185fb8b1a3e71b524be71d85be5c8c3d91bfbb9e03202385ca7d3d111d8fbb3",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA130925A1950446/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Final_MBBS/ENT/2021/KNRUHS_ENT_2021_JULY_Unknown_PaperI_7185fb8b1a3e.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Jul 2021",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "ent",
+      "paperNumber": "I",
+      "questionCount": 11,
+      "marks": 40,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 376,
+      "sha256": "4fd23adddeba55fabb1edb6fbc12f93d6edadbfa837e590bc7996090898b9486",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA130925A1950445/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Final_MBBS/ENT/2020/KNRUHS_ENT_2020_NOV_Unknown_PaperUnknown_4fd23adddeba.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Nov 2020",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "ent",
+      "paperNumber": null,
+      "questionCount": 11,
+      "marks": 40,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 377,
+      "sha256": "efca99555a9a62fdf950462c46d2733440510e1ee97500b7412dd668284578a1",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA010921A1301347/download",
+      "localPdfPath": "review_or_excluded/KNRUHS/Third_MBBS_Part_I/ENT/2019/KNRUHS_ENT_2019_SessionUnknown_Unknown_PaperUnknown_efca99555a9a.pdf",
+      "printedUniversity": "NTRUHS (printed vertically between the two examinations)",
+      "printedExamDate": "Multiple printed examinations; see unit dates",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "ent",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 80,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Two separately dated11unit40markexamcolumns; textbookannotationsnotexamwording.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 378,
+      "sha256": "d8a8632a5b92609e611d849510ab5d554cde3703ef55d75873f516a3a37cbf9d",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA010921A1301338/download",
+      "localPdfPath": "review_or_excluded/KNRUHS/Third_MBBS_Part_I/ENT/2016/KNRUHS_ENT_2016_AUGUST_FEBRUARY_Unknown_PaperUnknown_d8a8632a5b92.pdf",
+      "printedUniversity": "NTRUHS (printed vertically between the two examinations)",
+      "printedExamDate": "Multiple printed examinations; see unit dates",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "ent",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 80,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Two separately dated11unit40markexamcolumns; textbookannotationsnotexamwording.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 380,
+      "sha256": "125464dbf7fbc4ab4bba292362426673177cc78e37ebd12a6128e29b9dee250d",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA130925A1950458/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Third_MBBS_Part_I/Community_Medicine/2023/KNRUHS_Community_Medicine_2023_MARCH_NEW_REGULATION_Paper1_125464dbf7fb.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Mar 2023",
+      "paperCode": "Not printed",
+      "regulation": "New Regulation",
+      "subject": "community-medicine",
+      "paperNumber": "I",
+      "questionCount": 20,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 381,
+      "sha256": "78994aaf7270a2027419376fc784ef5cd473cbf4966a119dd297983d0a1f8f7a",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA130925A1950449/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Third_MBBS_Part_I/Community_Medicine/2023/KNRUHS_Community_Medicine_2023_MARCH_NEW_REGULATION_PaperII_78994aaf7270.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Mar 2023",
+      "paperCode": "Not printed",
+      "regulation": "New Regulation",
+      "subject": "community-medicine",
+      "paperNumber": "II",
+      "questionCount": 20,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 382,
+      "sha256": "2cffbcf525e524f2ad8fe3d8909c9ab1e2ed7aa8dd9524dfeb7640b0651d790a",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA130925A1950447/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Third_MBBS_Part_I/Unknown/2022/KNRUHS_Unknown_2022_MAY_Unknown_Paper1_2cffbcf525e5.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "May 2022",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "community-medicine",
+      "paperNumber": "I",
+      "questionCount": 12,
+      "marks": 60,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 383,
+      "sha256": "a5366484ff107a687e0f21927274cadadc11f9b8eb25ff616a3466a3af9029e4",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA130925A1950448/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Third_MBBS_Part_I/Unknown/2022/KNRUHS_Unknown_2022_MAY_Unknown_Paper2_a5366484ff10.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "May 2022",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "community-medicine",
+      "paperNumber": "II",
+      "questionCount": 12,
+      "marks": 60,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 384,
+      "sha256": "136b4dc127a6f3002381cbe67928ddd3349cb6ddae9128aa8f5a98e536f594fa",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA130925A1950453/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Third_MBBS_Part_I/Unknown/2022/KNRUHS_Unknown_2022_JANUARY_Unknown_Paper1_136b4dc127a6.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Jan 2022",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "community-medicine",
+      "paperNumber": "I",
+      "questionCount": 12,
+      "marks": 60,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 385,
+      "sha256": "e52220762b2cf465cf6a23d403f60df414f46e5eecc8561e9e8bf10335218c44",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA130925A1950457/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Third_MBBS_Part_I/Unknown/2022/KNRUHS_Unknown_2022_JANUARY_Unknown_Paper2_e52220762b2c.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Jan 2022",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "community-medicine",
+      "paperNumber": "II",
+      "questionCount": 12,
+      "marks": 60,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 386,
+      "sha256": "3da3b86afffe33d7ef55c23ad6ff596fe18948b351e3a818ca55fe70f3e28087",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA130925A1950452/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Third_MBBS_Part_I/Unknown/2021/KNRUHS_Unknown_2021_JULY_AUGUST_Unknown_Paper1_3da3b86afffe.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Jul/Aug 2021",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "community-medicine",
+      "paperNumber": "I",
+      "questionCount": 12,
+      "marks": 60,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Printed Colh chain and protein Energy retained literally; no expansion of question 7.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 387,
+      "sha256": "d5a145770a416d32bf5b2705f952bc1dc43faaaf704e7d3147c108effd470a2f",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA130925A1950456/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Third_MBBS_Part_I/Unknown/2021/KNRUHS_Unknown_2021_JULY_AUGUST_Unknown_Paper2_d5a145770a41.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Jul/Aug 2021",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "community-medicine",
+      "paperNumber": "II",
+      "questionCount": 12,
+      "marks": 60,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 388,
+      "sha256": "59d4857ba3c0ef32b8cc3614352ce97567ff55d399ae01b7385d138b7e47297f",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA130925A1950451/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Third_MBBS_Part_I/Unknown/2020/KNRUHS_Unknown_2020_OCT_NOV_Unknown_Paper1_59d4857ba3c0.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Oct/Nov 2020",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "community-medicine",
+      "paperNumber": "I",
+      "questionCount": 12,
+      "marks": 60,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Printed Part B heading 3x7=10m retained as source anomaly; long answer allocation printed 10m. Indi retained literally.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 389,
+      "sha256": "6d750ed50c46f5a2c68ccf92709ebe0dd861b26606254c4601b7fac71893647b",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA130925A1950455/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Third_MBBS_Part_I/Unknown/2020/KNRUHS_Unknown_2020_OCT_NOV_Unknown_Paper2_6d750ed50c46.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Oct/Nov 2020",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "community-medicine",
+      "paperNumber": "II",
+      "questionCount": 12,
+      "marks": 60,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Printed Part B heading 3x7=10m is not corrected; long answer allocation 10m.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 390,
+      "sha256": "66269ce7b51ac106de45ead73f0357d6d7c2c2312a60d04cb609672183bffe05",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA130925A1950450/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Third_MBBS_Part_I/Unknown/2020/KNRUHS_Unknown_2020_JANUARY_Unknown_Paper1_66269ce7b51a.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Jan 2020",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "community-medicine",
+      "paperNumber": "I",
+      "questionCount": 12,
+      "marks": 60,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 391,
+      "sha256": "7213a7110c8bbf6ba8ebb211d1191131121322792648961e9761d91ed7cc4c39",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA130925A1950454/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/KNRUHS/Third_MBBS_Part_I/Unknown/2020/KNRUHS_Unknown_2020_JANUARY_Unknown_Paper2_7213a7110c8b.pdf",
+      "printedUniversity": "Kaloji Narayana Rao University of Health Sciences",
+      "printedExamDate": "Jan 2020",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "community-medicine",
+      "paperNumber": "II",
+      "questionCount": 12,
+      "marks": 60,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 392,
+      "sha256": "9c4cf9ccb9de323e49395b6f46ec64c1c009776a7e322588ae35a179cac4f99b",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA010921A1301345/download",
+      "localPdfPath": "review_or_excluded/KNRUHS/Third_MBBS_Part_I/Unknown/2019/KNRUHS_Unknown_2019_JULY_Unknown_PaperUnknown_9c4cf9ccb9de.pdf",
+      "printedUniversity": "NTRUHS (printed vertically between the two examinations)",
+      "printedExamDate": "Jul 2019",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "community-medicine",
+      "paperNumber": null,
+      "questionCount": 24,
+      "marks": 120,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Two separately numbered and titled Paper I and II columns, each 12 questions and 60 marks; textbook annotations excluded.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 393,
+      "sha256": "a11493aeaed6070006815afcc40ea94c80dca855a25b636e26193377998dc9c0",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA010921A1301344/download",
+      "localPdfPath": "review_or_excluded/KNRUHS/Third_MBBS_Part_I/Unknown/2018/KNRUHS_Unknown_2018_FEBRUARY_Unknown_PaperUnknown_a11493aeaed6.pdf",
+      "printedUniversity": "NTRUHS (printed vertically between the two examinations)",
+      "printedExamDate": "Feb 2018",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "community-medicine",
+      "paperNumber": null,
+      "questionCount": 24,
+      "marks": 120,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Two separately numbered and titled Paper I and II columns, each 12 questions and 60 marks; textbook annotations excluded.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 394,
+      "sha256": "6224d1bfd390839b5de2ec1e07428d91a79bbde480b7d07384c3ec9f7590a4ed",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA010921A1301343/download",
+      "localPdfPath": "review_or_excluded/KNRUHS/Third_MBBS_Part_I/Unknown/2017/KNRUHS_Unknown_2017_FEBRUARY_Unknown_PaperUnknown_6224d1bfd390.pdf",
+      "printedUniversity": "NTRUHS (printed vertically between the two examinations)",
+      "printedExamDate": "Feb 2017",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "community-medicine",
+      "paperNumber": null,
+      "questionCount": 24,
+      "marks": 120,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Two separately numbered and titled Paper I and II columns, each 12 questions and 60 marks; textbook annotations excluded.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 395,
+      "sha256": "972a27fd7abd1a65d7b5491c0af48e36a54ec8434659f8e147674a044fa4355b",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA010921A1301340/download",
+      "localPdfPath": "review_or_excluded/KNRUHS/Third_MBBS_Part_I/Unknown/Unknown/KNRUHS_Unknown_Unknown_SessionUnknown_Unknown_PaperUnknown_972a27fd7abd.pdf",
+      "printedUniversity": "NTRUHS (printed vertically between the two examinations)",
+      "printedExamDate": "Feb 2016",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "community-medicine",
+      "paperNumber": null,
+      "questionCount": 24,
+      "marks": 120,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Two separately numbered and titled Paper I and II columns, each 12 questions and 60 marks; textbook annotations excluded.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 396,
+      "sha256": "dc18cc6ad34d0710bef418583e479226e9aeeb328f872303136a6549635b56fb",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA010921A1301336/download",
+      "localPdfPath": "review_or_excluded/KNRUHS/Third_MBBS_Part_I/Unknown/2015/KNRUHS_Unknown_2015_JANUARY_Unknown_PaperUnknown_dc18cc6ad34d.pdf",
+      "printedUniversity": "NTRUHS (printed vertically between the two examinations)",
+      "printedExamDate": "Jan 2015",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "community-medicine",
+      "paperNumber": null,
+      "questionCount": 24,
+      "marks": 120,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Two separately numbered and titled Paper I and II columns, each 12 questions and 60 marks; textbook annotations excluded.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 397,
+      "sha256": "f5e803ca6aa8f24c28f1648acd78802ffb41a81c7f3e51c7bc68a6e3c1692acd",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA010921A1301332/download",
+      "localPdfPath": "review_or_excluded/KNRUHS/Third_MBBS_Part_I/Unknown/2014/KNRUHS_Unknown_2014_JANUARY_Unknown_PaperUnknown_f5e803ca6aa8.pdf",
+      "printedUniversity": "NTRUHS (printed vertically between the two examinations)",
+      "printedExamDate": "Jan 2014",
+      "paperCode": "Not printed",
+      "regulation": "Not specified",
+      "subject": "community-medicine",
+      "paperNumber": null,
+      "questionCount": 24,
+      "marks": 120,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Two separately numbered and titled Paper I and II columns, each 12 questions and 60 marks; textbook annotations excluded.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    }
+  ],
+  "exclusions": [
+    {
+      "queueIndex": 327,
+      "sha256": "195438a3420ed59f1541b81ce731112cbee448dbf99811d801a36fad8a839139",
+      "pagesCompared": [
+        1,
+        2,
+        3
+      ],
+      "exclude": "Reflowed derivative of source325; same full examination content. ShorterAprildate label and malformed additions do not establish an independent occurrence.",
+      "canonicalSource": 325
+    },
+    {
+      "queueIndex": 328,
+      "sha256": "8ac934083f1425aac4b6ddbc5bc90c08314dd7d46a4324db0c802dbc0156581c",
+      "pagesCompared": [
+        1,
+        2,
+        3
+      ],
+      "exclude": "Reflowed derivative of source326; same full examination content. ShorterAprildate label and malformed additions do not establish an independent occurrence.",
+      "canonicalSource": 326
+    },
+    {
+      "queueIndex": 334,
+      "sha256": "aad7ce8676f70caa6cb8936a03611a14e852180c8ab6188e6c4f535ae3d2cbeb",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "All25units compared; alternate copy of imported Jan2026 pathology examination.",
+      "canonicalShaPrefix": "ff3dd4d16ddb"
+    },
+    {
+      "queueIndex": 335,
+      "sha256": "d1684fc3d74918adda85cbb5fca99cc2a1c271c4194204c7aa552777b6923a21",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "All25units compared; alternate copy of imported Jan2026 pathology examination.",
+      "canonicalShaPrefix": "dbf41e115c51"
+    },
+    {
+      "queueIndex": 346,
+      "sha256": "36eb93f04fe844c9b205cdc03deddd16921506d6254478ac50bff6d5dd16fb2e",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "All20unitscompared; reflowedalternateofsource344, retainedonce.",
+      "canonicalSource": 344
+    },
+    {
+      "queueIndex": 347,
+      "sha256": "250550082aa70725ca57eaf20e7b1a007d5ce84b07a2952e2b60fafd720e94e9",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "All20unitscompared; reflowedalternateofsource345, retainedonce.",
+      "canonicalSource": 345
+    },
+    {
+      "queueIndex": 352,
+      "sha256": "96e1a8ffaf74c4c8b506dcadeaec0b8f1e92516705db87d5206a4586d1c37d75",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "All25unitscompared; alternateJan2026pharmacologyexamalreadyimported.",
+      "canonicalShaPrefix": "b6cd50f0b87d"
+    },
+    {
+      "queueIndex": 353,
+      "sha256": "7434ded967c9b2e085914ffde75c9ca1f00b82ec28fb12e9508de8fe07cbe1b0",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "All25unitscompared; alternateJan2026pharmacologyexamalreadyimported.",
+      "canonicalShaPrefix": "ad3500b2dd56"
+    },
+    {
+      "queueIndex": 359,
+      "sha256": "81ac49e1965e233c64e832e212d565ee8196f5f383c6c1f9d435e1a9c7754b0d",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "All25unitscompared; alternatecopyofpreviouslyimportedexamination.",
+      "canonicalShaPrefix": "c6066ec7370d"
+    },
+    {
+      "queueIndex": 360,
+      "sha256": "15b9b1544da882d2029d387e8471286ed4f5f2f0395e1d39b248a49dbdb382de",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "All25unitscompared; alternatecopyofpreviouslyimportedexamination.",
+      "canonicalShaPrefix": "d3849ebf741b"
+    },
+    {
+      "queueIndex": 361,
+      "sha256": "1620a3eedc207254540493facd61a60ceafb6c8a7e0c9cb2eefabca3be2c0141",
+      "pagesCompared": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "exclude": "Reflowedderivativeof360/Nov2025 canonical; printed2015and19x1conflictwithcanonical2025/10x1andidenticalfull25questionsequence. No independent2015occurrence established; heldoutwithoutchangingprinteddate.",
+      "canonicalShaPrefix": "d3849ebf741b"
+    },
+    {
+      "queueIndex": 362,
+      "sha256": "c29012e4fcdaec692e06ffc054fa8c6fb0f758a68233d4643dacd96b28dd329c",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "All25unitscompared; alternatecopyofpreviouslyimportedexamination.",
+      "canonicalShaPrefix": "f902bd4a84fe"
+    },
+    {
+      "queueIndex": 365,
+      "sha256": "425c29c5a2a0b8ca1684541be3816907ee955ed564d020dc133ad6141ff3f711",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "All25unitscompared; sameprintedPartIophthalmologyexaminationalreadyimported; minorpapercodevariationinAprcopydoesnotcreateanotherexam.",
+      "canonicalShaPrefix": "76c1e1c76540"
+    },
+    {
+      "queueIndex": 366,
+      "sha256": "efa8d1bb04ec28352f9cac72bc1df36cca0f083339200cf65a440bba36064f36",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "All25unitscompared; sameprintedPartIophthalmologyexaminationalreadyimported; minorpapercodevariationinAprcopydoesnotcreateanotherexam.",
+      "canonicalShaPrefix": "95fc65e5ac90"
+    },
+    {
+      "queueIndex": 373,
+      "sha256": "725bab20151c8e696be33c041686ffa1850d8bea856aab07044b76fa360c9cd5",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "All25unitscompared; alternateofimportedPartIENTApr2026paper.",
+      "canonicalShaPrefix": "9ccef7949cae"
+    },
+    {
+      "queueIndex": 379,
+      "sha256": "091c00598186df2be3f7aa02ebe2a58a9c5e71b8ea5ceec87d767fbc1a9b0f8e",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "All 25 units compared; alternate of imported KNRUHS Community Medicine Paper I Apr 2026.",
+      "canonicalShaPrefix": "663cfc584243"
+    }
+  ],
+  "held": [
+    {
+      "queueIndex": 333,
+      "sha256": "3e6072d0e7e4704342ee87e63964d95b75febb3b1e20bf1d42ee5510159f25b4",
+      "sourceQuestion": "1",
+      "pdfPage": 1,
+      "marks": 10,
+      "text": "Classify hypersensitivity reactions with examples, Write mechanism of (type-) hypersensitivity Enlist mediators of anaphylaxis. following:",
+      "reason": "Printedtype-blank leaves requested hypersensitivity type missing; wholeunit held."
+    },
+    {
+      "queueIndex": 336,
+      "sha256": "4d39f3754b1de4960177e321e826db79d3f508cf747d4e84bd093fb4b860084a",
+      "sourceQuestion": "3",
+      "pdfPage": 2,
+      "marks": 1,
+      "text": "Which of the following is a reversible a) Karyorrhexis. c) Karyolysis b) Pyknosis. d) Medi Circle",
+      "reason": "Malformed reversible-injury stem and contaminatedMediCirclechoice; wholeunit held."
+    },
+    {
+      "queueIndex": 336,
+      "sha256": "4d39f3754b1de4960177e321e826db79d3f508cf747d4e84bd093fb4b860084a",
+      "sourceQuestion": "4",
+      "pdfPage": 2,
+      "marks": 1,
+      "text": "After initiation of an acute inflammatory process third in a sequence of changes in a), Vasoconstriction ✔ Leukocytic migration, b) Redness d) Vasodilation Swelling of endoplasmic reticulum.",
+      "reason": "Clipped/mixedstem andunlabelledextraoption; wholeunit held."
+    },
+    {
+      "queueIndex": 336,
+      "sha256": "4d39f3754b1de4960177e321e826db79d3f508cf747d4e84bd093fb4b860084a",
+      "sourceQuestion": "9",
+      "pdfPage": 3,
+      "marks": 1,
+      "text": "Which of the following antibody is virtually diagnostic of SLE? a) Anti ds DNA antibody c) APLA b) Anti histone antibody Anti Rho antibody",
+      "reason": "Fourthchoicehasnoprintedlabel in malformedderivative; held without guessinglabel."
+    },
+    {
+      "queueIndex": 369,
+      "sha256": "2a9a799f40ff52c72c6434f26c5746601926466c193ee86ba13ef92a325228e8",
+      "sourceQuestion": "1l",
+      "pdfPage": 1,
+      "marks": 10,
+      "text": "Discuss in detail the signs, stages and complications. (3+3+4=10)",
+      "reason": "Disease/object missing after signs/stages/complications in printedunit; holdwholelongquestion."
+    },
+    {
+      "queueIndex": 374,
+      "sha256": "c9738006124a3faf3c9ccb756855aefb836b4936e43cc564a2c49b0ff3a9b306",
+      "sourceQuestion": "4",
+      "pdfPage": 2,
+      "marks": 1,
+      "text": "Mr. Rangarajan, a 35-year-old male presents to the ENT clinic with sudden onset of right-sided facial weakness and drooping of the right corner of his mouth. He reports difficulty in closing his right eye, reduced taste sensation on the anterior two-thirds of his tongue, and hypersensitivity to sounds in his right ear. He denies any history of trauma to the head or neck. Upon further questioning, he reveals that he experienced a mild upper respiratory tract infection a week ago. He has no significant past medical history and is not currently taking any medications. He denies any recent illnesses or infections. On examination, has asymmetry of the face with weakness of the right facial muscles. His right eye does not fully close, and there is drooping of the right corner of his mouth. He has hyperacusis on the left side and decreased taste sensation on the anterior two-thirds of his tongue on the left side. There are no signs of ear or sinus infections. What is the most likely diagnosis in this patient? a. Acoustic neuroma b. Temporal bone fracture c. Bell's palsy d. Vestibular schwannoma",
+      "reason": "Completeclinicalstemexceeds1000characterquestionlimit; heldwholewithoutshortening."
+    }
+  ]
+}
