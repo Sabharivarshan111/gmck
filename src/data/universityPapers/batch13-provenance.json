@@ -32,8 +32,8 @@
     "heldUnits": 6,
     "excludedSources": 16,
     "distinctNormalizedWordings": 975,
-    "distinctNotInOld": 870,
-    "newOccurrencesMatchingOld": 116,
+    "distinctNotInOld": 869,
+    "newOccurrencesMatchingOld": 117,
     "nextQueueIndex": 398,
     "nextPage": 1,
     "nextQuestion": "1",
@@ -45,10 +45,10 @@
       "wbuhs": 4
     },
     "cumulativeMarks": {
-      "knruhs": 14919,
-      "wbuhs": 40,
       "rguhs": 15363,
-      "ntruhs": 1560
+      "wbuhs": 40,
+      "ntruhs": 1560,
+      "knruhs": 14919
     }
   },
   "papers": [
@@ -114,7 +114,7 @@
         2
       ],
       "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
-      "notes": "Printed longanswer heading2x15but individualmarksQ1(2+4+4),Q2(5+5)sum20; explicitunitmarks retained, observed90total vsprintedmax100.",
+      "notes": "Printed longanswer heading2x15but individualmarksQ1(2+4+4),Q2(5+5)sum20; explicitunitmarks retained, observed90total vsprintedmax100. Roman III compared against original, not OCR Ill.",
       "answerKey": "No official answer key supplied or invented",
       "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
     },

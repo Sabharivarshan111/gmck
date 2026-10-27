@@ -560,7 +560,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH13 = [
     "subjectKey": "microbiology",
     "topicKey": "immunology",
     "kind": "short-notes",
-    "question": "Type Ill Hypersensitivity reaction.",
+    "question": "Type III Hypersensitivity reaction.",
     "examRefs": [
       "Sep 2022 · Examination · Paper I · Code MB2019115 · New Regulation"
     ],
@@ -1396,7 +1396,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH13 = [
     "subjectKey": "microbiology",
     "topicKey": "immunology",
     "kind": "short-notes",
-    "question": "Type | Hypersensitivity.",
+    "question": "Type I Hypersensitivity.",
     "examRefs": [
       "Apr/May 2022 · Examination · Paper I · Code MB2019115 · New Regulation"
     ],
@@ -1624,7 +1624,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH13 = [
     "subjectKey": "microbiology",
     "topicKey": "virology",
     "kind": "essay",
-    "question": "A10-year-old boy is bitten by a dog in his forearm region. He is brought to the paediatric OPD. On local examination the wound has bite marks with bleeding. a Categorize the wound according to WHO guidelines. b. Describe the pathogenesis of this condition. é. Elaborate on Lab diagnosis, d. Explain the Post Exposure Prophylaxis (IM & ID). (2+4+4+5)",
+    "question": "A 10-year-old boy is bitten by a dog in his forearm region. He is brought to the paediatric OPD. On local examination the wound has bite marks with bleeding. a Categorize the wound according to WHO guidelines. b. Describe the pathogenesis of this condition. e. Elaborate on Lab diagnosis, d. Explain the Post Exposure Prophylaxis (IM & ID). (2+4+4+5)",
     "examRefs": [
       "Apr/May 2022 · Examination · Paper II · Code MB2019116 · New Regulation"
     ],
@@ -4400,7 +4400,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH13 = [
     "subjectKey": "pathology",
     "topicKey": "immunology",
     "kind": "short-notes",
-    "question": "Type Ill hypersensitivity Reaction.",
+    "question": "Type III hypersensitivity Reaction.",
     "examRefs": [
       "Aug 2023 · Supplementary · Paper I · Code MB2019113 · New Regulation"
     ],
@@ -9460,7 +9460,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH13 = [
     "subjectKey": "forensic-medicine",
     "topicKey": "legal-procedures",
     "kind": "short-notes",
-    "question": "First class judicial magistrate ls appointed by:\n(a) Chief minister of the state\n(b) Governor of the state\n(c) Chief justice of high court\n(d) Chief justice of Supreme court",
+    "question": "First class judicial magistrate is appointed by:\n(a) Chief minister of the state\n(b) Governor of the state\n(c) Chief justice of high court\n(d) Chief justice of Supreme court",
     "examRefs": [
       "Jan 2024 · Examination · Code MB2019121 · Not specified"
     ],
@@ -9604,7 +9604,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH13 = [
     "subjectKey": "forensic-medicine",
     "topicKey": "mechanical-injuries",
     "kind": "short-notes",
-    "question": "Hesitation cuts are seen in cases of:\n(a) Hornicide\n(b) Suicide\n(c) Fall from height\n(d) Accident",
+    "question": "Hesitation cuts are seen in cases of:\n(a) Homicide\n(b) Suicide\n(c) Fall from height\n(d) Accident",
     "examRefs": [
       "Jan 2024 · Examination · Code MB2019121 · Not specified"
     ],
@@ -9617,7 +9617,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH13 = [
     "options": [
       {
         "label": "a",
-        "text": "Hornicide"
+        "text": "Homicide"
       },
       {
         "label": "b",
@@ -9640,7 +9640,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH13 = [
     "subjectKey": "forensic-medicine",
     "topicKey": "mechanical-injuries",
     "kind": "short-notes",
-    "question": "Stellate wound is produced with firearm in:\n(a) Distant shot\n(b) Clase shot\n(c) Range with 1 meter\n(d) Contact shot",
+    "question": "Stellate wound is produced with firearm in:\n(a) Distant shot\n(b) Close shot\n(c) Range with 1 meter\n(d) Contact shot",
     "examRefs": [
       "Jan 2024 · Examination · Code MB2019121 · Not specified"
     ],
@@ -9657,7 +9657,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH13 = [
       },
       {
         "label": "b",
-        "text": "Clase shot"
+        "text": "Close shot"
       },
       {
         "label": "c",
@@ -12484,7 +12484,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH13 = [
     "subjectKey": "ent",
     "topicKey": "ear",
     "kind": "short-notes",
-    "question": "Carhart's notch is commontly-seen in which type of hearing loss?\n(a) Conductive hearing loss\n(b) Sensorineural hearing loss\n(c) Mixed hearing loss\n(d) Presbycusis",
+    "question": "Carhart's notch is commonly-seen in which type of hearing loss?\n(a) Conductive hearing loss\n(b) Sensorineural hearing loss\n(c) Mixed hearing loss\n(d) Presbycusis",
     "examRefs": [
       "Jan 2024 · Examination · Code MB2019123 · Not specified"
     ],
@@ -12592,7 +12592,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH13 = [
     "subjectKey": "ent",
     "topicKey": "ear",
     "kind": "short-notes",
-    "question": "Which of the following fluids fills the Scala media of the cochlea?\n(a) Perilyrnph\n(b) Endolymph\n(c) Cerebrospinal fluid\n(d) Labyrinthine fluid",
+    "question": "Which of the following fluids fills the Scala media of the cochlea?\n(a) Perilymph\n(b) Endolymph\n(c) Cerebrospinal fluid\n(d) Labyrinthine fluid",
     "examRefs": [
       "Jan 2024 · Examination · Code MB2019123 · Not specified"
     ],
@@ -12605,7 +12605,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH13 = [
     "options": [
       {
         "label": "a",
-        "text": "Perilyrnph"
+        "text": "Perilymph"
       },
       {
         "label": "b",

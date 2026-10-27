@@ -522,3 +522,12 @@ assert.equal(batch13.find(r=>r.id==="ntruhs-9c4cf9ccb9de-p1-q1r").examRefs[0],"J
 assert.equal(batch13.find(r=>r.id==="ntruhs-a11493aeaed6-p1-q1l").examRefs[0],"Feb 2018 \u00b7 Examination \u00b7 Paper I \u00b7 Code Not printed \u00b7 Not specified");
 assert.equal(batch13.find(r=>r.id==="ntruhs-f5e803ca6aa8-p1-q12r").examRefs[0],"Jan 2014 \u00b7 Examination \u00b7 Paper II \u00b7 Code Not printed \u00b7 Not specified");
 console.log('PASS Batch13:1015 units,61 source PDFs,4556 marks,56 MCQs/224 options; printed NTR/YSR attribution, column-specific dates/papers, repeated numbers, historical legal wording, whole-unit holds and alternate examination scans.');
+
+// Original-page-verified OCR glyph corrections, preserving source anomalies.
+assert.ok(batch13.find(r=>r.id==="knruhs-6cde83218b53-p1-q6").question.includes("Type III"));
+assert.ok(batch13.find(r=>r.id==="knruhs-99b4db6dee99-p2-q10").question.includes("Type I"));
+assert.ok(batch13.find(r=>r.id==="knruhs-3ece0ccf88fe-p1-q2").question.includes("e. Elaborate"));
+assert.ok(batch13.find(r=>r.id==="knruhs-059ef1f7f197-p1-q11").question.includes("Type III"));
+assert.ok(batch13.find(r=>r.id==="knruhs-049002aad524-p2-q6").question.includes("(a) Homicide"));
+assert.ok(batch13.find(r=>r.id==="knruhs-049002aad524-p2-q7").question.includes("(b) Close shot"));
+assert.ok(batch13.find(r=>r.id==="knruhs-c9738006124a-p2-q6").question.includes("(a) Perilymph"));
