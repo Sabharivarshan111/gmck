@@ -51,6 +51,12 @@ try {
       { university: 'rguhs', year: 'third', yearKey: 'third-year', query: 'plant twig while working', topic: 'Diseases of cornea', reference: '29 Sep 2025', option: 'e) Discuss the treatment of the above condition' },
       { university: 'rguhs', year: 'third', yearKey: 'third-year', query: 'kerosene like odour', topic: 'Toxicology', reference: '24 Nov 2025', option: 'e) Create a treatment plan for this case.' },
       { university: 'rguhs', year: 'third', yearKey: 'third-year', query: 'lighthouse sign', topic: 'Ear', reference: '21 Nov 2025', option: 'd) How will you treat this patient?' },
+      { university: 'rguhs', year: 'third', yearKey: 'third-year', query: 'Gradenigo triad', topic: 'Ear', reference: '24 Jan 2025', option: '(C) VII nerve involvement' },
+      { university: 'rguhs', year: 'third', yearKey: 'third-year', query: 'stomach wash in a case of poisoning EXCEPT', topic: 'Toxicology', reference: '20 Jan 2025', option: '(D) Organophosphorous Poisons' },
+      { university: 'rguhs', year: 'third', yearKey: 'third-year', query: 'Prostaglandin analogue', topic: 'Glaucoma', reference: '04 Mar 2022', option: 'mechanism of action and two important side effects' },
+      { university: 'rguhs', year: 'final', yearKey: 'final-year', query: 'early breast cancer', topic: 'Breast', reference: '06 Oct 2025', option: 'Or Classify renal tumours.' },
+      { university: 'rguhs', year: 'final', yearKey: 'final-year', query: 'Pyrogenic meningitis', topic: 'CNS', reference: '24 Sep 2025', option: 'Cerebro spinal fluid findings' },
+      { university: 'rguhs', year: 'final', yearKey: 'final-year', query: 'Triad of GERD', topic: 'Esophagus and stomach', reference: '19 Aug 2024', option: 'Triad of GERD.' },
     ]) {
       const context = await browser.newContext({ viewport: { width, height: 780 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
       await context.route('**/*', route => new URL(route.request().url()).origin === new URL(base).origin ? route.continue() : route.abort());
