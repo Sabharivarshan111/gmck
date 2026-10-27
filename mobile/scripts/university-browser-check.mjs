@@ -60,7 +60,7 @@ try {
       {"university": "rguhs", "year": "final", "yearKey": "final-year", "query": "Rodent ulcer", "topic": "Neoplasm and others", "reference": "27 Mar 2021", "option": "Rodent ulcer."},
       {"university": "knruhs", "year": "first", "yearKey": "first-year", "query": "Cadaver as the first teacher", "topic": "General Anatomy", "reference": "Aug 2024"},
       {"university": "knruhs", "year": "first", "yearKey": "first-year", "query": "radio ulnar joint", "topic": "Upper Limb", "reference": "Aug 2024"},
-      {"university": "knruhs", "year": "first", "yearKey": "first-year", "query": "allopurinol", "topic": "Nucleotide metabolism", "reference": "Nov 2023", "option": "serum - 12 mg/dL"},
+      {"university": "knruhs", "year": "first", "yearKey": "first-year", "query": "distal phalangeal joints", "topic": "Nucleotide metabolism", "reference": "Nov 2023", "option": "serum - 12 mg/dL"},
       {"university": "knruhs", "year": "first", "yearKey": "first-year", "query": "Motor end plate", "topic": "Nerve and Muscle Physiology", "reference": "Mar 2022"},
       {"university": "knruhs", "year": "second", "yearKey": "second-year", "query": "Current drug of choice for Enteric fever", "topic": "Bacteriology", "reference": "Jul 2024", "option": "(e) Ceftriaxone"},
     ]) {
