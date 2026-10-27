@@ -8,7 +8,8 @@ import { REVIEWED_UNIVERSITY_QUESTIONS_BATCH07 as batch07 } from './reviewedBatc
 import { REVIEWED_UNIVERSITY_QUESTIONS_BATCH08 as batch08 } from './reviewedBatch08';
 import { REVIEWED_UNIVERSITY_QUESTIONS_BATCH09 as batch09 } from './reviewedBatch09';
 import { REVIEWED_UNIVERSITY_QUESTIONS_BATCH10 as batch10 } from './reviewedBatch10';
+import { REVIEWED_UNIVERSITY_QUESTIONS_BATCH11 as batch11 } from './reviewedBatch11';
 import type { ReviewedUniversityQuestion } from './types';
 
 /** Explicitly approved batches only. The mechanical extraction queue is never imported. */
-export const REVIEWED_UNIVERSITY_QUESTIONS: ReviewedUniversityQuestion[] = [...batch01, ...batch02, ...batch03, ...batch04, ...batch05, ...batch06, ...batch07, ...batch08, ...batch09, ...batch10];
+export const REVIEWED_UNIVERSITY_QUESTIONS: ReviewedUniversityQuestion[] = [...batch01, ...batch02, ...batch03, ...batch04, ...batch05, ...batch06, ...batch07, ...batch08, ...batch09, ...batch10, ...batch11];
