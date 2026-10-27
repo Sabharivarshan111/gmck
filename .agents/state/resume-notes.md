@@ -2527,3 +2527,7 @@ NEXT: Publish exacttestedtree, watchfocusedUI/actualpackagedIDguards, selectivew
 ##2026-10-27 — University Batch09 web port
 
 Selective authorized port of1,001new original-page-reviewed RGUHS question units.3,580collected total,7heldsourceunits,4duplicatepagelinks excluded. Data/provenance/bank/search/browser fixtures copied from tested native tree7205366ed0578f81f8353ea80626f09a64ba274c. SWcache name bumped. No raw PDFs, backend changes or Play upload. Preserve concurrent anatomy/attendance/payment work. Verify hostedchecks/actualdomainbundle before reportinglive. Next source149p1Q1 from private checkpoint.
+
+
+## 2026-10-27 — ORBIT MBBS Batch10 web port
+Selective port of 1,012 original-page-reviewed RGUHS units;4,592 cumulative. Native source f0b3c7b66dbcdea9d7aadc7e738b77824ca41b8b.40PDFs/71pages compared,170MCQs/680options,12heldunits,onealternate scan/22occurrences excluded. Existing TNMGR/KUHS and native deep-list navigation preserved; rawPDFs private. Source190p1Q1 is next. Run focused bank/browser checks and actual assembled Vercel payload guard; inspect deployment/package receipts before claiming live. No backend/Play changes.

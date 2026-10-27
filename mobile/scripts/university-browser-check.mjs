@@ -46,6 +46,11 @@ try {
       { university: 'rguhs', year: 'second', yearKey: 'second-year', query: 'papulovesicular lesions over', topic: 'Bacteriology', reference: '25 Aug 2025', option: 'c) Describe laboratory investigations' },
       { university: 'rguhs', year: 'second', yearKey: 'second-year', query: 'metal sharp waste', topic: 'Hospital Infection Control', reference: '25 Aug 2025', option: '(D) White' },
       { university: 'rguhs', year: 'second', yearKey: 'second-year', query: 'Blood grouping in Disputed paternity', topic: 'Blood Stains, Artefacts, FS Laboratory', reference: '23 Aug 2024' },
+      { university: 'rguhs', year: 'second', yearKey: 'second-year', query: 'coronary artery disease', topic: 'Hormones', reference: '04 Mar 2022', option: '(C) Elderly patients with coronary artery disease' },
+      { university: 'rguhs', year: 'third', yearKey: 'third-year', query: 'Monks hood', topic: 'Toxicology', reference: '24 Nov 2025', option: '(D) Aconite' },
+      { university: 'rguhs', year: 'third', yearKey: 'third-year', query: 'plant twig while working', topic: 'Diseases of cornea', reference: '29 Sep 2025', option: 'e) Discuss the treatment of the above condition' },
+      { university: 'rguhs', year: 'third', yearKey: 'third-year', query: 'kerosene like odour', topic: 'Toxicology', reference: '24 Nov 2025', option: 'e) Create a treatment plan for this case.' },
+      { university: 'rguhs', year: 'third', yearKey: 'third-year', query: 'lighthouse sign', topic: 'Ear', reference: '21 Nov 2025', option: 'd) How will you treat this patient?' },
     ]) {
       const context = await browser.newContext({ viewport: { width, height: 780 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
       await context.route('**/*', route => new URL(route.request().url()).origin === new URL(base).origin ? route.continue() : route.abort());
@@ -58,7 +63,10 @@ try {
       await page.goto(`${base}/browse/${fixture.yearKey}`);
       await page.getByText(`${fixture.university.toUpperCase()} Question Bank`, { exact: true }).waitFor();
       await page.getByPlaceholder('Search all questions…').fill(fixture.query);
-      const switcher = page.getByLabel(`Switch to ${fixture.topic}`, { exact: true });
+      // Real repetitions across exams need their own dated result, not the first matching chapter.
+      const switcher = page.getByLabel(`Switch to ${fixture.topic}`, { exact: true })
+        .locator('..').filter({ hasText: fixture.reference })
+        .getByLabel(`Switch to ${fixture.topic}`, { exact: true });
       await switcher.waitFor();await switcher.click();
       await page.getByText(fixture.reference, { exact: false }).filter({ visible: true }).first().waitFor();
       if (fixture.option) await page.getByText(fixture.option, { exact: false }).filter({ visible: true }).first().waitFor();
@@ -67,7 +75,7 @@ try {
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), 'Horizontal overflow');
       assert.deepEqual(errors, []);
       results.push({ width, university: fixture.university, query: fixture.query, searchAndChapterAndReference: 'passed' });
-      if (width === 360 && fixture.query === 'metal sharp waste') { fs.mkdirSync('artifacts/university-import',{recursive:true});await page.screenshot({path:'artifacts/university-import/batch09-options-360.png'}); }
+      if (width === 360 && fixture.query === 'Monks hood') { fs.mkdirSync('artifacts/university-import',{recursive:true});await page.getByText(fixture.option, {exact:false}).filter({visible:true}).first().scrollIntoViewIfNeeded();await page.waitForTimeout(250);await page.screenshot({path:'artifacts/university-import/batch10-options-360.png'}); }
       console.log('PASS chapter/reference', width, fixture.university, fixture.query);
       await context.close();
     }
