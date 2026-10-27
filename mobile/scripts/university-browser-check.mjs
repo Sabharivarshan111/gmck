@@ -63,6 +63,12 @@ try {
       {"university": "knruhs", "year": "first", "yearKey": "first-year", "query": "distal phalangeal joints", "topic": "Nucleotide metabolism", "reference": "Nov 2023", "option": "serum - 12 mg/dL"},
       {"university": "knruhs", "year": "first", "yearKey": "first-year", "query": "Motor end plate", "topic": "Nerve and Muscle Physiology", "reference": "Mar 2022"},
       {"university": "knruhs", "year": "second", "yearKey": "second-year", "query": "Current drug of choice for Enteric fever", "topic": "Bacteriology", "reference": "Jul 2024", "option": "(e) Ceftriaxone"},
+      {"university": "ntruhs", "year": "second", "yearKey": "second-year", "query": "Vi antigen how", "topic": "Bacteriology", "reference": "Dec 2022", "option": "List the vaccine available"},
+      {"university": "knruhs", "year": "second", "yearKey": "second-year", "query": "formation of Thrombus", "topic": "Hemodynamic Disorders", "reference": "Feb 2022"},
+      {"university": "ntruhs", "year": "third", "yearKey": "third-year", "query": "Sluder", "topic": "Nose", "reference": "Feb 2019"},
+      {"university": "knruhs", "year": "third", "yearKey": "third-year", "query": "arytenoid cartilages", "topic": "Larynx and trachea", "reference": "Jan 2024", "option": "(a) One- Voice Articulation"},
+      {"university": "ntruhs", "year": "third", "yearKey": "third-year", "query": "Minimum requirements at PHC", "topic": "Health Care Of Community", "reference": "Jan 2015"},
+      {"university": "knruhs", "year": "third", "yearKey": "third-year", "query": "Proximate principle", "topic": "Nutrition And Health", "reference": "Mar 2023"},
     ]) {
       const context = await browser.newContext({ viewport: { width, height: 780 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
       await context.route('**/*', route => new URL(route.request().url()).origin === new URL(base).origin ? route.continue() : route.abort());

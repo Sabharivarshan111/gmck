@@ -2830,3 +2830,7 @@ Nextqueue240page1Q1,RGUHSGeneralSurgery2021SHAb709cf9e59b34769b066e45e1845478a0d
 **NEXT**: Verify native debug/internal/release artifacts and web selective PR/production; then resume source321,p1,Q1 from latest Batch12 checkpoint. No university/year complete.
 
 **DO NOT**: Promote unreviewed extraction, count alternate copies, silently renumber repeated printed questions, change backend/version29, or upload to Play.
+
+
+## 2026-10-27 — ORBIT university Batch13
+1,015 additional complete original-page-reviewed units, cumulative7,648: RGUHS3,793; KNRUHS3,516; NTR/YSR335; WB4. Source321–397 accounted for;61contributing PDFs/110pages,147totalpages visually compared.56MCQs/224options,4,556marks. Sixunits heldwhole;16alternate sources excluded. NTR columns keep per-column dates and paper numbers. Prior6,633objects unchanged; TNMGR/KUHS/version29/backend untouched. No university/year complete. Next source398p1Q1; check exact private checkpoint before resuming. Publish web selectively through PR; verify live IDs and actual packages before marking complete.
