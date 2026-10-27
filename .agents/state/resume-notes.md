@@ -2834,3 +2834,10 @@ Nextqueue240page1Q1,RGUHSGeneralSurgery2021SHAb709cf9e59b34769b066e45e1845478a0d
 
 ## 2026-10-27 — ORBIT university Batch13
 1,015 additional complete original-page-reviewed units, cumulative7,648: RGUHS3,793; KNRUHS3,516; NTR/YSR335; WB4. Source321–397 accounted for;61contributing PDFs/110pages,147totalpages visually compared.56MCQs/224options,4,556marks. Sixunits heldwhole;16alternate sources excluded. NTR columns keep per-column dates and paper numbers. Prior6,633objects unchanged; TNMGR/KUHS/version29/backend untouched. No university/year complete. Next source398p1Q1; check exact private checkpoint before resuming. Publish web selectively through PR; verify live IDs and actual packages before marking complete.
+
+
+## 2026-10-27 — ORBIT university Batch14
+DONE: 1,008 complete original-page-reviewed occurrences (829 NTR/YSR,179 KNRUHS), cumulative8,656; original7,648objects unchanged.75contributingPDFs/191pages;209pages visually compared including9alternatecopies.90MUHSattributionholds remain deferred and were not approved or claimed visually reviewed.273MCQs/1092options,3189marks;11wholeunitsheld. Preserve printed issuer/date, repeated5/skipped7, cross-page subparts and source anomalies. TNMGR/KUHS/version29/backend/Play unchanged.
+HALF-DONE: Publication/133scenario hostedUI/actualAPK-AABverification tracked in latest private Batch14 receipts. Source/bank/search/KUHS/TypeScript/requiredguards and native-web8656-ID check pass. Local Chromium download fails; hosted UI is required before completion.
+NEXT: Verify exactpublishedtree, bothUI suites, productionIDs and allAndroidpackages; then source572p1Q1, SHA046ca085a04b03080d2d82eadb7f7646742d9fa74efe255f6536ebb9d477ca81. No university/year complete. NTR queue nowactive; KNR collectedqueuecleared but missingcoverage/heldsources remain.
+DO NOT: promote mechanicaldrafts/MUHSfolderlabels, count alternatecopies, fillmissingvalues/choices, exposeoriginalPDFs or forcepush.

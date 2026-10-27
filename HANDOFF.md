@@ -2861,3 +2861,7 @@ The authorized MBBS import adds1,001complete page-reviewed RGUHS occurrences, ta
 
 ### ORBIT MBBS Batch10 — 27 October 2026
 Added 1,012 original-page-reviewed RGUHS units from 40 PDFs (71 pages compared), cumulative 4,592. 170 MCQs preserve 680 options; 12 missing/obscured units held and one alternate scan excludes 22 duplicate occurrences. Added data/provenance and bank/browser checks only; existing TNMGR/KUHS and deep-list navigation retained. Actual native web and Android JS bundle guards retain all 4,592 identities; banks, 17,493 search roundtrips, TypeScript/lint and required guards pass. Source PDFs stay private. Next review source190p1Q1. Publication/package receipts are tracked in the private Batch10 checkpoint.
+
+
+### ORBIT university Batch14 — 27 October2026
+Added1,008 original-page-reviewed units to shared offline bank, total8,656;829NTR/YSR and179KNRUHS.11incompleteunitsheld,9alternatecopiesexcluded;90MUHSsources remain attributiondeferred. Source provenance and regression checks preserve repeated/skipped numbering and complete cross-page questions. See latest resume entry and private Batch14 publication receipts for actual web/Android verification; source checks alone do not certify packages. Next review source572p1Q1. No university/year complete; backend/version29/Play unchanged.
