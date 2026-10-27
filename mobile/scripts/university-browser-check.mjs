@@ -69,6 +69,12 @@ try {
       {"university": "knruhs", "year": "third", "yearKey": "third-year", "query": "arytenoid cartilages", "topic": "Larynx and trachea", "reference": "Jan 2024", "option": "(a) One- Voice Articulation"},
       {"university": "ntruhs", "year": "third", "yearKey": "third-year", "query": "Minimum requirements at PHC", "topic": "Health Care Of Community", "reference": "Jan 2015"},
       {"university": "knruhs", "year": "third", "yearKey": "third-year", "query": "Proximate principle", "topic": "Nutrition And Health", "reference": "Mar 2023"},
+      {"university": "knruhs", "year": "final", "yearKey": "final-year", "query": "Wolf-Chaikoff", "topic": "Endocrinology", "reference": "Feb 2025", "option": "(b) Excessive iodine"},
+      {"university": "ntruhs", "year": "first", "yearKey": "first-year", "query": "1st lumbrical", "topic": "Upper Limb", "reference": "Aug 2024", "option": "(d) Anterior interosseous nerve"},
+      {"university": "ntruhs", "year": "first", "yearKey": "first-year", "query": "circadian rhythm", "topic": "Central Nervous System", "reference": "Aug 2024", "option": "(c) Suprachiasmatic nucleus"},
+      {"university": "ntruhs", "year": "second", "yearKey": "second-year", "query": "Empathy towards patients", "topic": "General Microbiology", "reference": "Jan 2024"},
+      {"university": "ntruhs", "year": "second", "yearKey": "second-year", "query": "hepatic CYP microsomal", "topic": "General Pharmacology", "reference": "Aug 2021"},
+      {"university": "ntruhs", "year": "third", "yearKey": "third-year", "query": "intersectorial approach", "topic": "Epidemiology Of Non-Communicable Diseases", "reference": "Aug 2011"},
     ]) {
       const context = await browser.newContext({ viewport: { width, height: 780 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
       await context.route('**/*', route => new URL(route.request().url()).origin === new URL(base).origin ? route.continue() : route.abort());

@@ -41,10 +41,10 @@ const notes = load('src/lib/handwrittenNotes.ts', { ...common, './notesDedup': {
   './notesLimits': {}, './progress': progress });
 const resume = load('src/lib/homeResume.ts', { ...common, '@/lib/questionBank': bank });
 
-assert.equal(rows.length, 7648);
+assert.equal(rows.length, 8656);
 assert.equal(new Set(rows.map(r => r.id)).size, rows.length);
-const expected = { rguhs: 3793, knruhs: 3516, muhs: 0, ntruhs: 335, wbuhs: 4 };
-const marks = { rguhs: 15363, knruhs: 14919, ntruhs: 1560, wbuhs: 40 };
+const expected = { rguhs: 3793, knruhs: 3695, muhs: 0, ntruhs: 1164, wbuhs: 4 };
+const marks = { rguhs: 15363, knruhs: 15599, ntruhs: 4069, wbuhs: 40 };
 const ids = new Set();
 for (const [university, count] of Object.entries(expected)) {
   assert.equal(bank.allSearchHits(university).length, count);
@@ -57,7 +57,7 @@ for (const [university, count] of Object.entries(expected)) {
     assert.match(row.sourceSha256, /^[a-f0-9]{64}$/);
     assert.ok(row.id.includes(row.sourceSha256.slice(0, 12)));
     assert.ok(Number.isInteger(row.pdfPage) && row.pdfPage >= 1 && row.pdfPage <= 7);
-    assert.ok((row.question.length > 4 || {"knruhs-6cde83218b53-p2-q12": "PKDL", "knruhs-ee244d19365e-p1-q11": "IgG", "knruhs-136b4dc127a6-p1-q2": "Bias", "knruhs-d5a145770a41-p1-q10": "CARE"}[row.id] === row.question || (row.id === 'knruhs-e8e59be64df3-p2-q17' && row.question === 'KFD') || (row.id === 'rguhs-942383725e34-p1-q6' && row.question === 'IgM.') || (row.id === 'rguhs-764314376aaf-p1-q17' && row.question === 'Hair') || (['rguhs-fc6c85e99007-p1-q5','rguhs-d3a0bc4dc8fb-p1-q12'].includes(row.id) && row.question === 'Gout') || (row.id === 'rguhs-8b7f4f6c8446-p1-q13' && row.question === 'GABA')) && row.question.length <= 1000);
+    assert.ok((row.question.length > 4 || (row.id === 'ntruhs-12f02835c36f-p1-q7' && row.question === 'Gout') || {"knruhs-6cde83218b53-p2-q12": "PKDL", "knruhs-ee244d19365e-p1-q11": "IgG", "knruhs-136b4dc127a6-p1-q2": "Bias", "knruhs-d5a145770a41-p1-q10": "CARE"}[row.id] === row.question || (row.id === 'knruhs-e8e59be64df3-p2-q17' && row.question === 'KFD') || (row.id === 'rguhs-942383725e34-p1-q6' && row.question === 'IgM.') || (row.id === 'rguhs-764314376aaf-p1-q17' && row.question === 'Hair') || (['rguhs-fc6c85e99007-p1-q5','rguhs-d3a0bc4dc8fb-p1-q12'].includes(row.id) && row.question === 'Gout') || (row.id === 'rguhs-8b7f4f6c8446-p1-q13' && row.question === 'GABA')) && row.question.length <= 1000);
     assert.ok(row.examRefs.length > 0 && row.topicKey);
     const raw = `PYQ[${row.id}] ${row.question}`;
     assert.equal(text.getCleanQuestionText(raw), row.question);
@@ -88,7 +88,7 @@ assert.ok(wb[2].question.includes('nephrosis and apoptosis'), 'Do not silently c
 assert.ok(wb[1].question.includes('any two') && wb[1].question.includes('c)'));
 assert.ok(wb[3].question.includes('any two') && wb[3].question.includes('d) Septic shock'));
 assert.ok(rows.find(r => r.university === 'knruhs').question.includes('(d) Applied anatomy'));
-console.log('PASS 7648 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
+console.log('PASS 8656 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
 
 const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH02: batch02 } = await bundle('src/data/universityPapers/reviewedBatch02.ts');
 assert.equal(batch02.length, 200);
@@ -531,3 +531,32 @@ assert.ok(batch13.find(r=>r.id==="knruhs-059ef1f7f197-p1-q11").question.includes
 assert.ok(batch13.find(r=>r.id==="knruhs-049002aad524-p2-q6").question.includes("(a) Homicide"));
 assert.ok(batch13.find(r=>r.id==="knruhs-049002aad524-p2-q7").question.includes("(b) Close shot"));
 assert.ok(batch13.find(r=>r.id==="knruhs-c9738006124a-p2-q6").question.includes("(a) Perilymph"));
+
+const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH14: batch14 } = await bundle('src/data/universityPapers/reviewedBatch14.ts');
+assert.equal(batch14.length,1008);
+assert.equal(batch14.reduce((s,r)=>s+r.marks,0),3189);
+assert.equal(batch14.filter(r=>r.options).length,273);
+assert.equal(batch14.reduce((s,r)=>s+(r.options?.length??0),0),1092);
+const q14=(n,q)=>batch14.find(r=>r.sourceSha256===source14[n] && r.id.endsWith('-q'+q));
+const source14={"398": "b4507601fb3539795f1b77db98bf6380bbb915033d12ec5ed67a628b144673c3", "403": "e43fbd21d959355424913141dabdfe0cc9bde45b691c6e9374a09c520819f9b8", "406": "111c5c296ee15d32ba0b234eefe1b315b122fd8eb4baea2b5753c0c4f2779aaf", "413": "c7f02cc0a9b365f5c6a0af6ffe389680899e1b500bd3c6341ef415f2d1e05e23", "510": "59106d9929fbfbfc160170a322ea94a9ed019b0c4aa060cf21e988cffdce2537", "513": "79c06ce41b0c2eaec19f13f7d40c4107bcf57ee0803eaf9dc1943555b610b81a", "517": "b7ecff9c28fc879fbe9a26bf46d0d2c5de168c35b58a1bd48b3ad0ddf91056e9", "521": "6df8e390df428bef504d5ae9f8d8610a580d597d763bd89a750c1f21e45656e5", "522": "446de7a6dbca70f838d52b9c13c85b444d68045759594bc4d8e0dee9101768c0", "523": "774318bcff31fadbe1184233f23de20ccbe309a2d3628103b54eede2ac8f112e", "524": "70e44b5a24d7ac891ec979d396ca9da3d0e51a71dae5d742924ebc1d36520327", "540": "2df4813f13a6a8f7f592b67be9a8cedea0e6b17c784a2855f5741cb169f30222", "541": "0977f69e714dcf516c8bc3c61035fb40d40df7821847b308d3525f0579a6a8c9", "571": "43d91731af39b982c404073ff38be0130c928c64d433e0139dbcb81f5ff4dc1d"};
+assert.ok(q14(403,'13').question.includes('11.8 g/dl'));
+assert.ok(q14(406,'2').question.includes('urine osmolality is 40'));
+assert.ok(q14(413,'9').examRefs[0].includes('Part B'));
+assert.ok(q14(398,'1l').examRefs[0].includes('Aug 2011'));
+assert.ok(q14(521,'5a').question.includes('Diarrheagenic'));
+assert.ok(q14(521,'5b').question.includes('Helicobacter'));
+assert.ok(q14(523,'1').question.startsWith('A 6 years'));
+assert.ok(q14(523,'2').question.includes('e. Write a note on treatment and prevention'));
+assert.ok(!q14(523,'7'));assert.ok(q14(523,'13'));
+assert.equal(q14(510,'19').options[0].text,'180 l');
+assert.ok(!q14(510,'3'));assert.ok(!q14(513,'7'));assert.ok(!q14(513,'8'));assert.ok(!q14(513,'16'));
+assert.ok(!q14(517,'2'));assert.ok(!q14(517,'8'));assert.ok(!q14(517,'9'));
+assert.ok(!q14(522,'15'));assert.ok(!q14(524,'7'));assert.ok(!q14(524,'20'));
+assert.ok(!batch14.some(r=>r.sourceSha256===source14[541]));
+assert.ok(q14(540,'11').question.includes('Diabetes Insipidus'));
+assert.ok(q14(571,'11').question.includes('Type IV'));
+for(const r of batch14){
+ assert.ok(!/Ranker|www\.|§X2|» Ei|Essay \/ Long Answer Questions|r ras|choige|tnechanisin/.test(r.question));
+ if(r.options){assert.equal(r.options.length,4);assert.equal(new Set(r.options.map(o=>o.label.toLowerCase())).size,4);for(const o of r.options)assert.ok(r.question.includes(`(${o.label}) ${o.text}`));}
+}
+console.log('PASS Batch14:1008 units,273MCQs/1092options,3189marks; repeated/skipped numbering, cross-page clinical subparts, complete-option holds, duplicate exam exclusion and printed NTR/YSR dates.');
