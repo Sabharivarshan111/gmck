@@ -41,10 +41,10 @@ const notes = load('src/lib/handwrittenNotes.ts', { ...common, './notesDedup': {
   './notesLimits': {}, './progress': progress });
 const resume = load('src/lib/homeResume.ts', { ...common, '@/lib/questionBank': bank });
 
-assert.equal(rows.length, 4592);
+assert.equal(rows.length, 5618);
 assert.equal(new Set(rows.map(r => r.id)).size, rows.length);
-const expected = { rguhs: 2683, knruhs: 1893, muhs: 0, ntruhs: 12, wbuhs: 4 };
-const marks = { rguhs: 10463, knruhs: 7550, ntruhs: 50, wbuhs: 40 };
+const expected = { rguhs: 3709, knruhs: 1893, muhs: 0, ntruhs: 12, wbuhs: 4 };
+const marks = { rguhs: 14963, knruhs: 7550, ntruhs: 50, wbuhs: 40 };
 const ids = new Set();
 for (const [university, count] of Object.entries(expected)) {
   assert.equal(bank.allSearchHits(university).length, count);
@@ -88,7 +88,7 @@ assert.ok(wb[2].question.includes('nephrosis and apoptosis'), 'Do not silently c
 assert.ok(wb[1].question.includes('any two') && wb[1].question.includes('c)'));
 assert.ok(wb[3].question.includes('any two') && wb[3].question.includes('d) Septic shock'));
 assert.ok(rows.find(r => r.university === 'knruhs').question.includes('(d) Applied anatomy'));
-console.log('PASS 4592 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
+console.log('PASS 5618 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
 
 const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH02: batch02 } = await bundle('src/data/universityPapers/reviewedBatch02.ts');
 assert.equal(batch02.length, 200);
@@ -379,3 +379,38 @@ const clinical10=batch10.find(r=>r.sourceSha256.startsWith('8075d7fdaeae')&&r.so
 assert.ok(batch10.find(r=>r.sourceSha256.startsWith('764314376aaf')).examRefs[0].includes('Dec 2013'),'Printed2013overridesOCR2015');
 assert.ok(batch10.find(r=>r.sourceSha256.startsWith('97235a56e071')&&r.sourceQuestion==='2').question.includes('e) Create a treatment plan'));
 console.log('PASS Batch10:1012complete units,40sources,3984marks,170MCQs/680options;12missing/obscured units held;22alternate-scan occurrences excluded; cross-page options/clinical subparts retained.');
+
+const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH11: batch11 } = await bundle('src/data/universityPapers/reviewedBatch11.ts');
+assert.equal(batch11.length, 1026);
+assert.equal(batch11.reduce((sum, r) => sum + r.marks, 0), 4500);
+assert.equal(batch11.filter(r => r.questionFormat === 'mcq').length, 50);
+assert.equal(batch11.reduce((sum, r) => sum + (r.options?.length ?? 0), 0), 200);
+const papers11 = Map.groupBy(batch11, r => r.sourceSha256);
+assert.equal(papers11.size, 47);
+for (const entries of papers11.values()) {
+  const shortPaper = ['1095', '1096'].some(code => entries[0].examRefs[0].includes(`Code ${code}`));
+  const cbme = entries[0].examRefs[0].includes('CBME');
+  const writtenCount = shortPaper ? 10 : cbme ? 20 : 22;
+  assert.deepEqual(entries.filter(r => r.questionFormat !== 'mcq').map(r => Number(r.sourceQuestion)), Array.from({ length: writtenCount }, (_, i) => i + 1));
+  assert.equal(entries.reduce((sum, r) => sum + r.marks, 0), shortPaper ? 50 : 100);
+  if (cbme) assert.deepEqual(entries.filter(r => r.questionFormat === 'mcq').map(r => r.sourceQuestion), ['21i','21ii','21iii','21iv','21v','22i','22ii','22iii','22iv','22v']);
+  for (const r of entries) {
+    assert.ok(!/www\.|FirstRanker|LONG ESSAY|SHORT ESSAY|Max. Marks|Page \d/.test(r.question));
+    if (r.options) {
+      assert.deepEqual(r.options.map(o => o.label), ['A','B','C','D']);
+      for (const o of r.options) assert.ok(r.question.includes(`(${o.label}) ${o.text}`));
+    }
+  }
+}
+for (const prefix of ['f993e66c7281','72d444832aed','8e7414ad7b32']) assert.ok(!batch11.some(r => r.sourceSha256.startsWith(prefix)), 'Alternate scans and unattributed paper must not inflate the bank');
+const q11 = (sha, q) => batch11.find(r => r.sourceSha256.startsWith(sha) && r.sourceQuestion === q);
+assert.equal(q11('cdd2e23a74e8','21i').pdfPage, 1, 'Cross-page MCQ group starts on actual page1');
+assert.equal(q11('cdd2e23a74e8','21ii').pdfPage, 2);
+assert.equal(q11('d76fe40fc278','21iv').options[2].text, 'VII nerve involvement', 'OCR dropped the second I; preserve actual printed choice');
+assert.equal(q11('82439f54d753','22').question, 'Triad of GERD.', 'Obscured footer must be transcribed from original pixels, not guessed');
+assert.ok(q11('b74a078d49f7','7').question.includes('population of 900'));
+assert.ok(q11('d9523b3a51f6','21').question.includes('mechanism of action and two important side effects'));
+assert.ok(batch11.some(r => r.question.includes('Pyrogenic meningitis')), 'Printed wording remains literal');
+assert.ok(batch11.some(r => r.examRefs[0].includes('Corrections') && r.question.includes('Or Classify renal tumours.')));
+assert.ok(q11('de62cac91db9','16').question.includes('Or Course of ureter'), 'Alternatives remain grouped with original number');
+console.log('PASS Batch11:1026 units,47 examinations,4500marks,50MCQs/200options;4half-papers,roman sequencing,footer transcription,grouped alternatives,cross-page provenance and exclusions.');
