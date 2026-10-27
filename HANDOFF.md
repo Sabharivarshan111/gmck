@@ -2853,3 +2853,7 @@ DONE: TypeScript/fullquietlint,2579bankchecks,15480searchroundtrips,oldbankparit
 HALF-DONE: Nativepublication/selectivewebPR/67scenarioCI/production2579/newAPK/AABpendingatprepush. Livepreviousweb1556untilactualpayloadchecked. Noannualcoveragecomplete. PrivateappZIP/markdownsameIDsnowv11savedbeforepublication.
 NEXT: Publish exacttestedtreewithremoteexpectedheadguards;selectivewebPR preservingconcurrentwork;inspectUIandactualpayloads. ThenRGUHSPhysiologyPaperI09Feb2023SHAdc4e153eb36ed4bf82ef64e2665487522dd31cba2b1ff818b0b508ac8f9d8ec4,Q1/page1,queueindex108. Allqueue60–107accountedfor;nextpagesnotvisuallycompared. Use latest2579-rowREVIEWED_APP_QUESTIONSexplicitly.
 DO NOT: Promotemechanical18081blocks,dropalternatives/options/subparts,inflatealternatewatermarkscans,guessofficialanswers/regulation/MUHSissuer,exposerawPDFs,changeversion29orforcepush.
+
+### University collection Batch09 (2026-10-27)
+
+The authorized MBBS import adds1,001complete page-reviewed RGUHS occurrences, taking the collected university bank to3,580. Raw sources stay private. Seven incomplete question units are held; duplicate pages in source119 add no Anatomy occurrences. Data, provenance, source numbering and option guards are in src/data/universityPapers and mobile/scripts/collected-university-check.mjs. Continue from source149p1Q1 using the private app checkpoint; PG work is separate. Read the latest resume entry and actual remote checks for publication/build status. No Supabase/Play changes.
