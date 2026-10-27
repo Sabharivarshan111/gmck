@@ -2522,3 +2522,8 @@ DONE: Continued from KNRUHS ENT FinalPartIIApr2026 through next8queue papers: EN
 DONE: Original450question files/IDs unchanged; approved total653(KNRUHS615,RGUHS22,NTRUHS12,WBUHS4grouped,MUHS0disabled),52approvedsourcepages. Allnewrows appfinal per printed PartII.653IDseparately verified in actual Android JS/native webJS. MobileTypeScript/fullquietlint,13554search round-trips, oldbankparity and8requiredguards pass. Removed duplicate inserted chapter labels before final verification.
 HALF-DONE: Sourcepublication/hosted27scenarioUI/newAndroidbuilds pending at this pre-push checkpoint. Previous450-ID packages are now complete: Debug634/Internal594/Release776(actualAPK/AABguards verified450). These do not prove653shipped. Version29unchanged; no backend/rawPDF/Play changes.
 NEXT: Publish exacttestedtree, watchfocusedUI/actualpackagedIDguards, selectivewebPR and livedomain653-ID verification. Nextunprocessedpaper KNRUHS GeneralSurgeryPaperI May2024 SHA f95168c7a1ea4890cc9501f51843a15a3e857904d417388a5d9ae20e534f173a, Q1/page1. First24queuepapers transcribed; no university/year complete. Preserve current source/concurrent work and use latest private appcheckpoint ZIP/markdown IDs, not older first50defaults.
+
+
+##2026-10-27 — University Batch09 web port
+
+Selective authorized port of1,001new original-page-reviewed RGUHS question units.3,580collected total,7heldsourceunits,4duplicatepagelinks excluded. Data/provenance/bank/search/browser fixtures copied from tested native tree7205366ed0578f81f8353ea80626f09a64ba274c. SWcache name bumped. No raw PDFs, backend changes or Play upload. Preserve concurrent anatomy/attendance/payment work. Verify hostedchecks/actualdomainbundle before reportinglive. Next source149p1Q1 from private checkpoint.

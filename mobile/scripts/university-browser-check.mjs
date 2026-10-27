@@ -42,6 +42,10 @@ try {
       { university: 'rguhs', year: 'first', yearKey: 'first-year', query: '0.85:1', topic: 'Chemistry of amino acids and proteins', reference: '13 Dec 2024', option: '5.0 g/dl; 2.3 g/dl; 0.85:1' },
       { university: 'rguhs', year: 'first', yearKey: 'first-year', query: 'Space of Retzius is related', topic: 'Abdomen and Pelvis', reference: '27 Apr 2023', option: '(D) Rectum' },
       { university: 'rguhs', year: 'first', yearKey: 'first-year', query: 'Most common site of lesion to the pyramidal', topic: 'Central Nervous System', reference: '02 May 2023', option: '(D) Medulla' },
+      { university: 'rguhs', year: 'first', yearKey: 'first-year', query: 'positive, chvostek', topic: 'Minerals', reference: '17 Feb 2021', option: 'd. Mention any 6 biochemical functions' },
+      { university: 'rguhs', year: 'second', yearKey: 'second-year', query: 'papulovesicular lesions over', topic: 'Bacteriology', reference: '25 Aug 2025', option: 'c) Describe laboratory investigations' },
+      { university: 'rguhs', year: 'second', yearKey: 'second-year', query: 'metal sharp waste', topic: 'Hospital Infection Control', reference: '25 Aug 2025', option: '(D) White' },
+      { university: 'rguhs', year: 'second', yearKey: 'second-year', query: 'Blood grouping in Disputed paternity', topic: 'Blood Stains, Artefacts, FS Laboratory', reference: '23 Aug 2024' },
     ]) {
       const context = await browser.newContext({ viewport: { width, height: 780 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
       await context.route('**/*', route => new URL(route.request().url()).origin === new URL(base).origin ? route.continue() : route.abort());
@@ -63,6 +67,7 @@ try {
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), 'Horizontal overflow');
       assert.deepEqual(errors, []);
       results.push({ width, university: fixture.university, query: fixture.query, searchAndChapterAndReference: 'passed' });
+      if (width === 360 && fixture.query === 'metal sharp waste') { fs.mkdirSync('artifacts/university-import',{recursive:true});await page.screenshot({path:'artifacts/university-import/batch09-options-360.png'}); }
       console.log('PASS chapter/reference', width, fixture.university, fixture.query);
       await context.close();
     }
