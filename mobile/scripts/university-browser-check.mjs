@@ -63,7 +63,10 @@ try {
       await page.goto(`${base}/browse/${fixture.yearKey}`);
       await page.getByText(`${fixture.university.toUpperCase()} Question Bank`, { exact: true }).waitFor();
       await page.getByPlaceholder('Search all questions…').fill(fixture.query);
-      const switcher = page.getByLabel(`Switch to ${fixture.topic}`, { exact: true });
+      // Real repetitions across exams need their own dated result, not the first matching chapter.
+      const switcher = page.getByLabel(`Switch to ${fixture.topic}`, { exact: true })
+        .locator('..').filter({ hasText: fixture.reference })
+        .getByLabel(`Switch to ${fixture.topic}`, { exact: true });
       await switcher.waitFor();await switcher.click();
       await page.getByText(fixture.reference, { exact: false }).filter({ visible: true }).first().waitFor();
       if (fixture.option) await page.getByText(fixture.option, { exact: false }).filter({ visible: true }).first().waitFor();
