@@ -41,10 +41,10 @@ const notes = load('src/lib/handwrittenNotes.ts', { ...common, './notesDedup': {
   './notesLimits': {}, './progress': progress });
 const resume = load('src/lib/homeResume.ts', { ...common, '@/lib/questionBank': bank });
 
-assert.equal(rows.length, 5618);
+assert.equal(rows.length, 6633);
 assert.equal(new Set(rows.map(r => r.id)).size, rows.length);
-const expected = { rguhs: 3709, knruhs: 1893, muhs: 0, ntruhs: 12, wbuhs: 4 };
-const marks = { rguhs: 14963, knruhs: 7550, ntruhs: 50, wbuhs: 40 };
+const expected = { rguhs: 3793, knruhs: 2824, muhs: 0, ntruhs: 12, wbuhs: 4 };
+const marks = { rguhs: 15363, knruhs: 11873, ntruhs: 50, wbuhs: 40 };
 const ids = new Set();
 for (const [university, count] of Object.entries(expected)) {
   assert.equal(bank.allSearchHits(university).length, count);
@@ -56,8 +56,8 @@ for (const [university, count] of Object.entries(expected)) {
   for (const row of uniRows) {
     assert.match(row.sourceSha256, /^[a-f0-9]{64}$/);
     assert.ok(row.id.includes(row.sourceSha256.slice(0, 12)));
-    assert.ok(Number.isInteger(row.pdfPage) && row.pdfPage >= 1 && row.pdfPage <= 4);
-    assert.ok((row.question.length > 4 || (row.id === 'rguhs-942383725e34-p1-q6' && row.question === 'IgM.') || (row.id === 'rguhs-764314376aaf-p1-q17' && row.question === 'Hair') || (['rguhs-fc6c85e99007-p1-q5','rguhs-d3a0bc4dc8fb-p1-q12'].includes(row.id) && row.question === 'Gout') || (row.id === 'rguhs-8b7f4f6c8446-p1-q13' && row.question === 'GABA')) && row.question.length <= 1000);
+    assert.ok(Number.isInteger(row.pdfPage) && row.pdfPage >= 1 && row.pdfPage <= 7);
+    assert.ok((row.question.length > 4 || (row.id === 'knruhs-e8e59be64df3-p2-q17' && row.question === 'KFD') || (row.id === 'rguhs-942383725e34-p1-q6' && row.question === 'IgM.') || (row.id === 'rguhs-764314376aaf-p1-q17' && row.question === 'Hair') || (['rguhs-fc6c85e99007-p1-q5','rguhs-d3a0bc4dc8fb-p1-q12'].includes(row.id) && row.question === 'Gout') || (row.id === 'rguhs-8b7f4f6c8446-p1-q13' && row.question === 'GABA')) && row.question.length <= 1000);
     assert.ok(row.examRefs.length > 0 && row.topicKey);
     const raw = `PYQ[${row.id}] ${row.question}`;
     assert.equal(text.getCleanQuestionText(raw), row.question);
@@ -88,7 +88,7 @@ assert.ok(wb[2].question.includes('nephrosis and apoptosis'), 'Do not silently c
 assert.ok(wb[1].question.includes('any two') && wb[1].question.includes('c)'));
 assert.ok(wb[3].question.includes('any two') && wb[3].question.includes('d) Septic shock'));
 assert.ok(rows.find(r => r.university === 'knruhs').question.includes('(d) Applied anatomy'));
-console.log('PASS 5618 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
+console.log('PASS 6633 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
 
 const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH02: batch02 } = await bundle('src/data/universityPapers/reviewedBatch02.ts');
 assert.equal(batch02.length, 200);
@@ -414,3 +414,55 @@ assert.ok(batch11.some(r => r.question.includes('Pyrogenic meningitis')), 'Print
 assert.ok(batch11.some(r => r.examRefs[0].includes('Corrections') && r.question.includes('Or Classify renal tumours.')));
 assert.ok(q11('de62cac91db9','16').question.includes('Or Course of ureter'), 'Alternatives remain grouped with original number');
 console.log('PASS Batch11:1026 units,47 examinations,4500marks,50MCQs/200options;4half-papers,roman sequencing,footer transcription,grouped alternatives,cross-page provenance and exclusions.');
+
+const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH12: batch12 } = await bundle('src/data/universityPapers/reviewedBatch12.ts');
+assert.equal(batch12.length,1015);
+assert.equal(batch12.reduce((sum,r)=>sum+r.marks,0),4723);
+assert.equal(batch12.filter(r=>r.options).length,108);
+assert.equal(batch12.reduce((sum,r)=>sum+(r.options?.length??0),0),432);
+const expected12 = {"b709cf9e59b34769b066e45e1845478a0dbbc7afe39d7bdc3370b844bcb63d94": [10, 50], "9bf3fdc76ad1449644816895299b9ae1c94cd354e282337b14929d39219f35b4": [10, 50], "aff3b94ae5384c418f4d2f74ae6f085076192cf3528858f7b6646a71249fdcc4": [22, 100], "814841cf01a017c8dbbc0bfb3bbe6d082db7654f1a84909bcb11a76c6e968da6": [10, 50], "5c70a6ef06d22aabad5eb9998ec63785e682f49b15eb1846cd342b33f7c822fe": [10, 50], "20439afd6967a5a7516df579a92e723de53b61fde482d93b880d8810a56a532a": [22, 100], "5710557000e192082aed9cce6e1b1a031c5c78b81ddbf8cf536b12efdee1a992": [25, 100], "a7a804b9d716418c5a94302a9024721360ea1b9ca9634c818dd219f5b9c7c77b": [12, 40], "11cf7cb62e64a8423a2e6d6b06d16eb80ca05094c8f984cd087365c8e034d49a": [25, 100], "454c318336876c827defba107074ef3d00da0aaf02ffb4135b73a5956ff56c72": [25, 100], "336cd1b4ca0d4deba13b6759e24c6d7c7ce8eb46deef2f2644458a047c4737d2": [25, 100], "2aa6e3efd266fcb5b4d2fbddfc803d16043de63b8d8d3ebb52afb31af076cf12": [20, 100], "fefbf2fc755e74d6ab1997834c165351e690d828b1f85d2b0893ada4ca937c4e": [21, 115], "ed50c381c4c6648c35aef3fb2f8df22c77d9409fae73bd69acb9d19b4e742bcc": [20, 100], "76148fa27297b8a4126a79a288e312e1578b881cb121484ed2ec410cdeb9d6bb": [10, 70], "8103983f6c1e01f0335bc7427dad863b1c1090649fc0c459cb9f8641b1a8b856": [20, 100], "e813d5506a85eae79057b39c2f0957687ecadd65af584c78f48c27f360a434b9": [20, 100], "e78b0e68d63d7001ad18a8800a3b87375fef750525753c0ae74463dffd935af4": [20, 100], "9a12d96e8b48f9f99c8a35e5605eefc8d10f921b48eff10435e8ff27b3d165da": [20, 100], "3f0a8de2759cdfc058d6c8db3cff806115a0ffb6e5cc3c48c00a4827de70afa3": [12, 50], "82f306eeb13f448ed39a35c66f458dc1ea8cecf1bd3064b709d520ea9ed40a4b": [12, 50], "b0c858d17af0654075083761e317aa708b36aec057df7a9e51de09a7c66c29a9": [12, 50], "f8e67f3705de9d47d730e5eb07b187f7d926926028474c29809649e0068f005a": [12, 50], "85bc48374b292af5ba72cac69849d815a2e876e57ebbc3e88301c824852cb0c1": [12, 50], "21160f85438fd8335711859518bbee9bf7f8cb2c53ba49312e16559f39479faa": [25, 100], "86c30b2e8485ed31b37ae2010dfe9a89320e14ce9cfd3374ef7b52da7519418c": [25, 100], "00326b5130dedcf343443d711da418afaeb1cbdfe024312483ae777a87a0420e": [20, 100], "f1dcbba464cd5f7c7b1373dd25f08a44b1b7cd82a69014def7636585d9f7c2a5": [20, 100], "65d7fd3d41ae18d912e36ecafd8a68e5dded62049c60f5dc98403c1bf46279a4": [20, 100], "dbd1271a54d516535962702d295d2b98aac1bcbe8ca8b085d96e8c9c676dbcfd": [20, 100], "93d2fa03289f31723ebec33fe82aa90603cf059a795a64146cd11e371fb2622c": [20, 100], "c772eddb79cb37d0fd1dfa26fb7c7c97a2134520f0b83f5250a0308757fe7f68": [20, 100], "3a438dc762f148c9cc5cc8e7fc87971b551c64dd103fb27c0d713258f188aee1": [20, 100], "bf4c3827091b774e1a512b4a604cc6d24f71cb81a434311361e89dbb24740241": [20, 100], "bec55d39fd4f84f1b995c64be823428ffe92654922f89750d5c1fecd390bc9f3": [12, 50], "87ab0dd2335d30816e3d30dc0f973507a06c007d7311efd9429e30f5dd10c11f": [12, 50], "a2a2261c6d41a36a3ee6350633a398a31b0a91871e74654073d02876f55daf1d": [12, 50], "d6d2fbe0fb8c6d992f9a7f1b318862fa99f361a8ff0ee99034c6dcfa3b21924f": [20, 100], "c67ef571fb3cfe0e2f84403c141094173d5f57577ae691780d0f2cd533a8a1fe": [20, 100], "c0327879e82ca458e78bed0bc0e73b8f957724d27dbe9d4405eed99f3aa53561": [20, 100], "f85f08901c23205e1bb3bb612f295c0e25fb3695c9aacfd671f42495b21552d7": [20, 100], "2eae7e92a40e4364b2700d87f5133a1fdd2649dec8bc888cb2d4bf16036198e7": [20, 100], "9365b23dd7beac213216bd2af704ac3f5ab6ad465aa9d4d360a00b6f3c644d22": [20, 100], "0fa190a5285b9cc9b935e6a0c3e25f05544c2a5a09eaff6cb73cebbdb81430b7": [20, 100], "69dee65335f3def2b2f6704ba732baf78a9d803b9442c81b65afa10ffc1315c6": [20, 100], "f8c87d3bede84eead0850797386b9ceb69b69ca21fc75129b78a5384669aeb9b": [12, 50], "ef049a0306ab03ae15ce1464ea905c987d5ae898361d31b3a94c5428d792219b": [12, 50], "cd2df02754e0161dab302da6d1fc9a59d3e944e12b2e794c9742d401011fb905": [24, 99], "849c49c1498ae1a85e024620912e1afa5161fca85522ebb54c90a384b718185d": [24, 99], "c013a2e3f6c7c0b0a9a7e4c50b4db1c64e3cf8af19a1f3d41f469f9ab33d22d4": [25, 100], "3f63415154be72cd2f13852e6939065c975ebf0d030ab0cf4f37826bf58a2f15": [25, 100], "9bdcdea6d4b8a807552917f5d76fbde33f8c006de319de0a65d148d05239312b": [20, 100], "375f9c968ac911341eae1a8298580b8dd7298fa4fdb2e04dd715f3b6491e7160": [20, 100], "6b12a1d0c14540ff2edc8a7a3f8627dec2194905890cceded150b596f05b494c": [20, 100], "e8e59be64df37ebaf49a02fb4c2b5943451bc8190d13497c2b45f74e168c3321": [20, 100]};
+const papers12=Map.groupBy(batch12,r=>r.sourceSha256);
+assert.equal(papers12.size,55);
+for(const [sha,entries] of papers12) {
+ assert.deepEqual([entries.length,entries.reduce((sum,r)=>sum+r.marks,0)],expected12[sha]);
+ for(const r of entries) {
+  assert.ok(!/Ranker|www\.|recom|following:|Max. Marks/.test(r.question));
+  if(r.options) {assert.equal(r.options.length,4);assert.equal(new Set(r.options.map(o=>o.label)).size,4);for(const o of r.options)assert.ok(r.question.includes(`(${o.label}) ${o.text}`));}
+ }
+}
+assert.ok(!batch12.some(r=>r.sourceSha256==="a7a804b9d716418c5a94302a9024721360ea1b9ca9634c818dd219f5b9c7c77b" && r.sourceQuestion==="13"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="a7a804b9d716418c5a94302a9024721360ea1b9ca9634c818dd219f5b9c7c77b" && r.sourceQuestion==="14"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="a7a804b9d716418c5a94302a9024721360ea1b9ca9634c818dd219f5b9c7c77b" && r.sourceQuestion==="15"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="a7a804b9d716418c5a94302a9024721360ea1b9ca9634c818dd219f5b9c7c77b" && r.sourceQuestion==="16"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="a7a804b9d716418c5a94302a9024721360ea1b9ca9634c818dd219f5b9c7c77b" && r.sourceQuestion==="17"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="a7a804b9d716418c5a94302a9024721360ea1b9ca9634c818dd219f5b9c7c77b" && r.sourceQuestion==="18"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="a7a804b9d716418c5a94302a9024721360ea1b9ca9634c818dd219f5b9c7c77b" && r.sourceQuestion==="19"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="a7a804b9d716418c5a94302a9024721360ea1b9ca9634c818dd219f5b9c7c77b" && r.sourceQuestion==="20"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="a7a804b9d716418c5a94302a9024721360ea1b9ca9634c818dd219f5b9c7c77b" && r.sourceQuestion==="21"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="a7a804b9d716418c5a94302a9024721360ea1b9ca9634c818dd219f5b9c7c77b" && r.sourceQuestion==="22"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="a7a804b9d716418c5a94302a9024721360ea1b9ca9634c818dd219f5b9c7c77b" && r.sourceQuestion==="23"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="a7a804b9d716418c5a94302a9024721360ea1b9ca9634c818dd219f5b9c7c77b" && r.sourceQuestion==="24"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="a7a804b9d716418c5a94302a9024721360ea1b9ca9634c818dd219f5b9c7c77b" && r.sourceQuestion==="25"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="76148fa27297b8a4126a79a288e312e1578b881cb121484ed2ec410cdeb9d6bb" && r.sourceQuestion==="11"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="76148fa27297b8a4126a79a288e312e1578b881cb121484ed2ec410cdeb9d6bb" && r.sourceQuestion==="12"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="76148fa27297b8a4126a79a288e312e1578b881cb121484ed2ec410cdeb9d6bb" && r.sourceQuestion==="13"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="76148fa27297b8a4126a79a288e312e1578b881cb121484ed2ec410cdeb9d6bb" && r.sourceQuestion==="14"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="76148fa27297b8a4126a79a288e312e1578b881cb121484ed2ec410cdeb9d6bb" && r.sourceQuestion==="15"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="76148fa27297b8a4126a79a288e312e1578b881cb121484ed2ec410cdeb9d6bb" && r.sourceQuestion==="16"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="76148fa27297b8a4126a79a288e312e1578b881cb121484ed2ec410cdeb9d6bb" && r.sourceQuestion==="17"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="76148fa27297b8a4126a79a288e312e1578b881cb121484ed2ec410cdeb9d6bb" && r.sourceQuestion==="18"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="76148fa27297b8a4126a79a288e312e1578b881cb121484ed2ec410cdeb9d6bb" && r.sourceQuestion==="19"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="76148fa27297b8a4126a79a288e312e1578b881cb121484ed2ec410cdeb9d6bb" && r.sourceQuestion==="20"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="cd2df02754e0161dab302da6d1fc9a59d3e944e12b2e794c9742d401011fb905" && r.sourceQuestion==="2"));
+assert.ok(!batch12.some(r=>r.sourceSha256==="849c49c1498ae1a85e024620912e1afa5161fca85522ebb54c90a384b718185d" && r.sourceQuestion==="9"));
+assert.deepEqual(batch12.find(r=>r.id==="knruhs-11cf7cb62e64-p1-q1").options.map(o=>o.label),["a", "c", "b", "d"]);
+assert.deepEqual(batch12.find(r=>r.id==="knruhs-cd2df02754e0-p3-q9").options.map(o=>o.label),["a", "e", "b", "d"]);
+assert.ok(batch12.find(r=>r.id==="knruhs-fefbf2fc755e-p1-q2b").question.includes("arches of foot"));
+assert.ok(batch12.find(r=>r.id==="knruhs-8103983f6c1e-p2-q19a").question.includes("cornea"));
+assert.ok(batch12.find(r=>r.id==="knruhs-8103983f6c1e-p2-q19b").question.includes("cleft palate"));
+assert.ok(batch12.find(r=>r.id==="knruhs-f1dcbba464cd-p1-q11a").question.includes("lipid profile"));
+assert.ok(batch12.find(r=>r.id==="knruhs-f1dcbba464cd-p2-q11b").question.includes("Oxidative phosphorylation"));
+assert.ok(batch12.find(r=>r.id==="knruhs-e8e59be64df3-p2-qa1").question.includes("Pertussis"));
+assert.ok(batch12.find(r=>r.id==="knruhs-e8e59be64df3-p2-qa2").question.includes("Cerebral Malaria"));
+assert.ok(batch12.find(r=>r.id==="knruhs-86c30b2e8485-p3-q11").question.includes("serum - 12 mg/dL"));
+console.log('PASS Batch12:1015 units,55 contributing examinations,4723marks,108MCQs/432options; repeated printed numbers, missing-label holds, mixed-tail holds, all cross-page subparts and genuine examination repeats.');
