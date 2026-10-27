@@ -57,6 +57,12 @@ try {
       { university: 'rguhs', year: 'final', yearKey: 'final-year', query: 'early breast cancer', topic: 'Breast', reference: '06 Oct 2025', option: 'Or Classify renal tumours.' },
       { university: 'rguhs', year: 'final', yearKey: 'final-year', query: 'Pyrogenic meningitis', topic: 'CNS', reference: '24 Sep 2025', option: 'Cerebro spinal fluid findings' },
       { university: 'rguhs', year: 'final', yearKey: 'final-year', query: 'Triad of GERD', topic: 'Esophagus and stomach', reference: '19 Aug 2024', option: 'Triad of GERD.' },
+      {"university": "rguhs", "year": "final", "yearKey": "final-year", "query": "Rodent ulcer", "topic": "Neoplasm and others", "reference": "27 Mar 2021", "option": "Rodent ulcer."},
+      {"university": "knruhs", "year": "first", "yearKey": "first-year", "query": "Cadaver as the first teacher", "topic": "General Anatomy", "reference": "Aug 2024"},
+      {"university": "knruhs", "year": "first", "yearKey": "first-year", "query": "radio ulnar joint", "topic": "Upper Limb", "reference": "Aug 2024"},
+      {"university": "knruhs", "year": "first", "yearKey": "first-year", "query": "allopurinol", "topic": "Nucleotide metabolism", "reference": "Nov 2023", "option": "serum - 12 mg/dL"},
+      {"university": "knruhs", "year": "first", "yearKey": "first-year", "query": "Motor end plate", "topic": "Nerve and Muscle Physiology", "reference": "Mar 2022"},
+      {"university": "knruhs", "year": "second", "yearKey": "second-year", "query": "Current drug of choice for Enteric fever", "topic": "Bacteriology", "reference": "Jul 2024", "option": "(e) Ceftriaxone"},
     ]) {
       const context = await browser.newContext({ viewport: { width, height: 780 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
       await context.route('**/*', route => new URL(route.request().url()).origin === new URL(base).origin ? route.continue() : route.abort());

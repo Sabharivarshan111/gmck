@@ -2820,3 +2820,13 @@ DO NOT: Promotemechanical18081blocks,dropalternatives/options/subparts,inflateal
 Reviewed1,026complete RGUHS units from47examinations/62original pages;5,618cumulative(RGUHS3,709/KNRUHS1,893/NTR12/WB4;MUHS0disabled).50MCQs/200options,4,500marks. Comparedall66pages inqueue190–239;203alternativeof211and210alternativeof201exclude44duplicateoccurrences;208hasnouniversityinprintedheaderandall22unitsremainheld. Four50marksections1095/1096retained,allOralternativesgrouped,footer232Q22TriadofGERDreadfrompixels. PrintedPyrogenicmeningitisandnumbers/optionspreserved;third-partyhighlightsarenotkeys. Old4,592rows/IDsunchanged. No newPDF/backend/version29/Playchange.
 Localbank/mark/sequence/exclusion/sourceguard,18,519searchroundtrips,KUHS6,916/TNMGR5,985parity,TypeScript/fullquietlint,requiredguardsandactualAndroidJS/nativewebJS5,618-IDguards pass. LocalChromiumdownloadfailed;hosted97scenarioUIandactualpackages/publicationpendingatthisprepushcheckpoint. InspectprivateBatch11receiptsbeforeclaimingshipped.
 Nextqueue240page1Q1,RGUHSGeneralSurgery2021SHAb709cf9e59b34769b066e45e1845478a0dbbc7afe39d7bdc3370b844bcb63d94. No annual/universitycoveragecomplete. Preserve unrelateduntrackedclinicalPDF. Latestprivateappcheckpointremainslibfile_5670062f729881918a8179e4da06134a;querycurrentversion.
+
+## 2026-10-27 — ORBIT university import Batch12
+
+**DONE**: Added1,015 original-page-reviewed occurrences (84RGUHS/931KNRUHS) to shared offline bank, total6,633.55contributingPDFs,131pages;190pages across queue240–320 compared.108MCQs/432options;4,723marks. Repeated printed numbers and nonstandard choice labels retained.25mixed-tail/incomplete units held;26alternate/unattributed sources excluded. Earlier5,618objects unchanged; TNMGR/KUHS unchanged. Source tests, mobile tsc/quietlint,19,534search roundtrips/KUHS6916 and all8requiredguards pass. Android and native-web JS compiled; actual packaged verification remains pending CI.
+
+**HALF-DONE**: Publishing this exact batch. Inspect current Actions and final Library checkpoint before asserting it is shipped. Local Chromium download is truncated; use hosted browser suites and actual APK/AABguards, not source tests alone.
+
+**NEXT**: Verify native debug/internal/release artifacts and web selective PR/production; then resume source321,p1,Q1 from latest Batch12 checkpoint. No university/year complete.
+
+**DO NOT**: Promote unreviewed extraction, count alternate copies, silently renumber repeated printed questions, change backend/version29, or upload to Play.
