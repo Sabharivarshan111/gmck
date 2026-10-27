@@ -50,8 +50,8 @@
       "wbuhs": 4
     },
     "cumulativeMarks": {
-      "rguhs": 15363,
       "knruhs": 15599,
+      "rguhs": 15363,
       "wbuhs": 40,
       "ntruhs": 4069
     }
@@ -389,7 +389,7 @@
         6
       ],
       "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
-      "notes": "Twenty observed MCQs, printed maximum20marks; per-item weight1 derives from that total. Malformed printed section heading1X2=20 is recorded, not silently repaired. No answer key inferred. Printed codeM1024020 and trailing1in option16d retained literally.",
+      "notes": "Twenty observed MCQs, printed maximum20marks; per-item weight1 derives from that total. Malformed printed section heading1X2=20 is recorded, not silently repaired. No answer key inferred. Printed codeM1024020 and trailing1in option16d retained literally. Final full physical page5 comparison confirms Q19a180 l; OCR1801 corrected without changing numerical value.",
       "answerKey": "No official answer key supplied or invented",
       "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
     },

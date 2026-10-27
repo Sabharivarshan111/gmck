@@ -6324,7 +6324,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH14 = [
     "subjectKey": "physiology",
     "topicKey": "renal-physiology",
     "kind": "short-notes",
-    "question": "Amount of blood enters the renal arteries per minute:\n(a) 1801\n(b) 1200 ml\n(c) 125 ml\n(d) 700 ml",
+    "question": "Amount of blood enters the renal arteries per minute:\n(a) 180 l\n(b) 1200 ml\n(c) 125 ml\n(d) 700 ml",
     "examRefs": [
       "Aug 2024 · Examination · Paper I · Code M1024020 · Not specified · Section I (MCQs) · Set A"
     ],
@@ -6337,7 +6337,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH14 = [
     "options": [
       {
         "label": "a",
-        "text": "1801"
+        "text": "180 l"
       },
       {
         "label": "b",
