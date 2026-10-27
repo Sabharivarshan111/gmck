@@ -41,10 +41,10 @@ const notes = load('src/lib/handwrittenNotes.ts', { ...common, './notesDedup': {
   './notesLimits': {}, './progress': progress });
 const resume = load('src/lib/homeResume.ts', { ...common, '@/lib/questionBank': bank });
 
-assert.equal(rows.length, 3580);
+assert.equal(rows.length, 4592);
 assert.equal(new Set(rows.map(r => r.id)).size, rows.length);
-const expected = { rguhs: 1671, knruhs: 1893, muhs: 0, ntruhs: 12, wbuhs: 4 };
-const marks = { rguhs: 6479, knruhs: 7550, ntruhs: 50, wbuhs: 40 };
+const expected = { rguhs: 2683, knruhs: 1893, muhs: 0, ntruhs: 12, wbuhs: 4 };
+const marks = { rguhs: 10463, knruhs: 7550, ntruhs: 50, wbuhs: 40 };
 const ids = new Set();
 for (const [university, count] of Object.entries(expected)) {
   assert.equal(bank.allSearchHits(university).length, count);
@@ -57,7 +57,7 @@ for (const [university, count] of Object.entries(expected)) {
     assert.match(row.sourceSha256, /^[a-f0-9]{64}$/);
     assert.ok(row.id.includes(row.sourceSha256.slice(0, 12)));
     assert.ok(Number.isInteger(row.pdfPage) && row.pdfPage >= 1 && row.pdfPage <= 4);
-    assert.ok((row.question.length > 4 || (['rguhs-fc6c85e99007-p1-q5','rguhs-d3a0bc4dc8fb-p1-q12'].includes(row.id) && row.question === 'Gout') || (row.id === 'rguhs-8b7f4f6c8446-p1-q13' && row.question === 'GABA')) && row.question.length <= 1000);
+    assert.ok((row.question.length > 4 || (row.id === 'rguhs-942383725e34-p1-q6' && row.question === 'IgM.') || (row.id === 'rguhs-764314376aaf-p1-q17' && row.question === 'Hair') || (['rguhs-fc6c85e99007-p1-q5','rguhs-d3a0bc4dc8fb-p1-q12'].includes(row.id) && row.question === 'Gout') || (row.id === 'rguhs-8b7f4f6c8446-p1-q13' && row.question === 'GABA')) && row.question.length <= 1000);
     assert.ok(row.examRefs.length > 0 && row.topicKey);
     const raw = `PYQ[${row.id}] ${row.question}`;
     assert.equal(text.getCleanQuestionText(raw), row.question);
@@ -88,7 +88,7 @@ assert.ok(wb[2].question.includes('nephrosis and apoptosis'), 'Do not silently c
 assert.ok(wb[1].question.includes('any two') && wb[1].question.includes('c)'));
 assert.ok(wb[3].question.includes('any two') && wb[3].question.includes('d) Septic shock'));
 assert.ok(rows.find(r => r.university === 'knruhs').question.includes('(d) Applied anatomy'));
-console.log('PASS 3580 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
+console.log('PASS 4592 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
 
 const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH02: batch02 } = await bundle('src/data/universityPapers/reviewedBatch02.ts');
 assert.equal(batch02.length, 200);
@@ -355,3 +355,27 @@ const fourPage09=batch09.find(r=>r.id==='rguhs-1a76097ff1cf-p4-q22v');assert.ok(
 const lft09=batch09.find(r=>r.id==='rguhs-c7db2e7f27f7-p1-q4');assert.ok(lft09.question.includes('7.7 mg/dl')&&lft09.question.includes('13.6 mg/dl'),'Preserve contradictory printed values without clinical correction');
 assert.deepEqual(batch09.filter(r=>r.subjectKey==='forensic-medicine').map(r=>r.sourceQuestion),Array.from({length:22},(_,i)=>String(i+1)));
 console.log('PASS Batch09:1001 complete units,41sources/70contributing pages,3979marks,157MCQs/628options,sevenheldomissions,double15identity,groupedalternatives and mixed-bundlepage dedup.');
+
+const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH10: batch10 } = await bundle('src/data/universityPapers/reviewedBatch10.ts');
+assert.equal(batch10.length,1012);
+assert.equal(batch10.reduce((sum,r)=>sum+r.marks,0),3984);
+assert.equal(batch10.filter(r=>r.questionFormat==='mcq').length,170);
+assert.equal(batch10.reduce((sum,r)=>sum+(r.options?.length??0),0),680);
+const expected10={"6afd9a51143d1985ae535d51f0d7eee7f1df3a50af83536f834274a3fae6dd0d": [30, 100], "29c7950372ac975072b2c5416a8778379fa5c43f4159470586a7936a7f7f1204": [30, 100], "371dbcffaa5f35ecfb37d1a63739cfed481702a9363ec3fa21770c9652c24252": [30, 100], "8f3b1646df24bad561915acc0144672b35e02bf8f0055a39d128bb2190a10db5": [30, 100], "3815f59f627cd1e87bfdb9ff3991fcfc05964e0cece7bb8ffa3adf1fbcc365a0": [30, 100], "ae18df1bf6ad883e7dc2127eb92b44f99ed8cac1d53ff7e2058a642a62339e10": [30, 100], "093a461a93ba9e7822645a0cde2b27069789a695a50a7873e431b9dca0de77b0": [22, 100], "c2e7c5f469365066d8263d3634f254a423b6bc810afbee3b9dcf917d62869774": [22, 100], "942383725e34869f458561de71797a34cbf0df5d02c46e2f73fd2927c92c19b7": [22, 100], "26b36e0a7a7ab9d19f2c929308ff0439072e7d4257fcb1f177a9bf79a9836924": [21, 97], "60a9d56a231d873588e708ae3c1624ba739c5c920b7a89feb6b85a088dfc0f22": [22, 100], "8db0c455b027a1463c5e3670c0d75f19a51ff1f1eec22ef55094dc17139bdaa7": [22, 100], "83d5fb0b63994b659f46a8664ba7e4aed83c75bf5439655b38666d3f995bb254": [22, 100], "a0d1807cc437a3e317e953940129bddc724fe9135101863b9ba7c7fa9ca6fa31": [22, 100], "a2a0f2f8a12184f2a172ca8b6a7cd084f69e438a425518f170750b2c56682bbe": [22, 100], "b3f058fd2efc316fbe53f367ff042b634e70d446927e3a53af0bc371610e5244": [30, 100], "de58fc7fc6622190ac62f215e8e1956818e9492c5e54e896530553a51d6c84ff": [30, 100], "c15f572406671b89f06c5376443f44183c9dfb61b468db247c6096dc896ec4c8": [30, 100], "8075d7fdaeaed1b98082d89749b97df0d050ec6f314b3749a16e059ef9ef1b11": [30, 100], "0b9d7cc9db3a1b4f23579076b0119a154b38e645a99f199f7b21b75a42edeff8": [30, 100], "255b75504f5b3441f68aed95c350e2ac9c72af9a3084ae840805cd39e05c9ddb": [30, 100], "6100df590db7df28bc4f19aa427ad988c82bdc984fc358938cac09f3fd8fb134": [30, 100], "9794b46203d9e6faaa872154674f925231fe2620003356697cdba0331f84096d": [30, 100], "f8ab536570201cf3c47f1fdbb39da1a1e35160bd30c65d7fa7ac335950b78e60": [19, 87], "cce07cded03575d685315959e1821845619a34500711eec66bc82476e4c57750": [22, 100], "e17378553b2c44b5c8bdc2a2649118d7f58068f83684919a26ef50e9b58dc93b": [22, 100], "dafa9ea7c42f1a1363ae67e2e57376b8c4e9a5f9fbde2c8107ab289f7faec6bd": [22, 100], "c8dc5c3b854c618d83795c9497b4ab58604cbe3dd159c9e584390f7e106bb0bf": [22, 100], "aa895cf27a257d32f1dd51dc921b3c19366ea500803071f33624430204955358": [22, 100], "20e99a17c2b496bcf1fbf1b1f410584a7dd60483e150e0c98db5ce21335cdabb": [22, 100], "edd2faad4de15442d3ccc69d0719f86d1506cb61f2096ca5b5fe510c0919e20c": [22, 100], "94705ea86f1df2bce2f814b5a7c77dc10a8a5497284a1f515e94dc1db0a1bc42": [22, 100], "764314376aaf5923c99642748f7451083dc599916f9077797c0dfcdb4defa646": [22, 100], "3a3f8015f0aac013f99b1753a1c6433d363921d6d38d26b82005f466dcb1c0ae": [22, 100], "3ce4501a8ee023e29a32e77313386448d4e90e01ec28652b7fe6982e648ffce1": [22, 100], "9b12b170a1e026cfff466bbcc20b925ebf9c8995a8ba3f3aab1f3568d9fa7669": [22, 100], "97235a56e0713d75deaea98fb0852f378948b3ff232af2e5a276cfd969014bb0": [30, 100], "fa9ccd35f22647403c4501b69824e09cb3c982ed8ce3dff2800d913d6a50c84d": [30, 100], "ff794afcf106686cf0db5ad61da5b9139c60abf1a15b1994da1edb4295e17752": [22, 100], "44c0c13c738dc61f3b040d1feb28516b1f4467a79415595ad02dd98f694cb167": [30, 100]};
+for(const [sha,[count,marks]]of Object.entries(expected10)){const group=batch10.filter(r=>r.sourceSha256===sha);assert.equal(group.length,count);assert.equal(group.reduce((s,r)=>s+r.marks,0),marks);}
+for(const row of batch10){
+ assert.equal(row.university,'rguhs');
+ assert.equal(row.year,['ophthalmology','ent','community-medicine'].includes(row.subjectKey)||(row.subjectKey==='forensic-medicine'&&row.examRefs[0].includes('24 Nov 2025'))?'third':'second');
+ assert.ok(!/FirstRanker|Key Answer|LONG ESSAYS|SHORT ESSAYS/.test(row.question));
+ if(row.options){assert.deepEqual(row.options.map(o=>o.label),['A','B','C','D']);for(const o of row.options)assert.ok(row.question.includes(`(${o.label}) ${o.text}`));}
+}
+for(const [sha,q]of [["26b36e0a7a7ab9d19f2c929308ff0439072e7d4257fcb1f177a9bf79a9836924", "22"], ["f8ab536570201cf3c47f1fdbb39da1a1e35160bd30c65d7fa7ac335950b78e60", "20"], ["f8ab536570201cf3c47f1fdbb39da1a1e35160bd30c65d7fa7ac335950b78e60", "21i"], ["f8ab536570201cf3c47f1fdbb39da1a1e35160bd30c65d7fa7ac335950b78e60", "21ii"], ["f8ab536570201cf3c47f1fdbb39da1a1e35160bd30c65d7fa7ac335950b78e60", "21iii"], ["f8ab536570201cf3c47f1fdbb39da1a1e35160bd30c65d7fa7ac335950b78e60", "21iv"], ["f8ab536570201cf3c47f1fdbb39da1a1e35160bd30c65d7fa7ac335950b78e60", "21v"], ["f8ab536570201cf3c47f1fdbb39da1a1e35160bd30c65d7fa7ac335950b78e60", "22i"], ["f8ab536570201cf3c47f1fdbb39da1a1e35160bd30c65d7fa7ac335950b78e60", "22ii"], ["f8ab536570201cf3c47f1fdbb39da1a1e35160bd30c65d7fa7ac335950b78e60", "22iii"], ["f8ab536570201cf3c47f1fdbb39da1a1e35160bd30c65d7fa7ac335950b78e60", "22iv"], ["f8ab536570201cf3c47f1fdbb39da1a1e35160bd30c65d7fa7ac335950b78e60", "22v"]])assert.ok(!batch10.some(r=>r.sourceSha256===sha&&r.sourceQuestion===q),'Incomplete units remain held');
+assert.ok(!batch10.some(r=>r.sourceSha256.startsWith('567abe33450f')),'Alternate scan181must not add duplicate occurrences');
+assert.equal(batch10.find(r=>r.sourceSha256.startsWith('371dbcffaa5f')&&r.sourceQuestion==='22v').pdfPage,2,'Cross-page MCQ begins on page2');
+assert.equal(batch10.find(r=>r.sourceSha256.startsWith('6100df590db7')&&r.sourceQuestion==='22ii').pdfPage,2,'Cross-page optionD retains stem page2');
+assert.equal(batch10.find(r=>r.sourceSha256.startsWith('8db0c455b027')&&r.sourceQuestion==='18').pdfPage,2);
+assert.equal(batch10.find(r=>r.sourceSha256.startsWith('83d5fb0b6399')&&r.sourceQuestion==='18').pdfPage,2);
+const clinical10=batch10.find(r=>r.sourceSha256.startsWith('8075d7fdaeae')&&r.sourceQuestion==='10');assert.ok(clinical10.question.includes('150/90 mm of Hg'));
+assert.ok(batch10.find(r=>r.sourceSha256.startsWith('764314376aaf')).examRefs[0].includes('Dec 2013'),'Printed2013overridesOCR2015');
+assert.ok(batch10.find(r=>r.sourceSha256.startsWith('97235a56e071')&&r.sourceQuestion==='2').question.includes('e) Create a treatment plan'));
+console.log('PASS Batch10:1012complete units,40sources,3984marks,170MCQs/680options;12missing/obscured units held;22alternate-scan occurrences excluded; cross-page options/clinical subparts retained.');
