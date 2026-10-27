@@ -41,10 +41,10 @@ const notes = load('src/lib/handwrittenNotes.ts', { ...common, './notesDedup': {
   './notesLimits': {}, './progress': progress });
 const resume = load('src/lib/homeResume.ts', { ...common, '@/lib/questionBank': bank });
 
-assert.equal(rows.length, 6633);
+assert.equal(rows.length, 7648);
 assert.equal(new Set(rows.map(r => r.id)).size, rows.length);
-const expected = { rguhs: 3793, knruhs: 2824, muhs: 0, ntruhs: 12, wbuhs: 4 };
-const marks = { rguhs: 15363, knruhs: 11873, ntruhs: 50, wbuhs: 40 };
+const expected = { rguhs: 3793, knruhs: 3516, muhs: 0, ntruhs: 335, wbuhs: 4 };
+const marks = { rguhs: 15363, knruhs: 14919, ntruhs: 1560, wbuhs: 40 };
 const ids = new Set();
 for (const [university, count] of Object.entries(expected)) {
   assert.equal(bank.allSearchHits(university).length, count);
@@ -57,7 +57,7 @@ for (const [university, count] of Object.entries(expected)) {
     assert.match(row.sourceSha256, /^[a-f0-9]{64}$/);
     assert.ok(row.id.includes(row.sourceSha256.slice(0, 12)));
     assert.ok(Number.isInteger(row.pdfPage) && row.pdfPage >= 1 && row.pdfPage <= 7);
-    assert.ok((row.question.length > 4 || (row.id === 'knruhs-e8e59be64df3-p2-q17' && row.question === 'KFD') || (row.id === 'rguhs-942383725e34-p1-q6' && row.question === 'IgM.') || (row.id === 'rguhs-764314376aaf-p1-q17' && row.question === 'Hair') || (['rguhs-fc6c85e99007-p1-q5','rguhs-d3a0bc4dc8fb-p1-q12'].includes(row.id) && row.question === 'Gout') || (row.id === 'rguhs-8b7f4f6c8446-p1-q13' && row.question === 'GABA')) && row.question.length <= 1000);
+    assert.ok((row.question.length > 4 || {"knruhs-6cde83218b53-p2-q12": "PKDL", "knruhs-ee244d19365e-p1-q11": "IgG", "knruhs-136b4dc127a6-p1-q2": "Bias", "knruhs-d5a145770a41-p1-q10": "CARE"}[row.id] === row.question || (row.id === 'knruhs-e8e59be64df3-p2-q17' && row.question === 'KFD') || (row.id === 'rguhs-942383725e34-p1-q6' && row.question === 'IgM.') || (row.id === 'rguhs-764314376aaf-p1-q17' && row.question === 'Hair') || (['rguhs-fc6c85e99007-p1-q5','rguhs-d3a0bc4dc8fb-p1-q12'].includes(row.id) && row.question === 'Gout') || (row.id === 'rguhs-8b7f4f6c8446-p1-q13' && row.question === 'GABA')) && row.question.length <= 1000);
     assert.ok(row.examRefs.length > 0 && row.topicKey);
     const raw = `PYQ[${row.id}] ${row.question}`;
     assert.equal(text.getCleanQuestionText(raw), row.question);
@@ -88,7 +88,7 @@ assert.ok(wb[2].question.includes('nephrosis and apoptosis'), 'Do not silently c
 assert.ok(wb[1].question.includes('any two') && wb[1].question.includes('c)'));
 assert.ok(wb[3].question.includes('any two') && wb[3].question.includes('d) Septic shock'));
 assert.ok(rows.find(r => r.university === 'knruhs').question.includes('(d) Applied anatomy'));
-console.log('PASS 6633 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
+console.log('PASS 7648 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
 
 const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH02: batch02 } = await bundle('src/data/universityPapers/reviewedBatch02.ts');
 assert.equal(batch02.length, 200);
@@ -426,7 +426,7 @@ assert.equal(papers12.size,55);
 for(const [sha,entries] of papers12) {
  assert.deepEqual([entries.length,entries.reduce((sum,r)=>sum+r.marks,0)],expected12[sha]);
  for(const r of entries) {
-  assert.ok(!/Ranker|www\.|recom|following:|Max. Marks/.test(r.question));
+  assert.ok(!/Ranker|www\.|\brecom\b|following:|Max. Marks/.test(r.question));
   if(r.options) {assert.equal(r.options.length,4);assert.equal(new Set(r.options.map(o=>o.label)).size,4);for(const o of r.options)assert.ok(r.question.includes(`(${o.label}) ${o.text}`));}
  }
 }
@@ -466,3 +466,68 @@ assert.ok(batch12.find(r=>r.id==="knruhs-e8e59be64df3-p2-qa1").question.includes
 assert.ok(batch12.find(r=>r.id==="knruhs-e8e59be64df3-p2-qa2").question.includes("Cerebral Malaria"));
 assert.ok(batch12.find(r=>r.id==="knruhs-86c30b2e8485-p3-q11").question.includes("serum - 12 mg/dL"));
 console.log('PASS Batch12:1015 units,55 contributing examinations,4723marks,108MCQs/432options; repeated printed numbers, missing-label holds, mixed-tail holds, all cross-page subparts and genuine examination repeats.');
+
+const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH13: batch13 } = await bundle('src/data/universityPapers/reviewedBatch13.ts');
+assert.equal(batch13.length,1015);
+assert.equal(batch13.reduce((sum,r)=>sum+r.marks,0),4556);
+assert.equal(batch13.filter(r=>r.options).length,56);
+assert.equal(batch13.reduce((sum,r)=>sum+(r.options?.length??0),0),224);
+const expected13 = {"39cbb6dfe789d5696813c8e321ed00868a7b0f7cc71a276e1eec00c128aa3a1f": [12, 80], "9039b33081858c76f7a7eb85d2825d1257cf48ea0c58471ca183dc5cdfa48660": [12, 80], "6cde83218b53fbcf9d09add25dd8557f70d0c660687d37dbb7d7498bea93b72b": [20, 90], "0f55ab167d50e2214d8711dd81b2d34a018c1401d75c9c7f7ee86fbce16de398": [20, 90], "99b4db6dee99f00114f751fe213c5956324235f783318f6cb042d8cd23f24b1a": [20, 100], "3ece0ccf88fedd706ac7a03b3e72f9640811804e34d34865bf70c7ae7fb62b6a": [20, 100], "db44df0937f2467ad1bdbd345551de8c8ba7f15006999c34235be5071b21eeec": [11, 40], "e9256320937a87e0457a73840c588dc4966e524bef7397b08fcf69919ee8f2a2": [11, 40], "ee244d19365ec3053f9429aa0fbd5528e1b468cc6016a4401127b9c3bf41f5f4": [11, 40], "10a26032c77015707bbbde74bc0f35c063e756b4e6358220df1c76fa75dd436e": [11, 40], "3e6072d0e7e4704342ee87e63964d95b75febb3b1e20bf1d42ee5510159f25b4": [10, 30], "4d39f3754b1de4960177e321e826db79d3f508cf747d4e84bd093fb4b860084a": [22, 97], "df5776d3d79a213054741a8e09c5394d55c668ab23ba9b1843ff73b050391b98": [25, 100], "059ef1f7f197fcd75f134b66811c9bba10a6a47fe37521eb65fdf719384a6cf1": [20, 100], "38429556789f66a86a3796fbfe47db555c908d8112340f8fd0447e47cfa50ff7": [20, 100], "6ea0620051d37e70fba66c2fdf57eff84e9b4218b01a727c2dbba1787e2e40d9": [12, 80], "61dbdcd48f7408f2f4d28528fd26d7a308017ff5121637a97e625bd0ba367ae4": [12, 80], "9d3f2bd642dfb792c526b0d05856f7009aada9cced3c54cb3bb25c5f20a5e649": [20, 100], "4a4653aae42360491bfd07fafea79749052aedd28bba3f2bc1a82f6701d2d0a3": [20, 100], "cdee4db328c6e355d7c18679db2547df01d14846dc6bb86fb5c879741b02b423": [20, 100], "ceab002fd23430674895579154e88a870a42628f80ce7329acb02de3c204b718": [20, 100], "7a0405438ac0b73616ba81ba73c927372e592c01d23eafa2c648675b7fd9f0dd": [11, 40], "7725cdf861568197b2536e87e46d70b8e886c6774e8821d65652f8f30a06a7a3": [11, 40], "65150043bbb4f2426ad8cb849dd5edf8e76e71e1236dba1d0ec969fe24690916": [11, 40], "df146d64614fca2c927595a29c65429744668ee9e182e2cc9605dd9ca49da96d": [11, 40], "ea45d02257573ef4e3ad6a56f3697b462f6b105f5ea34cd9d67bca944aca2481": [11, 40], "64c5d95239c7602f6248daad17b3a72436a522a33fc0b040e499e4d473a2dff3": [11, 40], "6228c6ca222be523506dc0a6f88d93996df324ec7c93e5572c2c8bd7204e0370": [11, 40], "77738936a8d95ffda03ad3420f39a854ec1dc10f34170737e9395facc28c5814": [11, 40], "7a4696da9e4581aa6f21625ba4d7b1edb6a96b502e0e21c31fea8a4edf975b3e": [11, 40], "7e2fc20b5e646c0d2fdcd841eb6aebbdc67b1c3a237a598d28b342b5be25e8c2": [25, 100], "049002aad52434d7c5e15e686d5a7fd0da8d4222900f59edb8c04293e47a5df7": [25, 100], "ab26140c6c703af43ffa8b97bf309c9b59f78a71198f0fa0647fc57cfed68f42": [25, 100], "eae5c2ac123cab1f66d2c56dd6059fcb37803ac8907dce9efdbfa11e8cd056ef": [11, 40], "2a9a799f40ff52c72c6434f26c5746601926466c193ee86ba13ef92a325228e8": [21, 70], "2049bfd7beb962672937ab2c645289ab160c82f56cf7317167eae2cd5666c7b7": [22, 80], "170c808b417af964646fc5aa1532db968af2a351bda6affef9cf4df845e04206": [22, 80], "4466180812d79eac00d818051efba5991a6ce442357a8a2f82c079e6ffbe5683": [22, 80], "c9738006124a3faf3c9ccb756855aefb836b4936e43cc564a2c49b0ff3a9b306": [24, 99], "7185fb8b1a3e71b524be71d85be5c8c3d91bfbb9e03202385ca7d3d111d8fbb3": [11, 40], "4fd23adddeba55fabb1edb6fbc12f93d6edadbfa837e590bc7996090898b9486": [11, 40], "efca99555a9a62fdf950462c46d2733440510e1ee97500b7412dd668284578a1": [22, 80], "d8a8632a5b92609e611d849510ab5d554cde3703ef55d75873f516a3a37cbf9d": [22, 80], "125464dbf7fbc4ab4bba292362426673177cc78e37ebd12a6128e29b9dee250d": [20, 100], "78994aaf7270a2027419376fc784ef5cd473cbf4966a119dd297983d0a1f8f7a": [20, 100], "2cffbcf525e524f2ad8fe3d8909c9ab1e2ed7aa8dd9524dfeb7640b0651d790a": [12, 60], "a5366484ff107a687e0f21927274cadadc11f9b8eb25ff616a3466a3af9029e4": [12, 60], "136b4dc127a6f3002381cbe67928ddd3349cb6ddae9128aa8f5a98e536f594fa": [12, 60], "e52220762b2cf465cf6a23d403f60df414f46e5eecc8561e9e8bf10335218c44": [12, 60], "3da3b86afffe33d7ef55c23ad6ff596fe18948b351e3a818ca55fe70f3e28087": [12, 60], "d5a145770a416d32bf5b2705f952bc1dc43faaaf704e7d3147c108effd470a2f": [12, 60], "59d4857ba3c0ef32b8cc3614352ce97567ff55d399ae01b7385d138b7e47297f": [12, 60], "6d750ed50c46f5a2c68ccf92709ebe0dd861b26606254c4601b7fac71893647b": [12, 60], "66269ce7b51ac106de45ead73f0357d6d7c2c2312a60d04cb609672183bffe05": [12, 60], "7213a7110c8bbf6ba8ebb211d1191131121322792648961e9761d91ed7cc4c39": [12, 60], "9c4cf9ccb9de323e49395b6f46ec64c1c009776a7e322588ae35a179cac4f99b": [24, 120], "a11493aeaed6070006815afcc40ea94c80dca855a25b636e26193377998dc9c0": [24, 120], "6224d1bfd390839b5de2ec1e07428d91a79bbde480b7d07384c3ec9f7590a4ed": [24, 120], "972a27fd7abd1a65d7b5491c0af48e36a54ec8434659f8e147674a044fa4355b": [24, 120], "dc18cc6ad34d0710bef418583e479226e9aeeb328f872303136a6549635b56fb": [24, 120], "f5e803ca6aa8f24c28f1648acd78802ffb41a81c7f3e51c7bc68a6e3c1692acd": [24, 120]};
+const papers13=Map.groupBy(batch13,r=>r.sourceSha256);
+assert.equal(papers13.size,61);
+for(const [sha,entries] of papers13) {
+ assert.deepEqual([entries.length,entries.reduce((sum,r)=>sum+r.marks,0)],expected13[sha]);
+ for(const r of entries) {
+  assert.ok(!/Ranker|www\.|\brecom\b|following:|Max. Marks|PART[ -]+[AB]/.test(r.question));
+  if(r.options) {assert.equal(r.options.length,4);assert.equal(new Set(r.options.map(o=>o.label.toLowerCase())).size,4);for(const o of r.options)assert.ok(r.question.includes(`(${o.label}) ${o.text}`));}
+ }
+}
+assert.ok(!batch13.some(r=>r.sourceSha256==="3e6072d0e7e4704342ee87e63964d95b75febb3b1e20bf1d42ee5510159f25b4" && r.id.endsWith('-q'+"1")));
+assert.ok(!batch13.some(r=>r.sourceSha256==="4d39f3754b1de4960177e321e826db79d3f508cf747d4e84bd093fb4b860084a" && r.id.endsWith('-q'+"3")));
+assert.ok(!batch13.some(r=>r.sourceSha256==="4d39f3754b1de4960177e321e826db79d3f508cf747d4e84bd093fb4b860084a" && r.id.endsWith('-q'+"4")));
+assert.ok(!batch13.some(r=>r.sourceSha256==="4d39f3754b1de4960177e321e826db79d3f508cf747d4e84bd093fb4b860084a" && r.id.endsWith('-q'+"9")));
+assert.ok(!batch13.some(r=>r.sourceSha256==="2a9a799f40ff52c72c6434f26c5746601926466c193ee86ba13ef92a325228e8" && r.id.endsWith('-q'+"1l")));
+assert.ok(!batch13.some(r=>r.sourceSha256==="c9738006124a3faf3c9ccb756855aefb836b4936e43cc564a2c49b0ff3a9b306" && r.id.endsWith('-q'+"4")));
+assert.ok(!batch13.some(r=>r.sourceSha256==="195438a3420ed59f1541b81ce731112cbee448dbf99811d801a36fad8a839139"));
+assert.ok(!batch13.some(r=>r.sourceSha256==="8ac934083f1425aac4b6ddbc5bc90c08314dd7d46a4324db0c802dbc0156581c"));
+assert.ok(!batch13.some(r=>r.sourceSha256==="aad7ce8676f70caa6cb8936a03611a14e852180c8ab6188e6c4f535ae3d2cbeb"));
+assert.ok(!batch13.some(r=>r.sourceSha256==="d1684fc3d74918adda85cbb5fca99cc2a1c271c4194204c7aa552777b6923a21"));
+assert.ok(!batch13.some(r=>r.sourceSha256==="36eb93f04fe844c9b205cdc03deddd16921506d6254478ac50bff6d5dd16fb2e"));
+assert.ok(!batch13.some(r=>r.sourceSha256==="250550082aa70725ca57eaf20e7b1a007d5ce84b07a2952e2b60fafd720e94e9"));
+assert.ok(!batch13.some(r=>r.sourceSha256==="96e1a8ffaf74c4c8b506dcadeaec0b8f1e92516705db87d5206a4586d1c37d75"));
+assert.ok(!batch13.some(r=>r.sourceSha256==="7434ded967c9b2e085914ffde75c9ca1f00b82ec28fb12e9508de8fe07cbe1b0"));
+assert.ok(!batch13.some(r=>r.sourceSha256==="81ac49e1965e233c64e832e212d565ee8196f5f383c6c1f9d435e1a9c7754b0d"));
+assert.ok(!batch13.some(r=>r.sourceSha256==="15b9b1544da882d2029d387e8471286ed4f5f2f0395e1d39b248a49dbdb382de"));
+assert.ok(!batch13.some(r=>r.sourceSha256==="1620a3eedc207254540493facd61a60ceafb6c8a7e0c9cb2eefabca3be2c0141"));
+assert.ok(!batch13.some(r=>r.sourceSha256==="c29012e4fcdaec692e06ffc054fa8c6fb0f758a68233d4643dacd96b28dd329c"));
+assert.ok(!batch13.some(r=>r.sourceSha256==="425c29c5a2a0b8ca1684541be3816907ee955ed564d020dc133ad6141ff3f711"));
+assert.ok(!batch13.some(r=>r.sourceSha256==="efa8d1bb04ec28352f9cac72bc1df36cca0f083339200cf65a440bba36064f36"));
+assert.ok(!batch13.some(r=>r.sourceSha256==="725bab20151c8e696be33c041686ffa1850d8bea856aab07044b76fa360c9cd5"));
+assert.ok(!batch13.some(r=>r.sourceSha256==="091c00598186df2be3f7aa02ebe2a58a9c5e71b8ea5ceec87d767fbc1a9b0f8e"));
+assert.ok(batch13.find(r=>r.id==="ntruhs-39cbb6dfe789-p1-q1").question.includes("List the vaccine"));
+assert.ok(batch13.find(r=>r.id==="ntruhs-9039b3308185-p1-q2").question.includes("Enumerate the prevention"));
+assert.ok(batch13.find(r=>r.id==="knruhs-99b4db6dee99-p2-q14a").question.includes("Koch's"));
+assert.ok(batch13.find(r=>r.id==="knruhs-99b4db6dee99-p2-q14b").question.includes("Candidiasis"));
+assert.ok(batch13.find(r=>r.id==="knruhs-65150043bbb4-p1-q1").question.includes("2. What is your diagnosis?"));
+assert.ok(batch13.find(r=>r.id==="knruhs-df146d64614f-p1-qa").question.includes("atheroma"));
+assert.ok(batch13.find(r=>r.id==="knruhs-7e2fc20b5e64-p2-q10").question.includes("Snack"));
+assert.ok(batch13.find(r=>r.id==="knruhs-c9738006124a-p1-q1").question.includes("(a) One- Voice"));
+assert.ok(batch13.find(r=>r.id==="ntruhs-f5e803ca6aa8-p1-q12r").question.includes("Indian Red Cross"));
+assert.equal(batch13.find(r=>r.id==="knruhs-6cde83218b53-p1-q1").marks,10);
+assert.equal(batch13.find(r=>r.id==="knruhs-0f55ab167d50-p1-q1").marks,10);
+assert.equal(batch13.find(r=>r.id==="ntruhs-2a9a799f40ff-p1-q1r").examRefs[0],"Feb 2018 \u00b7 Examination \u00b7 Code Not printed \u00b7 Not specified");
+assert.equal(batch13.find(r=>r.id==="ntruhs-efca99555a9a-p1-q1l").examRefs[0],"Feb 2019 \u00b7 Examination \u00b7 Code Not printed \u00b7 Not specified");
+assert.equal(batch13.find(r=>r.id==="ntruhs-d8a8632a5b92-p1-q1r").examRefs[0],"Feb 2016 \u00b7 Examination \u00b7 Code Not printed \u00b7 Not specified");
+assert.equal(batch13.find(r=>r.id==="ntruhs-9c4cf9ccb9de-p1-q1r").examRefs[0],"Jul 2019 \u00b7 Examination \u00b7 Paper II \u00b7 Code Not printed \u00b7 Not specified");
+assert.equal(batch13.find(r=>r.id==="ntruhs-a11493aeaed6-p1-q1l").examRefs[0],"Feb 2018 \u00b7 Examination \u00b7 Paper I \u00b7 Code Not printed \u00b7 Not specified");
+assert.equal(batch13.find(r=>r.id==="ntruhs-f5e803ca6aa8-p1-q12r").examRefs[0],"Jan 2014 \u00b7 Examination \u00b7 Paper II \u00b7 Code Not printed \u00b7 Not specified");
+console.log('PASS Batch13:1015 units,61 source PDFs,4556 marks,56 MCQs/224 options; printed NTR/YSR attribution, column-specific dates/papers, repeated numbers, historical legal wording, whole-unit holds and alternate examination scans.');
+
+// Original-page-verified OCR glyph corrections, preserving source anomalies.
+assert.ok(batch13.find(r=>r.id==="knruhs-6cde83218b53-p1-q6").question.includes("Type III"));
+assert.ok(batch13.find(r=>r.id==="knruhs-99b4db6dee99-p2-q10").question.includes("Type I"));
+assert.ok(batch13.find(r=>r.id==="knruhs-3ece0ccf88fe-p1-q2").question.includes("e. Elaborate"));
+assert.ok(batch13.find(r=>r.id==="knruhs-059ef1f7f197-p1-q11").question.includes("Type III"));
+assert.ok(batch13.find(r=>r.id==="knruhs-049002aad524-p2-q6").question.includes("(a) Homicide"));
+assert.ok(batch13.find(r=>r.id==="knruhs-049002aad524-p2-q7").question.includes("(b) Close shot"));
+assert.ok(batch13.find(r=>r.id==="knruhs-c9738006124a-p2-q6").question.includes("(a) Perilymph"));
