@@ -25,6 +25,29 @@ const ProgressDashboard = () => {
   const { local, cloud, userId, email, isAnonymous, needsOnboarding, saveProfile, setNeedsOnboarding, signOut, pendingConflict, resolveIdentityConflict } = useProfile();
   const [editOpen, setEditOpen] = useState(false);
   const [tick, setTick] = useState(0);
+  // Co-Founder title comes only from the authenticated user's server-managed team record.
+  const [teamDesignation, setTeamDesignation] = useState<{ userId: string; title: string } | null>(null);
+
+  useEffect(() => {
+    setTeamDesignation(null);
+    if (!userId || isAnonymous) return;
+    let cancelled = false;
+    const loadDesignation = async () => {
+      const { data, error } = await (supabase as any)
+        .from("team_members")
+        .select("designation")
+        .eq("user_id", userId)
+        .maybeSingle();
+      if (!cancelled) {
+        setTeamDesignation(!error && data?.designation === "Co-Founder"
+          ? { userId, title: "Co-Founder" } : null);
+      }
+    };
+    void loadDesignation();
+    const onVisible = () => { if (document.visibilityState === "visible") void loadDesignation(); };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => { cancelled = true; document.removeEventListener("visibilitychange", onVisible); };
+  }, [userId, isAnonymous]);
 
   useEffect(() => {
     const h = () => setTick((t) => t + 1);
@@ -109,7 +132,14 @@ const ProgressDashboard = () => {
     <div className="space-y-4 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">Dr. {local.display_name}</h3>
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <h3 className="text-lg font-semibold">Dr. {local.display_name}</h3>
+            {teamDesignation?.userId === userId && teamDesignation.title === "Co-Founder" && (
+              <span className="inline-flex items-center rounded-full border border-violet-400/50 bg-violet-500/10 px-2.5 py-0.5 text-[11px] font-bold tracking-wide text-violet-700 dark:text-violet-200" aria-label="ORBIT MBBS Co-Founder">
+                Co-Founder
+              </span>
+            )}
+          </div>
           <p className="text-xs text-muted-foreground">{YEAR_LABELS[local.year]}</p>
         </div>
         <Button size="sm" variant="ghost" onClick={() => setEditOpen(true)}>
