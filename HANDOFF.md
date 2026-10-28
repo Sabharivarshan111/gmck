@@ -2865,3 +2865,14 @@ Added 1,012 original-page-reviewed RGUHS units from 40 PDFs (71 pages compared),
 
 ### ORBIT university Batch14 — 27 October2026
 Added1,008 original-page-reviewed units to shared offline bank, total8,656;829NTR/YSR and179KNRUHS.11incompleteunitsheld,9alternatecopiesexcluded;90MUHSsources remain attributiondeferred. Source provenance and regression checks preserve repeated/skipped numbering and complete cross-page questions. See latest resume entry and private Batch14 publication receipts for actual web/Android verification; source checks alone do not certify packages. Next review source572p1Q1. No university/year complete; backend/version29/Play unchanged.
+
+
+### 2026-10-28 — ORBIT MBBS Batch15
+
+DONE: Added1,014 complete original-page-reviewed university occurrences (488 NTR/YSR,526 WBUHS), cumulative9,670.109 pages of39 contributing PDFs compared; source606 additional1page inspected but attribution deferred.330MCQs retain1,320options,4,588marks. Three whole units held; old8,656 rows unchanged. WBUHS mixed bundles retain per-paper headers, rotated options, printed2025 tail and intact choose-any groups. SourcePDFs remain private. Bank/search22,571roundtrips,KUHS6,916parity,TypeScript/quietlint,requiredguards and actual9,670-IDnativeweb/AndroidJS payload checks pass. Actual build:vercel passes.
+
+HALF-DONE: Hosted145scenario UI, production9,670payload and actual APK/AAB publication pending at this source commit. Prior Batch14 packages/live contain8,656. No university/year complete.
+
+NEXT: Verify exact-head hosted checks and packages; merge selective web PR preserving concurrent work and inspect production custom-domain payload. Continue collection at queue612,p1,Q1: WBUHS second-professional Jan–Feb2026 bundle SHA d170135deca921339f9c15881afeec808e27556e49262c66669e927223dc2311.
+
+DO NOT: Import unreviewed extraction, split choose-any alternatives, invent keys/clinical values/attribution, expose originals, change pinned version29/backend/Play or force-push. Final receipts stay in private checkpoint.
