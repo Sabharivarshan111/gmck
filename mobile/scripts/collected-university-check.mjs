@@ -41,10 +41,10 @@ const notes = load('src/lib/handwrittenNotes.ts', { ...common, './notesDedup': {
   './notesLimits': {}, './progress': progress });
 const resume = load('src/lib/homeResume.ts', { ...common, '@/lib/questionBank': bank });
 
-assert.equal(rows.length, 8656);
+assert.equal(rows.length, 9670);
 assert.equal(new Set(rows.map(r => r.id)).size, rows.length);
-const expected = { rguhs: 3793, knruhs: 3695, muhs: 0, ntruhs: 1164, wbuhs: 4 };
-const marks = { rguhs: 15363, knruhs: 15599, ntruhs: 4069, wbuhs: 40 };
+const expected = { rguhs: 3793, knruhs: 3695, muhs: 0, ntruhs: 1652, wbuhs: 530 };
+const marks = { rguhs: 15363, knruhs: 15599, ntruhs: 6117, wbuhs: 2580 };
 const ids = new Set();
 for (const [university, count] of Object.entries(expected)) {
   assert.equal(bank.allSearchHits(university).length, count);
@@ -56,8 +56,8 @@ for (const [university, count] of Object.entries(expected)) {
   for (const row of uniRows) {
     assert.match(row.sourceSha256, /^[a-f0-9]{64}$/);
     assert.ok(row.id.includes(row.sourceSha256.slice(0, 12)));
-    assert.ok(Number.isInteger(row.pdfPage) && row.pdfPage >= 1 && row.pdfPage <= 7);
-    assert.ok((row.question.length > 4 || (row.id === 'ntruhs-12f02835c36f-p1-q7' && row.question === 'Gout') || {"knruhs-6cde83218b53-p2-q12": "PKDL", "knruhs-ee244d19365e-p1-q11": "IgG", "knruhs-136b4dc127a6-p1-q2": "Bias", "knruhs-d5a145770a41-p1-q10": "CARE"}[row.id] === row.question || (row.id === 'knruhs-e8e59be64df3-p2-q17' && row.question === 'KFD') || (row.id === 'rguhs-942383725e34-p1-q6' && row.question === 'IgM.') || (row.id === 'rguhs-764314376aaf-p1-q17' && row.question === 'Hair') || (['rguhs-fc6c85e99007-p1-q5','rguhs-d3a0bc4dc8fb-p1-q12'].includes(row.id) && row.question === 'Gout') || (row.id === 'rguhs-8b7f4f6c8446-p1-q13' && row.question === 'GABA')) && row.question.length <= 1000);
+    assert.ok(Number.isInteger(row.pdfPage) && row.pdfPage >= 1 && row.pdfPage <= (JSON.parse(fs.readFileSync(path.join(repo, 'src/data/universityPapers/batch15-provenance.json'), 'utf8')).papers.find(p => p.sha256 === row.sourceSha256)?.pagesVisuallyCompared.length ?? 7));
+    assert.ok((row.question.length > 4 || {"ntruhs-2a174f5c1c88-p1-q9": "BERA", "ntruhs-45cc96809a77-p1-q11": "CTEV", "ntruhs-6b81306ad1a7-p1-q11": "ASHA"}[row.id] === row.question || (row.id === 'ntruhs-12f02835c36f-p1-q7' && row.question === 'Gout') || {"knruhs-6cde83218b53-p2-q12": "PKDL", "knruhs-ee244d19365e-p1-q11": "IgG", "knruhs-136b4dc127a6-p1-q2": "Bias", "knruhs-d5a145770a41-p1-q10": "CARE"}[row.id] === row.question || (row.id === 'knruhs-e8e59be64df3-p2-q17' && row.question === 'KFD') || (row.id === 'rguhs-942383725e34-p1-q6' && row.question === 'IgM.') || (row.id === 'rguhs-764314376aaf-p1-q17' && row.question === 'Hair') || (['rguhs-fc6c85e99007-p1-q5','rguhs-d3a0bc4dc8fb-p1-q12'].includes(row.id) && row.question === 'Gout') || (row.id === 'rguhs-8b7f4f6c8446-p1-q13' && row.question === 'GABA')) && row.question.length <= 1000);
     assert.ok(row.examRefs.length > 0 && row.topicKey);
     const raw = `PYQ[${row.id}] ${row.question}`;
     assert.equal(text.getCleanQuestionText(raw), row.question);
@@ -88,7 +88,7 @@ assert.ok(wb[2].question.includes('nephrosis and apoptosis'), 'Do not silently c
 assert.ok(wb[1].question.includes('any two') && wb[1].question.includes('c)'));
 assert.ok(wb[3].question.includes('any two') && wb[3].question.includes('d) Septic shock'));
 assert.ok(rows.find(r => r.university === 'knruhs').question.includes('(d) Applied anatomy'));
-console.log('PASS 8656 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
+console.log('PASS 9670 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
 
 const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH02: batch02 } = await bundle('src/data/universityPapers/reviewedBatch02.ts');
 assert.equal(batch02.length, 200);
@@ -560,3 +560,20 @@ for(const r of batch14){
  if(r.options){assert.equal(r.options.length,4);assert.equal(new Set(r.options.map(o=>o.label.toLowerCase())).size,4);for(const o of r.options)assert.ok(r.question.includes(`(${o.label}) ${o.text}`));}
 }
 console.log('PASS Batch14:1008 units,273MCQs/1092options,3189marks; repeated/skipped numbering, cross-page clinical subparts, complete-option holds, duplicate exam exclusion and printed NTR/YSR dates.');
+
+const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH15: batch15 } = await bundle('src/data/universityPapers/reviewedBatch15.ts');
+assert.equal(batch15.length,1014);assert.equal(batch15.reduce((n,r)=>n+r.marks,0),4588);assert.equal(batch15.filter(r=>r.options).length,330);assert.equal(batch15.reduce((n,r)=>n+(r.options?.length??0),0),1320);
+const source15={"574": "e04db729c6ad6bd021fc54c36364fd7e026f77259820291e0e436a9edc678e83", "583": "8c16d0d75853ba1ede3a969adaed40fc117f21e4a5fa753e8e554ff1700c3cf7", "591": "2a174f5c1c88336a5a0c91770809af2c2414852dd8ee2865870e7d5809fe878c", "595": "e680b79e412471aa62ca22f4d841d78dcd20572de899e6ee461fb98ab6645425", "604": "29eda413623cb56845024039af9019b3dffab3f122ee28ef9105554d95b8cc64", "606": "ef321bd043cf8ebc5de80a87519aeb83c601feb6022520e5e10e4aaa58014426", "607": "debcab6db733841592435e85dee0340042d16df8f365fe4d039d45968324f625", "609": "0644d392c4e2a4b4ca45a84761d8a74623ef2c5490244f4fbf72fe872ccec36c", "610": "ea880f97f5f755d6c622dc448fb1ed53e04249a40eacbaa791c09c8f53db508a", "611": "7f3a40a51aee47e58f88549d182640a918d8c52d198146857913525c5079877a"};
+const q15=(n,p,q)=>batch15.find(r=>r.sourceSha256===source15[n] && r.pdfPage===p && r.id.endsWith("-q"+q));
+assert.ok(q15(574,1,'9').sourceQuestion.includes('Unnumbered'));
+assert.ok(!q15(583,1,'1') && !q15(583,1,'2'));
+assert.equal(q15(591,2,'11').question,'Submandibular Sialadenitis');
+assert.ok(q15(595,1,'1').question.includes('recliner'));
+assert.equal(q15(604,1,'2b').question,'Mammogram');
+assert.ok(!batch15.some(r=>r.sourceSha256===source15[606]));assert.ok(!q15(607,2,'8'));
+assert.equal((q15(609,3,'1a').question.match(/T2DM presented/g)||[]).length,2);
+assert.ok(q15(610,10,'5vii').options[3].text.includes('medially, forwards'));
+assert.ok(q15(611,22,'1').examRefs[0].includes('Mar–Apr 2025'));
+assert.ok(q15(611,19,'3').question.includes('any five') && q15(611,19,'3').question.includes('g) Management of Irritable bowel syndrome'));
+for(const r of batch15){assert.ok(!/Ranker|www\.|Max.?Marks|Time:/.test(r.question));if(r.options){assert.equal(r.options.length,4);assert.equal(new Set(r.options.map(o=>o.label.toLowerCase())).size,4);for(const o of r.options)assert.ok(r.question.includes(`(${o.label}) ${o.text}`));}}
+console.log('PASS Batch15:1014 units,330MCQs/1320options,4588marks; complete clinical cases, cross-page questions, rotated options, mixed 2025/2026 headers and intact choose-any groups.');
