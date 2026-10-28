@@ -75,6 +75,12 @@ try {
       {"university": "ntruhs", "year": "second", "yearKey": "second-year", "query": "Empathy towards patients", "topic": "General Microbiology", "reference": "Jan 2024"},
       {"university": "ntruhs", "year": "second", "yearKey": "second-year", "query": "hepatic CYP microsomal", "topic": "General Pharmacology", "reference": "Aug 2021"},
       {"university": "ntruhs", "year": "third", "yearKey": "third-year", "query": "intersectorial approach", "topic": "Epidemiology Of Non-Communicable Diseases", "reference": "Aug 2011"},
+      {"university": "ntruhs", "year": "second", "yearKey": "second-year", "query": "Transferable bacterial drug resistance", "topic": "General Microbiology", "reference": "Jan 2016"},
+      {"university": "ntruhs", "year": "third", "yearKey": "third-year", "query": "Submandibular Sialadenitis", "topic": "Oral cavity and salivary gland", "reference": "Aug 2021"},
+      {"university": "wbuhs", "year": "final", "yearKey": "final-year", "query": "Schuffner", "topic": "Infective Diseases", "reference": "Jun–Jul 2026", "option": "(d) Plasmodium knowlesi"},
+      {"university": "wbuhs", "year": "final", "yearKey": "final-year", "query": "Nasolacrimal duct is directed", "topic": "Lacrimal apparatus", "reference": "Apr 2026", "option": "(d) Downwards, medially, forwards"},
+      {"university": "wbuhs", "year": "final", "yearKey": "final-year", "query": "endometriosis can affect fertility", "topic": "Benign condition in gynec", "reference": "Mar–Apr 2025"},
+      {"university": "wbuhs", "year": "final", "yearKey": "final-year", "query": "terminally ill patients and family", "topic": "Ageing, Onco & Others", "reference": "Mar–Apr 2026"},
     ]) {
       const context = await browser.newContext({ viewport: { width, height: 780 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
       await context.route('**/*', route => new URL(route.request().url()).origin === new URL(base).origin ? route.continue() : route.abort());
@@ -99,7 +105,7 @@ try {
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), 'Horizontal overflow');
       assert.deepEqual(errors, []);
       results.push({ width, university: fixture.university, query: fixture.query, searchAndChapterAndReference: 'passed' });
-      if (width === 360 && fixture.query === 'Monks hood') { fs.mkdirSync('artifacts/university-import',{recursive:true});await page.getByText(fixture.option, {exact:false}).filter({visible:true}).first().scrollIntoViewIfNeeded();await page.waitForTimeout(250);await page.screenshot({path:'artifacts/university-import/batch10-options-360.png'}); }
+      if (width === 360 && fixture.query === 'Schuffner') { fs.mkdirSync('artifacts/university-import',{recursive:true});await page.getByText(fixture.option, {exact:false}).filter({visible:true}).first().scrollIntoViewIfNeeded();await page.waitForTimeout(250);await page.screenshot({path:'artifacts/university-import/batch15-options-360.png'}); }
       console.log('PASS chapter/reference', width, fixture.university, fixture.query);
       await context.close();
     }
