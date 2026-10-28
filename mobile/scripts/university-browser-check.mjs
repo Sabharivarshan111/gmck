@@ -81,6 +81,12 @@ try {
       {"university": "wbuhs", "year": "final", "yearKey": "final-year", "query": "Nasolacrimal duct is directed", "topic": "Lacrimal apparatus", "reference": "Apr 2026", "option": "(d) Downwards, medially, forwards"},
       {"university": "wbuhs", "year": "final", "yearKey": "final-year", "query": "endometriosis can affect fertility", "topic": "Benign condition in gynec", "reference": "Mar–Apr 2025"},
       {"university": "wbuhs", "year": "final", "yearKey": "final-year", "query": "terminally ill patients and family", "topic": "Ageing, Onco & Others", "reference": "Mar–Apr 2026"},
+      {"university": "wbuhs", "year": "first", "yearKey": "first-year", "query": "TSH", "topic": "Endocrine Physiology", "reference": "Oct–Nov 2025", "option": "(d) A diagnosis of whether this is a patient of primary or secondary Hypothyroidism cannot be made from this report."},
+      {"university": "wbuhs", "year": "second", "yearKey": "second-year", "query": "Which of the following is not true of Staphylococcus aureus food poisoning?", "topic": "Bacteriology", "reference": "Jan–Feb 2026", "option": "(d) Type A toxin is responsible for most cases"},
+      {"university": "wbuhs", "year": "third", "yearKey": "third-year", "query": "Diagnostic power of screening", "topic": "Principles & Methods Of Epidemiology", "reference": "Jun 2025", "option": "(c) Predictive value"},
+      {"university": "wbuhs", "year": "final", "yearKey": "final-year", "query": "Wolfe graft", "topic": "Operative surgery and others", "reference": "Mar–Apr 2025", "option": "(d) Full split thickness graft"},
+      {"university": "wbuhs", "year": "second", "yearKey": "second-year", "query": "diabetic 60 year old", "topic": "Hospital Infection Control", "reference": "Mar–Apr 2024"},
+      {"university": "wbuhs", "year": "final", "yearKey": "final-year", "query": "ovarian germ cell", "topic": "Gynecological malignancies", "reference": "Mar–Apr 2024", "option": "(iv) CEA"},
     ]) {
       const context = await browser.newContext({ viewport: { width, height: 780 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
       await context.route('**/*', route => new URL(route.request().url()).origin === new URL(base).origin ? route.continue() : route.abort());
@@ -105,7 +111,7 @@ try {
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), 'Horizontal overflow');
       assert.deepEqual(errors, []);
       results.push({ width, university: fixture.university, query: fixture.query, searchAndChapterAndReference: 'passed' });
-      if (width === 360 && fixture.query === 'Schuffner') { fs.mkdirSync('artifacts/university-import',{recursive:true});await page.getByText(fixture.option, {exact:false}).filter({visible:true}).first().scrollIntoViewIfNeeded();await page.waitForTimeout(250);await page.screenshot({path:'artifacts/university-import/batch15-options-360.png'}); }
+      if (width === 360 && fixture.query === 'Wolfe graft') { fs.mkdirSync('artifacts/university-import',{recursive:true});await page.getByText(fixture.option, {exact:false}).filter({visible:true}).first().scrollIntoViewIfNeeded();await page.waitForTimeout(250);await page.screenshot({path:'artifacts/university-import/batch16-options-360.png'}); }
       console.log('PASS chapter/reference', width, fixture.university, fixture.query);
       await context.close();
     }

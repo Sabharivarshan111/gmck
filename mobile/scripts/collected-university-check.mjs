@@ -41,10 +41,10 @@ const notes = load('src/lib/handwrittenNotes.ts', { ...common, './notesDedup': {
   './notesLimits': {}, './progress': progress });
 const resume = load('src/lib/homeResume.ts', { ...common, '@/lib/questionBank': bank });
 
-assert.equal(rows.length, 9670);
+assert.equal(rows.length, 10684);
 assert.equal(new Set(rows.map(r => r.id)).size, rows.length);
-const expected = { rguhs: 3793, knruhs: 3695, muhs: 0, ntruhs: 1652, wbuhs: 530 };
-const marks = { rguhs: 15363, knruhs: 15599, ntruhs: 6117, wbuhs: 2580 };
+const expected = { rguhs: 3793, knruhs: 3695, muhs: 0, ntruhs: 1652, wbuhs: 1544 };
+const marks = { rguhs: 15363, knruhs: 15599, ntruhs: 6117, wbuhs: 7340 };
 const ids = new Set();
 for (const [university, count] of Object.entries(expected)) {
   assert.equal(bank.allSearchHits(university).length, count);
@@ -56,7 +56,7 @@ for (const [university, count] of Object.entries(expected)) {
   for (const row of uniRows) {
     assert.match(row.sourceSha256, /^[a-f0-9]{64}$/);
     assert.ok(row.id.includes(row.sourceSha256.slice(0, 12)));
-    assert.ok(Number.isInteger(row.pdfPage) && row.pdfPage >= 1 && row.pdfPage <= (JSON.parse(fs.readFileSync(path.join(repo, 'src/data/universityPapers/batch15-provenance.json'), 'utf8')).papers.find(p => p.sha256 === row.sourceSha256)?.pagesVisuallyCompared.length ?? 7));
+    assert.ok(Number.isInteger(row.pdfPage) && row.pdfPage >= 1 && row.pdfPage <= (['batch15-provenance.json', 'batch16-provenance.json'].flatMap(file => JSON.parse(fs.readFileSync(path.join(repo, 'src/data/universityPapers', file), 'utf8')).papers).find(p => p.sha256 === row.sourceSha256)?.pagesVisuallyCompared.at(-1) ?? 7));
     assert.ok((row.question.length > 4 || {"ntruhs-2a174f5c1c88-p1-q9": "BERA", "ntruhs-45cc96809a77-p1-q11": "CTEV", "ntruhs-6b81306ad1a7-p1-q11": "ASHA"}[row.id] === row.question || (row.id === 'ntruhs-12f02835c36f-p1-q7' && row.question === 'Gout') || {"knruhs-6cde83218b53-p2-q12": "PKDL", "knruhs-ee244d19365e-p1-q11": "IgG", "knruhs-136b4dc127a6-p1-q2": "Bias", "knruhs-d5a145770a41-p1-q10": "CARE"}[row.id] === row.question || (row.id === 'knruhs-e8e59be64df3-p2-q17' && row.question === 'KFD') || (row.id === 'rguhs-942383725e34-p1-q6' && row.question === 'IgM.') || (row.id === 'rguhs-764314376aaf-p1-q17' && row.question === 'Hair') || (['rguhs-fc6c85e99007-p1-q5','rguhs-d3a0bc4dc8fb-p1-q12'].includes(row.id) && row.question === 'Gout') || (row.id === 'rguhs-8b7f4f6c8446-p1-q13' && row.question === 'GABA')) && row.question.length <= 1000);
     assert.ok(row.examRefs.length > 0 && row.topicKey);
     const raw = `PYQ[${row.id}] ${row.question}`;
@@ -88,7 +88,7 @@ assert.ok(wb[2].question.includes('nephrosis and apoptosis'), 'Do not silently c
 assert.ok(wb[1].question.includes('any two') && wb[1].question.includes('c)'));
 assert.ok(wb[3].question.includes('any two') && wb[3].question.includes('d) Septic shock'));
 assert.ok(rows.find(r => r.university === 'knruhs').question.includes('(d) Applied anatomy'));
-console.log('PASS 9670 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
+console.log('PASS 10684 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
 
 const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH02: batch02 } = await bundle('src/data/universityPapers/reviewedBatch02.ts');
 assert.equal(batch02.length, 200);
@@ -577,3 +577,20 @@ assert.ok(q15(611,22,'1').examRefs[0].includes('Mar–Apr 2025'));
 assert.ok(q15(611,19,'3').question.includes('any five') && q15(611,19,'3').question.includes('g) Management of Irritable bowel syndrome'));
 for(const r of batch15){assert.ok(!/Ranker|www\.|Max.?Marks|Time:/.test(r.question));if(r.options){assert.equal(r.options.length,4);assert.equal(new Set(r.options.map(o=>o.label.toLowerCase())).size,4);for(const o of r.options)assert.ok(r.question.includes(`(${o.label}) ${o.text}`));}}
 console.log('PASS Batch15:1014 units,330MCQs/1320options,4588marks; complete clinical cases, cross-page questions, rotated options, mixed 2025/2026 headers and intact choose-any groups.');
+
+const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH16: batch16 } = await bundle('src/data/universityPapers/reviewedBatch16.ts');
+assert.equal(batch16.length,1014);assert.equal(batch16.reduce((n,r)=>n+r.marks,0),4760);assert.equal(batch16.filter(r=>r.options).length,432);assert.equal(batch16.reduce((n,r)=>n+(r.options?.length??0),0),1728);
+const source16={"612": "d170135deca921339f9c15881afeec808e27556e49262c66669e927223dc2311", "613": "fdeb155cbb33d1c7ad2035980c70fc6ce8e024b266a859a6b84faddeecae3057", "614": "8cc0c7d3c3d3911cfa81361ce949504466e50da19bdf143d5308c38e373c6e6f", "615": "a4f580b5e5ee62e364b2b55cc675a632731f5e1470e305923d03c9aac76adec2", "616": "c55c43250a6fbac89a1db82b5bb673ac445c4f40315b30f4d50573432f3aa952", "617": "ff96666ef6f34c2917c047565e05e9a09a6d71194f276b076fcd20468d37b8cf", "618": "d0644921c2cece2e47c75a41dfa4e83bb3410ed7182078e42e4242a237a363c9", "619": "d5988c3b36bc6c784efdf8a891184e8fc0a87d2659ea6ae2d4b63c8a9a0a7d41", "620": "b8683ba13a1f06f7a674ee3ca30ec40f9feadbd034486a933975e21375cf313c"};
+const q16=(n,p,q)=>batch16.find(r=>r.sourceSha256===source16[n]&&r.pdfPage===p&&r.id.endsWith("-q"+q));
+const repeated16={"wbuhs-d170135deca9-p6-q5viii": ["a", "b", "b", "d"], "wbuhs-8cc0c7d3c3d3-p8-q6vii": ["a", "b", "b", "d"], "wbuhs-a4f580b5e5ee-p5-q5ii": ["a", "b", "c", "c"], "wbuhs-c55c43250a6f-p19-q5ii": ["a", "b", "b", "d"], "wbuhs-d5988c3b36bc-p3-q5i": ["a", "b", "b", "c"], "wbuhs-d5988c3b36bc-p4-q5ix": ["a", "b", "b", "d"], "wbuhs-d5988c3b36bc-p12-q5x": ["a", "b", "b", "d"]};
+for(const r of batch16){assert.ok(!/Ranker|www\.|Max.?Marks|Time:/.test(r.question));if(r.options){assert.equal(r.options.length,4);assert.ok(r.options.every(o=>o.text.length>0));if(repeated16[r.id])assert.deepEqual(r.options.map(o=>o.label),repeated16[r.id]);else assert.equal(new Set(r.options.map(o=>o.label)).size,4);for(const o of r.options)assert.ok(r.question.includes(`(${o.label}) ${o.text}`));}}
+assert.equal(batch16.filter(r=>r.sourceSha256===source16[614]&&r.year==='first').length,174);
+assert.ok(q16(612,12,'4e').question.includes('T₄ is preferred over T₃'));
+assert.ok(q16(614,8,'6ix').question.includes('100'));
+assert.equal(q16(615,5,'3a').sourceQuestion,'3(i)');
+assert.equal(q16(619,5,'1b').sourceQuestion,'1(a) [second printed occurrence]');
+assert.equal(q16(618,3,'4a').sourceQuestion,'2(a) [second printed 2]');
+assert.ok(q16(616,3,'3').question.includes('any five')&&q16(616,3,'3').question.includes('g) Massive splenomegaly'));
+assert.equal(q16(616,15,'1').examRefs[0],'Mar–Apr 2025 · Examination · Paper II · Code 016/25 · Old Regulation');
+assert.ok(!batch16.some(r=>r.sourceSha256===source16[620]&&r.pdfPage>6));
+console.log('PASS Batch16:1014 original-page-reviewed units,432MCQs/1728options,4760marks; first/second/third/final headers, printed repeated option/question labels, complete clinical cases, old choose-any groups and partial-bundle seam retained.');
