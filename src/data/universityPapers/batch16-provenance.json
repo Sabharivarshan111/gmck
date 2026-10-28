@@ -1,0 +1,845 @@
+{
+  "audit": {
+    "batch": 16,
+    "newReviewed": 1014,
+    "previousApproved": 9670,
+    "totalReviewed": 10684,
+    "newByUniversity": {
+      "wbuhs": 1014
+    },
+    "newBySubject": {
+      "pathology": 88,
+      "microbiology": 88,
+      "pharmacology": 88,
+      "community-medicine": 132,
+      "forensic-medicine": 66,
+      "ent": 66,
+      "ophthalmology": 66,
+      "anatomy": 58,
+      "physiology": 58,
+      "biochemistry": 58,
+      "general-medicine": 60,
+      "paediatrics": 30,
+      "obstetrics-gynaecology": 112,
+      "general-surgery": 44
+    },
+    "byFormat": {
+      "long-answer": 86,
+      "short-answer": 286,
+      "very-short-answer": 210,
+      "mcq": 432
+    },
+    "sourcePDFs": 9,
+    "sourcePagesCompared": 96,
+    "allVisuallyComparedQueuePages": 96,
+    "newContributingPages": 96,
+    "marks": 4760,
+    "options": 1728,
+    "heldUnits": 0,
+    "excludedSources": 0,
+    "deferredSources": 0,
+    "distinctNormalizedWordings": 1007,
+    "distinctNotInOld": 1006,
+    "newOccurrencesMatchingOld": 1,
+    "nextQueueIndex": 620,
+    "nextPage": 7,
+    "nextQuestion": "1",
+    "noUniversityYearComplete": true,
+    "cumulativeByUniversity": {
+      "rguhs": 3793,
+      "knruhs": 3695,
+      "ntruhs": 1652,
+      "wbuhs": 1544
+    },
+    "cumulativeMarks": {
+      "knruhs": 15599,
+      "wbuhs": 7340,
+      "rguhs": 15363,
+      "ntruhs": 6117
+    }
+  },
+  "papers": [
+    {
+      "queueIndex": 612,
+      "sha256": "d170135deca921339f9c15881afeec808e27556e49262c66669e927223dc2311",
+      "sourceUrl": "https://cms.medical.iqcity.in/wp-content/uploads/2026/01/QP-M.B.B.S-2nd-Professional-Jan-Feb-26-Examinations.pdf",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/Second_MBBS/Multi-subject_bundle/2026/WBUHS_Multi-subject_bundle_2026_JANUARY_NEW_REGULATION_PaperUnknown_d170135deca9.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 132,
+      "marks": 600,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "pathology",
+          "paper": "I",
+          "examDate": "Jan–Feb 2026",
+          "code": "03/26",
+          "reg": "New Regulation",
+          "year": "second"
+        },
+        {
+          "componentStart": 3,
+          "subject": "pathology",
+          "paper": "II",
+          "examDate": "Jan–Feb 2026",
+          "code": "03/26",
+          "reg": "New Regulation",
+          "year": "second"
+        },
+        {
+          "componentStart": 5,
+          "subject": "microbiology",
+          "paper": "I",
+          "examDate": "Jan–Feb 2026",
+          "code": "03/26",
+          "reg": "New Regulation",
+          "year": "second"
+        },
+        {
+          "componentStart": 7,
+          "subject": "microbiology",
+          "paper": "II",
+          "examDate": "Jan–Feb 2026",
+          "code": "03/26",
+          "reg": "New Regulation",
+          "year": "second"
+        },
+        {
+          "componentStart": 9,
+          "subject": "pharmacology",
+          "paper": "I",
+          "examDate": "Jan–Feb 2026",
+          "code": "03/26",
+          "reg": "New Regulation",
+          "year": "second"
+        },
+        {
+          "componentStart": 11,
+          "subject": "pharmacology",
+          "paper": "II",
+          "examDate": "Jan–Feb 2026",
+          "code": "03/26",
+          "reg": "New Regulation",
+          "year": "second"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Only original-page-compared components approved; per-unit header metadata and full subparts/options retained. MicrobiologyI5(viii)prints third option as b again; retain a,b,b,d labels without repairing scientific wording. PharmacologyII4(e)prints T4 preferred over T3 and is retained literally.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 613,
+      "sha256": "fdeb155cbb33d1c7ad2035980c70fc6ce8e024b266a859a6b84faddeecae3057",
+      "sourceUrl": "https://cms.medical.iqcity.in/wp-content/uploads/2025/12/QP-M.B.B.S-3rd-Professional-Part-I-December-2025-Examinations.pdf",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/Third_MBBS_Part_I/Multi-subject_bundle/2025/WBUHS_Multi-subject_bundle_2025_SessionUnknown_NEW_REGULATION_PaperI_fdeb155cbb33.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 110,
+      "marks": 500,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "community-medicine",
+          "paper": "I",
+          "examDate": "Dec 2025",
+          "code": "015/25",
+          "reg": "New Regulation",
+          "year": "third"
+        },
+        {
+          "componentStart": 3,
+          "subject": "community-medicine",
+          "paper": "II",
+          "examDate": "Dec 2025",
+          "code": "015/25",
+          "reg": "New Regulation",
+          "year": "third"
+        },
+        {
+          "componentStart": 5,
+          "subject": "forensic-medicine",
+          "paper": null,
+          "examDate": "Dec 2025",
+          "code": "03/25",
+          "reg": "New Regulation",
+          "year": "third"
+        },
+        {
+          "componentStart": 7,
+          "subject": "ent",
+          "paper": null,
+          "examDate": "Dec 2025",
+          "code": "015/25",
+          "reg": "New Regulation",
+          "year": "third"
+        },
+        {
+          "componentStart": 9,
+          "subject": "ophthalmology",
+          "paper": null,
+          "examDate": "Dec 2025",
+          "code": "015/25",
+          "reg": "New Regulation",
+          "year": "third"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Only original-page-compared components approved; per-unit header metadata and full subparts/options retained.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 614,
+      "sha256": "8cc0c7d3c3d3911cfa81361ce949504466e50da19bdf143d5308c38e373c6e6f",
+      "sourceUrl": "https://cms.medical.iqcity.in/wp-content/uploads/2025/10/QP-M.B.B.S-1st-Professional-Theory-Examinations-October-November-2025.pdf",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/Third_MBBS_Part_I/Multi-subject_bundle/2025/WBUHS_Multi-subject_bundle_2025_OCTOBER_NOVEMBER_NEW_REGULATION_PaperII_8cc0c7d3c3d3.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 174,
+      "marks": 600,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "I",
+          "examDate": "Oct–Nov 2025",
+          "code": "001/25",
+          "reg": "New Regulation",
+          "year": "first"
+        },
+        {
+          "componentStart": 3,
+          "subject": "anatomy",
+          "paper": "II",
+          "examDate": "Oct–Nov 2025",
+          "code": "001/25",
+          "reg": "New Regulation",
+          "year": "first"
+        },
+        {
+          "componentStart": 5,
+          "subject": "physiology",
+          "paper": "I",
+          "examDate": "Oct–Nov 2025",
+          "code": "001/25",
+          "reg": "New Regulation",
+          "year": "first"
+        },
+        {
+          "componentStart": 7,
+          "subject": "physiology",
+          "paper": "II",
+          "examDate": "Oct–Nov 2025",
+          "code": "001/25",
+          "reg": "New Regulation",
+          "year": "first"
+        },
+        {
+          "componentStart": 9,
+          "subject": "biochemistry",
+          "paper": "I",
+          "examDate": "Oct–Nov 2025",
+          "code": "001/25",
+          "reg": "New Regulation",
+          "year": "first"
+        },
+        {
+          "componentStart": 11,
+          "subject": "biochemistry",
+          "paper": "II",
+          "examDate": "Oct–Nov 2025",
+          "code": "001/25",
+          "reg": "New Regulation",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original pages compared; independently marked required subquestions separated with complete subparts/options and per-paper header metadata.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 615,
+      "sha256": "a4f580b5e5ee62e364b2b55cc675a632731f5e1470e305923d03c9aac76adec2",
+      "sourceUrl": "https://cms.medical.iqcity.in/wp-content/uploads/2025/06/QP-M.B.B.S-3rd-Prof.-Part-I-May-June-2025-Examinations.pdf",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/Third_MBBS_Part_I/Community_Medicine/2025/WBUHS_Community_Medicine_2025_SessionUnknown_NEW_REGULATION_PaperUnknown_a4f580b5e5ee.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 110,
+      "marks": 500,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "ent",
+          "paper": null,
+          "examDate": "Jun 2025",
+          "code": "015/25",
+          "reg": "New Regulation",
+          "year": "third"
+        },
+        {
+          "componentStart": 3,
+          "subject": "ophthalmology",
+          "paper": null,
+          "examDate": "Jun 2025",
+          "code": "015/25",
+          "reg": "New Regulation",
+          "year": "third"
+        },
+        {
+          "componentStart": 5,
+          "subject": "community-medicine",
+          "paper": "I",
+          "examDate": "Jun 2025",
+          "code": "15/25",
+          "reg": "New Regulation",
+          "year": "third"
+        },
+        {
+          "componentStart": 7,
+          "subject": "community-medicine",
+          "paper": "II",
+          "examDate": "Jun 2025",
+          "code": "15/25",
+          "reg": "New Regulation",
+          "year": "third"
+        },
+        {
+          "componentStart": 9,
+          "subject": "forensic-medicine",
+          "paper": "I",
+          "examDate": "Jun 2025",
+          "code": "15/25",
+          "reg": "New Regulation",
+          "year": "third"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Only original-page-compared components approved; per-unit header metadata and full subparts/options retained.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 616,
+      "sha256": "c55c43250a6fbac89a1db82b5bb673ac445c4f40315b30f4d50573432f3aa952",
+      "sourceUrl": "https://cms.medical.iqcity.in/wp-content/uploads/2025/03/QP-MBBS-3rd-Professional-P-II-March-2025-Examinations-2.pdf",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/Final_MBBS/Multi-subject_bundle/2025/WBUHS_Multi-subject_bundle_2025_MARCH_APRIL_NEW_REGULATION_PaperI_c55c43250a6f.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 174,
+      "marks": 940,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "general-medicine",
+          "paper": "I",
+          "examDate": "Mar–Apr 2025",
+          "code": "016/25",
+          "reg": "New Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 4,
+          "subject": "general-medicine",
+          "paper": "II",
+          "examDate": "Mar–Apr 2025",
+          "code": "016/25",
+          "reg": "New Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 3,
+          "subject": "general-medicine",
+          "paper": "I",
+          "examDate": "Mar–Apr 2025",
+          "code": "16/25",
+          "reg": "Old Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 6,
+          "subject": "general-medicine",
+          "paper": "II",
+          "examDate": "Mar–Apr 2025",
+          "code": "16/25",
+          "reg": "Old Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 9,
+          "subject": "paediatrics",
+          "paper": null,
+          "examDate": "Mar–Apr 2025",
+          "code": "016/25",
+          "reg": "Old Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 12,
+          "subject": "obstetrics-gynaecology",
+          "paper": "I",
+          "examDate": "Mar–Apr 2025",
+          "code": "016/25",
+          "reg": "Old Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 7,
+          "subject": "paediatrics",
+          "paper": null,
+          "examDate": "Mar–Apr 2025",
+          "code": "16/25",
+          "reg": "New Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 10,
+          "subject": "obstetrics-gynaecology",
+          "paper": "I",
+          "examDate": "Mar–Apr 2025",
+          "code": "016/25",
+          "reg": "New Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 13,
+          "subject": "obstetrics-gynaecology",
+          "paper": "II",
+          "examDate": "Mar–Apr 2025",
+          "code": "16/25",
+          "reg": "New Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 16,
+          "subject": "general-surgery",
+          "paper": "I",
+          "examDate": "Mar–Apr 2025",
+          "code": "16/25",
+          "reg": "New Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 18,
+          "subject": "general-surgery",
+          "paper": "II",
+          "examDate": "Mar–Apr 2025",
+          "code": "16/25",
+          "reg": "New Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 15,
+          "subject": "obstetrics-gynaecology",
+          "paper": "II",
+          "examDate": "Mar–Apr 2025",
+          "code": "016/25",
+          "reg": "Old Regulation",
+          "year": "final"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks. Page15 and previously imported source611p22 both print Mar–Apr2025/016/25/Old Regulation OBGII but contain different complete examinations. Retained distinct printed-header variants; not collapsed by date/code alone.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 617,
+      "sha256": "ff96666ef6f34c2917c047565e05e9a09a6d71194f276b076fcd20468d37b8cf",
+      "sourceUrl": "https://cms.medical.iqcity.in/wp-content/uploads/2025/03/QP-MBBS-3rd-Prof.-P-II-Sept24-Exams-OR-1.pdf",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/Final_MBBS/Multi-subject_bundle/2024/WBUHS_Multi-subject_bundle_2024_SessionUnknown_OLD_REGULATION_PaperI_ff96666ef6f3.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 20,
+      "marks": 240,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "general-medicine",
+          "paper": "I",
+          "examDate": "Sep 2024",
+          "code": "016/24",
+          "reg": "Old Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 2,
+          "subject": "general-medicine",
+          "paper": "II",
+          "examDate": "Sep 2024",
+          "code": "016/24",
+          "reg": "Old Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 3,
+          "subject": "obstetrics-gynaecology",
+          "paper": "I",
+          "examDate": "Sep 2024",
+          "code": "016/24",
+          "reg": "Old Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 4,
+          "subject": "obstetrics-gynaecology",
+          "paper": "II",
+          "examDate": "Sep 2024",
+          "code": "016/24",
+          "reg": "Old Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 5,
+          "subject": "paediatrics",
+          "paper": null,
+          "examDate": "Sep 2024",
+          "code": "016/24",
+          "reg": "Old Regulation",
+          "year": "final"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 618,
+      "sha256": "d0644921c2cece2e47c75a41dfa4e83bb3410ed7182078e42e4242a237a363c9",
+      "sourceUrl": "https://cms.medical.iqcity.in/wp-content/uploads/2025/03/QP-MBBS-3rd-Professional-Part-I-August-2024-Examinations-1-1-1.pdf",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/Third_MBBS_Part_I/Multi-subject_bundle/2024/WBUHS_Multi-subject_bundle_2024_AUGUST_NEW_REGULATION_PaperUnknown_d0644921c2ce.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 110,
+      "marks": 500,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "forensic-medicine",
+          "paper": null,
+          "examDate": "Aug 2024",
+          "code": "015/24",
+          "reg": "New Regulation",
+          "year": "third"
+        },
+        {
+          "componentStart": 3,
+          "subject": "community-medicine",
+          "paper": "I",
+          "examDate": "Aug 2024",
+          "code": "015/24",
+          "reg": "New Regulation",
+          "year": "third"
+        },
+        {
+          "componentStart": 5,
+          "subject": "community-medicine",
+          "paper": "II",
+          "examDate": "Aug 2024",
+          "code": "015/24",
+          "reg": "New Regulation",
+          "year": "third"
+        },
+        {
+          "componentStart": 7,
+          "subject": "ent",
+          "paper": null,
+          "examDate": "Aug 2024",
+          "code": "015/24",
+          "reg": "New Regulation",
+          "year": "third"
+        },
+        {
+          "componentStart": 9,
+          "subject": "ophthalmology",
+          "paper": null,
+          "examDate": "Aug 2024",
+          "code": "015/24",
+          "reg": "New Regulation",
+          "year": "third"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Only original-page-compared components approved; per-unit header metadata and full subparts/options retained.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 619,
+      "sha256": "d5988c3b36bc6c784efdf8a891184e8fc0a87d2659ea6ae2d4b63c8a9a0a7d41",
+      "sourceUrl": "https://cms.medical.iqcity.in/wp-content/uploads/2025/03/QP-M.B.B.S-2nd-Prof.-Mar-Apr-24-Examinations-1.pdf",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/Second_MBBS/Multi-subject_bundle/2024/WBUHS_Multi-subject_bundle_2024_MARCH_NEW_REGULATION_PaperUnknown_d5988c3b36bc.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 132,
+      "marks": 600,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "pathology",
+          "paper": "I",
+          "examDate": "Mar–Apr 2024",
+          "code": "03/24",
+          "reg": "New Regulation",
+          "year": "second"
+        },
+        {
+          "componentStart": 3,
+          "subject": "pathology",
+          "paper": "II",
+          "examDate": "Mar–Apr 2024",
+          "code": "03/24",
+          "reg": "New Regulation",
+          "year": "second"
+        },
+        {
+          "componentStart": 5,
+          "subject": "microbiology",
+          "paper": "I",
+          "examDate": "Mar–Apr 2024",
+          "code": "03/24",
+          "reg": "New Regulation",
+          "year": "second"
+        },
+        {
+          "componentStart": 7,
+          "subject": "microbiology",
+          "paper": "II",
+          "examDate": "Mar–Apr 2024",
+          "code": "03/24",
+          "reg": "New Regulation",
+          "year": "second"
+        },
+        {
+          "componentStart": 9,
+          "subject": "pharmacology",
+          "paper": "I",
+          "examDate": "Mar–Apr 2024",
+          "code": "03/24",
+          "reg": "New Regulation",
+          "year": "second"
+        },
+        {
+          "componentStart": 11,
+          "subject": "pharmacology",
+          "paper": "II",
+          "examDate": "Mar–Apr 2024",
+          "code": "03/24",
+          "reg": "New Regulation",
+          "year": "second"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Only original-page-compared components approved; per-unit header metadata and full subparts/options retained.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 620,
+      "sha256": "b8683ba13a1f06f7a674ee3ca30ec40f9feadbd034486a933975e21375cf313c",
+      "sourceUrl": "https://cms.medical.iqcity.in/wp-content/uploads/2025/03/QP-MBBS-3rd-Prof.-P-II-Mar-Apr-24-Examinations-New-Old-Regulations-1.pdf",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/Final_MBBS/Multi-subject_bundle/Multi-year/WBUHS_Multi-subject_bundle_Multi-year_MARCH_APRIL_OLD_REGULATION_PaperUnknown_b8683ba13a1f.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 52,
+      "marks": 280,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "obstetrics-gynaecology",
+          "paper": "I",
+          "examDate": "Mar–Apr 2024",
+          "code": "016/24",
+          "reg": "Old Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 2,
+          "subject": "obstetrics-gynaecology",
+          "paper": "I",
+          "examDate": "Mar–Apr 2024",
+          "code": "016/24",
+          "reg": "New Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 4,
+          "subject": "obstetrics-gynaecology",
+          "paper": "II",
+          "examDate": "Mar–Apr 2024",
+          "code": "016/24",
+          "reg": "Old Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 5,
+          "subject": "obstetrics-gynaecology",
+          "paper": "II",
+          "examDate": "Mar–Apr 2024",
+          "code": "016/24",
+          "reg": "New Regulation",
+          "year": "final"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Only original-page-compared components approved; per-unit header metadata and full subparts/options retained. Partial bundle: only physical pages1–6 visually compared and approved. Resume page7, General Medicine I New Regulation, March–April2024.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    }
+  ],
+  "exclusions": [],
+  "held": []
+}

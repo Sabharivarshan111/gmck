@@ -2852,3 +2852,10 @@ HALF-DONE: Hosted145scenario UI, production9,670payload and actual APK/AAB publi
 NEXT: Verify exact-head hosted checks and packages; merge selective web PR preserving concurrent work and inspect production custom-domain payload. Continue collection at queue612,p1,Q1: WBUHS second-professional Jan–Feb2026 bundle SHA d170135deca921339f9c15881afeec808e27556e49262c66669e927223dc2311.
 
 DO NOT: Import unreviewed extraction, split choose-any alternatives, invent keys/clinical values/attribution, expose originals, change pinned version29/backend/Play or force-push. Final receipts stay in private checkpoint.
+
+
+## 2026-10-28 — ORBIT university import Batch16
+
+Adds1,014 original-page-reviewed WBUHS entries (10,684 cumulative) from96 physical pages in9 hash-verified PDFs. All14subjects represented. Printed first-professional Oct–Nov2025 headers override a misleading third-professional queue label.432MCQs retain1,728 complete options, including repeated printed labels; old choose-any groups retain all alternatives and allocated group marks. Source616p15/611p22 share the printed Mar–Apr2025code016/25 but have different complete questions; preserve both header variants. Source620 onlyp1–6 approved; resumep7 General MedicineI NewReg Mar–Apr2024. No university/year complete.
+
+Import, search/parity, required guards, TypeScript/quiet lint and Vercel/AndroidJS builds exercised; publication and exact-head browser/package receipts must be checked before claiming shipped. Version29 unchanged; no backend/rawPDF/Play changes. Private checkpoint holds original-page decisions.
