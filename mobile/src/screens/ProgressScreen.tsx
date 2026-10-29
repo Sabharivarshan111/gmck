@@ -4,6 +4,7 @@ import { useRoute, type RouteProp } from '@react-navigation/native';
 import type { RootTabParamList } from '@/navigation/types';
 import {
   ActivityIndicator,
+  AppState,
   Modal,
   Platform,
   ScrollView,
@@ -69,6 +70,8 @@ import { Brain } from 'lucide-react-native';
 import { AdminPanel } from '@/components/AdminPanel';
 import { AttendanceTab } from '@/components/AttendanceTab';
 import { ProgressNotesTab } from '@/components/ProgressNotesTab';
+import { FounderIdentityCard, type FounderRole } from '@/components/FounderIdentityCard';
+import { supabase } from '@/lib/supabase';
 
 type Tab = 'stats' | 'attendance' | 'notes';
 
@@ -130,6 +133,62 @@ export default function ProgressScreen() {
   const [email, setEmail] = useState<string | null>(null);
   const [authBusy, setAuthBusy] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [founderMembership, setFounderMembership] = useState<{ role: FounderRole; name: string } | null>(null);
+  const [founderAuthRevision, setFounderAuthRevision] = useState(0);
+
+  // The Vercel /progress page is this native-web screen, not the legacy
+  // src/components/progress/ProgressDashboard. Check the authenticated Supabase
+  // user plus the server-only team_members designation; never trust a cached
+  // email or an editable profile name for this exclusive founder identity.
+  useEffect(() => {
+    const { data: listener } = supabase.auth.onAuthStateChange(() => {
+      setFounderAuthRevision(n => n + 1);
+    });
+    const appStateListener = AppState.addEventListener('change', state => {
+      if (state === 'active') setFounderAuthRevision(n => n + 1);
+    });
+    return () => {
+      listener.subscription.unsubscribe();
+      appStateListener.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    let live = true;
+    setFounderMembership(null);
+    const verifyFounder = async () => {
+      try {
+        const { data: verified, error: authError } = await supabase.auth.getUser();
+        const user = verified.user;
+        if (authError || !user || user.is_anonymous || !user.email_confirmed_at) return;
+        const accountEmail = (user.email || '').trim().toLowerCase();
+        if (accountEmail !== 'sabharivarshan111@gmail.com' && accountEmail !== 'nivyanivi580@gmail.com') return;
+
+        const { data: member, error: memberError } = await supabase
+          .from('team_members')
+          .select('designation')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        if (memberError || !member) return;
+        const expectedRole: FounderRole =
+          accountEmail === 'sabharivarshan111@gmail.com' ? 'Founder' : 'Co-Founder';
+        if (member.designation !== expectedRole) return;
+        const googleName = typeof user.user_metadata?.full_name === 'string'
+          ? user.user_metadata.full_name.trim()
+          : typeof user.user_metadata?.name === 'string'
+            ? user.user_metadata.name.trim()
+            : '';
+        // The owner uses his founder name, never a changeable study nickname
+        // (for example the screenshot's "Dr. Phantom" profile display name).
+        const founderName = expectedRole === 'Founder' ? 'Sabharivarshan S' : (googleName || displayName || 'ORBIT Co-Founder');
+        if (live) setFounderMembership({ role: expectedRole, name: founderName });
+      } catch {
+        // If the entitlement cannot be verified, leave the private card hidden.
+      }
+    };
+    void verifyFounder();
+    return () => { live = false; };
+  }, [founderAuthRevision, displayName]);
   const isNative = Platform.OS === 'android';
   const [googleAuthenticated, setGoogleAuthenticated] = useState(!isNative || !GOOGLE_SIGN_IN_ENABLED);
 
@@ -305,6 +364,14 @@ export default function ProgressScreen() {
           <Pencil size={20} color={colors.text} />
         </Touchable>
       </View>
+
+      {/* Exclusive Founder / Co-Founder card in the actual Vercel My Progress UI. */}
+      {founderMembership ? (
+        <FounderIdentityCard
+          role={founderMembership.role}
+          cardholderName={founderMembership.name}
+        />
+      ) : null}
 
       {/* Sync state */}
       {GOOGLE_SIGN_IN_ENABLED ? (email ? (
