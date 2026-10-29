@@ -2859,3 +2859,11 @@ DO NOT: Import unreviewed extraction, split choose-any alternatives, invent keys
 Adds1,014 original-page-reviewed WBUHS entries (10,684 cumulative) from96 physical pages in9 hash-verified PDFs. All14subjects represented. Printed first-professional Oct–Nov2025 headers override a misleading third-professional queue label.432MCQs retain1,728 complete options, including repeated printed labels; old choose-any groups retain all alternatives and allocated group marks. Source616p15/611p22 share the printed Mar–Apr2025code016/25 but have different complete questions; preserve both header variants. Source620 onlyp1–6 approved; resumep7 General MedicineI NewReg Mar–Apr2024. No university/year complete.
 
 Import, search/parity, required guards, TypeScript/quiet lint and Vercel/AndroidJS builds exercised; publication and exact-head browser/package receipts must be checked before claiming shipped. Version29 unchanged; no backend/rawPDF/Play changes. Private checkpoint holds original-page decisions.
+
+## 2026-10-29 — ORBIT Batch17
+
+DONE:1,016new reviewed occurrences (810WBUHS/206RGUHS),11,700total, prior10,684objects unchanged.292MCQs/1168options/5785marks;106contributing physicalpages/40PDFs;77componentbalances.164eligible+alternate pages fully compared;24deferred derivative samplepages additionally inspected. One15mark621p7Q1aheld; three90mark2021scans missing10markMCQpages.37alternateexams excluded;25sources deferred. Bank/search24,601/KUHS/tsc/quietlint/requiredguards and emittedAndroidJS/assembledweb pass.
+
+HALF-DONE: Exact-head hosted169scenarioUI/liveweb/actualAPK+AAB proofs pending at source commit; inspect private BATCH17_PUBLICATION_RECEIPT. PreviousBatch16actualpackages now complete(debug666/internal626/release808).
+
+NEXT: Finish publication proofs then queue722p1Q1 RGUHSBiochemistryI Jul2019. Do not restart620; do not rerun append helpers; keep originals private; no backend/version29/Play changes; MUHS0disabled. Queue traversal71.4% is not overall completion.
