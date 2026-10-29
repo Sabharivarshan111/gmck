@@ -1,0 +1,2411 @@
+{
+  "audit": {
+    "batch": 17,
+    "newReviewed": 1016,
+    "previousApproved": 10684,
+    "totalReviewed": 11700,
+    "newByUniversity": {
+      "wbuhs": 810,
+      "rguhs": 206
+    },
+    "newBySubject": {
+      "general-medicine": 68,
+      "paediatrics": 34,
+      "general-surgery": 68,
+      "anatomy": 360,
+      "physiology": 175,
+      "biochemistry": 153,
+      "pharmacology": 8,
+      "pathology": 8,
+      "microbiology": 8,
+      "forensic-medicine": 52,
+      "obstetrics-gynaecology": 16,
+      "ophthalmology": 44,
+      "ent": 22
+    },
+    "byFormat": {
+      "long-answer": 114,
+      "short-answer": 380,
+      "very-short-answer": 230,
+      "mcq": 292
+    },
+    "sourcePDFs": 40,
+    "sourcePagesCompared": 106,
+    "allVisuallyComparedQueuePages": 188,
+    "fullyComparedNonDeferredPages": 164,
+    "newContributingPages": 106,
+    "marks": 5785,
+    "options": 1168,
+    "heldUnits": 1,
+    "excludedSources": 37,
+    "deferredSources": 25,
+    "distinctNormalizedWordings": 1014,
+    "distinctNotInOld": 991,
+    "newOccurrencesMatchingOld": 24,
+    "nextQueueIndex": 722,
+    "nextPage": 1,
+    "nextQuestion": "1",
+    "noUniversityYearComplete": true,
+    "cumulativeByUniversity": {
+      "rguhs": 3999,
+      "knruhs": 3695,
+      "ntruhs": 1652,
+      "wbuhs": 2354
+    },
+    "cumulativeMarks": {
+      "ntruhs": 6117,
+      "rguhs": 16263,
+      "wbuhs": 12225,
+      "knruhs": 15599
+    }
+  },
+  "papers": [
+    {
+      "queueIndex": 620,
+      "sha256": "b8683ba13a1f06f7a674ee3ca30ec40f9feadbd034486a933975e21375cf313c",
+      "sourceUrl": "https://cms.medical.iqcity.in/wp-content/uploads/2025/03/QP-MBBS-3rd-Prof.-P-II-Mar-Apr-24-Examinations-New-Old-Regulations-1.pdf",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/Final_MBBS/Multi-subject_bundle/Multi-year/WBUHS_Multi-subject_bundle_Multi-year_MARCH_APRIL_OLD_REGULATION_PaperUnknown_b8683ba13a1f.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 130,
+      "marks": 780,
+      "pagesVisuallyCompared": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 7,
+          "subject": "general-medicine",
+          "paper": "I",
+          "examDate": "Mar–Apr 2024",
+          "code": "016/24",
+          "reg": "New Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 9,
+          "subject": "general-medicine",
+          "paper": "I",
+          "examDate": "Mar–Apr 2024",
+          "code": "016/24",
+          "reg": "Old Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 10,
+          "subject": "general-medicine",
+          "paper": "II",
+          "examDate": "Mar–Apr 2024",
+          "code": "016/24",
+          "reg": "New Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 12,
+          "subject": "general-medicine",
+          "paper": "II",
+          "examDate": "Mar–Apr 2024",
+          "code": "016/24",
+          "reg": "Old Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 13,
+          "subject": "paediatrics",
+          "paper": null,
+          "examDate": "Mar–Apr 2024",
+          "code": "016/24",
+          "reg": "New Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 15,
+          "subject": "paediatrics",
+          "paper": null,
+          "examDate": "Mar–Apr 2024",
+          "code": "016/24",
+          "reg": "Old Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 16,
+          "subject": "general-surgery",
+          "paper": "I",
+          "examDate": "Mar–Apr 2024",
+          "code": "016/24",
+          "reg": "New Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 18,
+          "subject": "general-surgery",
+          "paper": "I",
+          "examDate": "Mar–Apr 2024",
+          "code": "016/24",
+          "reg": "Old Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 19,
+          "subject": "general-surgery",
+          "paper": "II",
+          "examDate": "Mar–Apr 2024",
+          "code": "016/24",
+          "reg": "New Regulation",
+          "year": "final"
+        },
+        {
+          "componentStart": 21,
+          "subject": "general-surgery",
+          "paper": "II",
+          "examDate": "Mar–Apr 2024",
+          "code": "016/24",
+          "reg": "Old Regulation",
+          "year": "final"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks. Batch17continuesphysicalp7–21only; p1–6wereapprovedinBatch16andareexcludedfromthisbatch.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 621,
+      "sha256": "21439dbd4c267c481288eab94516b536f41d8461dcf8f545edd5df94a89f469e",
+      "sourceUrl": "https://cms.medical.iqcity.in/wp-content/uploads/2025/03/QP_of_MBBS_1st_Prof._Nov_-_Dec_23_Examinations1-1.pdf",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/Final_MBBS/Multi-subject_bundle/2023/WBUHS_Multi-subject_bundle_2023_DEC_MAY_Unknown_PaperI_21439dbd4c26.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 131,
+      "marks": 585,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "I",
+          "examDate": "Nov–Dec 2023",
+          "code": "001/23",
+          "reg": "New Regulation",
+          "year": "first"
+        },
+        {
+          "componentStart": 3,
+          "subject": "anatomy",
+          "paper": "II",
+          "examDate": "Nov–Dec 2023",
+          "code": "001/23",
+          "reg": "New Regulation",
+          "year": "first"
+        },
+        {
+          "componentStart": 5,
+          "subject": "physiology",
+          "paper": "I",
+          "examDate": "Nov–Dec 2023",
+          "code": "001/23",
+          "reg": "New Regulation",
+          "year": "first"
+        },
+        {
+          "componentStart": 7,
+          "subject": "physiology",
+          "paper": "II",
+          "examDate": "Nov–Dec 2023",
+          "code": "001/23",
+          "reg": "New Regulation",
+          "year": "first"
+        },
+        {
+          "componentStart": 9,
+          "subject": "biochemistry",
+          "paper": "I",
+          "examDate": "Nov–Dec 2023",
+          "code": "001/23",
+          "reg": "New Regulation",
+          "year": "first"
+        },
+        {
+          "componentStart": 11,
+          "subject": "biochemistry",
+          "paper": "II",
+          "examDate": "Nov–Dec 2023",
+          "code": "001/23",
+          "reg": "New Regulation",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Only original-page-compared components approved; per-unit header metadata and full subparts/options retained.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 622,
+      "sha256": "1b03007380dcb7b5cce8292899434b4f2eb1a6787a36606d6db1f96d5fd49a2f",
+      "sourceUrl": "https://cms.medical.iqcity.in/wp-content/uploads/2025/03/W.B.U.H.S-question-papers-2nd-Professional-September-2022-Examinations-Old-Regulations-1.pdf",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/Second_MBBS/Multi-subject_bundle/2022/WBUHS_Multi-subject_bundle_2022_SEPTEMBER_OLD_REGULATION_PaperI_1b03007380dc.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 32,
+      "marks": 280,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "pharmacology",
+          "paper": "I",
+          "examDate": "Sep 2022",
+          "code": "02/22",
+          "reg": "Old Regulation",
+          "year": "second"
+        },
+        {
+          "componentStart": 2,
+          "subject": "pharmacology",
+          "paper": "II",
+          "examDate": "Sep 2022",
+          "code": "02/22",
+          "reg": "Old Regulation",
+          "year": "second"
+        },
+        {
+          "componentStart": 3,
+          "subject": "pathology",
+          "paper": "II",
+          "examDate": "Sep 2022",
+          "code": "Unknown (partially obscured)",
+          "reg": "Old Regulation",
+          "year": "second"
+        },
+        {
+          "componentStart": 4,
+          "subject": "pathology",
+          "paper": "I",
+          "examDate": "Sep 2022",
+          "code": "Unknown (partially obscured)",
+          "reg": "Old Regulation",
+          "year": "second"
+        },
+        {
+          "componentStart": 5,
+          "subject": "microbiology",
+          "paper": "I",
+          "examDate": "Sep 2022",
+          "code": "Unknown (partially obscured)",
+          "reg": "Old Regulation",
+          "year": "second"
+        },
+        {
+          "componentStart": 6,
+          "subject": "microbiology",
+          "paper": "II",
+          "examDate": "Sep 2022",
+          "code": "Unknown (partially obscured)",
+          "reg": "Old Regulation",
+          "year": "second"
+        },
+        {
+          "componentStart": 7,
+          "subject": "forensic-medicine",
+          "paper": null,
+          "examDate": "Sep 2022",
+          "code": "Unknown (partially obscured)",
+          "reg": "Old Regulation",
+          "year": "second"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 623,
+      "sha256": "26c76aae484fbf3666a6b0c283ce97ceb122749890d697b257ca00647b9e6718",
+      "sourceUrl": "https://cms.medical.iqcity.in/wp-content/uploads/2025/03/W.B.U.H.S-question-papers-of-M.B.B.S-3rd-Professional-Part-II-March-April-Examinations-2022-1.pdf",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/Final_MBBS/Multi-subject_bundle/2022/WBUHS_Multi-subject_bundle_2022_MARCH_APRIL_Unknown_Paper1_26c76aae484f.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 28,
+      "marks": 360,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "general-medicine",
+          "paper": "I",
+          "examDate": "Mar–Apr 2022",
+          "code": "016/22",
+          "reg": "Unknown (not printed)",
+          "year": "final"
+        },
+        {
+          "componentStart": 2,
+          "subject": "general-medicine",
+          "paper": "II",
+          "examDate": "Mar–Apr 2022",
+          "code": "016/22",
+          "reg": "Unknown (not printed)",
+          "year": "final"
+        },
+        {
+          "componentStart": 3,
+          "subject": "general-surgery",
+          "paper": "I",
+          "examDate": "Mar–Apr 2022",
+          "code": "016/22",
+          "reg": "Unknown (not printed)",
+          "year": "final"
+        },
+        {
+          "componentStart": 4,
+          "subject": "general-surgery",
+          "paper": "II",
+          "examDate": "Mar–Apr 2022",
+          "code": "016/22",
+          "reg": "Unknown (not printed)",
+          "year": "final"
+        },
+        {
+          "componentStart": 5,
+          "subject": "paediatrics",
+          "paper": null,
+          "examDate": "Mar–Apr 2022",
+          "code": "016/22",
+          "reg": "Unknown (not printed)",
+          "year": "final"
+        },
+        {
+          "componentStart": 6,
+          "subject": "obstetrics-gynaecology",
+          "paper": "I",
+          "examDate": "Mar–Apr 2022",
+          "code": "016/22",
+          "reg": "Unknown (not printed)",
+          "year": "final"
+        },
+        {
+          "componentStart": 7,
+          "subject": "obstetrics-gynaecology",
+          "paper": "II",
+          "examDate": "Mar–Apr 2022",
+          "code": "016/22",
+          "reg": "Unknown (not printed)",
+          "year": "final"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 624,
+      "sha256": "7d2797d6a70e517a27867e99f8c136ae1d4c0e7e8ffe77ceced294a0cd74de57",
+      "sourceUrl": "https://cms.medical.iqcity.in/wp-content/uploads/2025/03/W.B.U.H.S-First-Professional-February-March-2022-M.B.B.S-question-papers-1.pdf",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/Final_MBBS/Multi-subject_bundle/2022/WBUHS_Multi-subject_bundle_2022_FEBRUARY_MARCH_NEW_REGULATION_Paper1_7d2797d6a70e.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 132,
+      "marks": 600,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "I",
+          "examDate": "Feb–Mar 2022",
+          "code": "001/22",
+          "reg": "New Regulation",
+          "year": "first"
+        },
+        {
+          "componentStart": 3,
+          "subject": "anatomy",
+          "paper": "II",
+          "examDate": "Feb–Mar 2022",
+          "code": "001/22",
+          "reg": "New Regulation",
+          "year": "first"
+        },
+        {
+          "componentStart": 5,
+          "subject": "biochemistry",
+          "paper": "II",
+          "examDate": "Feb–Mar 2022",
+          "code": "001/22",
+          "reg": "New Regulation",
+          "year": "first"
+        },
+        {
+          "componentStart": 7,
+          "subject": "biochemistry",
+          "paper": "I",
+          "examDate": "Feb–Mar 2022",
+          "code": "001/22",
+          "reg": "New Regulation",
+          "year": "first"
+        },
+        {
+          "componentStart": 9,
+          "subject": "physiology",
+          "paper": "I",
+          "examDate": "Feb–Mar 2022",
+          "code": "001/22",
+          "reg": "New Regulation",
+          "year": "first"
+        },
+        {
+          "componentStart": 11,
+          "subject": "physiology",
+          "paper": "II",
+          "examDate": "Feb–Mar 2022",
+          "code": "001/22",
+          "reg": "New Regulation",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Only original-page-compared components approved; per-unit header metadata and full subparts/options retained.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 625,
+      "sha256": "d1fa3f8124cdbe7f0a01040c67751c8e51428f8f71bd54b298d63e5e9b2c448b",
+      "sourceUrl": "https://cms.medical.iqcity.in/wp-content/uploads/2025/03/W.B.U.H.S-Third-Professional-Part-II-July-August-2021-M.B.B.S-question-papers-2.pdf",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/Final_MBBS/Multi-subject_bundle/2021/WBUHS_Multi-subject_bundle_2021_JULY_AUGUST_Unknown_PaperUnknown_d1fa3f8124cd.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 28,
+      "marks": 360,
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "paediatrics",
+          "paper": null,
+          "examDate": "Jul–Aug 2021",
+          "code": "016/21",
+          "reg": "Unknown (not printed)",
+          "year": "final"
+        },
+        {
+          "componentStart": 2,
+          "subject": "obstetrics-gynaecology",
+          "paper": "II",
+          "examDate": "Jul–Aug 2021",
+          "code": "016/21",
+          "reg": "Unknown (not printed)",
+          "year": "final"
+        },
+        {
+          "componentStart": 3,
+          "subject": "obstetrics-gynaecology",
+          "paper": "I",
+          "examDate": "Jul–Aug 2021",
+          "code": "016/21",
+          "reg": "Unknown (not printed)",
+          "year": "final"
+        },
+        {
+          "componentStart": 4,
+          "subject": "general-surgery",
+          "paper": "I",
+          "examDate": "Jul–Aug 2021",
+          "code": "016/21",
+          "reg": "Unknown (not printed)",
+          "year": "final"
+        },
+        {
+          "componentStart": 5,
+          "subject": "general-surgery",
+          "paper": "II",
+          "examDate": "Jul–Aug 2021",
+          "code": "016/21",
+          "reg": "Unknown (not printed)",
+          "year": "final"
+        },
+        {
+          "componentStart": 6,
+          "subject": "general-medicine",
+          "paper": "I",
+          "examDate": "Jul–Aug 2021",
+          "code": "016/21",
+          "reg": "Unknown (not printed)",
+          "year": "final"
+        },
+        {
+          "componentStart": 7,
+          "subject": "general-medicine",
+          "paper": "II",
+          "examDate": "Jul–Aug 2021",
+          "code": "016/21",
+          "reg": "Unknown (not printed)",
+          "year": "final"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 628,
+      "sha256": "551176ba9e36ec42ac147c58dbb9de0d7e0e1d8f8f1c8474d80d1ded8dd294ab",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA040425A1827112/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/First_MBBS/Anatomy/2024/WBUHS_Anatomy_2024_NOVEMBER_DECEMBER_Unknown_Paper2_551176ba9e36.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "I",
+          "examDate": "Nov–Dec 2024",
+          "code": "001/24",
+          "reg": "New Regulation",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Only original-page-compared components approved; per-unit header metadata and full subparts/options retained.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 629,
+      "sha256": "8dffb9fec44b355c11406c1ee6443b6e1b673b5ddc288d0a9c279a854448515c",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA040425A1827113/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/First_MBBS/Anatomy/2024/WBUHS_Anatomy_2024_NOVEMBER_DECEMBER_NEW_REGULATION_PaperII_8dffb9fec44b.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "II",
+          "examDate": "Nov–Dec 2024",
+          "code": "001/24",
+          "reg": "New Regulation",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Only original-page-compared components approved; per-unit header metadata and full subparts/options retained.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 630,
+      "sha256": "783e147b160c9b72091424bc5d7ae0bb62a2581e217f0e01a75028288f050807",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA201124A230265/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/First_MBBS/Anatomy/2024/WBUHS_Anatomy_2024_AUGUST_NEW_REGULATION_PaperUnknown_783e147b160c.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "I",
+          "examDate": "Aug 2024",
+          "code": "001/24",
+          "reg": "New Regulation",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Only original-page-compared components approved; per-unit header metadata and full subparts/options retained.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 633,
+      "sha256": "fa22cd236b4b0d98c0de1c1293bdd9f18a60844b726601dfac65a20e23edc616",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA240323A150122/download",
+      "localPdfPath": "review_or_excluded/WBUHS/First_MBBS/Anatomy/2022/WBUHS_Anatomy_2022_SessionUnknown_NEW_REGULATION_PaperUnknown_fa22cd236b4b.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "I",
+          "examDate": "Jun 2022",
+          "code": "001/22",
+          "reg": "New Regulation",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Only original-page-compared components approved; per-unit header metadata and full subparts/options retained.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 634,
+      "sha256": "c5c1fbf0be362d5406dbe82d2e9bf8eac6412620a74c4de1470a2d04eee21987",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA240323A150126/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/First_MBBS/Anatomy/2022/WBUHS_Anatomy_2022_JUNE_NEW_REGULATION_PaperUnknown_c5c1fbf0be36.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "II",
+          "examDate": "Jun 2022",
+          "code": "001/22",
+          "reg": "New Regulation",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Only original-page-compared components approved; per-unit header metadata and full subparts/options retained.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 636,
+      "sha256": "eb690fb98e74092b6443bc7d01d049df4a4db567e7f4c4e4fa02e0cdf96a7ca2",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA070821A072016/download",
+      "localPdfPath": "review_or_excluded/WBUHS/First_MBBS/Unknown/Unknown/WBUHS_Unknown_Unknown_SessionUnknown_NEW_REGULATION_PaperUnknown_eb690fb98e74.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 12,
+      "marks": 90,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "I",
+          "examDate": "Mar 2021",
+          "code": "001/21",
+          "reg": "New Regulation",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks. Only physical written page present (90 marks); missing MCQ page (10 marks) remains an explicit collection gap.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 637,
+      "sha256": "9d53b468b4b1124e59e225e3fcb4d66dc8f65a872e064eebe3d469a6712994e7",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA070821A072017/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/First_MBBS/Anatomy/2021/WBUHS_Anatomy_2021_MARCH_NEW_REGULATION_PaperUnknown_9d53b468b4b1.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 12,
+      "marks": 90,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "II",
+          "examDate": "Mar 2021",
+          "code": "Unknown (not visible)",
+          "reg": "New Regulation",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks. Only physical written page present (90 marks); missing MCQ page (10 marks) remains an explicit collection gap.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 638,
+      "sha256": "ff8ccbff113219102ca8b0ab786eb32dfaa27d5bf448d563a208312f71bc658e",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA240323A150121/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/First_MBBS/Anatomy/2020/WBUHS_Anatomy_2020_JANUARY_Unknown_Paper1_ff8ccbff1132.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 4,
+      "marks": 50,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "I",
+          "examDate": "Jan 2020",
+          "code": "001/20",
+          "reg": "Unknown (not printed)",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 639,
+      "sha256": "362007910f0e929bbb66990ce79e1995d52c5cf991896878bd084baa20447df0",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA240323A150125/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/First_MBBS/Anatomy/2020/WBUHS_Anatomy_2020_JANUARY_Unknown_PaperUnknown_362007910f0e.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 4,
+      "marks": 50,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "II",
+          "examDate": "Jan 2020",
+          "code": "001/20",
+          "reg": "Unknown (not printed)",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 640,
+      "sha256": "09c2b4508ffa41999e37e53376933ece430f3d1e6d02e380e0c649ded7adca64",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA070821A072010/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/First_MBBS/Anatomy/2019/WBUHS_Anatomy_2019_JULY_Unknown_PaperUnknown_09c2b4508ffa.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 4,
+      "marks": 50,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "I",
+          "examDate": "Jul 2019",
+          "code": "001/19",
+          "reg": "Unknown (not printed)",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 641,
+      "sha256": "3c480c245088ab9d485090905534f85ff051f077ffe3e70ae7ddb4e7cf11deca",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA070821A072011/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/First_MBBS/Anatomy/2019/WBUHS_Anatomy_2019_JULY_Unknown_PaperI_3c480c245088.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 4,
+      "marks": 50,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "II",
+          "examDate": "Jul 2019",
+          "code": "001/19",
+          "reg": "Unknown (not printed)",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 642,
+      "sha256": "cc811994a1634ab249a6f158cffb8bc7602c6319f596bbf55a0a6bb3fa718052",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA201124A230260/download",
+      "localPdfPath": "review_or_excluded/WBUHS/First_MBBS/Unknown/Unknown/WBUHS_Unknown_Unknown_SessionUnknown_Unknown_PaperUnknown_cc811994a163.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 4,
+      "marks": 50,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "II",
+          "examDate": "2014 · Supplementary",
+          "code": "Unknown (not visible)",
+          "reg": "Unknown (not printed)",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 643,
+      "sha256": "821b6c668d96bd6aba1d8a435c4ad6832d2eedf2c9c1dc3af4315acf0dc2a14c",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA090326A124678/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/First_MBBS/Biochemistry/2026/WBUHS_Biochemistry_2026_FEBRUARY_MARCH_NEW_REGULATION_PaperI_821b6c668d96.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 29,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "biochemistry",
+          "paper": "I",
+          "examDate": "Feb–Mar 2026",
+          "code": "001/26",
+          "reg": "New Regulation",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original pages compared; independently marked required subquestions separated with complete subparts/options and per-paper header metadata.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 646,
+      "sha256": "0ccc2f0a23cbf6b4633f874f0b65753e1b773395f237e8490f201d0e520945ee",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA070821A072018/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/First_MBBS/Biochemistry/2021/WBUHS_Biochemistry_2021_MARCH_NEW_REGULATION_PaperUnknown_0ccc2f0a23cb.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 12,
+      "marks": 90,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "biochemistry",
+          "paper": "I",
+          "examDate": "Mar 2021",
+          "code": "Unknown (clipped)",
+          "reg": "New Regulation",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks. Only written page (90 marks) present; reverse MCQ page (10 marks) missing and not reconstructed.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 647,
+      "sha256": "de9f0e851cdd83e00a4f7301d93120c00c11a42fc6438e4c7a8ea059490cb77f",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA240323A1501210/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/First_MBBS/Biochemistry/2020/WBUHS_Biochemistry_2020_JANUARY_Unknown_Paper1_de9f0e851cdd.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 4,
+      "marks": 50,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "biochemistry",
+          "paper": "I",
+          "examDate": "Jan 2020",
+          "code": "001/20",
+          "reg": "Unknown (not printed)",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 648,
+      "sha256": "f3f7c5c27e0fc416f189c8b4805982d502c7564b60fbbb8febd7457f8458ba27",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA070821A072012/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/First_MBBS/Biochemistry/2019/WBUHS_Biochemistry_2019_JULY_Unknown_Paper1_f3f7c5c27e0f.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 4,
+      "marks": 50,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "biochemistry",
+          "paper": "I",
+          "examDate": "Jul 2019",
+          "code": "001/19",
+          "reg": "Unknown (not printed)",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 649,
+      "sha256": "de6e37d562f82aecb9a167c49dc8229933a02bbc7dd27eafd13df279cd7de965",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA240323A150129/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/First_MBBS/Unknown/2018/WBUHS_Unknown_2018_SessionUnknown_Unknown_PaperUnknown_de6e37d562f8.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 4,
+      "marks": 50,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "biochemistry",
+          "paper": "I",
+          "examDate": "2018 · Supplementary",
+          "code": "001/18",
+          "reg": "Unknown (not printed)",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 650,
+      "sha256": "7c1594743ebf5b7bb53124767b74c22851402b27ea81b11ee90bd966691525a3",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA240323A1501214/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/First_MBBS/Unknown/2018/WBUHS_Unknown_2018_SessionUnknown_Unknown_PaperUnknown_7c1594743ebf.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 4,
+      "marks": 50,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "biochemistry",
+          "paper": "II",
+          "examDate": "2018 · Supplementary",
+          "code": "001/18",
+          "reg": "Unknown (not printed)",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 651,
+      "sha256": "6da33e4ef5f788d6c789a5a7a831c142ae2bfabf9f5be72ac3f1974a2d3cc053",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA201124A230262/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/First_MBBS/Unknown/2014/WBUHS_Unknown_2014_SessionUnknown_Unknown_PaperUnknown_6da33e4ef5f7.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 4,
+      "marks": 50,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "biochemistry",
+          "paper": "II",
+          "examDate": "2014 · Supplementary",
+          "code": "Unknown (not visible)",
+          "reg": "Unknown (not printed)",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 652,
+      "sha256": "a8c8b4cdb14271e1f0c55ced24150606eb1e20eab00762df79d4a8fb66c597c5",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA240323A150128/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/First_MBBS/Unknown/2012/WBUHS_Unknown_2012_SessionUnknown_Unknown_PaperUnknown_a8c8b4cdb142.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 4,
+      "marks": 50,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "biochemistry",
+          "paper": "I",
+          "examDate": "2012 · Supplementary",
+          "code": "001/42",
+          "reg": "Unknown (not printed)",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 679,
+      "sha256": "9984a3ec03a6488e508f9c66ecc261118609d573b777c40ce920c1e45bf710d2",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA191123A090982/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/Third_MBBS_Part_I/Unknown/2023/WBUHS_Unknown_2023_APRIL_MAY_NEW_REGULATION_PaperUnknown_9984a3ec03a6.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "forensic-medicine",
+          "paper": null,
+          "examDate": "Apr–May 2023",
+          "code": "015/23",
+          "reg": "New Regulation",
+          "year": "third"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Only original-page-compared components approved; per-unit header metadata and full subparts/options retained.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 681,
+      "sha256": "a22972651ca54e0d3b928cd4e1cc84d590f876fb696f7be2dfe5e28d4ba4cf3a",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA191123A090983/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/Third_MBBS_Part_I/Ophthalmology/2023/WBUHS_Ophthalmology_2023_APRIL_MAY_NEW_REGULATION_PaperUnknown_a22972651ca5.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "ophthalmology",
+          "paper": null,
+          "examDate": "Apr–May 2023",
+          "code": "015/23",
+          "reg": "New Regulation",
+          "year": "third"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Only original-page-compared components approved; per-unit header metadata and full subparts/options retained.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 683,
+      "sha256": "ae8125b355ce0546da0fa0064c9e2342fb4c90db9f82a882f1953d8c4740cc30",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA191123A090984/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/Third_MBBS_Part_I/Unknown/2023/WBUHS_Unknown_2023_APRIL_MAY_NEW_REGULATION_PaperUnknown_ae8125b355ce.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "ent",
+          "paper": null,
+          "examDate": "Apr–May 2023",
+          "code": "015/23",
+          "reg": "New Regulation",
+          "year": "third"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Only original-page-compared components approved; per-unit header metadata and full subparts/options retained.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 684,
+      "sha256": "588258b8d32915c6cec6c3b4eaf190ab590107b2e4f8c5eba7bdd182e49497d2",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230826A083113/download",
+      "localPdfPath": "review_or_excluded/WBUHS/Final_MBBS/Forensic_Medicine/Unknown/WBUHS_Forensic_Medicine_Unknown_SessionUnknown_Unknown_PaperUnknown_588258b8d329.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "forensic-medicine",
+          "paper": null,
+          "examDate": "Aug–Sep 2026",
+          "code": "03/26",
+          "reg": "New Regulation",
+          "year": "third"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Only original-page-compared components approved; per-unit header metadata and full subparts/options retained.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 685,
+      "sha256": "63e2d609826fc1dc70c736ee3b2ed60acc8f5e21481c745b5b02cc88c61908a8",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230826A083114/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/WBUHS/Third_MBBS_Part_I/Unknown/2026/WBUHS_Unknown_2026_SEPTEMBER_NEW_REGULATION_PaperUnknown_63e2d609826f.pdf",
+      "printedUniversity": "The West Bengal University of Health Sciences",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "ophthalmology",
+          "paper": null,
+          "examDate": "Aug–Sep 2026",
+          "code": "015/26",
+          "reg": "New Regulation",
+          "year": "third"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Only original-page-compared components approved; per-unit header metadata and full subparts/options retained.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 713,
+      "sha256": "7813db33c7ebb72352bcf3830f5cde297148c751077b9e3f7351adc30275e9d1",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA021224A2026140/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Anatomy/Multi-year/RGUHS_Anatomy_Multi-year_AUG_CBME_RS4_RS5_PaperI_7813db33c7eb.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 30,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "I",
+          "examDate": "09-Aug-2024",
+          "code": "1020",
+          "reg": "RS4/RS5/RS6",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 714,
+      "sha256": "1ef13e68780c3742736751784ee6e5c0e5d5acd47c207b733094871e48130c44",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A14298114/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Anatomy/2020/RGUHS_Anatomy_2020_NOV_RS3_PaperI_1ef13e68780c.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "I",
+          "examDate": "19-Nov-2020",
+          "code": "1075",
+          "reg": "RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 715,
+      "sha256": "efd88c63c6b6878835e1fc16e7e03b6c9d34d032df4b2941bc1cd119187def41",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A14298115/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Anatomy/2020/RGUHS_Anatomy_2020_NOV_RS3_PaperII_efd88c63c6b6.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "II",
+          "examDate": "21-Nov-2020",
+          "code": "1076",
+          "reg": "RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 716,
+      "sha256": "5686d2225ad0912035162d818fc13b5b3d89600387570da4d198c809901b169e",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A14298116/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Physiology/2020/RGUHS_Physiology_2020_NOV_RS3_PaperUnknown_5686d2225ad0.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "physiology",
+          "paper": "I",
+          "examDate": "24-Nov-2020",
+          "code": "1077",
+          "reg": "RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 717,
+      "sha256": "ec83c595802ec20fad57a0d64b2357f0e1839e265b0ed4200461c0dbf0119462",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A14298117/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Physiology/2020/RGUHS_Physiology_2020_NOV_RS3_PaperUnknown_ec83c595802e.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "physiology",
+          "paper": "II",
+          "examDate": "26-Nov-2020",
+          "code": "1078",
+          "reg": "RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 718,
+      "sha256": "c3a64df3c4fae439f245acd0e3805ae6aefc81fd573d9eba2d1c129e41d1853a",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A14298102/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Anatomy/2019/RGUHS_Anatomy_2019_JUNE_RS2_RS3_PaperI_c3a64df3c4fa.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "I",
+          "examDate": "Jun 2019",
+          "code": "1075",
+          "reg": "RS2 & RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 719,
+      "sha256": "9324b4c9ff96dc539f3f2c037f1d65a1b38273049b0754ad428d5979e6278c84",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A14298103/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Anatomy/2019/RGUHS_Anatomy_2019_JUNE_RS2_RS3_PaperII_9324b4c9ff96.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "II",
+          "examDate": "Jun 2019",
+          "code": "1076",
+          "reg": "RS2 & RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 720,
+      "sha256": "52735997baf9fa5bcf37c9a4ef1886e0ffe3231f55a326e2d5e357e79d50d672",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A14298104/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Physiology/2019/RGUHS_Physiology_2019_JUNE_RS2_RS3_PaperI_52735997baf9.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "physiology",
+          "paper": "I",
+          "examDate": "Jun 2019",
+          "code": "1077",
+          "reg": "RS2 & RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 721,
+      "sha256": "4653f2662ce26cb683cd0d7537b95c120d508473f08c03bd1cdf32c5f2c7650a",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A14298105/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Physiology/2019/RGUHS_Physiology_2019_JUNE_RS2_RS3_PaperII_4653f2662ce2.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Per component printed header",
+      "paperCode": "Per component",
+      "regulation": "Per component",
+      "subject": "mixed",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "physiology",
+          "paper": "II",
+          "examDate": "Jun 2019",
+          "code": "1078",
+          "reg": "RS2 & RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "All original pages visually compared; explicit corrections and held units recorded",
+      "notes": "Original-page-compared components; choose-any groups retained as single units with all alternatives and allocated group marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    }
+  ],
+  "exclusions": [
+    {
+      "queueIndex": 627,
+      "sha256": "416d5086a4a71c101fd74f2c710e30f299c0a6299cfa28034f92c18369c54c85",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "Alternate scan/watermark of the same examination; full stems, subparts and options compared with canonical reviewed component; no new occurrence.",
+      "canonicalShaPrefix": "8cc0c7d3c3d3",
+      "canonicalQueueIndex": 614,
+      "canonicalPages": [
+        1,
+        2
+      ],
+      "reviewedPages": [
+        1,
+        2
+      ]
+    },
+    {
+      "queueIndex": 631,
+      "sha256": "6ebe0c59bb90d8a7950ecf0d581a70de67d1339bbaab7c4b5749f444e7f4a968",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "Alternate scan/watermark of the same examination; full stems, subparts and options compared with canonical reviewed component; no new occurrence.",
+      "canonicalShaPrefix": "21439dbd4c26",
+      "canonicalQueueIndex": 621,
+      "canonicalPages": [
+        1,
+        2
+      ],
+      "reviewedPages": [
+        1,
+        2
+      ]
+    },
+    {
+      "queueIndex": 632,
+      "sha256": "334abd8581b3142d274daeabdfc50da236b1c18eb4a2e90adae46dd0dd4a7037",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "Alternate scan/watermark of the same examination; full stems, subparts and options compared with canonical reviewed component; no new occurrence.",
+      "canonicalShaPrefix": "21439dbd4c26",
+      "canonicalQueueIndex": 621,
+      "canonicalPages": [
+        3,
+        4
+      ],
+      "reviewedPages": [
+        1,
+        2
+      ]
+    },
+    {
+      "queueIndex": 635,
+      "sha256": "8a68e13ebdd058b8a560fb9532845d8b71910778c14d0dc27c1bc9bf74c63b54",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "Alternate scan/watermark of the same examination; full stems, subparts and options compared with canonical reviewed component; no new occurrence.",
+      "canonicalShaPrefix": "7d2797d6a70e",
+      "canonicalQueueIndex": 624,
+      "canonicalPages": [
+        1,
+        2
+      ],
+      "reviewedPages": [
+        1,
+        2
+      ]
+    },
+    {
+      "queueIndex": 644,
+      "sha256": "1774d729e3d62110067ad1917480c6afad0e4fcba48b3a290c4ef50f0280bde6",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "Alternate scan/watermark of the same examination; full stems, subparts and options compared with canonical reviewed component; no new occurrence.",
+      "canonicalShaPrefix": "8cc0c7d3c3d3",
+      "canonicalQueueIndex": 614,
+      "canonicalPages": [
+        9,
+        10
+      ],
+      "reviewedPages": [
+        1,
+        2
+      ]
+    },
+    {
+      "queueIndex": 645,
+      "sha256": "df9e2a5689f5b34f5c0c2a1ab4a4207a0ba3befa30d234ac0cb2be2a3b02edc2",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "Alternate scan/watermark of the same examination; full stems, subparts and options compared with canonical reviewed component; no new occurrence.",
+      "canonicalShaPrefix": "21439dbd4c26",
+      "canonicalQueueIndex": 621,
+      "canonicalPages": [
+        9,
+        10
+      ],
+      "reviewedPages": [
+        1,
+        2
+      ]
+    },
+    {
+      "queueIndex": 653,
+      "sha256": "7034dd9dc47cbc65011c4d3329ca39fc166de16cf29ad3c60788c32477fdb60c",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "Alternate scan/watermark of already-reviewed examination component; complete printed questions/options matched. No new occurrence.",
+      "canonicalShaPrefix": "d170135deca9",
+      "canonicalQueueIndex": 612,
+      "canonicalPages": [
+        5,
+        6
+      ],
+      "reviewedPages": [
+        1,
+        2
+      ]
+    },
+    {
+      "queueIndex": 654,
+      "sha256": "64de52f0b15b400d135f6680820fe4194770a1c676cf9d35645b6e69b508ffbf",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "Alternate scan/watermark of already-reviewed examination component; complete printed questions/options matched. No new occurrence.",
+      "canonicalShaPrefix": "d170135deca9",
+      "canonicalQueueIndex": 612,
+      "canonicalPages": [
+        7,
+        8
+      ],
+      "reviewedPages": [
+        1,
+        2
+      ]
+    },
+    {
+      "queueIndex": 665,
+      "sha256": "b8415e80a31bd7d7a0d038ae22e107eaaa97a5a835609d9499c8067bde332423",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "Alternate scan/watermark of already-reviewed examination component; complete printed questions/options matched. No new occurrence.",
+      "canonicalShaPrefix": "d170135deca9",
+      "canonicalQueueIndex": 612,
+      "canonicalPages": [
+        1,
+        2
+      ],
+      "reviewedPages": [
+        1,
+        2
+      ]
+    },
+    {
+      "queueIndex": 674,
+      "sha256": "bd8245d2f943dbeb26021bff0b5cdc091d233580d51dd03618e376ddec6dc1c3",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "Alternate scan/watermark of already-reviewed examination component; complete printed questions/options matched. No new occurrence.",
+      "canonicalShaPrefix": "d170135deca9",
+      "canonicalQueueIndex": 612,
+      "canonicalPages": [
+        9,
+        10
+      ],
+      "reviewedPages": [
+        1,
+        2
+      ]
+    },
+    {
+      "queueIndex": 675,
+      "sha256": "345105920bd62f2719fbf80a4c68e1207890a056e3d1791774af2882c065d91e",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "Alternate original scan of previously approved examination component; printed header, complete stems, clinical values, subparts and all options compared against canonical checkpoint. No new occurrence.",
+      "canonicalShaPrefix": "ea880f97f5f7",
+      "canonicalQueueIndex": 610,
+      "canonicalPages": [
+        5,
+        6
+      ],
+      "reviewedPages": [
+        1,
+        2
+      ]
+    },
+    {
+      "queueIndex": 676,
+      "sha256": "b4e1d08aa418e85c2d9e00acf03948c2f4e02841ee0e5819fc118109a43367af",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "Alternate scan/watermark of already-reviewed examination component; complete printed questions/options matched. No new occurrence.",
+      "canonicalShaPrefix": "fdeb155cbb33",
+      "canonicalQueueIndex": 613,
+      "canonicalPages": [
+        5,
+        6
+      ],
+      "reviewedPages": [
+        1,
+        2
+      ]
+    },
+    {
+      "queueIndex": 677,
+      "sha256": "3665f2d6afa403f4b78f92149818b80e5568339663866da4a417341460e26578",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "Alternate scan/watermark of already-reviewed examination component; complete printed questions/options matched. No new occurrence.",
+      "canonicalShaPrefix": "fdeb155cbb33",
+      "canonicalQueueIndex": 613,
+      "canonicalPages": [
+        5,
+        6
+      ],
+      "reviewedPages": [
+        1,
+        2
+      ]
+    },
+    {
+      "queueIndex": 678,
+      "sha256": "2aa7c07c507d23868083031e327f8708b0645f71f57f3430317b55273b128582",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "Alternate scan/watermark of already-reviewed examination component; complete printed questions/options matched. No new occurrence.",
+      "canonicalShaPrefix": "a4f580b5e5ee",
+      "canonicalQueueIndex": 615,
+      "canonicalPages": [
+        9,
+        10
+      ],
+      "reviewedPages": [
+        1,
+        2
+      ]
+    },
+    {
+      "queueIndex": 680,
+      "sha256": "df86704ada8f4c6bd539db29a19b238c91d3e0bb84aef9ba02e12216292d6da4",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "Alternate original scan of previously approved examination component; printed header, complete stems, clinical values, subparts and all options compared against canonical checkpoint. No new occurrence.",
+      "canonicalShaPrefix": "ea880f97f5f7",
+      "canonicalQueueIndex": 610,
+      "canonicalPages": [
+        9,
+        10
+      ],
+      "reviewedPages": [
+        1,
+        2
+      ]
+    },
+    {
+      "queueIndex": 682,
+      "sha256": "52996d301625db3b574e3012a43c7e8f409d34e38098c6d6dcfc1f93c95d1d9a",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "Alternate original scan of previously approved examination component; printed header, complete stems, clinical values, subparts and all options compared against canonical checkpoint. No new occurrence.",
+      "canonicalShaPrefix": "ea880f97f5f7",
+      "canonicalQueueIndex": 610,
+      "canonicalPages": [
+        7,
+        8
+      ],
+      "reviewedPages": [
+        1,
+        2
+      ]
+    },
+    {
+      "queueIndex": 686,
+      "sha256": "bb693953ba898e49faf25e1e02935ad1781af55fa897e1d292afd6a8f901147e",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "Alternate original scan of previously approved examination component; printed header, complete stems, clinical values, subparts and all options compared against canonical checkpoint. No new occurrence.",
+      "canonicalShaPrefix": "0644d392c4e2",
+      "canonicalQueueIndex": 609,
+      "canonicalPages": [
+        1,
+        2
+      ],
+      "reviewedPages": [
+        1,
+        2
+      ]
+    },
+    {
+      "queueIndex": 687,
+      "sha256": "2c99391db954b5ab5912e0874c5a5fa902b0b171180d83cefc8504f21d03a05d",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "Alternate original scan of previously approved examination component; printed header, complete stems, clinical values, subparts and all options compared against canonical checkpoint. No new occurrence.",
+      "canonicalShaPrefix": "0644d392c4e2",
+      "canonicalQueueIndex": 609,
+      "canonicalPages": [
+        3,
+        4
+      ],
+      "reviewedPages": [
+        1,
+        2
+      ]
+    },
+    {
+      "queueIndex": 688,
+      "sha256": "45db0b3e4d14a2c383b896fff63d77b45ccdd8c167514aab49ecff090c73f82c",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "Alternate original scan of previously approved examination component; printed header, complete stems, clinical values, subparts and all options compared against canonical checkpoint. No new occurrence.",
+      "canonicalShaPrefix": "0644d392c4e2",
+      "canonicalQueueIndex": 609,
+      "canonicalPages": [
+        13,
+        14
+      ],
+      "reviewedPages": [
+        1,
+        2
+      ]
+    },
+    {
+      "queueIndex": 689,
+      "sha256": "d1a7ea0a941d9c21d934250214d4341d0d92e3a9b0c45b9a92e141ca1321d9f6",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "Alternate original scan of previously approved examination component; printed header, complete stems, clinical values, subparts and all options compared against canonical checkpoint. No new occurrence.",
+      "canonicalShaPrefix": "0644d392c4e2",
+      "canonicalQueueIndex": 609,
+      "canonicalPages": [
+        15,
+        16
+      ],
+      "reviewedPages": [
+        1,
+        2
+      ]
+    },
+    {
+      "queueIndex": 690,
+      "sha256": "1b0be3df0b173eecadc7d40f42343530c4f9db1e19c0f5e58ade2879ec0edef8",
+      "pagesCompared": [
+        1
+      ],
+      "exclude": "Alternate scan/watermark of already reviewed original examination; complete questions and printed metadata matched.",
+      "canonicalShaPrefix": "ff96666ef6f3",
+      "canonicalQueueIndex": 617,
+      "canonicalPages": [
+        1
+      ],
+      "reviewedPages": [
+        1
+      ]
+    },
+    {
+      "queueIndex": 691,
+      "sha256": "4d48ec5033b407e9bdbbf7b1aa2e048dfaccfed369a7aef00b6e3d9bf3eb66f2",
+      "pagesCompared": [
+        1
+      ],
+      "exclude": "Alternate scan/watermark of already reviewed original examination; complete questions and printed metadata matched.",
+      "canonicalShaPrefix": "ff96666ef6f3",
+      "canonicalQueueIndex": 617,
+      "canonicalPages": [
+        2
+      ],
+      "reviewedPages": [
+        1
+      ]
+    },
+    {
+      "queueIndex": 692,
+      "sha256": "8487bf00e3be89e2b875d74e165b0c433fcd6fdc01619cde9b3477a2b0a3b745",
+      "pagesCompared": [
+        1
+      ],
+      "exclude": "Alternate scan/watermark of already reviewed original examination; complete questions and printed metadata matched.",
+      "canonicalShaPrefix": "ff96666ef6f3",
+      "canonicalQueueIndex": 617,
+      "canonicalPages": [
+        4
+      ],
+      "reviewedPages": [
+        1
+      ]
+    },
+    {
+      "queueIndex": 693,
+      "sha256": "4d5247485f2da6f6aa8c169e8c589f37d7f03c701bf3e3393ad8b1b175bcc93a",
+      "pagesCompared": [
+        1
+      ],
+      "exclude": "Alternate scan/watermark of already reviewed original examination; complete questions and printed metadata matched.",
+      "canonicalShaPrefix": "ff96666ef6f3",
+      "canonicalQueueIndex": 617,
+      "canonicalPages": [
+        3
+      ],
+      "reviewedPages": [
+        1
+      ]
+    },
+    {
+      "queueIndex": 694,
+      "sha256": "da8924098b223efec28ae8559904317326cb729086ea5fea5ca7a8dcab5fb3e5",
+      "pagesCompared": [
+        1
+      ],
+      "exclude": "Alternate scan/watermark of already reviewed original examination; complete questions and printed metadata matched.",
+      "canonicalShaPrefix": "ff96666ef6f3",
+      "canonicalQueueIndex": 617,
+      "canonicalPages": [
+        5
+      ],
+      "reviewedPages": [
+        1
+      ]
+    },
+    {
+      "queueIndex": 695,
+      "sha256": "c09dddcdbbdb63cfa3bd4bb5970aaa649de019cf56dbc467f5ee7e4d63fac502",
+      "pagesCompared": [
+        1,
+        2
+      ],
+      "exclude": "Alternate scan/watermark of already reviewed original examination; complete questions and printed metadata matched.",
+      "canonicalShaPrefix": "c55c43250a6f",
+      "canonicalQueueIndex": 616,
+      "canonicalPages": [
+        1,
+        2
+      ],
+      "reviewedPages": [
+        1,
+        2
+      ]
+    },
+    {
+      "queueIndex": 696,
+      "sha256": "cef9a24f6d2a9b49039ee53f5fea1050e2af330ce1c13b9309788ed41427f890",
+      "pagesCompared": [
+        1
+      ],
+      "exclude": "Alternate scan/watermark of already reviewed original examination; complete questions and printed metadata matched.",
+      "canonicalShaPrefix": "26c76aae484f",
+      "canonicalQueueIndex": 623,
+      "canonicalPages": [
+        1
+      ],
+      "reviewedPages": [
+        1
+      ]
+    },
+    {
+      "queueIndex": 697,
+      "sha256": "e5517420b1f09e25edd4e49982a0b5c5415f610a364127e17736137efc1b2d5c",
+      "pagesCompared": [
+        1
+      ],
+      "exclude": "Alternate scan/watermark of already reviewed original examination; complete questions and printed metadata matched.",
+      "canonicalShaPrefix": "26c76aae484f",
+      "canonicalQueueIndex": 623,
+      "canonicalPages": [
+        2
+      ],
+      "reviewedPages": [
+        1
+      ]
+    },
+    {
+      "queueIndex": 698,
+      "sha256": "6bec3bd3504d2843d4bf38c8289a1a7830dab88b56d76018b2466907f28d391f",
+      "pagesCompared": [
+        1
+      ],
+      "exclude": "Alternate scan/watermark of already reviewed original examination; complete questions and printed metadata matched.",
+      "canonicalShaPrefix": "26c76aae484f",
+      "canonicalQueueIndex": 623,
+      "canonicalPages": [
+        6
+      ],
+      "reviewedPages": [
+        1
+      ]
+    },
+    {
+      "queueIndex": 699,
+      "sha256": "3c82cbdd51cc39f085d46c933e0f24daead7a1fa32d879ab7cd68ed1798e607c",
+      "pagesCompared": [
+        1
+      ],
+      "exclude": "Alternate scan/watermark of already reviewed original examination; complete questions and printed metadata matched.",
+      "canonicalShaPrefix": "26c76aae484f",
+      "canonicalQueueIndex": 623,
+      "canonicalPages": [
+        5
+      ],
+      "reviewedPages": [
+        1
+      ]
+    },
+    {
+      "queueIndex": 700,
+      "sha256": "cc5c900091446be85fdb9715d0ce57e222d2578756177554f2150bca46f9a825",
+      "pagesCompared": [
+        1
+      ],
+      "exclude": "Alternate scan/watermark of already reviewed original examination; complete questions and printed metadata matched.",
+      "canonicalShaPrefix": "26c76aae484f",
+      "canonicalQueueIndex": 623,
+      "canonicalPages": [
+        3
+      ],
+      "reviewedPages": [
+        1
+      ]
+    },
+    {
+      "queueIndex": 701,
+      "sha256": "fd54db5b531109fb28bc097c60133f925f7d0f51385741a83ce8be7dde67bf10",
+      "pagesCompared": [
+        1
+      ],
+      "exclude": "Alternate scan/watermark of already reviewed original examination; complete questions and printed metadata matched.",
+      "canonicalShaPrefix": "d1fa3f8124cd",
+      "canonicalQueueIndex": 625,
+      "canonicalPages": [
+        6
+      ],
+      "reviewedPages": [
+        1
+      ]
+    },
+    {
+      "queueIndex": 702,
+      "sha256": "05e7474e163e685958af3cec1c05c0d0045a52fb2a620e71396f69998d35a80d",
+      "pagesCompared": [
+        1
+      ],
+      "exclude": "Alternate scan/watermark of already reviewed original examination; complete questions and printed metadata matched.",
+      "canonicalShaPrefix": "d1fa3f8124cd",
+      "canonicalQueueIndex": 625,
+      "canonicalPages": [
+        7
+      ],
+      "reviewedPages": [
+        1
+      ]
+    },
+    {
+      "queueIndex": 703,
+      "sha256": "56e608e37211d825d6086b7b494fa1f76abc8fa883f72531d698ea87a0b78b96",
+      "pagesCompared": [
+        1
+      ],
+      "exclude": "Alternate scan/watermark of already reviewed original examination; complete questions and printed metadata matched.",
+      "canonicalShaPrefix": "d1fa3f8124cd",
+      "canonicalQueueIndex": 625,
+      "canonicalPages": [
+        3
+      ],
+      "reviewedPages": [
+        1
+      ]
+    },
+    {
+      "queueIndex": 704,
+      "sha256": "496251dec6a0dcb78f556ccbc104b05989a295b793eb9ce04871ba28d59e833e",
+      "pagesCompared": [
+        1
+      ],
+      "exclude": "Alternate scan/watermark of already reviewed original examination; complete questions and printed metadata matched.",
+      "canonicalShaPrefix": "d1fa3f8124cd",
+      "canonicalQueueIndex": 625,
+      "canonicalPages": [
+        2
+      ],
+      "reviewedPages": [
+        1
+      ]
+    },
+    {
+      "queueIndex": 705,
+      "sha256": "f5681590423659a981b5937572ab61910ebfbea732e4c572653f70ba74e578b9",
+      "pagesCompared": [
+        1
+      ],
+      "exclude": "Alternate scan/watermark of already reviewed original examination; complete questions and printed metadata matched.",
+      "canonicalShaPrefix": "d1fa3f8124cd",
+      "canonicalQueueIndex": 625,
+      "canonicalPages": [
+        1
+      ],
+      "reviewedPages": [
+        1
+      ]
+    },
+    {
+      "queueIndex": 706,
+      "sha256": "d19dcf381df7e3265f745bfa25caacf5307de3772f6bb9a669e55172c41f7772",
+      "pagesCompared": [
+        1
+      ],
+      "exclude": "Alternate scan/watermark of already reviewed original examination; complete questions and printed metadata matched.",
+      "canonicalShaPrefix": "d1fa3f8124cd",
+      "canonicalQueueIndex": 625,
+      "canonicalPages": [
+        4
+      ],
+      "reviewedPages": [
+        1
+      ]
+    }
+  ],
+  "held": [
+    {
+      "queueIndex": 621,
+      "sha256": "21439dbd4c267c481288eab94516b536f41d8461dcf8f545edd5df94a89f469e",
+      "sourceQuestion": "1a",
+      "pdfPage": 7,
+      "marks": 15,
+      "text": "A 60-year-old male is suffering from difficulty in initiation of any motor activity. While sitting he is having tremor in his hand which stops during any activity. Doctors also noted, along with change of emotions, there is no change in facial expression. i) What is your probable diagnosis? ii) Explain the pathophysiology of the disease with a diagram. iii) [Printed repeated subpart struck out; handwritten replacement requires independent confirmation.] iv) Name two drugs used to reduce hypokinesia in this patient. v) What type of rigidity is seen in this patient and how does it differ from the rigidity of upper motor neuron lesion? 1+6+3+2+3",
+      "reason": "Whole 15-mark unit held: printed iii repeated/struck through and handwritten replacement of uncertain authority/reading; do not silently substitute or omit the required subpart."
+    }
+  ]
+}
