@@ -1,0 +1,1559 @@
+{
+  "audit": {
+    "batch": 18,
+    "newReviewed": 1009,
+    "previousApproved": 11700,
+    "totalReviewed": 12709,
+    "newByUniversity": {
+      "rguhs": 1009
+    },
+    "newBySubject": {
+      "biochemistry": 94,
+      "anatomy": 398,
+      "physiology": 275,
+      "ent": 22,
+      "pharmacology": 44,
+      "pathology": 88,
+      "microbiology": 88
+    },
+    "byFormat": {
+      "long-answer": 88,
+      "short-answer": 440,
+      "very-short-answer": 481
+    },
+    "sourcePDFs": 45,
+    "sourcePagesCompared": 46,
+    "allVisuallyComparedQueuePages": 48,
+    "fullyComparedNonDeferredPages": 48,
+    "newContributingPages": 46,
+    "marks": 4338,
+    "options": 0,
+    "heldUnits": 1,
+    "excludedSources": 1,
+    "deferredSources": 0,
+    "distinctNormalizedWordings": 967,
+    "distinctNotInOld": 870,
+    "newOccurrencesMatchingOld": 114,
+    "nextQueueIndex": 768,
+    "nextPage": 1,
+    "nextQuestion": "1",
+    "noUniversityYearComplete": true,
+    "cumulativeByUniversity": {
+      "rguhs": 5008,
+      "knruhs": 3695,
+      "ntruhs": 1652,
+      "wbuhs": 2354
+    },
+    "cumulativeMarks": {
+      "rguhs": 20601,
+      "ntruhs": 6117,
+      "wbuhs": 12225,
+      "knruhs": 15599
+    }
+  },
+  "papers": [
+    {
+      "queueIndex": 722,
+      "sha256": "711f9840b5949fb801c3b93c7b26d3a5accdc78e6f1062f3dd52e66257e682b0",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A14298106/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Biochemistry/2019/RGUHS_Biochemistry_2019_JULY_RS2_RS3_PaperI_711f9840b594.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Jul 2019",
+      "paperCode": "1079",
+      "regulation": "RS2 & RS3",
+      "subject": "biochemistry",
+      "paperNumber": "I",
+      "questionCount": 11,
+      "marks": 50,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "biochemistry",
+          "paper": "I",
+          "examDate": "Jul 2019",
+          "code": "1079",
+          "reg": "RS2 & RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 723,
+      "sha256": "3e762a08ccd47c5731e68ae2a83b3873156b640b5b826b431dbf7c0e1056e903",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A14298107/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Biochemistry/2019/RGUHS_Biochemistry_2019_JULY_RS2_RS3_PaperII_3e762a08ccd4.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Jul 2019",
+      "paperCode": "1080",
+      "regulation": "RS2 & RS3",
+      "subject": "biochemistry",
+      "paperNumber": "II",
+      "questionCount": 11,
+      "marks": 50,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "biochemistry",
+          "paper": "II",
+          "examDate": "Jul 2019",
+          "code": "1080",
+          "reg": "RS2 & RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 724,
+      "sha256": "7039b37f9786d21c62bcc12f9db46b96f57f3645b7b64ba3ee06f58772e09793",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A14298108/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Anatomy/2019/RGUHS_Anatomy_2019_OCT_RS2_RS3_PaperI_7039b37f9786.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Oct 2019",
+      "paperCode": "1075",
+      "regulation": "RS2 & RS3",
+      "subject": "anatomy",
+      "paperNumber": "I",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "I",
+          "examDate": "Oct 2019",
+          "code": "1075",
+          "reg": "RS2 & RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 725,
+      "sha256": "de24806ca820ceffc7477a180b41d025d8ee136c2e3368480eeefa7043d7e852",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A14298109/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Unknown/Unknown/RGUHS_Unknown_Unknown_SessionUnknown_Unknown_PaperUnknown_de24806ca820.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Oct 2019",
+      "paperCode": "1076",
+      "regulation": "RS2 & RS3",
+      "subject": "anatomy",
+      "paperNumber": "II",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "II",
+          "examDate": "Oct 2019",
+          "code": "1076",
+          "reg": "RS2 & RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 726,
+      "sha256": "d50fac3461498cb8853faa6aeebb7be442d3f43d293b57da5ea1fcd4ba8fcd96",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429890/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Anatomy/2018/RGUHS_Anatomy_2018_JULY_RS2_RS3_PaperI_d50fac346149.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Jul 2018",
+      "paperCode": "1075",
+      "regulation": "RS2 & RS3",
+      "subject": "anatomy",
+      "paperNumber": "I",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "I",
+          "examDate": "Jul 2018",
+          "code": "1075",
+          "reg": "RS2 & RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 727,
+      "sha256": "23d0fb7b88c3c77ee02f03920d2f4c1aee95e291c529d32ac5f9dc4d62a02f9f",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429891/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Anatomy/2018/RGUHS_Anatomy_2018_JULY_RS2_RS3_PaperII_23d0fb7b88c3.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Jul 2018",
+      "paperCode": "1076",
+      "regulation": "RS2 & RS3",
+      "subject": "anatomy",
+      "paperNumber": "II",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "II",
+          "examDate": "Jul 2018",
+          "code": "1076",
+          "reg": "RS2 & RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 728,
+      "sha256": "2b70fbd16e9f902f66722c0e7bf7c653340a5877335372900dde749e6e53dfe1",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429892/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Physiology/2018/RGUHS_Physiology_2018_JULY_RS2_RS3_PaperI_2b70fbd16e9f.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Jul 2018",
+      "paperCode": "1077",
+      "regulation": "RS2 & RS3",
+      "subject": "physiology",
+      "paperNumber": "I",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "physiology",
+          "paper": "I",
+          "examDate": "Jul 2018",
+          "code": "1077",
+          "reg": "RS2 & RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 729,
+      "sha256": "b867fd4625a778132c4da2cf024e5a4656d0d61ba401e34fcbd113877dc4ad52",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429893/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Physiology/2018/RGUHS_Physiology_2018_JULY_RS2_RS3_PaperII_b867fd4625a7.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Jul 2018",
+      "paperCode": "1078",
+      "regulation": "RS2 & RS3",
+      "subject": "physiology",
+      "paperNumber": "II",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "physiology",
+          "paper": "II",
+          "examDate": "Jul 2018",
+          "code": "1078",
+          "reg": "RS2 & RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 730,
+      "sha256": "790afd3efc2dacbd015b9e3e9efdc38143cb82e013426ad39532621c9b0a75ce",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429878/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Unknown/2017/RGUHS_Unknown_2017_AUG_Unknown_PaperUnknown_790afd3efc2d.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Aug 2017",
+      "paperCode": "1075",
+      "regulation": "Revised Scheme II",
+      "subject": "anatomy",
+      "paperNumber": "I",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "I",
+          "examDate": "Aug 2017",
+          "code": "1075",
+          "reg": "Revised Scheme II",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 731,
+      "sha256": "20cfc403a9af8a011e713d3388a592d965aafa4dcc88020aff807d9ae17a0b9e",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429879/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Anatomy/2017/RGUHS_Anatomy_2017_AUG_Unknown_PaperII_20cfc403a9af.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Aug 2017",
+      "paperCode": "1076",
+      "regulation": "Regulation not stated",
+      "subject": "anatomy",
+      "paperNumber": "II",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "II",
+          "examDate": "Aug 2017",
+          "code": "1076",
+          "reg": "Regulation not stated",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 732,
+      "sha256": "6c6e172133f84980695f78195245897c24604f99dbd732fbb5dbf35ffdecbcfd",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429880/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Unknown/2017/RGUHS_Unknown_2017_AUG_RS2_RS3_PaperI_6c6e172133f8.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Aug 2017",
+      "paperCode": "1077",
+      "regulation": "RS2 & RS3",
+      "subject": "physiology",
+      "paperNumber": "I",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "physiology",
+          "paper": "I",
+          "examDate": "Aug 2017",
+          "code": "1077",
+          "reg": "RS2 & RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 733,
+      "sha256": "13229ab99688943b8d8fc08390b36f8c3aa6209aed2225e1932efb79b4c06525",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429881/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Physiology/2017/RGUHS_Physiology_2017_AUG_RS2_RS3_PaperII_13229ab99688.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Aug 2017",
+      "paperCode": "1078",
+      "regulation": "RS2 & RS3",
+      "subject": "physiology",
+      "paperNumber": "II",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "physiology",
+          "paper": "II",
+          "examDate": "Aug 2017",
+          "code": "1078",
+          "reg": "RS2 & RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 734,
+      "sha256": "f5eec01c5ca3ecb5f30ef6ea5eefdec9550d84490e4bb44a06ed92a91d032899",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429871/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/ENT/2016/RGUHS_ENT_2016_JUNE_Unknown_PaperUnknown_f5eec01c5ca3.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Jun 2016",
+      "paperCode": "1066",
+      "regulation": "Revised Scheme",
+      "subject": "ent",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "ent",
+          "paper": null,
+          "examDate": "Jun 2016",
+          "code": "1066",
+          "reg": "Revised Scheme",
+          "year": "third"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied. Questions8 and21 both print Referred otalgia, in distinct five/three-mark sections; retained as separately printed occurrences. Printed Q2 says malignant oitis externa; spelling preserved.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 735,
+      "sha256": "5c49ae453cceec6c1c1e2866beb70bcc97af9be2ff9931498bae0aff06e3696f",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429872/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Anatomy/2016/RGUHS_Anatomy_2016_JUNE_REVISED_SCHEME_II_PaperI_5c49ae453cce.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Jun 2016",
+      "paperCode": "1075",
+      "regulation": "Revised Scheme II",
+      "subject": "anatomy",
+      "paperNumber": "I",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "I",
+          "examDate": "Jun 2016",
+          "code": "1075",
+          "reg": "Revised Scheme II",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 736,
+      "sha256": "44cdc25655d42e8d1abe7821427ba617cef1d802fdf4f1188d3afd6cc3992c96",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429873/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Anatomy/2016/RGUHS_Anatomy_2016_JUNE_RS2_RS3_PaperII_44cdc25655d4.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Jun 2016",
+      "paperCode": "1076",
+      "regulation": "RS2 & RS3",
+      "subject": "anatomy",
+      "paperNumber": "II",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "II",
+          "examDate": "Jun 2016",
+          "code": "1076",
+          "reg": "RS2 & RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 737,
+      "sha256": "47a7adeaece5c3b310d4602c8251887084c19b0e7c2cbe06ad7c93ce933968b0",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429874/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Physiology/2016/RGUHS_Physiology_2016_JUNE_RS2_RS3_PaperUnknown_47a7adeaece5.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Jun 2016",
+      "paperCode": "1077",
+      "regulation": "RS2 & RS3",
+      "subject": "physiology",
+      "paperNumber": "I",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "physiology",
+          "paper": "I",
+          "examDate": "Jun 2016",
+          "code": "1077",
+          "reg": "RS2 & RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 738,
+      "sha256": "39d324cabe9c30ba84fc0029b5ac1c4dd19189e42228d10f7b7ddf8a2071e32c",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429839/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Unknown/2015/RGUHS_Unknown_2015_DECEMBER_Unknown_PaperUnknown_39d324cabe9c.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Dec 2015",
+      "paperCode": "1001",
+      "regulation": "Old Scheme",
+      "subject": "anatomy",
+      "paperNumber": "I",
+      "questionCount": 22,
+      "marks": 90,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "I",
+          "examDate": "Dec 2015",
+          "code": "1001",
+          "reg": "Old Scheme",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 739,
+      "sha256": "3700c0fc29d3dc60d9570b91af32f24618f181ac2f696f87c4f58a3b13ba5577",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429840/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Anatomy/2015/RGUHS_Anatomy_2015_DECEMBER_Unknown_PaperII_3700c0fc29d3.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Dec 2015",
+      "paperCode": "1002",
+      "regulation": "Old Scheme",
+      "subject": "anatomy",
+      "paperNumber": "II",
+      "questionCount": 22,
+      "marks": 90,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "II",
+          "examDate": "Dec 2015",
+          "code": "1002",
+          "reg": "Old Scheme",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 740,
+      "sha256": "17ffa864dc2384f2d2c9bf9007bad9117435e98a4adf766f5f16e4af91c2be7e",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429841/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Physiology/2015/RGUHS_Physiology_2015_DECEMBER_Unknown_PaperI_17ffa864dc23.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Dec 2015",
+      "paperCode": "1003",
+      "regulation": "Old Scheme",
+      "subject": "physiology",
+      "paperNumber": "I",
+      "questionCount": 22,
+      "marks": 90,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "physiology",
+          "paper": "I",
+          "examDate": "Dec 2015",
+          "code": "1003",
+          "reg": "Old Scheme",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 741,
+      "sha256": "0a443f2f40abd339c8c1d18ad7023a66227073249ad1ec70e47b82ea0a31db60",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429842/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Unknown/2015/RGUHS_Unknown_2015_DECEMBER_Unknown_PaperUnknown_0a443f2f40ab.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Dec 2015",
+      "paperCode": "1004",
+      "regulation": "Old Scheme",
+      "subject": "physiology",
+      "paperNumber": "II",
+      "questionCount": 22,
+      "marks": 90,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "physiology",
+          "paper": "II",
+          "examDate": "Dec 2015",
+          "code": "1004",
+          "reg": "Old Scheme",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied. Printed Q9 says Refractory errors; retained literally.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 742,
+      "sha256": "5515885dfcece0882c104c79f428cb947aab3482fbd41b4af6d3668c6837e43a",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429814/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Physiology/2014/RGUHS_Physiology_2014_DEC_Unknown_PaperII_5515885dfcec.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Dec 2014",
+      "paperCode": "1004",
+      "regulation": "Old Scheme",
+      "subject": "physiology",
+      "paperNumber": "II",
+      "questionCount": 22,
+      "marks": 90,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "physiology",
+          "paper": "II",
+          "examDate": "Dec 2014",
+          "code": "1004",
+          "reg": "Old Scheme",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied. Printed Q5 Derebrate rigidity and Q7 Ehrlanger Gasser classification retained as printed.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 743,
+      "sha256": "c3215322d35c811e8340c9ab7c2a76e56789da660aab89fe434d1d45d54f26f5",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429815/download",
+      "localPdfPath": "review_or_excluded/RGUHS/First_MBBS/Biochemistry/2014/RGUHS_Biochemistry_2014_DEC_Unknown_PaperUnknown_c3215322d35c.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences",
+      "printedExamDate": "Dec 2014",
+      "paperCode": "1005",
+      "regulation": "Old Scheme",
+      "subject": "biochemistry",
+      "paperNumber": null,
+      "questionCount": 22,
+      "marks": 90,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "biochemistry",
+          "paper": null,
+          "examDate": "Dec 2014",
+          "code": "1005",
+          "reg": "Old Scheme",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 744,
+      "sha256": "41b54056487f2672b8dba94528de6272105c48842768e1905f441b2bb4531004",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429816/download",
+      "localPdfPath": "review_or_excluded/RGUHS/First_MBBS/Anatomy/2014/RGUHS_Anatomy_2014_DEC_Unknown_PaperI_41b54056487f.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences",
+      "printedExamDate": "Dec 2014",
+      "paperCode": "1051",
+      "regulation": "Revised Scheme",
+      "subject": "anatomy",
+      "paperNumber": "I",
+      "questionCount": 28,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "I",
+          "examDate": "Dec 2014",
+          "code": "1051",
+          "reg": "Revised Scheme",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied. Printed Q28 coastal groove is retained literally. The 28-question paper balances18+50+32=100marks.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 745,
+      "sha256": "93d64d1cfb4a169d733b3acd628dd877ac413273d702ffa6fd998fc1e4770c6b",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429817/download",
+      "localPdfPath": "review_or_excluded/RGUHS/First_MBBS/Anatomy/2014/RGUHS_Anatomy_2014_DEC_Unknown_PaperII_93d64d1cfb4a.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences",
+      "printedExamDate": "Dec 2014",
+      "paperCode": "1052",
+      "regulation": "Revised Scheme",
+      "subject": "anatomy",
+      "paperNumber": "II",
+      "questionCount": 28,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "II",
+          "examDate": "Dec 2014",
+          "code": "1052",
+          "reg": "Revised Scheme",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 746,
+      "sha256": "d004e71914b2ec062f652f5891befa0d06a8238db896ea0e3604b803048a5f7a",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A142984/download",
+      "localPdfPath": "review_or_excluded/RGUHS/First_MBBS/Anatomy/Unknown/RGUHS_Anatomy_Unknown_SessionUnknown_Unknown_PaperI_d004e71914b2.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences",
+      "printedExamDate": "Jun–Jul 2011",
+      "paperCode": "1051",
+      "regulation": "Revised Scheme",
+      "subject": "anatomy",
+      "paperNumber": "I",
+      "questionCount": 28,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "I",
+          "examDate": "Jun–Jul 2011",
+          "code": "1051",
+          "reg": "Revised Scheme",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied. Printed June/July2011 exam header overrides any tiny2010 upload/form identifier.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 747,
+      "sha256": "8dd751491678ea6b28b6ffe2bf6a8ff0fdd37cf57f9813ee57f62d0f379c45be",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A142985/download",
+      "localPdfPath": "review_or_excluded/RGUHS/First_MBBS/Anatomy/2011/RGUHS_Anatomy_2011_JUNE_JULY_Unknown_PaperII_8dd751491678.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences",
+      "printedExamDate": "Jun–Jul 2011",
+      "paperCode": "1052",
+      "regulation": "Revised Scheme",
+      "subject": "anatomy",
+      "paperNumber": "II",
+      "questionCount": 28,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "II",
+          "examDate": "Jun–Jul 2011",
+          "code": "1052",
+          "reg": "Revised Scheme",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied. Printed Pats, Bounadaries, epidydimis, Ampula, Malphigian and Gamelli spellings retained. Printed June/July2011 exam header overrides any tiny2010 upload/form identifier.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 748,
+      "sha256": "4105d8f41d4ff2313bce358f6322c2b413206c6d7ce1f463449afed1178cd17f",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A142986/download",
+      "localPdfPath": "review_or_excluded/RGUHS/First_MBBS/Physiology/2011/RGUHS_Physiology_2011_JUNE_JULY_Unknown_PaperI_4105d8f41d4f.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences",
+      "printedExamDate": "Jun–Jul 2011",
+      "paperCode": "1053",
+      "regulation": "Revised Scheme",
+      "subject": "physiology",
+      "paperNumber": "I",
+      "questionCount": 28,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "physiology",
+          "paper": "I",
+          "examDate": "Jun–Jul 2011",
+          "code": "1053",
+          "reg": "Revised Scheme",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied. Printed June/July2011 exam header overrides any tiny2010 upload/form identifier.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 749,
+      "sha256": "c6ada8c9d1d3eb7937b88c7f4539667f2cabd7d09a489f3f17bbbfbbd97e8044",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A142987/download",
+      "localPdfPath": "review_or_excluded/RGUHS/First_MBBS/Physiology/2011/RGUHS_Physiology_2011_JUNE_JULY_Unknown_PaperII_c6ada8c9d1d3.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences",
+      "printedExamDate": "Jun–Jul 2011",
+      "paperCode": "1054",
+      "regulation": "Revised Scheme",
+      "subject": "physiology",
+      "paperNumber": "II",
+      "questionCount": 27,
+      "marks": 98,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "physiology",
+          "paper": "II",
+          "examDate": "Jun–Jul 2011",
+          "code": "1054",
+          "reg": "Revised Scheme",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied. Printed June/July2011 exam header overrides any tiny2010 upload/form identifier.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 750,
+      "sha256": "bc9a0c2306f6e5e5b8ffde8bed06ac64737ec4935b30795f5b9a4206258b3937",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A142988/download",
+      "localPdfPath": "review_or_excluded/RGUHS/First_MBBS/Biochemistry/2011/RGUHS_Biochemistry_2011_JUNE_JULY_Unknown_PaperUnknown_bc9a0c2306f6.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences",
+      "printedExamDate": "Jun–Jul 2011",
+      "paperCode": "1055",
+      "regulation": "Revised Scheme",
+      "subject": "biochemistry",
+      "paperNumber": null,
+      "questionCount": 28,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "biochemistry",
+          "paper": null,
+          "examDate": "Jun–Jul 2011",
+          "code": "1055",
+          "reg": "Revised Scheme",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 751,
+      "sha256": "aa27b9fe89f4273bc8694860eb40cf5c158013469fe3b4e23e107e3867606cd3",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A142989/download",
+      "localPdfPath": "review_or_excluded/RGUHS/First_MBBS/Anatomy/2011/RGUHS_Anatomy_2011_JUNE_JULY_RS_2_RS_3_PaperI_aa27b9fe89f4.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences",
+      "printedExamDate": "Jun–Jul 2011",
+      "paperCode": "1075",
+      "regulation": "RS2 & RS3",
+      "subject": "anatomy",
+      "paperNumber": "I",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "I",
+          "examDate": "Jun–Jul 2011",
+          "code": "1075",
+          "reg": "RS2 & RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 752,
+      "sha256": "cb592edbbcec0cf62fa5de7317a7645c276a5dd94dfb14b472090618321f8afb",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429810/download",
+      "localPdfPath": "review_or_excluded/RGUHS/First_MBBS/Anatomy/2011/RGUHS_Anatomy_2011_JUNE_JULY_RS_2_RS_3_PaperII_cb592edbbcec.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences",
+      "printedExamDate": "Jun–Jul 2011",
+      "paperCode": "1076",
+      "regulation": "RS2 & RS3",
+      "subject": "anatomy",
+      "paperNumber": "II",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "II",
+          "examDate": "Jun–Jul 2011",
+          "code": "1076",
+          "reg": "RS2 & RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 753,
+      "sha256": "63393e312764ac0cfb3b5a6de8e164cfdaaa3cbb01224815b2b24929a6a02e36",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429811/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Unknown/2011/RGUHS_Unknown_2011_JUNE_JULY_RS_2_RS_3_PaperUnknown_63393e312764.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Jun–Jul 2011",
+      "paperCode": "1077",
+      "regulation": "RS2 & RS3",
+      "subject": "physiology",
+      "paperNumber": "I",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "physiology",
+          "paper": "I",
+          "examDate": "Jun–Jul 2011",
+          "code": "1077",
+          "reg": "RS2 & RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 754,
+      "sha256": "82c0536f3232520ba93b9f19193d64b038cc3d087789c7f276c1a66bd93d297f",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429812/download",
+      "localPdfPath": "review_or_excluded/RGUHS/First_MBBS/Physiology/2011/RGUHS_Physiology_2011_JUNE_JULY_RS_2_RS_3_PaperII_82c0536f3232.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences",
+      "printedExamDate": "Jun–Jul 2011",
+      "paperCode": "1078",
+      "regulation": "RS2 & RS3",
+      "subject": "physiology",
+      "paperNumber": "II",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "physiology",
+          "paper": "II",
+          "examDate": "Jun–Jul 2011",
+          "code": "1078",
+          "reg": "RS2 & RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 755,
+      "sha256": "c54e956eadd0aa0741e2e1c87468978d030a5fa3c31ae7a4395c02e432de955b",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A1429813/download",
+      "localPdfPath": "review_or_excluded/RGUHS/First_MBBS/Biochemistry/2011/RGUHS_Biochemistry_2011_JUNE_JULY_RS_2_RS_3_PaperI_c54e956eadd0.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences",
+      "printedExamDate": "Jun–Jul 2011",
+      "paperCode": "1079",
+      "regulation": "RS2 & RS3",
+      "subject": "biochemistry",
+      "paperNumber": "I",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": "I",
+          "subject": "biochemistry",
+          "paper": "I",
+          "examDate": "Jun–Jul 2011",
+          "code": "1079",
+          "reg": "RS2 & RS3",
+          "year": "first"
+        },
+        {
+          "componentStart": "II",
+          "subject": "biochemistry",
+          "paper": "II",
+          "examDate": "Jun–Jul 2011",
+          "code": "1080",
+          "reg": "RS2 & RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied. One physical page prints two50-mark papers, each numbered1–11; all22occurrences retained with paper-specific stableIDs and printedquestionnumbers.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 757,
+      "sha256": "d9208b4a375d8440d2d7bba3e18094a03a8813af8bf7b46f1bd3121c4ea394df",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA021224A2026127/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/First_MBBS/Unknown/2022/RGUHS_Unknown_2022_MAY_Unknown_PaperUnknown_d9208b4a375d.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "13 May 2022",
+      "paperCode": "1075",
+      "regulation": "RS3",
+      "subject": "anatomy",
+      "paperNumber": "I",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "anatomy",
+          "paper": "I",
+          "examDate": "13 May 2022",
+          "code": "1075",
+          "reg": "RS3",
+          "year": "first"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 758,
+      "sha256": "f908dcaecf789d13f15d583d9fb2283eddf8c69db6e99d3bca05759d0299aaeb",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA021224A214680/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/Second_MBBS/Pharmacology/2021/RGUHS_Pharmacology_2021_OCT_RS3_PaperII_f908dcaecf78.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "01 Oct 2021",
+      "paperCode": "1086",
+      "regulation": "RS3",
+      "subject": "pharmacology",
+      "paperNumber": "II",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "pharmacology",
+          "paper": "II",
+          "examDate": "01 Oct 2021",
+          "code": "1086",
+          "reg": "RS3",
+          "year": "second"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 759,
+      "sha256": "ea3afec1216997aae32a1d37160c6cbc615aac3f48854e4b168493a5be07dc19",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A16007151/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/Second_MBBS/Pathology/2020/RGUHS_Pathology_2020_NOV_RS3_PaperII_ea3afec12169.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "20 Nov 2020",
+      "paperCode": "1082",
+      "regulation": "RS3",
+      "subject": "pathology",
+      "paperNumber": "II",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "pathology",
+          "paper": "II",
+          "examDate": "20 Nov 2020",
+          "code": "1082",
+          "reg": "RS3",
+          "year": "second"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 760,
+      "sha256": "d8c5ad5358cf7302e1c0fa618e4232f3c6780df063ec16c48580ca895c1ffe5a",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A16007152/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/Second_MBBS/Microbiology/2020/RGUHS_Microbiology_2020_NOV_RS3_PaperI_d8c5ad5358cf.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "23 Nov 2020",
+      "paperCode": "1083",
+      "regulation": "RS3",
+      "subject": "microbiology",
+      "paperNumber": "I",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "microbiology",
+          "paper": "I",
+          "examDate": "23 Nov 2020",
+          "code": "1083",
+          "reg": "RS3",
+          "year": "second"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 761,
+      "sha256": "6151d7d1c80e06dd4001488688e61058eff3b50acabf3b9a05b716d2cdc5c240",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A16007153/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/Second_MBBS/Microbiology/2020/RGUHS_Microbiology_2020_NOV_RS3_PaperII_6151d7d1c80e.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "25 Nov 2020",
+      "paperCode": "1084",
+      "regulation": "RS3",
+      "subject": "microbiology",
+      "paperNumber": "II",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "microbiology",
+          "paper": "II",
+          "examDate": "25 Nov 2020",
+          "code": "1084",
+          "reg": "RS3",
+          "year": "second"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 762,
+      "sha256": "a0275976ae1513692df36d6481c3e1484cd284f8c5670c134b87f85dadc43d7b",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A16007154/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/Second_MBBS/Pharmacology/2020/RGUHS_Pharmacology_2020_NOV_RS3_PaperI_a0275976ae15.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "27 Nov 2020",
+      "paperCode": "1085",
+      "regulation": "RS3",
+      "subject": "pharmacology",
+      "paperNumber": "I",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "pharmacology",
+          "paper": "I",
+          "examDate": "27 Nov 2020",
+          "code": "1085",
+          "reg": "RS3",
+          "year": "second"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 763,
+      "sha256": "f65f4987468dafdc8d6c7b0153f980fe137da1f9bb0a97dec1f1859b7cbf4109",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A16007137/download",
+      "localPdfPath": "review_or_excluded/RGUHS/Second_MBBS/Pathology/2019/RGUHS_Pathology_2019_DEC_RS2_RS3_PaperI_f65f4987468d.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "11 Dec 2019",
+      "paperCode": "1081",
+      "regulation": "RS2 & RS3",
+      "subject": "pathology",
+      "paperNumber": "I",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "pathology",
+          "paper": "I",
+          "examDate": "11 Dec 2019",
+          "code": "1081",
+          "reg": "RS2 & RS3",
+          "year": "second"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 764,
+      "sha256": "85dd7f30506bfb2494710ecf3aa476ab228f0d3f85ab40906afb3eea848a2cbf",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A16007138/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/Second_MBBS/Pathology/2019/RGUHS_Pathology_2019_DEC_RS2_RS3_PaperII_85dd7f30506b.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "13 Dec 2019",
+      "paperCode": "1082",
+      "regulation": "RS2 & RS3",
+      "subject": "pathology",
+      "paperNumber": "II",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "pathology",
+          "paper": "II",
+          "examDate": "13 Dec 2019",
+          "code": "1082",
+          "reg": "RS2 & RS3",
+          "year": "second"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 765,
+      "sha256": "4bc77d7b7c99927b8f26904254dc37f54c17e8bb69892208081f593d15c7c27d",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A16007139/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/Second_MBBS/Microbiology/2019/RGUHS_Microbiology_2019_DEC_RS2_RS3_PaperI_4bc77d7b7c99.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "16 Dec 2019",
+      "paperCode": "1083",
+      "regulation": "RS2 & RS3",
+      "subject": "microbiology",
+      "paperNumber": "I",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "microbiology",
+          "paper": "I",
+          "examDate": "16 Dec 2019",
+          "code": "1083",
+          "reg": "RS2 & RS3",
+          "year": "second"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 766,
+      "sha256": "b56525f0670a27e4755b52aac7d778e49f1beb80086c4baf2d35ee1ccae8899f",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A16007140/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/Second_MBBS/Microbiology/2019/RGUHS_Microbiology_2019_DEC_RS2_RS3_PaperII_b56525f0670a.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "18 Dec 2019",
+      "paperCode": "1084",
+      "regulation": "RS2 & RS3",
+      "subject": "microbiology",
+      "paperNumber": "II",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "microbiology",
+          "paper": "II",
+          "examDate": "18 Dec 2019",
+          "code": "1084",
+          "reg": "RS2 & RS3",
+          "year": "second"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    },
+    {
+      "queueIndex": 767,
+      "sha256": "1d56516f8f12c96569a2b56835aa488a350965273d04550e6fd2e425ef09a4bb",
+      "sourceUrl": "https://firstranker.com/frbeta/download.php/frdA230321A16007123/download",
+      "localPdfPath": "ORBIT_MBBS_PYQ_2011_2026/RGUHS/Second_MBBS/Pathology/2018/RGUHS_Pathology_2018_DEC_RS2_RS3_PaperI_1d56516f8f12.pdf",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "printedExamDate": "Dec 2018",
+      "paperCode": "1081",
+      "regulation": "RS2 & RS3",
+      "subject": "pathology",
+      "paperNumber": "I",
+      "questionCount": 22,
+      "marks": 100,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "componentHeaders": [
+        {
+          "componentStart": 1,
+          "subject": "pathology",
+          "paper": "I",
+          "examDate": "Dec 2018",
+          "code": "1081",
+          "reg": "RS2 & RS3",
+          "year": "second"
+        }
+      ],
+      "inspectionStatus": "Explicit listed original pages visually compared; remaining partial-bundle pages unapproved",
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied.",
+      "answerKey": "No official answer key supplied or invented",
+      "licence": "No explicit redistribution/commercial licence established; original PDFs remain private"
+    }
+  ],
+  "exclusions": [
+    {
+      "queueIndex": 756,
+      "sha256": "a9ce401dfa055f7779c5772b574072952498d2bab8effc4a3956aeca03c57d9a",
+      "university": "rguhs",
+      "printedUniversity": "Rajiv Gandhi University of Health Sciences, Karnataka",
+      "subject": "anatomy",
+      "year": "first",
+      "paper": "I",
+      "date": "08 Feb 2021",
+      "code": "1020",
+      "reg": "CBME RS4",
+      "layout": "manual",
+      "topics": "At Ahn Au Au Au At Ahn Ahn An An Ae Ahi Au At At Ahn Ahn Ahn An Au An Ae",
+      "reviewedPages": [
+        1,
+        2
+      ],
+      "printedAvailableMarks": 100,
+      "corrections": {
+        "(0.540.542)": "(0.5+0.5+2)",
+        "(24342)": "(2+3+2)",
+        "(0.542+14+0.5+1)": "(0.5+2+1+0.5+1)",
+        "(24+142)": "(2+1+2)",
+        "stapula": "scapula",
+        "meck": "neck",
+        "(0.54+1+0.5+2+1)": "(0.5+1+0.5+2+1)",
+        "(24+14+1+1)": "(2+1+1+1)",
+        "(441)": "(4+1)",
+        "Deseribe": "Describe",
+        "with.sultable": "with suitable",
+        "of. a*blastocyst": "of a blastocyst"
+      },
+      "notes": "Complete original physical page visually compared; all printed questions and subparts retained. No answer key supplied. Full 30-year-old cricketer rotator-cuff case and30-year-old blood-collection case retained, with all asked subparts. Printed Erb’splasy spelling retained.",
+      "exclude": "Alternate original scan of already approved08Feb2021AnatomyI/1020; complete22questions and printedheader match",
+      "canonicalShaPrefix": "8c0841b08755c5101e80d3e7e98f7fcd8d0f55ce880b244241e26b73f2cbdd39",
+      "pagesCompared": [
+        1,
+        2
+      ]
+    }
+  ],
+  "held": [
+    {
+      "queueIndex": 749,
+      "sha256": "c6ada8c9d1d3eb7937b88c7f4539667f2cabd7d09a489f3f17bbbfbbd97e8044",
+      "sourceQuestion": "28",
+      "pdfPage": 1,
+      "marks": 2,
+      "text": "[Crossed-out printed unit; transcription withheld]",
+      "reason": "Printed Q28 is crossed out and overlaps the footer. Entire2-mark unit held; no familiar law wording supplied from medical knowledge."
+    }
+  ]
+}

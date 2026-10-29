@@ -93,6 +93,12 @@ try {
       {"university": "wbuhs", "year": "third", "yearKey": "third-year", "query": "venomous snake bite", "topic": "Toxicology", "reference": "Aug–Sep 2026"},
       {"university": "rguhs", "year": "first", "yearKey": "first-year", "query": "lateral ventricle to third ventricle", "topic": "Neuroanatomy", "reference": "09-Aug-2024", "option": "(D) Foramen of Munro"},
       {"university": "rguhs", "year": "first", "yearKey": "first-year", "query": "dissociated anaesthesia", "topic": "Central Nervous System", "reference": "26-Nov-2020"},
+      {"university": "rguhs", "year": "first", "yearKey": "first-year", "query": "phenylalanine and tyrosine", "topic": "Protein metabolism", "reference": "Jul 2019"},
+      {"university": "rguhs", "year": "first", "yearKey": "first-year", "query": "coastal groove", "topic": "Thorax", "reference": "Dec 2014"},
+      {"university": "rguhs", "year": "first", "yearKey": "first-year", "query": "law of projection", "topic": "Special Senses", "reference": "Jun–Jul 2011"},
+      {"university": "rguhs", "year": "first", "yearKey": "first-year", "query": "orotic aciduria", "topic": "Nucleotide metabolism", "reference": "Jun–Jul 2011", "option": "biochemical basis of manifestation"},
+      {"university": "rguhs", "year": "second", "yearKey": "second-year", "query": "past history of pharyngitis", "topic": "Heart", "reference": "13 Dec 2019", "option": "Enumerate the complications associated with this condition."},
+      {"university": "rguhs", "year": "second", "yearKey": "second-year", "query": "α blockers", "topic": "Autonomic Nervous System", "reference": "27 Nov 2020"},
     ]) {
       const context = await browser.newContext({ viewport: { width, height: 780 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
       await context.route('**/*', route => new URL(route.request().url()).origin === new URL(base).origin ? route.continue() : route.abort());
@@ -117,7 +123,7 @@ try {
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), 'Horizontal overflow');
       assert.deepEqual(errors, []);
       results.push({ width, university: fixture.university, query: fixture.query, searchAndChapterAndReference: 'passed' });
-      if (width === 360 && fixture.query === 'external factor of bladder cancer') { fs.mkdirSync('artifacts/university-import',{recursive:true});await page.getByText(fixture.option, {exact:false}).filter({visible:true}).first().scrollIntoViewIfNeeded();await page.waitForTimeout(250);await page.screenshot({path:'artifacts/university-import/batch17-options-360.png'}); }
+      if (width === 360 && fixture.query === 'past history of pharyngitis') { fs.mkdirSync('artifacts/university-import',{recursive:true});await page.getByText(fixture.option, {exact:false}).filter({visible:true}).first().scrollIntoViewIfNeeded();await page.waitForTimeout(250);await page.screenshot({path:'artifacts/university-import/batch18-case-360.png'}); }
       console.log('PASS chapter/reference', width, fixture.university, fixture.query);
       await context.close();
     }
