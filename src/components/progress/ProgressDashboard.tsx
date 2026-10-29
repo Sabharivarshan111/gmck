@@ -16,6 +16,7 @@ import IdentityConflictDialog from "./IdentityConflictDialog";
 import ReviseDueCard from "./ReviseDueCard";
 import ExamCountdownCard from "./ExamCountdownCard";
 import WeakTopicHeatmap from "./WeakTopicHeatmap";
+import FounderPrivilegeCard from "./FounderPrivilegeCard";
 import { getYearNode, YEAR_LABELS } from "@/lib/year-subjects";
 import { collectQuestions, countDone, QUESTION_PROGRESS_EVENT } from "@/lib/question-progress";
 import { readLocalXp } from "@/lib/rewards";
@@ -146,6 +147,10 @@ const ProgressDashboard = () => {
           <Pencil className="h-4 w-4" />
         </Button>
       </div>
+
+      {teamDesignation?.userId === userId && teamDesignation.title === "Co-Founder" && (
+        <FounderPrivilegeCard displayName={local.display_name} />
+      )}
 
       <Tabs defaultValue="stats" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
