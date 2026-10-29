@@ -4,6 +4,7 @@ import Svg, { Circle, Defs, Ellipse, LinearGradient, Path, Rect, Stop } from 're
 import { Crown, Gem, ShieldCheck, Sparkles } from 'lucide-react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
+import { useTheme } from '@/theme';
 
 export type FounderRole = 'Founder' | 'Co-Founder';
 
@@ -30,6 +31,7 @@ export function FounderIdentityCard({
   role: FounderRole;
   cardholderName: string;
 }) {
+  const { colors } = useTheme();
   const isFounder = role === 'Founder';
   const metal = isFounder;
   const turning = useRef(new Animated.Value(0)).current;
@@ -56,10 +58,10 @@ export function FounderIdentityCard({
       <View style={styles.heading}>
         <View style={styles.headingIcon}><Gem size={17} color="#A5A8E2" /></View>
         <View style={{ flex: 1 }}>
-          <Text style={styles.headingTitle}>Your Founder's Card</Text>
-          <Text style={styles.headingSubtitle}>Exclusively yours · ORBIT Founders Edition</Text>
+          <Text style={[styles.headingTitle, { color: colors.text }]}>Your Founder's Card</Text>
+          <Text style={[styles.headingSubtitle, { color: colors.textMuted }]}>Exclusively yours · ORBIT Founders Edition</Text>
         </View>
-        <Text style={styles.editionMark}>✦  {isFounder ? '01 / 01' : '02 / 02'}</Text>
+        <Text style={[styles.editionMark, { color: colors.violet }]}>✦  {isFounder ? '01 / 01' : '02 / 02'}</Text>
       </View>
 
       <Touchable
@@ -182,7 +184,7 @@ export function FounderIdentityCard({
       </Touchable>
 
       <View style={styles.actionRow}>
-        <Text style={styles.flipHint}>↻  Tap the card to flip</Text>
+        <Text style={[styles.flipHint, { color: colors.textMuted }]}>↻  Tap the card to flip</Text>
         <Touchable
           label="Unlock a founders-only Easter egg"
           testID="founders-edition-secret"
@@ -202,7 +204,7 @@ export function FounderIdentityCard({
       ) : null}
       <View style={styles.disclaimer}>
         <ShieldCheck size={12} color="#8E96A4" />
-        <Text style={styles.disclaimerText}>Exclusive verified identity collectible · Not a payment card</Text>
+        <Text style={[styles.disclaimerText, { color: colors.textMuted }]}>Exclusive verified identity collectible · Not a payment card</Text>
       </View>
     </View>
   );
