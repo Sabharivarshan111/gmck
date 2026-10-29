@@ -26,7 +26,7 @@ const ProgressDashboard = () => {
   const { local, cloud, userId, email, isAnonymous, needsOnboarding, saveProfile, setNeedsOnboarding, signOut, pendingConflict, resolveIdentityConflict } = useProfile();
   const [editOpen, setEditOpen] = useState(false);
   const [tick, setTick] = useState(0);
-  // Co-Founder title comes only from the authenticated user's server-managed team record.
+  // Founders Edition identity comes only from the authenticated user's server-managed team record.
   const [teamDesignation, setTeamDesignation] = useState<{ userId: string; title: string } | null>(null);
 
   useEffect(() => {
@@ -40,8 +40,9 @@ const ProgressDashboard = () => {
         .eq("user_id", userId)
         .maybeSingle();
       if (!cancelled) {
-        setTeamDesignation(!error && data?.designation === "Co-Founder"
-          ? { userId, title: "Co-Founder" } : null);
+        const verifiedTitle = data?.designation === "Founder" || data?.designation === "Co-Founder" ? data.designation : null;
+        setTeamDesignation(!error && verifiedTitle
+          ? { userId, title: verifiedTitle } : null);
       }
     };
     void loadDesignation();
@@ -135,9 +136,9 @@ const ProgressDashboard = () => {
         <div>
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <h3 className="text-lg font-semibold">Dr. {local.display_name}</h3>
-            {teamDesignation?.userId === userId && teamDesignation.title === "Co-Founder" && (
-              <span className="inline-flex items-center rounded-full border border-violet-400/50 bg-violet-500/10 px-2.5 py-0.5 text-[11px] font-bold tracking-wide text-violet-700 dark:text-violet-200" aria-label="ORBIT MBBS Co-Founder">
-                Co-Founder
+            {teamDesignation?.userId === userId && (
+              <span className="inline-flex items-center rounded-full border border-violet-400/50 bg-violet-500/10 px-2.5 py-0.5 text-[11px] font-bold tracking-wide text-violet-700 dark:text-violet-200" aria-label={`ORBIT MBBS ${teamDesignation.title}`}>
+                {teamDesignation.title}
               </span>
             )}
           </div>
@@ -148,8 +149,11 @@ const ProgressDashboard = () => {
         </Button>
       </div>
 
-      {teamDesignation?.userId === userId && teamDesignation.title === "Co-Founder" && (
-        <FounderPrivilegeCard displayName={local.display_name} />
+      {teamDesignation?.userId === userId && (teamDesignation.title === "Founder" || teamDesignation.title === "Co-Founder") && (
+        <FounderPrivilegeCard
+          displayName={local.display_name}
+          designation={teamDesignation.title}
+        />
       )}
 
       <Tabs defaultValue="stats" className="w-full">
