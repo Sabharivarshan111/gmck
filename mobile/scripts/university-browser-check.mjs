@@ -87,7 +87,7 @@ try {
       {"university": "wbuhs", "year": "final", "yearKey": "final-year", "query": "Wolfe graft", "topic": "Operative surgery and others", "reference": "Mar–Apr 2025", "option": "(d) Full split thickness graft"},
       {"university": "wbuhs", "year": "second", "yearKey": "second-year", "query": "diabetic 60 year old", "topic": "Hospital Infection Control", "reference": "Mar–Apr 2024"},
       {"university": "wbuhs", "year": "final", "yearKey": "final-year", "query": "ovarian germ cell", "topic": "Gynecological malignancies", "reference": "Mar–Apr 2024", "option": "(iv) CEA"},
-      {"university": "wbuhs", "year": "final", "yearKey": "final-year", "query": "Serum calcium", "topic": "Urology", "reference": "Mar–Apr 2024", "option": "(d) Cyclophosphamide"},
+      {"university": "wbuhs", "year": "final", "yearKey": "final-year", "query": "external factor of bladder cancer", "topic": "Urology", "reference": "Mar–Apr 2024", "option": "(d) Cyclophosphamide"},
       {"university": "wbuhs", "year": "first", "yearKey": "first-year", "query": "7.72", "topic": "Maintenance of ph and acid base disorders", "reference": "Nov–Dec 2023"},
       {"university": "wbuhs", "year": "first", "yearKey": "first-year", "query": "palpable bony lump", "topic": "Upper Limb", "reference": "Nov–Dec 2024"},
       {"university": "wbuhs", "year": "third", "yearKey": "third-year", "query": "venomous snake bite", "topic": "Toxicology", "reference": "Aug–Sep 2026"},
@@ -117,7 +117,7 @@ try {
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), 'Horizontal overflow');
       assert.deepEqual(errors, []);
       results.push({ width, university: fixture.university, query: fixture.query, searchAndChapterAndReference: 'passed' });
-      if (width === 360 && fixture.query === 'Serum calcium') { fs.mkdirSync('artifacts/university-import',{recursive:true});await page.getByText(fixture.option, {exact:false}).filter({visible:true}).first().scrollIntoViewIfNeeded();await page.waitForTimeout(250);await page.screenshot({path:'artifacts/university-import/batch17-options-360.png'}); }
+      if (width === 360 && fixture.query === 'external factor of bladder cancer') { fs.mkdirSync('artifacts/university-import',{recursive:true});await page.getByText(fixture.option, {exact:false}).filter({visible:true}).first().scrollIntoViewIfNeeded();await page.waitForTimeout(250);await page.screenshot({path:'artifacts/university-import/batch17-options-360.png'}); }
       console.log('PASS chapter/reference', width, fixture.university, fixture.query);
       await context.close();
     }
