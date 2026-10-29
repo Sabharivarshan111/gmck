@@ -45,7 +45,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH18 = [
     "university": "rguhs",
     "year": "first",
     "subjectKey": "biochemistry",
-    "topicKey": "carbohydrate-metabolism",
+    "topicKey": "carbohydrate-chemistry",
     "kind": "short-notes",
     "question": "Classify carbohydrates with two examples for each class and subclass.",
     "examRefs": [
@@ -387,7 +387,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH18 = [
     "university": "rguhs",
     "year": "first",
     "subjectKey": "biochemistry",
-    "topicKey": "nucleotide-metabolism",
+    "topicKey": "molecular-biology",
     "kind": "short-notes",
     "question": "Oncogenes",
     "examRefs": [
@@ -3256,7 +3256,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH18 = [
     "university": "rguhs",
     "year": "first",
     "subjectKey": "anatomy",
-    "topicKey": "upper-limb",
+    "topicKey": "general-anatomy",
     "kind": "short-notes",
     "question": "Prime Movers with examples",
     "examRefs": [
@@ -6616,7 +6616,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH18 = [
     "university": "rguhs",
     "year": "first",
     "subjectKey": "anatomy",
-    "topicKey": "upper-limb",
+    "topicKey": "histology",
     "kind": "short-notes",
     "question": "What is vasa vasorum?",
     "examRefs": [
@@ -7053,7 +7053,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH18 = [
     "university": "rguhs",
     "year": "first",
     "subjectKey": "anatomy",
-    "topicKey": "general-anatomy",
+    "topicKey": "histology",
     "kind": "short-notes",
     "question": "Mention two functions of the Sertoli cell.",
     "examRefs": [
@@ -8687,7 +8687,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH18 = [
     "university": "rguhs",
     "year": "first",
     "subjectKey": "biochemistry",
-    "topicKey": "carbohydrate-metabolism",
+    "topicKey": "carbohydrate-chemistry",
     "kind": "short-notes",
     "question": "Starch, glycogen give similarities and differences",
     "examRefs": [
@@ -9007,7 +9007,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH18 = [
     "university": "rguhs",
     "year": "first",
     "subjectKey": "anatomy",
-    "topicKey": "upper-limb",
+    "topicKey": "general-anatomy",
     "kind": "short-notes",
     "question": "Give the types of pinnate muscles with one example of each",
     "examRefs": [
@@ -9919,7 +9919,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH18 = [
     "university": "rguhs",
     "year": "first",
     "subjectKey": "anatomy",
-    "topicKey": "histology",
+    "topicKey": "general-anatomy",
     "kind": "short-notes",
     "question": "Blood supply of bone",
     "examRefs": [
@@ -11986,7 +11986,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH18 = [
     "university": "rguhs",
     "year": "first",
     "subjectKey": "biochemistry",
-    "topicKey": "carbohydrate-metabolism",
+    "topicKey": "carbohydrate-chemistry",
     "kind": "short-notes",
     "question": "Epimerization",
     "examRefs": [
@@ -14318,7 +14318,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH18 = [
     "university": "rguhs",
     "year": "first",
     "subjectKey": "biochemistry",
-    "topicKey": "chemistry-of-amino-acids-and-proteins",
+    "topicKey": "protein-metabolism",
     "kind": "short-notes",
     "question": "Nitrogen balance",
     "examRefs": [
