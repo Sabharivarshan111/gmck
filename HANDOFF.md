@@ -2891,3 +2891,14 @@ Added1,016 complete original-page-reviewed occurrences (810 WBUHS,206 RGUHS),11,
 Local import/search24,601roundtrips/KUHSparity,TypeScript/quietlint,requiredguards,actual11700-IDAndroidJSandassembledVercel/nativeweb checked. Current exact-head hosted169scenarioUI/productionweb/actual APK+AAB proofs must be verified in private BATCH17_PUBLICATION_RECEIPT before claiming shipped. Batch16 actual debug666/internal626/release808 package proofs completed; do not rebuild. Version29/backend/Play unchanged; no physical-device claim.
 
 Next transcription queue722,p1,Q1: RGUHSBiochemistryI July2019; exact source URL/SHA/path in private NEXT_PENDING_PAPER.json. Do not restart620orblindlyrerunappend-styleauthoringhelpers. WBUHS current queue tranche exhausted with unresolved gaps/holds; overall five-university completion denominator unknown. Queue722/1011reached71.4%,289unreached28.6%,notoverallcompletion.
+
+
+## 2026-10-29 — ORBIT university Batch18
+
+DONE:1,009new original-page-reviewed RGUHS occurrences,12,709cumulative; previous11,700objects/IDs unchanged.45contributingPDFs/46pages;48physicalpages compared including the two-page already-approved08Feb2021AnatomyI alternate(source756), excluded after all22questions matched canonical8c0841b08755.46printedcomponentbalances/4,338approvedmarks. Source749Q28crossed-out2-mark unit held. Source755prints both BiochemistryI/II with separate1–11numbering/codes1079/1080; stablelowercasepaper suffixes retained. Source753Q21/22continue onto physicalpage2. Old90-mark and9-mark-long-essay schemes retained. No newMCQs/keys. All source originals private.
+
+HALF-DONE:Hosted181scenario browser suites, production12,709payload and actual APK/AAB publication pending at this source commit. Source/bank/search25,610/KUHS/TypeScript/quietlint/requiredguards pass; inspect private final receipts for emitted/packaged payload proof. Batch17 actual packages complete(debug678/internal638/release821).
+
+NEXT:Verify exact-head hostedchecks/packages, merge selectivewebPR preserving main, verify live payload; then queue768,p1,Q1, RGUHSPathologyII Dec2018 RS2&RS3/code1082, SHA8df1ff3a6cbee633e2186a67d3a1b59e2d2fcdfa5f23e3eedb9e2f9cc0b8b7cb.768–774machineprepared but not visuallyreviewed. No university/year complete; queue76.0%reached includes holds/alternates and is notoverallcompletion.
+
+DO NOT:Count alternatePDFs as newquestions; import rawextraction; supply crossed-out/clippedtext from medicalknowledge; change previousrows/TNMGR/KUHS/version29/backend/Play; expose originalPDFs or forcepush.

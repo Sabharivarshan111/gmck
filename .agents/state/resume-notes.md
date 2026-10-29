@@ -2867,3 +2867,14 @@ DONE:1,016new reviewed occurrences (810WBUHS/206RGUHS),11,700total, prior10,684o
 HALF-DONE: Exact-head hosted169scenarioUI/liveweb/actualAPK+AAB proofs pending at source commit; inspect private BATCH17_PUBLICATION_RECEIPT. PreviousBatch16actualpackages now complete(debug666/internal626/release808).
 
 NEXT: Finish publication proofs then queue722p1Q1 RGUHSBiochemistryI Jul2019. Do not restart620; do not rerun append helpers; keep originals private; no backend/version29/Play changes; MUHS0disabled. Queue traversal71.4% is not overall completion.
+
+
+## 2026-10-29 — ORBIT university Batch18
+
+DONE:1,009new original-page-reviewed RGUHS occurrences,12,709cumulative; previous11,700objects/IDs unchanged.45contributingPDFs/46pages;48physicalpages compared including the two-page already-approved08Feb2021AnatomyI alternate(source756), excluded after all22questions matched canonical8c0841b08755.46printedcomponentbalances/4,338approvedmarks. Source749Q28crossed-out2-mark unit held. Source755prints both BiochemistryI/II with separate1–11numbering/codes1079/1080; stablelowercasepaper suffixes retained. Source753Q21/22continue onto physicalpage2. Old90-mark and9-mark-long-essay schemes retained. No newMCQs/keys. All source originals private.
+
+HALF-DONE:Hosted181scenario browser suites, production12,709payload and actual APK/AAB publication pending at this source commit. Source/bank/search25,610/KUHS/TypeScript/quietlint/requiredguards pass; inspect private final receipts for emitted/packaged payload proof. Batch17 actual packages complete(debug678/internal638/release821).
+
+NEXT:Verify exact-head hostedchecks/packages, merge selectivewebPR preserving main, verify live payload; then queue768,p1,Q1, RGUHSPathologyII Dec2018 RS2&RS3/code1082, SHA8df1ff3a6cbee633e2186a67d3a1b59e2d2fcdfa5f23e3eedb9e2f9cc0b8b7cb.768–774machineprepared but not visuallyreviewed. No university/year complete; queue76.0%reached includes holds/alternates and is notoverallcompletion.
+
+DO NOT:Count alternatePDFs as newquestions; import rawextraction; supply crossed-out/clippedtext from medicalknowledge; change previousrows/TNMGR/KUHS/version29/backend/Play; expose originalPDFs or forcepush.
