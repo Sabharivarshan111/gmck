@@ -27,7 +27,7 @@ const ProgressDashboard = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [tick, setTick] = useState(0);
   // Founders Edition identity comes only from the authenticated user's server-managed team record.
-  const [teamDesignation, setTeamDesignation] = useState<{ userId: string; title: string } | null>(null);
+  const [teamDesignation, setTeamDesignation] = useState<{ userId: string; title: "Founder" | "Co-Founder" } | null>(null);
 
   useEffect(() => {
     setTeamDesignation(null);
