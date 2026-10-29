@@ -99,6 +99,8 @@ try {
       {"university": "rguhs", "year": "first", "yearKey": "first-year", "query": "orotic aciduria", "topic": "Nucleotide metabolism", "reference": "Jun–Jul 2011", "option": "biochemical basis of manifestation"},
       {"university": "rguhs", "year": "second", "yearKey": "second-year", "query": "past history of pharyngitis", "topic": "Heart", "reference": "13 Dec 2019", "option": "Enumerate the complications associated with this condition."},
       {"university": "rguhs", "year": "second", "yearKey": "second-year", "query": "α blockers", "topic": "Autonomic Nervous System", "reference": "27 Nov 2020"},
+      {"university": "rguhs", "year": "first", "yearKey": "first-year", "query": "Classify carbohydrates with two examples", "topic": "Carbohydrate chemistry", "reference": "Jul 2019"},
+      {"university": "rguhs", "year": "first", "yearKey": "first-year", "query": "Oncogenes", "topic": "Molecular biology", "reference": "Jul 2019"},
     ]) {
       const context = await browser.newContext({ viewport: { width, height: 780 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
       await context.route('**/*', route => new URL(route.request().url()).origin === new URL(base).origin ? route.continue() : route.abort());
