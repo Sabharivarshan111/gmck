@@ -4,11 +4,19 @@ import fs from 'node:fs';
 import { chromium } from 'playwright-core';
 
 const base = process.env.ORBIT_UNIVERSITY_BASE_URL || 'http://127.0.0.1:4184';
-const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
+const browser = await chromium.launch({ headless: true, executablePath: process.env.ORBIT_BROWSER_EXECUTABLE || undefined, args: ['--no-sandbox'] });
 const results = [];
 try {
   for (const width of [360, 430]) {
     for (const fixture of [
+      {"university": "rguhs", "year": "second", "yearKey": "second-year", "query": "Define and classify Cirrhosis. Discuss the pathology", "topic": "Liver, Gallbladder and Pancreas", "reference": "Dec 2018"},
+      {"university": "rguhs", "year": "second", "yearKey": "second-year", "query": "Antigen Antibody reactions. Describe Agglutination", "topic": "Immunology", "reference": "Dec 2018"},
+      {"university": "rguhs", "year": "second", "yearKey": "second-year", "query": "Define Identification. Describe in detail about Tattoo Marks.", "topic": "Identification", "reference": "Jun 2016"},
+      {"university": "rguhs", "year": "second", "yearKey": "second-year", "query": "Classify beta-adrenergic blocking drugs. Write therapeutic uses", "topic": "Autonomic Nervous System", "reference": "Jun 2016"},
+      {"university": "rguhs", "year": "third", "yearKey": "third-year", "query": "Discuss design, conduct and analysis of a Cohort study", "topic": "Principles & Methods Of Epidemiology", "reference": "19 Nov 2020"},
+      {"university": "rguhs", "year": "third", "yearKey": "third-year", "query": "Describe the anatomy of lateral wall of nose. Describe the types", "topic": "Nose", "reference": "26 Nov 2020"},
+      {"university": "rguhs", "year": "third", "yearKey": "third-year", "query": "management of Acute Iridocyclitis", "topic": "Diseases of uveal tract", "reference": "16 Dec 2019"},
+
       { university: 'rguhs', year: 'first', yearKey: 'first-year', query: 'distribution and applied Anatomy of Ulnar', topic: 'Upper Limb', reference: '24 Sep 2025' },
       { university: 'knruhs', year: 'first', yearKey: 'first-year', query: 'roots, trunks and cords', topic: 'Upper Limb', reference: 'Jul 2019', option: '(b) Parts (roots, trunks and cords)' },
       { university: 'ntruhs', year: 'first', yearKey: 'first-year', query: 'respiratory chain', topic: 'Bioenergetics', reference: 'Oct/Nov 2018' },
@@ -138,8 +146,9 @@ try {
   });
   const page = await context.newPage();await page.goto(base);
   await page.getByLabel('Settings', { exact: true }).click();
+  await page.getByLabel('University: Karnataka · RGUHS. Change university', { exact: true }).click();
   const radios = page.getByRole('radiogroup').filter({ visible: true }).getByRole('radio');await radios.first().waitFor();
-  assert.equal(await radios.count(), 7);
+  assert.equal(await radios.count(), 8);
   assert.equal(await page.getByRole('radiogroup').filter({ visible: true }).getByRole('radio', { name: /Maharashtra University/ }).getAttribute('aria-disabled'), 'true');
   await page.getByRole('radiogroup').filter({ visible: true }).getByRole('radio', { name: /West Bengal University/ }).scrollIntoViewIfNeeded();
   await page.getByRole('radiogroup').filter({ visible: true }).getByRole('radio', { name: /West Bengal University/ }).click();

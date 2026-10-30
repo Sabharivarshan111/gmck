@@ -18,6 +18,7 @@ import {
 import { useQuestionDone } from '@/hooks/useProgress';
 import { doubleTapPrompt, tripleTapPrompt } from '@/lib/askAi';
 import { kuhsQuestionSource, kuhsRecordedExamCount } from '@/lib/kuhsQuestionSource';
+import { useBankUniversity } from '@/hooks/useProfile';
 import { collectedQuestionSource } from '@data/universityPapers/questionBankData';
 import type { ConfirmedPage } from '@/lib/pageRefs';
 
@@ -100,8 +101,9 @@ function QuestionRowBase({
   // every other row mounted in the list.
   const done = useQuestionDone(question);
 
-  const kuhsSource = kuhsQuestionSource(question);
-  const collectedSource = collectedQuestionSource(question);
+  const university = useBankUniversity();
+  const kuhsSource = university === 'other' ? undefined : kuhsQuestionSource(question);
+  const collectedSource = university === 'other' ? undefined : collectedQuestionSource(question);
   const stars = kuhsSource ? kuhsRecordedExamCount(kuhsSource.examRefs) : countStars(question);
   const page = extractPageNumber(question);
   const importance = importanceLabel(stars);

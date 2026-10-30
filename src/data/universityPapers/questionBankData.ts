@@ -9,6 +9,7 @@ const SUBJECT_NAMES: Record<string, string> = {
   'general-medicine': 'General Medicine', 'general-surgery': 'General Surgery', 'community-medicine': 'Community Medicine', 'forensic-medicine': 'Forensic Medicine', ophthalmology: 'Ophthalmology', ent: 'ENT',
 };
 const TOPIC_NAMES: Record<string, string> = {
+  'concept-of-health-and-disease': 'Concept of Health and Disease',
   "cell-injury": "Cell Injury",
   "inflammation-repair": "Inflammation and Repair",
   "hemodynamic-disorders": "Hemodynamic Disorders",

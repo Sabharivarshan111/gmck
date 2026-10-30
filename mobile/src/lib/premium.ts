@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AppState, type AppStateStatus } from 'react-native';
 import { secureStorage } from './secureStorage';
 import { supabase } from './supabase';
@@ -133,4 +133,18 @@ export function usePremiumSync(): void {
       appSub.remove();
     };
   }, []);
+}
+
+/** Fresh account entitlement for the first-run offer; no entitlement is granted here. */
+export function usePremiumStatus(): string | null {
+  const [until, setUntil] = useState<string | null>(null);
+  useEffect(() => {
+    let live = true;
+    const refresh = async () => { const expiry = await syncPremiumCache(); if (live) setUntil(expiry); };
+    void refresh();
+    const { data } = supabase.auth.onAuthStateChange(() => { setUntil(null); setTimeout(() => { if (live) void refresh(); }, 0); });
+    const sub = AppState.addEventListener('change', state => { if (state === 'active') void refresh(); });
+    return () => { live = false; data.subscription.unsubscribe(); sub.remove(); };
+  }, []);
+  return until;
 }

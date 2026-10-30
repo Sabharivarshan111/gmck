@@ -55,7 +55,7 @@ const BodySchema = z.object({
   subject: z.string().min(1).max(120),
   subtopicKey: z.string().min(1).max(300),
   subtopicName: z.string().min(1).max(200),
-  university: z.enum(["tnmgr", "kuhs", "rguhs", "knruhs", "muhs", "ntruhs", "wbuhs"]).default("tnmgr"),
+  university: z.enum(["tnmgr", "kuhs", "rguhs", "knruhs", "muhs", "ntruhs", "wbuhs", "other"]).default("tnmgr"),
   questions: z.array(z.string().max(1000)).min(1).max(400),
   regenerate: z.boolean().optional(),
   limit: z.number().int().min(6).max(60).optional(),

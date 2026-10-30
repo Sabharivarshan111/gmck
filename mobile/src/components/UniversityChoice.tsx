@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
-import { Check } from 'lucide-react-native';
+import { Check, ChevronDown } from 'lucide-react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { useTheme, withAlpha } from '@/theme';
@@ -15,16 +15,24 @@ export function UniversityChoice({ value, onChange }: {
 }) {
   const { colors } = useTheme();
   const { height } = useWindowDimensions();
-  return <ScrollView style={[styles.scroll, { height: Math.min(320, height * 0.4) }]} contentContainerStyle={styles.options}
+  const [expanded, setExpanded] = useState(false);
+  return <View style={{ gap: 8 }}>
+    <Touchable label={value ? `University: ${UNIVERSITY_SHORT_LABEL[value]}. Change university` : 'Choose your university'}
+      state={{ expanded }} onPress={() => setExpanded(open => !open)}
+      style={[styles.option, { backgroundColor: colors.cardElevated, borderColor: colors.border }]}>
+      <Text style={[styles.title, { color: colors.text, flex: 1 }]}>{value ? UNIVERSITY_SHORT_LABEL[value] : 'Choose your university'}</Text>
+      <ChevronDown size={20} color={colors.accent} />
+    </Touchable>
+    {expanded ? <ScrollView style={[styles.scroll, { height: Math.min(320, height * 0.4) }]} contentContainerStyle={styles.options}
     nestedScrollEnabled accessibilityRole="radiogroup">
     {UNIVERSITIES.map(option => {
       const active = value === option;
       const unavailable = !bankAvailable(option);
-      const count = option !== 'tnmgr' && option !== 'kuhs' ? COLLECTED_QUESTION_COUNTS[option] : null;
+      const count = option !== 'other' && option !== 'tnmgr' && option !== 'kuhs' ? COLLECTED_QUESTION_COUNTS[option] : null;
       return <Touchable key={option}
         label={`${UNIVERSITY_LABEL[option]}${option === 'kuhs' && !KUHS_BANK_READY ? ', question bank under review' : ''}`}
         role="radio" state={{ checked: active, disabled: unavailable }} disabled={unavailable}
-        onPress={() => onChange(option)}
+        onPress={() => { onChange(option); setExpanded(false); }}
         style={[styles.option, {
           borderColor: active ? colors.accent : colors.border,
           backgroundColor: active ? withAlpha(colors.accent, 0.12) : colors.cardElevated,
@@ -35,7 +43,7 @@ export function UniversityChoice({ value, onChange }: {
             {UNIVERSITY_SHORT_LABEL[option]}
           </Text>
           <Text style={[styles.detail, { color: colors.textMuted }]}>
-            {count !== null
+            {option === 'other' ? 'A combined question bank for your studies' : count !== null
               ? (count > 0 ? `${count} questions · more papers being added` : 'Papers collected · question review in progress')
               : option === 'kuhs' && !KUHS_BANK_READY
               ? (unavailable ? 'Questions are being checked against the PDFs' : 'Review preview · coverage and references still being checked')
@@ -45,7 +53,7 @@ export function UniversityChoice({ value, onChange }: {
         {active ? <Check size={20} color={colors.accent} /> : null}
       </Touchable>;
     })}
-  </ScrollView>;
+  </ScrollView> : null}</View>;
 }
 
 const styles = StyleSheet.create({

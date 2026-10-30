@@ -28,7 +28,7 @@ async function loadPicture(url: string) {
 }
 
 async function generate(
-  university: 'tnmgr' | 'kuhs' | 'rguhs' | 'knruhs' | 'muhs' | 'ntruhs' | 'wbuhs',
+  university: 'tnmgr' | 'kuhs' | 'rguhs' | 'knruhs' | 'muhs' | 'ntruhs' | 'wbuhs' | 'other',
   year: string,
   kind: string,
   slot: number,
@@ -113,7 +113,7 @@ Deno.serve(secureEndpoint(async req => {
   let input: Record<string, unknown>;
   try { input = await req.json(); } catch { return json({ error: 'Invalid request.' }, 400); }
   const { year, kind, date } = input;
-  const universities = ['tnmgr', 'kuhs', 'rguhs', 'knruhs', 'muhs', 'ntruhs', 'wbuhs'] as const;
+  const universities = ['tnmgr', 'kuhs', 'rguhs', 'knruhs', 'muhs', 'ntruhs', 'wbuhs', 'other'] as const;
   type University = typeof universities[number];
   const university = input.university === undefined ? 'tnmgr' : universities.includes(input.university) ? input.university as University : null;
   const rawSources = Array.isArray(input.sourceQuestions) ? input.sourceQuestions.slice(0, 60) : [];

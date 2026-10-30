@@ -120,7 +120,7 @@ assert.match(home, /readLastQuestion\(bankUniversity\)/,
   'Home resume must read from the selected university only');
 
 const flashFn = readRepo('supabase/functions/generate-flashcards/index.ts');
-assert.match(flashFn, /university: z\.enum\(\["tnmgr", "kuhs", "rguhs", "knruhs", "muhs", "ntruhs", "wbuhs"\]\)/,
+assert.match(flashFn, /university: z\.enum\(\["tnmgr", "kuhs", "rguhs", "knruhs", "muhs", "ntruhs", "wbuhs", "other"\]\)/,
   'Flashcard Edge Function must validate university');
 assert.match(flashFn, /university === "tnmgr" \? baseDeckKey : `\$\{university\}::\$\{baseDeckKey\}`/,
   'Flashcard Edge Function must namespace KUHS shared cache');

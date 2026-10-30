@@ -49,7 +49,7 @@ const {
 
 const failures = [];
 let checked = 0;
-for (const university of ['tnmgr', 'kuhs', 'rguhs', 'knruhs', 'muhs', 'ntruhs', 'wbuhs']) {
+for (const university of ['tnmgr', 'kuhs', 'rguhs', 'knruhs', 'muhs', 'ntruhs', 'wbuhs', 'other']) {
   // The index itself, not a search over it: searchQuestions() needs a
   // two-letter query, so there is no query that means "everything".
   const everything = allSearchHits(university);

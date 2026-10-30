@@ -12,7 +12,7 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { CheckCircle2, Lock, ShieldAlert } from 'lucide-react-native';
+import { CheckCircle2, Lock } from 'lucide-react-native';
 import { Text } from '@/components/Text';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Touchable } from '@/components/Touchable';
@@ -20,7 +20,7 @@ import { GradientFill } from '@/components/Gradient';
 import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
 import { DURATION, EASE, SPRING, useReducedMotion } from '@/theme/motion';
-import { DisplayNameError, type LocalProfile, type Year } from '@/lib/profile';
+import { type LocalProfile, type Year } from '@/lib/profile';
 import { YEAR_LABEL } from '@/lib/questionBank';
 import { YEAR_TO_KEY } from '@/lib/profile';
 import {
@@ -31,6 +31,9 @@ import {
 import { useProfile } from '@/hooks/useProfile';
 import { setTourPaused } from '@/tour/store';
 import { UniversityChoice } from '@/components/UniversityChoice';
+import { openUnlock } from '@/lib/unlock';
+import { usePremiumStatus } from '@/lib/premium';
+import { validateDisplayName } from '@shared/profanity';
 import type { University } from '@shared/university';
 /*
  * Imported, not `require`d.
@@ -44,46 +47,19 @@ import APP_ICON from '@/assets/app-icon.png';
 
 const YEARS: Year[] = ['first', 'second', 'third', 'final'];
 
-/**
- * The first thing a new reader sees, and the reason it exists at all.
- *
- * Onboarding used to live only on **My Progress**, behind a tab: the sheet
- * appeared when you opened that screen with no profile, and nowhere else. A
- * fresh install therefore opened on Home having been asked nothing — and
- * `useProfile` falls back to `'second'`, so the app quietly showed second
- * year's question bank to a first year, a third year and a final year alike,
- * with the year chip agreeing. The reader had to find My Progress to discover
- * a question had ever been asked. That is what "why does it show default
- * second year" was.
- *
- * So this is a gate at the root, before any screen: the app cannot be used
- * without answering, because every screen in it is an answer to "which year".
- *
- * Three things it deliberately does:
- *
- * * **The icon and the welcome come first, on their own.** A form is a demand;
- *   an app that says hello before it asks for something is the difference
- *   between arriving somewhere and being processed. It lasts a second and a
- *   half and any tap skips it.
- * * **"Made by the community" is on that panel, not buried in an About box.**
- *   It is the single most load-bearing fact about this app — the questions in
- *   it were transcribed by students — and it belongs in the first sentence
- *   rather than in the credits.
- * * Google authentication is retained in internal and release APKs. Debug
- *   APKs and local Metro sessions bypass it through authMode.ts; their UI
- *   must not claim that a skipped sign-in verified a Google account.
+/** First run: welcome/sign-in, study setup, then the annual Premium offer.
+ * Existing profiles skip setup; profile persistence happens after step three.
+ * Native authentication and the established reduced-motion primitives remain.
  */
-
-/** Long enough to read two lines, short enough not to be a loading screen. */
-const SPLASH_MS = 1600;
-
 export function FirstRun() {
   const { colors } = useTheme();
   const { local, hydrated, save } = useProfile();
   const insets = useSafeAreaInsets();
   const reduced = useReducedMotion();
 
-  const [stage, setStage] = useState<'splash' | 'you'>('splash');
+  const [stage, setStage] = useState<'splash' | 'you' | 'premium'>('splash');
+  const premium = usePremiumStatus();
+  const [goal, setGoal] = useState<LocalProfile['preparationGoal']>('university-pyqs');
   const [name, setName] = useState('');
   const [year, setYear] = useState<Year | null>(null);
   const [university, setUniversity] = useState<University | null>(null);
@@ -142,30 +118,8 @@ export function FirstRun() {
         Animated.spring(icon, { toValue: 1, ...SPRING.default, useNativeDriver: true }),
       ]).start();
     }
-    const timer = setTimeout(() => setStage('you'), SPLASH_MS);
-    return () => clearTimeout(timer);
-  }, [needed, stage, reduced, rise, icon]);
 
-  const submit = useCallback(
-    async (profile: LocalProfile) => {
-      setSaving(true);
-      setError(null);
-      try {
-        await save(profile);
-      } catch (err) {
-        setError(
-          err instanceof DisplayNameError || err instanceof Error
-            ? err.message
-            : 'Could not save your profile.',
-        );
-        setSaving(false);
-      }
-      // Deliberately no `setSaving(false)` on success: `local` becomes non-null
-      // and this whole gate unmounts. Clearing it first would flash the button
-      // back to its idle state on the frame before it disappears.
-    },
-    [save],
-  );
+  }, [needed, stage, reduced, rise, icon]);
 
   const start = useCallback(() => {
     if (isNative && !googleAuthenticated) {
@@ -180,8 +134,10 @@ export function FirstRun() {
       setError('Choose your university — it decides which past papers you see.');
       return;
     }
-    void submit({ display_name: name, year, university });
-  }, [isNative, googleAuthenticated, name, year, university, submit]);
+    const check = validateDisplayName(name);
+    if (!check.ok) { setError(check.reason ?? 'Enter your name.'); return; }
+    setError(null); setStage('premium');
+  }, [isNative, googleAuthenticated, name, year, university]);
 
   /**
    * Google fills the name in and unlocks onboarding.
@@ -192,6 +148,7 @@ export function FirstRun() {
     try {
       const account = await signInWithGoogle();
       setGoogleAuthenticated(true);
+      setStage('you');
       if (account?.name && !name.trim()) {
         setName(account.name.split(' ')[0] ?? account.name);
       }
@@ -211,6 +168,16 @@ export function FirstRun() {
   }
 
   const splash = stage === 'splash';
+  const finish = async (unlock: boolean) => {
+    if (!year || !university || saving) return;
+    setSaving(true); setError(null);
+    try {
+      await save({ display_name: name, year, university, preparationGoal: goal });
+      if (unlock) openUnlock();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not save your setup.'); setSaving(false);
+    }
+  };
 
   return (
     <Modal visible transparent={false} animationType="fade" statusBarTranslucent>
@@ -236,11 +203,7 @@ export function FirstRun() {
           },
         ]}>
         {splash ? (
-          <Touchable
-            label="Continue"
-            onPress={() => setStage('you')}
-            scale={false}
-            style={styles.splash}>
+          <View style={styles.splash}>
             <Animated.View style={{ transform: [{ scale: icon }] }}>
               <Image
                 source={APP_ICON}
@@ -258,95 +221,55 @@ export function FirstRun() {
               <Text accessibilityRole="header" style={[styles.welcome, { color: colors.text }]}>
                 Welcome to Orbit
               </Text>
+              <Text style={[styles.label, { color: colors.accent, textAlign: 'center' }]}>STEP 1 OF 3</Text>
               <Text style={[styles.made, { color: colors.accent }]}>Made by the community</Text>
               <Text style={[styles.madeSub, { color: colors.textMuted }]}>
-                Every question in here was written down by a student who sat the exam.
+                Past papers, notes and clinical practice, together.
               </Text>
+              <Touchable disabled={googling} label={GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? 'Continue with Google' : 'Continue'}
+                onPress={() => { if (GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated) void withGoogle(); else setStage('you'); }}
+                style={[styles.google, { borderColor: colors.accent, marginTop: 24 }]}>
+                {googling ? <ActivityIndicator color={colors.accent} /> : <Text style={[styles.googleText, { color: colors.accent }]}>{GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? 'Continue with Google' : 'Continue'}</Text>}
+              </Touchable>
+              {!isNative && GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? <Touchable label="Continue on this device" onPress={() => setStage('you')} style={styles.google}><Text style={[styles.googleText, { color: colors.textMuted }]}>Continue on this device</Text></Touchable> : null}
+              {error ? <Text accessibilityRole="alert" style={[styles.error, { color: colors.danger }]}>{error}</Text> : null}
             </Animated.View>
-          </Touchable>
+          </View>
+        ) : stage === 'premium' ? (
+          <ScrollView key="premium" contentContainerStyle={[styles.form, { gap: 18 }]}>
+            <Text style={[styles.label, { color: colors.accent }]}>STEP 3 OF 3</Text>
+            <Image source={APP_ICON} style={styles.iconSmall} accessibilityLabel="Orbit" />
+            <Text accessibilityRole="header" style={[styles.title, { color: colors.text }]}>{premium ? 'Your Premium is active' : 'Unlock Premium'}</Text>
+            <View style={{ padding: 24, gap: 18, borderRadius: 22, borderWidth: 1, borderColor: colors.accent, backgroundColor: withAlpha(colors.accent, 0.08) }}>
+              <Text style={[typeScale.title1, { color: colors.text }]}>₹300 / 1 year</Text>
+              <Text style={[typeScale.bodyStrong, { color: colors.text }]}>One year of ORBIT Premium</Text>
+              {['Every anatomy organ', 'Patient simulator and clinical cases', 'Auscultation, ECG, X-ray and POCUS', 'Full access to practice questions'].map(text => <View key={text} style={{ flexDirection: 'row', gap: 10 }}><CheckCircle2 size={18} color={colors.accent} /><Text style={[typeScale.body, { color: colors.text, flex: 1 }]}>{text}</Text></View>)}
+            </View>
+            <Touchable label={premium ? 'Start studying' : 'Unlock Premium — ₹300'} disabled={saving} state={{ busy: saving }} onPress={() => { void finish(!premium); }} style={[styles.google, { backgroundColor: colors.accent }]}>
+              {saving ? <ActivityIndicator color={colors.onAccent} /> : <Text style={[styles.googleText, { color: colors.onAccent }]}>{premium ? 'Start studying' : 'Unlock Premium — ₹300'}</Text>}
+            </Touchable>
+            {!premium ? <Touchable label="Continue with free preview" disabled={saving} onPress={() => { void finish(false); }} style={[styles.google, { borderColor: colors.border }]}><Text style={[styles.googleText, { color: colors.text }]}>Continue with free preview</Text></Touchable> : null}
+            <Touchable label="Back to your study setup" disabled={saving} onPress={() => setStage('you')} style={styles.google}><Text style={[styles.googleText, { color: colors.textMuted }]}>Back</Text></Touchable>
+            <Text style={[styles.footnote, { color: colors.textMuted }]}>Use the same Google account to restore your Premium access.</Text>
+            {error ? <Text accessibilityRole="alert" style={[styles.error, { color: colors.danger }]}>{error}</Text> : null}
+          </ScrollView>
         ) : (
-          <ScrollView
+          <ScrollView key="study-setup"
             contentContainerStyle={styles.form}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}>
+            <Text style={[styles.label, { color: colors.accent }]}>STEP 2 OF 3</Text>
             <Image
               source={APP_ICON}
               style={styles.iconSmall}
               accessibilityLabel="Orbit"
             />
             <Text accessibilityRole="header" style={[styles.title, { color: colors.text }]}>
-              Set up your studies
+              Make Orbit yours
             </Text>
             <Text style={[styles.subtitle, { color: colors.textMuted }]}>
               Choose your year and university to get the right past papers.
             </Text>
-
-            {GOOGLE_SIGN_IN_ENABLED ? (
-              <>
-                {/* Anti-Spam Verification Notice */}
-                <View
-                  style={[
-                    styles.securityNotice,
-                    {
-                      backgroundColor: withAlpha(googleAuthenticated ? colors.green : colors.accent, 0.08),
-                      borderColor: withAlpha(googleAuthenticated ? colors.green : colors.accent, 0.28),
-                    },
-                  ]}>
-                  {googleAuthenticated ? (
-                    <CheckCircle2 size={18} color={colors.green} style={{ marginTop: 2 }} />
-                  ) : (
-                    <ShieldAlert size={18} color={colors.accent} style={{ marginTop: 2 }} />
-                  )}
-                  <View style={{ flex: 1 }}>
-                    <Text style={[styles.securityTitle, { color: colors.text }]}>
-                      {googleAuthenticated ? 'Verified with Google' : 'Google Sign-In Required'}
-                    </Text>
-                    <Text style={[styles.securityDesc, { color: colors.textMuted }]}>
-                      {googleAuthenticated
-                        ? 'Your account is verified. Your progress, leaderboard rank, and study notes will sync smoothly.'
-                        : 'To prevent spam attacks and safeguard your progress & rankings, please sign in with Google to continue.'}
-                    </Text>
-                  </View>
-                </View>
-
-                <Touchable
-                  label={googleAuthenticated ? 'Signed in with Google' : 'Continue with Google'}
-                  onPress={withGoogle}
-                  disabled={googling || saving || googleAuthenticated}
-                  state={{ busy: googling }}
-                  scaleTo={0.98}
-                  style={[
-                    styles.google,
-                    {
-                      borderColor: googleAuthenticated ? colors.green : colors.border,
-                      backgroundColor: googleAuthenticated
-                        ? withAlpha(colors.green, 0.1)
-                        : colors.cardElevated,
-                    },
-                  ]}>
-                  {googling ? (
-                    <ActivityIndicator size="small" color={colors.text} />
-                  ) : googleAuthenticated ? (
-                    <View style={styles.signedInRow}>
-                      <CheckCircle2 size={18} color={colors.green} />
-                      <Text style={[styles.googleText, { color: colors.green }]}>
-                        Signed in with Google
-                      </Text>
-                    </View>
-                  ) : (
-                    <Text style={[styles.googleText, { color: colors.text }]}>
-                      Continue with Google
-                    </Text>
-                  )}
-                </Touchable>
-                <Text style={[styles.optional, { color: colors.textMuted }]}>
-                  {googleAuthenticated
-                    ? 'One-time authentication verified. Works completely offline.'
-                    : 'One-time authentication required to safeguard your profile against spam attacks.'}
-                </Text>
-
-              </>
-            ) : null}
 
             {/* Profile Setup: Display Name & Year (Gated on Google Sign-In for native) */}
             <View style={!googleAuthenticated && isNative ? styles.lockedSection : undefined}>
@@ -359,6 +282,8 @@ export function FirstRun() {
                 </View>
               ) : null}
 
+              <Text style={[styles.label, { color: colors.textMuted }]}>UNIVERSITY — PICK ONE</Text>
+              <UniversityChoice value={university} onChange={setUniversity} />
               <Text style={[styles.label, { color: colors.textMuted }]}>DISPLAY NAME</Text>
               <TextInput
                 value={name}
@@ -423,8 +348,11 @@ export function FirstRun() {
                   );
                 })}
               </View>
-              <Text style={[styles.label, { color: colors.textMuted }]}>UNIVERSITY — PICK ONE</Text>
-              <UniversityChoice value={university} onChange={setUniversity} />
+              <Text style={[styles.label, { color: colors.textMuted }]}>WHAT ARE YOU PREPARING FOR?</Text>
+              <View style={[styles.grid, { flexWrap: 'wrap' }]}>
+                {([['university-pyqs', 'University PYQs'], ['neet-pg', 'NEET PG'], ['both', 'Both']] as const).map(([value, label]) => <Touchable key={value} label={label} role="radio" state={{ checked: goal === value }} onPress={() => setGoal(value)} style={[styles.yearCard, { borderColor: goal === value ? colors.accent : colors.border, backgroundColor: colors.cardElevated }]}><Text style={[styles.yearName, { color: colors.text }]}>{label}</Text></Touchable>)}
+              </View>
+              <Text style={[styles.footnote, { color: colors.textMuted }]}>Every choice takes you to your home screen. You can change it later.</Text>
             </View>
 
             {error ? (
@@ -442,13 +370,13 @@ export function FirstRun() {
               // one who would press this. It says what is missing instead.
               disabled={saving}
               state={{ busy: saving }}
-              label={!year ? 'Choose your year first' : !university ? 'Choose your university first' : 'Start studying'}
+              label={!year ? 'Choose your year first' : !university ? 'Choose your university first' : 'Continue to Premium'}
               style={[styles.startButton, (!year || !university) && styles.startPending]}>
               <GradientFill from="#FFFFFF" to={colors.fuchsia} borderRadius={14} />
               {saving ? (
                 <ActivityIndicator color="#1A0A1F" />
               ) : (
-                <Text style={styles.startText}>Start studying</Text>
+                <Text style={styles.startText}>Continue to Premium</Text>
               )}
             </Touchable>
             <Text style={[styles.footnote, { color: colors.textMuted }]}>

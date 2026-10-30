@@ -1,7 +1,8 @@
-export type University = 'tnmgr' | 'kuhs' | 'rguhs' | 'knruhs' | 'muhs' | 'ntruhs' | 'wbuhs';
+export type University = 'tnmgr' | 'kuhs' | 'rguhs' | 'knruhs' | 'muhs' | 'ntruhs' | 'wbuhs' | 'other';
 
-export const UNIVERSITIES: University[] = ['tnmgr', 'kuhs', 'rguhs', 'knruhs', 'muhs', 'ntruhs', 'wbuhs'];
+export const UNIVERSITIES: University[] = ['tnmgr', 'kuhs', 'rguhs', 'knruhs', 'muhs', 'ntruhs', 'wbuhs', 'other'];
 export const UNIVERSITY_LABEL: Record<University, string> = {
+  other: 'Other university',
   tnmgr: 'Tamil Nadu Dr. M.G.R. Medical University (TNMGR)',
   kuhs: 'Kerala University of Health Sciences (KUHS)',
   rguhs: 'Rajiv Gandhi University of Health Sciences (RGUHS)',
@@ -12,6 +13,7 @@ export const UNIVERSITY_LABEL: Record<University, string> = {
 };
 
 export const UNIVERSITY_SHORT_LABEL: Record<University, string> = {
+  other: 'Other university',
   tnmgr: 'Tamil Nadu · TNMGR', kuhs: 'Kerala · KUHS', rguhs: 'Karnataka · RGUHS',
   knruhs: 'Telangana · KNRUHS', muhs: 'Maharashtra · MUHS', ntruhs: 'Andhra Pradesh · NTRUHS',
   wbuhs: 'West Bengal · WBUHS',
