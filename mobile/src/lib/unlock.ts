@@ -41,7 +41,7 @@ import { Linking } from 'react-native';
  *
  * Flipping it is one edit and needs no other change anywhere.
  */
-export const UNLOCK_URL = 'https://mbbsqbank-questor.lovable.app/unlock';
+export const UNLOCK_URL = 'https://orbitmbbs.site/unlock';
 
 /**
  * Whether the app offers a button that leaves for the unlock page.

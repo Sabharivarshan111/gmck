@@ -76,7 +76,7 @@ export function FounderIdentityCard({
           <Svg pointerEvents="none" width="100%" height="100%" viewBox="0 0 350 220" preserveAspectRatio="xMidYMid slice" style={StyleSheet.absoluteFill}>
             <Defs>
               <LinearGradient id="plate" x1="0%" y1="0%" x2="100%" y2="100%">
-                {metal ? (
+                {[metal ? (
                   <>
                     <Stop offset="0%" stopColor="#F8F9FD" />
                     <Stop offset="19%" stopColor="#C7CDD6" />
@@ -92,7 +92,7 @@ export function FounderIdentityCard({
                     <Stop offset="70%" stopColor="#161D32" />
                     <Stop offset="100%" stopColor="#5C6389" />
                   </>
-                )}
+                )]}
               </LinearGradient>
               <LinearGradient id="reflection" x1="0%" y1="0%" x2="100%" y2="75%">
                 <Stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.55" />
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
   infinity: { fontSize: 23, lineHeight: 25, fontWeight: '400' },
   signature: { fontSize: 7, fontWeight: '700', letterSpacing: 1.2 },
   cardBack: { backgroundColor: '#111A2E' },
-  reverseText: { ...StyleSheet.absoluteFillObject, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 24, gap: 11 },
+  reverseText: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 24, gap: 11 },
   reverseEyebrow: { fontSize: 9, color: '#EED6A0', fontWeight: '900', letterSpacing: 2.5 },
   reverseMessage: { fontSize: 17, fontWeight: '800', lineHeight: 23, color: '#FFFFFF', textAlign: 'center' },
   reverseFooter: { fontSize: 8, color: '#C5C1D5', letterSpacing: 1.5, textAlign: 'center', marginTop: 8 },

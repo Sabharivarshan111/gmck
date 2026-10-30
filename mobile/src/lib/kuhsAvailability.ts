@@ -12,7 +12,7 @@ export function availableBankUniversity(university: University | null): Universi
 }
 
 export function bankAvailable(university: University): boolean {
-  if (university === 'tnmgr') return true;
+  if (university === 'tnmgr' || university === 'other') return true;
   if (university === 'kuhs') return KUHS_BANK_AVAILABLE;
   return COLLECTED_QUESTION_COUNTS[university] > 0;
 }

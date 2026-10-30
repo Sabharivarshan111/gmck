@@ -48,6 +48,8 @@ export default defineConfig({
           { key: 'simulator', icon: <Stethoscope size={18} color={colors.text} />, label: 'Patient simulator', hint: 'Clinical cases, anatomy and bedside practice', onPress: run(() => location.assign('/simulator')) },`);
         if (id.endsWith('/mobile/src/screens/NotesScreen.tsx')) return code.replace("Linking.openURL('https://orbitmbbs.vercel.app/simulator')", "Promise.resolve(location.assign('/simulator'))");
         if (id.endsWith('/mobile/src/components/FirstRun.tsx')) return code
+          .replace("import { usePremiumStatus } from '@/lib/premium';", "import { useVaultAccess } from '" + path.resolve(__dirname, 'VaultAccess.tsx') + "';")
+          .replace('const premium = usePremiumStatus();', 'const premium = useVaultAccess().active;')
           .replace('useState(!isNative || !GOOGLE_SIGN_IN_ENABLED)', 'useState(!GOOGLE_SIGN_IN_ENABLED)')
           .replace('if (isNative && GOOGLE_SIGN_IN_ENABLED)', 'if (GOOGLE_SIGN_IN_ENABLED)')
           .replace('Google Sign-In Required', 'Sync with Google')

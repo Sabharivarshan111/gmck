@@ -2531,3 +2531,19 @@ Selective authorized port of1,001new original-page-reviewed RGUHS question units
 
 ## 2026-10-27 — ORBIT MBBS Batch10 web port
 Selective port of 1,012 original-page-reviewed RGUHS units;4,592 cumulative. Native source f0b3c7b66dbcdea9d7aadc7e738b77824ca41b8b.40PDFs/71pages compared,170MCQs/680options,12heldunits,onealternate scan/22occurrences excluded. Existing TNMGR/KUHS and native deep-list navigation preserved; rawPDFs private. Source190p1Q1 is next. Run focused bank/browser checks and actual assembled Vercel payload guard; inspect deployment/package receipts before claiming live. No backend/Play changes.
+
+
+## 2026-10-30 — Batch19 and three-step onboarding
+DONE: 1,010 original-page-reviewed RGUHS entries added,13,719 cumulative;44 contributing papers/4,250marks. Sources768–814 accounted for;804/806 alternate exams excluded,803 retyped derivative deferred. Prior12,709rows and TNMGR5,985/KUHS6,916 unchanged.
+DONE: Welcome/sign-in → university dropdown,year,name,preparation goal → ₹300/year Premium,with free-preview continuation. Other university merges TNMGR/RGUHS/KUHS without duplicate exact prompts; original banks/provenance unchanged; UI source refs hidden only for Other. Separate bank identity preserved in search,notes,progress and caches. Backend profiles/dailycards constraints accept other; flashcards22/daily-study-card11 deployed preserving dependencies/JWT.
+VERIFIED: Source bank/43,945 search round trips,TypeScript/quietlint and required guards; emitted production build. Hosted browser and actual Android package/publication receipts pending.
+NEXT: Inspect exact commit hosted university+onboarding suites and actual APK/AAB guards. Merge selective web PR only after focused checks,verify orbitmbbs.site served13,719IDs. Save full updated private checkpoint; next review queue815,p1,Q1.
+DO NOT: Claim live13,719 or newly built packages until proven; restart768; re-import alternate804/806; invent original attribution for803; overwrite Founder-card work; change version29/Play upload.
+
+
+### 2026-10-30 — Publication blocked by automatic approval review
+Source changes committed locally. Native ebdf461d and web829c4beb are local initial commits; inspect newest local commits for follow-up tests. GitHub push was rejected: automatic approval review says publication to unverified destination was not explicitly authorized. Connector confirms Sabharivarshan111/gmck is PUBLIC (contrary to old HANDOFF private note). Do not retry pushes,create remote PRs or deploy until user approval. Current live baseline remains12,709. Both source and checkpoints need preserving. Backend other-university constraints and flashcards22/daily11 changes already succeeded with verification; no payment/privilege data changed. Local Chromium obtained through isolated npm runtime;6onboarding mobile scenarios pass. Full bank browser suite result recorded separately.
+
+
+## 2026-10-30 — Owner approved publication to public repository and live website
+User approved the exact publicgmck destination and specified allchanges for BOTHwebsite andnativeAndroid. Earlier approvalblock iscleared. Selectivewebpatch restored onunchangedmain1230077a; nativebranchpublished separately. Runhosted205browserchecks andproductionbuild,thenmergewithout overwriting Founder-card work. Verifylive13,719IDs andrecordAndroidpackagesseparately.
