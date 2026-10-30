@@ -2896,3 +2896,11 @@ Source changes committed locally. Native ebdf461d and web829c4beb are local init
 
 ## 2026-10-30 — Owner approved public publication for website and native Android
 User explicitly approved publishing to publicSabharivarshan111/gmck and updating theliveapp,then specified BOTH website andnativeAndroid. This supersedes the earlier approvalblock. Restored the saved Batch19 recovery patch on the unchanged45a1de3c nativebaseline; preserve all205localbrowserchecks and13,719approvedIDs. Hostedpublication andactualAndroidpackage verification nowrequired. No Playupload/versionbump.
+
+
+## 2026-10-30 — Batch19 website and Android release verification
+
+DONE: Owner explicitly approved publishing to public Sabharivarshan111/gmck and requested every change on BOTH website and native Android. Native code 5e78d347; web PR150 merged as 788f255e, with cache-only PR151 merged as 8e8ce0b0. 1,010 added /13,719 collected; Other university combines three banks (17,325 deduplicated questions); first-run welcome/sign-in → university/name/year/goal → ₹300/year Premium with free preview.
+VERIFIED: Both native/web hosted 199-bank+6-onboarding suites pass; all43,945 search paths; current iOS Chromium/WebKit setup/year/name persistence and attendance/calendar tests; checkout fixtures and actual Vercel build. Fixed iOS fixture to wait for durable profile storage before reload; product code is unchanged by that test repair. Existing digestive dossier92%vs95% failure remains separate.
+VERIFIED: Actual debug684/internal644/release827 APK/AAB guards retain all13,719 identities; independent public release digests and tags match native code5e78d347. Website served all13,719IDs at productiondpl_6XSuh1WdZp4dVWB7QgzLHhk9ULoj. Final cache deployment dpl_GKPKajQjvB3BTbAMBx2vQqWp6PEH is tracked in the latest private checkpoint receipt. No physical-device/real-charge/Play-upload claim; version29 unchanged.
+NEXT: Continue review at queue815,p1,Q1 from latest Library checkpoint IDs ZIP libfile_5670062f729881918a8179e4da06134a /MD libfile_0930737d0720819197055a6895f85a9d. The checkpoint has exact current live/cache receipts and all four public package digests. Do not redo Batch19 or rebuild successful packages. Preserve raw PDFs privately, previous question objects, other concurrent features and whole-unit holds.
