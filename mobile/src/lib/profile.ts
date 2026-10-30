@@ -23,6 +23,7 @@ export interface LocalProfile {
   year: Year;
   /** Missing on older installs until the reader chooses on Home. */
   university?: University;
+  preparationGoal?: 'university-pyqs' | 'neet-pg' | 'both';
 }
 
 export interface CloudProfile extends LocalProfile {
@@ -92,7 +93,8 @@ export async function readLocalProfile(): Promise<LocalProfile | null> {
       return null;
     }
     return { display_name: parsed.display_name, year,
-      ...(isUniversity(parsed.university) ? { university: parsed.university } : {}) };
+      ...(isUniversity(parsed.university) ? { university: parsed.university } : {}),
+      ...(['university-pyqs', 'neet-pg', 'both'].includes(parsed.preparationGoal ?? '') ? { preparationGoal: parsed.preparationGoal } : {}) };
   } catch {
     return null;
   }
@@ -131,6 +133,7 @@ export async function persistLocalProfile(profile: LocalProfile): Promise<LocalP
     display_name: profile.display_name.trim(),
     year: profile.year,
     ...(isUniversity(profile.university) ? { university: profile.university } : {}),
+    ...(['university-pyqs', 'neet-pg', 'both'].includes(profile.preparationGoal ?? '') ? { preparationGoal: profile.preparationGoal } : {}),
   };
   await writeLocalProfile(clean);
   return clean;

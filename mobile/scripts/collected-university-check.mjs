@@ -41,10 +41,10 @@ const notes = load('src/lib/handwrittenNotes.ts', { ...common, './notesDedup': {
   './notesLimits': {}, './progress': progress });
 const resume = load('src/lib/homeResume.ts', { ...common, '@/lib/questionBank': bank });
 
-assert.equal(rows.length, 12709);
+assert.equal(rows.length, 13719);
 assert.equal(new Set(rows.map(r => r.id)).size, rows.length);
-const expected = { rguhs: 5008, knruhs: 3695, muhs: 0, ntruhs: 1652, wbuhs: 2354 };
-const marks = { rguhs: 20601, knruhs: 15599, ntruhs: 6117, wbuhs: 12225 };
+const expected = { rguhs: 6018, knruhs: 3695, muhs: 0, ntruhs: 1652, wbuhs: 2354 };
+const marks = { rguhs: 24851, knruhs: 15599, ntruhs: 6117, wbuhs: 12225 };
 const ids = new Set();
 for (const [university, count] of Object.entries(expected)) {
   assert.equal(bank.allSearchHits(university).length, count);
@@ -57,7 +57,7 @@ for (const [university, count] of Object.entries(expected)) {
     assert.match(row.sourceSha256, /^[a-f0-9]{64}$/);
     assert.ok(row.id.includes(row.sourceSha256.slice(0, 12)));
     assert.ok(Number.isInteger(row.pdfPage) && row.pdfPage >= 1 && row.pdfPage <= Math.max(7, ...['batch15-provenance.json', 'batch16-provenance.json', 'batch17-provenance.json', 'batch18-provenance.json'].flatMap(file => JSON.parse(fs.readFileSync(path.join(repo, 'src/data/universityPapers', file), 'utf8')).papers).filter(p => p.sha256 === row.sourceSha256).flatMap(p => p.pagesVisuallyCompared)));
-    assert.ok((row.question.length > 4 || (row.id === 'rguhs-3e762a08ccd4-p1-q4' && row.question === 'BMR') || {"ntruhs-2a174f5c1c88-p1-q9": "BERA", "ntruhs-45cc96809a77-p1-q11": "CTEV", "ntruhs-6b81306ad1a7-p1-q11": "ASHA"}[row.id] === row.question || (row.id === 'ntruhs-12f02835c36f-p1-q7' && row.question === 'Gout') || {"knruhs-6cde83218b53-p2-q12": "PKDL", "knruhs-ee244d19365e-p1-q11": "IgG", "knruhs-136b4dc127a6-p1-q2": "Bias", "knruhs-d5a145770a41-p1-q10": "CARE"}[row.id] === row.question || (row.id === 'knruhs-e8e59be64df3-p2-q17' && row.question === 'KFD') || (row.id === 'rguhs-942383725e34-p1-q6' && row.question === 'IgM.') || (row.id === 'rguhs-764314376aaf-p1-q17' && row.question === 'Hair') || (['rguhs-fc6c85e99007-p1-q5','rguhs-d3a0bc4dc8fb-p1-q12'].includes(row.id) && row.question === 'Gout') || (row.id === 'rguhs-8b7f4f6c8446-p1-q13' && row.question === 'GABA')) && row.question.length <= 1000);
+    assert.ok((row.question.length > 4 || {"rguhs-529602a28734-p1-q17": "Pili", "rguhs-70d8a4e6839c-p1-q18": "PCR", "rguhs-70d8a4e6839c-p1-q23": "PCV"}[row.id] === row.question || (row.id === 'rguhs-3e762a08ccd4-p1-q4' && row.question === 'BMR') || {"ntruhs-2a174f5c1c88-p1-q9": "BERA", "ntruhs-45cc96809a77-p1-q11": "CTEV", "ntruhs-6b81306ad1a7-p1-q11": "ASHA"}[row.id] === row.question || (row.id === 'ntruhs-12f02835c36f-p1-q7' && row.question === 'Gout') || {"knruhs-6cde83218b53-p2-q12": "PKDL", "knruhs-ee244d19365e-p1-q11": "IgG", "knruhs-136b4dc127a6-p1-q2": "Bias", "knruhs-d5a145770a41-p1-q10": "CARE"}[row.id] === row.question || (row.id === 'knruhs-e8e59be64df3-p2-q17' && row.question === 'KFD') || (row.id === 'rguhs-942383725e34-p1-q6' && row.question === 'IgM.') || (row.id === 'rguhs-764314376aaf-p1-q17' && row.question === 'Hair') || (['rguhs-fc6c85e99007-p1-q5','rguhs-d3a0bc4dc8fb-p1-q12'].includes(row.id) && row.question === 'Gout') || (row.id === 'rguhs-8b7f4f6c8446-p1-q13' && row.question === 'GABA')) && row.question.length <= 1000);
     assert.ok(row.examRefs.length > 0 && row.topicKey);
     const raw = `PYQ[${row.id}] ${row.question}`;
     assert.equal(text.getCleanQuestionText(raw), row.question);
@@ -88,7 +88,7 @@ assert.ok(wb[2].question.includes('nephrosis and apoptosis'), 'Do not silently c
 assert.ok(wb[1].question.includes('any two') && wb[1].question.includes('c)'));
 assert.ok(wb[3].question.includes('any two') && wb[3].question.includes('d) Septic shock'));
 assert.ok(rows.find(r => r.university === 'knruhs').question.includes('(d) Applied anatomy'));
-console.log('PASS 12709 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
+console.log('PASS 13719 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
 
 const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH02: batch02 } = await bundle('src/data/universityPapers/reviewedBatch02.ts');
 assert.equal(batch02.length, 200);
@@ -636,3 +636,14 @@ console.log('PASS Batch18:1009 new original-page-reviewed units,4338marks,46comp
 
 const topics18=[[722, "3", "carbohydrate-chemistry"], [723, "10", "molecular-biology"], [730, "18", "general-anatomy"], [738, "20", "histology"], [739, "21", "histology"], [744, "15", "general-anatomy"], [746, "7", "general-anatomy"], [750, "5", "carbohydrate-chemistry"], [743, "20", "carbohydrate-chemistry"], [755, "ii-2", "protein-metabolism"]];
 for(const[n,q,topic]of topics18)assert.equal(q18(n,1,q).topicKey,topic);
+
+const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH19: batch19 } = await bundle('src/data/universityPapers/reviewedBatch19.ts');
+assert.equal(batch19.length, 1010);
+assert.equal(batch19.reduce((n,r) => n+r.marks,0), 4250);
+assert.ok(batch19.every(r => r.university === 'rguhs' && !r.options));
+assert.ok(!batch19.some(r => ['676de5325c57'].some(sha => r.sourceSha256.startsWith(sha))));
+const provenance19 = JSON.parse(fs.readFileSync(path.join(repo,'src/data/universityPapers/batch19-provenance.json'),'utf8'));
+assert.equal(provenance19.papers.length,44);
+assert.equal(provenance19.exclusions.length,2);
+for (const paper of provenance19.papers) assert.equal(paper.marks, rows.filter(r => r.sourceSha256===paper.sha256).reduce((n,r)=>n+r.marks,0));
+console.log('PASS Batch19:1010 original-page-reviewed units/4250marks,44 papers;2 alternate exams excluded;clinical subparts and 90/100 mark schemes preserved.');

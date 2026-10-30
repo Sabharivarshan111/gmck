@@ -178,3 +178,8 @@ export function useProfile() {
     setUniversity,
   };
 }
+
+/** Rows subscribe only to bank changes, never XP/streak/profile versions. */
+export function useBankUniversity(): University | null {
+  return useSyncExternalStore(subscribe, () => localProfile?.university ?? null, () => null);
+}
