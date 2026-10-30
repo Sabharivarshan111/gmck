@@ -29,11 +29,17 @@ const page=await context.newPage();await page.clock.install({time:new Date('2026
 const label=s=>page.getByLabel(s,{exact:true});const tap=async s=>{await label(s).scrollIntoViewIfNeeded();await label(s).tap();};
 try{
 await page.goto('http://127.0.0.1:5226');
-await label('Continue').or(label('Display name')).first().waitFor();
-if(await label('Continue').count())await label('Continue').tap({timeout:2000}).catch(()=>{});
+await label('Continue on this device').waitFor();
+await tap('Continue on this device');
+await tap('Choose your university');
+await page.getByRole('radio',{name:'Tamil Nadu Dr. M.G.R. Medical University (TNMGR)',exact:true}).tap();
 await label('Display name').fill('Calendar tester');
 await page.getByRole('radio',{name:'Final Year',exact:true}).tap();
-await page.getByRole('radio',{name:'Tamil Nadu Dr. M.G.R. Medical University (TNMGR)',exact:true}).tap();await tap('Start studying');
+await tap('Continue to Premium');
+await page.getByText('STEP 3 OF 3',{exact:true}).waitFor();
+assert.equal(await page.getByText('₹300 / 1 year',{exact:true}).count(),1);
+assert.equal(await page.evaluate(()=>localStorage.getItem('orbit-profile-v1')),null);
+await tap('Continue with free preview');
 await label('Settings').waitFor();await page.reload();await label('Settings').waitFor();assert.equal(await label('Display name').count(),0);assert.ok(!(await page.locator('body').innerText()).includes('Question bank ·'));console.log('PASS fresh setup stays complete after reload');
 await page.goto('http://127.0.0.1:5226/progress');await tap('Attendance');await tap('Clinical postings');await tap('Add a posting');
 await tap('Posting start date');
