@@ -1,7 +1,7 @@
 name: Publish Android builds after verified anatomy audit
 on:
   workflow_run:
-    workflows: [Full Android anatomy source audit, Verified Android anatomy evidence]
+    workflows: [Verified Android anatomy evidence]
     types: [completed]
 permissions:
   contents: read
@@ -21,11 +21,9 @@ jobs:
             const run=context.payload.workflow_run;
             const {data:main}=await github.rest.repos.getBranch({...context.repo,branch:'main'});
             if(main.commit.sha!==run.head_sha)throw Error('Main advanced after audit; wait for its own exact-source verification');
-            if(!['.github/workflows/android-v27-full-anatomy.yml','.github/workflows/android-anatomy-evidence-gate.yml'].includes(run.path))throw Error('Unexpected audit workflow');
-            if(run.path==='.github/workflows/android-anatomy-evidence-gate.yml'){
-              const {data:artifacts}=await github.rest.actions.listWorkflowRunArtifacts({...context.repo,run_id:run.id});
-              if(!artifacts.artifacts.some(a=>a.name==='verified-android-anatomy-'+run.head_sha&&!a.expired)){core.info('Evidence is not complete yet; no publication');return;}
-            }
+            if(run.path!=='.github/workflows/android-anatomy-evidence-gate.yml')throw Error('Expected exact-source evidence gate');
+            const {data:artifacts}=await github.rest.actions.listWorkflowRunArtifacts({...context.repo,run_id:run.id});
+            if(!artifacts.artifacts.some(a=>a.name==='verified-android-anatomy-'+run.head_sha&&!a.expired))throw Error('No complete 626-target evidence for this exact app source');
             for(const [workflow_id,inputs] of [['android-debug.yml',{publish_verified:'true'}],['android-internal.yml',{}],['android-release.yml',{build_apk:'true'}]]){
               const {data:existing}=await github.rest.actions.listWorkflowRuns({...context.repo,workflow_id,head_sha:run.head_sha,per_page:30});
               if(existing.workflow_runs.some(r=>r.head_sha===run.head_sha&&r.event==='workflow_dispatch')){core.info(workflow_id+' already dispatched for this source');continue;}

@@ -56,7 +56,7 @@ await tap('Continue with free preview');
 // before reloading; visible underlying content does not mean setup has saved.
 await page.waitForFunction(() => {
   const profile = JSON.parse(localStorage.getItem('orbit-profile-v1') || '{}');
-  return profile.display_name === 'Calendar tester' && profile.year === 'final' && profile.university === 'tnmgr';
+  return profile.display_name === 'Calendar tester' && profile.year === 'final' && profile.university === 'tnmgr' && profile.preparationGoal === 'both';
 });
 await label('Continue with free preview').waitFor({state:'hidden'});
 await label('Settings').waitFor();await page.reload();await label('Settings').waitFor();assert.equal(await label('Display name').count(),0);assert.ok(!(await page.locator('body').innerText()).includes('Question bank ·'));console.log('PASS fresh setup stays complete after reload');

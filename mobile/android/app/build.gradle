@@ -109,8 +109,8 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         // Version 28 explicitly requested by the owner on 2026-10-20.
-        versionCode 28
-        versionName "0.0.0.28"
+        versionCode 29
+        versionName "0.0.0.29"
 
         // Deep-link / OAuth callback scheme, consumed by the intent-filter in
         // AndroidManifest.xml. Added with an indexed put rather than assigning
