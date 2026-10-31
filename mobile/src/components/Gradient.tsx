@@ -26,8 +26,8 @@ export function GradientFill({
   }, []);
 
   return (
-    <View style={[StyleSheet.absoluteFill, { borderRadius, overflow: 'hidden' }, style]}>
-      <Svg width="100%" height="100%">
+    <View pointerEvents="none" accessible={false} style={[StyleSheet.absoluteFill, { borderRadius, overflow: 'hidden' }, style]}>
+      <Svg pointerEvents="none" width="100%" height="100%">
         <Defs>
           <LinearGradient id={id} x1="0" y1="0" x2="1" y2="1">
             <Stop offset="0" stopColor={from} />
