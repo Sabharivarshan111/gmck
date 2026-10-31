@@ -34,6 +34,7 @@ on:
       - codex/v27-mobile-controls-20261016
       - claude/native-app-sync
       - codex/native-web-parity
+      - chatgpt/android-onboarding-release-20261031
     # Documentation-only handoff commits must not cancel an AAB/APK that is
     # already building. Rebuild only when code/assets that can reach the
     # native artifact (or this workflow itself) change.
@@ -282,7 +283,7 @@ jobs:
       # Artifacts need a desktop browser and expire; a release asset can be
       # downloaded from the phone that is going to install it.
       - name: Publish the AAB and APK where a phone can reach them
-        if: github.ref_name != 'codex/v27-parity-repairs-20261016' && github.ref_name != 'codex/v27-brain-registration-20261016' && github.ref_name != 'codex/v27-context-camera-20261016' && github.ref_name != 'codex/v27-fresh-rebuild-20261016' && github.ref_name != 'codex/v27-mobile-controls-20261016'
+        if: github.ref_name != 'chatgpt/android-onboarding-release-20261031' && github.ref_name != 'codex/v27-parity-repairs-20261016' && github.ref_name != 'codex/v27-brain-registration-20261016' && github.ref_name != 'codex/v27-context-camera-20261016' && github.ref_name != 'codex/v27-fresh-rebuild-20261016' && github.ref_name != 'codex/v27-mobile-controls-20261016'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: release-${{ github.run_number }}
