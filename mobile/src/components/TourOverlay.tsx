@@ -287,6 +287,7 @@ export function TourOverlay() {
   const primary = step.cta ?? (isLast ? 'Finish' : 'Next');
 
   const ring = placement.rect;
+  const cardInset = Math.max(0, (window.width - 460) / 2);
   const cardTop = ring && placement.below ? ring.y + ring.height + HALO + GAP + ARROW : undefined;
   const cardBottom =
     ring && !placement.below ? window.height - (ring.y - HALO) + GAP + ARROW : undefined;
@@ -371,6 +372,8 @@ export function TourOverlay() {
            */
           ring ? { top: cardTop, bottom: cardBottom } : styles.cardWrapCentred,
           {
+            left: cardInset,
+            right: cardInset,
             paddingTop: insets.top + space.md,
             paddingBottom: insets.bottom + space.md,
             opacity: enter,
@@ -394,8 +397,8 @@ export function TourOverlay() {
                 // Clamped to the card's own width so the point never hangs off
                 // the corner radius when the target is at the screen edge.
                 left: Math.min(
-                  Math.max(ring.x + ring.width / 2 - ARROW, space.xl),
-                  window.width - space.xl - ARROW * 2,
+                  Math.max(ring.x + ring.width / 2 - ARROW - cardInset, space.xl),
+                  window.width - cardInset * 2 - space.xl - ARROW * 2,
                 ),
                 ...(placement.below
                   ? { borderBottomColor: colors.cardElevated }
@@ -503,9 +506,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingHorizontal: space.lg,
-    width: '100%',
-    maxWidth: 460,
-    alignSelf: 'center',
   },
   cardWrapCentred: { top: 0, bottom: 0, justifyContent: 'center' },
   arrow: {
@@ -522,6 +522,7 @@ const styles = StyleSheet.create({
   arrowUp: { top: -ARROW, borderBottomWidth: ARROW },
   arrowDown: { bottom: -ARROW, borderTopWidth: ARROW },
   card: {
+    flexGrow: 0,
     borderRadius: radius.xl,
     borderWidth: StyleSheet.hairlineWidth,
     padding: space.lg,
