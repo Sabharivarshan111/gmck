@@ -260,7 +260,7 @@ export function FirstRun() {
         ) : (
           <ScrollView key="study-setup"
             contentContainerStyle={styles.form}
-            keyboardShouldPersistTaps="handled"
+            keyboardShouldPersistTaps="always"
             showsVerticalScrollIndicator={false}>
             <Text style={[styles.label, { color: colors.accent }]}>STEP 2 OF 3</Text>
             <Image
@@ -354,7 +354,22 @@ export function FirstRun() {
               </View>
               <Text style={[styles.label, { color: colors.textMuted }]}>WHAT ARE YOU PREPARING FOR?</Text>
               <View style={[styles.grid, { flexWrap: 'wrap' }]}>
-                {([['university-pyqs', 'University PYQs'], ['neet-pg', 'NEET PG'], ['both', 'Both']] as const).map(([value, label]) => <Touchable key={value} label={label} role="radio" state={{ checked: goal === value }} onPress={() => setGoal(value)} style={[styles.yearCard, { borderColor: goal === value ? colors.accent : colors.border, backgroundColor: colors.cardElevated }]}><Text style={[styles.yearName, { color: colors.text }]}>{label}</Text></Touchable>)}
+                {([['university-pyqs', 'University PYQs'], ['neet-pg', 'NEET PG'], ['both', 'Both']] as const).map(([value, label]) => {
+                  const selected = goal === value;
+                  return <Touchable
+                    key={value}
+                    label={label}
+                    role="radio"
+                    state={{ checked: selected }}
+                    onPress={() => { setGoal(value); setError(null); }}
+                    style={[styles.yearCard, {
+                      borderWidth: selected ? 1.5 : StyleSheet.hairlineWidth,
+                      borderColor: selected ? colors.accent : colors.border,
+                      backgroundColor: selected ? withAlpha(colors.accent, 0.14) : colors.cardElevated,
+                    }]}>
+                    <Text style={[styles.yearName, { color: selected ? colors.accent : colors.text }]}>{label}</Text>
+                  </Touchable>;
+                })}
               </View>
               <Text style={[styles.footnote, { color: colors.textMuted }]}>Every choice takes you to your home screen. You can change it later.</Text>
             </View>
@@ -369,6 +384,7 @@ export function FirstRun() {
 
             <Touchable
               onPress={start}
+              testID="first-run-continue-to-premium"
               // Live with no year on purpose: a dead button explains nothing,
               // and the reader who has not noticed the year row is exactly the
               // one who would press this. It says what is missing instead.
