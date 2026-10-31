@@ -12,6 +12,7 @@ try {
   await context.addInitScript(()=>{localStorage.setItem('orbit:tour-v1',JSON.stringify({seen:1}));});
   const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto(base);await page.getByText('Welcome to Orbit',{exact:true}).waitFor();
+  await page.getByLabel('Continue with Google',{exact:true}).waitFor();
   if (await page.getByLabel('Continue on this device',{exact:true}).count()) await page.getByLabel('Continue on this device',{exact:true}).click(); else await page.getByLabel('Continue',{exact:true}).click();
   await page.getByLabel('Choose your university',{exact:true}).click();
   const other=page.getByRole('radio',{name:'Other university',exact:true});await other.scrollIntoViewIfNeeded();await other.click();

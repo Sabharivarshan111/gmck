@@ -225,7 +225,7 @@ export const STEPS: TourStep[] = [
       'Tap here for cards built from any chapter — theory on one side, the diagram on the other. ' +
       'They come back on the same spacing algorithm Anki uses, so you see a card just before you would forget it.',
     tab: 'Notes',
-    target: 'Anki-style flashcards, browse decks by year',
+    target: 'Anki flashcards',
     tapToAdvance: true,
   },
   {

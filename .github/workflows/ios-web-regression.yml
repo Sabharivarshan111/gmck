@@ -20,6 +20,7 @@ jobs:
       - run: npm ci --legacy-peer-deps
       - run: npm ci --legacy-peer-deps
         working-directory: mobile
+      - run: node mobile/scripts/browser-auth-storage-check.mjs
       - run: node mobile/scripts/profile-persistence-check.mjs
       - run: node scripts/test-ai-chat.mjs
       - run: npm run build:vercel

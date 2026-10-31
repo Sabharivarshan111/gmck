@@ -65,7 +65,7 @@ export async function readLocalProfile(): Promise<LocalProfile | null> {
       return null;
     }
     const parsed = JSON.parse(raw) as Partial<LocalProfile>;
-    if (!parsed || typeof parsed.display_name !== 'string') {
+    if (!parsed || typeof parsed.display_name !== 'string' || !parsed.display_name.trim()) {
       return null;
     }
     /*

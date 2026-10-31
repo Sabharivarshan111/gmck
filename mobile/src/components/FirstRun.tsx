@@ -67,15 +67,19 @@ export function FirstRun() {
   const [saving, setSaving] = useState(false);
   const [googling, setGoogling] = useState(false);
   const isNative = Platform.OS === 'android';
-  const [googleAuthenticated, setGoogleAuthenticated] = useState(!isNative || !GOOGLE_SIGN_IN_ENABLED);
+  const [googleAuthenticated, setGoogleAuthenticated] = useState(!GOOGLE_SIGN_IN_ENABLED);
+  const [checkingAccount, setCheckingAccount] = useState(GOOGLE_SIGN_IN_ENABLED);
 
   useEffect(() => {
-    if (isNative && GOOGLE_SIGN_IN_ENABLED) {
-      hasAuthenticatedGoogleOnce().then(ok => {
-        if (ok) setGoogleAuthenticated(true);
-      });
+    let active = true;
+    if (GOOGLE_SIGN_IN_ENABLED) {
+      hasAuthenticatedGoogleOnce()
+        .then(ok => { if (active) setGoogleAuthenticated(ok); })
+        .catch(() => { /* Keep the sign-in action available after a network failure. */ })
+        .finally(() => { if (active) setCheckingAccount(false); });
     }
-  }, [isNative]);
+    return () => { active = false; };
+  }, []);
 
   const needed = hydrated && !local;
 
@@ -226,10 +230,10 @@ export function FirstRun() {
               <Text style={[styles.madeSub, { color: colors.textMuted }]}>
                 Past papers, notes and clinical practice, together.
               </Text>
-              <Touchable disabled={googling} label={GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? 'Continue with Google' : 'Continue'}
+              <Touchable disabled={googling || checkingAccount} label={checkingAccount ? 'Checking your account' : GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? 'Continue with Google' : 'Continue'}
                 onPress={() => { if (GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated) void withGoogle(); else setStage('you'); }}
                 style={[styles.google, { borderColor: colors.accent, marginTop: 24 }]}>
-                {googling ? <ActivityIndicator color={colors.accent} /> : <Text style={[styles.googleText, { color: colors.accent }]}>{GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? 'Continue with Google' : 'Continue'}</Text>}
+                {googling || checkingAccount ? <ActivityIndicator color={colors.accent} /> : <Text style={[styles.googleText, { color: colors.accent }]}>{GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? 'Continue with Google' : 'Continue'}</Text>}
               </Touchable>
               {!isNative && GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? <Touchable label="Continue on this device" onPress={() => setStage('you')} style={styles.google}><Text style={[styles.googleText, { color: colors.textMuted }]}>Continue on this device</Text></Touchable> : null}
               {error ? <Text accessibilityRole="alert" style={[styles.error, { color: colors.danger }]}>{error}</Text> : null}
