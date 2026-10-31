@@ -30,7 +30,7 @@ const jwt=exp=>`${Buffer.from('{"alg":"HS256"}').toString('base64url')}.${Buffer
 sdk.local.set(key,JSON.stringify({access_token:jwt(Math.floor(Date.now()/1000)-60),refresh_token:'first-refresh',expires_at:Math.floor(Date.now()/1000)-60,user,token_type:'bearer'}));
 const options={auth:{storage:sdk.storage,storageKey:key,autoRefreshToken:false,persistSession:true,detectSessionInUrl:false},global:{fetch:async(url,request)=>{
  assert.ok(String(url).includes('/token?grant_type=refresh_token'));assert.equal(JSON.parse(request.body).refresh_token,'first-refresh');refreshes++;
- return new Response(JSON.stringify({access_token:jwt(Math.floor(Date.now()/1000)+3600),refresh_token:'rotated-refresh',expires_in:3600,token_type:'bearer',user}),{status:200,headers:{'content-type':'application/json'}});
+ return new globalThis.Response(JSON.stringify({access_token:jwt(Math.floor(Date.now()/1000)+3600),refresh_token:'rotated-refresh',expires_in:3600,token_type:'bearer',user}),{status:200,headers:{'content-type':'application/json'}});
 }}};
 const first=createClient('https://auth-fixture.invalid','fixture',options);
 const restored=await first.auth.getSession();assert.equal(restored.error,null);assert.equal(restored.data.session.refresh_token,'rotated-refresh');assert.equal(JSON.parse(sdk.local.get(key)).refresh_token,'rotated-refresh');await first.auth.stopAutoRefresh();
