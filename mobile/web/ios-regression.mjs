@@ -17,7 +17,7 @@ await context.route('**/*',r=>{
   intentionallyBlocked.add(url.host + url.pathname);
   return r.abort();
 });
-await context.addInitScript(()=>localStorage.setItem('orbit:tour-v1',JSON.stringify({seen:1})));
+await context.addInitScript(()=>{localStorage.setItem('orbit:tour-v1',JSON.stringify({seen:1}));localStorage.setItem('@orbit:google_authenticated_v1','true');});
 const page=await context.newPage();await page.clock.install({time:new Date('2026-10-14T09:00:00+05:30')});page.on('pageerror',e=>{
   // WebKit reports an intentionally aborted cross-origin fetch as a pageerror.
   // Ignore only that exact network message for a URL this fixture blocked;
@@ -29,6 +29,9 @@ const page=await context.newPage();await page.clock.install({time:new Date('2026
 const label=s=>page.getByLabel(s,{exact:true});const tap=async s=>{await label(s).scrollIntoViewIfNeeded();await label(s).tap();};
 try{
 await page.goto('http://127.0.0.1:5226');
+await label('Continue with Google').waitFor();
+assert.equal(await page.getByLabel('Install ORBIT web app').count(),0,'Install banner must not cover first-time setup');
+assert.equal(await label('Skip the walkthrough').count(),0,'Tour must wait for setup');
 await label('Continue on this device').waitFor();
 await tap('Continue on this device');
 await tap('Choose your university');

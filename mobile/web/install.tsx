@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './install.css';
+import { useProfile } from '@/hooks/useProfile';
+import { useTourState } from '@/tour/store';
 import { DeviceEventEmitter } from 'react-native';
 
 interface InstallPrompt extends Event {
@@ -24,6 +26,8 @@ function dismissed() {
 }
 
 export function InstallApp() {
+  const { hydrated, local } = useProfile();
+  const tour = useTourState();
   const [monochrome, setMonochrome] = useState(() => {
     try { return localStorage.getItem('orbit:theme-preference') === 'blackwhite'; }
     catch { return false; }
@@ -88,7 +92,7 @@ export function InstallApp() {
     } finally { pendingPrompt = null; setReady(false); setBusy(false); }
   }
   return <>
-    {!installed && !hidden && <aside className={'orbit-install-banner' + (monochrome ? ' orbit-install-mono' : '')} aria-label="Install ORBIT web app">
+    {hydrated && local && tour.index === null && !installed && !hidden && <aside className={'orbit-install-banner' + (monochrome ? ' orbit-install-mono' : '')} aria-label="Install ORBIT web app">
       <img src="/icon-192.png" alt="" width="32" height="32" />
       <div><strong>ORBIT on your Home Screen</strong><span>Open it like an app · iPhone & Android</span></div>
       <button className="orbit-install-primary" onClick={ready ? install : openInstallHelp} disabled={busy}>Install</button>

@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Dimensions, StyleSheet, View } from 'react-native';
+import { Animated, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react-native';
 import { Text } from '@/components/Text';
+import { useProfile } from '@/hooks/useProfile';
 import { Touchable } from '@/components/Touchable';
 import { TourGestureDemo } from '@/components/TourGestureDemo';
 import { useTheme } from '@/theme';
@@ -11,7 +12,7 @@ import { radius, space } from '@/theme/tokens';
 import { typeScale } from '@/theme/typography';
 import { DURATION, EASE, useReducedMotion } from '@/theme/motion';
 import { goToTab } from '@/navigation/ref';
-import { chapterOf, SKIP_FAREWELL,
+import { chapterOf,
   STEPS, type TourStep } from '@/tour/script';
 import {
   endTour,
@@ -79,52 +80,15 @@ export function TourOverlay() {
   const reduceMotion = useReducedMotion();
   const { index, run, paused } = useTourState();
 
-  /*
-   * Paused means a mandatory sheet is up — the tour keeps its place and draws
-   * nothing. `step` is nulled rather than the return being short-circuited
-   * later, so the measuring and navigating effects below stand down too: a
-   * tour that kept navigating behind a form the reader cannot leave would move
-   * the app under them while they filled it in.
-   */
-  /*
-   * Skip does not end the tour on its first press.
-   *
-   * It shows one card that spotlights the real Settings button and says the
-   * walkthrough lives there. Before this, the only thing that mentioned replay
-   * was the Skip button's accessibility HINT — spoken by TalkBack and read by
-   * nobody else — so the reader most likely to want it back was the one
-   * guaranteed not to be told. A second press ends it, so nobody is trapped.
-   */
-  const [farewell, setFarewell] = useState(false);
-
-  /*
-   * ...and it has to be forgotten when the tour stops.
-   *
-   * This is local component state, and `TourOverlay` is mounted for the life
-   * of the app — so `farewell` survived `endTour()`. The next `startTour()`,
-   * from a chapter row in Settings, then found it still true and rendered
-   * SKIP_FAREWELL over step one: the reader tapped "Focus timer", got "It
-   * lives in here" pointing at Settings again, and the chapter they asked for
-   * never played. Reported exactly that way.
-   *
-   * Reset on the tour not running rather than inside `endTour`, because the
-   * flag belongs to this component and every path that stops the tour ends
-   * with `index === null` — including any future one that does not go through
-   * `endTour` at all.
-   */
-  useEffect(() => {
-    if (index === null && farewell) {
-      setFarewell(false);
-    }
-  }, [index, farewell]);
-
-  const scripted: TourStep | null =
-    index === null || paused ? null : (STEPS[run[index]] ?? null);
-  const step: TourStep | null = farewell && scripted ? SKIP_FAREWELL : scripted;
+  const { hydrated, needsOnboarding } = useProfile();
+  // Never navigate or draw behind the welcome/setup modal, including the
+  // first frame before FirstRun has had a chance to pause the tour.
+  const step: TourStep | null = index === null || paused || !hydrated || needsOnboarding
+    ? null : (STEPS[run[index]] ?? null);
   const stepId = step?.id ?? null;
 
   const [placement, setPlacement] = useState<Placement>({ rect: null, below: true });
-  const window = Dimensions.get('window');
+  const window = useWindowDimensions();
 
   /*
    * Measuring is retried, not attempted once.
@@ -323,6 +287,7 @@ export function TourOverlay() {
   const primary = step.cta ?? (isLast ? 'Finish' : 'Next');
 
   const ring = placement.rect;
+  const cardInset = Math.max(0, (window.width - 460) / 2);
   const cardTop = ring && placement.below ? ring.y + ring.height + HALO + GAP + ARROW : undefined;
   const cardBottom =
     ring && !placement.below ? window.height - (ring.y - HALO) + GAP + ARROW : undefined;
@@ -407,6 +372,8 @@ export function TourOverlay() {
            */
           ring ? { top: cardTop, bottom: cardBottom } : styles.cardWrapCentred,
           {
+            left: cardInset,
+            right: cardInset,
             paddingTop: insets.top + space.md,
             paddingBottom: insets.bottom + space.md,
             opacity: enter,
@@ -430,8 +397,8 @@ export function TourOverlay() {
                 // Clamped to the card's own width so the point never hangs off
                 // the corner radius when the target is at the screen edge.
                 left: Math.min(
-                  Math.max(ring.x + ring.width / 2 - ARROW, space.xl),
-                  window.width - space.xl - ARROW * 2,
+                  Math.max(ring.x + ring.width / 2 - ARROW - cardInset, space.xl),
+                  window.width - cardInset * 2 - space.xl - ARROW * 2,
                 ),
                 ...(placement.below
                   ? { borderBottomColor: colors.cardElevated }
@@ -441,28 +408,27 @@ export function TourOverlay() {
           />
         ) : null}
 
-        <View
+        <ScrollView
           pointerEvents="auto"
+          contentContainerStyle={{ gap: space.sm }}
           style={[
             styles.card,
-            { backgroundColor: colors.cardElevated, borderColor: colors.border },
+            { backgroundColor: colors.cardElevated, borderColor: colors.border,
+              maxHeight: Math.max(180, window.height - (cardTop ?? cardBottom ?? 0) - insets.top - insets.bottom - space.md * 2) },
           ]}>
           <View style={styles.head}>
             <Text style={[typeScale.overline, { color: colors.accent }]}>
-              {/* The farewell is not one of the numbered steps, so it does not
-                  claim to be: "WELCOME · 4 OF 18" over a goodbye card is a
-                  reader wondering what happened to the other fourteen. */}
-              {farewell ? 'FINDING IT AGAIN' : `${chapter.name.toUpperCase()} · ${position} OF ${total}`}
+              {`${chapter.name.toUpperCase()} · ${position} OF ${total}`}
             </Text>
             <Touchable
-              onPress={() => (farewell ? endTour() : setFarewell(true))}
-              label={farewell ? 'Close the walkthrough' : 'Skip the walkthrough'}
-              hint={farewell ? undefined : 'It shows you where to find it again'}
+              onPress={endTour}
+              label="Skip the walkthrough"
+              hint="Replay any chapter later in Settings"
               scaleTo={0.9}
               hitSlop={12}
               style={styles.skip}>
               <Text style={[typeScale.footnote, { color: colors.textMuted }]}>
-                {farewell ? 'Close' : 'Skip'}
+                Skip
               </Text>
               <X size={14} color={colors.textMuted} />
             </Touchable>
@@ -482,7 +448,7 @@ export function TourOverlay() {
           ) : null}
 
           <View style={styles.actions}>
-            {position > 1 && !farewell ? (
+            {position > 1 ? (
               <Touchable
                 onPress={goBack}
                 label="Previous step"
@@ -495,11 +461,9 @@ export function TourOverlay() {
               <View />
             )}
             <Touchable
-              onPress={isLast || farewell ? endTour : advance}
+              onPress={isLast ? endTour : advance}
               label={
-                farewell
-                  ? 'Close the walkthrough'
-                  : isLast
+                isLast
                     ? 'Finish the walkthrough'
                     : `${primary}: step ${position + 1} of ${total}`
               }
@@ -508,12 +472,13 @@ export function TourOverlay() {
               <Text style={[typeScale.bodyStrong, { color: onColor(colors.accent) }]}>
                 {primary}
               </Text>
-              {isLast || farewell ? null : (
+              {isLast ? null : (
                 <ChevronRight size={16} color={onColor(colors.accent)} />
               )}
             </Touchable>
           </View>
-        </View>
+          <Text style={[typeScale.caption, { color: colors.textMuted }]}>Replay any chapter in Settings → Walkthrough.</Text>
+        </ScrollView>
       </Animated.View>
     </View>
   );
@@ -557,6 +522,7 @@ const styles = StyleSheet.create({
   arrowUp: { top: -ARROW, borderBottomWidth: ARROW },
   arrowDown: { bottom: -ARROW, borderTopWidth: ARROW },
   card: {
+    flexGrow: 0,
     borderRadius: radius.xl,
     borderWidth: StyleSheet.hairlineWidth,
     padding: space.lg,

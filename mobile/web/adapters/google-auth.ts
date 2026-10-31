@@ -32,5 +32,5 @@ export async function signOutGoogle() {
 export async function getSignedInEmail() { return (await supabase.auth.getSession()).data.session?.user?.email ?? await storage.getItem(GOOGLE_AUTH_EMAIL_KEY); }
 export async function hasAuthenticatedGoogleOnce() {
   const { data } = await supabase.auth.getSession();
-  return !!(data.session?.user && !data.session.user.is_anonymous) || (await storage.getItem(GOOGLE_AUTH_FLAG_KEY)) === 'true';
+  return !!(data.session?.user && !data.session.user.is_anonymous);
 }

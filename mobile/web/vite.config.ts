@@ -50,8 +50,6 @@ export default defineConfig({
         if (id.endsWith('/mobile/src/components/FirstRun.tsx')) return code
           .replace("import { usePremiumStatus } from '@/lib/premium';", "import { useVaultAccess } from '" + path.resolve(__dirname, 'VaultAccess.tsx') + "';")
           .replace('const premium = usePremiumStatus();', 'const premium = useVaultAccess().active;')
-          .replace('useState(!isNative || !GOOGLE_SIGN_IN_ENABLED)', 'useState(!GOOGLE_SIGN_IN_ENABLED)')
-          .replace('if (isNative && GOOGLE_SIGN_IN_ENABLED)', 'if (GOOGLE_SIGN_IN_ENABLED)')
           .replace('Google Sign-In Required', 'Sync with Google')
           .replace('To prevent spam attacks and safeguard your progress & rankings, please sign in with Google to continue.', 'Sign in to sync your progress and rankings, or set up your studies below to continue on this browser.')
           .replace('One-time authentication required to safeguard your profile against spam attacks.', 'Google sign-in is optional for local study. Sign in to sync across devices.')

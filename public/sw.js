@@ -8,7 +8,7 @@
 // the new HTML anyway — but one that ever fell back to the cached shell keeps
 // being served the asset hashes that shell names, and those ARE cached. Bumping
 // this is the one lever that empties the old cache for everybody.
-const SW_VERSION = 'v28-university-batch19-onboarding-2026-10-30';
+const SW_VERSION = 'v29-session-welcome-tour-2026-10-31';
 const CACHE_NAME = `mbbs-qb-${SW_VERSION}`;
 
 const PRECACHE_URLS = [

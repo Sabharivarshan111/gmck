@@ -1,5 +1,6 @@
 // IndexedDB holds study data and large decks. Existing web localStorage keys
 // remain readable; write failures propagate rather than pretending to persist.
+import { createBrowserAuthStorage, isBrowserAuthKey } from './auth-storage';
 export const DB_NAME = 'orbit-browser-v1';
 let database: Promise<IDBDatabase> | undefined;
 export function openDatabase() {
@@ -23,8 +24,19 @@ export async function transaction<T>(store: string, mode: IDBTransactionMode, op
     tx.onabort = () => reject(tx.error ?? new Error('Browser storage is unavailable.'));
   });
 }
+const authStorage = createBrowserAuthStorage(() => localStorage, {
+  async getItem(key) {
+    try {
+      const value = await transaction('strings', 'readonly', store => store.get(key));
+      return typeof value === 'string' ? value : null;
+    } catch { return null; }
+  },
+  async setItem(key, value) { await transaction('strings', 'readwrite', store => store.put(value, key)); },
+  async removeItem(key) { await transaction('strings', 'readwrite', store => store.delete(key)); },
+});
 const storage = {
   async getItem(key: string) {
+    if (isBrowserAuthKey(key)) return authStorage.getItem(key);
     try {
       const saved = await transaction('strings', 'readonly', store => store.get(key));
       if (typeof saved === 'string') return saved;
@@ -32,6 +44,7 @@ const storage = {
     return localStorage.getItem(key);
   },
   async setItem(key: string, value: string) {
+    if (isBrowserAuthKey(key)) return authStorage.setItem(key, value);
     let indexedError: unknown;
     try { await transaction('strings', 'readwrite', store => store.put(value, key)); }
     catch (error) { indexedError = error; }
@@ -43,6 +56,7 @@ const storage = {
     if (indexedError) throw indexedError;
   },
   async removeItem(key: string) {
+    if (isBrowserAuthKey(key)) return authStorage.removeItem(key);
     await transaction('strings', 'readwrite', store => store.delete(key));
     localStorage.removeItem(key);
   },
