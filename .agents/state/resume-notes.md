@@ -2919,3 +2919,7 @@ DO NOT: Clear user storage, reset progress, replace question banks, change versi
 - **VERIFIED**: Skill frontmatter validated; audit helper accepted a complete sample and rejected a wrong resolution. Fresh-context plan handled 5×2 exports, all phases, an actual deletion and capability limits. No new video render or app behavior claimed.
 - **NEXT**: Invoke the skill with footage; use its explicit GitHub-link prompt where ordinary ChatGPT does not automatically load installed skills.
 - **DO NOT**: Claim a repo instruction file enables video rendering in every chat, synthesize replacement SFX when downloaded ones were requested, or treat an existing output filename as evidence of a complete export.
+
+
+### 2026-10-31 — GMCK editing tool readiness
+Updated GMCK Content Creation with project-local automatic dependency preparation and JSON readiness evidence. Verified core H.264/AAC encode/probe/decode, required FFmpeg filters, Python graphics dependencies, and multilingual tiny ASR model inference. Added optional face/browser engine guidance and explicit ordinary-chat capability limits; no production app changes. Entry: `.agents/video/CONTENT-CREATION.md`.

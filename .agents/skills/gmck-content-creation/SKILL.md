@@ -9,6 +9,7 @@ Act as a transcript-led editor and motion designer. Complete the requested media
 
 ## Start from the actual material
 
+0. Run `scripts/ensure_tools.py --project-dir <media-project> --install --asr` when code execution is available. Read its `tool-readiness.json`; fix or report failed checks before promising an export. This prepares a project-local environment without modifying system Python. Add `--model small` when a real multilingual ASR-model load/test is needed; add `--face` only for a selected face-tracking treatment. Read [references/tool-setup.md](references/tool-setup.md).
 1. Inventory every attachment. Inspect metadata, rotation, native display resolution, frame rate, audio and representative frames. Identify whether clips are alternate takes, an opening plus main take, or unrelated material before joining them.
 2. Read [references/workflow.md](references/workflow.md) for editing and [references/runtime-and-qa.md](references/runtime-and-qa.md) before rendering.
 3. Transcribe Tamil/Tanglish **before** designing. Record source word/phrase timings. Correct names and technical terms manually using the footage and context; independently check unclear passages. Never mistake a translation-model guess for what was said.

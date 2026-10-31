@@ -21,3 +21,5 @@ Then say:
 ## In a coding assistant
 
 Read `.agents/skills/gmck-content-creation/SKILL.md`, then only the references relevant to the request. Keep media projects outside the installed skill folder. Read the repo's existing HyperFrames/video skills when using those renderers. Do not change ORBIT app code merely to edit a reel.
+
+Before editing, run the skill's [automatic tool preflight](../skills/gmck-content-creation/references/tool-setup.md). It prepares project-local dependencies and verifies actual rendering; optional engines and current chat capabilities must be tested when selected.

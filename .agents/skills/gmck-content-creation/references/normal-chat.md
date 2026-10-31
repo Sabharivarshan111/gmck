@@ -14,6 +14,10 @@ For Custom Instructions or a Project's instructions, a compact reusable preferen
 
 > For my video/reel requests, use GMCK Content Creation from SKILL_URL. Analyze Tamil first. Default to Electric Creator, real downloaded SFX, no BGM, original voice, English translation captions, relevant logos and animation, natural grading, native resolution and audited exports. Follow my current variation count and timing. Read the linked references when needed. Do the editing when execution tools are available; explain a specific tool limit otherwise.
 
+## Automatic tool preparation
+
+With code execution available, run the bundled `scripts/ensure_tools.py --project-dir <project> --install --asr` before editing. Use a suitable multilingual model for the actual Tamil transcription and verify it loads. The script prepares packages and tests FFmpeg, ffprobe, required filters and an actual H.264/AAC encode/decode. Read `tool-readiness.json`; do not confuse package installation with proof of a working browser, face tracker, model, downloads or file-saving connection. Re-run in a new execution environment because cached dependencies are not guaranteed to persist.
+
 ## Capability-dependent behavior
 
 - **Execution + browsing available:** read the skill and references, fetch assets, produce and verify media.
