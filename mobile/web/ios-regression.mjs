@@ -38,9 +38,18 @@ await tap('Choose your university');
 await page.getByRole('radio',{name:'Tamil Nadu Dr. M.G.R. Medical University (TNMGR)',exact:true}).tap();
 await label('Display name').fill('Calendar tester');
 await page.getByRole('radio',{name:'Final Year',exact:true}).tap();
-await tap('Continue to Premium');
-await page.getByText('STEP 3 OF 3',{exact:true}).waitFor();
-assert.equal(await page.getByText('₹300 / 1 year',{exact:true}).count(),1);
+// Regression: every preparation goal must register visually and advance on a real touch.
+for (const exam of ['University PYQs', 'NEET PG', 'Both']) {
+  const option = page.getByRole('radio', {name: exam, exact: true});
+  await option.scrollIntoViewIfNeeded();
+  await option.tap();
+  assert.equal(await option.getAttribute('aria-checked'), 'true', exam + ' should be selected');
+  await tap('Continue to Premium');
+  await page.getByText('STEP 3 OF 3', {exact: true}).waitFor();
+  assert.equal(await page.getByText('₹300 / 1 year', {exact: true}).count(), 1);
+  console.log('PASS ' + exam + ' advances to Premium');
+  if (exam !== 'Both') await tap('Back to your study setup');
+}
 assert.equal(await page.evaluate(()=>localStorage.getItem('orbit-profile-v1')),null);
 await tap('Continue with free preview');
 // Settings is rendered underneath the setup modal. Wait for the durable write
