@@ -2554,3 +2554,10 @@ DONE: PR152 unifies current browser auth tokens in localStorage with IDB-only mi
 HALF-DONE: Preview80c9eff manually verified welcome→university→premium→free continuation, tour Skip and reload persistence. Chromium AND WebKit setup/attendance workflow41158639441 passed. Final small tour-centering refinement follows that preview and compiles cleanly. Native shared source is synchronized separately, preserving native-branch web/payment differences; signed package workflows are not physical-device/Play certification.
 NEXT: Merge PR152 and verify the production aliases orbitmbbs.vercel.app and orbitmbbs.site serve the final commit. Record final deployment/package status in the repair receipt if interrupted. Bank stays13,719; collection queue815 unchanged.
 DO NOT: Clear browser storage or progress, transfer tokens between origins, change payment privileges, overwrite unrelated question content or reset native version29. Each domain/browser has a separate initial session by browser design; persistence is repaired within each origin.
+
+
+## 2026-10-31 — Session repair live on both public domains
+DONE: PR152 merged as9c99e856; productiondpl_epZPQ3pxNYrRKSUGm9q7WhxYNojW is READY with both public aliases. Live browser confirms Google welcome on vercel.app and canonicalwww.orbitmbbs.site. Final Chromium/WebKit workflow41159030012, installation41159030118 and payment41159030187 pass. Read docs/session-welcome-repair-2026-10-31.md for exact scope and limits.
+HALF-DONE: Nativec25b78c shares welcome/tour fixes; signed Android builds are running. No Play upload or physical-device claim.
+NEXT: Only if resuming Android delivery, inspect exactc25b78c workflows/packages; do not rebuild the completed website repair. Friend uses Safari; ask for a real-device symptom only if the deployed fix still fails.
+DO NOT: Clear browser data/progress, move tokens across origins, claim a real Google consent roundtrip, or alter bank/collection checkpoints.
