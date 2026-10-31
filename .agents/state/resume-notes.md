@@ -2547,3 +2547,10 @@ Source changes committed locally. Native ebdf461d and web829c4beb are local init
 
 ## 2026-10-30 — Owner approved publication to public repository and live website
 User approved the exact publicgmck destination and specified allchanges for BOTHwebsite andnativeAndroid. Earlier approvalblock iscleared. Selectivewebpatch restored onunchangedmain1230077a; nativebranchpublished separately. Runhosted205browserchecks andproductionbuild,thenmergewithout overwriting Founder-card work. Verifylive13,719IDs andrecordAndroidpackagesseparately.
+
+
+## 2026-10-31 — Browser session, welcome and tour repair
+DONE: PR152 unifies current browser auth tokens in localStorage with IDB-only migration and logout tombstones; SDK refresh/reopen, stale-copy, both-bundle rotation, logout and denied-store tests pass. Fresh setup checks actual account state rather than a historical flag; blank legacy profile names cannot skip welcome. Install banner waits for setup/tour. Skip ends the tour immediately; guidance stays inline; cards scroll in short windows and center on wide windows. Flashcard tour target matches Vault.
+HALF-DONE: Preview80c9eff manually verified welcome→university→premium→free continuation, tour Skip and reload persistence. Chromium AND WebKit setup/attendance workflow41158639441 passed. Final small tour-centering refinement follows that preview and compiles cleanly. Native shared source is synchronized separately, preserving native-branch web/payment differences; signed package workflows are not physical-device/Play certification.
+NEXT: Merge PR152 and verify the production aliases orbitmbbs.vercel.app and orbitmbbs.site serve the final commit. Record final deployment/package status in the repair receipt if interrupted. Bank stays13,719; collection queue815 unchanged.
+DO NOT: Clear browser storage or progress, transfer tokens between origins, change payment privileges, overwrite unrelated question content or reset native version29. Each domain/browser has a separate initial session by browser design; persistence is repaired within each origin.
