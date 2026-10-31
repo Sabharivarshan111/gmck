@@ -1,0 +1,4 @@
+interface:
+  display_name: "GMCK Content Creation"
+  short_description: "Tamil-first reels, animation, captions and real SFX"
+  default_prompt: "Use $gmck-content-creation to edit my uploaded video into four Electric Creator reels with downloaded SFX, no BGM, captions and relevant animation."

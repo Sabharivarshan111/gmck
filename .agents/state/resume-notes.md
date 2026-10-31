@@ -2911,3 +2911,11 @@ DONE: Shared FirstRun checks account state before showing the primary action; bl
 HALF-DONE: Web session repair is PR152, commit80c9eff, on main's separate source line. It unifies rotating browser auth tokens in localStorage with IDB-only migration and logout tombstones. Do not copy main's web config onto this native branch: its checkout/premium infrastructure intentionally differs.
 NEXT: Watch this branch's signed Android workflows. Website deployment and Chromium/WebKit checks are tracked in PR152. Native TypeScript, changed-file lint, tour, keyboard, edges, sync and security guards passed locally on byte-identical shared source. No physical device, Play upload or real Google consent verification is claimed.
 DO NOT: Clear user storage, reset progress, replace question banks, change version29, alter payment privileges or overwrite concurrent branch work.
+
+
+## 2026-10-31 — ChatGPT — GMCK content creation skill
+
+- **DONE**: Added `.agents/skills/gmck-content-creation/` and `.agents/video/CONTENT-CREATION.md`; portable Tamil-first editing, downloaded SFX/no-BGM defaults, distinct variants, medical phase coverage, cut-versus-cover semantics and export QA. Includes a tested FFmpeg audit helper and normal-chat instructions. Personal ChatGPT skill saved separately for supported skill surfaces.
+- **VERIFIED**: Skill frontmatter validated; audit helper accepted a complete sample and rejected a wrong resolution. Fresh-context plan handled 5×2 exports, all phases, an actual deletion and capability limits. No new video render or app behavior claimed.
+- **NEXT**: Invoke the skill with footage; use its explicit GitHub-link prompt where ordinary ChatGPT does not automatically load installed skills.
+- **DO NOT**: Claim a repo instruction file enables video rendering in every chat, synthesize replacement SFX when downloaded ones were requested, or treat an existing output filename as evidence of a complete export.
