@@ -4,15 +4,10 @@ import path from 'node:path';
 import vm from 'node:vm';
 import { stripTypeScriptTypes } from 'node:module';
 const root = path.resolve(import.meta.dirname, '../..');
-// Works without npm install; load the exact reviewed arrays, not a synthetic bank.
-const files = fs.readdirSync(path.join(root, 'src/data/universityPapers')).filter(file => /^reviewed(?:Questions|Batch\d+)\.ts$/.test(file));
-const rows = files.flatMap(file => {
-  const source = fs.readFileSync(path.join(root, 'src/data/universityPapers', file), 'utf8');
-  const match = /=\s*(\[)/.exec(source);
-  const start = match ? match.index + match[0].indexOf('[') : -1;
-  if (start < 0) return [];
-  try { return JSON.parse(source.slice(start, source.lastIndexOf(']') + 1)); } catch { return []; }
-});
+// Load the same emitted module graph the app uses.
+const { build } = await import('esbuild');
+const built = await build({entryPoints:[path.join(root,'src/data/universityPapers/reviewedQuestions.ts')],bundle:true,write:false,format:'esm',platform:'neutral'});
+const { REVIEWED_UNIVERSITY_QUESTIONS: rows } = await import(`data:text/javascript;base64,${Buffer.from(built.outputFiles[0].text).toString('base64')}`);
 assert.equal(rows.length, 15733);
 const byId = new Map(rows.map(row => [row.id, row]));
 const sourceFor = question => byId.get(question.match(/^PYQ\[([^\]]+)\]/)?.[1]);
