@@ -152,6 +152,7 @@ try {
         await page.screenshot({path:`artifacts/university-import/mcq-tabs-${width}.png`});
         // This fixture tests UI only. Medical evidence is tested separately against the live function.
         await page.route('**/functions/v1/university-mcq-answer', async route => {
+          if (route.request().method() === 'OPTIONS') { await route.fulfill({status:204,headers:{'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'POST, OPTIONS','Access-Control-Allow-Headers':'authorization,apikey,x-client-info,content-type'}}); return; }
           const body = route.request().postDataJSON();
           const choice = body.options[0];
           await route.fulfill({status:200, contentType:'application/json', headers:{'Access-Control-Allow-Origin':'*'}, body:JSON.stringify({id:body.id,status:'answered',basis:'textbook',label:choice.label,option:choice.text,explanation:'UI fixture answer',sources:[{title:'Textbook evidence fixture',quote:'Evidence rendering test excerpt.'}]})});
