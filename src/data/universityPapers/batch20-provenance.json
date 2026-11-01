@@ -1,0 +1,1178 @@
+{
+  "batch": 20,
+  "newReviewed": 1001,
+  "cumulative": 14720,
+  "sourcePagesVisuallyCompared": 53,
+  "contributingPages": 51,
+  "marks": 4455,
+  "papers": [
+    {
+      "sha256": "f9f15b9589e108c890398560dd90c632e4a9f40694aa5edb0e59db5eb258e5ab",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1657578/download",
+      "queueIndex": 815,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "ent",
+        "exam": "Dec 2018",
+        "code": "1090",
+        "scheme": "RS2 & RS3",
+        "paper": null,
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "14": "Mention three causes for referred otalgia.",
+          "22": "Cardinal features of chronic tonsillitis."
+        }
+      }
+    },
+    {
+      "sha256": "cff1e408bde09ac7d2119ab64ab2c4d3576bd79312d3c18ce7862510245a6569",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1657579/download",
+      "queueIndex": 816,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "ophthalmology",
+        "exam": "Dec 2018",
+        "code": "1091",
+        "scheme": "RS2 & RS3",
+        "paper": null,
+        "total": 100,
+        "units": 22
+      }
+    },
+    {
+      "sha256": "1b07aad721d9c69e6cf18d19dd8092a2e4546d467b1a4e1dde9d319c70f654bf",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1657564/download",
+      "queueIndex": 817,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "community-medicine",
+        "exam": "Dec 2017",
+        "code": "1088",
+        "scheme": "RS2 & RS3",
+        "paper": "I",
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "11": "Implications of False Positive and False Negative results in clinical practice.",
+          "18": "Occupational hazards of healthcare professionals."
+        }
+      }
+    },
+    {
+      "sha256": "dd2fb2b6b93a40dd512b6e40d7131adb5dfe75d4e6e45d5442760ef0e4794901",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1657565/download",
+      "queueIndex": 818,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "community-medicine",
+        "exam": "Dec 2017",
+        "code": "1089",
+        "scheme": "RS2 & RS3",
+        "paper": "II",
+        "total": 100,
+        "units": 22
+      }
+    },
+    {
+      "sha256": "ab3f966ec9377f0d447c680ea78fb47985701bbfb1f725a79cb292bdc31bdb4b",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1657566/download",
+      "queueIndex": 819,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "ent",
+        "exam": "Dec 2017",
+        "code": "1090",
+        "scheme": "RS2 & RS3",
+        "paper": null,
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "17": "Leukoplakia of oral cavity"
+        }
+      }
+    },
+    {
+      "sha256": "4d4755e68aa4a2cf968e4059a6858a42a5dca6ec2a2644e829d949315fed298d",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1657567/download",
+      "queueIndex": 820,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "ophthalmology",
+        "exam": "Dec 2017",
+        "code": "1091",
+        "scheme": "RS2 & RS3",
+        "paper": null,
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "2": "Describe the clinical features, risk factors and management of rhegmatogenous retinal detachment.",
+          "21": "Discuss fundus picture in diabetic retinopathy"
+        }
+      }
+    },
+    {
+      "sha256": "76bb1d84f38e962245fdefe2fcae977910645c0c0fc64009c29fec4a2b6be8b2",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1657554/download",
+      "queueIndex": 821,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "community-medicine",
+        "exam": "Jun 2016",
+        "code": "1010",
+        "scheme": "Old Scheme",
+        "paper": null,
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "14": "How you will determine the Chlorination in drinking water in a village?"
+        }
+      }
+    },
+    {
+      "sha256": "282e1085336089cf41acae43d81d7de585d77f94516c4b9fbe4bc7c0df91ed98",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1657555/download",
+      "queueIndex": 822,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 45,
+      "count": 11,
+      "printed": {
+        "subject": "ophthalmology",
+        "exam": "Jun 2016",
+        "code": "1011",
+        "scheme": "Old Scheme",
+        "paper": null,
+        "total": 45,
+        "units": 11,
+        "section": "Section A",
+        "questions": [
+          "Discuss the aetiopathogenesis, clinical features, complications and management of Hypopyon Corneal Ulcer.",
+          "Complicated Cataract",
+          "Differences between Papilloedema and Papillitis",
+          "Trabeculectomy",
+          "Blepharitis",
+          "Chronic Dacryocystitis",
+          "Causes for Dilated non-reactive pupil",
+          "Uses of Fluorescein in Ophthalmology",
+          "Aqueous Flare",
+          "Actions of Atropine in the eye",
+          "Tonometry"
+        ],
+        "note": "Codes1011/1012 share three hours;45marks are this ophthalmology component, not100."
+      }
+    },
+    {
+      "sha256": "7d6231db01ec40d51e2d73bdc4ac3f0f8a61fe0266ea31e59e0429fea813d30b",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1657556/download",
+      "queueIndex": 823,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 45,
+      "count": 11,
+      "printed": {
+        "subject": "ent",
+        "exam": "Jun 2016",
+        "code": "1012",
+        "scheme": "Old Scheme",
+        "paper": null,
+        "total": 45,
+        "units": 11,
+        "section": "Section B"
+      }
+    },
+    {
+      "sha256": "31105ff2dd977d72444581f212060a4bcc2ae3a6c7a916441c7e0474920a900b",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1657557/download",
+      "queueIndex": 824,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "community-medicine",
+        "exam": "Jun 2016",
+        "code": "1063",
+        "scheme": "Revised Scheme",
+        "paper": "I",
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "11": "What is the role of Acculturation in Disease Control?",
+          "13": "How do you assess the Socioeconomic status?"
+        }
+      }
+    },
+    {
+      "sha256": "3055d922f2bcdba2077cb2758c62445c17ddef575e281f7c3c9213aaeb75cdea",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1657532/download",
+      "queueIndex": 825,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "community-medicine",
+        "exam": "Dec 2015",
+        "code": "1010",
+        "scheme": "Old Scheme",
+        "paper": null,
+        "total": 100,
+        "units": 22
+      }
+    },
+    {
+      "sha256": "6e2b33c23af0c01f72a860537b4b2f6f6f3c3af1f7c2da16408fec3aa7027a43",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1657533/download",
+      "queueIndex": 826,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 45,
+      "count": 11,
+      "printed": {
+        "subject": "ophthalmology",
+        "exam": "Dec 2015",
+        "code": "1011",
+        "scheme": "Old Scheme",
+        "paper": null,
+        "total": 45,
+        "units": 11,
+        "section": "Section A"
+      }
+    },
+    {
+      "sha256": "4bd4dbb50908015dc76b851125affc637525965475ded9cfe18a4f2599af26df",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1657534/download",
+      "queueIndex": 827,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 45,
+      "count": 11,
+      "printed": {
+        "subject": "ent",
+        "exam": "Dec 2015",
+        "code": "1012",
+        "scheme": "Old Scheme",
+        "paper": null,
+        "total": 45,
+        "units": 11,
+        "section": "Section B",
+        "corrections": {
+          "5": "Management of Meniere’s disease."
+        }
+      }
+    },
+    {
+      "sha256": "ca6295b97511b334e75163bc0246ae65fab8f6843cfa5903500d46710f8912d1",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1657535/download",
+      "queueIndex": 828,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "community-medicine",
+        "exam": "Dec 2015",
+        "code": "1063",
+        "scheme": "Revised Scheme",
+        "paper": "I",
+        "total": 100,
+        "units": 22,
+        "note": "Printed SHORT ESSAY arithmetic says10x5=30; ten individual5mark units sum50 and paper total100. Retain anomaly in provenance.",
+        "corrections": {
+          "22": "Hazards of Noise pollution."
+        }
+      }
+    },
+    {
+      "sha256": "d6b92637f274ac71eb50a0d093c327763a32bc6c0e94b83de5b8d68826e4b8e1",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1657510/download",
+      "queueIndex": 829,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 45,
+      "count": 11,
+      "printed": {
+        "subject": "ophthalmology",
+        "exam": "Dec 2014",
+        "code": "1011",
+        "scheme": "Old Scheme",
+        "paper": null,
+        "total": 45,
+        "units": 11,
+        "section": "Section A",
+        "corrections": {
+          "11": "Infantile dacyocystitis"
+        }
+      }
+    },
+    {
+      "sha256": "288dc5e162a51a6740e2d7f9a89697fde9cfdb8dba61d96018805fa5cec89d1c",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1657511/download",
+      "queueIndex": 830,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "community-medicine",
+        "exam": "Dec 2014",
+        "code": "1063",
+        "scheme": "Revised Scheme",
+        "paper": "I",
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "11": "Mention the major ‘Air Pollutants’, their Sources and Adverse Health Effects."
+        }
+      }
+    },
+    {
+      "sha256": "f839863dee177ee4699a07cf9193ef6ed616822c1b4b6db7055bb066ae454c1b",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1657512/download",
+      "queueIndex": 831,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "community-medicine",
+        "exam": "Dec 2014",
+        "code": "1064",
+        "scheme": "Revised Scheme",
+        "paper": "II",
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "7": "Disaster Cycle",
+          "18": "Criteria for Baby Friendly Hospitals Initiatives (BFHI)",
+          "22": "Eugenics"
+        }
+      }
+    },
+    {
+      "sha256": "4798f99240bab626f0186745575ff3e57d2d4cbda854731ab0b43a5364c194bb",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1657513/download",
+      "queueIndex": 832,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "ophthalmology",
+        "exam": "Dec 2014",
+        "code": "1065",
+        "scheme": "Revised Scheme",
+        "paper": null,
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "13": "Mention three causes of cicatricial entropion"
+        }
+      }
+    },
+    {
+      "sha256": "9f14aa97a6c4580481ec9aa009b50d0c5951895539a4f922181cf7ff1d3cb683",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A165750/download",
+      "queueIndex": 833,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "community-medicine",
+        "exam": "Jun/Jul 2011",
+        "code": "1010",
+        "scheme": "Old Scheme",
+        "paper": null,
+        "total": 100,
+        "units": 22,
+        "note": "Printedexam2011 overrides leadingform2010."
+      }
+    },
+    {
+      "sha256": "9db097bff0ec3503cf06a6a440848dfe788acaedd8622d7feda468974d730aac",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A165751/download",
+      "queueIndex": 834,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "community-medicine",
+        "exam": "Jul 2011",
+        "code": "1063",
+        "scheme": "Revised Scheme",
+        "paper": "I",
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "22": "Millennium development Goals"
+        }
+      }
+    },
+    {
+      "sha256": "0c7ce17c2ca0eed716eeee5007f70dc1095a8f31d73c3ce8ea7dfd823780325b",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A165752/download",
+      "queueIndex": 835,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "community-medicine",
+        "exam": "Jul 2011",
+        "code": "1064",
+        "scheme": "Revised Scheme",
+        "paper": "II",
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "15": "Write measures for case detection in HIV in India",
+          "17": "What are functions of primary health centers in India",
+          "18": "Write components of ‘evaluation’ in health planning"
+        }
+      }
+    },
+    {
+      "sha256": "40ea3061b8ad55fb493d717d336a93070ecca66d7d56468f8a8e049d525ddeca",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A165753/download",
+      "queueIndex": 836,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "ophthalmology",
+        "exam": "Jun/Jul 2011",
+        "code": "1065",
+        "scheme": "Revised Scheme",
+        "paper": null,
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "16": "What is the origin, insertion and nerve supply of superior oblique muscle?",
+          "22": "List three systemic associations of retinitis pigmentosa"
+        }
+      }
+    },
+    {
+      "sha256": "76c5093a45941f5c61f3abc05e71249e31e01d3a3b1c18ce7f6d92100737c082",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A165754/download",
+      "queueIndex": 837,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "ent",
+        "exam": "Jun/Jul 2011",
+        "code": "1066",
+        "scheme": "Revised Scheme",
+        "paper": null,
+        "total": 100,
+        "units": 22
+      }
+    },
+    {
+      "sha256": "feded6c6cfe65fedbe4cf233bdf66769ac46dfe24150deb05e8dad6192923726",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A165755/download",
+      "queueIndex": 838,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "community-medicine",
+        "exam": "Jun/Jul 2011",
+        "code": "1088",
+        "scheme": "Revised Scheme II",
+        "paper": "I",
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "9": "What do you mean by environmental mangement? Which diseases are controlled by this method?",
+          "16": "Which genetic disorders can be prevented by Neonatal screening?",
+          "20": "Mode of action of Hand – wash gels",
+          "22": "Physical quality of lifeindex (PQLI)"
+        }
+      }
+    },
+    {
+      "sha256": "99730d4bc9be70477b39e226e24544f19b30924fe73e557d3c643534424c3c37",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A165756/download",
+      "queueIndex": 839,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "community-medicine",
+        "exam": "Jun/Jul 2011",
+        "code": "1089",
+        "scheme": "Revised Scheme II",
+        "paper": "II",
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "8": "How do you manage a case of Dengue Haemorrhagic fever in a primary Health Center",
+          "10": "How do you calculate Annual parasite incidence? What is the current API in India",
+          "14": "Mention three gametocidal drugs in malaria control"
+        }
+      }
+    },
+    {
+      "sha256": "6459338034d8a9c9385c507f579e4841298db6cb7a909cd1b96f6721afa93a78",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A165757/download",
+      "queueIndex": 840,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "ent",
+        "exam": "Jun/Jul 2011",
+        "code": "1090",
+        "scheme": "Revised Scheme II",
+        "paper": "I",
+        "total": 100,
+        "units": 22
+      }
+    },
+    {
+      "sha256": "93260f16e3486af435ed75e879867029a0fe8d52e3afa8ab77d2fcc45d6f4dcb",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A165758/download",
+      "queueIndex": 841,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "ophthalmology",
+        "exam": "Jun/Jul 2011",
+        "code": "1091",
+        "scheme": "Revised Scheme II",
+        "paper": null,
+        "total": 100,
+        "units": 22,
+        "note": "Complete wording repeatsDec2017source820; printeddateis2011. Preserve distinctdatedexamination, flagheadervariant.",
+        "corrections": {
+          "13": "Cycloplegic mydriatics"
+        }
+      }
+    },
+    {
+      "sha256": "1029923cb314a0a3627d77f56b2ee4b9a1e4eabb2ef718fea565b3c2c7131bdb",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A165759/download",
+      "queueIndex": 842,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 90,
+      "count": 22,
+      "printed": {
+        "subject": "mixed-ophthalmology-ent",
+        "exam": "Jun/Jul 2011",
+        "code": "1011/1012",
+        "scheme": "Old Scheme",
+        "paper": null,
+        "total": 90,
+        "units": 22,
+        "note": "SectionAophthalmology1011andSectionBENT1012 each11questions/45marks; repeated1-11numbers requireA/BstableIDs.",
+        "positionCorrections": {
+          "10": "Give 2 causes for consecutive optic atrophy"
+        }
+      }
+    },
+    {
+      "sha256": "ae771a6d82c6235f026a025599ca22392e782a3d001b75f7f9608db333a6358f",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA021224A2251418/download",
+      "queueIndex": 843,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "medicine",
+        "exam": "01 Aug 2022",
+        "code": "1093",
+        "scheme": "RS3",
+        "paper": "I",
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "8": "Discuss clinical features and treatment of Strongyloides stercoralis infection in immunocompromised people.",
+          "11": "How is severity of SARA CO-V2 pneumonia assessed at bed side?",
+          "12": "Classify acute kidney injury. Mention their distinguishing features.",
+          "13": "List hormones of anterior pituitary gland.",
+          "14": "Mention organs involved and hormones responsible for calcium homeostasis (3 each).",
+          "15": "What is body mass index (MBI)? Mention four categories of BMI."
+        },
+        "note": "Source prints SARA CO-V2 and MBI; preserve these source anomalies."
+      }
+    },
+    {
+      "sha256": "5cb08e4dc081dd634c79cee5e2f0e38d54ae4dd421e1b8360529d9a9a99c3d66",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA021224A2251434/download",
+      "queueIndex": 844,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "paediatrics",
+        "exam": "04 Feb 2023",
+        "code": "1092",
+        "scheme": "RS3",
+        "paper": null,
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "6": "Polio immunization in India.",
+          "7": "Macrocytic anemia.",
+          "10": "Status epilepticus definition and treatment."
+        }
+      }
+    },
+    {
+      "sha256": "46b3126e4500b0905f7601adb6bc9a885704be898371ac37a4e72151255f0b24",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A17296181/download",
+      "queueIndex": 846,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "paediatrics",
+        "exam": "29 Oct 2020",
+        "code": "1092",
+        "scheme": "RS3",
+        "paper": null,
+        "total": 100,
+        "units": 22,
+        "insert": {
+          "4": "Prevention of vertical transmission of hepatitis B"
+        },
+        "corrections": {
+          "3": "Hereditary spherocytosis",
+          "11": "Management of portal hypertension",
+          "12": "Etiopathogenesis of hydrocephalus",
+          "14": "Clinical features of hemophilia",
+          "22": "DOTS plus strategy."
+        }
+      }
+    },
+    {
+      "sha256": "3eb1bb08069e2f52c2e20d0f3c3363fc6ef77c3174df806cd25071afe5797f33",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A17296182/download",
+      "queueIndex": 847,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "medicine",
+        "exam": "14 Oct 2020",
+        "code": "1093",
+        "scheme": "RS3",
+        "paper": "I",
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "9": "Anti-microbial resistance"
+        }
+      }
+    },
+    {
+      "sha256": "d300c4feb9261b3d9f0c71a3ab1af3a631e9c8dc6c0653708d0d12a37d3ee8e9",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A17296183/download",
+      "queueIndex": 848,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "medicine",
+        "exam": "16 Oct 2020",
+        "code": "1094",
+        "scheme": "RS3",
+        "paper": "II",
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "14": "Conditions associated with X-linked recessive inheritance"
+        }
+      }
+    },
+    {
+      "sha256": "69382af3be9cd7675280868916dd5aa9743f022f765242b8e37ca2ddd0a4741e",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A17296165/download",
+      "queueIndex": 849,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "paediatrics",
+        "exam": "26 Dec 2019",
+        "code": "1092",
+        "scheme": "RS2 & RS3",
+        "paper": null,
+        "total": 100,
+        "units": 22
+      }
+    },
+    {
+      "sha256": "e9635a74dcd6f448a559f64a159e4cb6dcdb2d966161abbd1192c883c7a2ebdd",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A17296166/download",
+      "queueIndex": 850,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "medicine",
+        "exam": "11 Dec 2019",
+        "code": "1093",
+        "scheme": "RS2 & RS3",
+        "paper": "I",
+        "total": 100,
+        "units": 22
+      }
+    },
+    {
+      "sha256": "d799f73f3a94e8359fdbf6f48253b0822cc55645c50fe3566baa0af644e83b05",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A17296167/download",
+      "queueIndex": 851,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "medicine",
+        "exam": "13 Dec 2019",
+        "code": "1094",
+        "scheme": "RS2 & RS3",
+        "paper": "II",
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "14": "Causes of Hyper uricemia and gout",
+          "15": "Electro convulsive therapy",
+          "16": "Complications of Cystic fibrosis"
+        }
+      }
+    },
+    {
+      "sha256": "2f82865ed3f8ff2de860691fc9fcc88b8fdc7e190baab2c19baa37796f0e406c",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A17296149/download",
+      "queueIndex": 852,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "paediatrics",
+        "exam": "Dec 2018",
+        "code": "1092",
+        "scheme": "RS2 & RS3",
+        "paper": null,
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "1": "A nine month old infant presents with acute watery diarrhea. What are the causes? What complications do you anticipate? How do you manage a child with severe dehydration?"
+        }
+      }
+    },
+    {
+      "sha256": "75c431b33b740fc1ba4779ffa6352023f029c347e8ba0e6e078db500d6ab568e",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A17296150/download",
+      "queueIndex": 853,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "medicine",
+        "exam": "Dec 2018",
+        "code": "1093",
+        "scheme": "RS2 & RS3",
+        "paper": "I",
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "13": "Laboratory diagnosis of typhoid fever.",
+          "20": "Angiotensin receptor blockers (ARBs)"
+        }
+      }
+    },
+    {
+      "sha256": "f89fff1db7812cdb53efb89ee9ce740361f9ed23eb71cfb00c28b91279fe9c0e",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A17296151/download",
+      "queueIndex": 854,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "medicine",
+        "exam": "Dec 2018",
+        "code": "1094",
+        "scheme": "RS2 & RS3",
+        "paper": "II",
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "15": "Renal osteodystrophy",
+          "16": "Korsakoffs psychosis"
+        }
+      }
+    },
+    {
+      "sha256": "c667e499e3e2940b795c59f47759a4e1703abf354815d1afcc701d5983a5a788",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A17296130/download",
+      "queueIndex": 855,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 45,
+      "count": 11,
+      "printed": {
+        "subject": "medicine",
+        "exam": "Jun 2017",
+        "code": "1013",
+        "scheme": "Not printed",
+        "paper": null,
+        "total": 45,
+        "units": 11,
+        "corrections": {
+          "3": "Megaloblastic anaemia",
+          "9": "Indications for Bone marrow aspiration"
+        }
+      }
+    },
+    {
+      "sha256": "575d39f9e85b12443bb21f045f2e54b020bb309c4fb60d2750d2bc8377e607ce",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A17296131/download",
+      "queueIndex": 856,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 45,
+      "count": 11,
+      "printed": {
+        "subject": "paediatrics",
+        "exam": "Jun 2017",
+        "code": "1014",
+        "scheme": "Not printed",
+        "paper": null,
+        "total": 45,
+        "units": 11,
+        "corrections": {
+          "4": "Clinical features and complications of Pertussis"
+        }
+      }
+    },
+    {
+      "sha256": "e98cc077f8e5e9102939fc858517e155b647c00ac17980953be9e7d4330766ba",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A17296132/download",
+      "queueIndex": 857,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 90,
+      "count": 22,
+      "printed": {
+        "subject": "medicine",
+        "exam": "Jun 2017",
+        "code": "1015",
+        "scheme": "Old Scheme",
+        "paper": "II",
+        "total": 90,
+        "units": 22,
+        "corrections": {
+          "21": "Four clinical features of Hypocalcemia"
+        }
+      }
+    },
+    {
+      "sha256": "64a3a20f5587c14a97871967f3425cecda3864c77348177ca77d061e845728e6",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A17296106/download",
+      "queueIndex": 858,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "paediatrics",
+        "exam": "Jul 2016",
+        "code": "1067",
+        "scheme": "Revised Scheme",
+        "paper": null,
+        "total": 100,
+        "units": 22,
+        "corrections": {
+          "1": "Describe the stages of Tubercular Meningitis and etio-pathogenesis and management of TBM.",
+          "2": "Define and classify protein energy malnutrition. Discuss the management of severe acute malnutrition.",
+          "13": "Management of pneumocystitis carini pneumonia",
+          "16": "Three adverse reactions of Pertusis vaccine",
+          "22": "Six causes of continuous murmur"
+        }
+      }
+    },
+    {
+      "sha256": "ea13a1358b34cd0ea69e76558ba9fc0e6e708677bad0fbf01033b3dc05f895c6",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A17296107/download",
+      "queueIndex": 859,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "medicine",
+        "exam": "Jun 2016",
+        "code": "1068",
+        "scheme": "Revised Scheme",
+        "paper": "I",
+        "total": 100,
+        "units": 22
+      }
+    },
+    {
+      "sha256": "4aa27474a405bda2f54ea103163ee289c796f51459d46f078fc975c6d01dc7ec",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A17296108/download",
+      "queueIndex": 860,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "medicine",
+        "exam": "Jun 2016",
+        "code": "1069",
+        "scheme": "Revised Scheme",
+        "paper": "II",
+        "total": 100,
+        "units": 22
+      }
+    },
+    {
+      "sha256": "96fcbb5c4d9f7d36889860a72b61bcfe3ff0588ee59d6e4eea1825acef8f41c1",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1729660/download",
+      "queueIndex": 861,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 45,
+      "count": 11,
+      "printed": {
+        "subject": "medicine",
+        "exam": "Dec 2015",
+        "code": "1013",
+        "scheme": "Not printed",
+        "paper": null,
+        "total": 45,
+        "units": 11,
+        "corrections": {
+          "11": "Name four extra articular manifestations of Rheumatoid Arthritis."
+        }
+      }
+    },
+    {
+      "sha256": "300b56d5d30fa18367372688bdf93a257fc93f69742af9c54404cc01094841ff",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1729661/download",
+      "queueIndex": 862,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 45,
+      "count": 11,
+      "printed": {
+        "subject": "paediatrics",
+        "exam": "Dec 2015",
+        "code": "1014",
+        "scheme": "Not printed",
+        "paper": null,
+        "total": 45,
+        "units": 11,
+        "corrections": {
+          "4": "Etiopathogenesis and classification of Cerebral Palsy"
+        }
+      }
+    },
+    {
+      "sha256": "56332a72d45ae333a598493cf2155a189988cdfb57d99283634325c2d34f7d0e",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1729662/download",
+      "queueIndex": 863,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 90,
+      "count": 22,
+      "printed": {
+        "subject": "medicine",
+        "exam": "Dec 2015",
+        "code": "1015",
+        "scheme": "Old Scheme",
+        "paper": "II",
+        "total": 90,
+        "units": 22,
+        "corrections": {
+          "1": "Discuss the aetiopathogenesis, clinical features and management of Acute Congestive Cardiac Failure.",
+          "2": "Discuss the aetiology, clinical features and management of Alcoholic Cirrhosis of Liver. Enumerate the complications of the same.",
+          "11": "H1N1 disease",
+          "15": "Causes of tender Hepatomegaly",
+          "16": "Contraindications for Angiotensin Converting Enzyme inhibitors"
+        }
+      }
+    },
+    {
+      "sha256": "2d10c46daa51549316de50cd099ccb629b35d2a47a5559331d7f6094492e7c20",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1729619/download",
+      "queueIndex": 864,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 90,
+      "count": 22,
+      "printed": {
+        "subject": "medicine",
+        "exam": "Dec 2014",
+        "code": "1015",
+        "scheme": "Old Scheme",
+        "paper": "II",
+        "total": 90,
+        "units": 22,
+        "corrections": {
+          "16": "Mention 4 β bloking drugs used in hypertension"
+        }
+      }
+    },
+    {
+      "sha256": "4ea373939160be507fb0d5c1a703a90101ff982568db4fdd3078ae4746d8e252",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1729620/download",
+      "queueIndex": 865,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 45,
+      "count": 11,
+      "printed": {
+        "subject": "surgery",
+        "exam": "Dec 2014",
+        "code": "1016",
+        "scheme": "Old Scheme",
+        "paper": "I",
+        "total": 45,
+        "units": 11,
+        "corrections": {
+          "4": "Amputations – indications and types"
+        }
+      }
+    },
+    {
+      "sha256": "d19e62ccdf381b15a0220ad85343f8d6475e88d7a1d00be7fc5be2f9767fafa0",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1729621/download",
+      "queueIndex": 866,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 45,
+      "count": 11,
+      "printed": {
+        "subject": "orthopaedics",
+        "exam": "Dec 2014",
+        "code": "1017",
+        "scheme": "Old Scheme",
+        "paper": "I",
+        "total": 45,
+        "units": 11,
+        "corrections": {
+          "11": "Trigger thumb"
+        }
+      }
+    }
+  ],
+  "exclusions": [
+    {
+      "queueIndex": 845,
+      "reason": "All22fullquestions and printed09Aug2024/1092/RS3 header match prior approved examination",
+      "canonicalSha256": "30150d2d3a40073eaa6a277379d4d84a5bd9e516e3d3531a7256b8cb52f7ee81",
+      "candidateHeaderAndCanonicalPageCompared": true,
+      "candidateSHA256": "952c6878a520aecd3c6d702538fc8eb0a73b321df6e33b65c2e3f0ec04fdfe00"
+    }
+  ],
+  "headerVariants": [
+    {
+      "queueIndices": [
+        820,
+        841
+      ],
+      "reason": "Complete matching question text but different printed2017/2011dates; retained as source header variants, no silent date replacement"
+    }
+  ],
+  "nextReviewQueueIndex": 867,
+  "sourcePDFsPublished": false
+}
