@@ -161,6 +161,9 @@ try {
         await target.click({clickCount:3,delay:60});
         await page.getByText('MCQ answer', {exact:true}).filter({visible:true}).waitFor();
         await page.getByText('UI fixture answer', {exact:true}).filter({visible:true}).waitFor();
+        await page.waitForTimeout(550);
+        const answerBox = await page.getByText('MCQ answer', {exact:true}).filter({visible:true}).boundingBox();
+        assert.ok(answerBox && answerBox.y < 120, 'Answer modal did not open within the viewport');
         await page.screenshot({path:`artifacts/university-import/mcq-answer-${width}.png`});
         await page.getByLabel('Close MCQ answer', {exact:true}).click();
       }
