@@ -41,10 +41,10 @@ const notes = load('src/lib/handwrittenNotes.ts', { ...common, './notesDedup': {
   './notesLimits': {}, './progress': progress });
 const resume = load('src/lib/homeResume.ts', { ...common, '@/lib/questionBank': bank });
 
-assert.equal(rows.length, 13719);
+assert.equal(rows.length, 14720);
 assert.equal(new Set(rows.map(r => r.id)).size, rows.length);
-const expected = { rguhs: 6018, knruhs: 3695, muhs: 0, ntruhs: 1652, wbuhs: 2354 };
-const marks = { rguhs: 24851, knruhs: 15599, ntruhs: 6117, wbuhs: 12225 };
+const expected = { rguhs: 7019, knruhs: 3695, muhs: 0, ntruhs: 1652, wbuhs: 2354 };
+const marks = { rguhs: 29306, knruhs: 15599, ntruhs: 6117, wbuhs: 12225 };
 const ids = new Set();
 for (const [university, count] of Object.entries(expected)) {
   assert.equal(bank.allSearchHits(university).length, count);
@@ -57,7 +57,7 @@ for (const [university, count] of Object.entries(expected)) {
     assert.match(row.sourceSha256, /^[a-f0-9]{64}$/);
     assert.ok(row.id.includes(row.sourceSha256.slice(0, 12)));
     assert.ok(Number.isInteger(row.pdfPage) && row.pdfPage >= 1 && row.pdfPage <= Math.max(7, ...['batch15-provenance.json', 'batch16-provenance.json', 'batch17-provenance.json', 'batch18-provenance.json'].flatMap(file => JSON.parse(fs.readFileSync(path.join(repo, 'src/data/universityPapers', file), 'utf8')).papers).filter(p => p.sha256 === row.sourceSha256).flatMap(p => p.pagesVisuallyCompared)));
-    assert.ok((row.question.length > 4 || {"rguhs-529602a28734-p1-q17": "Pili", "rguhs-70d8a4e6839c-p1-q18": "PCR", "rguhs-70d8a4e6839c-p1-q23": "PCV"}[row.id] === row.question || (row.id === 'rguhs-3e762a08ccd4-p1-q4' && row.question === 'BMR') || {"ntruhs-2a174f5c1c88-p1-q9": "BERA", "ntruhs-45cc96809a77-p1-q11": "CTEV", "ntruhs-6b81306ad1a7-p1-q11": "ASHA"}[row.id] === row.question || (row.id === 'ntruhs-12f02835c36f-p1-q7' && row.question === 'Gout') || {"knruhs-6cde83218b53-p2-q12": "PKDL", "knruhs-ee244d19365e-p1-q11": "IgG", "knruhs-136b4dc127a6-p1-q2": "Bias", "knruhs-d5a145770a41-p1-q10": "CARE"}[row.id] === row.question || (row.id === 'knruhs-e8e59be64df3-p2-q17' && row.question === 'KFD') || (row.id === 'rguhs-942383725e34-p1-q6' && row.question === 'IgM.') || (row.id === 'rguhs-764314376aaf-p1-q17' && row.question === 'Hair') || (['rguhs-fc6c85e99007-p1-q5','rguhs-d3a0bc4dc8fb-p1-q12'].includes(row.id) && row.question === 'Gout') || (row.id === 'rguhs-8b7f4f6c8446-p1-q13' && row.question === 'GABA')) && row.question.length <= 1000);
+    assert.ok((row.question.length > 4 || {"rguhs-529602a28734-p1-q17": "Pili", "rguhs-70d8a4e6839c-p1-q18": "PCR", "rguhs-70d8a4e6839c-p1-q23": "PCV"}[row.id] === row.question || (row.id === 'rguhs-3e762a08ccd4-p1-q4' && row.question === 'BMR') || {"ntruhs-2a174f5c1c88-p1-q9": "BERA", "ntruhs-45cc96809a77-p1-q11": "CTEV", "ntruhs-6b81306ad1a7-p1-q11": "ASHA"}[row.id] === row.question || (row.id === 'ntruhs-12f02835c36f-p1-q7' && row.question === 'Gout') || {"knruhs-6cde83218b53-p2-q12": "PKDL", "knruhs-ee244d19365e-p1-q11": "IgG", "knruhs-136b4dc127a6-p1-q2": "Bias", "knruhs-d5a145770a41-p1-q10": "CARE"}[row.id] === row.question || (row.id === 'knruhs-e8e59be64df3-p2-q17' && row.question === 'KFD') || (row.id === 'rguhs-942383725e34-p1-q6' && row.question === 'IgM.') || (row.id === 'rguhs-764314376aaf-p1-q17' && row.question === 'Hair') || (['rguhs-fc6c85e99007-p1-q5','rguhs-d3a0bc4dc8fb-p1-q12'].includes(row.id) && row.question === 'Gout') || (row.id === 'rguhs-8b7f4f6c8446-p1-q13' && row.question === 'GABA') || {"rguhs-76bb1d84f38e-p1-q6": "DOTS", "rguhs-9f14aa97a6c4-p1-q20": "SARS", "rguhs-9f14aa97a6c4-p1-q22": "ASHA", "rguhs-d300c4feb926-p1-q19": "GERD", "rguhs-2f82865ed3f8-p1-q21": "PICA", "rguhs-575d39f9e85b-p1-q9": "ICDS", "rguhs-e98cc077f8e5-p1-q4": "Gout", "rguhs-64a3a20f5587-p1-q19": "PICA"}[row.id] === row.question) && row.question.length <= 1000);
     assert.ok(row.examRefs.length > 0 && row.topicKey);
     const raw = `PYQ[${row.id}] ${row.question}`;
     assert.equal(text.getCleanQuestionText(raw), row.question);
@@ -88,7 +88,7 @@ assert.ok(wb[2].question.includes('nephrosis and apoptosis'), 'Do not silently c
 assert.ok(wb[1].question.includes('any two') && wb[1].question.includes('c)'));
 assert.ok(wb[3].question.includes('any two') && wb[3].question.includes('d) Septic shock'));
 assert.ok(rows.find(r => r.university === 'knruhs').question.includes('(d) Applied anatomy'));
-console.log('PASS 13719 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
+console.log('PASS 14720 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
 
 const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH02: batch02 } = await bundle('src/data/universityPapers/reviewedBatch02.ts');
 assert.equal(batch02.length, 200);
@@ -647,3 +647,16 @@ assert.equal(provenance19.papers.length,44);
 assert.equal(provenance19.exclusions.length,2);
 for (const paper of provenance19.papers) assert.equal(paper.marks, rows.filter(r => r.sourceSha256===paper.sha256).reduce((n,r)=>n+r.marks,0));
 console.log('PASS Batch19:1010 original-page-reviewed units/4250marks,44 papers;2 alternate exams excluded;clinical subparts and 90/100 mark schemes preserved.');
+
+
+const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH20: batch20 } = await bundle('src/data/universityPapers/reviewedBatch20.ts');
+assert.equal(batch20.length,1001);assert.equal(batch20.reduce((n,r)=>n+r.marks,0),4455);
+const provenance20=JSON.parse(fs.readFileSync(path.join(repo,'src/data/universityPapers/batch20-provenance.json'),'utf8'));
+assert.equal(provenance20.papers.length,51);assert.equal(provenance20.exclusions.length,1);
+for(const paper of provenance20.papers){const entries=batch20.filter(r=>r.sourceSha256===paper.sha256);assert.equal(entries.length,paper.count);assert.equal(entries.reduce((n,r)=>n+r.marks,0),paper.marks);}
+for(const r of batch20){assert.ok(!/FirstRanker|www\.|QP Code|Max. Marks|LONG ESSAY|SHORT ESSAY|SHORT ANSWERS/.test(r.question));assert.ok(r.questionFormat&&!r.options);}
+const split20=batch20.filter(r=>r.examPart);assert.equal(split20.length,22);
+for(const part of ['A','B']){const g=split20.filter(r=>r.examPart===part);assert.deepEqual(g.map(r=>Number(r.sourceQuestion)),Array.from({length:11},(_,i)=>i+1));assert.equal(g.reduce((n,r)=>n+r.marks,0),45);assert.ok(g.every(r=>r.id.includes('-q'+part.toLowerCase()+'-')));}
+assert.ok(!batch20.some(r=>r.sourceSha256===provenance20.exclusions[0].candidateSHA256));
+assert.equal(batch20.filter(r=>r.question.includes('Mention organs involved and hormones responsible')).length,1);
+console.log('PASS Batch20:1001 original-page-reviewed units/4455marks,51 contributing PDFs;22-question alternate excluded;two-section45+45paper and source anomalies retained.');
