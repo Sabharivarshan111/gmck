@@ -143,9 +143,9 @@ try {
       assert.ok(!(await page.locator('body').innerText()).includes('PYQ['), 'Internal source marker leaked into UI');
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), 'Horizontal overflow');
       if (fixture.query === 'Space of Retzius is related') {
-        const mcqTab = page.getByRole('tab', {name: /^MCQ  /});
+        const mcqTab = page.getByRole('tab', {name: /^MCQ\s+\d/});
         assert.equal(await mcqTab.getAttribute('aria-selected'), 'true');
-        await page.getByRole('tab', {name: /^Short Notes  /}).click();
+        await page.getByRole('tab', {name: /^Short Notes\s+\d/}).click();
         assert.equal(await page.getByText(fixture.option, {exact:false}).filter({visible:true}).count(), 0);
         await mcqTab.click();
         fs.mkdirSync('artifacts/university-import', {recursive:true});
