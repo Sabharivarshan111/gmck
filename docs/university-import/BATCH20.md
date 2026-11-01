@@ -1,9 +1,11 @@
-# Batch20 reviewed university questions
+# Batch 20: 1,001 reviewed university questions
 
-Add1,001 original-page-compared RGUHS examination occurrences from queue815–866,excluding845,an alternate of the already-approved09Aug2024Paediatrics1092paper.All22questions and both original header images match. The51contributing PDFs contain4,455marks and52paper components. Old Scheme Ophthalmology/ENT and Medicine/Paediatrics45marksections stay separate. Source842contains two1–11numbered sections; stableA/Bsuffixes preserve both. Printed2011/2017matching-wording header variants remain distinct.
+Add 1,001 RGUHS examination occurrences from 51 original PDFs, preserving all 13,719 previous records for 14,720 collected-university entries. Source 845 is an alternate of the already approved 9 August 2024 Paediatrics paper; both original headers and all 22 questions matched, so it was excluded.
 
-13,719existing rows are retained, giving14,720 collected-university entries after this batch is imported. TNMGR/KUHS unchanged.No source PDFs,unreviewed staging,answer keys,backend,version orPlay changes. Original OCR defects were corrected against full original pages. Source anomalies such as SARA CO-V2,MBIand reflex disease are retained. Source828prints10x5=30; actual ten5markquestions balance the printed100markpaper and this arithmetic anomaly is recorded.
+The 51 contributing pages contain 52 paper components and 4,455 marks. Review covered 53 physical pages, including the alternate and canonical copy. The combined Ophthalmology/ENT paper retains two separately numbered 45-mark sections with stable A/B ID suffixes. Clinical details, subparts, printed marks, dated repetitions and source anomalies remain intact.
 
-Validation:51sourceSHA-256values;all1,001stableIDs;52componentmarkbalances;fulltext22-questionduplicate exclusion;chapter mapping and shared-bank source roundtrips. Hosted UI,actual web payload and APK/AAB verification are separate publication steps; see current receipt before claiming release.
+Both production domains independently serve all 14,720 reviewed IDs. Hosted bank, search, source identity, old-bank parity, 209 browser scenarios and six onboarding scenarios pass. The actual signed debug/internal/release APKs and release AAB contain all 14,720 IDs; public asset digests and tag commits match the checked files. Consult BATCH20_PUBLICATION_RECEIPT.json for exact identifiers.
 
-Next review:queue867,physicalpage1,Q1. Batch21/22stagingremainsunreviewed and must notbe reimported as completed content.
+No raw PDFs, unreviewed staging, backend, app version or Play Store upload changes are included. No physical-device test is claimed. The existing anatomy dossier coverage gate remains a separate failure; the actual website build and university-bank checks pass.
+
+Next original-page review: source queue 867, physical page 1, question 1. Keep private Batch 21/22 staging separate from reviewed and published counts. No university or year is complete.

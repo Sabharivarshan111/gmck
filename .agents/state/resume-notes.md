@@ -2923,3 +2923,12 @@ DO NOT: Clear user storage, reset progress, replace question banks, change versi
 
 ### 2026-10-31 — GMCK editing tool readiness
 Updated GMCK Content Creation with project-local automatic dependency preparation and JSON readiness evidence. Verified core H.264/AAC encode/probe/decode, required FFmpeg filters, Python graphics dependencies, and multilingual tiny ASR model inference. Added optional face/browser engine guidance and explicit ordinary-chat capability limits; no production app changes. Entry: `.agents/video/CONTENT-CREATION.md`.
+
+
+# 2026-11-01 — Batch20 COMPLETE: 1,001 reviewed, 14,720 live
+
+DONE: Reviewed original pages for queue815–866, excluding confirmed alternate845. Added1,001 complete examination occurrences from51 PDFs/52 components/4,455marks; all13,719 old records preserved. Cumulative14,720: RGUHS7,019/KNRUHS3,695/NTR–YSR1,652/WBUHS2,354/MUHS0 disabled. TNMGR/KUHS unchanged.
+DONE: Native application abc7f5066bded4ec39526dddf5d347da9e914dc9; webPR156 merged4e530562393e18dc05986bb23bb27d62e3b97de1. Both production aliases independently serve all14,720 IDs; READY deployment dpl_6GZT4fJCxYHYWoLcogQgEGvRKpNo. Both hosted suites209bank/browser+6onboarding pass. Actual debug-694/internal-654/release-840 APKs and release AAB contain14,720 IDs; release digests/tagrefs verified. See docs/university-import/BATCH20_PUBLICATION_RECEIPT.json.
+SAVED: ORBIT_1001_Completed_Reviewed_Entries.zip, Library libfile_3526c34735e4819190442e00e2edd202 version1;1,350,212bytes;SHA2566224e4b1290fc053563b0ad3e85c4ed4e5e04ec3b6f3b6009cd0e86f5118f49d. Complete cumulative bank, original-page corrections/mappings, component balances, portable helpers and publication proofs.
+NEXT REVIEW: queue867,p1,Q1, RGUHS Paediatrics December2013, SHA083ee8e7af347b1f2aa6c85c829f10395873f431f49a29a6730380fad83e407e. Read saved NEXT_PENDING_PAPER.json. Older Batch21/22 staged candidates are not additional approved entries. Do not resume actual review at staging1010p41.
+DO NOT: reset bank/reimport845/rebuild completed package proofs/rehost raw PDFs/claim university-year complete. No Play upload, physical-device test, backend or version29 change. Unrelated old anatomy dossier digestive92%vs95% gate remains separate; university checks and actual web build pass.

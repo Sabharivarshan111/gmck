@@ -1,0 +1,291 @@
+{
+  "newReviewed": 1001,
+  "totalReviewed": 14720,
+  "nativeCommit": "abc7f5066bded4ec39526dddf5d347da9e914dc9",
+  "webPR": 156,
+  "webHead": "e6880a56543669a4db88c0809c7b9b6b812285cb",
+  "nativeRunIds": {
+    "bank": 41272339124,
+    "release": 41272339122,
+    "internal": 41272339135,
+    "debug": 41272339313
+  },
+  "webRunIds": {
+    "bank": 41273047685,
+    "build": 41273047688,
+    "ios": 41273047706,
+    "installation": 41273047701
+  },
+  "webMerged": true,
+  "livePayloadVerified": true,
+  "androidPackagesVerified": true,
+  "nativeHostedVerification": {
+    "runId": 41272339124,
+    "jobId": 124747507458,
+    "status": "success",
+    "bankRows": 14720,
+    "browserScenarios": 209,
+    "onboardingScenarios": 6,
+    "actualEmittedIds": 14720,
+    "artifactId": 13069478516,
+    "artifactSHA256": "75eb132e0a7e56a0d0286793038ff1f6ea5b7cd168d8b10dc569c206d7a20ce8"
+  },
+  "legacyUnchangedFailure": "Anatomy dossier completeness gate92percent vs95percent; actual Webbuild job succeeds.",
+  "productionCommit": "4e530562393e18dc05986bb23bb27d62e3b97de1",
+  "productionDeploymentId": "dpl_6GZT4fJCxYHYWoLcogQgEGvRKpNo",
+  "productionState": "READY",
+  "liveVerification": {
+    "runId": 41273615747,
+    "jobId": 124751240201,
+    "success": true,
+    "receipt": {
+      "sourceCommit": "4e530562393e18dc05986bb23bb27d62e3b97de1",
+      "reviewedQuestionCount": 14720,
+      "verification": "actual production JavaScript bytes and service worker",
+      "origins": [
+        {
+          "requestedOrigin": "https://orbitmbbs.vercel.app",
+          "finalOrigin": "https://orbitmbbs.vercel.app",
+          "reviewedIdsFound": 14720,
+          "missing": 0,
+          "assets": [
+            {
+              "url": "https://orbitmbbs.vercel.app/assets/CheckoutPage-CWaJ9LEh.js",
+              "bytes": 11222,
+              "sha256": "4fee45ab09c8f747682f98c4c89832e53aa6b43b00c7ada260911dc2f502e799"
+            },
+            {
+              "url": "https://orbitmbbs.vercel.app/assets/aiimsPgBank-S7JFwNwR.js",
+              "bytes": 57810,
+              "sha256": "f4f3e868ffebe4b2a094f70153d9aa121083e66b10bb88f3b2bf6947100212d9"
+            },
+            {
+              "url": "https://orbitmbbs.vercel.app/assets/browser-B-sJ9r3b.js",
+              "bytes": 32140,
+              "sha256": "9f2d75af7d08aac2a2fe3fc7e6528bb86ecf1d3e4335d6e6b678b54bad1c2077"
+            },
+            {
+              "url": "https://orbitmbbs.vercel.app/assets/index-MiMDv5CP.js",
+              "bytes": 8231,
+              "sha256": "22a7ba3a3c311131d4b1e2be42915ceda4a2a230188a3f88f16cd6c874d1f783"
+            },
+            {
+              "url": "https://orbitmbbs.vercel.app/assets/index-of3d-nGQ.js",
+              "bytes": 12170597,
+              "sha256": "31a84043181cf7af45f7998fc5d6e5f56627f7c50dccab49a512dab8073af192"
+            },
+            {
+              "url": "https://orbitmbbs.vercel.app/assets/iniCetBank-BvLL9g_O.js",
+              "bytes": 151551,
+              "sha256": "bc4c818fefcfa9119f4c8d4724e1d1906eabd2ffaddedfafaddcb79ef1dbc52f"
+            },
+            {
+              "url": "https://orbitmbbs.vercel.app/assets/neetPgBank-CRaIP2kx.js",
+              "bytes": 1320471,
+              "sha256": "0cae0d57649b8f79510cf6d0059c23e4e38ceba2bb909cb64473ee86dbbdcaf1"
+            },
+            {
+              "url": "https://orbitmbbs.vercel.app/assets/neetPgImages0-BZBGmJ70.js",
+              "bytes": 5237859,
+              "sha256": "84292304e962e6c52695f27ee8ff5507a151fac9cc4d33157aefe082b55df957"
+            },
+            {
+              "url": "https://orbitmbbs.vercel.app/assets/neetPgImages1-QxrpUJkW.js",
+              "bytes": 4941865,
+              "sha256": "9182c64608242a2e9574ffbeb234cb4eee90fffecf615e15fa76dfd3013b9f8b"
+            },
+            {
+              "url": "https://orbitmbbs.vercel.app/assets/neetPgImages2-C1BeUuxe.js",
+              "bytes": 5045041,
+              "sha256": "77c939964bcf6cbf4b1e342db229491c6d6f2b857bdd858bd8246fa32adaa073"
+            },
+            {
+              "url": "https://orbitmbbs.vercel.app/assets/neetPgImages3-BR1omoax.js",
+              "bytes": 5325120,
+              "sha256": "a306d02d284573fe626e9371e87d4d66455d53cea8f5d98f5e497d45d4fe0632"
+            },
+            {
+              "url": "https://orbitmbbs.vercel.app/assets/pdf-58YdjDh9.js",
+              "bytes": 437740,
+              "sha256": "bb62a44c6ab82191d8e2d3ad891d0f0d6368f5233c0bb20bfa61cb1c7eb638bf"
+            },
+            {
+              "url": "https://orbitmbbs.vercel.app/assets/pdf.worker.min-CWpYdfRJ.js",
+              "bytes": 68,
+              "sha256": "d03fc8b6972439ff59b7d4a06bb01b07a758bb306a8f1443f2928c4ffb716a14"
+            },
+            {
+              "url": "https://orbitmbbs.vercel.app/assets/sql-wasm-browser-DEioKhMV.js",
+              "bytes": 40479,
+              "sha256": "a5d2b106e6f046c6dfde282287725ada20cf62890e63530b14c61fd2e58a7573"
+            }
+          ],
+          "combinedBytes": 34780208,
+          "combinedSHA256": "6974e31af4c0fa4d1fee596fde7b536c1c52b35e639d3bf973ee44ba2b01760c",
+          "offlineCacheRevision": "v31-university-batch20-2026-11-01"
+        },
+        {
+          "requestedOrigin": "https://www.orbitmbbs.site",
+          "finalOrigin": "https://www.orbitmbbs.site",
+          "reviewedIdsFound": 14720,
+          "missing": 0,
+          "assets": [
+            {
+              "url": "https://www.orbitmbbs.site/assets/CheckoutPage-CWaJ9LEh.js",
+              "bytes": 11222,
+              "sha256": "4fee45ab09c8f747682f98c4c89832e53aa6b43b00c7ada260911dc2f502e799"
+            },
+            {
+              "url": "https://www.orbitmbbs.site/assets/aiimsPgBank-S7JFwNwR.js",
+              "bytes": 57810,
+              "sha256": "f4f3e868ffebe4b2a094f70153d9aa121083e66b10bb88f3b2bf6947100212d9"
+            },
+            {
+              "url": "https://www.orbitmbbs.site/assets/browser-B-sJ9r3b.js",
+              "bytes": 32140,
+              "sha256": "9f2d75af7d08aac2a2fe3fc7e6528bb86ecf1d3e4335d6e6b678b54bad1c2077"
+            },
+            {
+              "url": "https://www.orbitmbbs.site/assets/index-MiMDv5CP.js",
+              "bytes": 8231,
+              "sha256": "22a7ba3a3c311131d4b1e2be42915ceda4a2a230188a3f88f16cd6c874d1f783"
+            },
+            {
+              "url": "https://www.orbitmbbs.site/assets/index-of3d-nGQ.js",
+              "bytes": 12170597,
+              "sha256": "31a84043181cf7af45f7998fc5d6e5f56627f7c50dccab49a512dab8073af192"
+            },
+            {
+              "url": "https://www.orbitmbbs.site/assets/iniCetBank-BvLL9g_O.js",
+              "bytes": 151551,
+              "sha256": "bc4c818fefcfa9119f4c8d4724e1d1906eabd2ffaddedfafaddcb79ef1dbc52f"
+            },
+            {
+              "url": "https://www.orbitmbbs.site/assets/neetPgBank-CRaIP2kx.js",
+              "bytes": 1320471,
+              "sha256": "0cae0d57649b8f79510cf6d0059c23e4e38ceba2bb909cb64473ee86dbbdcaf1"
+            },
+            {
+              "url": "https://www.orbitmbbs.site/assets/neetPgImages0-BZBGmJ70.js",
+              "bytes": 5237859,
+              "sha256": "84292304e962e6c52695f27ee8ff5507a151fac9cc4d33157aefe082b55df957"
+            },
+            {
+              "url": "https://www.orbitmbbs.site/assets/neetPgImages1-QxrpUJkW.js",
+              "bytes": 4941865,
+              "sha256": "9182c64608242a2e9574ffbeb234cb4eee90fffecf615e15fa76dfd3013b9f8b"
+            },
+            {
+              "url": "https://www.orbitmbbs.site/assets/neetPgImages2-C1BeUuxe.js",
+              "bytes": 5045041,
+              "sha256": "77c939964bcf6cbf4b1e342db229491c6d6f2b857bdd858bd8246fa32adaa073"
+            },
+            {
+              "url": "https://www.orbitmbbs.site/assets/neetPgImages3-BR1omoax.js",
+              "bytes": 5325120,
+              "sha256": "a306d02d284573fe626e9371e87d4d66455d53cea8f5d98f5e497d45d4fe0632"
+            },
+            {
+              "url": "https://www.orbitmbbs.site/assets/pdf-58YdjDh9.js",
+              "bytes": 437740,
+              "sha256": "bb62a44c6ab82191d8e2d3ad891d0f0d6368f5233c0bb20bfa61cb1c7eb638bf"
+            },
+            {
+              "url": "https://www.orbitmbbs.site/assets/pdf.worker.min-CWpYdfRJ.js",
+              "bytes": 68,
+              "sha256": "d03fc8b6972439ff59b7d4a06bb01b07a758bb306a8f1443f2928c4ffb716a14"
+            },
+            {
+              "url": "https://www.orbitmbbs.site/assets/sql-wasm-browser-DEioKhMV.js",
+              "bytes": 40479,
+              "sha256": "a5d2b106e6f046c6dfde282287725ada20cf62890e63530b14c61fd2e58a7573"
+            }
+          ],
+          "combinedBytes": 34780208,
+          "combinedSHA256": "6974e31af4c0fa4d1fee596fde7b536c1c52b35e639d3bf973ee44ba2b01760c",
+          "offlineCacheRevision": "v31-university-batch20-2026-11-01"
+        }
+      ]
+    }
+  },
+  "nativeInternal": {
+    "runId": 41272339135,
+    "jobId": 124747507775,
+    "status": "success",
+    "reviewedIdsInActualAPK": 14720,
+    "tag": "internal-654",
+    "commit": "abc7f5066bded4ec39526dddf5d347da9e914dc9",
+    "packageSHA256": "be23fcc2650beb8a581d945137a854bdb0ac2e78cf0b663268dadf6406051cdc",
+    "publicRelease": {
+      "tag": "internal-654",
+      "target": "abc7f5066bded4ec39526dddf5d347da9e914dc9",
+      "assets": [
+        {
+          "name": "app-internal.apk",
+          "bytes": 150202103,
+          "digest": "sha256:be23fcc2650beb8a581d945137a854bdb0ac2e78cf0b663268dadf6406051cdc",
+          "url": "https://github.com/Sabharivarshan111/gmck/releases/download/internal-654/app-internal.apk"
+        }
+      ]
+    }
+  },
+  "nativeRelease": {
+    "runId": 41272339122,
+    "jobId": 124747507572,
+    "success": true,
+    "reviewedIdsInActualAPK": 14720,
+    "reviewedIdsInActualAAB": 14720,
+    "release": {
+      "tag": "release-840",
+      "target": "abc7f5066bded4ec39526dddf5d347da9e914dc9",
+      "assets": [
+        {
+          "name": "app-release.aab",
+          "bytes": 108830978,
+          "digest": "sha256:3103d1caf9787427bf63c238a1ecd15cd9f9894288aa164b03bc344e8c6a73bb",
+          "url": "https://github.com/Sabharivarshan111/gmck/releases/download/release-840/app-release.aab"
+        },
+        {
+          "name": "app-release.apk",
+          "bytes": 142550443,
+          "digest": "sha256:e0523ee893f49b424850da88e1f1dff672f743a79f147469bad7d4cc1452527e",
+          "url": "https://github.com/Sabharivarshan111/gmck/releases/download/release-840/app-release.apk"
+        }
+      ]
+    }
+  },
+  "webHostedVerification": {
+    "runId": 41273047685,
+    "jobId": 124749568652,
+    "success": true,
+    "bankScenarios": 209,
+    "onboardingScenarios": 6,
+    "artifactId": 13070088828,
+    "artifactSHA256": "c1cd55e6d9d63ed1881b24deddb937d012ccbc21e2751179885e38e70590840a",
+    "screenshotVisuallyInspected": true,
+    "screenshotScope": "Growth and development topic with the expanded bank; new February2023 item is farther down the same list"
+  },
+  "androidReleaseAndInternalVerified": true,
+  "playStoreUploaded": false,
+  "physicalDeviceTested": false,
+  "webOfflineCacheRevision": "v31-university-batch20-2026-11-01",
+  "publicationStatus": "Complete: both live production origins independently serve14720reviewed IDs; actual debug/internal/release APKs and release AAB verify all14720IDs, with public asset digests and tag commits matched.",
+  "nativeDebug": {
+    "runId": 41272339313,
+    "jobId": 124747507953,
+    "status": "success",
+    "reviewedIdsInActualAPK": 14720,
+    "release": {
+      "tag": "debug-694",
+      "target": "abc7f5066bded4ec39526dddf5d347da9e914dc9",
+      "assets": [
+        {
+          "name": "app-preview.apk",
+          "bytes": 150185735,
+          "digest": "sha256:8bb8b772efd5b315c957efbe084f795de8819f9c3dff2b23057230a405427d00",
+          "url": "https://github.com/Sabharivarshan111/gmck/releases/download/debug-694/app-preview.apk"
+        }
+      ]
+    }
+  }
+}
