@@ -141,6 +141,7 @@ try {
       assert.deepEqual(errors, []);
       results.push({ width, university: fixture.university, query: fixture.query, searchAndChapterAndReference: 'passed' });
       if (width === 360 && fixture.query === 'past history of pharyngitis') { fs.mkdirSync('artifacts/university-import',{recursive:true});await page.getByText(fixture.option, {exact:false}).filter({visible:true}).first().scrollIntoViewIfNeeded();await page.waitForTimeout(250);await page.screenshot({path:'artifacts/university-import/batch18-case-360.png'}); }
+      if (width === 360 && fixture.query === 'Tabulate normal essential milestones') { fs.mkdirSync('artifacts/university-import',{recursive:true}); await page.screenshot({path:'artifacts/university-import/batch20-paediatrics-360.png',fullPage:true}); }
       console.log('PASS chapter/reference', width, fixture.university, fixture.query);
       await context.close();
     }
