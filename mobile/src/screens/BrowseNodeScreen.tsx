@@ -563,12 +563,12 @@ export default function BrowseNodeScreen() {
               a topic has no essays before tapping into an empty list. */}
             <SegmentedControl
               options={[
-                { key: 'essay' as const, label: `Essays  ${essayCount}` },
+                { key: 'essay' as const, label: `Essays\n${essayCount}` },
                 {
                   key: 'short-notes' as const,
-                  label: `Short Notes  ${shortNoteCount}`,
+                  label: `Short Notes\n${shortNoteCount}`,
                 },
-                { key: 'mcq' as const, label: `MCQ  ${mcqCount}` },
+                { key: 'mcq' as const, label: `MCQ\n${mcqCount}` },
               ]}
               value={type}
               onChange={setType}
