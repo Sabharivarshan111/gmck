@@ -19,6 +19,7 @@ import { useQuestionDone } from '@/hooks/useProgress';
 import { doubleTapPrompt, tripleTapPrompt } from '@/lib/askAi';
 import { kuhsQuestionSource, kuhsRecordedExamCount } from '@/lib/kuhsQuestionSource';
 import { useBankUniversity } from '@/hooks/useProfile';
+import { collectedRecordedExamCount } from '@data/universityPapers/presentation';
 import { collectedQuestionSource } from '@data/universityPapers/questionBankData';
 import type { ConfirmedPage } from '@/lib/pageRefs';
 
@@ -35,6 +36,7 @@ interface Props {
    * matching the web app: those are the subjects it has a textbook for.
    * Without it, a triple tap falls back to Ask AI.
    */
+  onMcqAnswer?: (question: string) => void;
   onNote?: (question: string, rawQuestion: string) => void;
   /**
    * Flash this row — the reader arrived from a search result and has to be
@@ -89,6 +91,7 @@ function QuestionRowBase({
   onAskAi,
   onAskMcq,
   onNote,
+  onMcqAnswer,
   highlighted = false,
   onPageRef,
   communityPage,
@@ -104,7 +107,8 @@ function QuestionRowBase({
   const university = useBankUniversity();
   const kuhsSource = university === 'other' ? undefined : kuhsQuestionSource(question);
   const collectedSource = university === 'other' ? undefined : collectedQuestionSource(question);
-  const stars = kuhsSource ? kuhsRecordedExamCount(kuhsSource.examRefs) : countStars(question);
+  const stars = kuhsSource ? kuhsRecordedExamCount(kuhsSource.examRefs) : collectedSource ? collectedRecordedExamCount(question) : countStars(question);
+  const originalMcq = collectedSource?.questionFormat === 'mcq';
   const page = extractPageNumber(question);
   const importance = importanceLabel(stars);
   const text = getCleanQuestionText(question);
@@ -152,6 +156,10 @@ function QuestionRowBase({
   // intent flags the edge function needs. Hand-writing the prose here is what
   // previously sent MCQ requests down the generic-chatbot path.
   const askAnswer = useCallback(() => {
+    if (originalMcq && onMcqAnswer) {
+      onMcqAnswer(question);
+      return;
+    }
     if (onNote) {
       // noteQuestionText, not getCleanQuestionText: the notes function's cache
       // key is a hash of this string, and the web app hashes the version that
@@ -164,7 +172,7 @@ function QuestionRowBase({
       return;
     }
     onAskAi(tripleTapPrompt(getCleanQuestionText(question)));
-  }, [onAskAi, onNote, question]);
+  }, [onAskAi, onNote, onMcqAnswer, originalMcq, question]);
 
   const askMcq = useCallback(() => {
     const prompt = doubleTapPrompt(getCleanQuestionText(question));
@@ -221,11 +229,11 @@ function QuestionRowBase({
     <Touchable
       onPress={onRowTap}
       label={kuhsSource ? `${text}. Printed exam references: ${kuhsSource.examRefs.join(', ')}. ${stars > 0 ? `${stars} recorded exam references` : 'Exam count not specified'}.` : text}
-      hint="Double tap twice for MCQs, three times for a written answer"
+      hint={originalMcq ? 'Triple tap for this MCQ answer' : 'Double tap for practice MCQs, triple tap for a written answer'}
       // The gestures above are unreachable with a screen reader; these are.
       accessibilityActions={[
         { name: 'mcqs', label: 'Practice MCQs' },
-        { name: 'answer', label: 'Written answer' },
+        { name: 'answer', label: originalMcq ? 'MCQ answer' : 'Written answer' },
       ]}
       onAccessibilityAction={name => {
         if (name === 'mcqs') {
@@ -284,7 +292,7 @@ function QuestionRowBase({
 
         <View style={styles.body}>
           <Text style={[styles.affordance, { color: colors.cyan }]}>
-            {onNote ? 'Triple tap → handwritten note' : 'Triple tap to ask AI'}
+            {originalMcq && onMcqAnswer ? 'Triple tap → MCQ answer' : onNote ? 'Triple tap → handwritten note' : 'Triple tap to ask AI'}
           </Text>
 
           <Text
@@ -316,7 +324,8 @@ function QuestionRowBase({
           {collectedSource ? (
             <Text style={[typeScale.caption, { color: colors.textMuted }]}>
               {collectedSource.examRefs.join(' · ')}{'\n'}
-              {collectedSource.originalSection} · {collectedSource.marks} marks
+              {collectedSource.originalSection} · {collectedSource.marks} marks{'\n'}
+              {stars} recorded exam appearance{stars === 1 ? '' : 's'}
             </Text>
           ) : null}
 
@@ -512,3 +521,4 @@ const styles = StyleSheet.create({
 });
 
 export const QuestionRow = memo(QuestionRowBase);
+
