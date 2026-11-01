@@ -257,3 +257,4 @@ export function collectedShortQuestionLabel(questions: string[]): string {
   const formats = questions.map(question => collectedQuestionSource(question)?.questionFormat);
   return formats.includes('mcq') ? 'Short / MCQ' : formats.some(Boolean) ? 'Short Answers' : 'Short Notes';
 }
+

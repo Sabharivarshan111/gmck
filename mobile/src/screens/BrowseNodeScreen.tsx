@@ -28,16 +28,15 @@ import { QuestionRow } from '@/components/QuestionRow';
 import { FilterField } from '@/components/FilterField';
 import { hasTextbook } from '@/lib/textbooks';
 import { getCleanQuestionText } from '@/lib/questionText';
-import { collectedShortQuestionLabel } from '@data/universityPapers/questionBankData';
+import { isUniversityMcq, partitionUniversityQuestions, type UniversityQuestionTab } from '@data/universityPapers/presentation';
+import { UniversityMcqAnswer } from '@/components/UniversityMcqAnswer';
 import {
   collectAllQuestions,
-  collectQuestions,
   findTypeQuestions,
   getTopicChildren,
   getSubjects,
   SUBJECT_ICON,
   YEAR_LABEL,
-  type QuestionType,
   resolveNode,
 } from '@/lib/questionBank';
 import { SingleQuestionNote } from '@/components/SingleQuestionNote';
@@ -79,9 +78,9 @@ export default function BrowseNodeScreen() {
 
   // Open on the tab the searched question is actually on, or a reader who
   // arrives from a search sees the other tab and an unhighlighted list.
-  const [type, setType] = useState<QuestionType>(highlightType ?? 'essay');
+  const [type, setType] = useState<UniversityQuestionTab>(highlight && isUniversityMcq(highlight) ? 'mcq' : highlightType ?? 'essay');
   const remember = useCallback((question: string) => {
-    rememberQuestion({ university: bankUniversity, year, path, title, question, type });
+    rememberQuestion({ university: bankUniversity, year, path, title, question, type: type === 'mcq' ? 'short-notes' : type });
   }, [bankUniversity, year, path, title, type]);
   const [query, setQuery] = useState('');
 
@@ -119,7 +118,9 @@ export default function BrowseNodeScreen() {
 
   const node = useMemo(() => resolveNode(year, path, bankUniversity), [year, path, bankUniversity]);
   const children = useMemo(() => getTopicChildren(node), [node]);
-  const questions = useMemo(() => findTypeQuestions(node, type), [node, type]);
+  const tabs = useMemo(() => partitionUniversityQuestions(findTypeQuestions(node, 'essay'), findTypeQuestions(node, 'short-notes')), [node]);
+  const questions = tabs[type];
+  const [mcqTarget, setMcqTarget] = useState<string | null>(null);
 
   /**
    * Textbook page references.
@@ -145,14 +146,9 @@ export default function BrowseNodeScreen() {
     [],
   );
 
-  const essayCount = useMemo(
-    () => findTypeQuestions(node, 'essay').length,
-    [node],
-  );
-  const shortNoteCount = useMemo(
-    () => findTypeQuestions(node, 'short-notes').length,
-    [node],
-  );
+  const essayCount = tabs.essay.length;
+  const shortNoteCount = tabs['short-notes'].length;
+  const mcqCount = tabs.mcq.length;
 
   /**
    * Only worth showing above a list long enough to scroll — measured across
@@ -172,7 +168,7 @@ export default function BrowseNodeScreen() {
    * there on the other; it is the same screen.
    */
   // Always enable question search across both Essays and Short Notes so students can quickly find any topic
-  const filterable = essayCount + shortNoteCount > 0;
+  const filterable = essayCount + shortNoteCount + mcqCount > 0;
 
   /**
    * Pairs, not strings, because the number shown on each row is its position
@@ -497,6 +493,7 @@ export default function BrowseNodeScreen() {
                     index={index}
                     onAskAi={askAi}
                     onNote={onNote}
+                    onMcqAnswer={setMcqTarget}
                   />
                 ))}
               </View>
@@ -504,6 +501,7 @@ export default function BrowseNodeScreen() {
           }
         />
         {noteReader}
+        <UniversityMcqAnswer question={mcqTarget} onClose={() => setMcqTarget(null)} />
       </>
     );
   }
@@ -553,7 +551,7 @@ export default function BrowseNodeScreen() {
               {backControl}
               <View style={styles.topicTitleWrap}>
                 <Text style={[styles.kicker, { color: colors.textMuted }]}>
-                  {collectQuestions(node, type).length} QUESTIONS
+                  {questions.length} QUESTIONS
                 </Text>
                 <Text style={[styles.topicTitle, { color: colors.text }]}>
                   {title}
@@ -568,8 +566,9 @@ export default function BrowseNodeScreen() {
                 { key: 'essay' as const, label: `Essays  ${essayCount}` },
                 {
                   key: 'short-notes' as const,
-                  label: `${collectedShortQuestionLabel(findTypeQuestions(node, 'short-notes'))}  ${shortNoteCount}`,
+                  label: `Short Notes  ${shortNoteCount}`,
                 },
+                { key: 'mcq' as const, label: `MCQ  ${mcqCount}` },
               ]}
               value={type}
               onChange={setType}
@@ -588,7 +587,7 @@ export default function BrowseNodeScreen() {
                 <FilterField
                   value={query}
                   onChange={setQuery}
-                  placeholder={`Search ${type === 'essay' ? 'essays' : 'short notes'} (${questions.length})…`}
+                  placeholder={`Search ${type === 'essay' ? 'essays' : type === 'mcq' ? 'MCQs' : 'short notes'} (${questions.length})…`}
                   label={`Filter questions in ${title}`}
                 />
                 {filtering ? (
@@ -678,7 +677,7 @@ export default function BrowseNodeScreen() {
             />
           ) : (
             <EmptyState
-              title={`No ${type === 'essay' ? 'essays' : 'short notes'} here`}
+              title={`No ${type === 'essay' ? 'essays' : type === 'mcq' ? 'MCQs' : 'short notes'} here`}
               subtitle="Switch the tab above to see the other question type."
             />
           )
@@ -692,6 +691,7 @@ export default function BrowseNodeScreen() {
             index={item.index}
             onAskAi={askAi}
             onNote={onNote}
+                    onMcqAnswer={setMcqTarget}
             highlighted={flash === item.question}
             onPageRef={showPageRefs ? openPageRef : undefined}
             communityPage={
@@ -704,6 +704,7 @@ export default function BrowseNodeScreen() {
         )}
       />
       {noteReader}
+        <UniversityMcqAnswer question={mcqTarget} onClose={() => setMcqTarget(null)} />
       <PageRefSheet
         visible={pageRefTarget !== null}
         onClose={() => setPageRefTarget(null)}
@@ -904,3 +905,4 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
+
