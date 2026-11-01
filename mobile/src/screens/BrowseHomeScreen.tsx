@@ -1,3 +1,4 @@
+import { isUniversityMcq } from '@data/universityPapers/presentation';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, StyleSheet, TextInput, View } from 'react-native';
 import { Text } from '@/components/Text';
@@ -226,7 +227,7 @@ export default function BrowseHomeScreen() {
           renderItem={({ item, index }) => (
             <View>
               <Text style={[styles.hitPath, { color: colors.textMuted }]}>
-                {item.type === 'essay' ? 'Essay' : 'Short Notes'} · {item.yearLabel} →{' '}
+                {isUniversityMcq(item.question) ? 'MCQ' : item.type === 'essay' ? 'Essay' : 'Short Notes'} · {item.yearLabel} →{' '}
                 {item.subjectName} → {item.topicName}
               </Text>
               <QuestionRow
@@ -414,3 +415,4 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
 });
+

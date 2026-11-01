@@ -143,6 +143,31 @@ try {
       if (fixture.section) await page.getByText(fixture.section, { exact: false }).filter({ visible: true }).first().waitFor();
       assert.ok(!(await page.locator('body').innerText()).includes('PYQ['), 'Internal source marker leaked into UI');
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), 'Horizontal overflow');
+      if (fixture.query === 'Space of Retzius is related') {
+        const mcqTab = page.getByRole('tab', {name: /^MCQ\s+\d/});
+        assert.equal(await mcqTab.getAttribute('aria-selected'), 'true');
+        await page.getByRole('tab', {name: /^Short Notes\s+\d/}).click();
+        assert.equal(await page.getByText(fixture.option, {exact:false}).filter({visible:true}).count(), 0);
+        await mcqTab.click();
+        fs.mkdirSync('artifacts/university-import', {recursive:true});
+        await page.screenshot({path:`artifacts/university-import/mcq-tabs-${width}.png`});
+        // This fixture tests UI only. Medical evidence is tested separately against the live function.
+        await page.route('**/functions/v1/university-mcq-answer', async route => {
+          if (route.request().method() === 'OPTIONS') { await route.fulfill({status:204,headers:{'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'POST, OPTIONS','Access-Control-Allow-Headers':'authorization,apikey,x-client-info,content-type'}}); return; }
+          const body = route.request().postDataJSON();
+          const choice = body.options[0];
+          await route.fulfill({status:200, contentType:'application/json', headers:{'Access-Control-Allow-Origin':'*'}, body:JSON.stringify({id:body.id,status:'answered',basis:'textbook',label:choice.label,option:choice.text,explanation:'UI fixture answer',sources:[{title:'Textbook evidence fixture',quote:'Evidence rendering test excerpt.'}]})});
+        });
+        const target = page.getByRole('button', {name: /Space of Retzius is related/}).first();
+        await target.click({clickCount:3,delay:60});
+        await page.getByText('MCQ answer', {exact:true}).filter({visible:true}).waitFor();
+        await page.getByText('UI fixture answer', {exact:true}).filter({visible:true}).waitFor();
+        await page.waitForTimeout(550);
+        const answerBox = await page.getByText('MCQ answer', {exact:true}).filter({visible:true}).boundingBox();
+        assert.ok(answerBox && answerBox.y < 120, 'Answer modal did not open within the viewport');
+        await page.screenshot({path:`artifacts/university-import/mcq-answer-${width}.png`});
+        await page.getByLabel('Close MCQ answer', {exact:true}).click();
+      }
       assert.deepEqual(errors, []);
       results.push({ width, university: fixture.university, query: fixture.query, searchAndChapterAndReference: 'passed' });
       if (width === 360 && fixture.query === 'past history of pharyngitis') { fs.mkdirSync('artifacts/university-import',{recursive:true});await page.getByText(fixture.option, {exact:false}).filter({visible:true}).first().scrollIntoViewIfNeeded();await page.waitForTimeout(250);await page.screenshot({path:'artifacts/university-import/batch18-case-360.png'}); }
@@ -175,4 +200,5 @@ try {
 fs.mkdirSync('artifacts/university-import', { recursive: true });
 fs.writeFileSync('artifacts/university-import/browser-results.json', JSON.stringify(results, null, 2));
 console.log(`PASS ${results.length} emitted web bank/picker scenarios`);
+
 

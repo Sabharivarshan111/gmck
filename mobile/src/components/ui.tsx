@@ -357,6 +357,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   segmentText: {
+    textAlign: 'center',
     fontSize: 13,
     fontWeight: '600',
   },
@@ -389,3 +390,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+

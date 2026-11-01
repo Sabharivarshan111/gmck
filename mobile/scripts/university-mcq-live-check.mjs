@@ -1,0 +1,22 @@
+/* global AbortSignal */
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+const mobile = path.resolve(import.meta.dirname, '..');
+const client = fs.readFileSync(path.join(mobile, 'src/lib/supabase.ts'), 'utf8');
+const url = client.match(/const SUPABASE_URL = '([^']+)'/)?.[1];
+const key = client.match(/const SUPABASE_ANON_KEY =\s*'([^']+)'/)?.[1];
+assert.ok(url && key);
+const input = { id: 'knruhs-c6066ec7370d-p1-q1', subject: 'forensic-medicine', topic: 'toxicology', question: 'Danbury tremors are due to\n(a) Cyanide\n(b) Phenol\n(c) Phosphorous\n(d) Mercury', options: [{label:'a',text:'Cyanide'}, {label:'b',text:'Phenol'}, {label:'c',text:'Phosphorous'}, {label:'d',text:'Mercury'}] };
+const response = await fetch(`${url}/functions/v1/university-mcq-answer`, { method:'POST', headers:{Authorization:`Bearer ${key}`,apikey:key,'Content-Type':'application/json'},body:JSON.stringify(input),signal:AbortSignal.timeout(115000) });
+const data = await response.json();
+assert.equal(response.status,200,JSON.stringify(data));
+assert.equal(data.id,input.id);
+assert.equal(data.status,'answered',JSON.stringify(data));
+assert.equal(data.label,'d',JSON.stringify(data));
+assert.equal(data.option,'Mercury');
+assert.equal(data.basis,'textbook',JSON.stringify(data));
+assert.ok(data.sources.length > 0 && data.sources[0].quote.length > 15);
+fs.mkdirSync(path.join(mobile,'artifacts/university-import'),{recursive:true});
+fs.writeFileSync(path.join(mobile,'artifacts/university-import/live-mcq-answer.json'), JSON.stringify({checkedAt:new Date().toISOString(),...data},null,2));
+console.log('PASS actual deployed MCQ answer: uploaded textbook evidence, original choice d/Mercury, source excerpt retained.');
