@@ -9,6 +9,13 @@ const results = [];
 try {
   for (const width of [360, 430]) {
     for (const fixture of [
+      {"university": "rguhs", "year": "third", "yearKey": "third-year", "query": "Enumerate causes of red eye. Discuss the symptoms", "topic": "Diseases of uveal tract", "reference": "Dec 2018"},
+      {"university": "rguhs", "year": "third", "yearKey": "third-year", "query": "Maternal and Child Health Indications", "topic": "Obstetrics, Pediatrics & Geriatrics", "reference": "Dec 2017"},
+      {"university": "rguhs", "year": "third", "yearKey": "third-year", "query": "Dysphagia lusoria", "topic": "Esophagus", "reference": "Jun/Jul 2011"},
+      {"university": "rguhs", "year": "final", "yearKey": "final-year", "query": "Tabulate normal essential milestones", "topic": "Growth and development", "reference": "04 Feb 2023"},
+      {"university": "rguhs", "year": "final", "yearKey": "final-year", "query": "Mention organs involved and hormones responsible for calcium", "topic": "Endocrinology", "reference": "01 Aug 2022"},
+
+
       {"university": "rguhs", "year": "second", "yearKey": "second-year", "query": "Define and classify Cirrhosis. Discuss the pathology", "topic": "Liver, Gallbladder and Pancreas", "reference": "Dec 2018"},
       {"university": "rguhs", "year": "second", "yearKey": "second-year", "query": "Antigen Antibody reactions. Describe Agglutination", "topic": "Immunology", "reference": "Dec 2018"},
       {"university": "rguhs", "year": "second", "yearKey": "second-year", "query": "Define Identification. Describe in detail about Tattoo Marks.", "topic": "Identification", "reference": "Jun 2016"},
@@ -161,3 +168,4 @@ try {
 fs.mkdirSync('artifacts/university-import', { recursive: true });
 fs.writeFileSync('artifacts/university-import/browser-results.json', JSON.stringify(results, null, 2));
 console.log(`PASS ${results.length} emitted web bank/picker scenarios`);
+
