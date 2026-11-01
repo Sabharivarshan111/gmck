@@ -29,6 +29,9 @@ jobs:
       - name: Verify bank identities and old-bank parity
         working-directory: mobile
         run: node --experimental-strip-types --no-warnings scripts/university-mcq-answer-check.mjs && node --experimental-strip-types --no-warnings scripts/university-mcq-presentation-check.mjs && npm run check:university-import && npm run check:search-index && npm run check:kuhs-parity
+      - name: Verify deployed textbook-grounded MCQ answer
+        working-directory: mobile
+        run: node scripts/university-mcq-live-check.mjs
       - name: Build emitted native web app
         run: npm --prefix mobile run web:build
       - name: Verify actual emitted question payload
