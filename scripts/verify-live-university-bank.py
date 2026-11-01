@@ -7,7 +7,7 @@ for p in sorted((ROOT/'src/data/universityPapers').glob('reviewedBatch*.ts')):
  m=re.search(r'export const \w+\s*=\s*(\[.*\])\s+satisfies',p.read_text(),re.S)
  assert m,p
  rows.extend(json.loads(m.group(1)))
-ids={r['id'] for r in rows};assert len(ids)==len(rows)
+ids={r['id'] for r in rows};assert rows and len(ids)==len(rows)
 TARGETS=['https://orbitmbbs.vercel.app','https://www.orbitmbbs.site']
 ASSET_CACHE={}
 def get(url):
