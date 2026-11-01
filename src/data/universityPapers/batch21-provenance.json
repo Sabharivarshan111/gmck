@@ -1,0 +1,1444 @@
+{
+  "batch": 21,
+  "newReviewed": 1013,
+  "cumulative": 15733,
+  "contributingPages": 57,
+  "contributingPDFs": 54,
+  "marks": 4280,
+  "papers": [
+    {
+      "sha256": "083ee8e7af347b1f2aa6c85c829f10395873f431f49a29a6730380fad83e407e",
+      "sourceURL": "https://firstranker.com/frv2downloads.php/RGUHS/MBBS/2013/3rd-Year-Part-2/Dec/1092-Paediatrics",
+      "queueIndex": 867,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "paediatrics",
+        "code": "1092",
+        "total": 100,
+        "paper": null,
+        "scheme": "RS2 & RS3",
+        "exam": "Dec 2013",
+        "units": 22,
+        "corrections": {
+          "5": "Pharmacotherapy of organophosphorus poisoning.",
+          "8": "Lactose intolerance.",
+          "22": "Jone’s Criteria for rheumatic fever,"
+        },
+        "insert": {
+          "6": "Management of neonatal seizures."
+        }
+      }
+    },
+    {
+      "sha256": "7310a75ab4a819358c3bbf390960d26fc124d1f75de258bb5a62c424f3b6a155",
+      "sourceURL": "https://firstranker.com/frv2downloads.php/RGUHS/MBBS/2013/3rd-Year-Part-2/Dec/1094-General-Medicine-Paper-II",
+      "queueIndex": 868,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "general-medicine",
+        "code": "1094",
+        "total": 100,
+        "paper": "II",
+        "scheme": "RS2 & RS3",
+        "exam": "Dec 2013",
+        "units": 22,
+        "corrections": {
+          "10": "Signs of bronchiectasis",
+          "17": "Name the Cardiac markers",
+          "22": "( Dipeptidyl peptidase-4 inhibitor) DPP-4 inhibitors"
+        },
+        "insert": {
+          "11": "Irritable bowel disease",
+          "18": "Treatment of leprosy"
+        }
+      }
+    },
+    {
+      "sha256": "c990027961bd0d963577df616393620aa1314effa03a927beb17279ff2403475",
+      "sourceURL": "https://firstranker.com/frv2downloads.php/RGUHS/MBBS/2013/3rd-Year-Part-2/Dec/1095-General-Surgery",
+      "queueIndex": 869,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 40,
+      "count": 9,
+      "printed": {
+        "subject": "general-surgery",
+        "code": "1095",
+        "total": 50,
+        "paper": null,
+        "scheme": "RS2 & RS3",
+        "exam": "Dec 2013",
+        "units": 10,
+        "section": "A",
+        "corrections": {
+          "3": "Potts puffy tumour",
+          "9": "Sterilization methods for surgical instruments"
+        },
+        "insert": {
+          "10": "Felon"
+        },
+        "held": {
+          "1": "Original right margin clips lower-limb qualifier; entire 10-mark unit withheld."
+        }
+      }
+    },
+    {
+      "sha256": "74799cad8d43c843dfabb88a200c3b03d74a76d25f512c0493a131fffb69e890",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A172960/download",
+      "queueIndex": 870,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 90,
+      "count": 22,
+      "printed": {
+        "subject": "general-medicine",
+        "code": "1015",
+        "total": 90,
+        "paper": "II",
+        "scheme": "Old Scheme",
+        "exam": "Jun/Jul 2011",
+        "units": 22,
+        "corrections": {
+          "15": "Reticulocytosis - four causes"
+        }
+      }
+    },
+    {
+      "sha256": "55ec93f09e644db66bc8d3979401a65efbc5f5d5bcc445de2900ece06d2020f3",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A172961/download",
+      "queueIndex": 871,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 90,
+      "count": 22,
+      "printed": {
+        "subject": "general-surgery",
+        "code": "1016",
+        "total": 90,
+        "paper": "I",
+        "scheme": "Old Scheme",
+        "exam": "Jun/Jul 2011",
+        "units": 22,
+        "split": {
+          "after": 11,
+          "codeB": "1017",
+          "totalA": 45,
+          "totalB": 45
+        },
+        "positionCorrections": {
+          "10": "Ketamine",
+          "21": "Bennet’s fracture"
+        }
+      }
+    },
+    {
+      "sha256": "e2fe5be657f83092c930f048877c7214a59b15919d9fcbb620dabfde76a848df",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A172962/download",
+      "queueIndex": 872,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 90,
+      "count": 22,
+      "printed": {
+        "subject": "general-surgery",
+        "code": "1018",
+        "total": 90,
+        "paper": "II",
+        "scheme": "Old Scheme",
+        "exam": "Jun/Jul 2011",
+        "units": 22,
+        "corrections": {
+          "6": "Paralytic ileus"
+        }
+      }
+    },
+    {
+      "sha256": "1dee98318a1035be76242f3e4feb4b69543c9ac68142a0ed1f3e2350fbc26768",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A172963/download",
+      "queueIndex": 873,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 90,
+      "count": 22,
+      "printed": {
+        "subject": "obg",
+        "code": "1019",
+        "total": 90,
+        "paper": null,
+        "scheme": "Old Scheme",
+        "exam": "Jun/Jul 2011",
+        "units": 22,
+        "corrections": {
+          "5": "What are the complications of 2nd Trimester termination of pregnancy? What is Manual vacuum aspiration?",
+          "7": "What is grading of prolapse uterus? What is the principle of treatment of Nulliparous prolapse?",
+          "10": "What is ovarian endometrioma? What is the medical management of endometriosis?",
+          "11": "What is HELLP syndrome? How would you manage HELLP syndrome at 32 weeks of pregnancy?",
+          "12": "What are the causes of PPROM? What are the complications associated with it?",
+          "19": "B-Lynch sutures",
+          "22": "What is the diet recommendation in normal pregnancy?"
+        }
+      }
+    },
+    {
+      "sha256": "e22ce9bb4f37b7e3623525426bdd899dcb256c4dbaa522ac14afc51e974b954e",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A172964/download",
+      "queueIndex": 874,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "paediatrics",
+        "code": "1067",
+        "total": 100,
+        "paper": null,
+        "scheme": "Revised Scheme",
+        "exam": "Jun/Jul 2011",
+        "units": 22,
+        "corrections": {
+          "14": "Laboratory diagnosis of Duchennes Muscular Dystrophy",
+          "15": "Sites of Intraossous infusion",
+          "16": "Drug of choice for scorpion sting and its dosage"
+        }
+      }
+    },
+    {
+      "sha256": "2f04aabcf57a7ec8812ce5198a30a63424401a85bce1051cfd42fb3b832a6b9a",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A172965/download",
+      "queueIndex": 875,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "general-medicine",
+        "code": "1068",
+        "total": 100,
+        "paper": "I",
+        "scheme": "Revised Scheme",
+        "exam": "Jun/Jul 2011",
+        "units": 22
+      }
+    },
+    {
+      "sha256": "db6e44f40c7af2d1454e71393b90f6da531cdbeafb0807ba450cb736501932ed",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A172966/download",
+      "queueIndex": 876,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "general-medicine",
+        "code": "1069",
+        "total": 100,
+        "paper": "II",
+        "scheme": "Revised Scheme",
+        "exam": "Jun/Jul 2011",
+        "units": 22,
+        "corrections": {
+          "22": "Sub clinical hypothyroidism"
+        }
+      }
+    },
+    {
+      "sha256": "d32d85a05d39e6b40835840066c7f855c06cb575ef2e2a1ab4d0a6833886eceb",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A172967/download",
+      "queueIndex": 877,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "general-surgery",
+        "code": "1072",
+        "total": 100,
+        "paper": "II",
+        "scheme": "Revised Scheme",
+        "exam": "Jun/Jul 2011",
+        "units": 22,
+        "corrections": {
+          "10": "Intussusception"
+        }
+      }
+    },
+    {
+      "sha256": "2434b54a3b86f8dae6257c0179443a9214e8a4c4c6daed6b3bdce8ad6002c04c",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A172968/download",
+      "queueIndex": 878,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "obg",
+        "code": "1073",
+        "total": 100,
+        "paper": "I",
+        "scheme": "Revised Scheme",
+        "exam": "Jun/Jul 2011",
+        "units": 22,
+        "corrections": {
+          "6": "Neonatal rescucitation",
+          "20": "Antimalarial therapy in pregnancy"
+        }
+      }
+    },
+    {
+      "sha256": "af45c513a3f867ad7037a6ece7d4fb672798cebfd533e075529ab3459dcf8c48",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A172969/download",
+      "queueIndex": 879,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "obg",
+        "code": "1074",
+        "total": 100,
+        "paper": "II",
+        "scheme": "Revised Scheme",
+        "exam": "Jun/Jul 2011",
+        "units": 22,
+        "corrections": {
+          "22": "Methods to diagnose missing Intrauterine device",
+          "15": "Turner’s staging of breast development"
+        }
+      }
+    },
+    {
+      "sha256": "dc4ff0429bed1aa29d8929532bb94541d47f03b9b0faa47a80a4affbff512440",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1729610/download",
+      "queueIndex": 880,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "paediatrics",
+        "code": "1092",
+        "total": 100,
+        "paper": null,
+        "scheme": "Revised Scheme II",
+        "exam": "Jun/Jul 2011",
+        "units": 22,
+        "corrections": {
+          "1": "Describe Etiology, clinical features and management of acute bronchiolitis in children",
+          "16": "Hemophilus influenza B (HiB) vaccine"
+        }
+      }
+    },
+    {
+      "sha256": "4db0b4a83b1d5e0097dfd949b1ff380fa495f93a3f85da6afc76f48e099d01f4",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1729611/download",
+      "queueIndex": 881,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "general-medicine",
+        "code": "1093",
+        "total": 100,
+        "paper": "I",
+        "scheme": "Revised Scheme II",
+        "exam": "Jun/Jul 2011",
+        "units": 22,
+        "corrections": {
+          "20": "Causes of chronic intestinal pseudo - obstruction",
+          "21": "Risk factors of Hepatitis C infection"
+        }
+      }
+    },
+    {
+      "sha256": "d98aa0080f2d310972b63df504ea58a8e2a60f10100a2aaf2fbd73ab5f4e085a",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1729612/download",
+      "queueIndex": 882,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "general-medicine",
+        "code": "1094",
+        "total": 100,
+        "paper": "II",
+        "scheme": "Revised Scheme II",
+        "exam": "Jun/Jul 2011",
+        "units": 22,
+        "corrections": {
+          "15": "Light’s criteria for distinguishing pleural transudate from exudates",
+          "22": "Oral glucose tolerance test: WHO diagnostic criteria"
+        }
+      }
+    },
+    {
+      "sha256": "9e9333c1558459898c1168a6d4110721fdcb752ecb06d8aca08379b8a687ba1b",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1729613/download",
+      "queueIndex": 883,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 20,
+      "printed": {
+        "subject": "general-surgery",
+        "code": "1095",
+        "total": 100,
+        "paper": "I",
+        "scheme": "Revised Scheme II",
+        "exam": "Jun/Jul 2011",
+        "units": 20,
+        "split": {
+          "after": 10,
+          "codeB": "1096",
+          "totalA": 50,
+          "totalB": 50
+        },
+        "positionCorrections": {
+          "9": "Frey’s syndrome"
+        }
+      }
+    },
+    {
+      "sha256": "147caf5e16cbba4487bf2f1d8f955794781218f27af4b713c2fbadd458ad5b70",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1729614/download",
+      "queueIndex": 884,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "general-surgery",
+        "code": "1097",
+        "total": 100,
+        "paper": "II",
+        "scheme": "Revised Scheme II",
+        "exam": "Jun/Jul 2011",
+        "units": 22,
+        "corrections": {
+          "15": "Hyocalcemia"
+        }
+      }
+    },
+    {
+      "sha256": "64d6c115f82f90a844158459125b62d14ec942bd3eeb4841367b87f596942559",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1729615/download",
+      "queueIndex": 885,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "obg",
+        "code": "1098",
+        "total": 100,
+        "paper": "I",
+        "scheme": "Revised Scheme II",
+        "exam": "Jun/Jul 2011",
+        "units": 22,
+        "corrections": {
+          "2": "Define pregnancy induced hypertension. Describe the management of case of a of Eclampsia at 36th weeks of gestation",
+          "10": "Methods of 1st trimester MTP",
+          "17": "Complications of intra uterine death",
+          "18": "Indications for caesarean in twin pregnancy"
+        }
+      }
+    },
+    {
+      "sha256": "5697daf91340f34e8af8c7328cad4dbb300b23f6c5e59367704ab8a833027bbb",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1729616/download",
+      "queueIndex": 886,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "obg",
+        "code": "1099",
+        "total": 100,
+        "paper": "II",
+        "scheme": "Revised Scheme II",
+        "exam": "Jun/Jul 2011",
+        "units": 22,
+        "corrections": {
+          "6": "Bartholin’s abscess"
+        }
+      }
+    },
+    {
+      "sha256": "59b00e341b7a47b4b2788cfcd5501154c21226657a77a512ad9e06d205066b3b",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1729617/download",
+      "queueIndex": 887,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 90,
+      "count": 22,
+      "printed": {
+        "subject": "general-medicine",
+        "code": "1013",
+        "total": 90,
+        "paper": "I",
+        "scheme": "Old Scheme",
+        "exam": "Jun/Jul 2011",
+        "units": 22,
+        "split": {
+          "after": 11,
+          "codeB": "1014",
+          "subjectB": "paediatrics",
+          "totalA": 45,
+          "totalB": 45
+        },
+        "positionCorrections": {
+          "10": "One side effect of each: 1) Chloramphenicol 2) Quinolones 3) Lithium 4) Radio-contrast",
+          "11": "Discuss protein - calorie malnutrition",
+          "21": "Congenital 21 hydroxylase deficiency"
+        },
+        "dropPositions": [
+          11
+        ]
+      }
+    },
+    {
+      "sha256": "da5f7c6e9ee2cca7eb5ae82008cfa088f08e2908a400a143048bffc5fe9e3503",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA230321A1729618/download",
+      "queueIndex": 888,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 20,
+      "printed": {
+        "subject": "general-surgery",
+        "code": "1070",
+        "total": 100,
+        "paper": "I",
+        "scheme": "Revised Scheme",
+        "exam": "Jun/Jul 2011",
+        "units": 20,
+        "split": {
+          "after": 10,
+          "codeB": "1071",
+          "totalA": 50,
+          "totalB": 50
+        },
+        "corrections": {
+          "3": "Flail chest"
+        },
+        "positionCorrections": {
+          "9": "Risk factors for oral cancer"
+        }
+      }
+    },
+    {
+      "sha256": "a0523d3c79330d44d02fc3aa5717b97a327f8c4e32d4782253ebd995f91befbb",
+      "sourceURL": "https://firstranker.com/frv2downloads.php/RGUHS/MBBS/2012/3rd-Year-Part-2/Dec/1092-Paediatrics",
+      "queueIndex": 889,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "paediatrics",
+        "code": "1092",
+        "total": 100,
+        "paper": null,
+        "scheme": "RS2 & RS3",
+        "exam": "Dec 2012",
+        "units": 22,
+        "corrections": {
+          "6": "Biliary atresia.",
+          "8": "Growth charts.",
+          "14": "Hyperspienism in chronically transfused children",
+          "21": "Plan B in diarrhea",
+          "10": "Imperforate anus."
+        },
+        "insert": {
+          "7": "Management of empyema.",
+          "11": "Persistent diarrhea."
+        },
+        "dropPositions": [
+          6
+        ]
+      }
+    },
+    {
+      "sha256": "3509503e9d89761be24d1e30df8c62a1609c34eef1d3da4c1001c8f44d04f336",
+      "sourceURL": "https://firstranker.com/frv2downloads.php/RGUHS/MBBS/2012/3rd-Year-Part-2/Dec/1094-General-Medicine",
+      "queueIndex": 890,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "subject": "general-medicine",
+        "code": "1094",
+        "total": 100,
+        "paper": "II",
+        "scheme": "RS2 & RS3",
+        "exam": "Dec 2012",
+        "units": 22,
+        "corrections": {
+          "3": "Antidepressants",
+          "4": "Bulimia nervosa",
+          "5": "Homocystinura",
+          "11": "Drug resistant tuberculosis",
+          "14": "Causes of exudative pleural effusion",
+          "22": "Adverse effects of antithyroid drugs"
+        },
+        "sectionNote": "SHORT ESSAYS (Answer any Eight) is printed alongside ten5-mark questions/50marks; preserve printed instruction and record inconsistency."
+      }
+    },
+    {
+      "sha256": "dc7de0c81dcab2b9a128af1f21df968b628f88d8dbc46e021d2806280693ddd3",
+      "sourceURL": "https://firstranker.com/frv2downloads.php/NTRUHS/MBBS/2018/1/Nov/NTR/501-Anatomy",
+      "queueIndex": 892,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 50,
+      "count": 12,
+      "printed": {
+        "subject": "anatomy",
+        "code": "501-A",
+        "paper": "I",
+        "exam": "Oct/Nov 2018",
+        "scheme": "Not specified",
+        "university": "ntruhs",
+        "total": 50,
+        "units": 12
+      }
+    },
+    {
+      "sha256": "60bd6398ebcf9cb85135512171a29af71754fdbcfe8b149bb469c5c8fe8a42e6",
+      "sourceURL": "https://firstranker.com/frv2downloads.php/NTRUHS/MBBS/2018/1/Nov/NTR/502-Anatomy",
+      "queueIndex": 893,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 50,
+      "count": 12,
+      "printed": {
+        "subject": "anatomy",
+        "code": "502",
+        "paper": "II",
+        "exam": "Oct/Nov 2018",
+        "scheme": "Not specified",
+        "university": "ntruhs",
+        "total": 50,
+        "units": 12
+      }
+    },
+    {
+      "sha256": "1c29ab3c5e9e2017492e9fdf13361ecfcf549b7ff14fc9c31bbc09a7da7729c0",
+      "sourceURL": "https://firstranker.com/frv2downloads.php/NTRUHS/MBBS/2017/1/Aug/NTR/500-A-Biochemistry",
+      "queueIndex": 894,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 50,
+      "count": 12,
+      "printed": {
+        "subject": "biochemistry",
+        "code": "500",
+        "paper": "I",
+        "exam": "Aug 2017",
+        "scheme": "Not specified",
+        "university": "ntruhs",
+        "total": 50,
+        "units": 12
+      }
+    },
+    {
+      "sha256": "9c79e78db9a10489b8c5cdc4cfe94c6da92a0077952c69dc8932610a09bc1207",
+      "sourceURL": "https://firstranker.com/frv2downloads.php/NTRUHS/MBBS/2017/1/Aug/NTR/500-B-Biochemistry",
+      "queueIndex": 895,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 50,
+      "count": 12,
+      "printed": {
+        "subject": "biochemistry",
+        "code": "500-B",
+        "paper": "II",
+        "exam": "Aug 2017",
+        "scheme": "Not specified",
+        "university": "ntruhs",
+        "total": 50,
+        "units": 12
+      }
+    },
+    {
+      "sha256": "9245486a43aa4d44a5817c19a908c8cb89c36a65013a28dc77e2f3e4fe4fb7b2",
+      "sourceURL": "https://firstranker.com/frv2downloads.php/NTRUHS/MBBS/2017/1/Aug/NTR/501-Anatomy",
+      "queueIndex": 896,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 50,
+      "count": 12,
+      "printed": {
+        "subject": "anatomy",
+        "code": "501-A",
+        "paper": "I",
+        "exam": "Aug 2017",
+        "scheme": "Not specified",
+        "university": "ntruhs",
+        "total": 50,
+        "units": 12
+      }
+    },
+    {
+      "sha256": "2631bf8fb0d437c5153f0766d1b77a6c13ca53abea600179cd80881079aca391",
+      "sourceURL": "https://firstranker.com/frv2downloads.php/NTRUHS/MBBS/2016/1/Aug/NTR/500-Biochemistry",
+      "queueIndex": 897,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 50,
+      "count": 12,
+      "printed": {
+        "subject": "biochemistry",
+        "code": "500-A",
+        "paper": "I",
+        "exam": "Aug 2016",
+        "scheme": "Not specified",
+        "university": "ntruhs",
+        "total": 50,
+        "units": 12
+      }
+    },
+    {
+      "sha256": "0946d8a383b0fe9b0dd10b42a219eab6a5612477d706b668497508ea85f5f595",
+      "sourceURL": "https://firstranker.com/frv2downloads.php/NTRUHS/MBBS/2016/1/Aug/NTR/501-Anatomy",
+      "queueIndex": 898,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 50,
+      "count": 12,
+      "printed": {
+        "subject": "anatomy",
+        "code": "501-A",
+        "paper": "I",
+        "exam": "Aug 2016",
+        "scheme": "Not specified",
+        "university": "ntruhs",
+        "total": 50,
+        "units": 12
+      }
+    },
+    {
+      "sha256": "92f883d0f46f318d92f595d0a18c43abdde8a33771a567660dd17aa24b3a2860",
+      "sourceURL": "https://firstranker.com/frv2downloads.php/NTRUHS/MBBS/2016/1/Aug/NTR/502-Anatomy",
+      "queueIndex": 899,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 50,
+      "count": 12,
+      "printed": {
+        "subject": "anatomy",
+        "code": "502-A",
+        "paper": "II",
+        "exam": "Aug 2016",
+        "scheme": "Not specified",
+        "university": "ntruhs",
+        "total": 50,
+        "units": 12
+      }
+    },
+    {
+      "sha256": "53ff16fd66b7a89b5d1f68b38b986c71d1e02be1a4d22702038a3741381d07e9",
+      "sourceURL": "https://firstranker.com/frv2downloads.php/NTRUHS/MBBS/2015/1/Dec/NTR/500-A-Biochemistry",
+      "queueIndex": 900,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 50,
+      "count": 12,
+      "printed": {
+        "subject": "biochemistry",
+        "code": "500-A",
+        "paper": "I",
+        "exam": "Dec 2015",
+        "scheme": "Not specified",
+        "university": "ntruhs",
+        "total": 50,
+        "units": 12
+      }
+    },
+    {
+      "sha256": "259796fa18cb51a816dc67a59f4d6476215eeefa8310445ccf36535eef2a4268",
+      "sourceURL": "https://firstranker.com/frv2downloads.php/NTRUHS/MBBS/2015/1/Dec/NTR/500-B-Biochemistry",
+      "queueIndex": 901,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 50,
+      "count": 12,
+      "printed": {
+        "subject": "biochemistry",
+        "code": "500-B",
+        "paper": "II",
+        "exam": "Dec 2015",
+        "scheme": "Not specified",
+        "university": "ntruhs",
+        "total": 50,
+        "units": 12
+      }
+    },
+    {
+      "sha256": "9d33e9c10ace14b82951789edcb960696b95274993d15250f87e45990c74c923",
+      "sourceURL": "https://firstranker.com/frv2downloads.php/NTRUHS/MBBS/2015/1/Dec/NTR/501-A-Anatomy",
+      "queueIndex": 902,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 50,
+      "count": 12,
+      "printed": {
+        "subject": "anatomy",
+        "code": "501-A",
+        "paper": "I",
+        "exam": "Dec 2015",
+        "scheme": "Not specified",
+        "university": "ntruhs",
+        "total": 50,
+        "units": 12
+      }
+    },
+    {
+      "sha256": "a293f56765faf3c99d7e56303a263291af43a2d4b59a7b80ad3c44b36f97c516",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA141219A1432625/download",
+      "queueIndex": 947,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 60,
+      "count": 12,
+      "printed": {
+        "subject": "community-medicine",
+        "code": "511-A",
+        "paper": "I",
+        "total": 60,
+        "exam": "Aug 2015",
+        "units": 12,
+        "university": "ntruhs",
+        "scheme": "Not specified",
+        "partsContinuous": 6,
+        "questions": [
+          "Mention different types of epidemiological studies. Write about Randomized controlled trials.",
+          "Primary prevention",
+          "Migration studies",
+          "Rapid sand filters",
+          "Function of a family relevant to health",
+          "Census",
+          "Enumerate the major nutritional problems in India. Discuss the factors that lead to protein energy nutrition. Briefly discuss the measures that could reduce PEM in India.",
+          "Iceberg Phenomenon of disease",
+          "Isolation and quarantine",
+          "Cultural factors in health and disease",
+          "Types of learning",
+          "Effects of noise pollution"
+        ]
+      }
+    },
+    {
+      "sha256": "dbc062cbf44e048a6631e1036622f37e2ee78eb7d8cd5f112fc22441c4ca807b",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA141219A1432626/download",
+      "queueIndex": 948,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 60,
+      "count": 12,
+      "printed": {
+        "subject": "community-medicine",
+        "code": "511-B",
+        "paper": "II",
+        "total": 60,
+        "exam": "Aug 2015",
+        "units": 12,
+        "university": "ntruhs",
+        "scheme": "Not specified",
+        "partsContinuous": 6,
+        "corrections": {
+          "6": "Barriers in health education",
+          "7": "Define blindness. Classify the categories of visual impairment. Enumerate the causes of blindness. Add a note on Vision 2020.",
+          "12": "Sickness absenteeism"
+        }
+      }
+    },
+    {
+      "sha256": "3490cfd6c65c7199bdde336e5eab6fecb8d9942b8a9d753a7486168f84e22213",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA291220A200840/download",
+      "queueIndex": 956,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 40,
+      "count": 11,
+      "printed": {
+        "subject": "ophthalmology",
+        "code": "510-A",
+        "paper": null,
+        "total": 40,
+        "exam": "Feb 2020",
+        "units": 11,
+        "university": "ntruhs",
+        "scheme": "Not specified",
+        "questions": [
+          "Write etiology, clinical features, complications and management of Ophthalmia neonatorum",
+          "Iris bombe",
+          "Dendritic ulcer",
+          "Scleritis",
+          "Retinoblastoma",
+          "Pupillary reflexes",
+          "Pin hole test",
+          "Maddox rod",
+          "Nd YAG laser",
+          "Circumcorneal congestion",
+          "Cherry - red spot"
+        ]
+      }
+    },
+    {
+      "sha256": "f7ec60fcc571ea6a8c278333c4e48808db788caee5f24ce4f6cc6f882b194ae0",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA291220A200841/download",
+      "queueIndex": 957,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 40,
+      "count": 11,
+      "printed": {
+        "subject": "ophthalmology",
+        "code": "510-A",
+        "paper": null,
+        "total": 40,
+        "exam": "Nov 2020",
+        "units": 11,
+        "university": "ntruhs",
+        "scheme": "Not specified",
+        "questions": [
+          "Describe clinical features and management of Congenital Glaucoma.",
+          "Hypermetropia",
+          "NPCB – National Program for Control of Blindness",
+          "After Cataract",
+          "Vernal Catarrh",
+          "Iris Bombe",
+          "Ocular uses of Atropine",
+          "Types of Lasers used in the eye",
+          "Indications of Enucleation",
+          "Causes of Disc Edema",
+          "Causes of Ptosis"
+        ]
+      }
+    },
+    {
+      "sha256": "8e6a533a3b6e87a6d3864953cb8fdab77e774b683752b4d935dd858a1acbca89",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA141219A17443124/download",
+      "queueIndex": 958,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 60,
+      "count": 16,
+      "printed": {
+        "subject": "general-medicine",
+        "code": "512-A",
+        "paper": "I",
+        "total": 60,
+        "exam": "Jan 2019",
+        "units": 16,
+        "university": "ntruhs",
+        "scheme": "Not specified",
+        "corrections": {
+          "1": "Write causes, clinical features and treatment of Acute Lobar Pneumonia.",
+          "2": "Write clinical features and management of Barbiturate Poisoning",
+          "7": "Treatment of Acute Proliferative Glomerulonephritis",
+          "9": "Pleural fluid analysis in synpneumonic effusion",
+          "12": "Signs of Addison’s disease"
+        }
+      }
+    },
+    {
+      "sha256": "007606cf1f00af8bc9831a950f5acb6003841ad031ee05ee4c81ee65ad8ff6c7",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA141219A17443125/download",
+      "queueIndex": 959,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 60,
+      "count": 16,
+      "printed": {
+        "subject": "general-medicine",
+        "code": "513-A",
+        "paper": "II",
+        "total": 60,
+        "exam": "Jan 2019",
+        "units": 16,
+        "university": "ntruhs",
+        "scheme": "Not specified",
+        "corrections": {
+          "1": "Write aetiology, clinical features, investigations and treatment of Acute Pyogenic Meningitis",
+          "2": "Write the clinical features, investigations and treatment of Enteric Fever",
+          "6": "Treatment of Digitalis Toxicity",
+          "9": "Obsessive Compulsive Disorder (OCD)"
+        }
+      }
+    },
+    {
+      "sha256": "409b5291751591bff353795ac435b0b936469358e3908c6214e703b4b21c3c19",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA141219A17443126/download",
+      "queueIndex": 960,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 60,
+      "count": 16,
+      "printed": {
+        "subject": "general-surgery",
+        "code": "514-A",
+        "paper": "I",
+        "total": 60,
+        "exam": "Jan 2019",
+        "units": 16,
+        "university": "ntruhs",
+        "scheme": "Not specified",
+        "partsContinuous": 8,
+        "corrections": {
+          "1": "Classify types of Shock. Discuss the Pathophysiology and management of Hypovolemic Shock",
+          "7": "Deep Vein Thrombosis",
+          "8": "Cystic Hygroma",
+          "9": "Describe the mode of injury, clinical features, investigations, treatment and complications of Supracondylar fracture of Humerus"
+        }
+      }
+    },
+    {
+      "sha256": "a6be6e0c4c6355749bf11ff4f2ab57b7ff014c1ba1fce8c30ebe84c2954821e4",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA141219A17443127/download",
+      "queueIndex": 961,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 60,
+      "count": 16,
+      "printed": {
+        "subject": "general-surgery",
+        "code": "515-A",
+        "paper": "II",
+        "total": 60,
+        "exam": "Jan 2019",
+        "units": 16,
+        "university": "ntruhs",
+        "scheme": "Not specified",
+        "corrections": {
+          "6": "Flail Chest",
+          "8": "Epididymo-orchitis",
+          "16": "Pruritus Ani"
+        }
+      }
+    },
+    {
+      "sha256": "f1e49ad9d144284d62417556b522936b5cefbcfcf037b5a3263f373fd01e9022",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA141219A17443110/download",
+      "queueIndex": 962,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 60,
+      "count": 16,
+      "printed": {
+        "subject": "general-medicine",
+        "code": "512-A",
+        "paper": "I",
+        "total": 60,
+        "exam": "Jan 2018",
+        "units": 16,
+        "university": "ntruhs",
+        "scheme": "Not specified",
+        "corrections": {
+          "1": "Write causes, clinical features and management of Pneumothorax."
+        }
+      }
+    },
+    {
+      "sha256": "21f16b7f172376c17b9ec920e87af2f3524f00e2861596294a96cf5f785524da",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA141219A17443111/download",
+      "queueIndex": 963,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 60,
+      "count": 16,
+      "printed": {
+        "subject": "general-medicine",
+        "code": "513-A",
+        "paper": "II",
+        "total": 60,
+        "exam": "Jan 2018",
+        "units": 16,
+        "university": "ntruhs",
+        "scheme": "Not specified",
+        "corrections": {
+          "4": "Complications and treatment of Cerebral Malaria",
+          "5": "Obsessive Compulsive Neurosis",
+          "7": "Complications and treatment of Scabies",
+          "8": "Clinical features of Parkinson’s Disease",
+          "10": "Incontinence in elderly",
+          "11": "Bitot’s spots",
+          "12": "Treatment of Neurocysticercosis"
+        }
+      }
+    },
+    {
+      "sha256": "5c8f0c240b0e76f4b9ba84c4e57ac2ac99c7d523b848687603c2d7c48d26805d",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA141219A17443112/download",
+      "queueIndex": 964,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 60,
+      "count": 16,
+      "printed": {
+        "subject": "general-surgery",
+        "code": "514-A",
+        "paper": "I",
+        "total": 60,
+        "exam": "Jan 2018",
+        "units": 16,
+        "university": "ntruhs",
+        "scheme": "Not specified",
+        "partsContinuous": 8,
+        "corrections": {
+          "6": "Podoconiosis (Endemic elephantiasis)",
+          "8": "Indications of blood transfusion"
+        }
+      }
+    },
+    {
+      "sha256": "eb860205d02bdd306e789ae6960cafc207850edf1be5ee1c536f809eee35ce75",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA141219A1744396/download",
+      "queueIndex": 965,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 60,
+      "count": 16,
+      "printed": {
+        "subject": "general-medicine",
+        "code": "512-A",
+        "paper": "I",
+        "total": 60,
+        "exam": "Jan 2017",
+        "units": 16,
+        "university": "ntruhs",
+        "scheme": "Not specified",
+        "partsContinuous": 8,
+        "corrections": {
+          "3": "Clinical features and management of anaphylaxis",
+          "8": "Management of Cholelithiasis",
+          "16": "Prevention of Hepatitis B"
+        }
+      }
+    },
+    {
+      "sha256": "240fae528ba5b4ae3ef39e96d30889001de55a820d8a82e12728ed828b736cd5",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA141219A1744398/download",
+      "queueIndex": 966,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 60,
+      "count": 16,
+      "printed": {
+        "subject": "general-surgery",
+        "code": "14-A (partly clipped)",
+        "paper": "I",
+        "total": 60,
+        "exam": "Jan 2017",
+        "units": 16,
+        "university": "ntruhs",
+        "scheme": "Not specified",
+        "partsContinuous": 8,
+        "corrections": {
+          "1": "Classify types of hemorrhage. Describe its physiological and pathological effects and treatment of hemorrhage.",
+          "8": "Mention complications of Radiotherapy",
+          "16": "Brodie’s abscess – common sites and two clinical features"
+        }
+      }
+    },
+    {
+      "sha256": "72831d17d7a3873b7f4201322a35f003efdd0fefbbd7b474d95ca36deb9bd849",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA141219A1744382/download",
+      "queueIndex": 967,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 60,
+      "count": 16,
+      "printed": {
+        "subject": "general-medicine",
+        "code": "512-A",
+        "paper": "I",
+        "total": 60,
+        "exam": "Jul 2016",
+        "units": 16,
+        "university": "ntruhs",
+        "scheme": "Not specified",
+        "partsContinuous": 8,
+        "corrections": {
+          "8": "Anti Snake Venom",
+          "16": "Colonoscopy"
+        }
+      }
+    },
+    {
+      "sha256": "8d84106575ef9cda54f6bca56b6bcc012cafb5ed8f4e328d068f1f74036de941",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA141219A1744383/download",
+      "queueIndex": 968,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 60,
+      "count": 16,
+      "printed": {
+        "subject": "general-medicine",
+        "code": "513-A",
+        "paper": "II",
+        "total": 60,
+        "exam": "Jul 2016",
+        "units": 16,
+        "university": "ntruhs",
+        "scheme": "Not specified",
+        "partsContinuous": 8,
+        "questions": [
+          "Clinical features and management of Acute Rheumatic Fever. Mention briefly Rheumatic fever prophylaxis.",
+          "HIV counseling",
+          "Marasmic kwashiorkor",
+          "TEE (Trans Esophageal Echocardiography)",
+          "Complications of Leptospirosis",
+          "Management of Acute Pulmonary Edema",
+          "Risk factors for Ischaemic Stroke",
+          "Bowen’s Disease",
+          "Enumerate involuntary movements. Discuss clinical features and treatment of Parkinson’s disease",
+          "Cardio Pulmonary Resuscitation (CPR)",
+          "Bipolar Disorder",
+          "Frailty Syndrome",
+          "Antioxidants",
+          "Treatment of Filariasis",
+          "Nosocomial infections",
+          "Scrub Typhus"
+        ]
+      }
+    },
+    {
+      "sha256": "6e2c050cb22b2659709cac102e333fa45702f24d89e980cfe60cd40c3ed5c40d",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA141219A1744384/download",
+      "queueIndex": 969,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 60,
+      "count": 16,
+      "printed": {
+        "subject": "general-surgery",
+        "code": "514-A",
+        "paper": "I",
+        "total": 60,
+        "exam": "Jul 2016",
+        "units": 16,
+        "university": "ntruhs",
+        "scheme": "Not specified",
+        "partsContinuous": 8,
+        "questions": [
+          "Define shock. Discuss the classification, clinical monitoring and management of hypovolemic shock.",
+          "Sebaceous cyst",
+          "Gas gangrene",
+          "Electrical burns",
+          "Mention complications of blood transfusion",
+          "Brachytherapy",
+          "Hypokalemia",
+          "Factors affecting wound healing",
+          "Describe the pathogenesis, clinical features and management of Avascular necrosis of head of femur.",
+          "Nutritional Rickets",
+          "Congenital talipes equinovarus (CTEV)",
+          "Carpal Tunnel Syndrome",
+          "Brodie’s abscess",
+          "Meningomyelocele",
+          "Plantar fasciitis",
+          "Glasgow coma scale"
+        ]
+      }
+    },
+    {
+      "sha256": "9a9daba7c9eae93b48a68891a27a9fef3a0adb105ccace7ba68b9096e6a373ce",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA141219A1744370/download",
+      "queueIndex": 971,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 60,
+      "count": 16,
+      "printed": {
+        "subject": "general-medicine",
+        "code": "513-A",
+        "paper": "II",
+        "total": 60,
+        "units": 16,
+        "university": "ntruhs",
+        "scheme": "Not specified",
+        "exam": "Aug 2015",
+        "partsContinuous": 8,
+        "corrections": {
+          "8": "Asterixis",
+          "10": "Lichen Planus"
+        }
+      }
+    },
+    {
+      "sha256": "a04fc64ab6096a4bb41db52cd59f37e6f600254fd36520925ae9fe2dd808d7d9",
+      "sourceURL": "https://firstranker.com/frbeta/download.php/frdA141219A1744371/download",
+      "queueIndex": 972,
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "marks": 60,
+      "count": 16,
+      "printed": {
+        "subject": "general-surgery",
+        "code": "514-A",
+        "paper": "I",
+        "total": 60,
+        "units": 16,
+        "university": "ntruhs",
+        "scheme": "Not specified",
+        "exam": "Aug 2015",
+        "partsContinuous": 8,
+        "corrections": {
+          "8": "Acute lymphangitis"
+        }
+      }
+    },
+    {
+      "sha256": "50d7c65d379203dec16bcc9a1808141b351ede18c7c3a3de8c0aefe5249f4f92",
+      "sourceURL": "https://firstranker.com/frdownloads.php/MBBS/RGUHS/ANATOMY-PAPER-II-fr-1",
+      "queueIndex": 1009,
+      "pagesVisuallyCompared": [
+        42
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "exam": "Dec 2011 / Jan 2012",
+        "code": "1075",
+        "scheme": "Revised Scheme II",
+        "paper": "I",
+        "total": 100,
+        "units": 22
+      }
+    },
+    {
+      "sha256": "50d7c65d379203dec16bcc9a1808141b351ede18c7c3a3de8c0aefe5249f4f92",
+      "sourceURL": "https://firstranker.com/frdownloads.php/MBBS/RGUHS/ANATOMY-PAPER-II-fr-1",
+      "queueIndex": 1009,
+      "pagesVisuallyCompared": [
+        43
+      ],
+      "marks": 100,
+      "count": 22,
+      "printed": {
+        "exam": "Dec 2011 / Jan 2012",
+        "code": "1076",
+        "scheme": "Revised Scheme II",
+        "paper": "II",
+        "total": 100,
+        "units": 22
+      }
+    },
+    {
+      "sha256": "50d7c65d379203dec16bcc9a1808141b351ede18c7c3a3de8c0aefe5249f4f92",
+      "sourceURL": "https://firstranker.com/frdownloads.php/MBBS/RGUHS/ANATOMY-PAPER-II-fr-1",
+      "queueIndex": 1009,
+      "pagesVisuallyCompared": [
+        48
+      ],
+      "marks": 100,
+      "count": 28,
+      "printed": {
+        "exam": "Jun 2013",
+        "code": "1052",
+        "scheme": "Revised Scheme",
+        "paper": "II",
+        "total": 100,
+        "units": 28
+      }
+    },
+    {
+      "sha256": "50d7c65d379203dec16bcc9a1808141b351ede18c7c3a3de8c0aefe5249f4f92",
+      "sourceURL": "https://firstranker.com/frdownloads.php/MBBS/RGUHS/ANATOMY-PAPER-II-fr-1",
+      "queueIndex": 1009,
+      "pagesVisuallyCompared": [
+        51
+      ],
+      "marks": 100,
+      "count": 28,
+      "printed": {
+        "exam": "Jun 2013",
+        "code": "1051",
+        "scheme": "Revised Scheme",
+        "paper": "I",
+        "total": 100,
+        "units": 28
+      }
+    }
+  ],
+  "heldUnits": [
+    {
+      "queueIndex": 869,
+      "sourceQuestion": "1",
+      "marks": 10,
+      "reason": "Original right margin clips lower-limb qualifier; entire 10-mark unit withheld."
+    }
+  ],
+  "notImported": {
+    "891": "Same SHA already approved",
+    "946": "Potential Aug2015 Ophthalmology alternate; entire11-question candidate excluded",
+    "869Q1": "Clipped original right margin; entire10-mark question held"
+  },
+  "nextReviewQueueIndex": 1009,
+  "nextReviewPdfPage": 52,
+  "sourcePDFsPublished": false,
+  "overallCoveragePercentage": null,
+  "coverageLimitation": "The 1,011-position source frontier is not university/year/session coverage; earlier held and alternate candidates remain unresolved."
+}

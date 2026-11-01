@@ -9,6 +9,11 @@ const results = [];
 try {
   for (const width of [360, 430]) {
     for (const fixture of [
+      {"university": "rguhs", "year": "final", "yearKey": "final-year", "query": "One side effect of each: 1) Chloramphenicol", "topic": "Fundamentals of Medicine", "reference": "Jun/Jul 2011"},
+      {"university": "ntruhs", "year": "first", "yearKey": "first-year", "query": "Describe the Brachial Plexus under the following headings", "topic": "Upper Limb", "reference": "Oct/Nov 2018"},
+      {"university": "ntruhs", "year": "final", "yearKey": "final-year", "query": "Describe the mode of injury, clinical features, investigations", "topic": "Trauma and fractures", "reference": "Jan 2019"},
+      {"university": "rguhs", "year": "first", "yearKey": "first-year", "query": "Discuss the shoulder joint under the following headings - a) Type and subtype", "topic": "Upper Limb", "reference": "Jun 2013"},
+
       {"university": "rguhs", "year": "third", "yearKey": "third-year", "query": "Enumerate causes of red eye. Discuss the symptoms", "topic": "Diseases of uveal tract", "reference": "Dec 2018"},
       {"university": "rguhs", "year": "third", "yearKey": "third-year", "query": "Maternal and Child Health Indications", "topic": "Obstetrics, Pediatrics & Geriatrics", "reference": "Dec 2017"},
       {"university": "rguhs", "year": "third", "yearKey": "third-year", "query": "Dysphagia lusoria", "topic": "Esophagus", "reference": "Jun/Jul 2011"},
