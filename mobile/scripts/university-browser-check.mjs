@@ -144,15 +144,16 @@ try {
       assert.ok(!(await page.locator('body').innerText()).includes('PYQ['), 'Internal source marker leaked into UI');
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), 'Horizontal overflow');
       if (fixture.query === 'Space of Retzius is related') {
-        const mcqTab = page.getByRole('tab', {name: /^MCQ\s+\d/});
+        const mcqTab = page.getByRole('tab', {name: /^MCQ  /});
         assert.equal(await mcqTab.getAttribute('aria-selected'), 'true');
-        await page.getByRole('tab', {name: /^Short Notes\s+\d/}).click();
+        await page.getByRole('tab', {name: /^Short Notes  /}).click();
         assert.equal(await page.getByText(fixture.option, {exact:false}).filter({visible:true}).count(), 0);
         await mcqTab.click();
         fs.mkdirSync('artifacts/university-import', {recursive:true});
         await page.screenshot({path:`artifacts/university-import/mcq-tabs-${width}.png`});
         // This fixture tests UI only. Medical evidence is tested separately against the live function.
         await page.route('**/functions/v1/university-mcq-answer', async route => {
+          if (route.request().method() === 'OPTIONS') { await route.fulfill({status:204,headers:{'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'POST, OPTIONS','Access-Control-Allow-Headers':'authorization,apikey,x-client-info,content-type'}}); return; }
           const body = route.request().postDataJSON();
           const choice = body.options[0];
           await route.fulfill({status:200, contentType:'application/json', headers:{'Access-Control-Allow-Origin':'*'}, body:JSON.stringify({id:body.id,status:'answered',basis:'textbook',label:choice.label,option:choice.text,explanation:'UI fixture answer',sources:[{title:'Textbook evidence fixture',quote:'Evidence rendering test excerpt.'}]})});
