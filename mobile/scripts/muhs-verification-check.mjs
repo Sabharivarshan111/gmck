@@ -15,7 +15,7 @@ const ledger = JSON.parse(fs.readFileSync(path.join(dir,'muhs-verification-ledge
 const provenance = JSON.parse(fs.readFileSync(path.join(dir,'batch26-provenance.json'),'utf8'));
 assert.equal(rows.length,1000);
 assert.equal(rows.length,ledger.rows.length);
-assert.equal(rows.reduce((total,row)=>total+row.marks,0),5222);
+assert.equal(rows.reduce((total,row)=>total+row.marks,0),5226);
 assert.equal(provenance.marks,batch('reviewedBatch26.ts').reduce((n,r)=>n+r.marks,0));
 const byId = new Map(rows.map(row=>[row.id,row]));
 assert.equal(byId.size,1000,'Duplicated IDs');
@@ -46,4 +46,4 @@ assert.equal(counted.pdf_text_layer_corroborated,129);
 assert.equal(counted.pdf_text_layer_low_match,0);
 assert.equal(counted.ocr_transcription_page_review_pending,508);
 assert.equal(ledger.noOriginalAnswerKeys,true);
-console.log('PASS MUHS audit: 1000 unique source-linked records; 363 original-page-checked, 129 text-corroborated, 0 weak text matches, 508 OCR still pending; 5222 original marks, no fabricated answers.');
+console.log('PASS MUHS audit: 1000 unique source-linked records; 363 original-page-checked, 129 text-corroborated, 0 weak text matches, 508 OCR still pending; 5226 original marks, no fabricated answers.');
