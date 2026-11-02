@@ -9,8 +9,8 @@
     "ocr_transcription_page_review_pending": "Original source file fingerprint/paper page is linked; its question text has not yet been exhaustively compared visually."
   },
   "counts": {
-    "page_image_compared": 363,
-    "pdf_text_layer_corroborated": 129,
+    "page_image_compared": 364,
+    "pdf_text_layer_corroborated": 128,
     "pdf_text_layer_low_match": 0,
     "ocr_transcription_page_review_pending": 508
   },
@@ -43,7 +43,7 @@
     "b044ff20e040",
     "d576128afb0b"
   ],
-  "sourceCaveat": "All 562 previously pending questions were machine compared with 89 scanned source pages, but only 54 new entries were manually image-checked in this pass. Overall: 363 page-image checked, 129 PDF text-corroborated, 508 OCR entries still requiring visual proofreading. The machine similarity check cannot certify original question boundaries, exam correctness, or answer keys.",
+  "sourceCaveat": "83 distinct original PDF source hashes; 364 question occurrences visually compared to source page images, 128 cross-checked with source text layers, 508 OCR-derived question occurrences still pending manual visual proofreading. Machine OCR similarity does not certify transcription or answers.",
   "noOriginalAnswerKeys": true,
   "rows": [
     {
@@ -13534,7 +13534,7 @@
       }
     }
   ],
-  "note": "Original archive uses image scans; text matching on OCR data is not equivalent to independent visual proofreading. Known missing printed questions are documented as source gaps and not invented as new entries to meet a round-number quota.",
+  "note": "One duplicate legacy Biochemistry question was replaced with the visually checked genuine Ophthalmology Q3, shifting one question from text-layer to page-image corroboration. Whole-bank OCR second-pass of 562 formerly pending cases is not the same as 562 manual checks.",
   "muhsOCRBatchReview": {
     "initialOCRPending": 562,
     "originalPaperSourcesExaminedByAutomatedPass": 59,
@@ -13546,7 +13546,7 @@
       "weak_text_overlap": 3,
       "poor_text_overlap": 1
     },
-    "independentlyPageImageReviewedThisPass": 54,
+    "independentlyPageImageReviewedThisPass": 55,
     "outstandingVisualWordingReview": 508,
     "correctedQuestionRecords": 25,
     "note": "Automatic OCR text comparison is a QA filter, NOT manual verification. Many drafts originated from OCR, so matching text can reproduce the same errors.",
