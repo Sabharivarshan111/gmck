@@ -9,10 +9,10 @@
     "ocr_transcription_page_review_pending": "Original source file fingerprint/paper page is linked; its question text has not yet been exhaustively compared visually."
   },
   "counts": {
-    "page_image_compared": 274,
+    "page_image_compared": 286,
     "pdf_text_layer_corroborated": 129,
     "pdf_text_layer_low_match": 0,
-    "ocr_transcription_page_review_pending": 597
+    "ocr_transcription_page_review_pending": 585
   },
   "verifiedSourceHashes": {
     "batch26OriginalPapers": 78,
@@ -38,9 +38,10 @@
     "c4efe0d45b10",
     "d05d4cbf5ce1",
     "90f1bb30a9de",
-    "f330159b57d8"
+    "f330159b57d8",
+    "5140e208414c"
   ],
-  "sourceCaveat": "83 distinct source PDF fingerprints cover the 1,000 MUHS entries (78 in Batch26; 6 in Batch25; 1 shared). All records carry valid page labels; 597 OCR transcriptions still need visual confirmation.",
+  "sourceCaveat": "83 original-paper PDF fingerprints; 286 question appearances were visually checked against scanned pages, 129 are cross-checked against original PDF text, and 585 OCR records remain pending visual verification. No official answer keys.",
   "noOriginalAnswerKeys": true,
   "rows": [
     {
@@ -7318,17 +7319,17 @@
       "subject": "ent",
       "format": "long-answer",
       "marks": 15,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared"
     },
     {
-      "id": "muhs-5140e208414c-p1-q2i",
+      "id": "muhs-5140e208414c-p3-q4",
       "sha256": "5140e208414c31f4486dcc9aefb156661cd7c176a0bef52084049f659f60d6f5",
-      "sourcePdfPage": 1,
-      "printedQuestion": "2i",
+      "sourcePdfPage": 3,
+      "printedQuestion": "4",
       "subject": "ent",
       "format": "long-answer",
       "marks": 15,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared"
     },
     {
       "id": "muhs-5140e208414c-p2-q2b",
@@ -7338,7 +7339,7 @@
       "subject": "ent",
       "format": "long-answer",
       "marks": 15,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared"
     },
     {
       "id": "muhs-5140e208414c-p2-q2c",
@@ -7348,7 +7349,7 @@
       "subject": "ent",
       "format": "long-answer",
       "marks": 15,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared"
     },
     {
       "id": "muhs-5140e208414c-p2-q3a",
@@ -7358,7 +7359,7 @@
       "subject": "ent",
       "format": "short-answer",
       "marks": 5,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared"
     },
     {
       "id": "muhs-5140e208414c-p2-q3b",
@@ -7368,7 +7369,7 @@
       "subject": "ent",
       "format": "short-answer",
       "marks": 5,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared"
     },
     {
       "id": "muhs-5140e208414c-p2-q3c",
@@ -7378,7 +7379,7 @@
       "subject": "ent",
       "format": "short-answer",
       "marks": 5,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared"
     },
     {
       "id": "muhs-5140e208414c-p3-q5a",
@@ -7388,7 +7389,7 @@
       "subject": "ent",
       "format": "short-answer",
       "marks": 5,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared"
     },
     {
       "id": "muhs-5140e208414c-p3-q5b",
@@ -7398,7 +7399,7 @@
       "subject": "ent",
       "format": "short-answer",
       "marks": 5,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared"
     },
     {
       "id": "muhs-5140e208414c-p3-q5c",
@@ -7408,7 +7409,7 @@
       "subject": "ent",
       "format": "short-answer",
       "marks": 5,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared"
     },
     {
       "id": "muhs-5140e208414c-p3-q5d",
@@ -7418,7 +7419,7 @@
       "subject": "ent",
       "format": "short-answer",
       "marks": 5,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared"
     },
     {
       "id": "muhs-5140e208414c-p3-q5e",
@@ -7428,7 +7429,7 @@
       "subject": "ent",
       "format": "short-answer",
       "marks": 5,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared"
     },
     {
       "id": "muhs-6c31abb1be7e-p1-q2a",
