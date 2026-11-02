@@ -9,6 +9,9 @@ const results = [];
 try {
   for (const width of [360, 430]) {
     for (const fixture of [
+{"university": "wbuhs", "year": "third", "yearKey": "third-year", "query": "Her weight is found to be 42 kg", "topic": "Epidemiology Of Communicable Diseases", "reference": "Aug/Sep 2026"},
+{"university": "ntruhs", "year": "first", "yearKey": "first-year", "query": "epiphyseal growth plate", "topic": "Histology", "reference": "Oct 2024", "option": "Hyaline cartilage"},
+{"university": "ntruhs", "year": "first", "yearKey": "first-year", "query": "90/70mm Hg", "topic": "Cardiovascular Physiology", "reference": "Oct 2024"},
       {"university": "rguhs", "year": "first", "yearKey": "first-year", "query": "State Mary’s Law", "topic": "Cardiovascular Physiology", "reference": "Dec 2013"},
       {"university": "ntruhs", "year": "second", "yearKey": "second-year", "query": "Arginine vasopressin is preferred over desmopressin", "topic": "Hormones", "reference": "Jan 2025", "option": "Bleeding esophageal varices"},
       {"university": "wbuhs", "year": "first", "yearKey": "first-year", "query": "maternal PKU syndrome", "topic": "Protein metabolism", "reference": "Sep/Oct 2026"},
@@ -152,6 +155,7 @@ try {
         await page.getByRole('tab', {name: /^Short Notes\s+\d/}).click();
         assert.equal(await page.getByText(fixture.option, {exact:false}).filter({visible:true}).count(), 0);
         await mcqTab.click();
+        await page.waitForTimeout(550);
         fs.mkdirSync('artifacts/university-import', {recursive:true});
         await page.screenshot({path:`artifacts/university-import/mcq-tabs-${width}.png`});
         // This fixture tests UI only. Medical evidence is tested separately against the live function.
