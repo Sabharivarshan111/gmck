@@ -1,0 +1,1900 @@
+{
+  "batch": 23,
+  "newReviewed": 1009,
+  "cumulative": 17767,
+  "newCounts": {
+    "wbuhs": 209,
+    "ntruhs": 800
+  },
+  "marks": 5245,
+  "originalMcqs": 128,
+  "choices": 512,
+  "heldUnits": [
+    {
+      "sha256": "d541ae34f7bbf0e569eb9402eb26a7d839f089d369016723c3b3906e1b6b85b8",
+      "pdfPage": 7,
+      "sourceQuestion": "6(x)",
+      "marks": 1,
+      "reason": "Printed option labels a,b,b,d"
+    },
+    {
+      "sha256": "397477e409f8d184e8212801771847e563520fd75e82a266dcac0d4bc5696a15",
+      "pdfPage": 10,
+      "sourceQuestion": "5(vii)",
+      "marks": 1,
+      "reason": "Printed labels e,b,c,d"
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pdfPage": 19,
+      "sourceQuestion": "2",
+      "marks": 10,
+      "reason": "Handwritten replacement, printed unit circled and superseded"
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pdfPage": 20,
+      "sourceQuestion": "8",
+      "marks": 4,
+      "reason": "Printed unit struck out and replaced by handwriting"
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pdfPage": 20,
+      "sourceQuestion": "9",
+      "marks": 4,
+      "reason": "Printed unit struck out and replaced by handwriting"
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pdfPage": 33,
+      "sourceQuestion": "all",
+      "marks": 40,
+      "reason": "Faded issuing university identifier; entire 11-unit paper deferred"
+    }
+  ],
+  "papers": [
+    {
+      "sha256": "397477e409f8d184e8212801771847e563520fd75e82a266dcac0d4bc5696a15",
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "count": 9,
+      "marks": 78
+    },
+    {
+      "sha256": "397477e409f8d184e8212801771847e563520fd75e82a266dcac0d4bc5696a15",
+      "pagesVisuallyCompared": [
+        2
+      ],
+      "count": 13,
+      "marks": 22
+    },
+    {
+      "sha256": "397477e409f8d184e8212801771847e563520fd75e82a266dcac0d4bc5696a15",
+      "pagesVisuallyCompared": [
+        3
+      ],
+      "count": 12,
+      "marks": 90
+    },
+    {
+      "sha256": "397477e409f8d184e8212801771847e563520fd75e82a266dcac0d4bc5696a15",
+      "pagesVisuallyCompared": [
+        4
+      ],
+      "count": 10,
+      "marks": 10
+    },
+    {
+      "sha256": "397477e409f8d184e8212801771847e563520fd75e82a266dcac0d4bc5696a15",
+      "pagesVisuallyCompared": [
+        9
+      ],
+      "count": 12,
+      "marks": 90
+    },
+    {
+      "sha256": "397477e409f8d184e8212801771847e563520fd75e82a266dcac0d4bc5696a15",
+      "pagesVisuallyCompared": [
+        10
+      ],
+      "count": 9,
+      "marks": 9
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        2
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        3
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        4
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        5
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        6
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        7
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        8
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        9
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        10
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        11
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        12
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        13
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        14
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        15
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        16
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        17
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        18
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        19
+      ],
+      "count": 12,
+      "marks": 50
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        20
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        21
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        22
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        23
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        24
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        25
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        26
+      ],
+      "count": 12,
+      "marks": 50
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        27
+      ],
+      "count": 12,
+      "marks": 50
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        30
+      ],
+      "count": 12,
+      "marks": 50
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        31
+      ],
+      "count": 3,
+      "marks": 25
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        32
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        33
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        34
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        35
+      ],
+      "count": 12,
+      "marks": 50
+    },
+    {
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "pagesVisuallyCompared": [
+        36
+      ],
+      "count": 12,
+      "marks": 50
+    },
+    {
+      "sha256": "5a410121866303c19d3bda1faea400e3945df90e1a5504bae9ffb8da2033c091",
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "count": 6,
+      "marks": 6
+    },
+    {
+      "sha256": "5a410121866303c19d3bda1faea400e3945df90e1a5504bae9ffb8da2033c091",
+      "pagesVisuallyCompared": [
+        2
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "5a410121866303c19d3bda1faea400e3945df90e1a5504bae9ffb8da2033c091",
+      "pagesVisuallyCompared": [
+        3
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "5a410121866303c19d3bda1faea400e3945df90e1a5504bae9ffb8da2033c091",
+      "pagesVisuallyCompared": [
+        4
+      ],
+      "count": 6,
+      "marks": 6
+    },
+    {
+      "sha256": "5a410121866303c19d3bda1faea400e3945df90e1a5504bae9ffb8da2033c091",
+      "pagesVisuallyCompared": [
+        5
+      ],
+      "count": 8,
+      "marks": 8
+    },
+    {
+      "sha256": "5a410121866303c19d3bda1faea400e3945df90e1a5504bae9ffb8da2033c091",
+      "pagesVisuallyCompared": [
+        6
+      ],
+      "count": 6,
+      "marks": 6
+    },
+    {
+      "sha256": "a6c5d67856d70641fb6f8731a0f64a976cfe6dfc2839c0183d9619b0cce65b29",
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "a6c5d67856d70641fb6f8731a0f64a976cfe6dfc2839c0183d9619b0cce65b29",
+      "pagesVisuallyCompared": [
+        2
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "a6c5d67856d70641fb6f8731a0f64a976cfe6dfc2839c0183d9619b0cce65b29",
+      "pagesVisuallyCompared": [
+        3
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "a6c5d67856d70641fb6f8731a0f64a976cfe6dfc2839c0183d9619b0cce65b29",
+      "pagesVisuallyCompared": [
+        5
+      ],
+      "count": 4,
+      "marks": 40
+    },
+    {
+      "sha256": "a6c5d67856d70641fb6f8731a0f64a976cfe6dfc2839c0183d9619b0cce65b29",
+      "pagesVisuallyCompared": [
+        6
+      ],
+      "count": 8,
+      "marks": 40
+    },
+    {
+      "sha256": "a6c5d67856d70641fb6f8731a0f64a976cfe6dfc2839c0183d9619b0cce65b29",
+      "pagesVisuallyCompared": [
+        7
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        2
+      ],
+      "count": 12,
+      "marks": 60
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        3
+      ],
+      "count": 12,
+      "marks": 60
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        4
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        5
+      ],
+      "count": 11,
+      "marks": 40
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        6
+      ],
+      "count": 11,
+      "marks": 40
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        7
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        8
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        9
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        10
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        11
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        15
+      ],
+      "count": 12,
+      "marks": 60
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        16
+      ],
+      "count": 12,
+      "marks": 60
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        17
+      ],
+      "count": 11,
+      "marks": 40
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        18
+      ],
+      "count": 11,
+      "marks": 40
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        19
+      ],
+      "count": 11,
+      "marks": 50
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        20
+      ],
+      "count": 10,
+      "marks": 52
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        21
+      ],
+      "count": 11,
+      "marks": 40
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        23
+      ],
+      "count": 12,
+      "marks": 60
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        24
+      ],
+      "count": 12,
+      "marks": 60
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        25
+      ],
+      "count": 11,
+      "marks": 40
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        26
+      ],
+      "count": 11,
+      "marks": 40
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        27
+      ],
+      "count": 12,
+      "marks": 60
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        29
+      ],
+      "count": 11,
+      "marks": 40
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        30
+      ],
+      "count": 12,
+      "marks": 60
+    },
+    {
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "pagesVisuallyCompared": [
+        31
+      ],
+      "count": 12,
+      "marks": 60
+    },
+    {
+      "sha256": "d541ae34f7bbf0e569eb9402eb26a7d839f089d369016723c3b3906e1b6b85b8",
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "count": 19,
+      "marks": 90
+    },
+    {
+      "sha256": "d541ae34f7bbf0e569eb9402eb26a7d839f089d369016723c3b3906e1b6b85b8",
+      "pagesVisuallyCompared": [
+        2
+      ],
+      "count": 10,
+      "marks": 10
+    },
+    {
+      "sha256": "d541ae34f7bbf0e569eb9402eb26a7d839f089d369016723c3b3906e1b6b85b8",
+      "pagesVisuallyCompared": [
+        3
+      ],
+      "count": 10,
+      "marks": 50
+    },
+    {
+      "sha256": "d541ae34f7bbf0e569eb9402eb26a7d839f089d369016723c3b3906e1b6b85b8",
+      "pagesVisuallyCompared": [
+        4
+      ],
+      "count": 12,
+      "marks": 43
+    },
+    {
+      "sha256": "d541ae34f7bbf0e569eb9402eb26a7d839f089d369016723c3b3906e1b6b85b8",
+      "pagesVisuallyCompared": [
+        5
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "d541ae34f7bbf0e569eb9402eb26a7d839f089d369016723c3b3906e1b6b85b8",
+      "pagesVisuallyCompared": [
+        6
+      ],
+      "count": 19,
+      "marks": 90
+    },
+    {
+      "sha256": "d541ae34f7bbf0e569eb9402eb26a7d839f089d369016723c3b3906e1b6b85b8",
+      "pagesVisuallyCompared": [
+        7
+      ],
+      "count": 9,
+      "marks": 9
+    },
+    {
+      "sha256": "d541ae34f7bbf0e569eb9402eb26a7d839f089d369016723c3b3906e1b6b85b8",
+      "pagesVisuallyCompared": [
+        8
+      ],
+      "count": 20,
+      "marks": 91
+    },
+    {
+      "sha256": "d541ae34f7bbf0e569eb9402eb26a7d839f089d369016723c3b3906e1b6b85b8",
+      "pagesVisuallyCompared": [
+        9
+      ],
+      "count": 9,
+      "marks": 9
+    },
+    {
+      "sha256": "d541ae34f7bbf0e569eb9402eb26a7d839f089d369016723c3b3906e1b6b85b8",
+      "pagesVisuallyCompared": [
+        12
+      ],
+      "count": 18,
+      "marks": 89
+    },
+    {
+      "sha256": "d541ae34f7bbf0e569eb9402eb26a7d839f089d369016723c3b3906e1b6b85b8",
+      "pagesVisuallyCompared": [
+        13
+      ],
+      "count": 11,
+      "marks": 11
+    }
+  ],
+  "sourcePaperReview": [
+    {
+      "sha256": "d541ae34f7bbf0e569eb9402eb26a7d839f089d369016723c3b3906e1b6b85b8",
+      "subject": "anatomy",
+      "paper": "I",
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "offeredMarks": 100,
+      "attemptedMarks": 100,
+      "wholeUnitsHeld": 0
+    },
+    {
+      "sha256": "d541ae34f7bbf0e569eb9402eb26a7d839f089d369016723c3b3906e1b6b85b8",
+      "subject": "anatomy",
+      "paper": "II",
+      "pagesVisuallyCompared": [
+        3,
+        4,
+        5
+      ],
+      "offeredMarks": 100,
+      "attemptedMarks": 100,
+      "wholeUnitsHeld": 0
+    },
+    {
+      "sha256": "d541ae34f7bbf0e569eb9402eb26a7d839f089d369016723c3b3906e1b6b85b8",
+      "subject": "physiology",
+      "paper": "I",
+      "pagesVisuallyCompared": [
+        6,
+        7
+      ],
+      "offeredMarks": 100,
+      "attemptedMarks": 100,
+      "wholeUnitsHeld": 1
+    },
+    {
+      "sha256": "d541ae34f7bbf0e569eb9402eb26a7d839f089d369016723c3b3906e1b6b85b8",
+      "subject": "physiology",
+      "paper": "II",
+      "pagesVisuallyCompared": [
+        8,
+        9
+      ],
+      "offeredMarks": 100,
+      "attemptedMarks": 100,
+      "wholeUnitsHeld": 0
+    },
+    {
+      "sha256": "d541ae34f7bbf0e569eb9402eb26a7d839f089d369016723c3b3906e1b6b85b8",
+      "subject": "biochemistry",
+      "paper": "I",
+      "pagesVisuallyCompared": [
+        10,
+        11
+      ],
+      "offeredMarks": 100,
+      "attemptedMarks": 100,
+      "wholeUnitsHeld": 0
+    },
+    {
+      "sha256": "d541ae34f7bbf0e569eb9402eb26a7d839f089d369016723c3b3906e1b6b85b8",
+      "subject": "biochemistry",
+      "paper": "II",
+      "pagesVisuallyCompared": [
+        12,
+        13
+      ],
+      "offeredMarks": 100,
+      "attemptedMarks": 100,
+      "wholeUnitsHeld": 0
+    },
+    {
+      "sha256": "397477e409f8d184e8212801771847e563520fd75e82a266dcac0d4bc5696a15",
+      "subject": "community-medicine",
+      "paper": "I",
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "offeredMarks": 100,
+      "attemptedMarks": 100,
+      "wholeUnitsHeld": 0
+    },
+    {
+      "sha256": "397477e409f8d184e8212801771847e563520fd75e82a266dcac0d4bc5696a15",
+      "subject": "community-medicine",
+      "paper": "II",
+      "pagesVisuallyCompared": [
+        3,
+        4
+      ],
+      "offeredMarks": 100,
+      "attemptedMarks": 100,
+      "wholeUnitsHeld": 0
+    },
+    {
+      "sha256": "397477e409f8d184e8212801771847e563520fd75e82a266dcac0d4bc5696a15",
+      "subject": "forensic-medicine",
+      "paper": "",
+      "pagesVisuallyCompared": [
+        5,
+        6
+      ],
+      "offeredMarks": 100,
+      "attemptedMarks": 100,
+      "wholeUnitsHeld": 0
+    },
+    {
+      "sha256": "397477e409f8d184e8212801771847e563520fd75e82a266dcac0d4bc5696a15",
+      "subject": "ophthalmology",
+      "paper": "",
+      "pagesVisuallyCompared": [
+        7,
+        8
+      ],
+      "offeredMarks": 100,
+      "attemptedMarks": 100,
+      "wholeUnitsHeld": 0
+    },
+    {
+      "sha256": "397477e409f8d184e8212801771847e563520fd75e82a266dcac0d4bc5696a15",
+      "subject": "ent",
+      "paper": "",
+      "pagesVisuallyCompared": [
+        9,
+        10
+      ],
+      "offeredMarks": 100,
+      "attemptedMarks": 100,
+      "wholeUnitsHeld": 1
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "anatomy",
+      "paper": "I",
+      "session": "Oct 2024",
+      "printedCode": "M102A010",
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "anatomy",
+      "paper": "II",
+      "session": "Oct 2024",
+      "printedCode": "M102A011",
+      "pagesVisuallyCompared": [
+        2
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "physiology",
+      "paper": "I",
+      "session": "Oct 2024",
+      "printedCode": "M102A020",
+      "pagesVisuallyCompared": [
+        3
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "physiology",
+      "paper": "II",
+      "session": "Oct 2024",
+      "printedCode": "M102A021",
+      "pagesVisuallyCompared": [
+        4
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "biochemistry",
+      "paper": "I",
+      "session": "Oct 2024",
+      "printedCode": "M102A030",
+      "pagesVisuallyCompared": [
+        5
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "biochemistry",
+      "paper": "II",
+      "session": "Oct 2024",
+      "printedCode": "M102A031",
+      "pagesVisuallyCompared": [
+        6
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "anatomy",
+      "paper": "I",
+      "session": "Aug 2024",
+      "printedCode": "M102A010",
+      "pagesVisuallyCompared": [
+        7
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "anatomy",
+      "paper": "II",
+      "session": "Aug 2024",
+      "printedCode": "M102A011",
+      "pagesVisuallyCompared": [
+        8
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "physiology",
+      "paper": "I",
+      "session": "Aug 2024",
+      "printedCode": "M102A020",
+      "pagesVisuallyCompared": [
+        9
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "physiology",
+      "paper": "II",
+      "session": "Aug 2024",
+      "printedCode": "M102A021",
+      "pagesVisuallyCompared": [
+        10
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "biochemistry",
+      "paper": "I",
+      "session": "Aug 2024",
+      "printedCode": "M102A030",
+      "pagesVisuallyCompared": [
+        11
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "biochemistry",
+      "paper": "II",
+      "session": "Aug 2024",
+      "printedCode": "M102A031",
+      "pagesVisuallyCompared": [
+        12
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "anatomy",
+      "paper": "I",
+      "session": "Dec 2023",
+      "printedCode": "M102A010",
+      "pagesVisuallyCompared": [
+        13
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "anatomy",
+      "paper": "II",
+      "session": "Dec 2023",
+      "printedCode": "M102A011",
+      "pagesVisuallyCompared": [
+        14
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "physiology",
+      "paper": "I",
+      "session": "Dec 2023",
+      "printedCode": "M102A020",
+      "pagesVisuallyCompared": [
+        15
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "physiology",
+      "paper": "II",
+      "session": "Dec 2023",
+      "printedCode": "M102A021",
+      "pagesVisuallyCompared": [
+        16
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "biochemistry",
+      "paper": "I",
+      "session": "Dec 2023",
+      "printedCode": "M102A030",
+      "pagesVisuallyCompared": [
+        17
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "biochemistry",
+      "paper": "II",
+      "session": "Dec 2023",
+      "printedCode": "M102A031",
+      "pagesVisuallyCompared": [
+        18
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "anatomy",
+      "paper": "II",
+      "session": "Jan 2023",
+      "printedCode": "502-A-OR",
+      "pagesVisuallyCompared": [
+        19
+      ],
+      "units": 12,
+      "marks": 50,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "anatomy",
+      "paper": "I",
+      "session": "Jan 2023",
+      "printedCode": "M102A010",
+      "pagesVisuallyCompared": [
+        20
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "anatomy",
+      "paper": "II",
+      "session": "Jan 2023",
+      "printedCode": "M102A011",
+      "pagesVisuallyCompared": [
+        21
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "physiology",
+      "paper": "I",
+      "session": "Jan 2023",
+      "printedCode": "M102A020",
+      "pagesVisuallyCompared": [
+        22
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "physiology",
+      "paper": "II",
+      "session": "Jan 2023",
+      "printedCode": "M102A021",
+      "pagesVisuallyCompared": [
+        23
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "biochemistry",
+      "paper": "I",
+      "session": "Jan 2023",
+      "printedCode": "M102A030",
+      "pagesVisuallyCompared": [
+        24
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "biochemistry",
+      "paper": "II",
+      "session": "Jan 2023",
+      "printedCode": "M102A031",
+      "pagesVisuallyCompared": [
+        25
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "anatomy",
+      "paper": "I",
+      "session": "Jan/Feb 2022",
+      "printedCode": "501-A-OR",
+      "pagesVisuallyCompared": [
+        26
+      ],
+      "units": 12,
+      "marks": 50,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "anatomy",
+      "paper": "II",
+      "session": "Jan/Feb 2022",
+      "printedCode": "502-A-OR",
+      "pagesVisuallyCompared": [
+        27
+      ],
+      "units": 12,
+      "marks": 50,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "physiology",
+      "paper": "I",
+      "session": "Jan/Feb 2022",
+      "printedCode": "503-A-OR",
+      "pagesVisuallyCompared": [
+        30
+      ],
+      "units": 12,
+      "marks": 50,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "physiology",
+      "paper": "I",
+      "session": "Jan/Feb 2022",
+      "printedCode": "503-A-CBME",
+      "pagesVisuallyCompared": [
+        31
+      ],
+      "units": 3,
+      "marks": 25,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "physiology",
+      "paper": "II",
+      "session": "Jan/Feb 2022",
+      "printedCode": "504-A-CBME",
+      "pagesVisuallyCompared": [
+        32
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "biochemistry",
+      "paper": "I",
+      "session": "Jan/Feb 2022",
+      "printedCode": "500-B-CBME",
+      "pagesVisuallyCompared": [
+        33
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "biochemistry",
+      "paper": "II",
+      "session": "Jan/Feb 2022",
+      "printedCode": "500-B-CBME",
+      "pagesVisuallyCompared": [
+        34
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "biochemistry",
+      "paper": "I",
+      "session": "Jan/Feb 2022",
+      "printedCode": "500-A-OR",
+      "pagesVisuallyCompared": [
+        35
+      ],
+      "units": 12,
+      "marks": 50,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3d9161eded6b495c2bd1e8515fc90a572977d16fb175dd9967081a46131af891",
+      "subject": "biochemistry",
+      "paper": "II",
+      "session": "Jan/Feb 2022",
+      "printedCode": "500-B-OR",
+      "pagesVisuallyCompared": [
+        36
+      ],
+      "units": 12,
+      "marks": 50,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "forensic-medicine",
+      "paper": "",
+      "session": "Jan 2024",
+      "printedCode": "M102C010",
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "community-medicine",
+      "paper": "I",
+      "session": "Aug 2024",
+      "printedCode": "511-A-OR",
+      "pagesVisuallyCompared": [
+        2
+      ],
+      "units": 12,
+      "marks": 60,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "community-medicine",
+      "paper": "II",
+      "session": "Aug 2024",
+      "printedCode": "511-B",
+      "pagesVisuallyCompared": [
+        3
+      ],
+      "units": 12,
+      "marks": 60,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "community-medicine",
+      "paper": "I",
+      "session": "Jan 2024",
+      "printedCode": "M102C040",
+      "pagesVisuallyCompared": [
+        4
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "ophthalmology",
+      "paper": "",
+      "session": "Aug 2024",
+      "printedCode": "510-A-OR",
+      "pagesVisuallyCompared": [
+        5
+      ],
+      "units": 11,
+      "marks": 40,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "ent",
+      "paper": "",
+      "session": "Aug 2024",
+      "printedCode": "509-A-OR",
+      "pagesVisuallyCompared": [
+        6
+      ],
+      "units": 11,
+      "marks": 40,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "community-medicine",
+      "paper": "II",
+      "session": "Jan 2024",
+      "printedCode": "M102C041",
+      "pagesVisuallyCompared": [
+        7
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "ophthalmology",
+      "paper": "",
+      "session": "Jan 2024",
+      "printedCode": "M102C020",
+      "pagesVisuallyCompared": [
+        8
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "ent",
+      "paper": "",
+      "session": "Jan 2024",
+      "printedCode": "M102C030",
+      "pagesVisuallyCompared": [
+        9
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "forensic-medicine",
+      "paper": "",
+      "session": "Jan 2023",
+      "printedCode": "M102C010",
+      "pagesVisuallyCompared": [
+        10
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "community-medicine",
+      "paper": "I",
+      "session": "Jan 2023",
+      "printedCode": "M102C040",
+      "pagesVisuallyCompared": [
+        11
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "community-medicine",
+      "paper": "II",
+      "session": "Mar 2022",
+      "printedCode": "511-B",
+      "pagesVisuallyCompared": [
+        15
+      ],
+      "units": 12,
+      "marks": 60,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "community-medicine",
+      "paper": "I",
+      "session": "Mar 2022",
+      "printedCode": "511-A",
+      "pagesVisuallyCompared": [
+        16
+      ],
+      "units": 12,
+      "marks": 60,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "ophthalmology",
+      "paper": "",
+      "session": "Mar 2022",
+      "printedCode": "510-A",
+      "pagesVisuallyCompared": [
+        17
+      ],
+      "units": 11,
+      "marks": 40,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "ent",
+      "paper": "",
+      "session": "Mar 2022",
+      "printedCode": "509-A",
+      "pagesVisuallyCompared": [
+        18
+      ],
+      "units": 11,
+      "marks": 40,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "community-medicine",
+      "paper": "I",
+      "session": "Aug 2021",
+      "printedCode": "511-A",
+      "pagesVisuallyCompared": [
+        19
+      ],
+      "units": 11,
+      "marks": 50,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "community-medicine",
+      "paper": "II",
+      "session": "Aug 2021",
+      "printedCode": "511-B",
+      "pagesVisuallyCompared": [
+        20
+      ],
+      "units": 10,
+      "marks": 52,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "ophthalmology",
+      "paper": "",
+      "session": "Aug 2021",
+      "printedCode": "510-A",
+      "pagesVisuallyCompared": [
+        21
+      ],
+      "units": 11,
+      "marks": 40,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "community-medicine",
+      "paper": "I",
+      "session": "Mar 2021",
+      "printedCode": "511-A",
+      "pagesVisuallyCompared": [
+        23
+      ],
+      "units": 12,
+      "marks": 60,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "community-medicine",
+      "paper": "II",
+      "session": "Mar 2021",
+      "printedCode": "511-B",
+      "pagesVisuallyCompared": [
+        24
+      ],
+      "units": 12,
+      "marks": 60,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "ophthalmology",
+      "paper": "",
+      "session": "Mar 2021",
+      "printedCode": "510-A",
+      "pagesVisuallyCompared": [
+        25
+      ],
+      "units": 11,
+      "marks": 40,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "ent",
+      "paper": "",
+      "session": "Mar 2021",
+      "printedCode": "509-A",
+      "pagesVisuallyCompared": [
+        26
+      ],
+      "units": 11,
+      "marks": 40,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "community-medicine",
+      "paper": "I",
+      "session": "Nov 2020",
+      "printedCode": "511-A",
+      "pagesVisuallyCompared": [
+        27
+      ],
+      "units": 12,
+      "marks": 60,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "ent",
+      "paper": "",
+      "session": "Nov 2020",
+      "printedCode": "509-A",
+      "pagesVisuallyCompared": [
+        29
+      ],
+      "units": 11,
+      "marks": 40,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "community-medicine",
+      "paper": "I",
+      "session": "Feb 2020",
+      "printedCode": "511-A",
+      "pagesVisuallyCompared": [
+        30
+      ],
+      "units": 12,
+      "marks": 60,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "c2a3ad3e2c6deb103086284d12d96251d0c5acd01eda3ad536ee786908262c2e",
+      "subject": "community-medicine",
+      "paper": "II",
+      "session": "Nov 2020",
+      "printedCode": "511-B",
+      "pagesVisuallyCompared": [
+        31
+      ],
+      "units": 12,
+      "marks": 60,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "a6c5d67856d70641fb6f8731a0f64a976cfe6dfc2839c0183d9619b0cce65b29",
+      "subject": "forensic-medicine",
+      "paper": "",
+      "session": "Jan 2025",
+      "printedCode": "M102C010",
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "a6c5d67856d70641fb6f8731a0f64a976cfe6dfc2839c0183d9619b0cce65b29",
+      "subject": "community-medicine",
+      "paper": "I",
+      "session": "Jan 2025",
+      "printedCode": "M102C040",
+      "pagesVisuallyCompared": [
+        2
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "a6c5d67856d70641fb6f8731a0f64a976cfe6dfc2839c0183d9619b0cce65b29",
+      "subject": "community-medicine",
+      "paper": "II",
+      "session": "Jan 2025",
+      "printedCode": "M102C041",
+      "pagesVisuallyCompared": [
+        3
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "a6c5d67856d70641fb6f8731a0f64a976cfe6dfc2839c0183d9619b0cce65b29",
+      "subject": "ophthalmology",
+      "paper": "",
+      "session": "Jan 2025",
+      "printedCode": "M102C020",
+      "pagesVisuallyCompared": [
+        5
+      ],
+      "units": 4,
+      "marks": 40,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "a6c5d67856d70641fb6f8731a0f64a976cfe6dfc2839c0183d9619b0cce65b29",
+      "subject": "ophthalmology",
+      "paper": "",
+      "session": "Jan 2025",
+      "printedCode": "M102C020",
+      "pagesVisuallyCompared": [
+        6
+      ],
+      "units": 8,
+      "marks": 40,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sourceGroup": "third",
+      "sha256": "a6c5d67856d70641fb6f8731a0f64a976cfe6dfc2839c0183d9619b0cce65b29",
+      "subject": "ent",
+      "paper": "",
+      "session": "Jan 2025",
+      "printedCode": "M102C030",
+      "pagesVisuallyCompared": [
+        7
+      ],
+      "units": 12,
+      "marks": 80,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "5a410121866303c19d3bda1faea400e3945df90e1a5504bae9ffb8da2033c091",
+      "subject": "anatomy",
+      "paper": "I",
+      "session": "Oct 2024",
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        3
+      ],
+      "units": 20,
+      "marks": 20,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "5a410121866303c19d3bda1faea400e3945df90e1a5504bae9ffb8da2033c091",
+      "subject": "anatomy",
+      "paper": "II",
+      "session": "Oct 2024",
+      "pagesVisuallyCompared": [
+        4,
+        5,
+        6
+      ],
+      "units": 20,
+      "marks": 20,
+      "visuallyCompared": true
+    }
+  ],
+  "sourcePDFsPublished": false,
+  "overallCoveragePercentage": null,
+  "duplicateExclusions": [
+    "WB first BiochemistryI FebMar2026 canonical821b6c668d96, WB Forensic/Ophthalmology AugSep2026 canonical588258b8d329/63e2d609826f:73 units excluded",
+    "NTR JanFeb2022 CBME anatomyI/II complete same-exam canonical already imported; no new occurrences",
+    "NTR JanFeb2022 physiologyI shifted/merged prior numbering: only missing complete units2,7,8 recovered; prior objects retained",
+    "NTR Jan2023 communityII/ophthalmology/ENT; Aug2021ENT; Nov2020/Feb2020ophthalmology already imported; excluded",
+    "Jan2025 amendment physical4 is supporting evidence only; no extra MCQ counted"
+  ]
+}
