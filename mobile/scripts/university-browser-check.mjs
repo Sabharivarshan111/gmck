@@ -9,6 +9,10 @@ const results = [];
 try {
   for (const width of [360, 430]) {
     for (const fixture of [
+      {"university": "rguhs", "year": "first", "yearKey": "first-year", "query": "State Mary’s Law", "topic": "Cardiovascular Physiology", "reference": "Dec 2013"},
+      {"university": "ntruhs", "year": "second", "yearKey": "second-year", "query": "Arginine vasopressin is preferred over desmopressin", "topic": "Hormones", "reference": "Jan 2025", "option": "Bleeding esophageal varices"},
+      {"university": "wbuhs", "year": "first", "yearKey": "first-year", "query": "maternal PKU syndrome", "topic": "Protein metabolism", "reference": "Sep/Oct 2026"},
+
       {"university": "rguhs", "year": "final", "yearKey": "final-year", "query": "One side effect of each: 1) Chloramphenicol", "topic": "Fundamentals of Medicine", "reference": "Jun/Jul 2011"},
       {"university": "ntruhs", "year": "first", "yearKey": "first-year", "query": "Describe the Brachial Plexus under the following headings", "topic": "Upper Limb", "reference": "Oct/Nov 2018"},
       {"university": "ntruhs", "year": "final", "yearKey": "final-year", "query": "Describe the mode of injury, clinical features, investigations", "topic": "Trauma and fractures", "reference": "Jan 2019"},
