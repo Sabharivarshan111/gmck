@@ -5,12 +5,12 @@
   "cumulative": 19769,
   "MUHSTotal": 1000,
   "contributingOriginalPapers": 78,
-  "reviewStatus": "SOURCE-PAGE VISUAL QA: 300 of 862 Batch26 question records checked against 19 original-paper PDF scans. 562 Batch26 OCR/derived transcriptions remain pending. Batch25: nine original-page-checked and 129 text-layer corroborated.",
+  "reviewStatus": "SECOND-PASS OCR OF ALL 562 FORMERLY PENDING: 89 page images across 59 paper PDFs machine compared; 54 more questions visually checked. Batch26 now has 354 page-image-checked records, 508 still pending full manual page proofreading; Batch25 has 9 image-checked plus 129 text-layer corroborated.",
   "countsByEvidenceClass": {
-    "pageImageCompared": 300,
-    "ocrDerivedPending": 562
+    "pageImageCompared": 354,
+    "ocrDerivedPending": 508
   },
-  "marks": 4635,
+  "marks": 4640,
   "mcqs": 0,
   "excludedUnreviewedDrafts": true,
   "sourceHashes": [
@@ -100,7 +100,9 @@
     "note": "Visual original-page QA corrected mistaken marks, split/merged questions, misleading clinical wording and sourceQuestion IDs; replaced duplicate continuation rows with genuine omitted original-paper questions. See Git history 1d8d516e, 6e91676c and 6290502b.",
     "sourceHashVerified": 78,
     "duplicatesAfterQA": 0,
-    "displayedCountUnchanged": 1000
+    "displayedCountUnchanged": 1000,
+    "latest": "24 additional corrections after comparison to 89 source images; corrected 2019 ENT four-mark scheme and recovered one true Biochemistry clinical question from an OCR join",
+    "sourceGapCount": 5
   },
   "publishedDataCounts": {
     "priorUniversityBank": 18769,
@@ -111,14 +113,16 @@
   },
   "verification": {
     "verifiedOriginalPaperSHA256": 78,
-    "visualSourcesThisPass": 19,
-    "visuallyComparedBatch26Questions": 300,
-    "notVisuallyCheckedBatch26": 562,
+    "visualSourcesThisPass": 30,
+    "visuallyComparedBatch26Questions": 354,
+    "notVisuallyCheckedBatch26": 508,
     "olderBatch25SourceLinked": 138,
     "totalMUHS": 1000,
     "noOfficialAnswerKey": true,
     "notice": "A source fingerprint validates the underlying PDF file, not the correctness of an individual OCR transcription or medical answer.",
     "distinctOriginalSourcePDFsAcrossBatch25and26": 83,
-    "warning": "Source SHA validates input PDF identity, not correctness of OCR question or medical answer."
+    "warning": "Similarity to a second OCR extraction is not independent visual evidence; it can repeat errors.",
+    "automatedOCRPagesCompared": 89,
+    "automatedOCRRowsCompared": 562
   }
 }
