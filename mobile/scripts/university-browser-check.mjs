@@ -197,7 +197,11 @@ try {
   await page.getByLabel('University: Karnataka · RGUHS. Change university', { exact: true }).click();
   const radios = page.getByRole('radiogroup').filter({ visible: true }).getByRole('radio');await radios.first().waitFor();
   assert.equal(await radios.count(), 8);
-  assert.equal(await page.getByRole('radiogroup').filter({ visible: true }).getByRole('radio', { name: /Maharashtra University/ }).getAttribute('aria-disabled'), 'true');
+  const maharashtra = page.getByRole('radiogroup').filter({ visible: true }).getByRole('radio', { name: /Maharashtra University/ });
+  assert.notEqual(await maharashtra.getAttribute('aria-disabled'), 'true', 'MUHS must be selectable after the 1000-question import');
+  await maharashtra.scrollIntoViewIfNeeded();
+  await maharashtra.click();
+  await page.waitForFunction(() => JSON.parse(localStorage.getItem('orbit-profile-v1') || '{}').university === 'muhs');
   await page.getByRole('radiogroup').filter({ visible: true }).getByRole('radio', { name: /West Bengal University/ }).scrollIntoViewIfNeeded();
   await page.getByRole('radiogroup').filter({ visible: true }).getByRole('radio', { name: /West Bengal University/ }).click();
   await page.waitForFunction(() => JSON.parse(localStorage.getItem('orbit-profile-v1') || '{}').university === 'wbuhs');
