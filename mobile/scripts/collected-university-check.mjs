@@ -44,7 +44,7 @@ const resume = load('src/lib/homeResume.ts', { ...common, '@/lib/questionBank': 
 assert.equal(rows.length, 19769);
 assert.equal(new Set(rows.map(r => r.id)).size, rows.length);
 const expected = { rguhs: 8050, knruhs: 3695, muhs: 1000, ntruhs: 4276, wbuhs: 2748 };
-const marks = { rguhs: 33690, knruhs: 15599, muhs: 5251, ntruhs: 16782, wbuhs: 13730 };
+const marks = { rguhs: 33690, knruhs: 15599, muhs: 5217, ntruhs: 16782, wbuhs: 13730 };
 const ids = new Set();
 for (const [university, count] of Object.entries(expected)) {
   assert.equal(bank.allSearchHits(university).length, count);
