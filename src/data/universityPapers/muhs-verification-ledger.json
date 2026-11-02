@@ -16,7 +16,11 @@
   },
   "verifiedSourceHashes": {
     "batch26OriginalPapers": 78,
-    "legacyBatch25OriginalPapers": 6
+    "legacyBatch25OriginalPapers": 6,
+    "uniqueSourceFiles": 83,
+    "sharedBetweenBatches": [
+      "f54e5d25c24b0718861e5e5b223d82fc7148912d203cad956ed4c77bf34fc6fc"
+    ]
   },
   "independentOriginalPaperPagesComparedSourcePrefixes": [
     "a0db0fc76309",
@@ -36,7 +40,7 @@
     "90f1bb30a9de",
     "f330159b57d8"
   ],
-  "sourceCaveat": "Full image review pending on 597 Batch26 questions; paper hash, page number and source ID validate metadata, not exact OCR wording. Do not claim 1,000 independently transcription-verified.",
+  "sourceCaveat": "83 distinct source PDF fingerprints cover the 1,000 MUHS entries (78 in Batch26; 6 in Batch25; 1 shared). All records carry valid page labels; 597 OCR transcriptions still need visual confirmation.",
   "noOriginalAnswerKeys": true,
   "rows": [
     {
