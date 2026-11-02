@@ -8,15 +8,15 @@ const root = path.resolve(import.meta.dirname, '../..');
 const source = fs.readFileSync(path.join(root, 'supabase/functions/university-mcq-answer/index.ts'), 'utf8').replace(/^import .*\n/gm, '');
 const code = stripTypeScriptTypes(source);
 const input = { id: 'knruhs-c6066ec7370d-p1-q1', subject: 'forensic-medicine', topic: 'toxicology', question: 'Danbury tremors are due to', options: [{label:'a',text:'Cyanide'}, {label:'b',text:'Phenol'}, {label:'c',text:'Phosphorous'}, {label:'d',text:'Mercury'}] };
-async function scenario({ context = '', responses = [], fail = false } = {}) {
+async function scenario({ context = '', responses = [], fail = false, failOnce = false } = {}) {
   let handler;
   let calls = 0;
-  const sandbox = { Response, AbortSignal, console,
+  const sandbox = { Response, AbortSignal, console, setTimeout: fn => {fn();},
     buildTextbookContext: async () => context,
     Deno: { env: { get: () => 'server-only-test-key' }, serve: fn => { handler = fn; } },
     fetch: async () => {
       calls++;
-      if (fail) throw Error('network unavailable');
+      if (fail || (failOnce && calls === 1)) throw Error('network unavailable');
       const value = responses.shift();
       assert.ok(value, 'unexpected extra network call');
       return new Response(typeof value === 'string' ? value : JSON.stringify(value));
@@ -40,3 +40,9 @@ data = await (await web.handler(request(input))).json(); assert.equal(data.basis
 const invalid = await scenario(); response = await invalid.handler(request({...input,options:input.options.slice(1)})); assert.equal(response.status,400); assert.equal(invalid.calls(),0);
 const failure = await scenario({context:evidence,fail:true}); response = await failure.handler(request(input)); assert.equal(response.status,503);
 console.log('PASS: textbook first, exact evidence validation, cited web fallback, unresolved evidence, malformed choices and network error.');
+
+const transient = await scenario({context:evidence,responses:[model(supported)],failOnce:true});
+response=await transient.handler(request(input));data=await response.json();
+assert.equal(response.status,200);assert.equal(data.option,'Mercury');assert.equal(transient.calls(),2);
+assert.equal(failure.calls(),2,'Persistent failure must have bounded retries');
+console.log('PASS bounded transient retry, persistent-error cap and unchanged sourced-answer validation.');
