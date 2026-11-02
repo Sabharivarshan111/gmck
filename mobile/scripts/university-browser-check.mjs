@@ -202,6 +202,7 @@ try {
   await maharashtra.scrollIntoViewIfNeeded();
   await maharashtra.click();
   await page.waitForFunction(() => JSON.parse(localStorage.getItem('orbit-profile-v1') || '{}').university === 'muhs');
+  await page.getByLabel('University: Maharashtra · MUHS. Change university', { exact: true }).click();
   await page.getByRole('radiogroup').filter({ visible: true }).getByRole('radio', { name: /West Bengal University/ }).scrollIntoViewIfNeeded();
   await page.getByRole('radiogroup').filter({ visible: true }).getByRole('radio', { name: /West Bengal University/ }).click();
   await page.waitForFunction(() => JSON.parse(localStorage.getItem('orbit-profile-v1') || '{}').university === 'wbuhs');
