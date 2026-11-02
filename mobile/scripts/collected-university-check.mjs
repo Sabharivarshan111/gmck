@@ -41,10 +41,10 @@ const notes = load('src/lib/handwrittenNotes.ts', { ...common, './notesDedup': {
   './notesLimits': {}, './progress': progress });
 const resume = load('src/lib/homeResume.ts', { ...common, '@/lib/questionBank': bank });
 
-assert.equal(rows.length, 16758);
+assert.equal(rows.length, 17767);
 assert.equal(new Set(rows.map(r => r.id)).size, rows.length);
-const expected = { rguhs: 8050, knruhs: 3695, muhs: 0, ntruhs: 2474, wbuhs: 2539 };
-const marks = { rguhs: 33690, knruhs: 15599, ntruhs: 8457, wbuhs: 12932 };
+const expected = { rguhs: 8050, knruhs: 3695, muhs: 0, ntruhs: 3274, wbuhs: 2748 };
+const marks = { rguhs: 33690, knruhs: 15599, ntruhs: 12904, wbuhs: 13730 };
 const ids = new Set();
 for (const [university, count] of Object.entries(expected)) {
   assert.equal(bank.allSearchHits(university).length, count);
@@ -56,8 +56,8 @@ for (const [university, count] of Object.entries(expected)) {
   for (const row of uniRows) {
     assert.match(row.sourceSha256, /^[a-f0-9]{64}$/);
     assert.ok(row.id.includes(row.sourceSha256.slice(0, 12)));
-    assert.ok(Number.isInteger(row.pdfPage) && row.pdfPage >= 1 && row.pdfPage <= Math.max(7, ...['batch15-provenance.json', 'batch16-provenance.json', 'batch17-provenance.json', 'batch18-provenance.json', 'batch21-provenance.json', 'batch22-provenance.json'].flatMap(file => JSON.parse(fs.readFileSync(path.join(repo, 'src/data/universityPapers', file), 'utf8')).papers).filter(p => p.sha256 === row.sourceSha256).flatMap(p => p.pagesVisuallyCompared)));
-    assert.ok(( {"ntruhs-3f2b9bfcccf8-p3-q5": "FNAC"}[row.id] === row.question || row.question.length > 4 || {"rguhs-529602a28734-p1-q17": "Pili", "rguhs-70d8a4e6839c-p1-q18": "PCR", "rguhs-70d8a4e6839c-p1-q23": "PCV"}[row.id] === row.question || (row.id === 'rguhs-3e762a08ccd4-p1-q4' && row.question === 'BMR') || {"ntruhs-2a174f5c1c88-p1-q9": "BERA", "ntruhs-45cc96809a77-p1-q11": "CTEV", "ntruhs-6b81306ad1a7-p1-q11": "ASHA"}[row.id] === row.question || (row.id === 'ntruhs-12f02835c36f-p1-q7' && row.question === 'Gout') || {"knruhs-6cde83218b53-p2-q12": "PKDL", "knruhs-ee244d19365e-p1-q11": "IgG", "knruhs-136b4dc127a6-p1-q2": "Bias", "knruhs-d5a145770a41-p1-q10": "CARE"}[row.id] === row.question || (row.id === 'knruhs-e8e59be64df3-p2-q17' && row.question === 'KFD') || (row.id === 'rguhs-942383725e34-p1-q6' && row.question === 'IgM.') || (row.id === 'rguhs-764314376aaf-p1-q17' && row.question === 'Hair') || (['rguhs-fc6c85e99007-p1-q5','rguhs-d3a0bc4dc8fb-p1-q12'].includes(row.id) && row.question === 'Gout') || (row.id === 'rguhs-8b7f4f6c8446-p1-q13' && row.question === 'GABA') || {"rguhs-76bb1d84f38e-p1-q6": "DOTS", "rguhs-9f14aa97a6c4-p1-q20": "SARS", "rguhs-9f14aa97a6c4-p1-q22": "ASHA", "rguhs-d300c4feb926-p1-q19": "GERD", "rguhs-2f82865ed3f8-p1-q21": "PICA", "rguhs-575d39f9e85b-p1-q9": "ICDS", "rguhs-e98cc077f8e5-p1-q4": "Gout", "rguhs-64a3a20f5587-p1-q19": "PICA"}[row.id] === row.question || {"rguhs-d32d85a05d39-p1-q14": "MRI", "rguhs-dc4ff0429bed-p1-q15": "Pica", "rguhs-9e9333c15584-p1-qa-5": "ANDI", "rguhs-147caf5e16cb-p1-q14": "PTC"}[row.id] === row.question) && row.question.length <= ({"wbuhs-2d48fd197637-p9-q1-ii": 1157, "wbuhs-2d48fd197637-p12-q1-ii": 1085}[row.id] ?? 1000));
+    assert.ok(Number.isInteger(row.pdfPage) && row.pdfPage >= 1 && row.pdfPage <= Math.max(7, ...['batch15-provenance.json', 'batch16-provenance.json', 'batch17-provenance.json', 'batch18-provenance.json', 'batch21-provenance.json', 'batch22-provenance.json', 'batch23-provenance.json'].flatMap(file => JSON.parse(fs.readFileSync(path.join(repo, 'src/data/universityPapers', file), 'utf8')).papers).filter(p => p.sha256 === row.sourceSha256).flatMap(p => p.pagesVisuallyCompared)));
+    assert.ok(( {"ntruhs-c2a3ad3e2c6d-p16-q11": "Bias", "ntruhs-c2a3ad3e2c6d-p24-q7": "Cu-T", "ntruhs-c2a3ad3e2c6d-p24-q8": "WHO", "ntruhs-c2a3ad3e2c6d-p31-q12": "PERT"}[row.id] === row.question || {"ntruhs-3f2b9bfcccf8-p3-q5": "FNAC"}[row.id] === row.question || row.question.length > 4 || {"rguhs-529602a28734-p1-q17": "Pili", "rguhs-70d8a4e6839c-p1-q18": "PCR", "rguhs-70d8a4e6839c-p1-q23": "PCV"}[row.id] === row.question || (row.id === 'rguhs-3e762a08ccd4-p1-q4' && row.question === 'BMR') || {"ntruhs-2a174f5c1c88-p1-q9": "BERA", "ntruhs-45cc96809a77-p1-q11": "CTEV", "ntruhs-6b81306ad1a7-p1-q11": "ASHA"}[row.id] === row.question || (row.id === 'ntruhs-12f02835c36f-p1-q7' && row.question === 'Gout') || {"knruhs-6cde83218b53-p2-q12": "PKDL", "knruhs-ee244d19365e-p1-q11": "IgG", "knruhs-136b4dc127a6-p1-q2": "Bias", "knruhs-d5a145770a41-p1-q10": "CARE"}[row.id] === row.question || (row.id === 'knruhs-e8e59be64df3-p2-q17' && row.question === 'KFD') || (row.id === 'rguhs-942383725e34-p1-q6' && row.question === 'IgM.') || (row.id === 'rguhs-764314376aaf-p1-q17' && row.question === 'Hair') || (['rguhs-fc6c85e99007-p1-q5','rguhs-d3a0bc4dc8fb-p1-q12'].includes(row.id) && row.question === 'Gout') || (row.id === 'rguhs-8b7f4f6c8446-p1-q13' && row.question === 'GABA') || {"rguhs-76bb1d84f38e-p1-q6": "DOTS", "rguhs-9f14aa97a6c4-p1-q20": "SARS", "rguhs-9f14aa97a6c4-p1-q22": "ASHA", "rguhs-d300c4feb926-p1-q19": "GERD", "rguhs-2f82865ed3f8-p1-q21": "PICA", "rguhs-575d39f9e85b-p1-q9": "ICDS", "rguhs-e98cc077f8e5-p1-q4": "Gout", "rguhs-64a3a20f5587-p1-q19": "PICA"}[row.id] === row.question || {"rguhs-d32d85a05d39-p1-q14": "MRI", "rguhs-dc4ff0429bed-p1-q15": "Pica", "rguhs-9e9333c15584-p1-qa-5": "ANDI", "rguhs-147caf5e16cb-p1-q14": "PTC"}[row.id] === row.question) && row.question.length <= ({"wbuhs-2d48fd197637-p9-q1-ii": 1157, "wbuhs-2d48fd197637-p12-q1-ii": 1085}[row.id] ?? 1000));
     assert.ok(row.examRefs.length > 0 && row.topicKey);
     const raw = `PYQ[${row.id}] ${row.question}`;
     assert.equal(text.getCleanQuestionText(raw), row.question);
@@ -88,7 +88,7 @@ assert.ok(wb[2].question.includes('nephrosis and apoptosis'), 'Do not silently c
 assert.ok(wb[1].question.includes('any two') && wb[1].question.includes('c)'));
 assert.ok(wb[3].question.includes('any two') && wb[3].question.includes('d) Septic shock'));
 assert.ok(rows.find(r => r.university === 'knruhs').question.includes('(d) Applied anatomy'));
-console.log('PASS 16758 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
+console.log('PASS 17767 reviewed question units: all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
 
 const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH02: batch02 } = await bundle('src/data/universityPapers/reviewedBatch02.ts');
 assert.equal(batch02.length, 200);
@@ -685,3 +685,17 @@ assert.ok(batch22.find(r=>r.id==='wbuhs-2d48fd197637-p9-q1-ii').question.include
 assert.ok(batch22.find(r=>r.id==='ntruhs-3f2b9bfcccf8-p3-q2').question.includes('50mm Hg'));
 assert.ok(batch22.find(r=>r.id==='ntruhs-68c525733f5e-p70-q19').question.includes('all - poor fluid'));
 console.log('PASS Batch22:1025 reviewed units/3151marks/431MCQs/1724choices; complete clinical cases and held units preserved.');
+
+const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH23: batch23 } = await bundle('src/data/universityPapers/reviewedBatch23.ts');
+const p23=JSON.parse(fs.readFileSync(path.join(repo,'src/data/universityPapers/batch23-provenance.json'),'utf8'));
+assert.equal(batch23.length,1009);assert.equal(batch23.reduce((n,r)=>n+r.marks,0),5245);
+assert.equal(batch23.filter(r=>r.questionFormat==='mcq').length,128);
+assert.equal(batch23.reduce((n,r)=>n+(r.options?.length??0),0),512);
+for(const p of p23.papers){const es=batch23.filter(r=>r.sourceSha256===p.sha256&&r.pdfPage===p.pagesVisuallyCompared[0]);assert.equal(es.length,p.count);assert.equal(es.reduce((n,r)=>n+r.marks,0),p.marks);}
+for(const h of p23.heldUnits)assert.ok(!batch23.some(r=>r.sourceSha256===h.sha256&&r.pdfPage===h.pdfPage&&(h.sourceQuestion==='all'||r.sourceQuestion===h.sourceQuestion)));
+for(const r of batch23){if(r.questionFormat==='mcq'){assert.deepEqual(r.options.map(o=>o.label),['a','b','c','d']);assert.equal(r.marks,1);for(const o of r.options)assert.ok(r.question.includes(`(${o.label}) ${o.text}`));}assert.ok(!/FirstRanker|www\.|Contd|P.T.O/.test(r.question));}
+assert.ok(batch23.find(r=>r.id==='wbuhs-397477e409f8-p1-q1-a').question.includes('42 kg'));
+assert.ok(batch23.find(r=>r.id==='ntruhs-3d9161eded6b-p12-q7').question.includes('8 mEq/L'));
+assert.ok(!batch23.some(r=>r.sourceSha256.startsWith('397477')&&r.subjectKey==='forensic-medicine'),'Same-exam bundled copies must be excluded');
+assert.deepEqual(batch23.find(r=>r.id==='ntruhs-5a4101218663-p1-q6').options.filter(o=>o.text==='Holocrine').map(o=>o.label),['a','d'],'Original duplicate choice values retained');
+console.log('PASS Batch23:1009 original-page-reviewed units/5245marks/128MCQs/512choices; held units, source anomalies and duplicate exclusions preserved.');

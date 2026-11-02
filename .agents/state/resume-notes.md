@@ -2561,3 +2561,12 @@ DONE: PR152 merged as9c99e856; productiondpl_epZPQ3pxNYrRKSUGm9q7WhxYNojW is REA
 HALF-DONE: Nativec25b78c shares welcome/tour fixes; signed Android builds are running. No Play upload or physical-device claim.
 NEXT: Only if resuming Android delivery, inspect exactc25b78c workflows/packages; do not rebuild the completed website repair. Friend uses Safari; ask for a real-device symptom only if the deployed fix still fails.
 DO NOT: Clear browser data/progress, move tokens across origins, claim a real Google consent roundtrip, or alter bank/collection checkpoints.
+
+
+## ORBIT Batch23 — 1,009 reviewed; publication checks pending (2 November 2026)
+
+New1,009=800NTR/YSR+209WBUHS; cumulative17,767.128MCQs/512choices;5,245marks;89contributing physicalpages/6SHA PDFs. Previous16,758objects/IDs unchanged. Same-exam WB copies73excluded; NTR JanFeb2022CBME anatomy copies excluded, physiology only missing whole2/7/8 recovered. Handwritten replacements/duplicate MCQ labels held; faint third33issuer whole11units deferred. All private original PDFs/transcription/provenance in Batch23 recovery checkpoint. No overallcoveragepercentage known.
+
+Both app branches prepared on exact current native4709/main3f879, preserving live functionv4. Native source updated to same v4 already deployed; no backend redeploy. Cachev35 for web. Source/bank/search49,819/KUHS/tsc/focusedlint/nativeweb build passed. HostedUI, actualserved17,767 and signed Androidpackages still pending; do not claim them yet. No Play/version/deviceclaim. Final priorBatch22 Librarylibfile_1fbe538af43881918ac2fb1bf4a0bdd0v4; nextBatch23 Librarylibfile_4351aaa8209c81918c769d33b3acf9ffv0 is only209-entry interim, replace with full1009 before stopping.
+
+Next review after completedpublication: PSIMS firstana/phyMCQ SHA5a410121866303c19d3bda1faea400e3945df90e1a5504bae9ffb8da2033c091physical7Q1(Aug2024alreadyimportedSetD, comparealternateSetA; recover gaps only); otherfirst/thirdMCQPDFs machinepreparedonly. WBtwo bundles complete accounted except holds, NTRfirsttheory36pages complete accounted, third2020–24 held33/duplicates12–14/22/28/32 excluded; January2025alloriginaltheorycomplete, amendmentpage4supportingonly.
