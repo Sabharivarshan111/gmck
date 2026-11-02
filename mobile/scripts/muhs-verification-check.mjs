@@ -41,9 +41,9 @@ for (const entry of ledger.rows) {
   counted[entry.status]++;
 }
 assert.deepEqual(counted, ledger.counts);
-assert.equal(counted.page_image_compared,286);
+assert.equal(counted.page_image_compared,309);
 assert.equal(counted.pdf_text_layer_corroborated,129);
 assert.equal(counted.pdf_text_layer_low_match,0);
-assert.equal(counted.ocr_transcription_page_review_pending,585);
+assert.equal(counted.ocr_transcription_page_review_pending,562);
 assert.equal(ledger.noOriginalAnswerKeys,true);
-console.log('PASS MUHS audit: 1000 unique source-linked records; 286 original-page-checked, 129 text-corroborated, 0 weak text matches, 585 OCR still pending; 5217 original marks, no fabricated answers.');
+console.log('PASS MUHS audit: 1000 unique source-linked records; 309 original-page-checked, 129 text-corroborated, 0 weak text matches, 562 OCR still pending; 5217 original marks, no fabricated answers.');
