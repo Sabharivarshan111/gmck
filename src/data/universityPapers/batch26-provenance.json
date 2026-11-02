@@ -5,7 +5,7 @@
   "cumulative": 19769,
   "MUHSTotal": 1000,
   "contributingOriginalPapers": 78,
-  "reviewStatus": "ALL 562 FORMERLY PENDING WERE SCREENED BY SECOND-PASS OCR AGAINST 89 SOURCE PAGE IMAGES. 54 were visually checked in that pass; one duplicated Biochemistry record was replaced with authentic Ophthalmology 2020 Q3. Batch26 has 354 source-page-image-reviewed records and 508 pending visual wording review. Batch25 has 9 page-reviewed plus 129 source-text corroborated. This is not 1000 manual verifications.",
+  "reviewStatus": "SECOND-PASS OCR over 562 initial pending entries; 55 question occurrences were image-compared including a newly recovered Ophthalmology Q3, leaving 508 OCR entries pending visual review. 364 of 1000 overall image-reviewed, 128 PDF text-corroborated.",
   "countsByEvidenceClass": {
     "pageImageCompared": 354,
     "ocrDerivedPending": 508
@@ -125,6 +125,8 @@
     "warning": "Similarity to a second OCR extraction is not independent visual evidence; it can repeat errors.",
     "automatedOCRPagesCompared": 89,
     "automatedOCRRowsCompared": 562,
-    "sourceHashesChecked": 78
+    "sourceHashesChecked": 78,
+    "wholeBankImageCompared": 364,
+    "wholeBankPdfTextCorroborated": 128
   }
 }
