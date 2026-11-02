@@ -1,0 +1,1097 @@
+{
+  "batch": 24,
+  "baseline": 17767,
+  "newApproved": 1002,
+  "cumulative": 18769,
+  "marks": 3878,
+  "mcqs": 40,
+  "choiceCount": 160,
+  "contributingPhysicalPages": 81,
+  "contributingPdfs": 4,
+  "papers": [
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-medicine",
+      "session": "Aug 2024",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        2
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-medicine",
+      "session": "Aug 2024",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        3
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-surgery",
+      "session": "Aug 2024",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        4
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-surgery",
+      "session": "Aug 2024",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        5
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "obstetrics-gynaecology",
+      "session": "Aug 2024",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "count": 11
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        6
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "obstetrics-gynaecology",
+      "session": "Aug 2024",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "count": 11
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        7
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "paediatrics",
+      "session": "Aug 2024",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "count": 11
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        9
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-medicine",
+      "session": "Dec 2023",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        12
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-surgery",
+      "session": "Dec 2023",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        13
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-surgery",
+      "session": "Dec 2023",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        14
+      ],
+      "visuallyCompared": true,
+      "units": 12,
+      "subject": "obstetrics-gynaecology",
+      "session": "Dec 2023",
+      "regulation": "CBME",
+      "marks": 80,
+      "count": 12
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        15
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "obstetrics-gynaecology",
+      "session": "Dec 2023",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "count": 11
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        16
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "obstetrics-gynaecology",
+      "session": "Dec 2023",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "count": 11
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        18
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "paediatrics",
+      "session": "Dec 2023",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "count": 11
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        19
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-medicine",
+      "session": "Jul 2023",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        20
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-medicine",
+      "session": "Jul 2023",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        21
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-surgery",
+      "session": "Jul 2023",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        22
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-surgery",
+      "session": "Jul 2023",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        23
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "obstetrics-gynaecology",
+      "session": "Jul 2023",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "count": 11
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        24
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "obstetrics-gynaecology",
+      "session": "Jul 2023",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "count": 11
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        25
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "paediatrics",
+      "session": "Jul 2023",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "count": 11
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        26
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-medicine",
+      "session": "Dec 2022",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        27
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-medicine",
+      "session": "Dec 2022",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        28
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-surgery",
+      "session": "Dec 2022",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        29
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-surgery",
+      "session": "Dec 2022",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        30
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "obstetrics-gynaecology",
+      "session": "Dec 2022",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "count": 11
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        31
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "obstetrics-gynaecology",
+      "session": "Dec 2022",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "count": 11
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        32
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "paediatrics",
+      "session": "Dec 2022",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "count": 11
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        33
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-medicine",
+      "session": "Jan 2022",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        34
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-medicine",
+      "session": "Jan 2022",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        38
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "obstetrics-gynaecology",
+      "session": "Jan 2022",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "count": 11
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        39
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "paediatrics",
+      "session": "Jan 2022",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "count": 11
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        41
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-medicine",
+      "session": "Aug 2021",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        43
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-surgery",
+      "session": "Aug 2021",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        44
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "obstetrics-gynaecology",
+      "session": "Aug 2021",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "count": 11
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        45
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "obstetrics-gynaecology",
+      "session": "Aug 2021",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "count": 11
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        46
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "paediatrics",
+      "session": "Aug 2021",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "count": 11
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        47
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-medicine",
+      "session": "Mar 2021",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        48
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-medicine",
+      "session": "Mar 2021",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        50
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-surgery",
+      "session": "Mar 2021",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        51
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "obstetrics-gynaecology",
+      "session": "Mar 2021",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "count": 11
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        52
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "obstetrics-gynaecology",
+      "session": "Mar 2021",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "count": 11
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        53
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "paediatrics",
+      "session": "Mar 2021",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "count": 11
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        54
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-medicine",
+      "session": "Jan 2020",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        55
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-medicine",
+      "session": "Jan 2020",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        56
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-surgery",
+      "session": "Jan 2020",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        57
+      ],
+      "visuallyCompared": true,
+      "units": 16,
+      "subject": "general-surgery",
+      "session": "Jan 2020",
+      "regulation": "Old Regulation",
+      "marks": 60,
+      "count": 16
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        58
+      ],
+      "visuallyCompared": true,
+      "units": 10,
+      "subject": "obstetrics-gynaecology",
+      "session": "Jan 2020",
+      "regulation": "Old Regulation",
+      "marks": 38,
+      "count": 10
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        59
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "obstetrics-gynaecology",
+      "session": "Jan 2020",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "count": 11
+    },
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pagesVisuallyCompared": [
+        60
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "paediatrics",
+      "session": "Jan 2020",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "count": 11
+    },
+    {
+      "sha256": "c6860e5b0131f467faca9fb3e9e867c307f7cf67baad06894e402e083e73cda9",
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "visuallyCompared": true,
+      "units": 12,
+      "subject": "general-medicine",
+      "session": "Dec 2024",
+      "regulation": "CBME",
+      "marks": 80,
+      "count": 12
+    },
+    {
+      "sha256": "c6860e5b0131f467faca9fb3e9e867c307f7cf67baad06894e402e083e73cda9",
+      "pagesVisuallyCompared": [
+        2
+      ],
+      "visuallyCompared": true,
+      "units": 12,
+      "subject": "general-medicine",
+      "session": "Dec 2024",
+      "regulation": "CBME",
+      "marks": 80,
+      "count": 12
+    },
+    {
+      "sha256": "c6860e5b0131f467faca9fb3e9e867c307f7cf67baad06894e402e083e73cda9",
+      "pagesVisuallyCompared": [
+        3
+      ],
+      "visuallyCompared": true,
+      "units": 12,
+      "subject": "obstetrics-gynaecology",
+      "session": "Dec 2024",
+      "regulation": "CBME",
+      "marks": 80,
+      "count": 12
+    },
+    {
+      "sha256": "c6860e5b0131f467faca9fb3e9e867c307f7cf67baad06894e402e083e73cda9",
+      "pagesVisuallyCompared": [
+        4
+      ],
+      "visuallyCompared": true,
+      "units": 12,
+      "subject": "obstetrics-gynaecology",
+      "session": "Dec 2024",
+      "regulation": "CBME",
+      "marks": 80,
+      "count": 12
+    },
+    {
+      "sha256": "c6860e5b0131f467faca9fb3e9e867c307f7cf67baad06894e402e083e73cda9",
+      "pagesVisuallyCompared": [
+        5
+      ],
+      "visuallyCompared": true,
+      "units": 12,
+      "subject": "general-surgery",
+      "session": "Dec 2024",
+      "regulation": "CBME",
+      "marks": 80,
+      "count": 12
+    },
+    {
+      "sha256": "c6860e5b0131f467faca9fb3e9e867c307f7cf67baad06894e402e083e73cda9",
+      "pagesVisuallyCompared": [
+        6
+      ],
+      "visuallyCompared": true,
+      "units": 12,
+      "subject": "general-surgery",
+      "session": "Dec 2024",
+      "regulation": "CBME",
+      "marks": 80,
+      "count": 12
+    },
+    {
+      "sha256": "c6860e5b0131f467faca9fb3e9e867c307f7cf67baad06894e402e083e73cda9",
+      "pagesVisuallyCompared": [
+        7
+      ],
+      "visuallyCompared": true,
+      "units": 12,
+      "subject": "paediatrics",
+      "session": "Dec 2024",
+      "regulation": "CBME",
+      "marks": 80,
+      "amendmentPages": [
+        8
+      ],
+      "count": 12
+    },
+    {
+      "sha256": "50b1a8ae8cfc5a69e50a959079303b2c83071b093dd1dacca9f970fa047e1b75",
+      "pagesVisuallyCompared": [
+        19
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "microbiology",
+      "session": "Aug 2021",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "printedPhase": "Second MBBS",
+      "count": 11
+    },
+    {
+      "sha256": "50b1a8ae8cfc5a69e50a959079303b2c83071b093dd1dacca9f970fa047e1b75",
+      "pagesVisuallyCompared": [
+        20
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "microbiology",
+      "session": "Aug 2021",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "printedPhase": "Second MBBS",
+      "count": 11
+    },
+    {
+      "sha256": "50b1a8ae8cfc5a69e50a959079303b2c83071b093dd1dacca9f970fa047e1b75",
+      "pagesVisuallyCompared": [
+        22
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "pharmacology",
+      "session": "Aug 2021",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "printedPhase": "Second MBBS",
+      "count": 11
+    },
+    {
+      "sha256": "50b1a8ae8cfc5a69e50a959079303b2c83071b093dd1dacca9f970fa047e1b75",
+      "pagesVisuallyCompared": [
+        23
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "pathology",
+      "session": "Aug 2021",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "printedPhase": "Second MBBS",
+      "count": 11
+    },
+    {
+      "sha256": "50b1a8ae8cfc5a69e50a959079303b2c83071b093dd1dacca9f970fa047e1b75",
+      "pagesVisuallyCompared": [
+        24
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "pathology",
+      "session": "Aug 2021",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "printedPhase": "Second MBBS",
+      "count": 11
+    },
+    {
+      "sha256": "50b1a8ae8cfc5a69e50a959079303b2c83071b093dd1dacca9f970fa047e1b75",
+      "pagesVisuallyCompared": [
+        26
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "microbiology",
+      "session": "Mar 2021",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "printedPhase": "Second MBBS",
+      "count": 11
+    },
+    {
+      "sha256": "50b1a8ae8cfc5a69e50a959079303b2c83071b093dd1dacca9f970fa047e1b75",
+      "pagesVisuallyCompared": [
+        27
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "microbiology",
+      "session": "Mar 2021",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "printedPhase": "Second MBBS",
+      "count": 11
+    },
+    {
+      "sha256": "50b1a8ae8cfc5a69e50a959079303b2c83071b093dd1dacca9f970fa047e1b75",
+      "pagesVisuallyCompared": [
+        30
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "pathology",
+      "session": "Mar 2021",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "printedPhase": "Second MBBS",
+      "count": 11
+    },
+    {
+      "sha256": "50b1a8ae8cfc5a69e50a959079303b2c83071b093dd1dacca9f970fa047e1b75",
+      "pagesVisuallyCompared": [
+        31
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "pathology",
+      "session": "Mar 2021",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "printedPhase": "Second MBBS",
+      "count": 11
+    },
+    {
+      "sha256": "50b1a8ae8cfc5a69e50a959079303b2c83071b093dd1dacca9f970fa047e1b75",
+      "pagesVisuallyCompared": [
+        32
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "forensic-medicine",
+      "session": "Mar 2021",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "printedPhase": "Second MBBS",
+      "count": 11
+    },
+    {
+      "sha256": "50b1a8ae8cfc5a69e50a959079303b2c83071b093dd1dacca9f970fa047e1b75",
+      "pagesVisuallyCompared": [
+        33
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "microbiology",
+      "session": "Nov 2020",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "printedPhase": "Second MBBS",
+      "count": 11
+    },
+    {
+      "sha256": "50b1a8ae8cfc5a69e50a959079303b2c83071b093dd1dacca9f970fa047e1b75",
+      "pagesVisuallyCompared": [
+        34
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "microbiology",
+      "session": "Nov 2020",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "printedPhase": "Second MBBS",
+      "count": 11
+    },
+    {
+      "sha256": "50b1a8ae8cfc5a69e50a959079303b2c83071b093dd1dacca9f970fa047e1b75",
+      "pagesVisuallyCompared": [
+        37
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "pathology",
+      "session": "Nov 2020",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "printedPhase": "Second MBBS",
+      "count": 11
+    },
+    {
+      "sha256": "50b1a8ae8cfc5a69e50a959079303b2c83071b093dd1dacca9f970fa047e1b75",
+      "pagesVisuallyCompared": [
+        38
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "pathology",
+      "session": "Nov 2020",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "printedPhase": "Second MBBS",
+      "count": 11
+    },
+    {
+      "sha256": "50b1a8ae8cfc5a69e50a959079303b2c83071b093dd1dacca9f970fa047e1b75",
+      "pagesVisuallyCompared": [
+        39
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "forensic-medicine",
+      "session": "Nov 2020",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "printedPhase": "Second MBBS",
+      "count": 11
+    },
+    {
+      "sha256": "50b1a8ae8cfc5a69e50a959079303b2c83071b093dd1dacca9f970fa047e1b75",
+      "pagesVisuallyCompared": [
+        43
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "pathology",
+      "session": "Feb 2020",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "printedPhase": "Second MBBS",
+      "count": 11
+    },
+    {
+      "sha256": "50b1a8ae8cfc5a69e50a959079303b2c83071b093dd1dacca9f970fa047e1b75",
+      "pagesVisuallyCompared": [
+        44
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "pathology",
+      "session": "Feb 2020",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "printedPhase": "Second MBBS",
+      "count": 11
+    },
+    {
+      "sha256": "50b1a8ae8cfc5a69e50a959079303b2c83071b093dd1dacca9f970fa047e1b75",
+      "pagesVisuallyCompared": [
+        45
+      ],
+      "visuallyCompared": true,
+      "units": 11,
+      "subject": "forensic-medicine",
+      "session": "Feb 2020",
+      "regulation": "Old Regulation",
+      "marks": 40,
+      "printedPhase": "Second MBBS",
+      "count": 11
+    },
+    {
+      "sha256": "5a410121866303c19d3bda1faea400e3945df90e1a5504bae9ffb8da2033c091",
+      "pagesVisuallyCompared": [
+        13
+      ],
+      "visuallyCompared": true,
+      "units": 6,
+      "subject": "anatomy",
+      "session": "Dec 2023",
+      "regulation": "CBME",
+      "marks": 6,
+      "count": 6
+    },
+    {
+      "sha256": "5a410121866303c19d3bda1faea400e3945df90e1a5504bae9ffb8da2033c091",
+      "pagesVisuallyCompared": [
+        14
+      ],
+      "visuallyCompared": true,
+      "units": 8,
+      "subject": "anatomy",
+      "session": "Dec 2023",
+      "regulation": "CBME",
+      "marks": 8,
+      "count": 8
+    },
+    {
+      "sha256": "5a410121866303c19d3bda1faea400e3945df90e1a5504bae9ffb8da2033c091",
+      "pagesVisuallyCompared": [
+        15
+      ],
+      "visuallyCompared": true,
+      "units": 6,
+      "subject": "anatomy",
+      "session": "Dec 2023",
+      "regulation": "CBME",
+      "marks": 6,
+      "count": 6
+    },
+    {
+      "sha256": "5a410121866303c19d3bda1faea400e3945df90e1a5504bae9ffb8da2033c091",
+      "pagesVisuallyCompared": [
+        16
+      ],
+      "visuallyCompared": true,
+      "units": 6,
+      "subject": "anatomy",
+      "session": "Jan 2023",
+      "regulation": "CBME",
+      "marks": 6,
+      "count": 6
+    },
+    {
+      "sha256": "5a410121866303c19d3bda1faea400e3945df90e1a5504bae9ffb8da2033c091",
+      "pagesVisuallyCompared": [
+        17
+      ],
+      "visuallyCompared": true,
+      "units": 8,
+      "subject": "anatomy",
+      "session": "Jan 2023",
+      "regulation": "CBME",
+      "marks": 8,
+      "count": 8
+    },
+    {
+      "sha256": "5a410121866303c19d3bda1faea400e3945df90e1a5504bae9ffb8da2033c091",
+      "pagesVisuallyCompared": [
+        18
+      ],
+      "visuallyCompared": true,
+      "units": 6,
+      "subject": "anatomy",
+      "session": "Jan 2023",
+      "regulation": "CBME",
+      "marks": 6,
+      "count": 6
+    }
+  ],
+  "heldUnits": [
+    {
+      "sha256": "74fda53aef215c30d9256e61eafaea139fde2c0b682efa53825f716a93d6189e",
+      "pdfPage": 58,
+      "sourceQuestion": "9",
+      "marks": 2,
+      "reason": "Printed ending of stem clipped/faded; entire unit held"
+    }
+  ],
+  "overallRemainingPercentage": null
+}
