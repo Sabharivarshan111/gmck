@@ -5,13 +5,13 @@
   "cumulative": 19769,
   "MUHSTotal": 1000,
   "contributingOriginalPapers": 78,
-  "reviewStatus": "MIXED SOURCE-LINKED / NOT FULLY PAGE-VERIFIED: 138 manually transcribed source-image questions; 724 OCR/derived transcriptions under pending visual review. Exam dates, marks, question wording are provisional for unreviewed rows.",
+  "reviewStatus": "PARTIAL PRIMARY-PAGE VISUAL REVIEW: 265 Batch26 entries rechecked from 16 original-paper PDFs; 597 Batch26 OCR/derived entries still need comparison to the paper image. Batch25's 138 older entries remain separately source-linked; not all were rechecked in this pass.",
   "countsByEvidenceClass": {
-    "MANUAL_SOURCE_IMAGE": 138,
-    "archive_inspection_text": 710,
-    "archive_line_derived": 14
+    "manualWinter2023PagesReviewed": 138,
+    "otherOriginalPaperPagesReviewed": 127,
+    "ocrDerivedPendingSourcePageReview": 597
   },
-  "marks": 4669,
+  "marks": 4635,
   "mcqs": 0,
   "excludedUnreviewedDrafts": true,
   "sourceHashes": [
@@ -98,12 +98,10 @@
   "disclaimer": "Question wording in OCR-derived rows may require corrections; no official answer key or verified answers asserted.",
   "newConnected": 862,
   "corrections": {
-    "sourceImageComparison": "18 serious segmentation/context/numbering repairs from three original scanned papers",
+    "note": "Visual original-page QA corrected mistaken marks, split/merged questions, misleading clinical wording and sourceQuestion IDs; replaced duplicate continuation rows with genuine omitted original-paper questions. See Git history 1d8d516e, 6e91676c and 6290502b.",
     "sourceHashVerified": 78,
-    "sourcePageInRange": 862,
-    "duplicateIDCount": 0,
-    "duplicateSourceOccurrenceCount": 0,
-    "notes": "No claim of official key or 100% verified transcription; image-backed review required on remaining sources."
+    "duplicatesAfterQA": 0,
+    "displayedCountUnchanged": 1000
   },
   "publishedDataCounts": {
     "priorUniversityBank": 18769,
@@ -111,5 +109,15 @@
     "batch26": 862,
     "totalUniversityBank": 19769,
     "displayedMUHS": 1000
+  },
+  "verification": {
+    "verifiedOriginalPaperSHA256": 78,
+    "visualSourcesThisPass": 16,
+    "visuallyComparedBatch26Questions": 265,
+    "notVisuallyCheckedBatch26": 597,
+    "olderBatch25SourceLinked": 138,
+    "totalMUHS": 1000,
+    "noOfficialAnswerKey": true,
+    "notice": "A source fingerprint validates the underlying PDF file, not the correctness of an individual OCR transcription or medical answer."
   }
 }
