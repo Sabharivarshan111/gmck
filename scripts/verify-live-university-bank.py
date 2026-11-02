@@ -37,8 +37,8 @@ def verify(base,attempt):
  missing=[s for s in ids if s.encode() not in payload]
  assert not missing,f'{len(missing)} of {len(ids)} reviewed IDs are not served yet'
  _,sw=get(origin+'/sw.js?orbit-bank-check='+str(len(ids)))
- assert b'v33-university-mcq-tabs-2026-11-01' in sw,'Offline cache revision has not propagated'
- return {'requestedOrigin':base,'finalOrigin':origin,'reviewedIdsFound':len(ids),'missing':0,'assets':assets,'combinedBytes':len(payload),'combinedSHA256':hashlib.sha256(payload).hexdigest(),'offlineCacheRevision':'v33-university-mcq-tabs-2026-11-01'}
+ assert b'v34-university-batch22-2026-11-02' in sw,'Offline cache revision has not propagated'
+ return {'requestedOrigin':base,'finalOrigin':origin,'reviewedIdsFound':len(ids),'missing':0,'assets':assets,'combinedBytes':len(payload),'combinedSHA256':hashlib.sha256(payload).hexdigest(),'offlineCacheRevision':'v34-university-batch22-2026-11-02'}
 result={}
 for attempt in range(1,61):
  for target in TARGETS:
