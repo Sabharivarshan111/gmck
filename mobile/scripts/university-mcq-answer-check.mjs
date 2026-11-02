@@ -11,7 +11,8 @@ const input = { id: 'knruhs-c6066ec7370d-p1-q1', subject: 'forensic-medicine', t
 async function scenario({ context = '', responses = [], fail = false, failOnce = false } = {}) {
   let handler;
   let calls = 0;
-  const sandbox = { Response, AbortSignal, console, setTimeout: fn => {fn();},
+  const delays = [];
+  const sandbox = { Response, AbortSignal, console, setTimeout: (fn, ms) => {delays.push(ms);fn();},
     buildTextbookContext: async () => context,
     Deno: { env: { get: () => 'server-only-test-key' }, serve: fn => { handler = fn; } },
     fetch: async () => {
@@ -19,11 +20,12 @@ async function scenario({ context = '', responses = [], fail = false, failOnce =
       if (fail || (failOnce && calls === 1)) throw Error('network unavailable');
       const value = responses.shift();
       assert.ok(value, 'unexpected extra network call');
+      if (value instanceof Response) return value;
       return new Response(typeof value === 'string' ? value : JSON.stringify(value));
     },
   };
   vm.runInNewContext(code, sandbox);
-  return { handler, calls: () => calls };
+  return { handler, calls: () => calls, delays };
 }
 const model = value => ({ candidates: [{ content: { parts: [{ text: JSON.stringify(value) }] } }] });
 const evidence = 'Chronic exposure to mercury produces Danbury tremors.';
@@ -46,3 +48,9 @@ response=await transient.handler(request(input));data=await response.json();
 assert.equal(response.status,200);assert.equal(data.option,'Mercury');assert.equal(transient.calls(),2);
 assert.equal(failure.calls(),2,'Persistent failure must have bounded retries');
 console.log('PASS bounded transient retry, persistent-error cap and unchanged sourced-answer validation.');
+
+const busy = await scenario({context:evidence,responses:[new Response(JSON.stringify({error:{details:[{retryDelay:'3s'}]}}),{status:429}),model(supported)]});
+response=await busy.handler(request(input));assert.equal(response.status,200);assert.equal(busy.calls(),2);assert.deepEqual(busy.delays,[3000]);
+const badKey=await scenario({context:evidence,responses:[new Response('{}',{status:403})]});
+response=await badKey.handler(request(input));assert.equal(response.status,503);assert.equal(badKey.calls(),1);
+console.log('PASS provider retry delay honored; permanent403 never retried.');

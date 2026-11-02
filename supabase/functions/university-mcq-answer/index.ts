@@ -13,6 +13,7 @@ async function generate(prompt: string, deadline: number): Promise<Record<string
     const remaining = deadline - Date.now();
     if (remaining < 1000) throw new Error('Answer request deadline reached');
     let retryable = true;
+    let retryDelayMs = 500;
     try {
       const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent', {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
@@ -20,6 +21,16 @@ async function generate(prompt: string, deadline: number): Promise<Record<string
         body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { temperature: 0, responseMimeType: 'application/json', maxOutputTokens: 1800 } }),
       });
       if (!response.ok) {
+        console.warn('university-mcq-answer provider HTTP status', response.status);
+        if (response.status === 429) {
+          const details = await response.json().catch(() => ({}));
+          const retry = details.error?.details?.find((item: {retryDelay?: string}) => typeof item.retryDelay === 'string')?.retryDelay;
+          const header = response.headers.get('retry-after');
+          const seconds = typeof retry === 'string' ? Number.parseFloat(retry) : header ? Number(header) : 2;
+          if (Number.isFinite(seconds)) retryDelayMs = Math.max(500, Math.ceil(seconds * 1000));
+          const quotas = details.error?.details?.flatMap((item: {violations?: {quotaMetric?: string; quotaId?: string}[]}) => item.violations?.map(v => ({metric:v.quotaMetric,id:v.quotaId})) ?? []) ?? [];
+          console.warn('university-mcq-answer quota', JSON.stringify(quotas), 'retryDelayMs', retryDelayMs);
+        }
         retryable = response.status === 408 || response.status === 429 || response.status >= 500;
         throw new Error('Answer service is temporarily unavailable');
       }
@@ -27,9 +38,9 @@ async function generate(prompt: string, deadline: number): Promise<Record<string
       const text = data.candidates?.[0]?.content?.parts?.map((part: {text?: string}) => part.text ?? '').join('') ?? '';
       return JSON.parse(text.replace(/^```(?:json)?\s*|\s*```$/g, ''));
     } catch (error) {
-      if (!retryable || attempt === 1 || deadline - Date.now() < 1500) throw error;
+      if (!retryable || attempt === 1 || deadline - Date.now() < retryDelayMs + 1000) throw error;
       // Only idempotent generation is retried; the same evidence checks still apply.
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, retryDelayMs));
     }
   }
   throw new Error('Answer service is temporarily unavailable');
@@ -85,7 +96,8 @@ Deno.serve(async request => {
     }
     const answer = await supportedAnswer(input, await searchLiterature(input, deadline), 'web', deadline);
     return json({ ...(answer ?? { status: 'unresolved', explanation: 'The uploaded textbook excerpts and public medical-literature search did not establish a reliable answer.', sources: [] }), id: input.id });
-  } catch {
+  } catch (error) {
+    console.warn('university-mcq-answer failed', error instanceof Error ? error.name : 'Error');
     return json({ error: 'Could not retrieve a sourced answer. Please try again.' }, 503);
   }
 });
