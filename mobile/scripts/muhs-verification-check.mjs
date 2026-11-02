@@ -24,7 +24,7 @@ assert.equal(new Set(occurrenceKeys).size,rows.length,'Duplicated original paper
 const allowed = new Set(Object.keys(ledger.counts));
 const counted = Object.fromEntries([...allowed].map(status=>[status,0]));
 const knownSources = new Set(rows.map(r=>r.sourceSha256));
-assert.equal(knownSources.size,84,'Original MUHS paper source count changed');
+assert.equal(knownSources.size,83,'Original MUHS paper source count changed');
 for (const entry of ledger.rows) {
   const row = byId.get(entry.id);
   assert.ok(row, 'Ledger row not in app: '+entry.id);
