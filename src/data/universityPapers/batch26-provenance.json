@@ -5,12 +5,12 @@
   "cumulative": 19769,
   "MUHSTotal": 1000,
   "contributingOriginalPapers": 78,
-  "reviewStatus": "SECOND-PASS OCR OF ALL 562 FORMERLY PENDING: 89 page images across 59 paper PDFs machine compared; 54 more questions visually checked. Batch26 now has 354 page-image-checked records, 508 still pending full manual page proofreading; Batch25 has 9 image-checked plus 129 text-layer corroborated.",
+  "reviewStatus": "ALL 562 FORMERLY PENDING WERE SCREENED BY SECOND-PASS OCR AGAINST 89 SOURCE PAGE IMAGES. 54 were visually checked in that pass; one duplicated Biochemistry record was replaced with authentic Ophthalmology 2020 Q3. Batch26 has 354 source-page-image-reviewed records and 508 pending visual wording review. Batch25 has 9 page-reviewed plus 129 source-text corroborated. This is not 1000 manual verifications.",
   "countsByEvidenceClass": {
     "pageImageCompared": 354,
     "ocrDerivedPending": 508
   },
-  "marks": 4640,
+  "marks": 4644,
   "mcqs": 0,
   "excludedUnreviewedDrafts": true,
   "sourceHashes": [
@@ -102,7 +102,8 @@
     "duplicatesAfterQA": 0,
     "displayedCountUnchanged": 1000,
     "latest": "24 additional corrections after comparison to 89 source images; corrected 2019 ENT four-mark scheme and recovered one true Biochemistry clinical question from an OCR join",
-    "sourceGapCount": 5
+    "sourceGapCount": 5,
+    "crossBatchDuplicateRemoved": "muhs-f54e5d25c24b-p2-q3g was already present in Batch25, replaced with source paper b86b98d3a76c Q3 (Ophthalmia neonatorum); source total remains 1000 distinct appearances."
   },
   "publishedDataCounts": {
     "priorUniversityBank": 18769,
@@ -123,6 +124,7 @@
     "distinctOriginalSourcePDFsAcrossBatch25and26": 83,
     "warning": "Similarity to a second OCR extraction is not independent visual evidence; it can repeat errors.",
     "automatedOCRPagesCompared": 89,
-    "automatedOCRRowsCompared": 562
+    "automatedOCRRowsCompared": 562,
+    "sourceHashesChecked": 78
   }
 }
