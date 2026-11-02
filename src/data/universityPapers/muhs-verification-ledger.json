@@ -1152,17 +1152,22 @@
       ]
     },
     {
-      "id": "muhs-f54e5d25c24b-p2-q3g",
-      "sha256": "f54e5d25c24b0718861e5e5b223d82fc7148912d203cad956ed4c77bf34fc6fc",
+      "id": "muhs-b86b98d3a76c-p2-q3",
+      "sha256": "b86b98d3a76c02caecd1cd74a47edd6b59143eb87a41680eed0b97fe3f4c223a",
       "sourcePdfPage": 2,
-      "printedQuestion": "3g",
-      "subject": "biochemistry",
-      "format": "short-answer",
-      "marks": 5,
-      "status": "pdf_text_layer_corroborated",
+      "printedQuestion": "3",
+      "subject": "ophthalmology",
+      "format": "long-answer",
+      "marks": 9,
+      "status": "page_image_compared",
       "qaSignals": [
         "long_question_confirm_clinical_subparts"
-      ]
+      ],
+      "automatedOCRSecondPass": {
+        "method": "visually inspected original 2020 Ophthalmology page 2",
+        "status": "confirmed_correct_replacement",
+        "note": "Replaces duplicate OCR Biochemistry fragment already covered in Batch25; actual omitted original Q3."
+      }
     },
     {
       "id": "muhs-f54e5d25c24b-p2-q3h",
@@ -13543,15 +13548,9 @@
     },
     "independentlyPageImageReviewedThisPass": 54,
     "outstandingVisualWordingReview": 508,
-    "correctedQuestionRecords": 24,
+    "correctedQuestionRecords": 25,
     "note": "Automatic OCR text comparison is a QA filter, NOT manual verification. Many drafts originated from OCR, so matching text can reproduce the same errors.",
     "originalPaperGapsConfirmed": [
-      {
-        "pdfShaPrefix": "b86b98d3a76c",
-        "printedQuestion": "3",
-        "page": 2,
-        "description": "Ophthalmia neonatorum LAQ (9 marks), previously merged into Q2e; not silently counted as a second existing record"
-      },
       {
         "pdfShaPrefix": "8a62d128ddc1",
         "printedQuestion": "2e",
@@ -13576,6 +13575,7 @@
         "page": 1,
         "description": "Carcinoma maxillary sinus (7 marks) omitted"
       }
-    ]
+    ],
+    "crossBatchDuplicateEliminated": "muhs-f54e5d25c24b-p2-q3g (already in Batch25); replaced with authentic MUHS Ophthalmology 2020 paper Q3."
   }
 }
