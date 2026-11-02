@@ -9,6 +9,10 @@ const results = [];
 try {
   for (const width of [360, 430]) {
     for (const fixture of [
+      {"university": "rguhs", "year": "first", "yearKey": "first-year", "query": "State Mary’s Law", "topic": "Cardiovascular Physiology", "reference": "Dec 2013"},
+      {"university": "ntruhs", "year": "second", "yearKey": "second-year", "query": "Arginine vasopressin is preferred over desmopressin", "topic": "Hormones", "reference": "Jan 2025", "option": "Bleeding esophageal varices"},
+      {"university": "wbuhs", "year": "first", "yearKey": "first-year", "query": "maternal PKU syndrome", "topic": "Protein metabolism", "reference": "Sep/Oct 2026"},
+
       {"university": "rguhs", "year": "final", "yearKey": "final-year", "query": "One side effect of each: 1) Chloramphenicol", "topic": "Fundamentals of Medicine", "reference": "Jun/Jul 2011"},
       {"university": "ntruhs", "year": "first", "yearKey": "first-year", "query": "Describe the Brachial Plexus under the following headings", "topic": "Upper Limb", "reference": "Oct/Nov 2018"},
       {"university": "ntruhs", "year": "final", "yearKey": "final-year", "query": "Describe the mode of injury, clinical features, investigations", "topic": "Trauma and fractures", "reference": "Jan 2019"},
@@ -19,7 +23,6 @@ try {
       {"university": "rguhs", "year": "third", "yearKey": "third-year", "query": "Dysphagia lusoria", "topic": "Esophagus", "reference": "Jun/Jul 2011"},
       {"university": "rguhs", "year": "final", "yearKey": "final-year", "query": "Tabulate normal essential milestones", "topic": "Growth and development", "reference": "04 Feb 2023"},
       {"university": "rguhs", "year": "final", "yearKey": "final-year", "query": "Mention organs involved and hormones responsible for calcium", "topic": "Endocrinology", "reference": "01 Aug 2022"},
-
 
       {"university": "rguhs", "year": "second", "yearKey": "second-year", "query": "Define and classify Cirrhosis. Discuss the pathology", "topic": "Liver, Gallbladder and Pancreas", "reference": "Dec 2018"},
       {"university": "rguhs", "year": "second", "yearKey": "second-year", "query": "Antigen Antibody reactions. Describe Agglutination", "topic": "Immunology", "reference": "Dec 2018"},
@@ -171,8 +174,6 @@ try {
       assert.deepEqual(errors, []);
       results.push({ width, university: fixture.university, query: fixture.query, searchAndChapterAndReference: 'passed' });
       if (width === 360 && fixture.query === 'past history of pharyngitis') { fs.mkdirSync('artifacts/university-import',{recursive:true});await page.getByText(fixture.option, {exact:false}).filter({visible:true}).first().scrollIntoViewIfNeeded();await page.waitForTimeout(250);await page.screenshot({path:'artifacts/university-import/batch18-case-360.png'}); }
-      if (width === 360 && fixture.query === 'Tabulate normal essential milestones') { fs.mkdirSync('artifacts/university-import',{recursive:true}); await page.screenshot({path:'artifacts/university-import/batch20-paediatrics-360.png',fullPage:true}); }
-      if (width === 360 && fixture.query === 'One side effect of each: 1) Chloramphenicol') { fs.mkdirSync('artifacts/university-import',{recursive:true}); await page.getByText(fixture.query, {exact:false}).filter({visible:true}).first().scrollIntoViewIfNeeded(); await page.screenshot({path:'artifacts/university-import/batch21-complete-subparts-360.png'}); }
       console.log('PASS chapter/reference', width, fixture.university, fixture.query);
       await context.close();
     }
@@ -200,5 +201,4 @@ try {
 fs.mkdirSync('artifacts/university-import', { recursive: true });
 fs.writeFileSync('artifacts/university-import/browser-results.json', JSON.stringify(results, null, 2));
 console.log(`PASS ${results.length} emitted web bank/picker scenarios`);
-
 

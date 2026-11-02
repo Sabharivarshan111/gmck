@@ -7,9 +7,14 @@ export type UniversityQuestionTab = 'essay' | 'short-notes' | 'mcq';
 const normalize = (value: string) => value.normalize('NFKC').toLowerCase()
   .replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/\s+/g, ' ').trim();
 export function repetitionKey(row: ReviewedUniversityQuestion): string {
+  const mcq = row.questionFormat === 'mcq' && row.options?.length === 4;
+  // Booklet choice ordering is presentation; retain every complete choice value.
+  const marker = mcq ? `\n(${row.options![0].label}) ` : '';
+  const optionStart = marker ? row.question.indexOf(marker) : -1;
+  const stem = optionStart >= 0 ? row.question.slice(0, optionStart) : row.question;
   return JSON.stringify([row.university, row.subjectKey,
-    row.questionFormat === 'mcq' ? 'mcq' : 'written', normalize(row.question),
-    row.options?.map(option => [normalize(option.label), normalize(option.text)]) ?? []]);
+    mcq ? 'mcq' : 'written', normalize(stem),
+    mcq ? row.options!.map(option => normalize(option.text)).sort() : []]);
 }
 export function indexExamAppearances(rows: readonly ReviewedUniversityQuestion[]) {
   const index = new Map<string, Set<string>>();

@@ -1,0 +1,1482 @@
+{
+  "batch": 22,
+  "newReviewed": 1025,
+  "cumulative": 16758,
+  "marks": 3151,
+  "newCounts": {
+    "rguhs": 420,
+    "wbuhs": 185,
+    "ntruhs": 420
+  },
+  "originalMcqs": 431,
+  "choices": 1724,
+  "papers": [
+    {
+      "sha256": "10695a66436ea197337239589586a7cb0f212dccfa940808e350c900a78fad26",
+      "pagesVisuallyCompared": [
+        40
+      ],
+      "count": 21,
+      "marks": 97
+    },
+    {
+      "sha256": "10695a66436ea197337239589586a7cb0f212dccfa940808e350c900a78fad26",
+      "pagesVisuallyCompared": [
+        41
+      ],
+      "count": 22,
+      "marks": 100
+    },
+    {
+      "sha256": "10695a66436ea197337239589586a7cb0f212dccfa940808e350c900a78fad26",
+      "pagesVisuallyCompared": [
+        43
+      ],
+      "count": 21,
+      "marks": 97
+    },
+    {
+      "sha256": "10695a66436ea197337239589586a7cb0f212dccfa940808e350c900a78fad26",
+      "pagesVisuallyCompared": [
+        46
+      ],
+      "count": 28,
+      "marks": 100
+    },
+    {
+      "sha256": "10695a66436ea197337239589586a7cb0f212dccfa940808e350c900a78fad26",
+      "pagesVisuallyCompared": [
+        47
+      ],
+      "count": 28,
+      "marks": 100
+    },
+    {
+      "sha256": "10695a66436ea197337239589586a7cb0f212dccfa940808e350c900a78fad26",
+      "pagesVisuallyCompared": [
+        49
+      ],
+      "count": 22,
+      "marks": 100
+    },
+    {
+      "sha256": "10695a66436ea197337239589586a7cb0f212dccfa940808e350c900a78fad26",
+      "pagesVisuallyCompared": [
+        50
+      ],
+      "count": 22,
+      "marks": 100
+    },
+    {
+      "sha256": "10695a66436ea197337239589586a7cb0f212dccfa940808e350c900a78fad26",
+      "pagesVisuallyCompared": [
+        51
+      ],
+      "count": 28,
+      "marks": 100
+    },
+    {
+      "sha256": "10695a66436ea197337239589586a7cb0f212dccfa940808e350c900a78fad26",
+      "pagesVisuallyCompared": [
+        52
+      ],
+      "count": 28,
+      "marks": 100
+    },
+    {
+      "sha256": "2d48fd19763795d2e31149c40d937e7185b5d58ddfac46d455bd4b1dbba5d10b",
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "count": 19,
+      "marks": 106
+    },
+    {
+      "sha256": "2d48fd19763795d2e31149c40d937e7185b5d58ddfac46d455bd4b1dbba5d10b",
+      "pagesVisuallyCompared": [
+        2
+      ],
+      "count": 12,
+      "marks": 12
+    },
+    {
+      "sha256": "2d48fd19763795d2e31149c40d937e7185b5d58ddfac46d455bd4b1dbba5d10b",
+      "pagesVisuallyCompared": [
+        3
+      ],
+      "count": 19,
+      "marks": 106
+    },
+    {
+      "sha256": "2d48fd19763795d2e31149c40d937e7185b5d58ddfac46d455bd4b1dbba5d10b",
+      "pagesVisuallyCompared": [
+        4
+      ],
+      "count": 12,
+      "marks": 12
+    },
+    {
+      "sha256": "2d48fd19763795d2e31149c40d937e7185b5d58ddfac46d455bd4b1dbba5d10b",
+      "pagesVisuallyCompared": [
+        5
+      ],
+      "count": 19,
+      "marks": 106
+    },
+    {
+      "sha256": "2d48fd19763795d2e31149c40d937e7185b5d58ddfac46d455bd4b1dbba5d10b",
+      "pagesVisuallyCompared": [
+        6
+      ],
+      "count": 12,
+      "marks": 12
+    },
+    {
+      "sha256": "2d48fd19763795d2e31149c40d937e7185b5d58ddfac46d455bd4b1dbba5d10b",
+      "pagesVisuallyCompared": [
+        7
+      ],
+      "count": 19,
+      "marks": 106
+    },
+    {
+      "sha256": "2d48fd19763795d2e31149c40d937e7185b5d58ddfac46d455bd4b1dbba5d10b",
+      "pagesVisuallyCompared": [
+        8
+      ],
+      "count": 12,
+      "marks": 12
+    },
+    {
+      "sha256": "2d48fd19763795d2e31149c40d937e7185b5d58ddfac46d455bd4b1dbba5d10b",
+      "pagesVisuallyCompared": [
+        9
+      ],
+      "count": 8,
+      "marks": 48
+    },
+    {
+      "sha256": "2d48fd19763795d2e31149c40d937e7185b5d58ddfac46d455bd4b1dbba5d10b",
+      "pagesVisuallyCompared": [
+        10
+      ],
+      "count": 14,
+      "marks": 61
+    },
+    {
+      "sha256": "2d48fd19763795d2e31149c40d937e7185b5d58ddfac46d455bd4b1dbba5d10b",
+      "pagesVisuallyCompared": [
+        11
+      ],
+      "count": 8,
+      "marks": 8
+    },
+    {
+      "sha256": "2d48fd19763795d2e31149c40d937e7185b5d58ddfac46d455bd4b1dbba5d10b",
+      "pagesVisuallyCompared": [
+        12
+      ],
+      "count": 12,
+      "marks": 68
+    },
+    {
+      "sha256": "2d48fd19763795d2e31149c40d937e7185b5d58ddfac46d455bd4b1dbba5d10b",
+      "pagesVisuallyCompared": [
+        13
+      ],
+      "count": 19,
+      "marks": 50
+    },
+    {
+      "sha256": "3f2b9bfcccf864188fd6c1f7fa992a74b86000e6dbe42da4a20e142a96b4191f",
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3f2b9bfcccf864188fd6c1f7fa992a74b86000e6dbe42da4a20e142a96b4191f",
+      "pagesVisuallyCompared": [
+        2
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3f2b9bfcccf864188fd6c1f7fa992a74b86000e6dbe42da4a20e142a96b4191f",
+      "pagesVisuallyCompared": [
+        3
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3f2b9bfcccf864188fd6c1f7fa992a74b86000e6dbe42da4a20e142a96b4191f",
+      "pagesVisuallyCompared": [
+        4
+      ],
+      "count": 12,
+      "marks": 80
+    },
+    {
+      "sha256": "3f2b9bfcccf864188fd6c1f7fa992a74b86000e6dbe42da4a20e142a96b4191f",
+      "pagesVisuallyCompared": [
+        5
+      ],
+      "count": 1,
+      "marks": 5
+    },
+    {
+      "sha256": "3f2b9bfcccf864188fd6c1f7fa992a74b86000e6dbe42da4a20e142a96b4191f",
+      "pagesVisuallyCompared": [
+        6
+      ],
+      "count": 11,
+      "marks": 65
+    },
+    {
+      "sha256": "50d7c65d379203dec16bcc9a1808141b351ede18c7c3a3de8c0aefe5249f4f92",
+      "pagesVisuallyCompared": [
+        52
+      ],
+      "count": 22,
+      "marks": 100
+    },
+    {
+      "sha256": "50d7c65d379203dec16bcc9a1808141b351ede18c7c3a3de8c0aefe5249f4f92",
+      "pagesVisuallyCompared": [
+        53
+      ],
+      "count": 22,
+      "marks": 100
+    },
+    {
+      "sha256": "50d7c65d379203dec16bcc9a1808141b351ede18c7c3a3de8c0aefe5249f4f92",
+      "pagesVisuallyCompared": [
+        54
+      ],
+      "count": 28,
+      "marks": 100
+    },
+    {
+      "sha256": "50d7c65d379203dec16bcc9a1808141b351ede18c7c3a3de8c0aefe5249f4f92",
+      "pagesVisuallyCompared": [
+        55
+      ],
+      "count": 28,
+      "marks": 100
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "count": 6,
+      "marks": 6
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        2
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        4
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        5
+      ],
+      "count": 6,
+      "marks": 6
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        6
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        7
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        8
+      ],
+      "count": 6,
+      "marks": 6
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        9
+      ],
+      "count": 8,
+      "marks": 8
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        10
+      ],
+      "count": 6,
+      "marks": 6
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        11
+      ],
+      "count": 6,
+      "marks": 6
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        12
+      ],
+      "count": 8,
+      "marks": 8
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        13
+      ],
+      "count": 6,
+      "marks": 6
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        20
+      ],
+      "count": 6,
+      "marks": 6
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        21
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        22
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        23
+      ],
+      "count": 6,
+      "marks": 6
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        24
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        25
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        26
+      ],
+      "count": 5,
+      "marks": 5
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        27
+      ],
+      "count": 8,
+      "marks": 8
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        28
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        29
+      ],
+      "count": 5,
+      "marks": 5
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        30
+      ],
+      "count": 8,
+      "marks": 8
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        31
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        32
+      ],
+      "count": 6,
+      "marks": 6
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        33
+      ],
+      "count": 6,
+      "marks": 6
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        34
+      ],
+      "count": 8,
+      "marks": 8
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        37
+      ],
+      "count": 1,
+      "marks": 1
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        44
+      ],
+      "count": 6,
+      "marks": 6
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        45
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        46
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        47
+      ],
+      "count": 6,
+      "marks": 6
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        48
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        49
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        53
+      ],
+      "count": 5,
+      "marks": 5
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        54
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        55
+      ],
+      "count": 8,
+      "marks": 8
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        56
+      ],
+      "count": 6,
+      "marks": 6
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        57
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        58
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        59
+      ],
+      "count": 5,
+      "marks": 5
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        60
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        61
+      ],
+      "count": 8,
+      "marks": 8
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        62
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        63
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        64
+      ],
+      "count": 6,
+      "marks": 6
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        65
+      ],
+      "count": 6,
+      "marks": 6
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        66
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        67
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        68
+      ],
+      "count": 6,
+      "marks": 6
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        69
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        70
+      ],
+      "count": 7,
+      "marks": 7
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        71
+      ],
+      "count": 5,
+      "marks": 5
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        72
+      ],
+      "count": 6,
+      "marks": 6
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pagesVisuallyCompared": [
+        73
+      ],
+      "count": 8,
+      "marks": 8
+    },
+    {
+      "sha256": "a7674b65b15b899bb96cf50552743d6078abfced14353cc13dc085fc3c0510fe",
+      "pagesVisuallyCompared": [
+        15
+      ],
+      "count": 28,
+      "marks": 100
+    },
+    {
+      "sha256": "a7674b65b15b899bb96cf50552743d6078abfced14353cc13dc085fc3c0510fe",
+      "pagesVisuallyCompared": [
+        19
+      ],
+      "count": 22,
+      "marks": 100
+    },
+    {
+      "sha256": "a7674b65b15b899bb96cf50552743d6078abfced14353cc13dc085fc3c0510fe",
+      "pagesVisuallyCompared": [
+        22
+      ],
+      "count": 11,
+      "marks": 50
+    },
+    {
+      "sha256": "a7674b65b15b899bb96cf50552743d6078abfced14353cc13dc085fc3c0510fe",
+      "pagesVisuallyCompared": [
+        23
+      ],
+      "count": 28,
+      "marks": 100
+    },
+    {
+      "sha256": "a7674b65b15b899bb96cf50552743d6078abfced14353cc13dc085fc3c0510fe",
+      "pagesVisuallyCompared": [
+        24
+      ],
+      "count": 11,
+      "marks": 50
+    }
+  ],
+  "heldUnits": [
+    {
+      "sha256": "10695a66436ea197337239589586a7cb0f212dccfa940808e350c900a78fad26",
+      "pdfPage": 40,
+      "sourceQuestion": "13",
+      "marks": 3,
+      "reason": "Names overwritten"
+    },
+    {
+      "sha256": "10695a66436ea197337239589586a7cb0f212dccfa940808e350c900a78fad26",
+      "pdfPage": 43,
+      "sourceQuestion": "14",
+      "marks": 3,
+      "reason": "Struck out and handwritten replacement"
+    },
+    {
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "pdfPage": 72,
+      "sourceQuestion": "6",
+      "marks": 1,
+      "reason": "Unintelligible PRWRI stem"
+    },
+    {
+      "sha256": "3f2b9bfcccf864188fd6c1f7fa992a74b86000e6dbe42da4a20e142a96b4191f",
+      "pdfPage": 6,
+      "sourceQuestion": "2",
+      "marks": 15,
+      "reason": "Corrupt Gynecology o:. phrase"
+    },
+    {
+      "sha256": "2d48fd19763795d2e31149c40d937e7185b5d58ddfac46d455bd4b1dbba5d10b",
+      "pdfPage": 10,
+      "sourceQuestion": "6(i)",
+      "marks": 1,
+      "reason": "Printed option labels a,b,b,d need original duplicate-label support"
+    }
+  ],
+  "sourcePDFsPublished": false,
+  "overallCoveragePercentage": null,
+  "sourcePaperReview": [
+    {
+      "key": "physiology-52",
+      "sha256": "10695a66436ea197337239589586a7cb0f212dccfa940808e350c900a78fad26",
+      "pdfPage": 52,
+      "units": 28,
+      "marks": 100,
+      "paper": "II",
+      "code": "1054",
+      "session": "Dec 2013",
+      "visuallyCompared": true
+    },
+    {
+      "key": "physiology-50",
+      "sha256": "10695a66436ea197337239589586a7cb0f212dccfa940808e350c900a78fad26",
+      "pdfPage": 50,
+      "units": 22,
+      "marks": 100,
+      "paper": "II",
+      "code": "1078",
+      "session": "Dec 2013",
+      "visuallyCompared": true
+    },
+    {
+      "key": "physiology-43",
+      "sha256": "10695a66436ea197337239589586a7cb0f212dccfa940808e350c900a78fad26",
+      "pdfPage": 43,
+      "units": 21,
+      "marks": 97,
+      "paper": "II",
+      "code": "1078",
+      "session": "Jun/Jul 2012",
+      "visuallyCompared": true
+    },
+    {
+      "key": "anatomy-53",
+      "sha256": "50d7c65d379203dec16bcc9a1808141b351ede18c7c3a3de8c0aefe5249f4f92",
+      "pdfPage": 53,
+      "units": 22,
+      "marks": 100,
+      "paper": "II",
+      "code": "1076",
+      "session": "Dec 2013",
+      "visuallyCompared": true
+    },
+    {
+      "key": "physiology-51",
+      "sha256": "10695a66436ea197337239589586a7cb0f212dccfa940808e350c900a78fad26",
+      "pdfPage": 51,
+      "units": 28,
+      "marks": 100,
+      "paper": "I",
+      "code": "1053",
+      "session": "Dec 2013",
+      "visuallyCompared": true
+    },
+    {
+      "key": "anatomy-54",
+      "sha256": "50d7c65d379203dec16bcc9a1808141b351ede18c7c3a3de8c0aefe5249f4f92",
+      "pdfPage": 54,
+      "units": 28,
+      "marks": 100,
+      "paper": "I",
+      "code": "1051",
+      "session": "Dec 2013",
+      "visuallyCompared": true
+    },
+    {
+      "key": "anatomy-52",
+      "sha256": "50d7c65d379203dec16bcc9a1808141b351ede18c7c3a3de8c0aefe5249f4f92",
+      "pdfPage": 52,
+      "units": 22,
+      "marks": 100,
+      "paper": "I",
+      "code": "1075",
+      "session": "Dec 2013",
+      "visuallyCompared": true
+    },
+    {
+      "key": "physiology-46",
+      "sha256": "10695a66436ea197337239589586a7cb0f212dccfa940808e350c900a78fad26",
+      "pdfPage": 46,
+      "units": 28,
+      "marks": 100,
+      "paper": "I",
+      "code": "1053",
+      "session": "Jun 2013",
+      "visuallyCompared": true
+    },
+    {
+      "key": "physiology-40",
+      "sha256": "10695a66436ea197337239589586a7cb0f212dccfa940808e350c900a78fad26",
+      "pdfPage": 40,
+      "units": 21,
+      "marks": 97,
+      "paper": "II",
+      "code": "1078",
+      "session": "Dec 2011 / Jan 2012",
+      "visuallyCompared": true
+    },
+    {
+      "key": "anatomy-55",
+      "sha256": "50d7c65d379203dec16bcc9a1808141b351ede18c7c3a3de8c0aefe5249f4f92",
+      "pdfPage": 55,
+      "units": 28,
+      "marks": 100,
+      "paper": "II",
+      "code": "1052",
+      "session": "Dec 2013",
+      "visuallyCompared": true
+    },
+    {
+      "key": "physiology-49",
+      "sha256": "10695a66436ea197337239589586a7cb0f212dccfa940808e350c900a78fad26",
+      "pdfPage": 49,
+      "units": 22,
+      "marks": 100,
+      "paper": "I",
+      "code": "1077",
+      "session": "Dec 2013",
+      "visuallyCompared": true
+    },
+    {
+      "key": "physiology-47",
+      "sha256": "10695a66436ea197337239589586a7cb0f212dccfa940808e350c900a78fad26",
+      "pdfPage": 47,
+      "units": 28,
+      "marks": 100,
+      "paper": "II",
+      "code": "1054",
+      "session": "Jun 2013",
+      "visuallyCompared": true
+    },
+    {
+      "key": "physiology-41",
+      "sha256": "10695a66436ea197337239589586a7cb0f212dccfa940808e350c900a78fad26",
+      "pdfPage": 41,
+      "units": 22,
+      "marks": 100,
+      "paper": "I",
+      "code": "1077",
+      "session": "Dec 2011 / Jan 2012",
+      "visuallyCompared": true
+    },
+    {
+      "key": "biochemistry-15",
+      "sha256": "a7674b65b15b899bb96cf50552743d6078abfced14353cc13dc085fc3c0510fe",
+      "pdfPage": 15,
+      "units": 28,
+      "marks": 100,
+      "paper": "I",
+      "code": "1055",
+      "session": "Jun 2013",
+      "visuallyCompared": true
+    },
+    {
+      "key": "biochemistry-19-i",
+      "sha256": "a7674b65b15b899bb96cf50552743d6078abfced14353cc13dc085fc3c0510fe",
+      "pdfPage": 19,
+      "units": 11,
+      "marks": 50,
+      "paper": "I",
+      "code": "1079",
+      "session": "Dec 2011 / Jan 2012",
+      "visuallyCompared": true
+    },
+    {
+      "key": "biochemistry-19-ii",
+      "sha256": "a7674b65b15b899bb96cf50552743d6078abfced14353cc13dc085fc3c0510fe",
+      "pdfPage": 19,
+      "units": 11,
+      "marks": 50,
+      "paper": "II",
+      "code": "1080",
+      "session": "Dec 2011 / Jan 2012",
+      "visuallyCompared": true
+    },
+    {
+      "key": "biochemistry-22",
+      "sha256": "a7674b65b15b899bb96cf50552743d6078abfced14353cc13dc085fc3c0510fe",
+      "pdfPage": 22,
+      "units": 11,
+      "marks": 50,
+      "paper": "II",
+      "code": "1080",
+      "session": "Dec 2013",
+      "visuallyCompared": true
+    },
+    {
+      "key": "biochemistry-23",
+      "sha256": "a7674b65b15b899bb96cf50552743d6078abfced14353cc13dc085fc3c0510fe",
+      "pdfPage": 23,
+      "units": 28,
+      "marks": 100,
+      "paper": "I",
+      "code": "1055",
+      "session": "Dec 2013",
+      "visuallyCompared": true
+    },
+    {
+      "key": "biochemistry-24",
+      "sha256": "a7674b65b15b899bb96cf50552743d6078abfced14353cc13dc085fc3c0510fe",
+      "pdfPage": 24,
+      "units": 11,
+      "marks": 50,
+      "paper": "I",
+      "code": "1079",
+      "session": "Dec 2013",
+      "visuallyCompared": true
+    },
+    {
+      "university": "wbuhs",
+      "sha256": "2d48fd19763795d2e31149c40d937e7185b5d58ddfac46d455bd4b1dbba5d10b",
+      "paper": "I",
+      "subject": "anatomy",
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "units": 31,
+      "marks": 118,
+      "selectionRules": {
+        "section1": "Answer any one of two,15 marks",
+        "section2": "Any five of six,3 marks each"
+      },
+      "offeredMarks": 118,
+      "attemptedMarks": 100,
+      "visuallyCompared": true
+    },
+    {
+      "university": "wbuhs",
+      "sha256": "2d48fd19763795d2e31149c40d937e7185b5d58ddfac46d455bd4b1dbba5d10b",
+      "paper": "II",
+      "subject": "anatomy",
+      "pagesVisuallyCompared": [
+        3,
+        4
+      ],
+      "units": 31,
+      "marks": 118,
+      "selectionRules": {
+        "section1": "Answer any one of two,15 marks",
+        "section2": "Any five of six,3 marks each"
+      },
+      "offeredMarks": 118,
+      "attemptedMarks": 100,
+      "visuallyCompared": true
+    },
+    {
+      "university": "wbuhs",
+      "sha256": "2d48fd19763795d2e31149c40d937e7185b5d58ddfac46d455bd4b1dbba5d10b",
+      "paper": "I",
+      "subject": "physiology",
+      "pagesVisuallyCompared": [
+        5,
+        6
+      ],
+      "units": 31,
+      "marks": 118,
+      "selectionRules": {
+        "section1": "Answer any one of two,15 marks",
+        "section2": "Any five of six,3 marks each"
+      },
+      "offeredMarks": 118,
+      "attemptedMarks": 100,
+      "visuallyCompared": true
+    },
+    {
+      "university": "wbuhs",
+      "sha256": "2d48fd19763795d2e31149c40d937e7185b5d58ddfac46d455bd4b1dbba5d10b",
+      "paper": "II",
+      "subject": "physiology",
+      "pagesVisuallyCompared": [
+        7,
+        8
+      ],
+      "units": 31,
+      "marks": 118,
+      "selectionRules": {
+        "section1": "Answer any one of two,15 marks",
+        "section2": "Any five of six,3 marks each"
+      },
+      "offeredMarks": 118,
+      "attemptedMarks": 100,
+      "visuallyCompared": true
+    },
+    {
+      "university": "wbuhs",
+      "sha256": "2d48fd19763795d2e31149c40d937e7185b5d58ddfac46d455bd4b1dbba5d10b",
+      "paper": "I",
+      "subject": "biochemistry",
+      "pagesVisuallyCompared": [
+        9,
+        10,
+        11
+      ],
+      "units": 30,
+      "marks": 117,
+      "selectionRules": {
+        "section1": "Answer any one of two,15 marks",
+        "section2": "Any five of six,3 marks each"
+      },
+      "offeredMarks": 118,
+      "attemptedMarks": 100,
+      "visuallyCompared": true
+    },
+    {
+      "university": "wbuhs",
+      "sha256": "2d48fd19763795d2e31149c40d937e7185b5d58ddfac46d455bd4b1dbba5d10b",
+      "paper": "II",
+      "subject": "biochemistry",
+      "pagesVisuallyCompared": [
+        12,
+        13
+      ],
+      "units": 31,
+      "marks": 118,
+      "selectionRules": {
+        "section1": "Answer any one of two,15 marks",
+        "section2": "Any five of six,3 marks each"
+      },
+      "offeredMarks": 118,
+      "attemptedMarks": 100,
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "paper": "I",
+      "subject": "pharmacology",
+      "pagesVisuallyCompared": [
+        1,
+        2,
+        4
+      ],
+      "units": 20,
+      "marks": 20,
+      "session": "Jan 2025",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "paper": "II",
+      "subject": "pharmacology",
+      "pagesVisuallyCompared": [
+        5,
+        6,
+        7
+      ],
+      "units": 20,
+      "marks": 20,
+      "session": "Jan 2025",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "paper": "I",
+      "subject": "pathology",
+      "pagesVisuallyCompared": [
+        8,
+        9,
+        10
+      ],
+      "units": 20,
+      "marks": 20,
+      "session": "Jan 2025",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "paper": "II",
+      "subject": "pathology",
+      "pagesVisuallyCompared": [
+        11,
+        12,
+        13
+      ],
+      "units": 20,
+      "marks": 20,
+      "session": "Jan 2025",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "paper": "I",
+      "subject": "pharmacology",
+      "pagesVisuallyCompared": [
+        20,
+        21,
+        22
+      ],
+      "units": 20,
+      "marks": 20,
+      "session": "Jan 2024",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "paper": "II",
+      "subject": "pharmacology",
+      "pagesVisuallyCompared": [
+        23,
+        24,
+        25
+      ],
+      "units": 20,
+      "marks": 20,
+      "session": "Jan 2024",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "paper": "II",
+      "subject": "pathology",
+      "pagesVisuallyCompared": [
+        26,
+        27,
+        28
+      ],
+      "units": 20,
+      "marks": 20,
+      "session": "Jan 2024",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "paper": "I",
+      "subject": "pathology",
+      "pagesVisuallyCompared": [
+        29,
+        30,
+        31
+      ],
+      "units": 20,
+      "marks": 20,
+      "session": "Jan 2024",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "paper": "II",
+      "subject": "microbiology",
+      "pagesVisuallyCompared": [
+        32,
+        33,
+        34
+      ],
+      "units": 20,
+      "marks": 20,
+      "session": "Jan 2024",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "paper": "I",
+      "subject": "microbiology",
+      "pagesVisuallyCompared": [
+        37
+      ],
+      "units": 1,
+      "marks": 1,
+      "session": "Jan 2024",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "paper": "I",
+      "subject": "pharmacology",
+      "pagesVisuallyCompared": [
+        44,
+        45,
+        46
+      ],
+      "units": 20,
+      "marks": 20,
+      "session": "Dec 2022",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "paper": "II",
+      "subject": "pharmacology",
+      "pagesVisuallyCompared": [
+        47,
+        48,
+        49
+      ],
+      "units": 20,
+      "marks": 20,
+      "session": "Dec 2022",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "paper": "II",
+      "subject": "pathology",
+      "pagesVisuallyCompared": [
+        53,
+        54,
+        55
+      ],
+      "units": 20,
+      "marks": 20,
+      "session": "Dec 2022",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "paper": "I",
+      "subject": "pharmacology",
+      "pagesVisuallyCompared": [
+        56,
+        57,
+        58
+      ],
+      "units": 20,
+      "marks": 20,
+      "session": "Feb 2022",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "paper": "II",
+      "subject": "pharmacology",
+      "pagesVisuallyCompared": [
+        59,
+        60,
+        61
+      ],
+      "units": 20,
+      "marks": 20,
+      "session": "Feb 2022",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "paper": "I",
+      "subject": "microbiology",
+      "pagesVisuallyCompared": [
+        62,
+        63,
+        64
+      ],
+      "units": 20,
+      "marks": 20,
+      "session": "Feb 2022",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "paper": "II",
+      "subject": "microbiology",
+      "pagesVisuallyCompared": [
+        65,
+        66,
+        67
+      ],
+      "units": 20,
+      "marks": 20,
+      "session": "Feb 2022",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "paper": "I",
+      "subject": "pathology",
+      "pagesVisuallyCompared": [
+        68,
+        69,
+        70
+      ],
+      "units": 20,
+      "marks": 20,
+      "session": "Feb 2022",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "68c525733f5e7517e9080e695e562999920bd483902f308c36cd4521eba570b3",
+      "paper": "II",
+      "subject": "pathology",
+      "pagesVisuallyCompared": [
+        71,
+        72,
+        73
+      ],
+      "units": 19,
+      "marks": 19,
+      "session": "Feb 2022",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3f2b9bfcccf864188fd6c1f7fa992a74b86000e6dbe42da4a20e142a96b4191f",
+      "paper": "I",
+      "subject": "pharmacology",
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "units": 12,
+      "marks": 80,
+      "session": "Jan 2025",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3f2b9bfcccf864188fd6c1f7fa992a74b86000e6dbe42da4a20e142a96b4191f",
+      "paper": "II",
+      "subject": "pharmacology",
+      "pagesVisuallyCompared": [
+        2
+      ],
+      "units": 12,
+      "marks": 80,
+      "session": "Jan 2025",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3f2b9bfcccf864188fd6c1f7fa992a74b86000e6dbe42da4a20e142a96b4191f",
+      "paper": "I",
+      "subject": "pathology",
+      "pagesVisuallyCompared": [
+        3
+      ],
+      "units": 12,
+      "marks": 80,
+      "session": "Jan 2025",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3f2b9bfcccf864188fd6c1f7fa992a74b86000e6dbe42da4a20e142a96b4191f",
+      "paper": "II",
+      "subject": "pathology",
+      "pagesVisuallyCompared": [
+        4
+      ],
+      "units": 12,
+      "marks": 80,
+      "session": "Jan 2025",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3f2b9bfcccf864188fd6c1f7fa992a74b86000e6dbe42da4a20e142a96b4191f",
+      "paper": "I",
+      "subject": "microbiology",
+      "pagesVisuallyCompared": [
+        5
+      ],
+      "units": 1,
+      "marks": 5,
+      "session": "Jan 2025",
+      "visuallyCompared": true
+    },
+    {
+      "university": "ntruhs",
+      "sha256": "3f2b9bfcccf864188fd6c1f7fa992a74b86000e6dbe42da4a20e142a96b4191f",
+      "paper": "II",
+      "subject": "microbiology",
+      "pagesVisuallyCompared": [
+        6
+      ],
+      "units": 11,
+      "marks": 65,
+      "session": "Jan 2025",
+      "visuallyCompared": true
+    }
+  ],
+  "duplicateExclusions": [
+    "January2024 MicrobiologyI SetA same exam as canonical SetB: only Q14 recovered",
+    "January2025 MicrobiologyI written same exam: only Q6 recovered",
+    "Previously imported MCQ examinations excluded"
+  ]
+}

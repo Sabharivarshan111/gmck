@@ -8,7 +8,7 @@ const root = path.resolve(import.meta.dirname, '../..');
 const { build } = await import('esbuild');
 const built = await build({entryPoints:[path.join(root,'src/data/universityPapers/reviewedQuestions.ts')],bundle:true,write:false,format:'esm',platform:'neutral'});
 const { REVIEWED_UNIVERSITY_QUESTIONS: rows } = await import(`data:text/javascript;base64,${Buffer.from(built.outputFiles[0].text).toString('base64')}`);
-assert.equal(rows.length, 15733);
+assert.equal(rows.length, 16758);
 const byId = new Map(rows.map(row => [row.id, row]));
 const sourceFor = question => byId.get(question.match(/^PYQ\[([^\]]+)\]/)?.[1]);
 let code = fs.readFileSync(path.join(root, 'src/data/universityPapers/presentation.ts'), 'utf8').replace(/^import .*\n/gm, '').replace(/export /g, '');
@@ -18,7 +18,7 @@ vm.runInNewContext(code, context);
 const h = context.helpers;
 const raw = row => `PYQ[${row.id}] ${row.question}`;
 const tabs = h.partitionUniversityQuestions(rows.filter(row => row.kind === 'essay').map(raw), rows.filter(row => row.kind === 'short-notes').map(raw));
-assert.equal(tabs.mcq.length, 2768);
+assert.equal(tabs.mcq.length, 3199);
 assert.equal(Object.values(tabs).flat().length, rows.length);
 assert.equal(new Set(Object.values(tabs).flat()).size, rows.length);
 assert.ok(tabs.mcq.every(question => sourceFor(question).questionFormat === 'mcq'));
@@ -34,3 +34,9 @@ assert.notEqual(h.repetitionKey(mcq), h.repetitionKey({ ...mcq, options: mcq.opt
 assert.equal(h.partitionUniversityQuestions(['Describe (a) nerve (b) muscle'], []).mcq.length, 0);
 assert.ok(rows.some(row => h.collectedRecordedExamCount(raw(row)) >= 2));
 console.log(`PASS: ${rows.length} identities preserved; ${tabs.mcq.length} original MCQs partitioned; repeats scoped by university, wording, choices and exam.`);
+
+const reordered = {...mcq, options:[...mcq.options].reverse().map((o,i)=>({...o,label:['a','b','c','d'][i]}))};
+const stem=mcq.question.split('\n(a) ')[0];
+reordered.question=stem+'\n'+reordered.options.map(o=>`(${o.label}) ${o.text}`).join('\n');
+assert.equal(h.repetitionKey(mcq),h.repetitionKey(reordered));
+assert.notEqual(h.repetitionKey(mcq),h.repetitionKey({...mcq,question:'NOT '+mcq.question}));
