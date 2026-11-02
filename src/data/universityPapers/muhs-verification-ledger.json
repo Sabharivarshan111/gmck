@@ -9,10 +9,10 @@
     "ocr_transcription_page_review_pending": "Original source file fingerprint/paper page is linked; its question text has not yet been exhaustively compared visually."
   },
   "counts": {
-    "page_image_compared": 286,
+    "page_image_compared": 309,
     "pdf_text_layer_corroborated": 129,
     "pdf_text_layer_low_match": 0,
-    "ocr_transcription_page_review_pending": 585
+    "ocr_transcription_page_review_pending": 562
   },
   "verifiedSourceHashes": {
     "batch26OriginalPapers": 78,
@@ -39,9 +39,11 @@
     "d05d4cbf5ce1",
     "90f1bb30a9de",
     "f330159b57d8",
-    "5140e208414c"
+    "5140e208414c",
+    "b044ff20e040",
+    "d576128afb0b"
   ],
-  "sourceCaveat": "83 original-paper PDF fingerprints; 286 question appearances were visually checked against scanned pages, 129 are cross-checked against original PDF text, and 585 OCR records remain pending visual verification. No official answer keys.",
+  "sourceCaveat": "83 original PDF sources; 309 questions visually compared with original scanned pages, 129 checked against original searchable PDF text, 562 OCR-based questions still pending page-by-page accuracy review. No official answer key.",
   "noOriginalAnswerKeys": true,
   "rows": [
     {
@@ -3139,7 +3141,8 @@
       "subject": "physiology",
       "format": "very-short-answer",
       "marks": 2,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-b044ff20e040-p1-q2b",
@@ -3149,7 +3152,8 @@
       "subject": "physiology",
       "format": "very-short-answer",
       "marks": 2,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-b044ff20e040-p1-q2c",
@@ -3159,7 +3163,8 @@
       "subject": "physiology",
       "format": "very-short-answer",
       "marks": 2,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-b044ff20e040-p1-q2d",
@@ -3169,7 +3174,8 @@
       "subject": "physiology",
       "format": "very-short-answer",
       "marks": 2,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-b044ff20e040-p1-q2e",
@@ -3179,7 +3185,8 @@
       "subject": "physiology",
       "format": "very-short-answer",
       "marks": 2,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-b044ff20e040-p1-q2f",
@@ -3189,7 +3196,8 @@
       "subject": "physiology",
       "format": "very-short-answer",
       "marks": 2,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-b044ff20e040-p1-q2g",
@@ -3199,7 +3207,8 @@
       "subject": "physiology",
       "format": "very-short-answer",
       "marks": 2,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-b044ff20e040-p1-q2h",
@@ -3209,7 +3218,8 @@
       "subject": "physiology",
       "format": "very-short-answer",
       "marks": 2,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-b044ff20e040-p1-q2i",
@@ -3219,7 +3229,8 @@
       "subject": "physiology",
       "format": "very-short-answer",
       "marks": 2,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-b044ff20e040-p1-q2j",
@@ -3229,7 +3240,8 @@
       "subject": "physiology",
       "format": "very-short-answer",
       "marks": 2,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-b044ff20e040-p1-q2k",
@@ -3239,7 +3251,8 @@
       "subject": "physiology",
       "format": "very-short-answer",
       "marks": 2,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-3719f6a422f3-p1-q2b",
@@ -6225,7 +6238,8 @@
       "subject": "community-medicine",
       "format": "short-answer",
       "marks": 7,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-d576128afb0b-p1-q3b",
@@ -6235,7 +6249,8 @@
       "subject": "community-medicine",
       "format": "short-answer",
       "marks": 7,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-d576128afb0b-p1-q3c",
@@ -6245,7 +6260,8 @@
       "subject": "community-medicine",
       "format": "short-answer",
       "marks": 7,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-d576128afb0b-p1-q3d",
@@ -6255,7 +6271,8 @@
       "subject": "community-medicine",
       "format": "short-answer",
       "marks": 7,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-d576128afb0b-p2-q4",
@@ -6265,7 +6282,8 @@
       "subject": "community-medicine",
       "format": "long-answer",
       "marks": 12,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-d576128afb0b-p2-q5a",
@@ -6275,7 +6293,8 @@
       "subject": "community-medicine",
       "format": "short-answer",
       "marks": 7,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-d576128afb0b-p2-q5b",
@@ -6285,7 +6304,8 @@
       "subject": "community-medicine",
       "format": "short-answer",
       "marks": 7,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-d576128afb0b-p2-q5c",
@@ -6295,7 +6315,8 @@
       "subject": "community-medicine",
       "format": "short-answer",
       "marks": 7,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-d576128afb0b-p2-q5d",
@@ -6305,7 +6326,8 @@
       "subject": "community-medicine",
       "format": "short-answer",
       "marks": 7,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-d576128afb0b-p2-q5e",
@@ -6315,7 +6337,8 @@
       "subject": "community-medicine",
       "format": "short-answer",
       "marks": 7,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-d576128afb0b-p2-q6",
@@ -6325,7 +6348,8 @@
       "subject": "community-medicine",
       "format": "long-answer",
       "marks": 12,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-ed191c7bdde9-p1-q2a",
@@ -9999,7 +10023,8 @@
       "subject": "physiology",
       "format": "long-answer",
       "marks": 10,
-      "status": "ocr_transcription_page_review_pending"
+      "status": "page_image_compared",
+      "qaSignals": []
     },
     {
       "id": "muhs-3719f6a422f3-p2-q3d",
