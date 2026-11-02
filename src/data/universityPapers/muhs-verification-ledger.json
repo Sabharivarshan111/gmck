@@ -3,15 +3,15 @@
   "asOf": "2026-11-02",
   "scope": "1,000 MUHS examination occurrences across Batch25 (138) + Batch26 (862)",
   "verificationLevels": {
-    "page_image_compared": "Row checked against displayed pages of original source PDF, including numbering, marks and clinical subparts. Does not verify an answer key.",
+    "page_image_compared": "Row manually compared with the original paper page image in this turn for all recorded stems/labels or subject-by-question matrix. This is a transcription review, not an official answer key or scientific correctness certification.",
     "pdf_text_layer_corroborated": "Legacy manually transcribed question has moderate or better token concordance with its PDF text layer, but not every line was independently checked visually in this pass.",
     "pdf_text_layer_low_match": "Legacy question has weak searchable PDF text concordance; source page needs visual confirmation (possibly OCR extraction problem).",
     "ocr_transcription_page_review_pending": "Original source file fingerprint/paper page is linked; its question text has not yet been exhaustively compared visually."
   },
   "counts": {
-    "page_image_compared": 265,
+    "page_image_compared": 274,
     "pdf_text_layer_corroborated": 129,
-    "pdf_text_layer_low_match": 9,
+    "pdf_text_layer_low_match": 0,
     "ocr_transcription_page_review_pending": 597
   },
   "verifiedSourceHashes": {
@@ -36,7 +36,7 @@
     "90f1bb30a9de",
     "f330159b57d8"
   ],
-  "sourceCaveat": "Source identity, uniqueness and page validity are metadata integrity checks; they do NOT establish medically correct answers or error-free OCR.",
+  "sourceCaveat": "Full image review pending on 597 Batch26 questions; paper hash, page number and source ID validate metadata, not exact OCR wording. Do not claim 1,000 independently transcription-verified.",
   "noOriginalAnswerKeys": true,
   "rows": [
     {
@@ -590,7 +590,7 @@
       "subject": "physiology",
       "format": "very-short-answer",
       "marks": 2,
-      "status": "pdf_text_layer_low_match"
+      "status": "page_image_compared"
     },
     {
       "id": "muhs-516b19932358-p1-q2j",
@@ -610,7 +610,7 @@
       "subject": "physiology",
       "format": "very-short-answer",
       "marks": 2,
-      "status": "pdf_text_layer_low_match",
+      "status": "page_image_compared",
       "qaSignals": [
         "short_label_check"
       ]
@@ -826,7 +826,7 @@
       "subject": "anatomy",
       "format": "very-short-answer",
       "marks": 2,
-      "status": "pdf_text_layer_low_match"
+      "status": "page_image_compared"
     },
     {
       "id": "muhs-3b0e557acfac-p1-q2j",
@@ -836,7 +836,7 @@
       "subject": "anatomy",
       "format": "very-short-answer",
       "marks": 2,
-      "status": "pdf_text_layer_low_match"
+      "status": "page_image_compared"
     },
     {
       "id": "muhs-3b0e557acfac-p1-q2k",
@@ -916,7 +916,7 @@
       "subject": "anatomy",
       "format": "short-answer",
       "marks": 5,
-      "status": "pdf_text_layer_low_match"
+      "status": "page_image_compared"
     },
     {
       "id": "muhs-3b0e557acfac-p2-q3h",
@@ -1079,7 +1079,7 @@
       "subject": "biochemistry",
       "format": "very-short-answer",
       "marks": 2,
-      "status": "pdf_text_layer_low_match"
+      "status": "page_image_compared"
     },
     {
       "id": "muhs-f54e5d25c24b-p2-q3a",
@@ -1325,7 +1325,7 @@
       "subject": "physiology",
       "format": "short-answer",
       "marks": 5,
-      "status": "pdf_text_layer_low_match"
+      "status": "page_image_compared"
     },
     {
       "id": "muhs-d735fa0a6981-p2-q3b",
@@ -1335,7 +1335,7 @@
       "subject": "physiology",
       "format": "short-answer",
       "marks": 5,
-      "status": "pdf_text_layer_low_match"
+      "status": "page_image_compared"
     },
     {
       "id": "muhs-d735fa0a6981-p2-q3c",
@@ -1345,7 +1345,7 @@
       "subject": "physiology",
       "format": "short-answer",
       "marks": 5,
-      "status": "pdf_text_layer_low_match"
+      "status": "page_image_compared"
     },
     {
       "id": "muhs-d735fa0a6981-p2-q3d",
@@ -10126,5 +10126,6 @@
       "marks": 10,
       "status": "ocr_transcription_page_review_pending"
     }
-  ]
+  ],
+  "note": "An additional nine low text-layer-concordance legacy Batch25 entries were visually checked on scans of their source pages (2 Physiology I/Anatomy I/Biochemistry II papers). Source-text OCR errors had caused their earlier low match."
 }
