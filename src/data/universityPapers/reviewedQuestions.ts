@@ -1,3 +1,4 @@
+import { REVIEWED_UNIVERSITY_QUESTIONS_BATCH24 as batch24 } from './reviewedBatch24';
 import { REVIEWED_UNIVERSITY_QUESTIONS as batch01 } from './reviewedBatch01';
 import { REVIEWED_UNIVERSITY_QUESTIONS_BATCH02 as batch02 } from './reviewedBatch02';
 import { REVIEWED_UNIVERSITY_QUESTIONS_BATCH03 as batch03 } from './reviewedBatch03';
@@ -24,5 +25,5 @@ import { REVIEWED_UNIVERSITY_QUESTIONS_BATCH23 as batch23 } from './reviewedBatc
 import type { ReviewedUniversityQuestion } from './types';
 
 /** Explicitly approved batches only. The mechanical extraction queue is never imported. */
-export const REVIEWED_UNIVERSITY_QUESTIONS: ReviewedUniversityQuestion[] = [...batch01, ...batch02, ...batch03, ...batch04, ...batch05, ...batch06, ...batch07, ...batch08, ...batch09, ...batch10, ...batch11, ...batch12, ...batch13, ...batch14, ...batch15, ...batch16, ...batch17, ...batch18, ...batch19, ...batch20, ...batch21, ...batch22, ...batch23];
+export const REVIEWED_UNIVERSITY_QUESTIONS: ReviewedUniversityQuestion[] = [...batch01, ...batch02, ...batch03, ...batch04, ...batch05, ...batch06, ...batch07, ...batch08, ...batch09, ...batch10, ...batch11, ...batch12, ...batch13, ...batch14, ...batch15, ...batch16, ...batch17, ...batch18, ...batch19, ...batch20, ...batch21, ...batch22, ...batch23, ...batch24];
 

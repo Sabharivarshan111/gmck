@@ -9,6 +9,10 @@ const results = [];
 try {
   for (const width of [360, 430]) {
     for (const fixture of [
+{university:'ntruhs',year:'first',yearKey:'first-year',query:'Chromosomal abnormality in Patau syndrome',topic:'Genetics',reference:'Dec 2023',option:'Trisomy 13'},
+{university:'ntruhs',year:'final',yearKey:'final-year',query:'102°F (38.9°C)',topic:'Infective Diseases',reference:'Dec 2024'},
+{university:'ntruhs',year:'second',yearKey:'second-year',query:'2,00,000 cells/mm³',topic:'White Blood Cells',reference:'Nov 2020'},
+{university:'ntruhs',year:'final',yearKey:'final-year',query:'acute pyogenic meningitis in infancy',topic:'CNS',reference:'Dec 2024'},
 {"university": "wbuhs", "year": "third", "yearKey": "third-year", "query": "Her weight is found to be 42 kg", "topic": "Epidemiology Of Communicable Diseases", "reference": "Aug/Sep 2026"},
 {"university": "ntruhs", "year": "first", "yearKey": "first-year", "query": "epiphyseal growth plate", "topic": "Histology", "reference": "Oct 2024", "option": "Hyaline cartilage"},
 {"university": "ntruhs", "year": "first", "yearKey": "first-year", "query": "90/70mm Hg", "topic": "Cardiovascular Physiology", "reference": "Oct 2024"},
