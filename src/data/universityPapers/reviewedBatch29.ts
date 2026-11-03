@@ -5,7 +5,7 @@
  */
 import type { ReviewedUniversityQuestion } from './types';
 
-export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH29: ReviewedUniversityQuestion[] = [
+export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH29 = [
   {
     "id": "rguhs-pdf26-anatomy-p4-q1",
     "university": "rguhs",
@@ -1951,4 +1951,4 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH29: ReviewedUniversityQuestion[]
     "marks": 0,
     "originalSection": "Short Notes"
   }
-];
+] satisfies ReviewedUniversityQuestion[];
