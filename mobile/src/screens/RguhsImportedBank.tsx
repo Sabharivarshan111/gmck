@@ -40,13 +40,13 @@ const SUBJECTS: Record<Year, Subject[]> = {
     { name: "Biochemistry", count: 719 },
   ],
   "second-year": [
-    { name: "Pathology", count: 866 },
-    { name: "Pharmacology", count: 1089 },
-    { name: "Microbiology", count: 1069 },
+    { name: "Pathology", count: 864 },
+    { name: "Pharmacology", count: 1086 },
+    { name: "Microbiology", count: 1067 },
   ],
   "third-year": [
-    { name: "Community Medicine (PSM)", count: 827 },
-    { name: "Forensic Medicine", count: 544 },
+    { name: "Community Medicine (PSM)", count: 824 },
+    { name: "Forensic Medicine", count: 530 },
   ],
 };
 const YEAR_DB: Record<Year, string> = { "first-year": "first", "second-year": "second", "third-year": "third" };
