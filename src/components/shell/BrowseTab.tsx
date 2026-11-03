@@ -226,7 +226,7 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
   const subjectNode = subjectKey ? yearNode?.subtopics?.[subjectKey] : null;
   const subjectHasPapers = !!(subjectNode?.subtopics?.["paper-1"] || subjectNode?.subtopics?.["paper-2"]);
 
-  if (rguhsSelected && showRguhsFull && (yearKey === "first-year" || yearKey === "second-year" || yearKey === "third-year")) {
+  if (rguhsSelected && showRguhsFull && (yearKey === "first-year" || yearKey === "second-year" || yearKey === "third-year" || yearKey === "final-year")) {
     return <RGUHSCompleteBank yearKey={yearKey} onSwitchBack={() => setShowRguhsFull(false)} onYearChange={setYearKey} />;
   }
 
