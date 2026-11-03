@@ -71,7 +71,7 @@ export default function WBUHSSecondThirdBank({ yearKey, onSwitchBack }: { yearKe
             .order("source_column", { ascending: true })
             .order("question_number", { ascending: true })
             .range(start, start + PAGE_SIZE - 1);
-          if (queryError) throw new Error(queryError.message || "Could not load MUHS questions");
+          if (queryError) throw new Error(queryError.message || "Could not load WBUHS questions");
           if (cancelled) return;
           const batch: QuestionRow[] = data ?? [];
           items.push(...batch);
