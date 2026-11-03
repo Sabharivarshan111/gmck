@@ -11,6 +11,7 @@ import { pushBackHandler } from "@/lib/back-stack";
 import { cn } from "@/lib/utils";
 import MUHSFinalYearBank from "@/components/shell/MUHSFinalYearBank";
 import WBUHSSecondThirdBank from "@/components/shell/WBUHSSecondThirdBank";
+import MUHSPreFinalBank from "@/components/shell/MUHSPreFinalBank";
 
 const SUBJECT_ICONS: Record<string, string> = {
   anatomy: "🫀", physiology: "🧠", biochemistry: "🧬",
@@ -95,7 +96,24 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
   });
   const switchWBUHS = (enabled: boolean) => {
     setWbuhsSelected(enabled);
+    if (enabled) {
+      setMuhsEarlierSelected(false);
+      try { localStorage.setItem("orbit:muhs-pre-final-year", "existing"); } catch { /* storage disabled */ }
+    }
     try { localStorage.setItem("orbit:wbuhs-second-third", enabled ? "WBUHS" : "existing"); } catch { /* storage disabled */ }
+    setSubjectKey(null); setPaperKey(null); setTopicKey(null); setSearch("");
+  };
+  const [muhsEarlierSelected, setMuhsEarlierSelected] = useState(() => {
+    try { return localStorage.getItem("orbit:muhs-pre-final-year") === "MUHS"; }
+    catch { return false; }
+  });
+  const switchMuhsEarlier = (enabled: boolean) => {
+    setMuhsEarlierSelected(enabled);
+    if (enabled) setWbuhsSelected(false);
+    try {
+      localStorage.setItem("orbit:muhs-pre-final-year", enabled ? "MUHS" : "existing");
+      if (enabled) localStorage.setItem("orbit:wbuhs-second-third", "existing");
+    } catch { /* storage disabled */ }
     setSubjectKey(null); setPaperKey(null); setTopicKey(null); setSearch("");
   };
   const [muhsSelected, setMuhsSelected] = useState(() => {
@@ -174,6 +192,10 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
 
   const subjectNode = subjectKey ? yearNode?.subtopics?.[subjectKey] : null;
   const subjectHasPapers = !!(subjectNode?.subtopics?.["paper-1"] || subjectNode?.subtopics?.["paper-2"]);
+
+  if ((yearKey === "first-year" || yearKey === "second-year" || yearKey === "third-year") && muhsEarlierSelected) {
+    return <MUHSPreFinalBank yearKey={yearKey} onSwitchBack={() => switchMuhsEarlier(false)} />;
+  }
 
   if ((yearKey === "second-year" || yearKey === "third-year") && wbuhsSelected) {
     return <WBUHSSecondThirdBank yearKey={yearKey} onSwitchBack={() => switchWBUHS(false)} />;
@@ -439,6 +461,26 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
           );
         })}
       </div>
+
+      {(yearKey === "first-year" || yearKey === "second-year" || yearKey === "third-year") && (
+        <button
+          type="button"
+          onClick={() => switchMuhsEarlier(true)}
+          className="w-full flex items-center justify-between rounded-xl border border-primary/40 bg-primary/10 p-4 text-left hover:border-primary transition"
+        >
+          <span>
+            <span className="block text-sm font-bold">MUHS — Maharashtra University</span>
+            <span className="block text-xs text-muted-foreground mt-1">
+              {yearKey === "first-year"
+                ? "1st Year • 1,499 OCR questions • Anatomy, Physiology, Biochemistry"
+                : yearKey === "second-year"
+                ? "2nd Year • 1,204 OCR questions • Pharmacology, Pathology, Microbiology"
+                : "3rd Year Part I • 96 OCR questions • Community Medicine, Forensic Medicine"}
+            </span>
+          </span>
+          <ChevronRight className="h-5 w-5 text-primary ml-2" />
+        </button>
+      )}
 
       {(yearKey === "second-year" || yearKey === "third-year") && (
         <button
