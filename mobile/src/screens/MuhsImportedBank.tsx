@@ -61,11 +61,11 @@ const SUBJECTS: Record<Year, { name: string; key: string; count: number }[]> = {
     { name: 'Forensic Medicine', key: 'forensic-medicine', count: 28 },
   ],
   'final-year': [
-    { name: 'General Medicine', key: 'general-medicine', count: 680 },
-    { name: 'General Surgery', key: 'general-surgery', count: 341 },
+    { name: 'General Medicine', key: 'general-medicine', count: 681 },
+    { name: 'General Surgery', key: 'general-surgery', count: 342 },
     { name: 'Orthopaedics', key: 'orthopaedics', count: 129 },
     { name: 'Anaesthesiology', key: 'anaesthesiology', count: 10 },
-    { name: 'Obstetrics & Gynaecology', key: 'obstetrics-gynaecology', count: 250 },
+    { name: 'Obstetrics & Gynaecology', key: 'obstetrics-gynaecology', count: 251 },
     { name: 'Paediatrics', key: 'paediatrics', count: 158 },
   ],
 };
