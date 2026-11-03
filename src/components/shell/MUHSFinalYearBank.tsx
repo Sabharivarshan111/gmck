@@ -20,11 +20,11 @@ type QuestionRow = {
 };
 
 const SUBJECTS = [
-  { key: "General Medicine", label: "General Medicine", emoji: "🩺", count: 680 },
-  { key: "General Surgery", label: "General Surgery", emoji: "🔪", count: 341 },
+  { key: "General Medicine", label: "General Medicine", emoji: "🩺", count: 681 },
+  { key: "General Surgery", label: "General Surgery", emoji: "🔪", count: 342 },
   { key: "Orthopaedics", label: "Orthopaedics", emoji: "🦴", count: 129 },
   { key: "Anaesthesiology", label: "Anaesthesiology", emoji: "💉", count: 10 },
-  { key: "Obstetrics & Gynaecology", label: "Obstetrics & Gynaecology", emoji: "👶", count: 250 },
+  { key: "Obstetrics & Gynaecology", label: "Obstetrics & Gynaecology", emoji: "👶", count: 251 },
   { key: "Paediatrics", label: "Paediatrics", emoji: "🧒", count: 158 },
 ] as const;
 
@@ -122,7 +122,7 @@ export default function MUHSFinalYearBank({ onSwitchBack }: { onSwitchBack: () =
       </header>
       {!subject && (
         <>
-          <p className="text-xs text-muted-foreground">1,568 questions extracted from Medicine, Surgery, OBG and Paediatrics MUHS PDFs, arranged by subject and chapter.</p>
+          <p className="text-xs text-muted-foreground">1,571 questions extracted from Medicine, Surgery, OBG and Paediatrics MUHS PDFs, arranged by subject and chapter.</p>
           <div className="grid grid-cols-2 gap-3">
             {SUBJECTS.map((s) => (
               <button key={s.key} onClick={() => enterSubject(s.key)} className="h-40 rounded-2xl border border-border/60 bg-gradient-to-br from-card to-primary/10 p-4 flex flex-col items-start justify-between text-left hover:border-primary/50 active:scale-[0.98] transition">
