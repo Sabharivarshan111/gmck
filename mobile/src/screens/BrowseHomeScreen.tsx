@@ -1,5 +1,6 @@
 import { isUniversityMcq } from '@data/universityPapers/presentation';
 import MuhsImportedBank from '@/screens/MuhsImportedBank';
+import WbuhsImportedBank from '@/screens/WbuhsImportedBank';
 import RguhsImportedBank from '@/screens/RguhsImportedBank';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, StyleSheet, TextInput, View } from 'react-native';
@@ -54,6 +55,7 @@ export default function BrowseHomeScreen() {
   const bankUniversity = availableBankUniversity(university);
   const [year, setYear] = useState<YearKey>(route.params?.year ?? profileYear);
   const [showMuhsOcr, setShowMuhsOcr] = useState(true);
+  const [showWbuhsOcr, setShowWbuhsOcr] = useState(true);
   const [showRguhsOcr, setShowRguhsOcr] = useState(true);
   const [query, setQuery] = useState('');
   const [debounced, setDebounced] = useState('');
@@ -154,6 +156,10 @@ export default function BrowseHomeScreen() {
     return <MuhsImportedBank initialYear={year} onSwitchBack={() => setShowMuhsOcr(false)} />;
   }
 
+  if (bankUniversity === 'wbuhs' && showWbuhsOcr) {
+    return <WbuhsImportedBank initialYear={year} onSwitchBack={() => setShowWbuhsOcr(false)} />;
+  }
+
   return (
     <KeyboardSafe>
     <View style={[styles.container, { backgroundColor: colors.background, paddingTop: insets.top + 8 }]}>
@@ -174,12 +180,22 @@ export default function BrowseHomeScreen() {
         </Touchable>
       ) : null}
 
+      {bankUniversity === 'wbuhs' ? (
+        <Touchable
+          label="Open WBUHS OCR second and third year question bank"
+          onPress={() => setShowWbuhsOcr(true)}
+          style={[styles.switchRow, { borderColor: colors.border }]}>
+          <Text style={{ color: colors.cyan, fontWeight: '700' }}>WBUHS OCR: Second / Third Year (1,288 questions, flagged entries shown)</Text>
+          <ChevronRight size={16} color={colors.cyan} />
+        </Touchable>
+      ) : null}
+
       {bankUniversity === 'muhs' ? (
         <Touchable
-          label="Open MUHS OCR 1st, 2nd and 3rd year question bank"
+          label="Open MUHS OCR first through final year question bank"
           onPress={() => setShowMuhsOcr(true)}
           style={[styles.switchRow, { borderColor: colors.border }]}>
-          <Text style={{ color: colors.cyan, fontWeight: '700' }}>MUHS OCR: 1st / 2nd / 3rd MBBS (2,708 screened questions)</Text>
+          <Text style={{ color: colors.cyan, fontWeight: '700' }}>MUHS OCR: First / Second / Third / Final Year (4,347 stored questions)</Text>
           <ChevronRight size={16} color={colors.cyan} />
         </Touchable>
       ) : null}
