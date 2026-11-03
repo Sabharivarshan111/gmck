@@ -8,6 +8,7 @@ for p in sorted((ROOT/'src/data/universityPapers').glob('reviewedBatch*.ts')):
  assert m,p
  rows.extend(json.loads(m.group(1)))
 ids={r['id'] for r in rows};assert rows and len(ids)==len(rows)
+EXPECTED_CACHE_REVISION=re.search(r"const SW_VERSION\s*=\s*['\"]([^'\"]+)['\"]",(ROOT/'public/sw.js').read_text()).group(1)
 TARGETS=['https://orbitmbbs.vercel.app','https://www.orbitmbbs.site']
 ASSET_CACHE={}
 def get(url):
@@ -37,8 +38,8 @@ def verify(base,attempt):
  missing=[s for s in ids if s.encode() not in payload]
  assert not missing,f'{len(missing)} of {len(ids)} reviewed IDs are not served yet'
  _,sw=get(origin+'/sw.js?orbit-bank-check='+str(len(ids)))
- assert b'v38-muhs-batch26-1000-2026-11-02' in sw,'Offline cache revision has not propagated'
- return {'requestedOrigin':base,'finalOrigin':origin,'reviewedIdsFound':len(ids),'missing':0,'assets':assets,'combinedBytes':len(payload),'combinedSHA256':hashlib.sha256(payload).hexdigest(),'offlineCacheRevision':'v38-muhs-batch26-1000-2026-11-02'}
+ assert EXPECTED_CACHE_REVISION.encode() in sw,'Offline cache revision has not propagated'
+ return {'requestedOrigin':base,'finalOrigin':origin,'reviewedIdsFound':len(ids),'missing':0,'assets':assets,'combinedBytes':len(payload),'combinedSHA256':hashlib.sha256(payload).hexdigest(),'offlineCacheRevision':EXPECTED_CACHE_REVISION}
 result={}
 for attempt in range(1,61):
  for target in TARGETS:
