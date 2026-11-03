@@ -196,7 +196,7 @@ export default function MUHSFinalYearBank({ onSwitchBack }: { onSwitchBack: () =
                       <div className="px-3 pt-1 text-[11px] text-muted-foreground">
                         {q.exam_dates?.length ? `Exam: ${q.exam_dates.join(", ")} • ` : ""}
                         {q.source_page ? `Source PDF page ${q.source_page}` : ""}
-                        {q.quality_status !== "ocr_parsed" && <span className="ml-2 text-amber-600 dark:text-amber-400">OCR review pending</span>}
+                        {q.quality_status.startsWith("needs_") && <span className="ml-2 text-amber-600 dark:text-amber-400">OCR review pending</span>}
                       </div>
                     </div>
                   ))}
