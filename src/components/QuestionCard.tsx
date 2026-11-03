@@ -16,9 +16,11 @@ interface QuestionCardProps {
   yearKey?: string;
   subjectKey?: string;
   subjectName?: string;
+  /** Explicit exam appearance count; 0 suppresses an unverified OCR badge. */
+  repeatCountOverride?: number;
 }
 
-const QuestionCard: React.FC<QuestionCardProps> = ({ question, index, isFirstYear, highlight, yearKey, subjectKey, subjectName }) => {
+const QuestionCard: React.FC<QuestionCardProps> = ({ question, index, isFirstYear, highlight, yearKey, subjectKey, subjectName, repeatCountOverride }) => {
   const rootRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (highlight && rootRef.current) {
@@ -38,7 +40,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index, isFirstYea
   // Only source-linked, reviewed RGUHS rows use the actual number of distinct
   // exam sessions. Never infer this number from OCR drafts or asterisks.
   const collectedSource = collectedQuestionSource(question);
-  const displayCount = collectedSource
+  const displayCount = repeatCountOverride !== undefined ? repeatCountOverride : collectedSource
     ? collectedRecordedExamCount(question)
     : isFirstYear ? (asteriskCount === 0 ? 1 : asteriskCount) : asteriskCount;
   const { theme } = useTheme();
