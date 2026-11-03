@@ -1,3 +1,5 @@
+import { collectedQuestionSource } from '@/data/universityPapers/questionBankData';
+import { collectedRecordedExamCount } from '@/data/universityPapers/presentation';
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { SuccessCheckmark } from '@/components/SuccessCheckmark';
@@ -33,7 +35,12 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, index, isFirstYea
   });
   const [tapStatus, setTapStatus] = useState<'idle' | 'processing-answer' | 'processing-mcq'>('idle');
   const asteriskCount = countAsterisks(question);
-  const displayCount = isFirstYear ? (asteriskCount === 0 ? 1 : asteriskCount) : asteriskCount;
+  // Only source-linked, reviewed RGUHS rows use the actual number of distinct
+  // exam sessions. Never infer this number from OCR drafts or asterisks.
+  const collectedSource = collectedQuestionSource(question);
+  const displayCount = collectedSource
+    ? collectedRecordedExamCount(question)
+    : isFirstYear ? (asteriskCount === 0 ? 1 : asteriskCount) : asteriskCount;
   const { theme } = useTheme();
   
   // Create refs to track tap counts and timing
@@ -319,7 +326,7 @@ function extractPageNumber(question: string): string | null {
 function getCleanQuestionText(question: string): string {
   // Don't remove any of the important details
   // Just remove the numbering at the beginning if present
-  let cleaned = question.replace(/^\d+\.\s/, '');
+  let cleaned = question.replace(/^PYQ\[[a-z0-9-]+\]\s*/, '').replace(/^\d+\.\s/, '');
   return cleaned;
 }
 
