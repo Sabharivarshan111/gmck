@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import MUHSFinalYearBank from "@/components/shell/MUHSFinalYearBank";
 import WBUHSSecondThirdBank from "@/components/shell/WBUHSSecondThirdBank";
 import MUHSPreFinalBank from "@/components/shell/MUHSPreFinalBank";
+import RGUHSCompleteBank from "@/components/shell/RGUHSCompleteBank";
 
 const SUBJECT_ICONS: Record<string, string> = {
   anatomy: "🫀", physiology: "🧠", biochemistry: "🧬",
@@ -91,6 +92,7 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
   const [topicKey, setTopicKey] = useState<string | null>(meta?.topic ?? null);
   const [activeTab, setActiveTab] = useState<"essay" | "short-notes">(meta?.tab ?? "essay");
   const [tick, setTick] = useState(0);
+  const [showRguhsFull, setShowRguhsFull] = useState(true);
   const [rguhsSelected, setRguhsSelected] = useState(() => {
     try {
       const saved = localStorage.getItem("orbit:rguhs-question-bank");
@@ -102,6 +104,7 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
   });
   const switchRGUHS = (enabled: boolean) => {
     setRguhsSelected(enabled);
+    setShowRguhsFull(enabled);
     if (enabled) { setWbuhsSelected(false); setMuhsEarlierSelected(false); }
     try {
       localStorage.setItem("orbit:rguhs-question-bank", enabled ? "RGUHS" : "existing");
@@ -222,6 +225,10 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
 
   const subjectNode = subjectKey ? yearNode?.subtopics?.[subjectKey] : null;
   const subjectHasPapers = !!(subjectNode?.subtopics?.["paper-1"] || subjectNode?.subtopics?.["paper-2"]);
+
+  if (rguhsSelected && showRguhsFull && (yearKey === "first-year" || yearKey === "second-year" || yearKey === "third-year")) {
+    return <RGUHSCompleteBank yearKey={yearKey} onSwitchBack={() => setShowRguhsFull(false)} onYearChange={setYearKey} />;
+  }
 
   if ((yearKey === "first-year" || yearKey === "second-year" || yearKey === "third-year") && muhsEarlierSelected && !rguhsSelected) {
     return <MUHSPreFinalBank yearKey={yearKey} onSwitchBack={() => switchMuhsEarlier(false)} />;
@@ -505,6 +512,13 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
             </span>
           </span>
           <ChevronRight className="h-5 w-5 text-primary ml-2" />
+        </button>
+      )}
+
+      {rguhsSelected && !showRguhsFull && yearKey !== "final-year" && (
+        <button type="button" onClick={() => setShowRguhsFull(true)}
+          className="w-full text-left rounded-xl border border-primary/40 bg-primary/10 p-4 font-bold text-sm text-primary">
+          View all 8,072 RGUHS OCR imported questions
         </button>
       )}
 
