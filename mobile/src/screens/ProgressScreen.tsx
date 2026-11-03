@@ -32,7 +32,7 @@ import {
   Trophy,
 } from 'lucide-react-native';
 import { typeScale } from '@/theme/typography';
-import { XP_MILESTONES, XP_PER_LEVEL, levelFor } from '@/lib/xp';
+import { XP_MILESTONES, STREAK_BADGES, XP_PER_LEVEL, levelFor, rewardSummary } from '@/lib/xp';
 import { useTheme, withAlpha, type ThemePreference } from '@/theme';
 import { onColor } from '@/theme/color';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
@@ -86,14 +86,6 @@ const TABS: { key: Tab; label: string }[] = [
   { key: 'notes', label: 'Notes' },
 ];
 
-const STREAK_BADGES = [
-  { label: 'Spark', days: 3, tint: '#7C2D12' },
-  { label: 'Blaze', days: 7, tint: '#3F3F46' },
-  { label: 'Inferno', days: 14, tint: '#713F12' },
-  { label: 'Wildfire', days: 30, tint: '#164E63' },
-  { label: 'Eternal', days: 100, tint: '#27272A' },
-];
-
 const THEME_OPTIONS: { key: ThemePreference; label: string }[] = [
   { key: 'light', label: 'Light' },
   { key: 'dark', label: 'Dark' },
@@ -131,7 +123,7 @@ export default function ProgressScreen() {
   const [authBusy, setAuthBusy] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const isNative = Platform.OS === 'android';
-  const [googleAuthenticated, setGoogleAuthenticated] = useState(!isNative || !GOOGLE_SIGN_IN_ENABLED);
+  const [googleAuthenticated, setGoogleAuthenticated] = useState<boolean>(!isNative || !GOOGLE_SIGN_IN_ENABLED);
 
   const subjects = useMemo(
     () =>
@@ -162,6 +154,7 @@ export default function ProgressScreen() {
 
   const yearPct = totals.total ? Math.round((totals.done / totals.total) * 100) : 0;
   const xp = totals.done;
+  const rewards = rewardSummary(xp, streak);
   const level = useMemo(() => levelFor(xp), [xp]);
 
   useEffect(() => {
@@ -644,8 +637,8 @@ export default function ProgressScreen() {
               <Trophy size={20} color={colors.warning} />
               <Text style={[styles.cardTitle, { color: colors.text }]}>Rewards</Text>
               <Text style={[styles.cardCount, { color: colors.fuchsia }]}>
-                {XP_MILESTONES.filter(m => xp >= m.xp).length}
-                <Text style={{ color: colors.textMuted }}> / {XP_MILESTONES.length + 5}</Text>
+                {rewards.unlocked}
+                <Text style={{ color: colors.textMuted }}> / {rewards.total}</Text>
               </Text>
               <View style={styles.grow} />
               <ChevronUp
@@ -690,7 +683,9 @@ export default function ProgressScreen() {
                   })}
                 </View>
 
-                <Text style={[styles.subLabel, { color: colors.textMuted }]}>STREAK BADGES</Text>
+                <Text style={[styles.subLabel, { color: colors.textMuted }]}>
+                  STREAK BADGES · {rewards.streakUnlocked} / {STREAK_BADGES.length} unlocked
+                </Text>
                 <View style={styles.streakBadges}>
                   {STREAK_BADGES.map(badge => {
                     /*
@@ -710,6 +705,9 @@ export default function ProgressScreen() {
                     return (
                       <View
                         key={badge.label}
+                        accessible
+                        accessibilityRole="image"
+                        accessibilityLabel={`${badge.label}, ${badge.days} day streak badge, ${earned ? 'unlocked' : `${badge.days - streak} days to go`}`}
                         style={[
                           styles.streakBadge,
                           {
