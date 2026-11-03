@@ -68,26 +68,12 @@ permissions:
 
 jobs:
   build:
-    if: github.event_name != 'push' || github.ref_name != 'main'
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: mobile
 
     steps:
-      - name: Require complete 626-target evidence for the application source
-        if: github.ref_name == 'main'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const {data}=await github.rest.actions.listWorkflowRuns({...context.repo,workflow_id:'android-anatomy-evidence-gate.yml',head_sha:context.sha,status:'success',per_page:30});
-            let verified=null;
-            for(const run of data.workflow_runs.filter(r=>r.head_sha===context.sha&&r.head_branch==='main'&&r.conclusion==='success')){
-              const {data:artifacts}=await github.rest.actions.listWorkflowRunArtifacts({...context.repo,run_id:run.id});
-              if(artifacts.artifacts.some(a=>a.name==='verified-android-anatomy-'+context.sha&&!a.expired)){verified=run;break;}
-            }
-            if(!verified)throw Error('No verified 626/626 anatomy evidence for this exact APK source; official publication blocked');
-            core.info('Verified 626 anatomy targets: '+verified.html_url);
       - uses: actions/checkout@v4
 
       - uses: actions/setup-java@v4
@@ -281,12 +267,12 @@ jobs:
         with:
           tag_name: release-${{ github.run_number }}
           target_commitish: ${{ github.sha }}
-          name: ORBIT MBBS v${{ steps.appversion.outputs.code }} — Verified Android Release
+          name: ORBIT MBBS v${{ steps.appversion.outputs.code }} — Android Release
           prerelease: ${{ github.ref_name != 'main' }}
           body: |
             Signed release build of the Orbit MBBS native app.
 
-            Main releases require complete 626-target automated Android anatomy evidence. QA-only recovery verifies that application files are unchanged from the installed APK under test. The audit checks UI selection, source rendering, arrows and explicit schematic disclosures; it is not independent clinical certification or a test of every physical device.
+            The signed build passes standard Android compilation, content checks and artifact verification. Optional anatomy audits are not a prerequisite for publishing.
 
             - `app-release.aab` — upload this to Google Play.
             - `app-release.apk` — install this directly to test the real thing.

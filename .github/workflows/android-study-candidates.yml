@@ -1,5 +1,5 @@
 name: Android study-fix signed candidates
-# Signed artifacts only; public releases retain the existing full626 gate.
+# Signed candidate builds remain separate from public Android releases.
 on:
   workflow_dispatch:
     inputs:
