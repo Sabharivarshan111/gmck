@@ -39,7 +39,7 @@ function chapterLabel(item: Entry) {
 function examLabels(item: Entry) {
   return Array.from(new Set((item.exam_sessions ?? []).map(x => x.trim()).filter(Boolean)));
 }
-/** OCR drafts are accessible but never misrepresented as source-verified. */
+/** Imported RGUHS questions; provenance remains in internal review_status. */
 export default function RGUHSCompleteBank({ yearKey, onSwitchBack, onYearChange }: { yearKey: Year; onSwitchBack: () => void; onYearChange: (year: Year) => void }) {
   const [subject, setSubject] = useState<string | null>(null);
   const [chapter, setChapter] = useState<string | null>(null);
@@ -108,8 +108,7 @@ export default function RGUHSCompleteBank({ yearKey, onSwitchBack, onYearChange 
       </div>
     </header>
     <p className="rounded-xl bg-card border border-border p-3 text-xs text-muted-foreground">
-      Full OCR import; source pages are preserved. <strong>OCR draft means not yet page-verified.</strong>
-      Scanned wording, exam dates, category and chapter may contain errors. Unverified dates do not count as confirmed repetitions.
+      Chapterwise RGUHS questions with source PDF page references. Dates and wording should be checked against the original question papers before use.
     </p>
     {!subject ? <>
       <nav aria-label="MBBS year" className="flex gap-2 overflow-x-auto">
@@ -120,7 +119,7 @@ export default function RGUHSCompleteBank({ yearKey, onSwitchBack, onYearChange 
             {YEAR_TEXT[year]}
           </button>)}
       </nav>
-      <p className="text-sm text-muted-foreground">{SUBJECTS[yearKey].reduce((n, row) => n + row.count, 0).toLocaleString()} new RGUHS records. Existing reviewed RGUHS entries are preserved separately.</p>
+      <p className="text-sm text-muted-foreground">{SUBJECTS[yearKey].reduce((n, row) => n + row.count, 0).toLocaleString()} RGUHS questions. Previous question-bank entries are preserved.</p>
       <div className="grid grid-cols-2 gap-3">{SUBJECTS[yearKey].map(row =>
         <button key={row.name} type="button" onClick={() => { setSubject(row.name); setChapter(null); setQuery(""); setTab("essay"); }}
           className="min-h-36 rounded-2xl border border-border bg-card p-4 flex flex-col gap-3 text-left justify-between hover:border-primary/40">
@@ -146,12 +145,12 @@ export default function RGUHSCompleteBank({ yearKey, onSwitchBack, onYearChange 
         <div className="flex flex-wrap gap-2">{(["essay", "short-notes", "unknown"] as Kind[]).map(kind =>
           <button key={kind} type="button" onClick={() => { setTab(kind); setQuery(""); }}
             className={"rounded-full border px-3 py-2 text-xs font-semibold " + (tab === kind ? "bg-primary/10 text-primary border-primary" : "bg-card border-border text-muted-foreground")}>
-            {kind === "essay" ? "Essay" : kind === "short-notes" ? "Short Notes" : "Needs classification"}
+            {kind === "essay" ? "Essay" : kind === "short-notes" ? "Short Notes" : "Other"}
           </button>)}</div>
         <div className="rounded-xl border border-border bg-card flex gap-2 items-center px-3"><Search className="w-4 h-4 text-muted-foreground" />
           <input type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder="Search this section" className="bg-transparent outline-none w-full text-sm p-3" /></div>
         <p className="text-xs text-muted-foreground">{visible.length} matching questions</p>
-        {visible.length === 0 && <p className="text-sm p-4 text-muted-foreground">No questions here. Try another classification tab.</p>}
+        {visible.length === 0 && <p className="text-sm p-4 text-muted-foreground">No questions in this section. Try another tab.</p>}
         {visible.map((row, index) => {
           const sessions = examLabels(row);
           const verified = row.review_status === "verified";
@@ -159,8 +158,8 @@ export default function RGUHSCompleteBank({ yearKey, onSwitchBack, onYearChange 
             <QuestionCard question={row.question_text} index={index} yearKey={yearKey} subjectKey={subjectMeta?.key}
               subjectName={subject || ""} repeatCountOverride={verified ? sessions.length : 0} />
             <div className="text-[11px] text-muted-foreground pl-3 -mt-1 space-y-1">
-              <p>{verified ? "✓ Page-checked" : "OCR draft · needs review"} · Source PDF page {row.source_pages?.join(", ") || "unknown"}</p>
-              <p>{verified ? "Documented exam sessions" : "OCR date labels (unverified)"}: {sessions.length ? sessions.join(" · ") : "not reliably captured"}</p>
+              <p>Source PDF page {row.source_pages?.join(", ") || "unknown"}</p>
+              <p>{verified ? "Exam sessions" : "Dates shown in source"}: {sessions.length ? sessions.join(" · ") : "not listed"}</p>
             </div>
           </div>;
         })}
