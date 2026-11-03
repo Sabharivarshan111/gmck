@@ -17,13 +17,13 @@ const SUBJECTS: Record<Year, { name: string; icon: string; key: string; count: n
     { name: "Biochemistry", icon: "🧬", key: "biochemistry", count: 719 },
   ],
   "second-year": [
-    { name: "Pathology", icon: "🔬", key: "pathology", count: 866 },
-    { name: "Pharmacology", icon: "💊", key: "pharmacology", count: 1089 },
-    { name: "Microbiology", icon: "🦠", key: "microbiology", count: 1069 },
+    { name: "Pathology", icon: "🔬", key: "pathology", count: 864 },
+    { name: "Pharmacology", icon: "💊", key: "pharmacology", count: 1086 },
+    { name: "Microbiology", icon: "🦠", key: "microbiology", count: 1067 },
   ],
   "third-year": [
-    { name: "Community Medicine (PSM)", icon: "🏥", key: "community-medicine", count: 827 },
-    { name: "Forensic Medicine", icon: "⚖️", key: "forensic-medicine", count: 544 },
+    { name: "Community Medicine (PSM)", icon: "🏥", key: "community-medicine", count: 824 },
+    { name: "Forensic Medicine", icon: "⚖️", key: "forensic-medicine", count: 530 },
   ],
 };
 const YEAR_TO_DB: Record<Year, string> = { "first-year": "first", "second-year": "second", "third-year": "third" };
