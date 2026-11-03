@@ -105,7 +105,8 @@
     "check:premium": "node scripts/premium-access-check.mjs",
     "check:attendance-organizer": "node scripts/attendance-organizer-check.mjs",
     "check:attendance-history": "node scripts/attendance-history-check.mjs",
-    "check:university-import": "node scripts/collected-university-check.mjs"
+    "check:university-import": "node scripts/collected-university-check.mjs",
+    "ios": "react-native run-ios"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.1.1",
@@ -157,7 +158,8 @@
     "react-dom": "^19.2.3",
     "react-native-web": "^0.21.2",
     "typescript": "^6.0.3",
-    "vite": "^7.3.6"
+    "vite": "^7.3.6",
+    "@react-native-community/cli-platform-ios": "20.2.0"
   },
   "engines": {
     "node": ">= 22.11.0"
