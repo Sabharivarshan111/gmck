@@ -1,0 +1,22 @@
+name: ORBIT university question-bank Android typecheck
+on:
+  push:
+    branches:
+      - codex/orbit-university-parity-20261103
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - name: Install locked mobile dependencies
+        run: npm --prefix mobile ci --legacy-peer-deps --ignore-scripts
+      - name: Typecheck native application
+        run: npm --prefix mobile run typecheck
+      - name: Check university question-bank integration
+        run: npm --prefix mobile run check:university-import
