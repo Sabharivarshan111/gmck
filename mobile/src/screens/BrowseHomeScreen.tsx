@@ -172,10 +172,10 @@ export default function BrowseHomeScreen() {
 
       {bankUniversity === 'rguhs' ? (
         <Touchable
-          label="Open all 11296 RGUHS questions across four MBBS years"
+          label="Open all 10859 RGUHS questions across four MBBS years"
           onPress={() => setShowRguhsOcr(true)}
           style={[styles.switchRow, { borderColor: colors.border }]}>
-          <Text style={{ color: colors.cyan, fontWeight: '700' }}>RGUHS: 1st–Final MBBS • 11,296 questions</Text>
+          <Text style={{ color: colors.cyan, fontWeight: '700' }}>RGUHS: 1st–Final MBBS • 10,859 questions</Text>
           <ChevronRight size={16} color={colors.cyan} />
         </Touchable>
       ) : null}
