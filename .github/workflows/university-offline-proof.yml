@@ -9,7 +9,7 @@ on:
       - 'mobile/scripts/*university*'
       - '.github/workflows/university-offline-proof.yml'
   pull_request:
-    branches: [main]
+    branches: [main, claude/native-app-sync]
     paths:
       - 'src/data/universityPapers/**'
       - 'src/lib/university.ts'
@@ -51,3 +51,4 @@ jobs:
         with:
           name: university-browser-results
           path: mobile/artifacts/university-import/
+
