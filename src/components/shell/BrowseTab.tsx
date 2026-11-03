@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ChevronRight, BookOpen, FileText, Timer as TimerIcon, Search } from "lucide-react";
 import { QUESTION_BANK_DATA } from "@/data/questionBankData";
+import { COLLECTED_BANKS } from "@/data/universityPapers/questionBankData";
 import { collectQuestions, countDone, QUESTION_PROGRESS_EVENT } from "@/lib/question-progress";
 import { useProfile } from "@/hooks/use-profile";
 import QuestionCard from "@/components/QuestionCard";
@@ -90,6 +91,27 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
   const [topicKey, setTopicKey] = useState<string | null>(meta?.topic ?? null);
   const [activeTab, setActiveTab] = useState<"essay" | "short-notes">(meta?.tab ?? "essay");
   const [tick, setTick] = useState(0);
+  const [rguhsSelected, setRguhsSelected] = useState(() => {
+    try {
+      const saved = localStorage.getItem("orbit:rguhs-question-bank");
+      if (saved === "RGUHS") return true;
+      if (saved === "existing") return false;
+      const profile = JSON.parse(localStorage.getItem("orbit-profile-v1") || "null");
+      return profile?.university === "rguhs";
+    } catch { return false; }
+  });
+  const switchRGUHS = (enabled: boolean) => {
+    setRguhsSelected(enabled);
+    if (enabled) { setWbuhsSelected(false); setMuhsEarlierSelected(false); }
+    try {
+      localStorage.setItem("orbit:rguhs-question-bank", enabled ? "RGUHS" : "existing");
+      if (enabled) {
+        localStorage.setItem("orbit:wbuhs-second-third", "existing");
+        localStorage.setItem("orbit:muhs-pre-final-year", "existing");
+      }
+    } catch { /* local storage disabled */ }
+    setSubjectKey(null); setPaperKey(null); setTopicKey(null); setSearch("");
+  };
   const [wbuhsSelected, setWbuhsSelected] = useState(() => {
     try { return localStorage.getItem("orbit:wbuhs-second-third") === "WBUHS"; }
     catch { return false; }
@@ -97,6 +119,8 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
   const switchWBUHS = (enabled: boolean) => {
     setWbuhsSelected(enabled);
     if (enabled) {
+      setRguhsSelected(false);
+      try { localStorage.setItem("orbit:rguhs-question-bank", "existing"); } catch {}
       setMuhsEarlierSelected(false);
       try { localStorage.setItem("orbit:muhs-pre-final-year", "existing"); } catch { /* storage disabled */ }
     }
@@ -109,7 +133,11 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
   });
   const switchMuhsEarlier = (enabled: boolean) => {
     setMuhsEarlierSelected(enabled);
-    if (enabled) setWbuhsSelected(false);
+    if (enabled) {
+      setWbuhsSelected(false);
+      setRguhsSelected(false);
+      try { localStorage.setItem("orbit:rguhs-question-bank", "existing"); } catch {}
+    }
     try {
       localStorage.setItem("orbit:muhs-pre-final-year", enabled ? "MUHS" : "existing");
       if (enabled) localStorage.setItem("orbit:wbuhs-second-third", "existing");
@@ -169,7 +197,9 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
   }, []);
 
 
-  const yearNode = (QUESTION_BANK_DATA as any)[yearKey];
+  const yearNode = (rguhsSelected && yearKey !== "final-year"
+    ? COLLECTED_BANKS.rguhs
+    : QUESTION_BANK_DATA as any)[yearKey];
   const subjects = useMemo(() => {
     if (!yearNode?.subtopics) return [];
     return Object.entries(yearNode.subtopics).map(([key, sub]: any) => {
@@ -193,11 +223,11 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
   const subjectNode = subjectKey ? yearNode?.subtopics?.[subjectKey] : null;
   const subjectHasPapers = !!(subjectNode?.subtopics?.["paper-1"] || subjectNode?.subtopics?.["paper-2"]);
 
-  if ((yearKey === "first-year" || yearKey === "second-year" || yearKey === "third-year") && muhsEarlierSelected) {
+  if ((yearKey === "first-year" || yearKey === "second-year" || yearKey === "third-year") && muhsEarlierSelected && !rguhsSelected) {
     return <MUHSPreFinalBank yearKey={yearKey} onSwitchBack={() => switchMuhsEarlier(false)} />;
   }
 
-  if ((yearKey === "second-year" || yearKey === "third-year") && wbuhsSelected) {
+  if ((yearKey === "second-year" || yearKey === "third-year") && wbuhsSelected && !rguhsSelected) {
     return <WBUHSSecondThirdBank yearKey={yearKey} onSwitchBack={() => switchWBUHS(false)} />;
   }
 
@@ -463,6 +493,22 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
       </div>
 
       {(yearKey === "first-year" || yearKey === "second-year" || yearKey === "third-year") && (
+        <button
+          type="button"
+          onClick={() => switchRGUHS(!rguhsSelected)}
+          className="w-full flex items-center justify-between rounded-xl border border-primary/40 bg-primary/10 p-4 text-left hover:border-primary transition"
+        >
+          <span>
+            <span className="block text-sm font-bold">RGUHS — Karnataka {rguhsSelected ? "✓ Selected" : ""}</span>
+            <span className="block text-xs text-muted-foreground mt-1">
+              {rguhsSelected ? "Showing source-reviewed RGUHS past papers. Tap to return to the standard bank." : "Open RGUHS yearwise, chapterwise reviewed questions with recorded repeat counts."}
+            </span>
+          </span>
+          <ChevronRight className="h-5 w-5 text-primary ml-2" />
+        </button>
+      )}
+
+      {(yearKey === "first-year" || yearKey === "second-year" || yearKey === "third-year") && !rguhsSelected && (
         <button
           type="button"
           onClick={() => switchMuhsEarlier(true)}
