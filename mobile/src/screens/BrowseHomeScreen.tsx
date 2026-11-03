@@ -1,5 +1,6 @@
 import { isUniversityMcq } from '@data/universityPapers/presentation';
 import MuhsImportedBank from '@/screens/MuhsImportedBank';
+import RguhsImportedBank from '@/screens/RguhsImportedBank';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, StyleSheet, TextInput, View } from 'react-native';
 import { Text } from '@/components/Text';
@@ -53,6 +54,7 @@ export default function BrowseHomeScreen() {
   const bankUniversity = availableBankUniversity(university);
   const [year, setYear] = useState<YearKey>(route.params?.year ?? profileYear);
   const [showMuhsOcr, setShowMuhsOcr] = useState(true);
+  const [showRguhsOcr, setShowRguhsOcr] = useState(true);
   const [query, setQuery] = useState('');
   const [debounced, setDebounced] = useState('');
 
@@ -144,6 +146,10 @@ export default function BrowseHomeScreen() {
     [navigation],
   );
 
+  if (bankUniversity === 'rguhs' && showRguhsOcr) {
+    return <RguhsImportedBank initialYear={year} onSwitchBack={() => setShowRguhsOcr(false)} />;
+  }
+
   if (bankUniversity === 'muhs' && showMuhsOcr) {
     return <MuhsImportedBank initialYear={year} onSwitchBack={() => setShowMuhsOcr(false)} />;
   }
@@ -157,6 +163,16 @@ export default function BrowseHomeScreen() {
           {bankUniversity === 'other' ? 'Other university' : `${bankUniversity.toUpperCase()} Question Bank`}
         </Text>
       </View>
+
+      {bankUniversity === 'rguhs' ? (
+        <Touchable
+          label="Open all 8072 OCR imported RGUHS questions"
+          onPress={() => setShowRguhsOcr(true)}
+          style={[styles.switchRow, { borderColor: colors.border }]}>
+          <Text style={{ color: colors.cyan, fontWeight: '700' }}>RGUHS: complete 1st / 2nd / 3rd year OCR question bank (8,072)</Text>
+          <ChevronRight size={16} color={colors.cyan} />
+        </Touchable>
+      ) : null}
 
       {bankUniversity === 'muhs' ? (
         <Touchable
