@@ -2581,3 +2581,11 @@ DONE: Next1,002NTR/YSR original-page-reviewed occurrences;18,769 cumulative.3,87
 HALF-DONE: Both app branches contain identical Batch24 data. Offline bank/UI proof workflow separates deterministic data/UI coverage from unchanged external model availability probes. Verify hosted237browser scenarios/6onboarding, both live18,769-ID payloads and signedAndroid packages before calling publication complete. Webcachev36. No backend/version/Play/device changes.
 
 NEXT: Finishpublication and save final receipts. Next review: firstana/phyMCQ SHA5a410 physical19 JanFeb2022AnatomyI, images19–21 seen but not transcribed; firstbio/third/finalMCQs remain pending. Secondtheory2020–24pages3–18 are unreviewed this batch (dedup against existing CBME first); page25fadedforensic and remaining35/36/41/42require review/dedup. Original45pages are not declared complete. Firsttheory36 and finaltheory60/Dec2024eightpages already accounted. Overall university/year/session remaining percentage unknown.
+
+
+## 2026-11-03 — Codex — MUHS new-paper batch preparation
+
+**DONE** — staged 156 source-page transcriptions from PIMS original exam scans into Batch27, with page SHA and selection groups; all prior IDs retained. Section labels on pages 41/46/48 corrected against source.
+**HALF-DONE** — targeted validation is running on this branch; this is part of the requested next1000, not a completed1000 or Android release.
+**NEXT** — inspect exact-head tests and final content review; continue collecting original MUHS papers toward1000 before calling batch complete. Native branch still requires selective parity and actual package verification.
+**DO NOT** — publish raw PDFs, count alternate copies twice, or infer Play availability from a web PR.

@@ -1,0 +1,45 @@
+{
+  "batch": 27,
+  "count": 156,
+  "marks": 935,
+  "sourceBasis": "College-hosted original exam scans; attributed to MUHS via institution affiliation and paper-code corroboration. Issuing university name is not printed on these pages.",
+  "sourceUrl": "https://www.pims.co.in/wp-content/uploads/2024/09/2.5.3-exam-reforrms.pdf",
+  "attributionUrl": "https://www.pims.co.in/wp-content/uploads/2022/05/Part-II_compressed.pdf",
+  "rawPdfPublished": false,
+  "papers": [
+    {
+      "sha256": "ff8e209e9014b641eb3815a7750e7872f89bc198a5e2f40bdf42d7918e18c59c",
+      "pagesVisuallyCompared": [
+        25,
+        26,
+        27,
+        28,
+        33,
+        34,
+        35,
+        41,
+        45,
+        46,
+        47,
+        48,
+        53,
+        55,
+        61,
+        63,
+        65,
+        67,
+        77,
+        79,
+        81,
+        83,
+        93,
+        95,
+        97,
+        99
+      ]
+    }
+  ],
+  "held": "Five units omitted for selection-instruction ambiguity or unresolved ethics topic mapping. Earlier source C retype equivalents and conflicting 2020 Surgery I excluded.",
+  "dedupBasis": "No corresponding subject/session/year refs in old 1000 bank. All 107 source files screened, including 25 pages of 14 formerly OCR-poor First MBBS papers; these differ in professional phase from the candidates. Shared wording in readable sources occurs in different sessions or subjects.",
+  "sourcePagesCheck": "Transcription and section/mark comparisons recorded in the private continuation checkpoint. Source typos retained."
+}
