@@ -49,15 +49,16 @@ const ids = new Set();
 for (const [university, count] of Object.entries(expected)) {
   const uniRows = rows.filter(r => r.university === university);
   assert.equal(uniRows.length, count, 'Source-linked question row count for ' + university);
-  if (university === 'rguhs') {
-    // The 105 newly page-reviewed RGUHS records keep all dated source rows,
-    // while the UI intentionally suppresses identical question cards.
-    const identities = new Set(uniRows.map(row => [row.year, row.subjectKey, row.kind,
-      row.questionFormat === 'mcq' ? 'mcq' : 'written', row.question.normalize('NFKC').toLowerCase()
-        .replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/\s+/g, ' ')
-        .replace(/[.!?]+$/, '').trim()].join('|')));
-    assert.equal(bank.allSearchHits(university).length, identities.size, 'Every unique RGUHS question must be browseable');
-  } else assert.equal(bank.allSearchHits(university).length, count);
+  // The source retains every dated appearance for repeat-frequency metadata,
+  // while buildCollectedBank suppresses identical question cards for EVERY university.
+  // Verify complete unique-question coverage, without pretending duplicate sittings
+  // should render as separate cards or weakening the raw source/count assertions.
+  const identities = new Set(uniRows.map(row => [row.year, row.subjectKey, row.kind,
+    row.questionFormat === 'mcq' ? 'mcq' : 'written', row.question.normalize('NFKC').toLowerCase()
+      .replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/\s+/g, ' ')
+      .replace(/[.!?]+$/, '').trim()].join('|')));
+  assert.equal(bank.allSearchHits(university).length, identities.size,
+    'Every distinct ' + university + ' question must be browseable');
   assert.equal(source.COLLECTED_QUESTION_COUNTS[university], count);
   assert.equal(availability.bankAvailable(university), count > 0);
   if (count) assert.equal(availability.availableBankUniversity(university), university);
