@@ -40,7 +40,7 @@ function examLabels(item: Entry) {
   return Array.from(new Set((item.exam_sessions ?? []).map(x => x.trim()).filter(Boolean)));
 }
 /** OCR drafts are accessible but never misrepresented as source-verified. */
-export default function RGUHSCompleteBank({ yearKey, onSwitchBack }: { yearKey: Year; onSwitchBack: () => void }) {
+export default function RGUHSCompleteBank({ yearKey, onSwitchBack, onYearChange }: { yearKey: Year; onSwitchBack: () => void; onYearChange: (year: Year) => void }) {
   const [subject, setSubject] = useState<string | null>(null);
   const [chapter, setChapter] = useState<string | null>(null);
   const [tab, setTab] = useState<Kind>("essay");
@@ -112,6 +112,14 @@ export default function RGUHSCompleteBank({ yearKey, onSwitchBack }: { yearKey: 
       Scanned wording, exam dates, category and chapter may contain errors. Unverified dates do not count as confirmed repetitions.
     </p>
     {!subject ? <>
+      <nav aria-label="MBBS year" className="flex gap-2 overflow-x-auto">
+        {(["first-year", "second-year", "third-year"] as Year[]).map(year =>
+          <button type="button" key={year} onClick={() => onYearChange(year)}
+            className={"rounded-full px-4 py-2 whitespace-nowrap border text-sm " +
+              (yearKey === year ? "bg-primary/10 text-primary border-primary" : "border-border bg-card text-muted-foreground")}>
+            {YEAR_TEXT[year]}
+          </button>)}
+      </nav>
       <p className="text-sm text-muted-foreground">{SUBJECTS[yearKey].reduce((n, row) => n + row.count, 0).toLocaleString()} new RGUHS records. Existing reviewed RGUHS entries are preserved separately.</p>
       <div className="grid grid-cols-2 gap-3">{SUBJECTS[yearKey].map(row =>
         <button key={row.name} type="button" onClick={() => { setSubject(row.name); setChapter(null); setQuery(""); setTab("essay"); }}
