@@ -163,7 +163,7 @@ export default function BrowseHomeScreen() {
           label="Open MUHS OCR 1st, 2nd and 3rd year question bank"
           onPress={() => setShowMuhsOcr(true)}
           style={[styles.switchRow, { borderColor: colors.border }]}>
-          <Text style={{ color: colors.cyan, fontWeight: '700' }}>MUHS OCR: 1st / 2nd / 3rd MBBS (2,799 questions)</Text>
+          <Text style={{ color: colors.cyan, fontWeight: '700' }}>MUHS OCR: 1st / 2nd / 3rd MBBS (2,708 screened questions)</Text>
           <ChevronRight size={16} color={colors.cyan} />
         </Touchable>
       ) : null}
