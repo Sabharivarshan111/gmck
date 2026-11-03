@@ -105,12 +105,13 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
   const switchRGUHS = (enabled: boolean) => {
     setRguhsSelected(enabled);
     setShowRguhsFull(enabled);
-    if (enabled) { setWbuhsSelected(false); setMuhsEarlierSelected(false); }
+    if (enabled) { setWbuhsSelected(false); setMuhsEarlierSelected(false); setMuhsSelected(false); }
     try {
       localStorage.setItem("orbit:rguhs-question-bank", enabled ? "RGUHS" : "existing");
       if (enabled) {
         localStorage.setItem("orbit:wbuhs-second-third", "existing");
         localStorage.setItem("orbit:muhs-pre-final-year", "existing");
+        localStorage.setItem("orbit:final-year-university", "existing");
       }
     } catch { /* local storage disabled */ }
     setSubjectKey(null); setPaperKey(null); setTopicKey(null); setSearch("");
