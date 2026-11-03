@@ -65,6 +65,8 @@ interface Props {
   myBook?: boolean;
   /** Remember a question the reader actually opened or marked. */
   onInteract?: (question: string) => void;
+  /** Show true checked repetitions; pass 0 for unverified OCR. */
+  repeatCountOverride?: number;
 }
 
 /**
@@ -97,6 +99,7 @@ function QuestionRowBase({
   communityPage,
   myBook = false,
   onInteract,
+  repeatCountOverride,
 }: Props) {
   const { colors } = useTheme();
   const reduceMotion = useReducedMotion();
@@ -107,7 +110,7 @@ function QuestionRowBase({
   const university = useBankUniversity();
   const kuhsSource = university === 'other' ? undefined : kuhsQuestionSource(question);
   const collectedSource = university === 'other' ? undefined : collectedQuestionSource(question);
-  const stars = kuhsSource ? kuhsRecordedExamCount(kuhsSource.examRefs) : collectedSource ? collectedRecordedExamCount(question) : countStars(question);
+  const stars = repeatCountOverride !== undefined ? repeatCountOverride : kuhsSource ? kuhsRecordedExamCount(kuhsSource.examRefs) : collectedSource ? collectedRecordedExamCount(question) : countStars(question);
   const originalMcq = collectedSource?.questionFormat === 'mcq';
   const page = extractPageNumber(question);
   const importance = importanceLabel(stars);
