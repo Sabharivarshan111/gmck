@@ -567,7 +567,7 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
         >
           <span>
             <span className="block text-sm font-bold">MUHS — Maharashtra University</span>
-            <span className="block text-xs text-muted-foreground mt-1">Final Year • 1,568 questions • Medicine, Surgery, OBG, Paediatrics</span>
+            <span className="block text-xs text-muted-foreground mt-1">Final Year • 1,571 questions • Medicine, Surgery, OBG, Paediatrics</span>
           </span>
           <ChevronRight className="h-5 w-5 text-primary ml-2" />
         </button>
