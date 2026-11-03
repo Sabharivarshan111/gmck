@@ -499,7 +499,7 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
         })}
       </div>
 
-      {(yearKey === "first-year" || yearKey === "second-year" || yearKey === "third-year") && (
+      {(yearKey === "first-year" || yearKey === "second-year" || yearKey === "third-year" || yearKey === "final-year") && (
         <button
           type="button"
           onClick={() => switchRGUHS(!rguhsSelected)}
@@ -508,17 +508,17 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
           <span>
             <span className="block text-sm font-bold">RGUHS — Karnataka {rguhsSelected ? "✓ Selected" : ""}</span>
             <span className="block text-xs text-muted-foreground mt-1">
-              {rguhsSelected ? "Showing source-reviewed RGUHS past papers. Tap to return to the standard bank." : "Open RGUHS yearwise, chapterwise reviewed questions with recorded repeat counts."}
+              {rguhsSelected ? "Showing RGUHS yearwise past questions. Tap to return to the standard bank." : "Open RGUHS questions from all four MBBS years with source PDF page references."}
             </span>
           </span>
           <ChevronRight className="h-5 w-5 text-primary ml-2" />
         </button>
       )}
 
-      {rguhsSelected && !showRguhsFull && yearKey !== "final-year" && (
+      {rguhsSelected && !showRguhsFull && (
         <button type="button" onClick={() => setShowRguhsFull(true)}
           className="w-full text-left rounded-xl border border-primary/40 bg-primary/10 p-4 font-bold text-sm text-primary">
-          View all 8,048 RGUHS OCR imported questions
+          Open complete RGUHS collection (10,859 questions)
         </button>
       )}
 
