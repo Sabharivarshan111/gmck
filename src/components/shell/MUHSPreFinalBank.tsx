@@ -19,17 +19,17 @@ type QuestionRow = {
 
 const SUBJECTS_BY_YEAR = {
   "first-year": [
-    { key: "Anatomy", label: "Anatomy", emoji: "🫀", count: 393 },
-    { key: "Physiology", label: "Physiology", emoji: "🧠", count: 631 },
-    { key: "Biochemistry", label: "Biochemistry", emoji: "🧬", count: 403 },
+    { key: "Anatomy", label: "Anatomy", emoji: "🫀", count: 422 },
+    { key: "Physiology", label: "Physiology", emoji: "🧠", count: 654 },
+    { key: "Biochemistry", label: "Biochemistry", emoji: "🧬", count: 412 },
   ],
   "second-year": [
-    { key: "Pathology", label: "Pathology", emoji: "🔬", count: 261 },
-    { key: "Pharmacology", label: "Pharmacology", emoji: "💊", count: 621 },
-    { key: "Microbiology", label: "Microbiology", emoji: "🦠", count: 309 },
+    { key: "Pathology", label: "Pathology", emoji: "🔬", count: 269 },
+    { key: "Pharmacology", label: "Pharmacology", emoji: "💊", count: 606 },
+    { key: "Microbiology", label: "Microbiology", emoji: "🦠", count: 324 },
   ],
   "third-year": [
-    { key: "Community Medicine (PSM)", label: "Community Medicine (PSM)", emoji: "🏥", count: 62 },
+    { key: "Community Medicine (PSM)", label: "Community Medicine (PSM)", emoji: "🏥", count: 64 },
     { key: "Forensic Medicine", label: "Forensic Medicine & Toxicology", emoji: "⚖️", count: 28 },
   ],
 } as const;
@@ -41,13 +41,18 @@ const YEAR_LABEL = {
 } as const;
 
 const DB_STUDY_YEAR = {
-  "first-year": "first-year",
-  "second-year": "second-year",
-  "third-year": "third-year",
+  "first-year": "1st Year",
+  "second-year": "2nd Year",
+  "third-year": "3rd Year Part 1",
 } as const;
 
 const PAGE_SIZE = 250;
 const COLUMNS = "id,subject,chapter,question_type,question_text,source_page,source_column,source_pdf,quality_status";
+const REVIEW_LABEL: Record<string, string> = {
+  reviewed_against_pdf: "Checked against PDF",
+  needs_review: "Review pending",
+  ocr_parsed: "OCR extracted · not yet verified",
+};
 
 export default function MUHSPreFinalBank({ yearKey, onSwitchBack }: { yearKey: "first-year" | "second-year" | "third-year"; onSwitchBack: () => void }) {
   const [subject, setSubject] = useState<string | null>(null);
@@ -77,12 +82,11 @@ export default function MUHSPreFinalBank({ yearKey, onSwitchBack }: { yearKey: "
         const items: QuestionRow[] = [];
         for (let start = 0; ; start += PAGE_SIZE) {
           const { data, error: queryError } = await (supabase as any)
-            .from("muhs_early_year_questions")
+            .from("muhs_pre_final_questions")
             .select(COLUMNS)
             .eq("university", "MUHS")
             .eq("study_year", DB_STUDY_YEAR[yearKey])
             .eq("subject", subject)
-            .in("quality_status", ["ocr_checked", "verified"])
             .order("source_page", { ascending: true })
             .order("source_column", { ascending: true })
             .order("id", { ascending: true })
@@ -150,7 +154,7 @@ export default function MUHSPreFinalBank({ yearKey, onSwitchBack }: { yearKey: "
       </header>
       {!subject && (
         <>
-          <p className="text-xs text-muted-foreground">{SUBJECTS_BY_YEAR[yearKey].reduce((total, item) => total + item.count, 0)} OCR-screened MUHS questions arranged by subject and chapter. Uncertain scans are withheld for review; wording has not been fully verified against every page.</p>
+          <p className="text-xs text-muted-foreground">{SUBJECTS_BY_YEAR[yearKey].reduce((total, item) => total + item.count, 0)} MUHS questions imported from PDF scans. Entries marked Review pending may contain OCR mistakes; only Checked against PDF entries have been individually reviewed.</p>
           <div className="grid grid-cols-2 gap-3">
             {SUBJECTS_BY_YEAR[yearKey].map((s) => (
               <button key={s.key} onClick={() => enterSubject(s.key)} className="h-40 rounded-2xl border border-border/60 bg-gradient-to-br from-card to-primary/10 p-4 flex flex-col items-start justify-between text-left hover:border-primary/50 active:scale-[0.98] transition">
@@ -223,6 +227,9 @@ export default function MUHSPreFinalBank({ yearKey, onSwitchBack }: { yearKey: "
                       />
                       <div className="px-3 pt-1 text-[11px] text-muted-foreground">
                         {q.source_pdf ? `${q.source_pdf}, PDF page ${q.source_page}` : `PDF page ${q.source_page}`}
+                        <span className={`ml-2 font-semibold ${q.quality_status === "needs_review" ? "text-amber-600 dark:text-amber-400" : q.quality_status === "reviewed_against_pdf" ? "text-emerald-600 dark:text-emerald-400" : ""}`}>
+                          · {REVIEW_LABEL[q.quality_status] ?? "OCR extracted"}
+                        </span>
                       </div>
                     </div>
                   ))}
