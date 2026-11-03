@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActivityIndicator, FlatList, StyleSheet, TextInput, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -18,7 +19,7 @@ import { noteQuestionText } from '@/lib/questionText';
 import { SegmentedControl } from '@/components/ui';
 import { type YearKey } from '@/lib/questionBank';
 
-type Year = 'first-year' | 'second-year' | 'third-year';
+type Year = 'first-year' | 'second-year' | 'third-year' | 'final-year';
 type Entry = {
   id: string;
   subject: string;
@@ -28,16 +29,21 @@ type Entry = {
   source_pdf: string;
   source_page: number;
   quality_status: string;
+  exam_dates?: string[];
+  question_number?: number;
+  source_column?: number;
 };
 const DB_YEAR: Record<Year, string> = {
   'first-year': '1st Year',
   'second-year': '2nd Year',
   'third-year': '3rd Year Part 1',
+  'final-year': 'Final Year',
 };
 const OPTIONS = [
   { key: 'first-year', label: '1st' },
   { key: 'second-year', label: '2nd' },
   { key: 'third-year', label: '3rd' },
+  { key: 'final-year', label: 'Final' },
 ] as const;
 const SUBJECTS: Record<Year, { name: string; key: string; count: number }[]> = {
   'first-year': [
@@ -54,6 +60,14 @@ const SUBJECTS: Record<Year, { name: string; key: string; count: number }[]> = {
     { name: 'Community Medicine (PSM)', key: 'community-medicine', count: 64 },
     { name: 'Forensic Medicine', key: 'forensic-medicine', count: 28 },
   ],
+  'final-year': [
+    { name: 'General Medicine', key: 'general-medicine', count: 680 },
+    { name: 'General Surgery', key: 'general-surgery', count: 341 },
+    { name: 'Orthopaedics', key: 'orthopaedics', count: 129 },
+    { name: 'Anaesthesiology', key: 'anaesthesiology', count: 10 },
+    { name: 'Obstetrics & Gynaecology', key: 'obstetrics-gynaecology', count: 250 },
+    { name: 'Paediatrics', key: 'paediatrics', count: 158 },
+  ],
 };
 
 type Item = { kind: 'subject'; name: string; key: string; count: number }
@@ -67,7 +81,7 @@ export default function MuhsImportedBank({ initialYear, onSwitchBack }: {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList, 'BrowseHome'>>();
-  const [year, setYear] = useState<Year>(initialYear === 'final-year' ? 'first-year' : initialYear);
+  const [year, setYear] = useState<Year>(initialYear);
   const [subject, setSubject] = useState<string | null>(null);
   const [chapter, setChapter] = useState<string | null>(null);
   const [tab, setTab] = useState<'essay' | 'short-notes'>('essay');
@@ -76,6 +90,7 @@ export default function MuhsImportedBank({ initialYear, onSwitchBack }: {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [retry, setRetry] = useState(0);
+  const [cached, setCached] = useState(false);
   const [noted, setNoted] = useState<Entry | null>(null);
 
   const chosenSubject = SUBJECTS[year].find(item => item.name === subject);
@@ -96,18 +111,24 @@ export default function MuhsImportedBank({ initialYear, onSwitchBack }: {
     let cancelled = false;
     setLoading(true);
     setError('');
+    setCached(false);
     setRows([]);
     const fetchAll = async () => {
       try {
         const all: Entry[] = [];
+        const cacheKey = `orbit:muhs-ocr:${year}:${subject}`;
+        const table = year === 'final-year' ? 'muhs_final_year_questions' : 'muhs_pre_final_questions';
         for (let start = 0; start < 10000; start += 250) {
           const { data, error: queryError } = await supabase
-            .from('muhs_pre_final_questions')
-            .select('id,subject,chapter,question_type,question_text,source_pdf,source_page,quality_status')
+            .from(table)
+            .select('id,subject,chapter,question_type,question_text,source_pdf,source_page,source_column,exam_dates,question_number,quality_status')
             .eq('university', 'MUHS')
             .eq('study_year', DB_YEAR[year])
             .eq('subject', subject)
             .order('source_page')
+            .order('source_column')
+            .order('question_number')
+            .order('id')
             .range(start, start + 249);
           if (queryError) throw new Error(queryError.message);
           if (cancelled) return;
@@ -116,15 +137,18 @@ export default function MuhsImportedBank({ initialYear, onSwitchBack }: {
           if (batch.length < 250) break;
         }
         if (!cancelled) {
-          const seen = new Set<string>();
-          setRows(all.filter(row => {
-            const key = [row.chapter, row.question_type, row.question_text.toLowerCase().replace(/[^a-z0-9]/g, '')].join('|');
-            if (seen.has(key)) return false;
-            seen.add(key);
-            return true;
-          }));
+          setRows([...new Map(all.map(row => [row.id, row])).values()]);
+          void AsyncStorage.setItem(cacheKey, JSON.stringify(all)).catch(() => undefined);
         }
       } catch (e) {
+        try {
+          const copy = await AsyncStorage.getItem(`orbit:muhs-ocr:${year}:${subject}`);
+          if (copy && !cancelled) {
+            setRows(JSON.parse(copy) as Entry[]);
+            setCached(true);
+            return;
+          }
+        } catch { /* No saved copy */ }
         if (!cancelled) setError(e instanceof Error ? e.message : 'Unable to load MUHS questions');
       } finally {
         if (!cancelled) setLoading(false);
@@ -159,11 +183,11 @@ export default function MuhsImportedBank({ initialYear, onSwitchBack }: {
           </Touchable>
           <View style={{ flex: 1 }}>
             <Text style={[styles.title, { color: colors.text }]}>MUHS — {subject ?? 'Previous Questions'}</Text>
-            <Text style={{ color: colors.textMuted, fontSize: 12 }}>{chapter ?? 'First, Second and Third MBBS'}</Text>
+            <Text style={{ color: colors.textMuted, fontSize: 12 }}>{chapter ?? 'First through Final MBBS'}</Text>
           </View>
         </View>
         <Text style={[styles.warning, { color: colors.textMuted, borderColor: colors.border }]}>
-          MUHS questions from PDF scans. Review pending items may contain OCR errors; only Checked against PDF entries are individually verified.
+          MUHS questions from PDF scans. Review pending items may contain OCR errors; only source-page-reviewed entries have had their source pages checked. Other records may have OCR errors.
         </Text>
         {!subject ? (
           <SegmentedControl options={OPTIONS.map(item => ({ key: item.key, label: item.label }))} value={year} onChange={(next: Year) => {
@@ -182,6 +206,7 @@ export default function MuhsImportedBank({ initialYear, onSwitchBack }: {
               style={[styles.search, { borderColor: colors.border, color: colors.text, backgroundColor: colors.card }]} />
           </View>
         ) : null}
+        {cached ? <Text style={{ fontSize: 12, color: colors.textMuted, marginBottom: 8 }}>Offline cached copy — connect for newer corrections.</Text> : null}
         {loading ? <ActivityIndicator style={{ margin: 20 }} color={colors.primary} /> : null}
         {error ? (
           <Touchable onPress={() => setRetry(current => current + 1)} label="Retry loading MUHS questions">
@@ -204,7 +229,8 @@ export default function MuhsImportedBank({ initialYear, onSwitchBack }: {
                   />
                   <Text style={{ color: colors.textMuted, fontSize: 11, marginLeft: 10 }}>
                     {item.row.source_pdf} • PDF page {item.row.source_page}
-                    {' • '}{item.row.quality_status === 'reviewed_against_pdf' ? 'Checked against PDF' : item.row.quality_status === 'needs_review' ? 'Review pending' : 'OCR extracted, not verified'}
+                    {item.row.exam_dates?.length ? ' • ' + [...new Set(item.row.exam_dates)].join(', ') : ''}
+                    {' • '}{item.row.quality_status === 'source_page_reviewed' || item.row.quality_status === 'reviewed_against_pdf' ? 'Source page reviewed' : item.row.quality_status.startsWith('needs_') ? 'OCR review pending' : item.row.quality_status === 'ocr_image_crosschecked' ? 'Image/OCR cross-checked' : 'OCR extracted, not individually verified'}
                   </Text>
                 </View>
               );
