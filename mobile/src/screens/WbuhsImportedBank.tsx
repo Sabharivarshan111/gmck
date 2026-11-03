@@ -125,7 +125,7 @@ export default function WbuhsImportedBank({ initialYear, onSwitchBack }: {
         }
       } catch (e) {
         try {
-          const copy = await AsyncStorage.getItem(`orbit:muhs-ocr:${year}:${subject}`);
+          const copy = await AsyncStorage.getItem(`orbit:wbuhs-ocr:${year}:${subject}`);
           if (copy && !cancelled) {
             setRows(JSON.parse(copy) as Entry[]);
             setCached(true);
@@ -170,7 +170,7 @@ export default function WbuhsImportedBank({ initialYear, onSwitchBack }: {
           </View>
         </View>
         <Text style={[styles.warning, { color: colors.textMuted, borderColor: colors.border }]}>
-          MUHS questions from PDF scans. Review pending items may contain OCR errors; only source-page-reviewed entries have had their source pages checked. Other records may have OCR errors.
+          WBUHS questions from PDF scans. Review pending items may contain OCR errors; only source-page-reviewed entries have had their source pages checked. Other records may have OCR errors.
         </Text>
         {!subject ? (
           <SegmentedControl options={OPTIONS.map(item => ({ key: item.key, label: item.label }))} value={year} onChange={(next: Year) => {
@@ -192,7 +192,7 @@ export default function WbuhsImportedBank({ initialYear, onSwitchBack }: {
         {cached ? <Text style={{ fontSize: 12, color: colors.textMuted, marginBottom: 8 }}>Offline cached copy — connect for newer corrections.</Text> : null}
         {loading ? <ActivityIndicator style={{ margin: 20 }} color={colors.primary} /> : null}
         {error ? (
-          <Touchable onPress={() => setRetry(current => current + 1)} label="Retry loading MUHS questions">
+          <Touchable onPress={() => setRetry(current => current + 1)} label="Retry loading WBUHS questions">
             <Text style={{ color: colors.danger }}>Loading failed: {error}. Tap to retry.</Text>
           </Touchable>
         ) : null}
