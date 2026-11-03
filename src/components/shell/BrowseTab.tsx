@@ -518,7 +518,7 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
       {rguhsSelected && !showRguhsFull && yearKey !== "final-year" && (
         <button type="button" onClick={() => setShowRguhsFull(true)}
           className="w-full text-left rounded-xl border border-primary/40 bg-primary/10 p-4 font-bold text-sm text-primary">
-          View all 8,072 RGUHS OCR imported questions
+          View all 8,048 RGUHS OCR imported questions
         </button>
       )}
 
