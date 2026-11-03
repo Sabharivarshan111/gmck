@@ -206,6 +206,27 @@ const js = ts
 const mod = await import(`data:text/javascript;base64,${Buffer.from(js).toString('base64')}`);
 const { milestoneFor } = mod;
 
+// Screenshot regression: 29 active days and no XP badges used to show 0/11.
+for (const [xp, streak, unlocked, streakUnlocked] of [
+  [0, 0, 0, 0],
+  [1, 29, 3, 3],
+  [10, 29, 4, 3],
+  [1, 30, 4, 4],
+  [1000, 100, 11, 5],
+]) {
+  const actual = mod.rewardSummary(xp, streak);
+  check(actual.unlocked === unlocked && actual.streakUnlocked === streakUnlocked && actual.total === 11,
+    `Rewards disagrees with earned badges at ${xp} XP / ${streak} days: ${JSON.stringify(actual)}`);
+}
+for (const badge of mod.STREAK_BADGES) {
+  const before = mod.rewardSummary(0, badge.days - 1);
+  const after = mod.rewardSummary(0, badge.days);
+  check(after.unlocked === before.unlocked + 1, `${badge.label} must count on its exact earned day`);
+}
+check(progressScreen.includes('{rewards.unlocked}') && progressScreen.includes('{rewards.total}'),
+  'Rewards header must display the combined XP and streak summary');
+check(progressScreen.includes('{rewards.streakUnlocked}'), 'Streak badges must show their own unlocked count');
+
 const announced = [];
 for (let xp = 0; xp < 1200; xp++) {
   const hit = milestoneFor(xp, xp + 1);

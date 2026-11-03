@@ -27,6 +27,26 @@ export const XP_MILESTONES = [
   { label: 'Legendary Healer', xp: 1000, medal: '👑' },
 ] as const;
 
+export const STREAK_BADGES = [
+  { label: 'Spark', days: 3, tint: '#7C2D12' },
+  { label: 'Blaze', days: 7, tint: '#3F3F46' },
+  { label: 'Inferno', days: 14, tint: '#713F12' },
+  { label: 'Wildfire', days: 30, tint: '#164E63' },
+  { label: 'Eternal', days: 100, tint: '#27272A' },
+] as const;
+
+/** Count both families displayed in Rewards, from the same live values. */
+export function rewardSummary(xp: number, streak: number) {
+  const xpUnlocked = XP_MILESTONES.filter(badge => xp >= badge.xp).length;
+  const streakUnlocked = STREAK_BADGES.filter(badge => streak >= badge.days).length;
+  return {
+    xpUnlocked,
+    streakUnlocked,
+    unlocked: xpUnlocked + streakUnlocked,
+    total: XP_MILESTONES.length + STREAK_BADGES.length,
+  };
+}
+
 export function levelFor(xp: number): { level: number; into: number; percent: number } {
   const level = Math.floor(xp / XP_PER_LEVEL) + 1;
   const into = xp % XP_PER_LEVEL;
