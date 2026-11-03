@@ -8,6 +8,7 @@ on:
       - 'mobile/src/components/UniversityChoice.tsx'
       - 'mobile/scripts/*university*'
       - '.github/workflows/university-import.yml'
+      - 'scripts/verify-live-university-bank.py'
   pull_request:
     branches: [main]
     paths:
@@ -15,6 +16,7 @@ on:
       - 'src/lib/university.ts'
       - 'mobile/src/components/UniversityChoice.tsx'
       - '.github/workflows/university-import.yml'
+      - 'scripts/verify-live-university-bank.py'
 jobs:
   reviewed-bank-and-browser:
     runs-on: ubuntu-latest
