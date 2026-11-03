@@ -15,7 +15,7 @@ import { SegmentedControl } from "@/components/ui";
 import type { HomeStackParamList, RootTabParamList } from "@/navigation/types";
 import type { YearKey } from "@/lib/questionBank";
 
-type Year = "first-year" | "second-year" | "third-year";
+type Year = "first-year" | "second-year" | "third-year" | "final-year";
 type Kind = "essay" | "short-notes" | "unknown";
 type Entry = {
   id: string;
@@ -48,10 +48,16 @@ const SUBJECTS: Record<Year, Subject[]> = {
     { name: "Community Medicine (PSM)", count: 824 },
     { name: "Forensic Medicine", count: 530 },
   ],
+  "final-year": [
+    { name: "Medicine", count: 1072 },
+    { name: "Surgery", count: 777 },
+    { name: "Obstetrics & Gynaecology", count: 869 },
+    { name: "Paediatrics", count: 530 },
+  ],
 };
-const YEAR_DB: Record<Year, string> = { "first-year": "first", "second-year": "second", "third-year": "third" };
+const YEAR_DB: Record<Year, string> = { "first-year": "first", "second-year": "second", "third-year": "third", "final-year": "final" };
 const YEARS: { key: Year; label: string }[] = [
-  { key: "first-year", label: "1st" }, { key: "second-year", label: "2nd" }, { key: "third-year", label: "3rd" },
+  { key: "first-year", label: "1st" }, { key: "second-year", label: "2nd" }, { key: "third-year", label: "3rd" }, { key: "final-year", label: "Final" },
 ];
 const FIELDS = "id,subject,chapter,question_type,question_text,source_pdf,source_pages,exam_sessions,review_status";
 const PAGE = 250;
@@ -75,7 +81,7 @@ export default function RguhsImportedBank({ initialYear, onSwitchBack }: {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList, "BrowseHome">>();
-  const [year, setYear] = useState<Year>(initialYear === "final-year" ? "first-year" : initialYear);
+  const [year, setYear] = useState<Year>(initialYear);
   const [subject, setSubject] = useState<string | null>(null);
   const [chapter, setChapter] = useState<string | null>(null);
   const [tab, setTab] = useState<Kind>("essay");
@@ -151,7 +157,7 @@ export default function RguhsImportedBank({ initialYear, onSwitchBack }: {
         </Touchable>
         <View style={{ flex: 1 }}>
           <Text style={{ fontWeight: "800", fontSize: 18, color: colors.text }}>RGUHS — {subject || "Complete Question Bank"}</Text>
-          <Text style={{ color: colors.textMuted, fontSize: 12 }}>{chapter || "Karnataka • 1st, 2nd, 3rd MBBS"}</Text>
+          <Text style={{ color: colors.textMuted, fontSize: 12 }}>{chapter || "Karnataka • All four MBBS years"}</Text>
         </View>
       </View>
       <Text style={{ color: colors.textMuted, fontSize: 12, padding: 12, marginBottom: 12, borderRadius: 10, borderWidth: 1, borderColor: colors.border }}>
