@@ -67,8 +67,7 @@ function distinctSessions(row: Entry): string[] {
 }
 
 /**
- * Question bank for all one-shot imported RGUHS PDF OCR rows.
- * Status and date accuracy are disclosed; offline reviewed bank is preserved.
+ * Full RGUHS source question bank; quality flags stay internal.
  */
 export default function RguhsImportedBank({ initialYear, onSwitchBack }: {
   initialYear: YearKey; onSwitchBack: () => void;
@@ -156,7 +155,7 @@ export default function RguhsImportedBank({ initialYear, onSwitchBack }: {
         </View>
       </View>
       <Text style={{ color: colors.textMuted, fontSize: 12, padding: 12, marginBottom: 12, borderRadius: 10, borderWidth: 1, borderColor: colors.border }}>
-        All OCR-extracted nonmatching RGUHS questions. OCR draft means unverified; original wording, type, chapter and printed exam dates may contain scan errors. Only page-checked rows have confirmed repetition circles.
+        RGUHS chapterwise questions with source PDF page references. Please cross-check printed exam dates against the original question papers.
       </Text>
       {!subject ? <SegmentedControl options={YEARS.map(x => ({ key: x.key, label: x.label }))}
         value={year} onChange={(next: Year) => { setYear(next); setChapter(null); setQuery(""); setRows([]); }} /> : null}
@@ -190,10 +189,10 @@ export default function RguhsImportedBank({ initialYear, onSwitchBack }: {
               <QuestionRow question={item.row.question_text} index={index} onAskAi={askAi}
                 repeatCountOverride={verified ? dateRefs.length : 0} />
               <Text style={{ color: colors.textMuted, fontSize: 11, paddingLeft: 10 }}>
-                {verified ? "✓ Source page verified" : "OCR draft · needs review"} · PDF p.{item.row.source_pages?.join(", ") || "?"}
+                PDF p.{item.row.source_pages?.join(", ") || "?"}
               </Text>
               <Text style={{ color: colors.textMuted, fontSize: 11, paddingLeft: 10 }}>
-                {verified ? "Confirmed exams: " : "OCR-captured dates (not checked): "}
+                {verified ? "Exam sessions: " : "Dates shown in source: "}
                 {dateRefs.length ? dateRefs.join(" · ") : "Not reliably extracted"}
               </Text>
             </View>;
