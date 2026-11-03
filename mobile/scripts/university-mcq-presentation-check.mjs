@@ -8,7 +8,7 @@ const root = path.resolve(import.meta.dirname, '../..');
 const { build } = await import('esbuild');
 const built = await build({entryPoints:[path.join(root,'src/data/universityPapers/reviewedQuestions.ts')],bundle:true,write:false,format:'esm',platform:'neutral'});
 const { REVIEWED_UNIVERSITY_QUESTIONS: rows } = await import(`data:text/javascript;base64,${Buffer.from(built.outputFiles[0].text).toString('base64')}`);
-assert.equal(rows.length, 19925);
+assert.equal(rows.length, 20076);
 const byId = new Map(rows.map(row => [row.id, row]));
 const sourceFor = question => byId.get(question.match(/^PYQ\[([^\]]+)\]/)?.[1]);
 let code = fs.readFileSync(path.join(root, 'src/data/universityPapers/presentation.ts'), 'utf8').replace(/^import .*\n/gm, '').replace(/export /g, '');
@@ -40,3 +40,4 @@ const stem=mcq.question.split('\n(a) ')[0];
 reordered.question=stem+'\n'+reordered.options.map(o=>`(${o.label}) ${o.text}`).join('\n');
 assert.equal(h.repetitionKey(mcq),h.repetitionKey(reordered));
 assert.notEqual(h.repetitionKey(mcq),h.repetitionKey({...mcq,question:'NOT '+mcq.question}));
+
