@@ -9,6 +9,7 @@ import { pushBackHandler } from "@/lib/back-stack";
 
 
 import { cn } from "@/lib/utils";
+import MUHSFinalYearBank from "@/components/shell/MUHSFinalYearBank";
 
 const SUBJECT_ICONS: Record<string, string> = {
   anatomy: "🫀", physiology: "🧠", biochemistry: "🧬",
@@ -87,7 +88,20 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
   const [topicKey, setTopicKey] = useState<string | null>(meta?.topic ?? null);
   const [activeTab, setActiveTab] = useState<"essay" | "short-notes">(meta?.tab ?? "essay");
   const [tick, setTick] = useState(0);
+  const [muhsSelected, setMuhsSelected] = useState(() => {
+    try { return localStorage.getItem("orbit:final-year-university") === "MUHS"; }
+    catch { return false; }
+  });
   const [search, setSearch] = useState("");
+
+  const switchFinalYearUniversity = (useMuhs: boolean) => {
+    setMuhsSelected(useMuhs);
+    try { localStorage.setItem("orbit:final-year-university", useMuhs ? "MUHS" : "existing"); } catch { /* storage disabled */ }
+    setSubjectKey(null);
+    setPaperKey(null);
+    setTopicKey(null);
+    setSearch("");
+  };
   const [highlightQuestion, setHighlightQuestion] = useState<string | null>(meta?.highlightQuestion ?? null);
 
   const handleTabChange = useCallback((t: "essay" | "short-notes") => {
@@ -150,6 +164,10 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
 
   const subjectNode = subjectKey ? yearNode?.subtopics?.[subjectKey] : null;
   const subjectHasPapers = !!(subjectNode?.subtopics?.["paper-1"] || subjectNode?.subtopics?.["paper-2"]);
+
+  if (yearKey === "final-year" && muhsSelected) {
+    return <MUHSFinalYearBank onSwitchBack={() => switchFinalYearUniversity(false)} />;
+  }
 
   // ---------- Level: TOPIC DETAIL (essay / short-notes questions) ----------
   if (subjectKey && topicKey) {
@@ -407,6 +425,20 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
           );
         })}
       </div>
+
+      {yearKey === "final-year" && (
+        <button
+          type="button"
+          onClick={() => switchFinalYearUniversity(true)}
+          className="w-full flex items-center justify-between rounded-xl border border-primary/40 bg-primary/10 p-4 text-left hover:border-primary transition"
+        >
+          <span>
+            <span className="block text-sm font-bold">MUHS — Maharashtra University</span>
+            <span className="block text-xs text-muted-foreground mt-1">Final Year • 1,568 questions • Medicine, Surgery, OBG, Paediatrics</span>
+          </span>
+          <ChevronRight className="h-5 w-5 text-primary ml-2" />
+        </button>
+      )}
 
       {subjects.length === 0 ? (
         <div className="text-center py-12 text-sm text-muted-foreground">
