@@ -1212,8 +1212,8 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH29: ReviewedUniversityQuestion[]
     "year": "second",
     "subjectKey": "microbiology",
     "topicKey": "general-microbiology",
-    "kind": "essay",
-    "questionFormat": "long-answer",
+    "kind": "short-notes",
+    "questionFormat": "short-answer",
     "question": "Koch's postulates.",
     "examRefs": [
       "Apr 2025",
@@ -1224,7 +1224,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH29: ReviewedUniversityQuestion[]
     "sourceSha256": "120277cd058c75c63f407f542501d81981c97dbdffadacbcc4650c4155b99d45",
     "sourceQuestion": "Q9",
     "marks": 0,
-    "originalSection": "Essays"
+    "originalSection": "Short Notes"
   },
   {
     "id": "rguhs-pdf26-microbiology-p4-q10",
@@ -1232,8 +1232,8 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH29: ReviewedUniversityQuestion[]
     "year": "second",
     "subjectKey": "microbiology",
     "topicKey": "general-microbiology",
-    "kind": "essay",
-    "questionFormat": "long-answer",
+    "kind": "short-notes",
+    "questionFormat": "short-answer",
     "question": "Bacterial cell wall.",
     "examRefs": [
       "Jun 2019",
@@ -1244,7 +1244,7 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH29: ReviewedUniversityQuestion[]
     "sourceSha256": "120277cd058c75c63f407f542501d81981c97dbdffadacbcc4650c4155b99d45",
     "sourceQuestion": "Q10",
     "marks": 0,
-    "originalSection": "Essays"
+    "originalSection": "Short Notes"
   },
   {
     "id": "rguhs-pdf26-microbiology-p4-q11",
