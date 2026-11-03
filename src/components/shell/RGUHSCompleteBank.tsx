@@ -12,22 +12,22 @@ type Entry = {
 };
 const SUBJECTS: Record<Year, { name: string; icon: string; key: string; count: number }[]> = {
   "first-year": [
-    { name: "Anatomy", icon: "🫀", key: "anatomy", count: 1316 },
+    { name: "Anatomy", icon: "🫀", key: "anatomy", count: 1313 },
     { name: "Physiology", icon: "🧠", key: "physiology", count: 1642 },
-    { name: "Biochemistry", icon: "🧬", key: "biochemistry", count: 719 },
+    { name: "Biochemistry", icon: "🧬", key: "biochemistry", count: 718 },
   ],
   "second-year": [
-    { name: "Pathology", icon: "🔬", key: "pathology", count: 864 },
-    { name: "Pharmacology", icon: "💊", key: "pharmacology", count: 1086 },
+    { name: "Pathology", icon: "🔬", key: "pathology", count: 863 },
+    { name: "Pharmacology", icon: "💊", key: "pharmacology", count: 1084 },
     { name: "Microbiology", icon: "🦠", key: "microbiology", count: 1067 },
   ],
   "third-year": [
-    { name: "Community Medicine (PSM)", icon: "🏥", key: "community-medicine", count: 824 },
-    { name: "Forensic Medicine", icon: "⚖️", key: "forensic-medicine", count: 530 },
+    { name: "Community Medicine (PSM)", icon: "🏥", key: "community-medicine", count: 822 },
+    { name: "Forensic Medicine", icon: "⚖️", key: "forensic-medicine", count: 528 },
   ],
   "final-year": [
-    { name: "Medicine", icon: "🩺", key: "general-medicine", count: 867 },
-    { name: "Surgery", icon: "🏥", key: "general-surgery", count: 715 },
+    { name: "Medicine", icon: "🩺", key: "general-medicine", count: 866 },
+    { name: "Surgery", icon: "🏥", key: "general-surgery", count: 713 },
     { name: "Obstetrics & Gynaecology", icon: "👶", key: "obstetrics-gynaecology", count: 806 },
     { name: "Paediatrics", icon: "🧒", key: "paediatrics", count: 423 },
   ],
