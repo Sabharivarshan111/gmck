@@ -10,10 +10,7 @@ type QuestionRow = {
   subject: string;
   chapter: string;
   question_type: QuestionType;
-  question_number: number;
   question_text: string;
-  exam_dates: string[] | null;
-  reference_text: string[] | null;
   source_page: number;
   source_column: number;
   source_pdf: string;
@@ -22,18 +19,18 @@ type QuestionRow = {
 
 const SUBJECTS_BY_YEAR = {
   "first-year": [
-    { key: "Anatomy", label: "Anatomy", emoji: "🫀", count: 426 },
-    { key: "Physiology", label: "Physiology", emoji: "🧠", count: 659 },
-    { key: "Biochemistry", label: "Biochemistry", emoji: "🧬", count: 414 },
+    { key: "Anatomy", label: "Anatomy", emoji: "🫀", count: 393 },
+    { key: "Physiology", label: "Physiology", emoji: "🧠", count: 631 },
+    { key: "Biochemistry", label: "Biochemistry", emoji: "🧬", count: 403 },
   ],
   "second-year": [
-    { key: "Pathology", label: "Pathology", emoji: "🔬", count: 267 },
-    { key: "Pharmacology", label: "Pharmacology", emoji: "💊", count: 609 },
-    { key: "Microbiology", label: "Microbiology", emoji: "🦠", count: 328 },
+    { key: "Pathology", label: "Pathology", emoji: "🔬", count: 261 },
+    { key: "Pharmacology", label: "Pharmacology", emoji: "💊", count: 621 },
+    { key: "Microbiology", label: "Microbiology", emoji: "🦠", count: 309 },
   ],
   "third-year": [
-    { key: "Community Medicine (PSM)", label: "Community Medicine (PSM)", emoji: "🏥", count: 67 },
-    { key: "Forensic Medicine", label: "Forensic Medicine & Toxicology", emoji: "⚖️", count: 29 },
+    { key: "Community Medicine (PSM)", label: "Community Medicine (PSM)", emoji: "🏥", count: 62 },
+    { key: "Forensic Medicine", label: "Forensic Medicine & Toxicology", emoji: "⚖️", count: 28 },
   ],
 } as const;
 
@@ -44,13 +41,13 @@ const YEAR_LABEL = {
 } as const;
 
 const DB_STUDY_YEAR = {
-  "first-year": "1st Year",
-  "second-year": "2nd Year",
-  "third-year": "3rd Year Part 1",
+  "first-year": "first-year",
+  "second-year": "second-year",
+  "third-year": "third-year",
 } as const;
 
 const PAGE_SIZE = 250;
-const COLUMNS = "id,subject,chapter,question_type,question_number,question_text,exam_dates,reference_text,source_page,source_column,source_pdf,quality_status";
+const COLUMNS = "id,subject,chapter,question_type,question_text,source_page,source_column,source_pdf,quality_status";
 
 export default function MUHSPreFinalBank({ yearKey, onSwitchBack }: { yearKey: "first-year" | "second-year" | "third-year"; onSwitchBack: () => void }) {
   const [subject, setSubject] = useState<string | null>(null);
@@ -80,14 +77,15 @@ export default function MUHSPreFinalBank({ yearKey, onSwitchBack }: { yearKey: "
         const items: QuestionRow[] = [];
         for (let start = 0; ; start += PAGE_SIZE) {
           const { data, error: queryError } = await (supabase as any)
-            .from("muhs_pre_final_questions")
+            .from("muhs_early_year_questions")
             .select(COLUMNS)
             .eq("university", "MUHS")
             .eq("study_year", DB_STUDY_YEAR[yearKey])
             .eq("subject", subject)
+            .in("quality_status", ["ocr_checked", "verified"])
             .order("source_page", { ascending: true })
             .order("source_column", { ascending: true })
-            .order("question_number", { ascending: true })
+            .order("id", { ascending: true })
             .range(start, start + PAGE_SIZE - 1);
           if (queryError) throw new Error(queryError.message || "Could not load MUHS questions");
           if (cancelled) return;
@@ -152,7 +150,7 @@ export default function MUHSPreFinalBank({ yearKey, onSwitchBack }: { yearKey: "
       </header>
       {!subject && (
         <>
-          <p className="text-xs text-muted-foreground">{SUBJECTS_BY_YEAR[yearKey].reduce((total, item) => total + item.count, 0)} OCR-extracted MUHS questions arranged by subject and chapter. These are not independently verified; compare with the source PDF before relying on exact wording.</p>
+          <p className="text-xs text-muted-foreground">{SUBJECTS_BY_YEAR[yearKey].reduce((total, item) => total + item.count, 0)} OCR-screened MUHS questions arranged by subject and chapter. Uncertain scans are withheld for review; wording has not been fully verified against every page.</p>
           <div className="grid grid-cols-2 gap-3">
             {SUBJECTS_BY_YEAR[yearKey].map((s) => (
               <button key={s.key} onClick={() => enterSubject(s.key)} className="h-40 rounded-2xl border border-border/60 bg-gradient-to-br from-card to-primary/10 p-4 flex flex-col items-start justify-between text-left hover:border-primary/50 active:scale-[0.98] transition">
@@ -224,9 +222,7 @@ export default function MUHSPreFinalBank({ yearKey, onSwitchBack }: { yearKey: "
                         subjectName={`MUHS — ${subject}`}
                       />
                       <div className="px-3 pt-1 text-[11px] text-muted-foreground">
-                        {q.exam_dates?.length ? `Exam: ${q.exam_dates.join(", ")} • ` : ""}
                         {q.source_pdf ? `${q.source_pdf}, PDF page ${q.source_page}` : `PDF page ${q.source_page}`}
-                        {q.quality_status.startsWith("needs_") && <span className="ml-2 text-amber-600 dark:text-amber-400">OCR review pending</span>}
                       </div>
                     </div>
                   ))}
