@@ -107,7 +107,7 @@ export default function MuhsImportedBank({ initialYear, onSwitchBack }: {
             .eq('university', 'MUHS')
             .eq('study_year', DB_YEAR[year])
             .eq('subject', subject)
-                .order('source_page')
+            .order('source_page')
             .range(start, start + 249);
           if (queryError) throw new Error(queryError.message);
           if (cancelled) return;
