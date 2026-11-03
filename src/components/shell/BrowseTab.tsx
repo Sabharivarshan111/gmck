@@ -10,6 +10,7 @@ import { pushBackHandler } from "@/lib/back-stack";
 
 import { cn } from "@/lib/utils";
 import MUHSFinalYearBank from "@/components/shell/MUHSFinalYearBank";
+import WBUHSSecondThirdBank from "@/components/shell/WBUHSSecondThirdBank";
 
 const SUBJECT_ICONS: Record<string, string> = {
   anatomy: "🫀", physiology: "🧠", biochemistry: "🧬",
@@ -88,6 +89,15 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
   const [topicKey, setTopicKey] = useState<string | null>(meta?.topic ?? null);
   const [activeTab, setActiveTab] = useState<"essay" | "short-notes">(meta?.tab ?? "essay");
   const [tick, setTick] = useState(0);
+  const [wbuhsSelected, setWbuhsSelected] = useState(() => {
+    try { return localStorage.getItem("orbit:wbuhs-second-third") === "WBUHS"; }
+    catch { return false; }
+  });
+  const switchWBUHS = (enabled: boolean) => {
+    setWbuhsSelected(enabled);
+    try { localStorage.setItem("orbit:wbuhs-second-third", enabled ? "WBUHS" : "existing"); } catch { /* storage disabled */ }
+    setSubjectKey(null); setPaperKey(null); setTopicKey(null); setSearch("");
+  };
   const [muhsSelected, setMuhsSelected] = useState(() => {
     try { return localStorage.getItem("orbit:final-year-university") === "MUHS"; }
     catch { return false; }
@@ -164,6 +174,10 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
 
   const subjectNode = subjectKey ? yearNode?.subtopics?.[subjectKey] : null;
   const subjectHasPapers = !!(subjectNode?.subtopics?.["paper-1"] || subjectNode?.subtopics?.["paper-2"]);
+
+  if ((yearKey === "second-year" || yearKey === "third-year") && wbuhsSelected) {
+    return <WBUHSSecondThirdBank yearKey={yearKey} onSwitchBack={() => switchWBUHS(false)} />;
+  }
 
   if (yearKey === "final-year" && muhsSelected) {
     return <MUHSFinalYearBank onSwitchBack={() => switchFinalYearUniversity(false)} />;
@@ -425,6 +439,22 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
           );
         })}
       </div>
+
+      {(yearKey === "second-year" || yearKey === "third-year") && (
+        <button
+          type="button"
+          onClick={() => switchWBUHS(true)}
+          className="w-full flex items-center justify-between rounded-xl border border-primary/40 bg-primary/10 p-4 text-left hover:border-primary transition"
+        >
+          <span>
+            <span className="block text-sm font-bold">WBUHS — West Bengal University</span>
+            <span className="block text-xs text-muted-foreground mt-1">
+              {yearKey === "second-year" ? "Second Year • 836 questions • Pharmacology, Microbiology, Pathology" : "Third Year • 452 questions • Community Medicine, Forensic Medicine"}
+            </span>
+          </span>
+          <ChevronRight className="h-5 w-5 text-primary ml-2" />
+        </button>
+      )}
 
       {yearKey === "final-year" && (
         <button
