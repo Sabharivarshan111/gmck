@@ -41,18 +41,18 @@ const OPTIONS = [
 ] as const;
 const SUBJECTS: Record<Year, { name: string; key: string; count: number }[]> = {
   'first-year': [
-    { name: 'Anatomy', key: 'anatomy', count: 426 },
-    { name: 'Physiology', key: 'physiology', count: 659 },
-    { name: 'Biochemistry', key: 'biochemistry', count: 414 },
+    { name: 'Anatomy', key: 'anatomy', count: 393 },
+    { name: 'Physiology', key: 'physiology', count: 631 },
+    { name: 'Biochemistry', key: 'biochemistry', count: 403 },
   ],
   'second-year': [
-    { name: 'Pathology', key: 'pathology', count: 267 },
-    { name: 'Pharmacology', key: 'pharmacology', count: 609 },
-    { name: 'Microbiology', key: 'microbiology', count: 328 },
+    { name: 'Pathology', key: 'pathology', count: 261 },
+    { name: 'Pharmacology', key: 'pharmacology', count: 621 },
+    { name: 'Microbiology', key: 'microbiology', count: 309 },
   ],
   'third-year': [
-    { name: 'Community Medicine (PSM)', key: 'community-medicine', count: 67 },
-    { name: 'Forensic Medicine', key: 'forensic-medicine', count: 29 },
+    { name: 'Community Medicine (PSM)', key: 'community-medicine', count: 62 },
+    { name: 'Forensic Medicine', key: 'forensic-medicine', count: 28 },
   ],
 };
 
@@ -102,11 +102,12 @@ export default function MuhsImportedBank({ initialYear, onSwitchBack }: {
         const all: Entry[] = [];
         for (let start = 0; start < 10000; start += 250) {
           const { data, error: queryError } = await supabase
-            .from('muhs_pre_final_questions')
+            .from('muhs_early_year_questions')
             .select('id,subject,chapter,question_type,question_text,source_pdf,source_page,quality_status')
             .eq('university', 'MUHS')
-            .eq('study_year', DB_YEAR[year])
+            .eq('study_year', year)
             .eq('subject', subject)
+            .in('quality_status', ['ocr_checked', 'verified'])
             .order('source_page')
             .range(start, start + 249);
           if (queryError) throw new Error(queryError.message);
@@ -163,7 +164,7 @@ export default function MuhsImportedBank({ initialYear, onSwitchBack }: {
           </View>
         </View>
         <Text style={[styles.warning, { color: colors.textMuted, borderColor: colors.border }]}>
-          OCR-extracted questions, not independently verified. Review flagged wording against the source PDF.
+          OCR-screened MUHS questions; uncertain scans are withheld. Exact wording is not fully manually verified.
         </Text>
         {!subject ? (
           <SegmentedControl options={OPTIONS.map(item => ({ key: item.key, label: item.label }))} value={year} onChange={(next: Year) => {
@@ -204,7 +205,7 @@ export default function MuhsImportedBank({ initialYear, onSwitchBack }: {
                   />
                   <Text style={{ color: colors.textMuted, fontSize: 11, marginLeft: 10 }}>
                     {item.row.source_pdf} • PDF page {item.row.source_page}
-                    {item.row.quality_status === 'needs_review' ? ' • OCR review needed' : ' • OCR extracted'}
+                    {' • OCR-screened'}
                   </Text>
                 </View>
               );
