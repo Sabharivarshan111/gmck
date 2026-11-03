@@ -135,9 +135,9 @@ export default function MuhsImportedBank({ initialYear, onSwitchBack }: {
   }, [year, subject, retry]);
 
   const items: Item[] = !subject
-    ? SUBJECTS[year].map(item => ({ kind: 'subject', ...item }))
+    ? SUBJECTS[year].map(item => ({ kind: 'subject' as const, ...item }))
     : !chapter ? chapters
-      : topicRows.map(row => ({ kind: 'question', row }));
+      : topicRows.map(row => ({ kind: 'question' as const, row }));
 
   const goBack = useCallback(() => {
     if (chapter) { setChapter(null); setSearch(''); return; }
