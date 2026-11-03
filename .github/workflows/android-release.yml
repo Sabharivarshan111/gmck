@@ -27,6 +27,7 @@ on:
       # main included so a merge here cuts a release with no API access
       # needed — see the note in android-debug.yml.
       - main
+      - codex/orbit-university-parity-20261103
       - codex/v27-parity-repairs-20261016
       - codex/v27-brain-registration-20261016
       - codex/v27-context-camera-20261016
