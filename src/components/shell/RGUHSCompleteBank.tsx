@@ -3,7 +3,7 @@ import { ArrowLeft, ChevronRight, RefreshCw, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import QuestionCard from "@/components/QuestionCard";
 
-type Year = "first-year" | "second-year" | "third-year";
+type Year = "first-year" | "second-year" | "third-year" | "final-year";
 type Kind = "essay" | "short-notes" | "unknown";
 type Entry = {
   id: string; subject: string; chapter: string; question_type: Kind;
@@ -25,9 +25,15 @@ const SUBJECTS: Record<Year, { name: string; icon: string; key: string; count: n
     { name: "Community Medicine (PSM)", icon: "🏥", key: "community-medicine", count: 824 },
     { name: "Forensic Medicine", icon: "⚖️", key: "forensic-medicine", count: 530 },
   ],
+  "final-year": [
+    { name: "Medicine", icon: "🩺", key: "general-medicine", count: 1072 },
+    { name: "Surgery", icon: "🏥", key: "general-surgery", count: 777 },
+    { name: "Obstetrics & Gynaecology", icon: "👶", key: "obstetrics-gynaecology", count: 869 },
+    { name: "Paediatrics", icon: "🧒", key: "paediatrics", count: 530 },
+  ],
 };
-const YEAR_TO_DB: Record<Year, string> = { "first-year": "first", "second-year": "second", "third-year": "third" };
-const YEAR_TEXT: Record<Year, string> = { "first-year": "1st Year", "second-year": "2nd Year", "third-year": "3rd Year Part I" };
+const YEAR_TO_DB: Record<Year, string> = { "first-year": "first", "second-year": "second", "third-year": "third", "final-year": "final" };
+const YEAR_TEXT: Record<Year, string> = { "first-year": "1st Year", "second-year": "2nd Year", "third-year": "3rd Year Part I", "final-year": "Final Year" };
 const PAGE_SIZE = 250;
 const FIELDS = "id,subject,chapter,question_type,question_text,source_pdf,source_pages,exam_sessions,review_status";
 function chapterLabel(item: Entry) {
@@ -112,7 +118,7 @@ export default function RGUHSCompleteBank({ yearKey, onSwitchBack, onYearChange 
     </p>
     {!subject ? <>
       <nav aria-label="MBBS year" className="flex gap-2 overflow-x-auto">
-        {(["first-year", "second-year", "third-year"] as Year[]).map(year =>
+        {(["first-year", "second-year", "third-year", "final-year"] as Year[]).map(year =>
           <button type="button" key={year} onClick={() => onYearChange(year)}
             className={"rounded-full px-4 py-2 whitespace-nowrap border text-sm " +
               (yearKey === year ? "bg-primary/10 text-primary border-primary" : "border-border bg-card text-muted-foreground")}>
