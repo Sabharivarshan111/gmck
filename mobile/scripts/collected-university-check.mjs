@@ -41,9 +41,9 @@ const notes = load('src/lib/handwrittenNotes.ts', { ...common, './notesDedup': {
   './notesLimits': {}, './progress': progress });
 const resume = load('src/lib/homeResume.ts', { ...common, '@/lib/questionBank': bank });
 
-assert.equal(rows.length, 20076);
+assert.equal(rows.length, 20181);
 assert.equal(new Set(rows.map(r => r.id)).size, rows.length);
-const expected = { rguhs: 8050, knruhs: 3695, muhs: 1307, ntruhs: 4276, wbuhs: 2748 };
+const expected = { rguhs: 8155, knruhs: 3695, muhs: 1307, ntruhs: 4276, wbuhs: 2748 };
 const marks = { rguhs: 33690, knruhs: 15599, muhs: 6903, ntruhs: 16782, wbuhs: 13730 };
 const ids = new Set();
 for (const [university, count] of Object.entries(expected)) {
@@ -88,7 +88,7 @@ assert.ok(wb[2].question.includes('nephrosis and apoptosis'), 'Do not silently c
 assert.ok(wb[1].question.includes('any two') && wb[1].question.includes('c)'));
 assert.ok(wb[3].question.includes('any two') && wb[3].question.includes('d) Septic shock'));
 assert.ok(rows.find(r => r.university === 'knruhs').question.includes('(d) Applied anatomy'));
-console.log('PASS 20076 source-linked question units (1307 MUHS including existing OCR transcriptions under review): all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
+console.log('PASS 20181 source-linked question units (1307 MUHS including existing OCR transcriptions under review): all new bank counts, marks, identities, cleaned text, source refs, university isolation, note/deck cache keys and resume persistence; old TNMGR/KUHS banks retained.');
 
 const { REVIEWED_UNIVERSITY_QUESTIONS_BATCH02: batch02 } = await bundle('src/data/universityPapers/reviewedBatch02.ts');
 assert.equal(batch02.length, 200);
