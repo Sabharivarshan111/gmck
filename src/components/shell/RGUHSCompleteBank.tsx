@@ -26,10 +26,10 @@ const SUBJECTS: Record<Year, { name: string; icon: string; key: string; count: n
     { name: "Forensic Medicine", icon: "⚖️", key: "forensic-medicine", count: 530 },
   ],
   "final-year": [
-    { name: "Medicine", icon: "🩺", key: "general-medicine", count: 1072 },
-    { name: "Surgery", icon: "🏥", key: "general-surgery", count: 777 },
-    { name: "Obstetrics & Gynaecology", icon: "👶", key: "obstetrics-gynaecology", count: 869 },
-    { name: "Paediatrics", icon: "🧒", key: "paediatrics", count: 530 },
+    { name: "Medicine", icon: "🩺", key: "general-medicine", count: 867 },
+    { name: "Surgery", icon: "🏥", key: "general-surgery", count: 715 },
+    { name: "Obstetrics & Gynaecology", icon: "👶", key: "obstetrics-gynaecology", count: 806 },
+    { name: "Paediatrics", icon: "🧒", key: "paediatrics", count: 423 },
   ],
 };
 const YEAR_TO_DB: Record<Year, string> = { "first-year": "first", "second-year": "second", "third-year": "third", "final-year": "final" };
