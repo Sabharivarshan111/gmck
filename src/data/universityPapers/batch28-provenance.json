@@ -1,0 +1,132 @@
+{
+  "schema": 1,
+  "batch": 28,
+  "reviewedDrafts": 266,
+  "count": 151,
+  "marks": 742,
+  "heldDrafts": 115,
+  "attribution": "Issuer names not printed on these pages. MUHS attribution is corroborated using the source listings, official MUHS legacy paper codes and college-hosted university examination/timetable evidence; never represented as printed issuer.",
+  "attributionEvidence": [
+    "https://jmfacpm.com/pdf/pgpdf-46-10-07-2021-11111.pdf",
+    "https://www.muhs.ac.in/upload/Programme_Exam_Supplementry_Ist%20MBBS%20Exam.pdf",
+    "https://gmcnandurbar.com/question-papers/",
+    "https://www.pims.co.in/wp-content/uploads/2022/05/Part-II_compressed.pdf"
+  ],
+  "sourceAnomaliesPreserved": [
+    "Mirochondrial inheritance",
+    "sciatica nerve",
+    "complete transaction of spinal cord"
+  ],
+  "papers": [
+    {
+      "sha256": "7621596313d5606cc5d70365018076552f8b9f5405371d42d3c267bac66443a6",
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "count": 23,
+      "marks": 97
+    },
+    {
+      "sha256": "3e8c815fbb7273394871efba6d242e8294867347b962437ad08c886f8dc5314a",
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "count": 10,
+      "marks": 52
+    },
+    {
+      "sha256": "d9937124f643bb47a110630432289b5049aff84b35ff70a31b52a87240659c15",
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "count": 10,
+      "marks": 52
+    },
+    {
+      "sha256": "a96b503bb65adc07a129a1172dac7eed0338efeed56b364b2034eae85830d399",
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "count": 10,
+      "marks": 52
+    },
+    {
+      "sha256": "a46f16a9a01ed1d02fa4680947fff506f615d76ad69b34047e23bf33e0be9e61",
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "count": 10,
+      "marks": 52
+    },
+    {
+      "sha256": "28d7a22f782090e895dc0394a563ff9632be633631a582d2d15dfd3734bb52d6",
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "count": 10,
+      "marks": 52
+    },
+    {
+      "sha256": "df923dbd33fbba2c9a7792f0f4e381b2cbad364840e3089ddc980438f2610793",
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "count": 10,
+      "marks": 52
+    },
+    {
+      "sha256": "7618fc7e7bcdbd7dc9bdecbb1c130c66eca4014a791b5deb9a0d40dc76cc3fdd",
+      "pagesVisuallyCompared": [
+        1,
+        2
+      ],
+      "count": 10,
+      "marks": 52
+    },
+    {
+      "sha256": "8dbde406ff70d6f914b79647bc26668c6453ee18689c52434908511fa43b338e",
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "count": 10,
+      "marks": 52
+    },
+    {
+      "sha256": "d54965a54fce57e8570528f4b57caaac6ca5d73a44b1c9943185eb3ccdb14e90",
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "count": 10,
+      "marks": 52
+    },
+    {
+      "sha256": "585afeff82a5eb34137ba9e686546ae37274a57ea63b305cd1b53c2371bf1757",
+      "pagesVisuallyCompared": [
+        1
+      ],
+      "count": 10,
+      "marks": 52
+    },
+    {
+      "sha256": "ff8e209e9014b641eb3815a7750e7872f89bc198a5e2f40bdf42d7918e18c59c",
+      "pagesVisuallyCompared": [
+        1,
+        3,
+        7,
+        8,
+        15
+      ],
+      "count": 28,
+      "marks": 125
+    }
+  ],
+  "notes": [
+    "Raw PDFs and held drafts are private. No original SectionA MCQs are present or invented.",
+    "123 first-year questions/617 offered marks plus28 original PIMS questions/125 marks.",
+    "11 first-year examination sources screened against107 saved sources; no same-exam alternative detected. Different-session repeats retained.",
+    "Retyped alternates map one-to-one to original canonical PIMS IDs; LAQ original8-mark weights override erroneous16-mark retype."
+  ]
+}

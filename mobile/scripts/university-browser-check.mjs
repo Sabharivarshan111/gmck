@@ -9,6 +9,9 @@ const results = [];
 try {
   for (const width of [360, 430]) {
     for (const fixture of [
+{university:'muhs',year:'first',yearKey:'first-year',query:'Mirochondrial inheritance',topic:'Genetics',reference:'Winter 2022'},
+{university:'muhs',year:'first',yearKey:'first-year',query:'ferric chloride has shown positive',topic:'Protein metabolism',reference:'Summer 2018'},
+
 {university:'ntruhs',year:'first',yearKey:'first-year',query:'Chromosomal abnormality in Patau syndrome',topic:'Genetics',reference:'Dec 2023',option:'Trisomy 13'},
 {university:'ntruhs',year:'final',yearKey:'final-year',query:'102°F (38.9°C)',topic:'Infective Diseases',reference:'Dec 2024'},
 {university:'ntruhs',year:'second',yearKey:'second-year',query:'2,00,000 cells/mm³',topic:'White Blood Cells',reference:'Nov 2020'},
@@ -198,7 +201,7 @@ try {
   const radios = page.getByRole('radiogroup').filter({ visible: true }).getByRole('radio');await radios.first().waitFor();
   assert.equal(await radios.count(), 8);
   const maharashtra = page.getByRole('radiogroup').filter({ visible: true }).getByRole('radio', { name: /Maharashtra University/ });
-  assert.notEqual(await maharashtra.getAttribute('aria-disabled'), 'true', 'MUHS must be selectable after the 1000-question import');
+  assert.notEqual(await maharashtra.getAttribute('aria-disabled'), 'true', 'MUHS must be selectable after the reviewed MUHS imports');
   await maharashtra.scrollIntoViewIfNeeded();
   await maharashtra.click();
   await page.waitForFunction(() => JSON.parse(localStorage.getItem('orbit-profile-v1') || '{}').university === 'muhs');
@@ -214,4 +217,5 @@ try {
 fs.mkdirSync('artifacts/university-import', { recursive: true });
 fs.writeFileSync('artifacts/university-import/browser-results.json', JSON.stringify(results, null, 2));
 console.log(`PASS ${results.length} emitted web bank/picker scenarios`);
+
 
