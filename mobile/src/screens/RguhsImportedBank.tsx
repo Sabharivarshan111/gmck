@@ -49,10 +49,10 @@ const SUBJECTS: Record<Year, Subject[]> = {
     { name: "Forensic Medicine", count: 530 },
   ],
   "final-year": [
-    { name: "Medicine", count: 1072 },
-    { name: "Surgery", count: 777 },
-    { name: "Obstetrics & Gynaecology", count: 869 },
-    { name: "Paediatrics", count: 530 },
+    { name: "Medicine", count: 867 },
+    { name: "Surgery", count: 715 },
+    { name: "Obstetrics & Gynaecology", count: 806 },
+    { name: "Paediatrics", count: 423 },
   ],
 };
 const YEAR_DB: Record<Year, string> = { "first-year": "first", "second-year": "second", "third-year": "third", "final-year": "final" };
