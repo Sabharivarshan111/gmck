@@ -35,22 +35,22 @@ type ListItem = { kind: "subject"; item: Subject } |
 
 const SUBJECTS: Record<Year, Subject[]> = {
   "first-year": [
-    { name: "Anatomy", count: 1316 },
+    { name: "Anatomy", count: 1313 },
     { name: "Physiology", count: 1642 },
-    { name: "Biochemistry", count: 719 },
+    { name: "Biochemistry", count: 718 },
   ],
   "second-year": [
-    { name: "Pathology", count: 864 },
-    { name: "Pharmacology", count: 1086 },
+    { name: "Pathology", count: 863 },
+    { name: "Pharmacology", count: 1084 },
     { name: "Microbiology", count: 1067 },
   ],
   "third-year": [
-    { name: "Community Medicine (PSM)", count: 824 },
-    { name: "Forensic Medicine", count: 530 },
+    { name: "Community Medicine (PSM)", count: 822 },
+    { name: "Forensic Medicine", count: 528 },
   ],
   "final-year": [
-    { name: "Medicine", count: 867 },
-    { name: "Surgery", count: 715 },
+    { name: "Medicine", count: 866 },
+    { name: "Surgery", count: 713 },
     { name: "Obstetrics & Gynaecology", count: 806 },
     { name: "Paediatrics", count: 423 },
   ],
