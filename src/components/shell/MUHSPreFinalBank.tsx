@@ -21,7 +21,7 @@ const SUBJECTS_BY_YEAR = {
   "first-year": [
     { key: "Anatomy", label: "Anatomy", emoji: "🫀", count: 422 },
     { key: "Physiology", label: "Physiology", emoji: "🧠", count: 654 },
-    { key: "Biochemistry", label: "Biochemistry", emoji: "🧬", count: 412 },
+    { key: "Biochemistry", label: "Biochemistry", emoji: "🧬", count: 410 },
   ],
   "second-year": [
     { key: "Pathology", label: "Pathology", emoji: "🔬", count: 269 },
