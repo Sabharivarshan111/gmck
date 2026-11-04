@@ -2607,3 +2607,14 @@ Reviewed all266 saved drafts:151 cleared canonical original-page occurrences/742
 
 **DO NOT:** Push old claude/native-app-sync branch93a8911 over newer main MUHS content; merge unfinished iOS PR175; infer verified exam years for the practice dataset; invent missing explanations; replace any supplied key.
 
+
+
+## 2026-11-04 — Remove automatic first-run payment plans
+
+**DONE:** Owner explicitly requested first-time setup to stop showing payment plans. FirstRun now has welcome + study setup, saves on Start studying and opens Home directly. Premium checkout remains intentionally accessible from locked features/settings. Updated browser adapters and both onboarding regressions. Full website build, six 360/430 browser scenarios across all three study goals, profile validation/write-failure/storage tests, keyboard guard and setup/calendar Chromium flow passed locally. Practice restoration PR179 merged as90adb6d; production deployment dpl_BejEDVfwZnawwn9gu5ScsRWbzawi READY, public /pg/size.json reports185636 records and8744604 bytes. Branch codex/onboarding-direct-home holds the new change pending CI/publication.
+
+**HALF-DONE:** New onboarding changes are not yet in a released APK/native iOS binary. Practice Android release run41797178644 is building. Native iOS verification run41797028753 tests app source dba321, not the new flow. Prior native run41758653345 completed all onboarding/relaunch UI assertions but Maestro cleanup timed out; screenshots/logs prove setup and reopened Home. Current runner records completion-marker evidence separately from cleanup failure and continues other screen checks. Missing iOS custom modules remain real port gaps; PR175 stays draft.
+
+**NEXT:** Finish onboarding CI/merge/release, inspect native screen evidence and persist exact receipts.
+
+**DO NOT:** Reintroduce the automatic premium screen, alter manual payment prices, merge unfinished iOS PR175, overwrite newer MUHS/WBUHS updates or call the iOS port fully ready. Anatomy dossier92%/95% check is a pre-existing unrelated failure; do not weaken it to conceal results.

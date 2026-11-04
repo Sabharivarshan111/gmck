@@ -20,18 +20,18 @@ try {
   await page.getByLabel('Display name',{exact:true}).fill('Study tester');
   await page.getByRole('radio',{name:'1st Year',exact:true}).click();
   await page.getByRole('radio',{name:goal,exact:true}).click();
-  await page.getByLabel('Continue to Premium',{exact:true}).click();
-  await page.getByRole('heading',{name:'Unlock Premium',exact:true}).waitFor();
-  await page.getByText('STEP 3 OF 3',{exact:true}).waitFor();
-  assert.equal(await page.getByText('₹300 / 1 year',{exact:true}).count(),1);
-  assert.equal(await page.evaluate(()=>localStorage.getItem('orbit-profile-v1')),null);
-  await page.screenshot({path:`artifacts/university-import/premium-${width}-${goal.replace(/\W/g,'')}.png`});
-  await page.getByLabel('Back to your study setup',{exact:true}).click();
-  assert.equal(await page.getByLabel('Display name',{exact:true}).inputValue(),'Study tester');
-  await page.getByLabel('Continue to Premium',{exact:true}).click();
-  await page.getByLabel('Continue with free preview',{exact:true}).click();
+  assert.equal(await page.getByText('STEP 2 OF 2',{exact:true}).count(),1);
+  assert.equal(await page.getByRole('heading',{name:'Unlock Premium',exact:true}).count(),0);
+  assert.equal(await page.getByLabel('Continue to Premium',{exact:true}).count(),0);
+  await page.getByLabel('Start studying',{exact:true}).click();
   await page.waitForFunction(()=>JSON.parse(localStorage.getItem('orbit-profile-v1')||'{}').university==='other');
   const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('orbit-profile-v1')));
+  assert.equal(saved.display_name,'Study tester');
+  assert.equal(saved.year,'first');
+  await page.getByLabel('Start studying',{exact:true}).waitFor({state:'hidden'});
+  await page.getByLabel('Settings',{exact:true}).waitFor();
+  assert.equal(await page.getByRole('heading',{name:'Unlock Premium',exact:true}).count(),0);
+  await page.screenshot({path:`artifacts/university-import/home-${width}-${goal.replace(/\W/g,'')}.png`});
   assert.equal(saved.preparationGoal,goal==='Both'?'both':goal==='NEET PG'?'neet-pg':'university-pyqs');
   await page.reload();await page.getByLabel('Settings',{exact:true}).waitFor();
   assert.equal(await page.getByText('Welcome to Orbit',{exact:true}).count(),0);
@@ -41,9 +41,9 @@ try {
   await page.getByLabel('Switch to Gastrointestinal System',{exact:true}).first().click();
   const body=await page.locator('body').innerText();
   assert.ok(!/RGUHS|TNMGR|KUHS|Code 1082/.test(body),'Other bank must hide source university/exam labels');
-  assert.deepEqual(errors,[]);results.push({width,goal,otherAndThirdStepAndPersistence:'passed'});await context.close();
+  assert.deepEqual(errors,[]);results.push({width,goal,directHomeAndPersistence:'passed'});await context.close();
  }
 } finally {await browser.close();}
 fs.mkdirSync('artifacts/university-import',{recursive:true});
 fs.writeFileSync('artifacts/university-import/onboarding-results.json',JSON.stringify(results,null,2));
-console.log(`PASS ${results.length} three-step onboarding scenarios`);
+console.log(`PASS ${results.length} direct-to-Home onboarding scenarios`);
