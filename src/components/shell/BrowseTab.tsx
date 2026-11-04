@@ -533,7 +533,7 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
             <span className="block text-sm font-bold">MUHS — Maharashtra University</span>
             <span className="block text-xs text-muted-foreground mt-1">
               {yearKey === "first-year"
-                ? "1st Year • 1,486 imported questions • Anatomy, Physiology, Biochemistry"
+                ? "1st Year • 1,485 imported questions • Anatomy, Physiology, Biochemistry"
                 : yearKey === "second-year"
                 ? "2nd Year • 1,199 imported questions • Pharmacology, Pathology, Microbiology"
                 : "3rd Year Part I • 92 imported questions • Community Medicine, Forensic Medicine"}
