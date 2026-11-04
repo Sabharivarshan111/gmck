@@ -80,8 +80,10 @@ try {
   await label('Next practice page').waitFor();
   await page.waitForFunction(() => !document.querySelector('[aria-label="Loading practice questions"]'));
   assert.equal(await label('Next practice page').isDisabled(), false);
+  await label(data.rows[0][0]).first().waitFor();
   const firstPage = await page.locator('[role="button"]').allTextContents();
   await label('Next practice page').click();
+  await label(data.rows[30][0]).first().waitFor();
   await page.waitForFunction(() => !document.querySelector('[aria-label="Loading practice questions"]'));
   assert.notDeepEqual(await page.locator('[role="button"]').allTextContents(), firstPage);
   await page.screenshot({path:path.join(evidence,'practice-library.png')});
