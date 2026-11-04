@@ -28,6 +28,8 @@ if device['state']!='Booted':run('xcrun','simctl','boot',udid,timeout=180)
 run('xcrun','simctl','bootstatus',udid,'-b',timeout=360)
 run('xcrun','simctl','install',udid,str(app),timeout=120)
 container=pathlib.Path(subprocess.check_output(['xcrun','simctl','get_app_container',udid,APP_ID,'data'],text=True).strip())
+os.environ['MAESTRO_DRIVER_STARTUP_TIMEOUT']='300000'
+os.environ['MAESTRO_CLI_NO_ANALYTICS']='1'
 maestro=shutil.which('maestro')
 run(maestro,'--version')
 helptext=run(maestro,'test','--help',capture_output=True).stdout
@@ -35,6 +37,7 @@ report={'source_sha':'dba321a5dd50335f5be7c4a101769f74dbc07243','build_run':4175
         'device':device['name'],'runtime':runtime,'offline_backend_isolated':True,'native_classes':capabilities,
         'cases':[],'not_verified':['real Google sign-in (disabled in tested build)','StoreKit/live purchases (not implemented)','push delivery on a real iPhone','TestFlight signing and App Store review']}
 def local_records(update_streak=False):
+    container=pathlib.Path(subprocess.check_output(['xcrun','simctl','get_app_container',udid,APP_ID,'data'],text=True).strip())
     records={}
     for file in container.rglob('*'):
         if not file.is_file() or file.name.endswith(('-wal','-shm')):continue
@@ -73,7 +76,7 @@ for flow in sorted((ROOT/'.verification/ios/flows').glob('*.yaml')):
     if '--test-output-dir' in helptext:cmd+=['--test-output-dir',str(OUT/'screenshots')]
     cmd.append(str(flow))
     try:
-        result=subprocess.run(cmd,capture_output=True,text=True,timeout=600 if name.startswith('01-') else 210)
+        result=subprocess.run(cmd,capture_output=True,text=True,timeout=660 if name.startswith('01-') else 420)
         code=result.returncode;log=result.stdout+'\n'+result.stderr
     except subprocess.TimeoutExpired as e:
         code=124;log=str(e)
