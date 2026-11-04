@@ -15,6 +15,10 @@ if linkage != nil
 end
 
 target 'OrbitMBBS' do
+  # Google Sign-In's Swift AppCheck dependency needs module maps when linked statically.
+  pod 'GoogleUtilities', :modular_headers => true
+  pod 'RecaptchaInterop', :modular_headers => true
+
   config = use_native_modules!
 
   use_react_native!(
