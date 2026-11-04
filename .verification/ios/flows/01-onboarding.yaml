@@ -5,8 +5,9 @@ appId: com.aistudio.mbbsqbank.aycxvd
 - assertVisible: "Welcome to Orbit"
 - tapOn: "Continue"
 - assertVisible: "Make Orbit yours"
-- tapOn: "Display name"
+- tapOn: "(?-i:Display name)"
 - inputText: "Study Reader"
+- assertVisible: "Study Reader"
 - hideKeyboard
 - tapOn: "2nd Year"
 - scrollUntilVisible:
