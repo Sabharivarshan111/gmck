@@ -49,7 +49,7 @@ const SUBJECTS: Record<Year, { name: string; key: string; count: number }[]> = {
   'first-year': [
     { name: 'Anatomy', key: 'anatomy', count: 422 },
     { name: 'Physiology', key: 'physiology', count: 654 },
-    { name: 'Biochemistry', key: 'biochemistry', count: 410 },
+    { name: 'Biochemistry', key: 'biochemistry', count: 409 },
   ],
   'second-year': [
     { name: 'Pathology', key: 'pathology', count: 269 },
