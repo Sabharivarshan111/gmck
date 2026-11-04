@@ -1,5 +1,5 @@
 import { useVaultPremium, VaultTrialBanner } from '@/components/VaultPremium';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, AppState, BackHandler, StatusBar, StyleSheet, View } from 'react-native';
 import LocalSimulator from '@/native/LocalSimulator';
 import { useIsFocused } from '@react-navigation/native';
@@ -17,7 +17,7 @@ import NativeClubbingTrainer from '@/components/NativeClubbingTrainer';
 import NativeCoronaryLab from '@/components/NativeCoronaryLab';
 import { PhysiologyKernel } from '@simulator/engine/PhysiologyKernel';
 import { restoreClinicalSnapshot } from '@/lib/clinicalSnapshot';
-import { nativeClinicalRoute } from '@/lib/nativeSimulatorRouting';
+import { nativeClinicalRoute, type NativeClinicalDestination } from '@/lib/nativeSimulatorRouting';
 
 /**
  * WIP Native Vercel parity migration.
@@ -28,7 +28,7 @@ import { nativeClinicalRoute } from '@/lib/nativeSimulatorRouting';
  * diagnostic tools use the locally bundled canonical WebGL renderer with
  * checksum-pinned model caching. Device visual parity still needs certification.
  */
-export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
+export default function SimulatorScreen({ onExit, initialTool }: { onExit: () => void; initialTool?: string }) {
   const { colors } = useTheme();
   const premium = useVaultPremium();
   const insets = useSafeAreaInsets();
@@ -38,6 +38,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   const [url, setUrl] = useState<string | null>(null);
   const [studioScenarioId, setStudioScenarioId] = useState('normal');
   const [studioTheme, setStudioTheme] = useState<'dark' | 'light'>('dark');
+  const [studioThemeHydrated, setStudioThemeHydrated] = useState(false);
   const [rendererTheme, setRendererTheme] = useState<'dark' | 'light'>('dark');
   const [nativeMode, setNativeMode] = useState<{kind: 'monitor' | 'case' | 'ecg' | 'radiology' | 'clubbing' | 'coronary'; scenarioId: string} | null>(null);
   const [active, setActive] = useState(AppState.currentState === 'active');
@@ -47,6 +48,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   const darkStatusIcons = nativeMode?.kind === 'clubbing' || studioTheme === 'light';
   const wrap = (child: React.ReactNode) => <>{focused && <StatusBar barStyle={darkStatusIcons ? 'dark-content' : 'light-content'} />}{child}</>;
   const returnToNativeStudio = () => {
+    if (initialTool) { onExit(); return; }
     setUrl(null);
     setNativeMode(null);
     setFailed(false);
@@ -56,7 +58,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
     let mounted = true;
     AsyncStorage.getItem('orbit-simulator-theme').then(value => {
       if (mounted && (value === 'dark' || value === 'light')) setStudioTheme(value);
-    }).catch(() => undefined);
+    }).catch(() => undefined).finally(() => { if (mounted) setStudioThemeHydrated(true); });
     return () => { mounted = false; };
   }, []);
 
@@ -80,6 +82,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
       if (!focused) return false;
+      if (initialTool && (!url || failed)) { onExit(); return true; }
       if (url) {
         if (failed) {
           setUrl(null); setFailed(false);
@@ -93,40 +96,11 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
       return true;
     });
     return () => sub.remove();
-  }, [focused, onExit, url, nativeMode, failed]);
+  }, [focused, onExit, url, nativeMode, failed, initialTool]);
 
   useEffect(() => { if (!premium.active) { setNativeMode(null); setUrl(null); setStudioScenarioId('normal'); caseEngine.current = new PhysiologyKernel('normal'); } }, [premium.active]);
 
-  if (nativeMode?.kind === 'monitor') return wrap(<NativeIcuMonitor scenarioId={nativeMode.scenarioId} engine={caseEngine.current || undefined}
-    theme={studioTheme} onToggleTheme={onToggleStudioTheme} onExit={onExit} onBack={returnToNativeStudio} onSkills={returnToNativeStudio}
-    onCase={patient => { if (!premium.active) { premium.requestPurchase('patient cases'); return; } caseEngine.current = patient; setNativeMode({ kind: 'case', scenarioId: patient.currentScenario.id }); }}
-    onAnatomy={patient => {
-      caseEngine.current = patient;
-      setNativeMode(premium.active ? { kind: 'case', scenarioId: patient.currentScenario.id } : null);
-      setRendererTheme(studioTheme); setInitialPatient(JSON.stringify(patient));
-      setBackRequest(0); setFailed(false); setLoading(true);
-      setUrl('https://orbitmbbs.vercel.app/simulator?' + new URLSearchParams({ mode: 'anatomy', scenario: patient.currentScenario.id }).toString());
-    }} />);
-  if (premium.active && nativeMode?.kind === 'ecg') return wrap(<NativeEcgTwelveLead scenarioId={nativeMode.scenarioId} theme={studioTheme} engine={caseEngine.current || undefined} onBack={returnToNativeStudio} />);
-  if (nativeMode?.kind === 'case' && !url) return wrap(<NativeClinicalCase scenarioId={nativeMode.scenarioId}
-    engine={caseEngine.current || undefined} onExit={onExit} theme={studioTheme} onToggleTheme={onToggleStudioTheme}
-    onScenarioChange={id => { setStudioScenarioId(id); setNativeMode({ kind: 'case', scenarioId: id }); }}
-    onOpen={query => {
-      setRendererTheme(studioTheme);
-      setInitialPatient(JSON.stringify(caseEngine.current));
-      setBackRequest(0); setFailed(false); setLoading(true);
-      setUrl('https://orbitmbbs.vercel.app/simulator?' + query);
-    }} onBack={returnToNativeStudio} />);
-
-  if (premium.active && nativeMode?.kind === 'radiology') return wrap(<NativeRadiologyViewer theme={studioTheme} onBack={returnToNativeStudio} />);
-
-  if (premium.active && nativeMode?.kind === 'coronary') return wrap(<NativeCoronaryLab theme={studioTheme} onToggleTheme={onToggleStudioTheme} onBack={returnToNativeStudio} />);
-
-  // The canonical clubbing sheet is white in both studio themes.
-  if (premium.active && nativeMode?.kind === 'clubbing') return wrap(<NativeClubbingTrainer onBack={returnToNativeStudio} />);
-
-  if (!url) {
-    return wrap(<><VaultTrialBanner kind="simulator" /><NativeClinicalStudio onExit={onExit} scenarioId={studioScenarioId} onScenarioChange={onStudioScenarioChange} theme={studioTheme} onToggleTheme={onToggleStudioTheme} onOpen={destination => {
+  const openDestination = useCallback((destination: NativeClinicalDestination) => {
       if (!premium.active && (destination.kind === 'case' || destination.kind === 'tool' && destination.id !== 'stethoscope')) { premium.requestPurchase(destination.kind === 'case' ? 'patient cases' : 'clinical tools'); return; }
       if (destination.kind === 'monitor') {
         if (!caseEngine.current || caseEngine.current.currentScenario.id !== studioScenarioId) caseEngine.current = new PhysiologyKernel(studioScenarioId);
@@ -165,7 +139,44 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
       setLoading(true);
       setBackRequest(0);
       setUrl(nativeClinicalRoute(destination));
-    }} /></>);
+  }, [premium.active, premium.requestPurchase, studioScenarioId, studioTheme]);
+  const initialToolOpened = useRef(false);
+  useEffect(() => {
+    if (!initialTool || !studioThemeHydrated || initialToolOpened.current) return;
+    initialToolOpened.current = true;
+    openDestination({ kind: 'tool', id: initialTool, scenario: 'normal' });
+  }, [initialTool, studioThemeHydrated, openDestination]);
+
+  if (nativeMode?.kind === 'monitor') return wrap(<NativeIcuMonitor scenarioId={nativeMode.scenarioId} engine={caseEngine.current || undefined}
+    theme={studioTheme} onToggleTheme={onToggleStudioTheme} onExit={onExit} onBack={returnToNativeStudio} onSkills={returnToNativeStudio}
+    onCase={patient => { if (!premium.active) { premium.requestPurchase('patient cases'); return; } caseEngine.current = patient; setNativeMode({ kind: 'case', scenarioId: patient.currentScenario.id }); }}
+    onAnatomy={patient => {
+      caseEngine.current = patient;
+      setNativeMode(premium.active ? { kind: 'case', scenarioId: patient.currentScenario.id } : null);
+      setRendererTheme(studioTheme); setInitialPatient(JSON.stringify(patient));
+      setBackRequest(0); setFailed(false); setLoading(true);
+      setUrl('https://orbitmbbs.vercel.app/simulator?' + new URLSearchParams({ mode: 'anatomy', scenario: patient.currentScenario.id }).toString());
+    }} />);
+  if (premium.active && nativeMode?.kind === 'ecg') return wrap(<NativeEcgTwelveLead scenarioId={nativeMode.scenarioId} theme={studioTheme} engine={caseEngine.current || undefined} onBack={returnToNativeStudio} />);
+  if (nativeMode?.kind === 'case' && !url) return wrap(<NativeClinicalCase scenarioId={nativeMode.scenarioId}
+    engine={caseEngine.current || undefined} onExit={onExit} theme={studioTheme} onToggleTheme={onToggleStudioTheme}
+    onScenarioChange={id => { setStudioScenarioId(id); setNativeMode({ kind: 'case', scenarioId: id }); }}
+    onOpen={query => {
+      setRendererTheme(studioTheme);
+      setInitialPatient(JSON.stringify(caseEngine.current));
+      setBackRequest(0); setFailed(false); setLoading(true);
+      setUrl('https://orbitmbbs.vercel.app/simulator?' + query);
+    }} onBack={returnToNativeStudio} />);
+
+  if (premium.active && nativeMode?.kind === 'radiology') return wrap(<NativeRadiologyViewer theme={studioTheme} onBack={returnToNativeStudio} />);
+
+  if (premium.active && nativeMode?.kind === 'coronary') return wrap(<NativeCoronaryLab theme={studioTheme} onToggleTheme={onToggleStudioTheme} onBack={returnToNativeStudio} />);
+
+  // The canonical clubbing sheet is white in both studio themes.
+  if (premium.active && nativeMode?.kind === 'clubbing') return wrap(<NativeClubbingTrainer onBack={returnToNativeStudio} />);
+
+  if (!url) {
+    return wrap(<><VaultTrialBanner kind="simulator" /><NativeClinicalStudio onExit={onExit} scenarioId={studioScenarioId} onScenarioChange={onStudioScenarioChange} theme={studioTheme} onToggleTheme={onToggleStudioTheme} onOpen={openDestination} /></>);
   }
 
   return wrap(
@@ -191,6 +202,7 @@ export default function SimulatorScreen({ onExit }: { onExit: () => void }) {
                 } catch { /* Incomplete bridge message. */ }
               }
               if (nativeEvent.status === 'exit') {
+                if (initialTool) { onExit(); return; }
                 setUrl(null); setFailed(false);
                 if (nativeMode?.kind !== 'case') setNativeMode(null);
               }
