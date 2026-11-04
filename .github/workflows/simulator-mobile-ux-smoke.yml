@@ -15,6 +15,8 @@ on:
       - 'scripts/simulator-clinical-e2e.mjs'
       - 'scripts/vault-layout-e2e.mjs'
       - 'mobile/src/screens/NotesScreen.tsx'
+      - 'mobile/src/screens/SimulatorScreen.tsx'
+      - 'mobile/web/vault-shortcuts-check.mjs'
       - '.github/workflows/simulator-mobile-ux-smoke.yml'
   workflow_dispatch:
 
@@ -126,6 +128,10 @@ jobs:
             sleep 1
           done
           ORBIT_VAULT_BASE_URL=http://127.0.0.1:5225 node scripts/vault-layout-e2e.mjs
+      - name: Verify direct Vault clinical skill shortcuts
+        run: |
+          export CHROME_PATH="$(node -e 'process.stdout.write(require("playwright").chromium.executablePath())')"
+          node mobile/web/vault-shortcuts-check.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
