@@ -44,6 +44,8 @@ jobs:
           printf 'export const ADS_ENABLED = false;\n' > src/lib/adsMode.ts
           printf 'export const GOOGLE_SIGN_IN_ENABLED = false;\n' > src/lib/authMode.ts
           node -e 'const fs=require("fs");const p=JSON.parse(fs.readFileSync("app.json"));p["react-native-google-mobile-ads"].ios_app_id="ca-app-pub-3940256099942544~1458002511";fs.writeFileSync("app.json",JSON.stringify(p,null,2));'
+          # Exercise only synthetic Keychain records in this simulator artifact.
+          cat ../scripts/ios-keychain-probe.inc >> ios/OrbitMBBS/OrbitSecureStorage.mm
       - name: Check types and bundle real iOS entry point
         run: |
           node ../scripts/build-pg-compact.mjs

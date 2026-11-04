@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A9E5F0000000000000000001 /* OrbitSecureStorage.mm in Sources */ = {isa = PBXBuildFile; fileRef = A9E5F0000000000000000002 /* OrbitSecureStorage.mm */; };
 		0C80B921A6F3F58F76C31292 /* libPods-OrbitMBBS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-OrbitMBBS.a */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
@@ -14,6 +15,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A9E5F0000000000000000002 /* OrbitSecureStorage.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = OrbitSecureStorage.mm; path = OrbitMBBS/OrbitSecureStorage.mm; sourceTree = "<group>"; };
+		A9E5F0000000000000000003 /* OrbitSecureStorage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OrbitSecureStorage.h; path = OrbitMBBS/OrbitSecureStorage.h; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* OrbitMBBS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OrbitMBBS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = OrbitMBBS/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = OrbitMBBS/Info.plist; sourceTree = "<group>"; };
@@ -42,6 +45,8 @@
 			isa = PBXGroup;
 			children = (
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
+				A9E5F0000000000000000002 /* OrbitSecureStorage.mm */,
+				A9E5F0000000000000000003 /* OrbitSecureStorage.h */,
 				761780EC2CA45674006654EE /* AppDelegate.swift */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
@@ -245,6 +250,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				761780ED2CA45674006654EE /* AppDelegate.swift in Sources */,
+				A9E5F0000000000000000001 /* OrbitSecureStorage.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

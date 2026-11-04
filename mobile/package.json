@@ -171,6 +171,11 @@
     "jsSrcsDir": "src/native",
     "android": {
       "javaPackageName": "com.aistudio.mbbsqbank.aycxvd"
+    },
+    "ios": {
+      "modulesProvider": {
+        "OrbitSecureStorage": "OrbitSecureStorage"
+      }
     }
   },
   "overrides": {
