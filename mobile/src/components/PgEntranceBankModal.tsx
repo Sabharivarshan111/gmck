@@ -10,13 +10,15 @@ import {installedNeetBank} from '@/lib/neetPgInstalledBank';
 import {loadBundledNeetBank} from '@/lib/neetPgBundledBank';
 import {loadBundledRecallBank, type RecallExam} from '@/lib/pgRecallBundledBank';
 import {NeetPgOfflineModal} from '@/components/NeetPgOfflineModal';
+import {MedMcqaPracticeModal} from '@/components/MedMcqaPracticeModal';
 import type {InstalledReader} from '@shared/neetPgInstall';
 
-type Exam = 'neet-pg' | RecallExam;
+type Exam = 'neet-pg' | RecallExam | 'practice';
 const EXAMS = [
   {id: 'neet-pg', label: 'NEET-PG'},
   {id: 'aiims-pg', label: 'AIIMS PG'},
   {id: 'ini-cet', label: 'INI-CET'},
+  {id: 'practice', label: 'Practice questions'},
 ] as const;
 
 export function PgEntranceBankModal({visible, onClose, initialQuestionId}: {visible: boolean; onClose: () => void; initialQuestionId?: string}) {
@@ -36,6 +38,11 @@ export function PgEntranceBankModal({visible, onClose, initialQuestionId}: {visi
     let cancelled = false;
     setChecked(false);
     setInstalled(null);
+    if (exam === 'practice') {
+      setChecked(true);
+      setLoadedExam(exam);
+      return;
+    }
     const loading = exam === 'neet-pg'
       ? installedNeetBank.load().catch(() => null).then(async value => value ?? await loadBundledNeetBank())
       : loadBundledRecallBank(exam);
@@ -57,7 +64,7 @@ export function PgEntranceBankModal({visible, onClose, initialQuestionId}: {visi
   if (!visible) return null;
   const choices = <View style={styles.choices}>{EXAMS.map(item => <Touchable
     key={item.id}
-    label={'Open ' + item.label + ' practice'}
+    label={item.id === 'practice' ? 'Open chapter-wise practice questions' : 'Open ' + item.label + ' practice'}
     role="button"
     state={{selected: exam === item.id}}
     disabled={installing || !checked || loadedExam !== exam}
@@ -65,6 +72,7 @@ export function PgEntranceBankModal({visible, onClose, initialQuestionId}: {visi
     style={[styles.choice, {borderColor: exam === item.id ? colors.primary : colors.border, backgroundColor: exam === item.id ? withAlpha(colors.primary, 0.1) : colors.card}]}
   ><Text style={[typeScale.footnote, {color: colors.text}]}>{item.label}</Text></Touchable>)}</View>;
   const loadingCurrent = !checked || loadedExam !== exam;
+  if (exam === 'practice') return <MedMcqaPracticeModal onClose={onClose} examChoices={choices} />;
   if (loadingCurrent || !installed) return <Modal visible onRequestClose={onClose}><View style={[styles.loading, {paddingTop: insets.top + space.lg, paddingBottom: insets.bottom + space.lg, backgroundColor: colors.background}]}>
     {loadingCurrent ? <ActivityIndicator color={colors.primary} accessibilityLabel="Opening offline bank" /> : <Text style={{color: colors.text}}>The offline bank could not be opened.</Text>}
     {choices}

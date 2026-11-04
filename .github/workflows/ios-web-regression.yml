@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
       - run: npm ci --legacy-peer-deps
       - run: npm ci --legacy-peer-deps
         working-directory: mobile
@@ -31,6 +31,8 @@ jobs:
       - run: node scripts/test-pg-exam-years.mjs
       - run: node mobile/web/neet-pg-offline-check.mjs
       - run: node mobile/web/pg-recall-check.mjs
+      - run: node scripts/test-pg-runtime.mjs
+      - run: node mobile/web/medmcqa-practice-check.mjs
       - run: node mobile/web/ai-chat-check.mjs
       - run: node mobile/web/ios-regression.mjs
       - run: ORBIT_BROWSER=webkit node mobile/web/ios-regression.mjs
@@ -42,3 +44,4 @@ jobs:
             /tmp/orbit-ios-evidence
             docs/evidence/tablet-ai-chat
             docs/evidence/pg-recalls
+            /tmp/orbit-practice-evidence
