@@ -1,4 +1,4 @@
-import datetime, hashlib, json, os, pathlib, re, shutil, sqlite3, subprocess, time
+import datetime, hashlib, json, os, pathlib, re, shutil, signal, sqlite3, subprocess, time
 ROOT=pathlib.Path.cwd()
 OUT=ROOT/'evidence'
 OUT.mkdir(exist_ok=True)
@@ -75,12 +75,24 @@ for flow in sorted((ROOT/'.verification/ios/flows').glob('*.yaml')):
     if '--debug-output' in helptext:cmd+=['--debug-output',str(OUT/'debug'/name)]
     if '--test-output-dir' in helptext:cmd+=['--test-output-dir',str(OUT/'screenshots')]
     cmd.append(str(flow))
-    try:
-        result=subprocess.run(cmd,capture_output=True,text=True,timeout=900 if name.startswith('01-') else 480)
-        code=result.returncode;log=result.stdout+'\n'+result.stderr
-    except subprocess.TimeoutExpired as e:
-        code=124;log=str(e)
-    (OUT/(name+'.log')).write_text(log)
+    completed=False
+    deadline=time.monotonic()+(900 if name.startswith('01-') else 480)
+    logpath=OUT/(name+'.log')
+    with logpath.open('w') as stream:
+        process=subprocess.Popen(cmd,stdout=stream,stderr=subprocess.STDOUT,text=True,start_new_session=True)
+        marker_at=None
+        while process.poll() is None:
+            completed=bool(list(OUT.rglob('__complete-'+name+'.png')))
+            if completed and marker_at is None:marker_at=time.monotonic()
+            if time.monotonic()>deadline or (marker_at is not None and time.monotonic()-marker_at>15):
+                os.killpg(process.pid,signal.SIGTERM)
+                try:process.wait(timeout=10)
+                except subprocess.TimeoutExpired:
+                    os.killpg(process.pid,signal.SIGKILL);process.wait()
+                code=124
+                break
+            time.sleep(1)
+        else:code=process.returncode
     completed=bool(list(OUT.rglob('__complete-'+name+'.png')))
     status='pass' if code==0 else 'assertions_passed_runner_teardown_timeout' if code==124 and completed else 'fail'
     if name.startswith('01-'):setup_ok=code==0 or completed
