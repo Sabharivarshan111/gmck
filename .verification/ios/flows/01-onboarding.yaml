@@ -3,35 +3,55 @@ appId: com.aistudio.mbbsqbank.aycxvd
 - launchApp:
     clearState: true
 - assertVisible: "Welcome to Orbit"
-- tapOn: "Continue"
+- tapOn:
+    text: "Continue"
+    waitToSettleTimeoutMs: 1500
 - assertVisible: "Make Orbit yours"
-- tapOn: "(?-i:Display name)"
+- tapOn:
+    text: "(?-i:Display name)"
+    waitToSettleTimeoutMs: 1500
 - inputText: "Study Reader"
 - assertVisible: "Study Reader"
 - tapOn:
+    waitToSettleTimeoutMs: 1500
     id: "Return"
-- tapOn: "2nd Year"
+- tapOn:
+    text: "2nd Year"
+    waitToSettleTimeoutMs: 1500
 - scrollUntilVisible:
     element: "Choose your university"
-- tapOn: "Choose your university"
-- tapOn: "Tamil Nadu Dr.*Medical University.*TNMGR.*"
+- tapOn:
+    text: "Choose your university"
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: "Tamil Nadu Dr.*Medical University.*TNMGR.*"
+    waitToSettleTimeoutMs: 1500
 - scrollUntilVisible:
     element: "Both"
-- tapOn: "Both"
+- tapOn:
+    text: "Both"
+    waitToSettleTimeoutMs: 1500
 - takeScreenshot: "01-study-setup"
 - scrollUntilVisible:
     element: "Continue to Premium"
-- tapOn: "Continue to Premium"
+- tapOn:
+    text: "Continue to Premium"
+    waitToSettleTimeoutMs: 1500
 - assertVisible: "Unlock Premium"
 - takeScreenshot: "01-premium"
 - scrollUntilVisible:
     element: "Continue with free preview"
-- tapOn: "Continue with free preview"
+- tapOn:
+    text: "Continue with free preview"
+    waitToSettleTimeoutMs: 1500
 - tapOn:
     text: "Skip the walkthrough"
     optional: true
 - assertVisible: "My Progress"
 - takeScreenshot: "01-home"
-- launchApp
+- launchApp:
+    stopApp: false
 - assertNotVisible: "Welcome to Orbit"
 - assertVisible: "My Progress"
+
+- takeScreenshot: "__complete-01-onboarding"

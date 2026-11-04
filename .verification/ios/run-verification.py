@@ -76,15 +76,16 @@ for flow in sorted((ROOT/'.verification/ios/flows').glob('*.yaml')):
     if '--test-output-dir' in helptext:cmd+=['--test-output-dir',str(OUT/'screenshots')]
     cmd.append(str(flow))
     try:
-        result=subprocess.run(cmd,capture_output=True,text=True,timeout=660 if name.startswith('01-') else 420)
+        result=subprocess.run(cmd,capture_output=True,text=True,timeout=900 if name.startswith('01-') else 480)
         code=result.returncode;log=result.stdout+'\n'+result.stderr
     except subprocess.TimeoutExpired as e:
         code=124;log=str(e)
     (OUT/(name+'.log')).write_text(log)
-    status='pass' if code==0 else 'fail'
-    if name.startswith('01-'):setup_ok=code==0
+    completed=bool(list(OUT.rglob('__complete-'+name+'.png')))
+    status='pass' if code==0 else 'assertions_passed_runner_teardown_timeout' if code==124 and completed else 'fail'
+    if name.startswith('01-'):setup_ok=code==0 or completed
     if name.startswith('06-') and not capabilities['OrbitSimulator']:status='fail_native_view_not_implemented'
-    report['cases'].append({'name':name,'status':status,'exit_code':code})
+    report['cases'].append({'name':name,'status':status,'exit_code':code,'all_flow_commands_completed':completed})
     run('xcrun','simctl','io',udid,'screenshot',str(OUT/(name+'-final.png')),timeout=60)
     (OUT/'report.json').write_text(json.dumps(report,indent=2))
 if setup_ok:

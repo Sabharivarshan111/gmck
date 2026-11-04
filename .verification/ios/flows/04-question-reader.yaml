@@ -1,15 +1,26 @@
 appId: com.aistudio.mbbsqbank.aycxvd
 ---
-- launchApp
-- tapOn: "Home"
+- launchApp:
+    stopApp: false
+- tapOn:
+    text: "Home"
+    waitToSettleTimeoutMs: 1500
 - scrollUntilVisible:
     element: "Pathology, .*% complete"
-- tapOn: "Pathology, .*% complete"
-- tapOn: "Paper 1,.*"
+- tapOn:
+    text: "Pathology, .*% complete"
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: "Paper 1,.*"
+    waitToSettleTimeoutMs: 1500
 - scrollUntilVisible:
     element: "Cell Injury, Cell Death and Adaptation,.*"
-- tapOn: "Cell Injury, Cell Death and Adaptation,.*"
-- tapOn: "Essay,.*"
+- tapOn:
+    text: "Cell Injury, Cell Death and Adaptation,.*"
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: "Essay,.*"
+    waitToSettleTimeoutMs: 1500
 - assertVisible: "Necrosis.*"
 - tapOn:
     text: "Mark as done"
@@ -17,13 +28,25 @@ appId: com.aistudio.mbbsqbank.aycxvd
 - assertVisible: "Mark as not done"
 - takeScreenshot: "04-question-done"
 - launchApp
-- tapOn: "Home"
+- tapOn:
+    text: "Home"
+    waitToSettleTimeoutMs: 1500
 - scrollUntilVisible:
     element: "Pathology, .*% complete"
-- tapOn: "Pathology, .*% complete"
-- tapOn: "Paper 1,.*"
+- tapOn:
+    text: "Pathology, .*% complete"
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: "Paper 1,.*"
+    waitToSettleTimeoutMs: 1500
 - scrollUntilVisible:
     element: "Cell Injury, Cell Death and Adaptation,.*"
-- tapOn: "Cell Injury, Cell Death and Adaptation,.*"
-- tapOn: "Essay,.*"
+- tapOn:
+    text: "Cell Injury, Cell Death and Adaptation,.*"
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: "Essay,.*"
+    waitToSettleTimeoutMs: 1500
 - assertVisible: "Mark as not done"
+
+- takeScreenshot: "__complete-04-question-reader"

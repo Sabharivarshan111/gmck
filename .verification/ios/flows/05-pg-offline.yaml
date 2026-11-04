@@ -1,10 +1,19 @@
 appId: com.aistudio.mbbsqbank.aycxvd
 ---
-- launchApp
-- tapOn: "Vault"
-- tapOn: "NEET-PG practice questions"
+- launchApp:
+    stopApp: false
+- tapOn:
+    text: "Vault"
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: "NEET-PG practice questions"
+    waitToSettleTimeoutMs: 1500
 - assertVisible: "Start NEET PG practice"
 - takeScreenshot: "05-pg-bank"
-- tapOn: "Start NEET PG practice"
+- tapOn:
+    text: "Start NEET PG practice"
+    waitToSettleTimeoutMs: 1500
 - assertVisible: "Show answer and explanation"
 - takeScreenshot: "05-pg-question"
+
+- takeScreenshot: "__complete-05-pg-offline"
