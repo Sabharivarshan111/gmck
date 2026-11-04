@@ -33,16 +33,10 @@ appId: com.aistudio.mbbsqbank.aycxvd
     waitToSettleTimeoutMs: 1500
 - takeScreenshot: "01-study-setup"
 - scrollUntilVisible:
-    element: "Continue to Premium"
+    element: "Start studying"
+- assertNotVisible: "Unlock Premium"
 - tapOn:
-    text: "Continue to Premium"
-    waitToSettleTimeoutMs: 1500
-- assertVisible: "Unlock Premium"
-- takeScreenshot: "01-premium"
-- scrollUntilVisible:
-    element: "Continue with free preview"
-- tapOn:
-    text: "Continue with free preview"
+    text: "Start studying"
     waitToSettleTimeoutMs: 1500
 - tapOn:
     text: "Skip the walkthrough"

@@ -1,0 +1,59 @@
+appId: com.aistudio.mbbsqbank.aycxvd
+---
+- launchApp:
+    stopApp: false
+- tapOn:
+    text: "Vault"
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: "NEET-PG practice questions"
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: "Open chapter-wise practice questions"
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: 'Anaesthesia \(3,192\)'
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: 'AIIMS 2017 \(5\)'
+    waitToSettleTimeoutMs: 1500
+- extendedWaitUntil:
+    visible: "Highest concentration of oxygen.*"
+    timeout: 30000
+- tapOn:
+    text: "Highest concentration of oxygen.*"
+    waitToSettleTimeoutMs: 1500
+- assertVisible: "Option A: .*"
+- assertVisible: "Option B: .*"
+- assertVisible: "Option C: .*"
+- assertVisible: "Option D: .*"
+- tapOn:
+    text: "Show supplied answer"
+    waitToSettleTimeoutMs: 1500
+- assertVisible: "Answer: C"
+- takeScreenshot: "07-native-practice-answer"
+- tapOn:
+    text: "Save practice question"
+    waitToSettleTimeoutMs: 1500
+- assertVisible: "Unsave practice question"
+- launchApp
+- tapOn:
+    text: "Vault"
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: "NEET-PG practice questions"
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: "Open chapter-wise practice questions"
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: 'Anaesthesia \(3,192\)'
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: 'AIIMS 2017 \(5\)'
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: "Highest concentration of oxygen.*"
+    waitToSettleTimeoutMs: 1500
+- assertVisible: "Unsave practice question"
+- takeScreenshot: "__complete-07-chapter-practice"

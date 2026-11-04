@@ -19,14 +19,16 @@ jobs:
         with:
           sparse-checkout: .verification/ios
           persist-credentials: false
+      - name: Check isolated storage fixture updates
+        run: python3 .verification/ios/test-storage-fixture.py
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
       - uses: actions/download-artifact@v4
         with:
-          name: orbit-ios-simulator-dba321a5dd50335f5be7c4a101769f74dbc07243
-          run-id: 41752091252
+          name: orbit-ios-simulator-0d48159af95ee31c89598a5debf344112aef07c3
+          run-id: 41800009136
           github-token: ${{ github.token }}
           path: package
       - name: Install pinned Maestro

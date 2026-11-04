@@ -33,7 +33,7 @@ os.environ['MAESTRO_CLI_NO_ANALYTICS']='1'
 maestro=shutil.which('maestro')
 run(maestro,'--version')
 helptext=run(maestro,'test','--help',capture_output=True).stdout
-report={'source_sha':'dba321a5dd50335f5be7c4a101769f74dbc07243','build_run':41752091252,
+report={'source_sha':'0d48159af95ee31c89598a5debf344112aef07c3','build_run':41800009136,
         'device':device['name'],'runtime':runtime,'offline_backend_isolated':True,'native_classes':capabilities,
         'cases':[],'not_verified':['real Google sign-in (disabled in tested build)','StoreKit/live purchases (not implemented)','push delivery on a real iPhone','TestFlight signing and App Store review']}
 def local_records(update_streak=False):
@@ -41,6 +41,26 @@ def local_records(update_streak=False):
     records={}
     for file in container.rglob('*'):
         if not file.is_file() or file.name.endswith(('-wal','-shm')):continue
+        if file.name=='manifest.json':
+            try:
+                manifest=json.loads(file.read_text())
+                if not isinstance(manifest,dict):continue
+                for key in ['orbit-profile-v1','orbit:streak-v1']:
+                    if key not in manifest:continue
+                    value=manifest[key]
+                    if value is None:
+                        large=file.parent/hashlib.md5(key.encode()).hexdigest()
+                        value=large.read_text() if large.exists() else None
+                    if isinstance(value,str):records[key]=json.loads(value)
+                if update_streak and 'orbit-profile-v1' in manifest:
+                    state=dict(records.get('orbit:streak-v1',{}))
+                    state.update(current=29,best=max(29,state.get('best',0)),lastActiveDay=datetime.datetime.now().strftime('%Y-%m-%d'))
+                    manifest['orbit:streak-v1']=json.dumps(state)
+                    temporary=file.with_suffix('.qa-temp')
+                    temporary.write_text(json.dumps(manifest));temporary.replace(file)
+                    records['orbit:streak-v1']=state
+            except (OSError,ValueError,TypeError):pass
+            continue
         try:
             with file.open('rb') as stream:
                 if stream.read(16)!=b'SQLite format 3\x00':continue
@@ -71,6 +91,9 @@ for flow in sorted((ROOT/'.verification/ios/flows').glob('*.yaml')):
         report['local_profile']=saved.get('orbit-profile-v1')
         if 'orbit:streak-v1' not in saved:
             report['cases'].append({'name':name,'status':'blocked_streak_fixture_storage_not_found'});continue
+    if not name.startswith('01-'):
+        subprocess.run(['xcrun','simctl','terminate',udid,APP_ID],capture_output=True)
+        run('xcrun','simctl','launch',udid,APP_ID,timeout=90)
     cmd=[maestro,'--device',udid,'test','--format','junit','--output',str(OUT/(name+'.xml'))]
     if '--debug-output' in helptext:cmd+=['--debug-output',str(OUT/'debug'/name)]
     if '--test-output-dir' in helptext:cmd+=['--test-output-dir',str(OUT/'screenshots')]

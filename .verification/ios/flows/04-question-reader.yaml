@@ -11,15 +11,12 @@ appId: com.aistudio.mbbsqbank.aycxvd
     text: "Pathology, .*% complete"
     waitToSettleTimeoutMs: 1500
 - tapOn:
-    text: "Paper 1,.*"
+    text: "Explore Paper 1 questions"
     waitToSettleTimeoutMs: 1500
 - scrollUntilVisible:
     element: "Cell Injury, Cell Death and Adaptation,.*"
 - tapOn:
     text: "Cell Injury, Cell Death and Adaptation,.*"
-    waitToSettleTimeoutMs: 1500
-- tapOn:
-    text: "Essay,.*"
     waitToSettleTimeoutMs: 1500
 - assertVisible: "Necrosis.*"
 - tapOn:
@@ -37,15 +34,12 @@ appId: com.aistudio.mbbsqbank.aycxvd
     text: "Pathology, .*% complete"
     waitToSettleTimeoutMs: 1500
 - tapOn:
-    text: "Paper 1,.*"
+    text: "Explore Paper 1 questions"
     waitToSettleTimeoutMs: 1500
 - scrollUntilVisible:
     element: "Cell Injury, Cell Death and Adaptation,.*"
 - tapOn:
     text: "Cell Injury, Cell Death and Adaptation,.*"
-    waitToSettleTimeoutMs: 1500
-- tapOn:
-    text: "Essay,.*"
     waitToSettleTimeoutMs: 1500
 - assertVisible: "Mark as not done"
 
