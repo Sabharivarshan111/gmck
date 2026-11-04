@@ -43,12 +43,12 @@ const OPTIONS = [
 ] as const;
 const SUBJECTS: Record<Year, { name: string; key: string; count: number }[]> = {
   'second-year': [
-    { name: 'Pharmacology', key: 'pharmacology', count: 360 },
+    { name: 'Pharmacology', key: 'pharmacology', count: 364 },
     { name: 'Microbiology', key: 'microbiology', count: 247 },
-    { name: 'Pathology', key: 'pathology', count: 229 },
+    { name: 'Pathology', key: 'pathology', count: 232 },
   ],
   'third-year': [
-    { name: 'Community Medicine', key: 'community-medicine', count: 264 },
+    { name: 'Community Medicine', key: 'community-medicine', count: 263 },
     { name: 'Forensic Medicine', key: 'forensic-medicine', count: 188 },
   ],
 };
