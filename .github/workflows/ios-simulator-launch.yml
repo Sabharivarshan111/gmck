@@ -1,0 +1,82 @@
+name: Launch iOS simulator application
+on:
+  push:
+    branches: [codex/ios-port-bootstrap]
+    paths: ['.github/workflows/ios-simulator-launch.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  launch:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - name: Wait for the reviewed simulator build
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const run_id = 41748010655;
+            for (let attempt = 0; attempt < 60; attempt++) {
+              const {data: run} = await github.rest.actions.getWorkflowRun({...context.repo, run_id});
+              if (run.head_sha !== 'eeca1c3ccf0b87e73d85e6fac24a62f9c2f78267' ||
+                  run.path !== '.github/workflows/ios-simulator.yml') throw Error('Unexpected simulator build source');
+              if (run.status === 'completed') {
+                if (run.conclusion !== 'success') throw Error('Simulator build did not succeed: ' + run.html_url);
+                return;
+              }
+              core.info('Waiting for simulator compile: ' + run.status);
+              await new Promise(resolve => setTimeout(resolve, 30000));
+            }
+            throw Error('Simulator compile has not finished within thirty minutes');
+      - uses: actions/download-artifact@v4
+        with:
+          name: orbit-ios-simulator-eeca1c3ccf0b87e73d85e6fac24a62f9c2f78267
+          run-id: 41748010655
+          github-token: ${{ github.token }}
+          path: package
+      - name: Boot iPhone and launch the actual app
+        shell: bash
+        run: |
+          mkdir -p evidence package/unpacked
+          ditto -x -k package/evidence/OrbitMBBS-simulator.zip package/unpacked
+          python3 - <<'PY'
+          import json, os, pathlib, plistlib, re, subprocess, time
+          def run(*args, **kwargs):
+              return subprocess.run(args, check=True, text=True, **kwargs)
+          devices = json.loads(subprocess.check_output(['xcrun','simctl','list','devices','available','--json']))
+          candidates = [(runtime, d) for runtime, ds in devices['devices'].items() for d in ds
+                        if d.get('isAvailable') and d['name'].startswith('iPhone')]
+          if not candidates:
+              raise RuntimeError('No available iPhone simulator runtime')
+          runtime, device = sorted(candidates, key=lambda item: item[0], reverse=True)[0]
+          udid = device['udid']
+          if device['state'] != 'Booted':
+              run('xcrun','simctl','boot',udid)
+          run('xcrun','simctl','bootstatus',udid,'-b',timeout=240)
+          app = next(pathlib.Path('package/unpacked').glob('*.app'))
+          with (app/'Info.plist').open('rb') as handle:
+              bundle_id = plistlib.load(handle)['CFBundleIdentifier']
+          if bundle_id != 'com.aistudio.mbbsqbank.aycxvd':
+              raise RuntimeError('Unexpected application identifier')
+          run('xcrun','simctl','install',udid,str(app))
+          launched = run('xcrun','simctl','launch','--terminate-running-process',udid,bundle_id,capture_output=True)
+          print(launched.stdout)
+          match = re.search(r':\s*(\d+)\s*$',launched.stdout)
+          if not match:
+              raise RuntimeError('Could not obtain launched application PID')
+          pid = int(match.group(1))
+          time.sleep(12)
+          os.kill(pid,0)
+          run('xcrun','simctl','io',udid,'screenshot','evidence/ios-first-launch.png')
+          pathlib.Path('evidence/launch.json').write_text(json.dumps({
+              'build_run':41748010655,'source_sha':'eeca1c3ccf0b87e73d85e6fac24a62f9c2f78267',
+              'device':device['name'],'runtime':runtime,'bundle_id':bundle_id,
+              'alive_after_seconds':12,'pid':pid},indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: orbit-ios-first-launch
+          path: evidence/
+          retention-days: 7
