@@ -4,6 +4,60 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#0b0a14" />
+    <!-- Temporary website-only splash; the actual app remains unchanged. -->
+    <style>
+      html:not(.orbit-offline-unlocked) body { margin: 0; background: #070b17; }
+      html:not(.orbit-offline-unlocked) #root { display: none !important; }
+      html.orbit-offline-unlocked #orbit-offline-cover { display: none !important; }
+      #orbit-offline-cover {
+        position: fixed; inset: 0; z-index: 2147483647;
+        display: flex; align-items: center; justify-content: center;
+        padding: 24px; box-sizing: border-box;
+        background: radial-gradient(ellipse at 50% 28%, #172c49 0%, #0a1428 38%, #060a15 78%);
+        color: #edf5ff; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        text-align: center;
+      }
+      #orbit-offline-cover .orbit-offline-content { width: 100%; max-width: 430px; }
+      #orbit-offline-cover .orbit-offline-logo {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 68px; height: 68px; margin-bottom: 28px; border-radius: 20px;
+        border: 1px solid rgba(151,185,245,.24); background: rgba(85,128,209,.12);
+        font-weight: 800; font-size: 28px; letter-spacing: -.07em; color: #b5d4ff;
+        box-shadow: 0 14px 48px rgba(0,0,0,.24);
+      }
+      #orbit-offline-cover .orbit-offline-brand {
+        font-size: 13px; letter-spacing: .26em; font-weight: 700;
+        color: #99b4da; margin: 0 0 20px;
+      }
+      #orbit-offline-cover #orbit-offline-trigger {
+        display: block; width: 100%; padding: 10px 0; border: 0;
+        background: transparent; color: inherit; cursor: default;
+        font-size: clamp(30px, 6vw, 44px); line-height: 1.15; font-weight: 750;
+        letter-spacing: -.035em; -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation; user-select: none; -webkit-user-select: none;
+      }
+      #orbit-offline-trigger:focus-visible { outline: 2px solid #aacaff; outline-offset: 4px; border-radius: 8px; }
+      #orbit-offline-cover .orbit-offline-subtitle {
+        margin: 14px auto 0; max-width: 310px; color: #a5b5cf;
+        font-size: 15px; line-height: 1.7;
+      }
+      #orbit-offline-cover .orbit-offline-dot {
+        display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+        background: #e1a862; margin-right: 8px; vertical-align: middle;
+      }
+      #orbit-offline-cover .orbit-offline-footer {
+        margin-top: 56px; font-size: 12px; color: #637896; letter-spacing: .06em;
+      }
+    </style>
+    <script>
+      (() => {
+        try {
+          if (sessionStorage.getItem('orbit-website-entry') === 'open') {
+            document.documentElement.classList.add('orbit-offline-unlocked');
+          }
+        } catch (_) {}
+      })();
+    </script>
     <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
     <title>ORBIT MBBS | TNMGRMU &amp; KUHS Question Bank + AI</title>
     <meta name="description" content="Free ORBIT MBBS question bank for TNMGRMU and KUHS students with PYQs, MCQs, AI answers, handwritten notes, Anki, attendance tracking and focus tools." />
@@ -58,5 +112,33 @@
       dialog::backdrop { background:rgba(0,0,0,.65); }
     </style>
   </head>
-  <body><div id="root"></div><script type="module" src="./main.tsx"></script></body>
+  <body>
+    <div id="orbit-offline-cover" aria-label="ORBIT MBBS temporarily offline">
+      <div class="orbit-offline-content">
+        <div class="orbit-offline-logo" aria-hidden="true">O</div>
+        <p class="orbit-offline-brand">ORBIT MBBS</p>
+        <button id="orbit-offline-trigger" type="button">Currently offline</button>
+        <p class="orbit-offline-subtitle"><span class="orbit-offline-dot" aria-hidden="true"></span>Our website is temporarily unavailable. Please check back soon.</p>
+        <p class="orbit-offline-footer">ORBIT MEDICAL LEARNING</p>
+      </div>
+    </div>
+    <script>
+      (() => {
+        const trigger = document.getElementById('orbit-offline-trigger');
+        if (!trigger) return;
+        let taps = 0, lastTap = 0;
+        const onTap = () => {
+          const now = Date.now();
+          taps = now - lastTap <= 1200 ? taps + 1 : 1;
+          lastTap = now;
+          if (taps >= 3) {
+            taps = 0;
+            try { sessionStorage.setItem('orbit-website-entry', 'open'); } catch (_) {}
+            document.documentElement.classList.add('orbit-offline-unlocked');
+          }
+        };
+        trigger.addEventListener('click', onTap);
+      })();
+    </script>
+<div id="root"></div><script type="module" src="./main.tsx"></script></body>
 </html>
