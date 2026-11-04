@@ -21,12 +21,12 @@ type QuestionRow = {
 
 const SUBJECTS_BY_YEAR = {
   "second-year": [
-    { key: "Pharmacology", label: "Pharmacology", emoji: "💊", count: 360 },
+    { key: "Pharmacology", label: "Pharmacology", emoji: "💊", count: 364 },
     { key: "Microbiology", label: "Microbiology", emoji: "🦠", count: 247 },
-    { key: "Pathology", label: "Pathology", emoji: "🔬", count: 229 },
+    { key: "Pathology", label: "Pathology", emoji: "🔬", count: 232 },
   ],
   "third-year": [
-    { key: "Community Medicine", label: "Community Medicine (PSM)", emoji: "🏥", count: 264 },
+    { key: "Community Medicine", label: "Community Medicine (PSM)", emoji: "🏥", count: 263 },
     { key: "Forensic Medicine", label: "Forensic Medicine & Toxicology", emoji: "⚖️", count: 188 },
   ],
 } as const;
@@ -132,7 +132,7 @@ export default function WBUHSSecondThirdBank({ yearKey, onSwitchBack }: { yearKe
       </header>
       {!subject && (
         <>
-          <p className="text-xs text-muted-foreground">{yearKey === "second-year" ? "836" : "452"} OCR-extracted WBUHS questions arranged by subject and chapter. Uncertain text and exam dates are marked for review.</p>
+          <p className="text-xs text-muted-foreground">{yearKey === "second-year" ? "843" : "451"} OCR-extracted WBUHS questions arranged by subject and chapter. Uncertain text and exam dates are marked for review.</p>
           <div className="grid grid-cols-2 gap-3">
             {SUBJECTS_BY_YEAR[yearKey].map((s) => (
               <button key={s.key} onClick={() => enterSubject(s.key)} className="h-40 rounded-2xl border border-border/60 bg-gradient-to-br from-card to-primary/10 p-4 flex flex-col items-start justify-between text-left hover:border-primary/50 active:scale-[0.98] transition">
