@@ -7,7 +7,7 @@ def run(*args, **kwargs):
     return subprocess.run(args,check=True,text=True,**kwargs)
 app=next((ROOT/'package/unpacked').glob('*.app'))
 binary=app/'OrbitMBBS'
-symbols=run('xcrun','nm','-gU',str(binary),capture_output=True).stdout
+symbols=run('xcrun','nm','-a',str(binary),capture_output=True).stdout
 classes=[s for s in symbols.splitlines() if '_OBJC_CLASS_' in s and 'Orbit' in s]
 (OUT/'native-classes.txt').write_text('\n'.join(classes))
 names=['OrbitSecureStorage','OrbitFiles','OrbitApkg','OrbitSound','OrbitSpeech','OrbitNotify','OrbitScreen','OrbitPgBank','OrbitRadiology','OrbitSimulator']
@@ -127,6 +127,8 @@ if setup_ok:
     subprocess.run(['xcrun','simctl','terminate',udid,APP_ID],capture_output=True)
     report['saved_records']=local_records()
 if (ROOT/'.maestro').exists():shutil.copytree(ROOT/'.maestro',OUT/'maestro-default',dirs_exist_ok=True)
+# Maestro's first flow clears app state; resolve the container again after relaunches.
+container=pathlib.Path(subprocess.check_output(['xcrun','simctl','get_app_container',udid,APP_ID,'data'],text=True).strip())
 probe=container/'Documents/ios-keychain-qa.json'
 try:
     keychain=json.loads(probe.read_text())

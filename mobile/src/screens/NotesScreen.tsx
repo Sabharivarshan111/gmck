@@ -18,6 +18,12 @@ import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import type { RootTabParamList } from '@/navigation/types';
 import {
   ArrowLeft,
+  Stethoscope,
+  HeartPulse,
+  Monitor,
+  ScanLine,
+  Eye,
+  Search,
   BookOpen,
   BookOpenCheck,
   ChevronRight,
@@ -325,6 +331,21 @@ export default function NotesScreen() {
   );
 }
 
+const VAULT_SKILL_ICONS: Record<string, typeof Stethoscope> = {
+  Auscultation: Stethoscope,
+  '12-lead ECG': HeartPulse,
+  'Ultrasound / POCUS': Monitor,
+  'X-ray & MRI': ScanLine,
+  'Eyes & cranial nerves': Eye,
+  'General examination': Search,
+};
+
+function VaultCardIcon({title, emoji}: {title: string; emoji: string}) {
+  const {colors} = useTheme();
+  const Icon = VAULT_SKILL_ICONS[title];
+  return Icon ? <Icon size={44} color={colors.accent} accessible={false} /> : <Text accessible={false} style={styles.yearEmoji}>{emoji}</Text>;
+}
+
 function VaultView({ onNotes, onPgPractice, onSimulator, onClinicalSkill, onProformas, onFlashcards }: { onNotes: () => void; onPgPractice: () => void; onSimulator: () => void; onClinicalSkill: (id: string) => void; onProformas: () => void; onFlashcards: () => void }) {
   const { colors } = useTheme();
   const textScale = useTextScale();
@@ -344,7 +365,7 @@ function VaultView({ onNotes, onPgPractice, onSimulator, onClinicalSkill, onProf
     <Text style={[styles.subtitle, { color: colors.textMuted }]}>Your study space. Choose what you want to do.</Text>
     <View style={styles.yearGrid}>
       {entries.map(({ title, hint, emoji, open, ...entry }) => <Touchable key={title} testID={`vault-card-${title}`} label={entry.label || title} onPress={open} scaleTo={0.97} style={[styles.vaultCard, { height: 220 * Math.max(1, textScale), backgroundColor: colors.card, borderColor: colors.border }]}>
-        <View style={{ height: 58 * textScale }}><Text accessible={false} style={styles.yearEmoji}>{emoji}</Text></View>
+        <View style={{ height: 58 * textScale }}><VaultCardIcon title={title} emoji={emoji} /></View>
         <View style={{ height: 50 * textScale }}><Text numberOfLines={2} style={[styles.yearName, { lineHeight: 22, color: colors.text }]}>{title}</Text></View>
         <View style={{ flex: 1 }}><Text numberOfLines={3} style={[styles.yearHint, { lineHeight: 18, color: colors.textMuted }]}>{hint}</Text></View>
         {title !== 'Notes' && !premium.active ? <Text style={[typeScale.caption, {color:colors.accent}]}>{'Free preview'}</Text> : <ChevronRight size={18} color={colors.accent} />}

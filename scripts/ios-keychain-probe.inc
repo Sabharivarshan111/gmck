@@ -31,6 +31,7 @@
     [store getItem:key resolve:resolve reject:reject];
     if (actual != nil) [failures addObject:@"delete"];
     NSURL *directory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
+    [[NSFileManager defaultManager] createDirectoryAtURL:directory withIntermediateDirectories:YES attributes:nil error:nil];
     NSURL *report = [directory URLByAppendingPathComponent:@"ios-keychain-qa.json"];
     BOOL previousLaunch = [[NSFileManager defaultManager] fileExistsAtPath:report.path];
     NSString *phase = @"written";
