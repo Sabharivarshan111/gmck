@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  Keyboard,
   Modal,
   ScrollView,
   StyleSheet,
@@ -12,6 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
+import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { NeetPgQuestionAi } from '@/components/NeetPgQuestionAi';
 import {
   PG_COMPACT,
@@ -163,7 +165,7 @@ export function MedMcqaPracticeModal({
       }));
   return (
     <Modal visible onRequestClose={back}>
-      <View
+      <KeyboardSafe
         style={[
           styles.screen,
           {
@@ -293,6 +295,7 @@ export function MedMcqaPracticeModal({
                 onChangeText={setQuery}
                 onSubmitEditing={() => {
                   setSearch(query.trim());
+                  Keyboard.dismiss();
                   setPage(0);
                 }}
                 placeholder="Search practice questions"
@@ -305,6 +308,7 @@ export function MedMcqaPracticeModal({
               />
               {button('Search practice', () => {
                 setSearch(query.trim());
+                  Keyboard.dismiss();
                 setPage(0);
               })}
             </View>
@@ -332,6 +336,7 @@ export function MedMcqaPracticeModal({
                   </Text>
                 ) : null}
                 <FlatList
+                keyboardShouldPersistTaps="handled"
                   data={result?.questions ?? []}
                   keyExtractor={item => item.id}
                   renderItem={({ item }) => (
@@ -358,6 +363,7 @@ export function MedMcqaPracticeModal({
               </>
             ) : (
               <FlatList
+                keyboardShouldPersistTaps="handled"
                 data={rows}
                 keyExtractor={item => item.id}
                 renderItem={({ item }) => (
@@ -376,7 +382,7 @@ export function MedMcqaPracticeModal({
             )}
           </>
         )}
-      </View>
+      </KeyboardSafe>
     </Modal>
   );
 }
