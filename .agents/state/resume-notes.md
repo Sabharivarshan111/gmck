@@ -2595,3 +2595,15 @@ NEXT: Finishpublication and save final receipts. Next review: firstana/phyMCQ SH
 ## 2026-11-03 — MUHS 266-draft review, Batch28
 
 Reviewed all266 saved drafts:151 cleared canonical original-page occurrences/742 offered marks;115 held due retyped-only sources, contradictory metadata/selection rules or conflicting full examinations. Retyped Winter2020 SurgeryII LAQs wrongly showed16 each/chooseone: original offers both8 each. New151 retain complete subparts and original marks. No original MCQs/answers invented, no raw PDFs or held text published. Prior Batch27 new156 is independently live on both domains (main8d02a7a/all19925 IDs). Native now selectively receives those156 plus151 (307 MUHS); old web1000 under review is not blindly copied. New native19076/web20076 totals differ by old1000 legacy web MUHS records. Check exact emitted payloads, browser suites and actual signed packages before claiming release. User's next1000 target currently307 cleared additions,693 still needed; these are not university-completion counts.
+
+
+## 2026-11-04 — Restore chapter-wise MedMCQA practice alongside exam banks
+
+**DONE:** Owner explicitly requested the earlier MedMCQA practice bank again; this supersedes the older no-MedMCQA instruction for the compact labelled practice reader only. Added a fourth Practice questions choice, paged subject/chapter/search UI, supplied-key reveal, stable bookmarks, existing ACEV discussion, website premium boundary, reproducible compact assets and PWA precaching. Existing 185636 eligible records/holds/IDs and 2078+303 exam records preserved. Native types/lint, full website assembly, complete codec/runtime integrity checks and real browser offline/persistence/access-control flow passed. See docs/PG_PRACTICE_RESTORE_20261104.md.
+
+**HALF-DONE:** Android JS bundle passed; PR/CI/publication receipts pending. Native iOS full verification continues independently on codex/ios-port-bootstrap: simulator build dba321 passed; actual custom iOS modules absent. First deep run found a harness label collision; second hit cold XCTest startup timeout. Commit62aa2d6 raises driver startup timeout and refreshes sandbox storage lookup. Do not call onboarding-dependent iOS cases passed.
+
+**NEXT:** Finish bundle, publish reviewed change, check deployment, append final receipts; inspect native iOS deep verification evidence.
+
+**DO NOT:** Push old claude/native-app-sync branch93a8911 over newer main MUHS content; merge unfinished iOS PR175; infer verified exam years for the practice dataset; invent missing explanations; replace any supplied key.
+

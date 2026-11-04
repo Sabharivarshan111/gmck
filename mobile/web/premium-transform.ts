@@ -19,6 +19,7 @@ export function transformWebsitePremium(code: string, id: string, accessModule: 
     replace('  const choices = <View style={styles.choices}>', '  const choices = <View><VaultTrialBanner kind="practice" /><View style={styles.choices}>');
     replace('</Touchable>)}</View>;', '</Touchable>)}</View></View>;');
     replace('    installed={installed}', '    installed={sampleBank!}');
+    replace('onClose={onClose} examChoices={choices} />;', "onClose={onClose} examChoices={choices} locked={!vaultAccess.active} onUnlock={() => vaultAccess.requestPurchase('chapter-wise practice questions')} />;");
     replace("    initialQuestionId={exam === 'neet-pg' ? initialQuestionId : undefined}", "    initialQuestionId={vaultAccess.active && exam === 'neet-pg' ? initialQuestionId : undefined}");
     replace("onReplace={exam === 'neet-pg' ? () => {void install();} : undefined}", "onReplace={exam === 'neet-pg' ? () => { if (!vaultAccess.active) vaultAccess.requestPurchase('full question bank import'); else void install(); } : undefined}");
     replace("    if (installing || exam !== 'neet-pg') return;", "    if (!vaultAccess.active) { vaultAccess.requestPurchase('full question bank import'); return; }\n    if (installing || exam !== 'neet-pg') return;");
