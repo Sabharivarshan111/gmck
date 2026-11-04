@@ -533,7 +533,7 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
             <span className="block text-sm font-bold">MUHS — Maharashtra University</span>
             <span className="block text-xs text-muted-foreground mt-1">
               {yearKey === "first-year"
-                ? "1st Year • 1,488 imported questions • Anatomy, Physiology, Biochemistry"
+                ? "1st Year • 1,486 imported questions • Anatomy, Physiology, Biochemistry"
                 : yearKey === "second-year"
                 ? "2nd Year • 1,199 imported questions • Pharmacology, Pathology, Microbiology"
                 : "3rd Year Part I • 92 imported questions • Community Medicine, Forensic Medicine"}
@@ -552,7 +552,7 @@ export default function BrowseTab({ meta }: { meta?: BrowseMeta }) {
           <span>
             <span className="block text-sm font-bold">WBUHS — West Bengal University</span>
             <span className="block text-xs text-muted-foreground mt-1">
-              {yearKey === "second-year" ? "Second Year • 836 questions • Pharmacology, Microbiology, Pathology" : "Third Year • 452 questions • Community Medicine, Forensic Medicine"}
+              {yearKey === "second-year" ? "Second Year • 843 questions • Pharmacology, Microbiology, Pathology" : "Third Year • 451 questions • Community Medicine, Forensic Medicine"}
             </span>
           </span>
           <ChevronRight className="h-5 w-5 text-primary ml-2" />
