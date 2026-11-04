@@ -5,7 +5,7 @@
  * Marks not supplied by source: 0. This code has no answer key.
  */
 import type { ReviewedUniversityQuestion } from './types';
-export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH30: ReviewedUniversityQuestion[] = [
+export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH30 = [
   {
     "id": "wbuhs-passcomp-90f6ad70200a-p4-q1",
     "university": "wbuhs",
@@ -584,4 +584,4 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH30: ReviewedUniversityQuestion[]
     "marks": 0,
     "originalSection": "Short Notes"
   }
-];
+] satisfies ReviewedUniversityQuestion[];
