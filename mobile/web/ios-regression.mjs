@@ -38,27 +38,24 @@ await tap('Choose your university');
 await page.getByRole('radio',{name:'Tamil Nadu Dr. M.G.R. Medical University (TNMGR)',exact:true}).tap();
 await label('Display name').fill('Calendar tester');
 await page.getByRole('radio',{name:'Final Year',exact:true}).tap();
-// Regression: every preparation goal must register visually and advance on a real touch.
+// Study goals register visually; setup goes directly Home without a payment step.
 for (const exam of ['University PYQs', 'NEET PG', 'Both']) {
   const option = page.getByRole('radio', {name: exam, exact: true});
   await option.scrollIntoViewIfNeeded();
   await option.tap();
   assert.equal(await option.getAttribute('aria-checked'), 'true', exam + ' should be selected');
-  await tap('Continue to Premium');
-  await page.getByText('STEP 3 OF 3', {exact: true}).waitFor();
-  assert.equal(await page.getByText('₹300 / 1 year', {exact: true}).count(), 1);
-  console.log('PASS ' + exam + ' advances to Premium');
-  if (exam !== 'Both') await tap('Back to your study setup');
 }
 assert.equal(await page.evaluate(()=>localStorage.getItem('orbit-profile-v1')),null);
-await tap('Continue with free preview');
+assert.equal(await page.getByText('STEP 3 OF 3', {exact:true}).count(),0);
+assert.equal(await label('Continue to Premium').count(),0);
+await tap('Start studying');
 // Settings is rendered underneath the setup modal. Wait for the durable write
 // before reloading; visible underlying content does not mean setup has saved.
 await page.waitForFunction(() => {
   const profile = JSON.parse(localStorage.getItem('orbit-profile-v1') || '{}');
   return profile.display_name === 'Calendar tester' && profile.year === 'final' && profile.university === 'tnmgr' && profile.preparationGoal === 'both';
 });
-await label('Continue with free preview').waitFor({state:'hidden'});
+await label('Start studying').waitFor({state:'hidden'});
 await label('Settings').waitFor();await page.reload();await label('Settings').waitFor();assert.equal(await label('Display name').count(),0);assert.ok(!(await page.locator('body').innerText()).includes('Question bank ·'));console.log('PASS fresh setup stays complete after reload');
 await page.goto('http://127.0.0.1:5226/progress');await tap('Attendance');await tap('Clinical postings');await tap('Add a posting');
 await tap('Posting start date');
