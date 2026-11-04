@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useRef } from 'react';
-import { Animated, StyleSheet, View } from 'react-native';
+import { Animated, Platform, StyleSheet, View } from 'react-native';
 import { BookOpen } from 'lucide-react-native';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
@@ -65,6 +65,8 @@ interface Props {
   myBook?: boolean;
   /** Remember a question the reader actually opened or marked. */
   onInteract?: (question: string) => void;
+  /** Show true checked repetitions; pass 0 for unverified OCR. */
+  repeatCountOverride?: number;
 }
 
 /**
@@ -97,6 +99,7 @@ function QuestionRowBase({
   communityPage,
   myBook = false,
   onInteract,
+  repeatCountOverride,
 }: Props) {
   const { colors } = useTheme();
   const reduceMotion = useReducedMotion();
@@ -107,7 +110,7 @@ function QuestionRowBase({
   const university = useBankUniversity();
   const kuhsSource = university === 'other' ? undefined : kuhsQuestionSource(question);
   const collectedSource = university === 'other' ? undefined : collectedQuestionSource(question);
-  const stars = kuhsSource ? kuhsRecordedExamCount(kuhsSource.examRefs) : collectedSource ? collectedRecordedExamCount(question) : countStars(question);
+  const stars = repeatCountOverride !== undefined ? repeatCountOverride : kuhsSource ? kuhsRecordedExamCount(kuhsSource.examRefs) : collectedSource ? collectedRecordedExamCount(question) : countStars(question);
   const originalMcq = collectedSource?.questionFormat === 'mcq';
   const page = extractPageNumber(question);
   const importance = importanceLabel(stars);
@@ -225,23 +228,27 @@ function QuestionRowBase({
       ? colors.warning
       : colors.textMuted;
 
+  const questionLabel = kuhsSource ? `${text}. Printed exam references: ${kuhsSource.examRefs.join(', ')}. ${stars > 0 ? `${stars} recorded exam references` : 'Exam count not specified'}.` : text;
+  const answerActions = [
+    { name: 'mcqs', label: 'Practice MCQs' },
+    { name: 'answer', label: originalMcq ? 'MCQ answer' : 'Written answer' },
+  ];
+  const accessibilityAction = (name: string) => {
+    if (name === 'mcqs') askMcq();
+    else if (name === 'answer' || name === 'activate') askAnswer();
+  };
+
   return (
     <Touchable
       onPress={onRowTap}
-      label={kuhsSource ? `${text}. Printed exam references: ${kuhsSource.examRefs.join(', ')}. ${stars > 0 ? `${stars} recorded exam references` : 'Exam count not specified'}.` : text}
+      label={questionLabel}
+      // UIKit groups accessible parents and hides nested controls. Expose the
+      // question text, completion checkbox and page button separately on iOS.
+      accessible={Platform.OS !== 'ios'}
       hint={originalMcq ? 'Triple tap for this MCQ answer' : 'Double tap for practice MCQs, triple tap for a written answer'}
       // The gestures above are unreachable with a screen reader; these are.
-      accessibilityActions={[
-        { name: 'mcqs', label: 'Practice MCQs' },
-        { name: 'answer', label: originalMcq ? 'MCQ answer' : 'Written answer' },
-      ]}
-      onAccessibilityAction={name => {
-        if (name === 'mcqs') {
-          askMcq();
-        } else if (name === 'answer') {
-          askAnswer();
-        }
-      }}
+      accessibilityActions={answerActions}
+      onAccessibilityAction={accessibilityAction}
       scaleTo={0.985}
       style={[
         styles.row,
@@ -296,6 +303,12 @@ function QuestionRowBase({
           </Text>
 
           <Text
+            accessible={Platform.OS === 'ios'}
+            accessibilityRole={Platform.OS === 'ios' ? 'button' : undefined}
+            accessibilityLabel={Platform.OS === 'ios' ? questionLabel : undefined}
+            accessibilityHint={Platform.OS === 'ios' ? 'Opens the answer. Practice MCQs are available in actions.' : undefined}
+            accessibilityActions={Platform.OS === 'ios' ? [{name: 'activate', label: 'Open answer'}, ...answerActions] : undefined}
+            onAccessibilityAction={Platform.OS === 'ios' ? event => accessibilityAction(event.nativeEvent.actionName) : undefined}
             style={[
               typeScale.callout,
               styles.text,

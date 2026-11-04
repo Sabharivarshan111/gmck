@@ -1,0 +1,46 @@
+appId: com.aistudio.mbbsqbank.aycxvd
+---
+- launchApp:
+    stopApp: false
+- tapOn:
+    text: "Home"
+    waitToSettleTimeoutMs: 1500
+- scrollUntilVisible:
+    element: "Pathology, .*% complete"
+- tapOn:
+    text: "Pathology, .*% complete"
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: "Explore Paper 1 questions"
+    waitToSettleTimeoutMs: 1500
+- scrollUntilVisible:
+    element: "Cell Injury, Cell Death and Adaptation,.*"
+- tapOn:
+    text: "Cell Injury, Cell Death and Adaptation,.*"
+    waitToSettleTimeoutMs: 1500
+- assertVisible: "Necrosis.*"
+- tapOn:
+    text: "Mark as done"
+    index: 0
+- assertVisible: "Mark as not done"
+- takeScreenshot: "04-question-done"
+- launchApp
+- tapOn:
+    text: "Home"
+    waitToSettleTimeoutMs: 1500
+- scrollUntilVisible:
+    element: "Pathology, .*% complete"
+- tapOn:
+    text: "Pathology, .*% complete"
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: "Explore Paper 1 questions"
+    waitToSettleTimeoutMs: 1500
+- scrollUntilVisible:
+    element: "Cell Injury, Cell Death and Adaptation,.*"
+- tapOn:
+    text: "Cell Injury, Cell Death and Adaptation,.*"
+    waitToSettleTimeoutMs: 1500
+- assertVisible: "Mark as not done"
+
+- takeScreenshot: "__complete-04-question-reader"

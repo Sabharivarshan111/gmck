@@ -1,0 +1,71 @@
+name: iOS native deep verification
+on:
+  workflow_call:
+    inputs:
+      build_run:
+        required: true
+        type: number
+      source_sha:
+        required: true
+        type: string
+      artifact_name:
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: ios-native-deep-verification
+  cancel-in-progress: true
+jobs:
+  native:
+    runs-on: macos-15
+    timeout-minutes: 60
+    env:
+      ORBIT_IOS_SOURCE_SHA: ${{ inputs.source_sha }}
+      ORBIT_IOS_BUILD_RUN: ${{ inputs.build_run }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .verification/ios
+          ref: ${{ inputs.source_sha }}
+          persist-credentials: false
+      - name: Check isolated storage fixture updates
+        run: python3 .verification/ios/test-storage-fixture.py
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.artifact_name }}
+          run-id: ${{ inputs.build_run }}
+          github-token: ${{ github.token }}
+          path: package
+      - name: Install pinned Maestro
+        run: |
+          mkdir -p tools evidence
+          cd tools
+          curl -fsSL https://github.com/mobile-dev-inc/Maestro/releases/download/cli-2.12.1/maestro.zip -o maestro.zip
+          curl -fsSL https://github.com/mobile-dev-inc/Maestro/releases/download/cli-2.12.1/checksums_sha256.txt -o checksums.txt
+          python3 - <<'PY'
+          import hashlib,pathlib,re
+          lines=pathlib.Path('checksums.txt').read_text().splitlines()
+          line=next(s for s in lines if 'maestro.zip' in s)
+          expected=re.search(r'[0-9a-fA-F]{64}',line).group().lower()
+          assert hashlib.sha256(pathlib.Path('maestro.zip').read_bytes()).hexdigest()==expected
+          PY
+          unzip -q maestro.zip
+          chmod +x maestro/bin/maestro
+          echo "$PWD/maestro/bin" >> "$GITHUB_PATH"
+      - name: Boot simulator and install reviewed application offline
+        run: |
+          mkdir -p package/unpacked
+          ditto -x -k package/evidence/OrbitMBBS-simulator.zip package/unpacked
+          python3 .verification/ios/run-verification.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: orbit-ios-deep-verification
+          path: evidence/
+          retention-days: 14

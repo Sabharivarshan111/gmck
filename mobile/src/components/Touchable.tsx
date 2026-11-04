@@ -49,6 +49,8 @@ export interface TouchableProps {
   onLongPress?: () => void;
   /** Spoken by TalkBack. Required — an unlabelled control is unusable blind. */
   label: string;
+  /** Set false on an iOS container whose children must be separate controls. */
+  accessible?: boolean;
   /** Extra context TalkBack reads after the label, e.g. "Opens the year picker". */
   hint?: string;
   role?: AccessibilityRole;
@@ -97,6 +99,7 @@ export function Touchable({
   onPress,
   onLongPress,
   label,
+  accessible = true,
   hint,
   role = 'button',
   state,
@@ -246,6 +249,7 @@ export function Touchable({
       hitSlop={hitSlop}
       testID={testID}
       accessibilityRole={role}
+      accessible={accessible}
       accessibilityLabel={label}
       accessibilityHint={hint}
       accessibilityState={{ ...state, disabled: isDisabled }}

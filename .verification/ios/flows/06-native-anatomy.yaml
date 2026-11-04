@@ -1,0 +1,22 @@
+appId: com.aistudio.mbbsqbank.aycxvd
+---
+- launchApp:
+    stopApp: false
+- tapOn:
+    text: "Vault"
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: "Simulator & Anatomy"
+    waitToSettleTimeoutMs: 1500
+- assertVisible: "Explore 3D anatomy"
+- takeScreenshot: "06-clinical-studio"
+- tapOn:
+    text: "Explore 3D anatomy"
+    waitToSettleTimeoutMs: 1500
+- extendedWaitUntil:
+    notVisible: "Something went wrong"
+    timeout: 10000
+- assertNotVisible: "Something went wrong"
+- takeScreenshot: "06-anatomy"
+
+- takeScreenshot: "__complete-06-native-anatomy"

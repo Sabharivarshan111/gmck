@@ -1,0 +1,51 @@
+appId: com.aistudio.mbbsqbank.aycxvd
+---
+- launchApp:
+    clearState: true
+- assertVisible: "Welcome to Orbit"
+- tapOn:
+    text: "Continue"
+    waitToSettleTimeoutMs: 1500
+- assertVisible: "Make Orbit yours"
+- tapOn:
+    text: "(?-i:Display name)"
+    waitToSettleTimeoutMs: 1500
+- inputText: "Study Reader"
+- assertVisible: "Study Reader"
+- tapOn:
+    waitToSettleTimeoutMs: 1500
+    id: "Return"
+- tapOn:
+    text: "2nd Year"
+    waitToSettleTimeoutMs: 1500
+- scrollUntilVisible:
+    element: "Choose your university"
+- tapOn:
+    text: "Choose your university"
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: "Tamil Nadu Dr.*Medical University.*TNMGR.*"
+    waitToSettleTimeoutMs: 1500
+- scrollUntilVisible:
+    element: "Both"
+- tapOn:
+    text: "Both"
+    waitToSettleTimeoutMs: 1500
+- takeScreenshot: "01-study-setup"
+- scrollUntilVisible:
+    element: "Start studying"
+- assertNotVisible: "Unlock Premium"
+- tapOn:
+    text: "Start studying"
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: "Skip the walkthrough"
+    optional: true
+- assertVisible: "My Progress"
+- takeScreenshot: "01-home"
+- launchApp:
+    stopApp: true
+- assertNotVisible: "Welcome to Orbit"
+- assertVisible: "My Progress"
+
+- takeScreenshot: "__complete-01-onboarding"

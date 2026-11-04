@@ -1,3 +1,4 @@
+import { NATIVE_CLINICAL_SKILLS } from '@/lib/nativeClinicalCatalog';
 import { useVaultPremium } from '@/components/VaultPremium';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -17,6 +18,12 @@ import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import type { RootTabParamList } from '@/navigation/types';
 import {
   ArrowLeft,
+  Stethoscope,
+  HeartPulse,
+  Monitor,
+  ScanLine,
+  Eye,
+  Search,
   BookOpen,
   BookOpenCheck,
   ChevronRight,
@@ -102,6 +109,7 @@ export default function NotesScreen() {
    */
   const [flashcards, setFlashcards] = useState(() => getPendingLaunchDeck() != null);
   const [simulatorOpen, setSimulatorOpen] = useState(false);
+  const [simulatorTool, setSimulatorTool] = useState<string | undefined>();
   const navigation = useNavigation<BottomTabNavigationProp<RootTabParamList, 'Notes'>>();
   useLayoutEffect(() => {
     navigation.setOptions({ tabBarStyle: simulatorOpen ? { display: 'none' } : undefined });
@@ -194,9 +202,19 @@ export default function NotesScreen() {
     });
   }, [topicsViewFor]);
 
+  const openSimulator = useCallback((tool?: string) => {
+    if (Platform.OS === 'web') {
+      const query = tool ? '?' + new URLSearchParams({ tool, scenario: 'normal' }).toString() : '';
+      void Linking.openURL('https://orbitmbbs.vercel.app/simulator' + query).catch(() => Alert.alert('Simulator could not open', 'Please check your connection and try again.'));
+      return;
+    }
+    setSimulatorTool(tool);
+    setSimulatorOpen(true);
+  }, []);
+
   if (flashcards && !premium.active) return <FlashcardsPreview onBack={() => setFlashcards(false)} />;
   if (!premium.active && (datasetCasesOpen || caseLibraryOpen)) return <View style={{flex:1,justifyContent:'center',padding:24}}><Touchable label="Explore Premium" onPress={() => premium.requestPurchase('ORBIT Vault')}><Text>Explore Premium to unlock this feature</Text></Touchable><Touchable label="Back to Vault" onPress={() => { setFlashcards(false); setDatasetCasesOpen(false); setCaseLibraryOpen(false); }}><Text>Back to Vault</Text></Touchable></View>;
-  if (simulatorOpen) return <SimulatorScreen onExit={() => setSimulatorOpen(false)} />;
+  if (simulatorOpen) return <SimulatorScreen initialTool={simulatorTool} onExit={() => setSimulatorOpen(false)} />;
 
   if (flashcards) {
     return (
@@ -216,7 +234,7 @@ export default function NotesScreen() {
       style={[styles.screen, { backgroundColor: colors.background }]}
       contentContainerStyle={[styles.content, { paddingTop: insets.top + 12 }]}
       showsVerticalScrollIndicator={false}>
-      {view.kind === 'vault' ? <VaultView onNotes={() => setView({ kind: 'years' })} onPgPractice={() => setPgEntranceOpen(true)} onFlashcards={() => setFlashcards(true)} onProformas={() => setProformasOpen(true)} onSimulator={() => { if (Platform.OS !== 'web') { setSimulatorOpen(true); return; } void Linking.openURL('https://orbitmbbs.vercel.app/simulator').catch(() => Alert.alert('Simulator could not open', 'Please check your connection and try again.')); }} /> : null}
+      {view.kind === 'vault' ? <VaultView onNotes={() => setView({ kind: 'years' })} onPgPractice={() => setPgEntranceOpen(true)} onFlashcards={() => setFlashcards(true)} onProformas={() => setProformasOpen(true)} onSimulator={() => openSimulator()} onClinicalSkill={id => openSimulator(id)} /> : null}
       {view.kind === 'years' ? (
         <YearsView
           currentYear={profileYear}
@@ -313,15 +331,33 @@ export default function NotesScreen() {
   );
 }
 
-function VaultView({ onNotes, onPgPractice, onSimulator, onProformas, onFlashcards }: { onNotes: () => void; onPgPractice: () => void; onSimulator: () => void; onProformas: () => void; onFlashcards: () => void }) {
+const VAULT_SKILL_ICONS: Record<string, typeof Stethoscope> = {
+  Auscultation: Stethoscope,
+  '12-lead ECG': HeartPulse,
+  'Ultrasound / POCUS': Monitor,
+  'X-ray & MRI': ScanLine,
+  'Eyes & cranial nerves': Eye,
+  'General examination': Search,
+};
+
+function VaultCardIcon({title, emoji}: {title: string; emoji: string}) {
+  const {colors} = useTheme();
+  const Icon = VAULT_SKILL_ICONS[title];
+  return Icon ? <Icon size={44} color={colors.accent} accessible={false} /> : <Text accessible={false} style={styles.yearEmoji}>{emoji}</Text>;
+}
+
+function VaultView({ onNotes, onPgPractice, onSimulator, onClinicalSkill, onProformas, onFlashcards }: { onNotes: () => void; onPgPractice: () => void; onSimulator: () => void; onClinicalSkill: (id: string) => void; onProformas: () => void; onFlashcards: () => void }) {
   const { colors } = useTheme();
   const textScale = useTextScale();
   const premium = useVaultPremium();
   const entries = [
     { title: 'Notes', hint: 'Years, subjects & handwritten notes', emoji: '📚', open: onNotes },
-    { title: 'PG Practice', label: 'NEET-PG practice questions', hint: 'NEET-PG · AIIMS PG · INI-CET', emoji: '📝', open: onPgPractice },
+    { title: 'PG Practice', label: 'NEET-PG practice questions', hint: 'NEET-PG · AIIMS PG · INI-CET · Practice', emoji: '📝', open: onPgPractice },
     { title: 'Simulator & Anatomy', hint: 'Explore anatomy & bedside skills', emoji: '🫀', open: onSimulator },
     { title: 'Case proformas', hint: 'History & examination guides', emoji: '📋', open: onProformas },
+    ...NATIVE_CLINICAL_SKILLS
+      .filter(skill => ['stethoscope', 'ecg12', 'ultrasound', 'radiology', 'pupil', 'piccled'].includes(skill.id))
+      .map(skill => ({ title: skill.title, label: skill.title, hint: skill.hint, emoji: skill.emoji, open: () => onClinicalSkill(skill.id) })),
     { title: 'Anki flashcards', hint: 'Decks & spaced repetition', emoji: '📇', open: onFlashcards },
   ];
   return <>
@@ -329,7 +365,7 @@ function VaultView({ onNotes, onPgPractice, onSimulator, onProformas, onFlashcar
     <Text style={[styles.subtitle, { color: colors.textMuted }]}>Your study space. Choose what you want to do.</Text>
     <View style={styles.yearGrid}>
       {entries.map(({ title, hint, emoji, open, ...entry }) => <Touchable key={title} testID={`vault-card-${title}`} label={entry.label || title} onPress={open} scaleTo={0.97} style={[styles.vaultCard, { height: 220 * Math.max(1, textScale), backgroundColor: colors.card, borderColor: colors.border }]}>
-        <View style={{ height: 58 * textScale }}><Text accessible={false} style={styles.yearEmoji}>{emoji}</Text></View>
+        <View style={{ height: 58 * textScale }}><VaultCardIcon title={title} emoji={emoji} /></View>
         <View style={{ height: 50 * textScale }}><Text numberOfLines={2} style={[styles.yearName, { lineHeight: 22, color: colors.text }]}>{title}</Text></View>
         <View style={{ flex: 1 }}><Text numberOfLines={3} style={[styles.yearHint, { lineHeight: 18, color: colors.textMuted }]}>{hint}</Text></View>
         {title !== 'Notes' && !premium.active ? <Text style={[typeScale.caption, {color:colors.accent}]}>{'Free preview'}</Text> : <ChevronRight size={18} color={colors.accent} />}

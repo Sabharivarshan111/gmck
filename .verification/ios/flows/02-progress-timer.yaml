@@ -1,0 +1,34 @@
+appId: com.aistudio.mbbsqbank.aycxvd
+---
+- launchApp:
+    stopApp: false
+- tapOn:
+    text: "My Progress"
+    waitToSettleTimeoutMs: 1500
+- assertVisible: "Edit profile"
+- takeScreenshot: "02-progress"
+- tapOn:
+    text: "Timer"
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: "Start timer"
+    waitToSettleTimeoutMs: 1500
+- assertVisible: "Pause timer"
+- takeScreenshot: "02-timer-running"
+- tapOn:
+    text: "Pause timer"
+    waitToSettleTimeoutMs: 1500
+- assertVisible: "Start timer"
+- tapOn:
+    text: "Reset timer"
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: "My Progress"
+    waitToSettleTimeoutMs: 1500
+- tapOn:
+    text: "Attendance"
+    waitToSettleTimeoutMs: 1500
+- assertVisible: "Add a subject"
+- takeScreenshot: "02-attendance"
+
+- takeScreenshot: "__complete-02-progress-timer"

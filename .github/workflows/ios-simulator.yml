@@ -1,0 +1,90 @@
+name: iOS simulator build
+on:
+  push:
+    branches: [codex/ios-port-bootstrap]
+    paths:
+      - 'mobile/**'
+      - '.verification/ios/**'
+      - 'src/data/**'
+      - 'src/lib/**'
+      - '.github/workflows/ios-simulator.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: ios-simulator-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  simulator:
+    runs-on: macos-15
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: mobile
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+      - name: Record Apple toolchain
+        run: |
+          mkdir -p ios/evidence
+          xcodebuild -version | tee ios/evidence/toolchain.txt
+          xcrun simctl list devices available > ios/evidence/devices.txt
+      - name: Install locked JavaScript dependencies
+        run: npm ci --legacy-peer-deps
+      - name: Configure isolated development build
+        run: |
+          # Build-only settings; production Android files remain untouched.
+          printf 'export const ADS_ENABLED = false;\n' > src/lib/adsMode.ts
+          printf 'export const GOOGLE_SIGN_IN_ENABLED = false;\n' > src/lib/authMode.ts
+          node -e 'const fs=require("fs");const p=JSON.parse(fs.readFileSync("app.json"));p["react-native-google-mobile-ads"].ios_app_id="ca-app-pub-3940256099942544~1458002511";fs.writeFileSync("app.json",JSON.stringify(p,null,2));'
+          # Exercise only synthetic Keychain records in this simulator artifact.
+          cat ../scripts/ios-keychain-probe.inc >> ios/OrbitMBBS/OrbitSecureStorage.mm
+          cp ../scripts/ios-keychain-jsi-probe.ts src/lib/iosKeychainVerification.ts
+          node -e 'const fs=require("fs");fs.writeFileSync("index.js", "import \"./src/lib/iosKeychainVerification\";\n"+fs.readFileSync("index.js","utf8"));'
+      - name: Check types and bundle real iOS entry point
+        run: |
+          node ../scripts/build-pg-compact.mjs
+          node ../scripts/test-pg-ios-adapter.mjs
+          npx tsc --noEmit
+          npx react-native bundle --platform ios --dev false --entry-file index.js --bundle-output ios/evidence/main.jsbundle --assets-dest ios/evidence/assets
+      - name: Install CocoaPods
+        working-directory: mobile/ios
+        run: |
+          bundle install
+          bundle exec pod install 2>&1 | tee evidence/pods.log
+      - name: Compile unsigned simulator application
+        run: |
+          set -o pipefail
+          xcodebuild -workspace ios/OrbitMBBS.xcworkspace -scheme OrbitMBBS -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath ios/build CODE_SIGNING_ALLOWED=NO 2>&1 | tee ios/evidence/xcodebuild.log
+      - name: Package simulator application
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent ios/build/Build/Products/Release-iphonesimulator/OrbitMBBS.app ios/evidence/OrbitMBBS-simulator.zip
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: orbit-ios-simulator-${{ github.sha }}
+          path: |
+            mobile/ios/evidence/toolchain.txt
+            mobile/ios/evidence/devices.txt
+            mobile/ios/evidence/pods.log
+            mobile/ios/evidence/xcodebuild.log
+            mobile/ios/evidence/OrbitMBBS-simulator.zip
+            mobile/ios/Podfile.lock
+          retention-days: 7
+
+  verify-native:
+    needs: simulator
+    uses: ./.github/workflows/ios-deep-verification.yml
+    with:
+      build_run: ${{ fromJSON(github.run_id) }}
+      source_sha: ${{ github.sha }}
+      artifact_name: orbit-ios-simulator-${{ github.sha }}

@@ -12,7 +12,7 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { CheckCircle2, Lock } from 'lucide-react-native';
+import { Lock } from 'lucide-react-native';
 import { Text } from '@/components/Text';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Touchable } from '@/components/Touchable';
@@ -31,8 +31,6 @@ import {
 import { useProfile } from '@/hooks/useProfile';
 import { setTourPaused } from '@/tour/store';
 import { UniversityChoice } from '@/components/UniversityChoice';
-import { openUnlock } from '@/lib/unlock';
-import { usePremiumStatus } from '@/lib/premium';
 import { validateDisplayName } from '@shared/profanity';
 import type { University } from '@shared/university';
 /*
@@ -47,8 +45,8 @@ import APP_ICON from '@/assets/app-icon.png';
 
 const YEARS: Year[] = ['first', 'second', 'third', 'final'];
 
-/** First run: welcome/sign-in, study setup, then the annual Premium offer.
- * Existing profiles skip setup; profile persistence happens after step three.
+/** First run: welcome/sign-in, then study setup and Home.
+ * Existing profiles skip setup; profile persistence happens when study setup is submitted.
  * Native authentication and the established reduced-motion primitives remain.
  */
 export function FirstRun() {
@@ -57,8 +55,7 @@ export function FirstRun() {
   const insets = useSafeAreaInsets();
   const reduced = useReducedMotion();
 
-  const [stage, setStage] = useState<'splash' | 'you' | 'premium'>('splash');
-  const premium = usePremiumStatus();
+  const [stage, setStage] = useState<'splash' | 'you'>('splash');
   const [goal, setGoal] = useState<LocalProfile['preparationGoal']>('university-pyqs');
   const [name, setName] = useState('');
   const [year, setYear] = useState<Year | null>(null);
@@ -125,7 +122,8 @@ export function FirstRun() {
 
   }, [needed, stage, reduced, rise, icon]);
 
-  const start = useCallback(() => {
+  const start = useCallback(async () => {
+    if (saving) return;
     if (isNative && !googleAuthenticated) {
       setError('Please sign in with Google above to safeguard your progress and unlock setup.');
       return;
@@ -140,8 +138,16 @@ export function FirstRun() {
     }
     const check = validateDisplayName(name);
     if (!check.ok) { setError(check.reason ?? 'Enter your name.'); return; }
-    setError(null); setStage('premium');
-  }, [isNative, googleAuthenticated, name, year, university]);
+    setSaving(true);
+    setError(null);
+    try {
+      await save({ display_name: name, year, university, preparationGoal: goal });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not save your setup.');
+    } finally {
+      setSaving(false);
+    }
+  }, [isNative, googleAuthenticated, name, year, university, goal, save, saving]);
 
   /**
    * Google fills the name in and unlocks onboarding.
@@ -172,16 +178,7 @@ export function FirstRun() {
   }
 
   const splash = stage === 'splash';
-  const finish = async (unlock: boolean) => {
-    if (!year || !university || saving) return;
-    setSaving(true); setError(null);
-    try {
-      await save({ display_name: name, year, university, preparationGoal: goal });
-      if (unlock) openUnlock();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not save your setup.'); setSaving(false);
-    }
-  };
+
 
   return (
     <Modal visible transparent={false} animationType="fade" statusBarTranslucent>
@@ -225,7 +222,7 @@ export function FirstRun() {
               <Text accessibilityRole="header" style={[styles.welcome, { color: colors.text }]}>
                 Welcome to Orbit
               </Text>
-              <Text style={[styles.label, { color: colors.accent, textAlign: 'center' }]}>STEP 1 OF 3</Text>
+              <Text style={[styles.label, { color: colors.accent, textAlign: 'center' }]}>STEP 1 OF 2</Text>
               <Text style={[styles.made, { color: colors.accent }]}>Made by the community</Text>
               <Text style={[styles.madeSub, { color: colors.textMuted }]}>
                 Past papers, notes and clinical practice, together.
@@ -239,30 +236,12 @@ export function FirstRun() {
               {error ? <Text accessibilityRole="alert" style={[styles.error, { color: colors.danger }]}>{error}</Text> : null}
             </Animated.View>
           </View>
-        ) : stage === 'premium' ? (
-          <ScrollView key="premium" contentContainerStyle={[styles.form, { gap: 18 }]}>
-            <Text style={[styles.label, { color: colors.accent }]}>STEP 3 OF 3</Text>
-            <Image source={APP_ICON} style={styles.iconSmall} accessibilityLabel="Orbit" />
-            <Text accessibilityRole="header" style={[styles.title, { color: colors.text }]}>{premium ? 'Your Premium is active' : 'Unlock Premium'}</Text>
-            <View style={{ padding: 24, gap: 18, borderRadius: 22, borderWidth: 1, borderColor: colors.accent, backgroundColor: withAlpha(colors.accent, 0.08) }}>
-              <Text style={[typeScale.title1, { color: colors.text }]}>₹300 / 1 year</Text>
-              <Text style={[typeScale.bodyStrong, { color: colors.text }]}>One year of ORBIT Premium</Text>
-              {['Every anatomy organ', 'Patient simulator and clinical cases', 'Auscultation, ECG, X-ray and POCUS', 'Full access to practice questions'].map(text => <View key={text} style={{ flexDirection: 'row', gap: 10 }}><CheckCircle2 size={18} color={colors.accent} /><Text style={[typeScale.body, { color: colors.text, flex: 1 }]}>{text}</Text></View>)}
-            </View>
-            <Touchable label={premium ? 'Start studying' : 'Unlock Premium — ₹300'} disabled={saving} state={{ busy: saving }} onPress={() => { void finish(!premium); }} style={[styles.google, { backgroundColor: colors.accent }]}>
-              {saving ? <ActivityIndicator color={colors.onAccent} /> : <Text style={[styles.googleText, { color: colors.onAccent }]}>{premium ? 'Start studying' : 'Unlock Premium — ₹300'}</Text>}
-            </Touchable>
-            {!premium ? <Touchable label="Continue with free preview" disabled={saving} onPress={() => { void finish(false); }} style={[styles.google, { borderColor: colors.border }]}><Text style={[styles.googleText, { color: colors.text }]}>Continue with free preview</Text></Touchable> : null}
-            <Touchable label="Back to your study setup" disabled={saving} onPress={() => setStage('you')} style={styles.google}><Text style={[styles.googleText, { color: colors.textMuted }]}>Back</Text></Touchable>
-            <Text style={[styles.footnote, { color: colors.textMuted }]}>Use the same Google account to restore your Premium access.</Text>
-            {error ? <Text accessibilityRole="alert" style={[styles.error, { color: colors.danger }]}>{error}</Text> : null}
-          </ScrollView>
         ) : (
           <ScrollView key="study-setup"
             contentContainerStyle={styles.form}
-            keyboardShouldPersistTaps="handled"
+            keyboardShouldPersistTaps="always"
             showsVerticalScrollIndicator={false}>
-            <Text style={[styles.label, { color: colors.accent }]}>STEP 2 OF 3</Text>
+            <Text style={[styles.label, { color: colors.accent }]}>STEP 2 OF 2</Text>
             <Image
               source={APP_ICON}
               style={styles.iconSmall}
@@ -354,7 +333,22 @@ export function FirstRun() {
               </View>
               <Text style={[styles.label, { color: colors.textMuted }]}>WHAT ARE YOU PREPARING FOR?</Text>
               <View style={[styles.grid, { flexWrap: 'wrap' }]}>
-                {([['university-pyqs', 'University PYQs'], ['neet-pg', 'NEET PG'], ['both', 'Both']] as const).map(([value, label]) => <Touchable key={value} label={label} role="radio" state={{ checked: goal === value }} onPress={() => setGoal(value)} style={[styles.yearCard, { borderColor: goal === value ? colors.accent : colors.border, backgroundColor: colors.cardElevated }]}><Text style={[styles.yearName, { color: colors.text }]}>{label}</Text></Touchable>)}
+                {([['university-pyqs', 'University PYQs'], ['neet-pg', 'NEET PG'], ['both', 'Both']] as const).map(([value, label]) => {
+                  const selected = goal === value;
+                  return <Touchable
+                    key={value}
+                    label={label}
+                    role="radio"
+                    state={{ checked: selected }}
+                    onPress={() => { setGoal(value); setError(null); }}
+                    style={[styles.yearCard, {
+                      borderWidth: selected ? 1.5 : StyleSheet.hairlineWidth,
+                      borderColor: selected ? colors.accent : colors.border,
+                      backgroundColor: selected ? withAlpha(colors.accent, 0.14) : colors.cardElevated,
+                    }]}>
+                    <Text style={[styles.yearName, { color: selected ? colors.accent : colors.text }]}>{label}</Text>
+                  </Touchable>;
+                })}
               </View>
               <Text style={[styles.footnote, { color: colors.textMuted }]}>Every choice takes you to your home screen. You can change it later.</Text>
             </View>
@@ -369,18 +363,19 @@ export function FirstRun() {
 
             <Touchable
               onPress={start}
+              testID="first-run-start-studying"
               // Live with no year on purpose: a dead button explains nothing,
               // and the reader who has not noticed the year row is exactly the
               // one who would press this. It says what is missing instead.
               disabled={saving}
               state={{ busy: saving }}
-              label={!year ? 'Choose your year first' : !university ? 'Choose your university first' : 'Continue to Premium'}
+              label={!year ? 'Choose your year first' : !university ? 'Choose your university first' : 'Start studying'}
               style={[styles.startButton, (!year || !university) && styles.startPending]}>
               <GradientFill from="#FFFFFF" to={colors.fuchsia} borderRadius={14} />
               {saving ? (
                 <ActivityIndicator color="#1A0A1F" />
               ) : (
-                <Text style={styles.startText}>Continue to Premium</Text>
+                <Text style={styles.startText}>Start studying</Text>
               )}
             </Touchable>
             <Text style={[styles.footnote, { color: colors.textMuted }]}>

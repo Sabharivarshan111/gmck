@@ -225,8 +225,17 @@ const TOPIC_NAMES: Record<string, string> = {
 export function buildCollectedBank(university: CollectedUniversity, rows = REVIEWED_UNIVERSITY_QUESTIONS): Record<string, Node> {
   const bank: Record<string, Node> = Object.fromEntries(Object.entries(YEARS)
     .map(([year, key]) => [key, { name: YEAR_NAMES[year as keyof typeof YEARS], subtopics: {} }]));
+  const seen = new Set<string>();
   for (const row of rows) {
     if (row.university !== university) continue;
+    // Do not show a second question card for an exact repeat in an older batch.
+    // The source index keeps every dated appearance for repetition badges.
+    const normalized = row.question.normalize('NFKC').toLowerCase()
+      .replace(/[‘’]/g, "'").replace(/[“”]/g, '"')
+      .replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim();
+    const identity = [row.year, row.subjectKey, row.kind, row.questionFormat === 'mcq' ? 'mcq' : 'written', normalized].join('|');
+    if (seen.has(identity)) continue;
+    seen.add(identity);
     const subjects = bank[YEARS[row.year]].subtopics!;
     const subject = subjects[row.subjectKey] ??= { name: SUBJECT_NAMES[row.subjectKey] ?? row.subjectKey, subtopics: {} };
     const topic = subject.subtopics![row.topicKey] ??= {
@@ -257,4 +266,3 @@ export function collectedShortQuestionLabel(questions: string[]): string {
   const formats = questions.map(question => collectedQuestionSource(question)?.questionFormat);
   return formats.includes('mcq') ? 'Short / MCQ' : formats.some(Boolean) ? 'Short Answers' : 'Short Notes';
 }
-

@@ -150,7 +150,7 @@ function readBytes(reader: Reader): Uint8Array {
  * TypeScript lib and a card's text is not the place to find out which runtimes
  * have it. Protobuf strings are UTF-8 by definition, so this is the whole job.
  */
-function decodeUtf8(bytes: Uint8Array): string {
+export function decodeUtf8(bytes: Uint8Array): string {
   let out = '';
   let at = 0;
   while (at < bytes.length) {
