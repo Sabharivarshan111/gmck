@@ -8,7 +8,8 @@ appId: com.aistudio.mbbsqbank.aycxvd
 - tapOn: "(?-i:Display name)"
 - inputText: "Study Reader"
 - assertVisible: "Study Reader"
-- hideKeyboard
+- tapOn:
+    id: "Return"
 - tapOn: "2nd Year"
 - scrollUntilVisible:
     element: "Choose your university"
