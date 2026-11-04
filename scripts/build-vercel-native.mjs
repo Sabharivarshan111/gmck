@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 
 
@@ -12,6 +13,21 @@ fs.rmSync('dist/pg', { recursive: true, force: true });
 fs.copyFileSync('dist/index.html', 'dist/legacy.html');
 execFileSync('npm', ['--prefix', 'mobile', 'run', 'web:build'], { stdio: 'inherit' });
 fs.cpSync('dist-native', 'dist', { recursive: true });
+
+// Installed PWAs must retire the old code cache when either app changes.
+// Derive the revision from the assembled shells and content-hashed asset names.
+const cacheRevision = createHash('sha256')
+  .update(fs.readFileSync('dist/index.html'))
+  .update(fs.readFileSync('dist/legacy.html'))
+  .update(fs.readdirSync('dist/assets').sort().join('\n'))
+  .digest('hex').slice(0, 16);
+const workerPath = 'dist/sw.js';
+const worker = fs.readFileSync(workerPath, 'utf8');
+const version = worker.match(/const SW_VERSION = '([^']+)';/);
+if (!version) throw new Error('Cannot version the offline app worker');
+fs.writeFileSync(workerPath, worker.replace(version[0],
+  `const SW_VERSION = '${version[1]}-assets-${cacheRevision}';`));
+
 for (const directory of ['dist/assets','dist-native/assets']) {
   for (const name of fs.readdirSync(directory)) {
     if (/neet_pg_undated|general_medical_undated/.test(name)) throw new Error('Unapproved PG pack emitted: '+name);
