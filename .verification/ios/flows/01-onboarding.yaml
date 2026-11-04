@@ -1,0 +1,35 @@
+appId: com.aistudio.mbbsqbank.aycxvd
+---
+- launchApp:
+    clearState: true
+- assertVisible: "Welcome to Orbit"
+- tapOn: "Continue"
+- assertVisible: "Make Orbit yours"
+- tapOn: "Display name"
+- inputText: "Study Reader"
+- hideKeyboard
+- tapOn: "2nd Year"
+- scrollUntilVisible:
+    element: "Choose your university"
+- tapOn: "Choose your university"
+- tapOn: "Tamil Nadu Dr.*Medical University.*TNMGR.*"
+- scrollUntilVisible:
+    element: "Both"
+- tapOn: "Both"
+- takeScreenshot: "01-study-setup"
+- scrollUntilVisible:
+    element: "Continue to Premium"
+- tapOn: "Continue to Premium"
+- assertVisible: "Unlock Premium"
+- takeScreenshot: "01-premium"
+- scrollUntilVisible:
+    element: "Continue with free preview"
+- tapOn: "Continue with free preview"
+- tapOn:
+    text: "Skip the walkthrough"
+    optional: true
+- assertVisible: "My Progress"
+- takeScreenshot: "01-home"
+- launchApp
+- assertNotVisible: "Welcome to Orbit"
+- assertVisible: "My Progress"

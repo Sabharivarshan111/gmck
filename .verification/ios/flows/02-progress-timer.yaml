@@ -1,0 +1,17 @@
+appId: com.aistudio.mbbsqbank.aycxvd
+---
+- launchApp
+- tapOn: "My Progress"
+- assertVisible: "Edit profile"
+- takeScreenshot: "02-progress"
+- tapOn: "Timer"
+- tapOn: "Start timer"
+- assertVisible: "Pause timer"
+- takeScreenshot: "02-timer-running"
+- tapOn: "Pause timer"
+- assertVisible: "Start timer"
+- tapOn: "Reset timer"
+- tapOn: "My Progress"
+- tapOn: "Attendance"
+- assertVisible: "Add a subject"
+- takeScreenshot: "02-attendance"

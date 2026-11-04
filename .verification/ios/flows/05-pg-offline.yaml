@@ -1,0 +1,10 @@
+appId: com.aistudio.mbbsqbank.aycxvd
+---
+- launchApp
+- tapOn: "Vault"
+- tapOn: "NEET-PG practice questions"
+- assertVisible: "Start NEET PG practice"
+- takeScreenshot: "05-pg-bank"
+- tapOn: "Start NEET PG practice"
+- assertVisible: "Show answer and explanation"
+- takeScreenshot: "05-pg-question"

@@ -1,0 +1,29 @@
+appId: com.aistudio.mbbsqbank.aycxvd
+---
+- launchApp
+- tapOn: "Home"
+- scrollUntilVisible:
+    element: "Pathology, .*% complete"
+- tapOn: "Pathology, .*% complete"
+- tapOn: "Paper 1,.*"
+- scrollUntilVisible:
+    element: "Cell Injury, Cell Death and Adaptation,.*"
+- tapOn: "Cell Injury, Cell Death and Adaptation,.*"
+- tapOn: "Essay,.*"
+- assertVisible: "Necrosis.*"
+- tapOn:
+    text: "Mark as done"
+    index: 0
+- assertVisible: "Mark as not done"
+- takeScreenshot: "04-question-done"
+- launchApp
+- tapOn: "Home"
+- scrollUntilVisible:
+    element: "Pathology, .*% complete"
+- tapOn: "Pathology, .*% complete"
+- tapOn: "Paper 1,.*"
+- scrollUntilVisible:
+    element: "Cell Injury, Cell Death and Adaptation,.*"
+- tapOn: "Cell Injury, Cell Death and Adaptation,.*"
+- tapOn: "Essay,.*"
+- assertVisible: "Mark as not done"

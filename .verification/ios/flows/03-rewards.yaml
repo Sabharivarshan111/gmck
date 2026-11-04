@@ -1,0 +1,17 @@
+appId: com.aistudio.mbbsqbank.aycxvd
+---
+- launchApp
+- tapOn: "My Progress"
+- scrollUntilVisible:
+    element: "Rewards"
+- scrollUntilVisible:
+    element: "Spark, 3 day streak badge, unlocked"
+- assertVisible: "Blaze, 7 day streak badge, unlocked"
+- assertVisible: "Inferno, 14 day streak badge, unlocked"
+- assertVisible: "STREAK BADGES.*3 / 5 unlocked"
+- takeScreenshot: "03-earned-rewards"
+- launchApp
+- tapOn: "My Progress"
+- scrollUntilVisible:
+    element: "Spark, 3 day streak badge, unlocked"
+- assertVisible: "STREAK BADGES.*3 / 5 unlocked"
