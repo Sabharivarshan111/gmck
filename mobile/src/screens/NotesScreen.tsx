@@ -1,3 +1,4 @@
+import { NATIVE_CLINICAL_SKILLS } from '@/lib/nativeClinicalCatalog';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -99,6 +100,7 @@ export default function NotesScreen() {
    */
   const [flashcards, setFlashcards] = useState(() => getPendingLaunchDeck() != null);
   const [simulatorOpen, setSimulatorOpen] = useState(false);
+  const [simulatorTool, setSimulatorTool] = useState<string | undefined>();
   const navigation = useNavigation<BottomTabNavigationProp<RootTabParamList, 'Notes'>>();
   useLayoutEffect(() => {
     navigation.setOptions({ tabBarStyle: simulatorOpen ? { display: 'none' } : undefined });
@@ -191,7 +193,17 @@ export default function NotesScreen() {
     });
   }, [topicsViewFor]);
 
-  if (simulatorOpen) return <SimulatorScreen onExit={() => setSimulatorOpen(false)} />;
+  const openSimulator = useCallback((tool?: string) => {
+    if (Platform.OS === 'web') {
+      const query = tool ? '?' + new URLSearchParams({ tool, scenario: 'normal' }).toString() : '';
+      void Linking.openURL('https://orbitmbbs.vercel.app/simulator' + query).catch(() => Alert.alert('Simulator could not open', 'Please check your connection and try again.'));
+      return;
+    }
+    setSimulatorTool(tool);
+    setSimulatorOpen(true);
+  }, []);
+
+  if (simulatorOpen) return <SimulatorScreen initialTool={simulatorTool} onExit={() => setSimulatorOpen(false)} />;
 
   if (flashcards) {
     return (
@@ -211,7 +223,7 @@ export default function NotesScreen() {
       style={[styles.screen, { backgroundColor: colors.background }]}
       contentContainerStyle={[styles.content, { paddingTop: insets.top + 12 }]}
       showsVerticalScrollIndicator={false}>
-      {view.kind === 'vault' ? <VaultView onNotes={() => setView({ kind: 'years' })} onPgPractice={() => setPgEntranceOpen(true)} onFlashcards={() => setFlashcards(true)} onProformas={() => setProformasOpen(true)} onSimulator={() => { if (Platform.OS !== 'web') { setSimulatorOpen(true); return; } void Linking.openURL('https://orbitmbbs.vercel.app/simulator').catch(() => Alert.alert('Simulator could not open', 'Please check your connection and try again.')); }} /> : null}
+      {view.kind === 'vault' ? <VaultView onNotes={() => setView({ kind: 'years' })} onPgPractice={() => setPgEntranceOpen(true)} onFlashcards={() => setFlashcards(true)} onProformas={() => setProformasOpen(true)} onSimulator={() => openSimulator()} onClinicalSkill={id => openSimulator(id)} /> : null}
       {view.kind === 'years' ? (
         <YearsView
           currentYear={profileYear}
@@ -308,7 +320,7 @@ export default function NotesScreen() {
   );
 }
 
-function VaultView({ onNotes, onPgPractice, onSimulator, onProformas, onFlashcards }: { onNotes: () => void; onPgPractice: () => void; onSimulator: () => void; onProformas: () => void; onFlashcards: () => void }) {
+function VaultView({ onNotes, onPgPractice, onSimulator, onClinicalSkill, onProformas, onFlashcards }: { onNotes: () => void; onPgPractice: () => void; onSimulator: () => void; onClinicalSkill: (id: string) => void; onProformas: () => void; onFlashcards: () => void }) {
   const { colors } = useTheme();
   const textScale = useTextScale();
   const entries = [
@@ -316,6 +328,9 @@ function VaultView({ onNotes, onPgPractice, onSimulator, onProformas, onFlashcar
     { title: 'PG Practice', label: 'NEET-PG practice questions', hint: 'NEET-PG · AIIMS PG · INI-CET · Practice', emoji: '📝', open: onPgPractice },
     { title: 'Simulator & Anatomy', hint: 'Explore anatomy & bedside skills', emoji: '🫀', open: onSimulator },
     { title: 'Case proformas', hint: 'History & examination guides', emoji: '📋', open: onProformas },
+    ...NATIVE_CLINICAL_SKILLS
+      .filter(skill => ['stethoscope', 'ecg12', 'ultrasound', 'radiology', 'pupil', 'piccled'].includes(skill.id))
+      .map(skill => ({ title: skill.title, label: skill.title, hint: skill.hint, emoji: skill.emoji, open: () => onClinicalSkill(skill.id) })),
     { title: 'Anki flashcards', hint: 'Decks & spaced repetition', emoji: '📇', open: onFlashcards },
   ];
   return <>
