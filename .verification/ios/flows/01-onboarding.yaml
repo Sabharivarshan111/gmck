@@ -50,7 +50,7 @@ appId: com.aistudio.mbbsqbank.aycxvd
 - assertVisible: "My Progress"
 - takeScreenshot: "01-home"
 - launchApp:
-    stopApp: false
+    stopApp: true
 - assertNotVisible: "Welcome to Orbit"
 - assertVisible: "My Progress"
 
