@@ -4,12 +4,14 @@ on:
     branches: [codex/ios-port-bootstrap]
     paths:
       - 'mobile/**'
+      - '.verification/ios/**'
       - 'src/data/**'
       - 'src/lib/**'
       - '.github/workflows/ios-simulator.yml'
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: ios-simulator-${{ github.ref }}
   cancel-in-progress: true
@@ -46,6 +48,8 @@ jobs:
           node -e 'const fs=require("fs");const p=JSON.parse(fs.readFileSync("app.json"));p["react-native-google-mobile-ads"].ios_app_id="ca-app-pub-3940256099942544~1458002511";fs.writeFileSync("app.json",JSON.stringify(p,null,2));'
           # Exercise only synthetic Keychain records in this simulator artifact.
           cat ../scripts/ios-keychain-probe.inc >> ios/OrbitMBBS/OrbitSecureStorage.mm
+          cp ../scripts/ios-keychain-jsi-probe.ts src/lib/iosKeychainVerification.ts
+          node -e 'const fs=require("fs");fs.writeFileSync("index.js", "import \"./src/lib/iosKeychainVerification\";\n"+fs.readFileSync("index.js","utf8"));'
       - name: Check types and bundle real iOS entry point
         run: |
           node ../scripts/build-pg-compact.mjs
@@ -76,3 +80,11 @@ jobs:
             mobile/ios/evidence/OrbitMBBS-simulator.zip
             mobile/ios/Podfile.lock
           retention-days: 7
+
+  verify-native:
+    needs: simulator
+    uses: ./.github/workflows/ios-deep-verification.yml
+    with:
+      build_run: ${{ fromJSON(github.run_id) }}
+      source_sha: ${{ github.sha }}
+      artifact_name: orbit-ios-simulator-${{ github.sha }}

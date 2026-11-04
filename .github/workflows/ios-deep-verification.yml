@@ -1,9 +1,16 @@
 name: iOS native deep verification
 on:
-  push:
-    branches: [codex/ios-port-bootstrap]
-    paths: ['.github/workflows/ios-deep-verification.yml', '.verification/ios/**']
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      build_run:
+        required: true
+        type: number
+      source_sha:
+        required: true
+        type: string
+      artifact_name:
+        required: true
+        type: string
 permissions:
   contents: read
   actions: read
@@ -14,10 +21,14 @@ jobs:
   native:
     runs-on: macos-15
     timeout-minutes: 60
+    env:
+      ORBIT_IOS_SOURCE_SHA: ${{ inputs.source_sha }}
+      ORBIT_IOS_BUILD_RUN: ${{ inputs.build_run }}
     steps:
       - uses: actions/checkout@v4
         with:
           sparse-checkout: .verification/ios
+          ref: ${{ inputs.source_sha }}
           persist-credentials: false
       - name: Check isolated storage fixture updates
         run: python3 .verification/ios/test-storage-fixture.py
@@ -27,8 +38,8 @@ jobs:
           java-version: '17'
       - uses: actions/download-artifact@v4
         with:
-          name: orbit-ios-simulator-0d48159af95ee31c89598a5debf344112aef07c3
-          run-id: 41800009136
+          name: ${{ inputs.artifact_name }}
+          run-id: ${{ inputs.build_run }}
           github-token: ${{ github.token }}
           path: package
       - name: Install pinned Maestro

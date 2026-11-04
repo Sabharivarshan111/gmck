@@ -33,9 +33,9 @@ os.environ['MAESTRO_CLI_NO_ANALYTICS']='1'
 maestro=shutil.which('maestro')
 run(maestro,'--version')
 helptext=run(maestro,'test','--help',capture_output=True).stdout
-report={'source_sha':'0d48159af95ee31c89598a5debf344112aef07c3','build_run':41800009136,
+report={'source_sha':os.environ.get('ORBIT_IOS_SOURCE_SHA','0d48159af95ee31c89598a5debf344112aef07c3'),'build_run':int(os.environ.get('ORBIT_IOS_BUILD_RUN','41800009136')),
         'device':device['name'],'runtime':runtime,'offline_backend_isolated':True,'native_classes':capabilities,
-        'cases':[],'not_verified':['real Google sign-in (disabled in tested build)','StoreKit/live purchases (not implemented)','push delivery on a real iPhone','TestFlight signing and App Store review']}
+        'cases':[],'not_verified':['real Google sign-in (disabled in tested build)','StoreKit/live purchases (not implemented)','local reminder delivery on a real iPhone','TestFlight signing and App Store review']}
 def local_records(update_streak=False):
     container=pathlib.Path(subprocess.check_output(['xcrun','simctl','get_app_container',udid,APP_ID,'data'],text=True).strip())
     records={}
@@ -127,6 +127,15 @@ if setup_ok:
     subprocess.run(['xcrun','simctl','terminate',udid,APP_ID],capture_output=True)
     report['saved_records']=local_records()
 if (ROOT/'.maestro').exists():shutil.copytree(ROOT/'.maestro',OUT/'maestro-default',dirs_exist_ok=True)
+probe=container/'Documents/ios-keychain-qa.json'
+try:
+    keychain=json.loads(probe.read_text())
+    report['keychain_probe']={k:keychain.get(k) for k in ['pass','phase','failures','jsi']}
+    keychain_ok=keychain.get('pass') is True and keychain.get('phase')=='verified' and keychain.get('jsi') is True
+except (OSError,ValueError):
+    report['keychain_probe']={'pass':False,'reason':'probe_report_missing'}
+    keychain_ok=False
+report['cases'].append({'name':'08-keychain-native-crud-relaunch','status':'pass' if keychain_ok else 'fail'})
 (OUT/'report.json').write_text(json.dumps(report,indent=2))
 print(json.dumps(report,indent=2))
 if any(c['status']!='pass' for c in report['cases']):raise SystemExit(1)
