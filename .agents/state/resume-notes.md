@@ -2618,3 +2618,11 @@ Reviewed all266 saved drafts:151 cleared canonical original-page occurrences/742
 **NEXT:** Finish onboarding CI/merge/release, inspect native screen evidence and persist exact receipts.
 
 **DO NOT:** Reintroduce the automatic premium screen, alter manual payment prices, merge unfinished iOS PR175, overwrite newer MUHS/WBUHS updates or call the iOS port fully ready. Anatomy dossier92%/95% check is a pre-existing unrelated failure; do not weaken it to conceal results.
+
+
+## 2026-11-04 — Direct clinical skills in Vault
+
+**DONE:** PR183 adds Auscultation,12-lead ECG,Ultrasound/POCUS,X-ray&MRI,Eyes&cranial nerves,General examination beneath the Simulator/Case-proformas row and before Anki. Reuses the canonical clinical catalog and existing tool handlers; native direct entries use normal findings, saved studio theme and Back to Vault. Website links carry exact tool/scenario parameters; normal Simulator entry stays intact. Added font-independent vector icons. Native TypeScript/quietlint, keyboard checks, production build and four browser scenarios (360/430px,100/115% text,dark/light) passed; screenshots inspected. Browser test blocks all production requests and only captures link destinations. No medical content/pricing/access changes.
+**HALF-DONE:** Signed Android build and production deployment pending this PR merge; inspect exact merged SHA release rather than old release-980. iOS shortcut source b62f6ff is on isolated ios-port branch and its cloud build is running. iOS remains incomplete. Prior dace2fa native run41807894318 proved reader checkbox/relaunch fix and rewards/NEET; setup/practice assertions completed but Maestro teardown timed out. Anatomy still fails; Keychain probe report was missing, so storage runtime is unproven.
+**NEXT:** Merge the validated Vault change, verify production deployment and exact-head signed APK/AAB; inspect new iOS build without treating its known anatomy or Keychain failures as passes. Keep iOS PR175 draft.
+**DO NOT:** Overwrite newer WBUHS changes (main base adbaac8); gate Android on pre-existing anatomy dossier coverage failure or claim real-device clinical-tool behavior from browser link checks. Do not push old native branch over main.
