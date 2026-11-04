@@ -6,7 +6,7 @@
  * Marks absent from cards -> 0. No answer keys are supplied.
  */
 import type { ReviewedUniversityQuestion } from './types';
-export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH31: ReviewedUniversityQuestion[] = [
+export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH31 = [
   {
     "id": "wbuhs-passcomp-90f6ad70200a-p5-q1",
     "university": "wbuhs",
@@ -1242,4 +1242,4 @@ export const REVIEWED_UNIVERSITY_QUESTIONS_BATCH31: ReviewedUniversityQuestion[]
     "marks": 0,
     "originalSection": "Short Notes"
   }
-];
+] satisfies ReviewedUniversityQuestion[];
