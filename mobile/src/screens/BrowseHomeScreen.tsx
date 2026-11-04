@@ -185,7 +185,7 @@ export default function BrowseHomeScreen() {
           label="Open WBUHS OCR second and third year question bank"
           onPress={() => setShowWbuhsOcr(true)}
           style={[styles.switchRow, { borderColor: colors.border }]}>
-          <Text style={{ color: colors.cyan, fontWeight: '700' }}>WBUHS OCR: Second / Third Year (1,288 questions, flagged entries shown)</Text>
+          <Text style={{ color: colors.cyan, fontWeight: '700' }}>WBUHS OCR: Second / Third Year (1,294 questions; OCR quality shown)</Text>
           <ChevronRight size={16} color={colors.cyan} />
         </Touchable>
       ) : null}
@@ -195,7 +195,7 @@ export default function BrowseHomeScreen() {
           label="Open MUHS OCR first through final year question bank"
           onPress={() => setShowMuhsOcr(true)}
           style={[styles.switchRow, { borderColor: colors.border }]}>
-          <Text style={{ color: colors.cyan, fontWeight: '700' }}>MUHS OCR: First / Second / Third / Final Year (4,347 stored questions)</Text>
+          <Text style={{ color: colors.cyan, fontWeight: '700' }}>MUHS OCR: First / Second / Third / Final Year (4,348 stored questions)</Text>
           <ChevronRight size={16} color={colors.cyan} />
         </Touchable>
       ) : null}
