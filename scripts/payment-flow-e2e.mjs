@@ -53,7 +53,8 @@ async function scenario(width,signedIn=true,verificationFails=false,interrupted=
   await page.getByLabel('NEET-PG practice questions',{exact:true}).waitFor();
   if(featureMode==='free'){
    await page.getByText('Free preview',{exact:true}).first().waitFor();
-   assert.equal(await page.getByText('Free preview',{exact:true}).count(),4);
+   assert.equal(await page.getByText('Free preview',{exact:true}).count(),10);
+   for (const title of ['Auscultation','12-lead ECG','Ultrasound / POCUS','X-ray & MRI','Eyes & cranial nerves','General examination']) assert.equal(await page.getByLabel(title,{exact:true}).count(),1);
    await page.getByLabel('Anki flashcards',{exact:true}).click();
    await page.getByText('Flashcards preview',{exact:true}).waitFor();
    await page.getByText('How many chambers does the human heart have?',{exact:true}).waitFor();

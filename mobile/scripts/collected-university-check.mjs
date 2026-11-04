@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
@@ -7,6 +8,8 @@ import { build } from 'esbuild';
 
 const mobile = path.resolve(import.meta.dirname, '..');
 const repo = path.dirname(mobile);
+const undatedCompilations = new Map(JSON.parse(fs.readFileSync(path.join(repo, 'docs/WBUHS_UNDATED_COMPILATION_ROWS.json'), 'utf8')).rows.map(row => [row.id, row]));
+const undatedSeen = new Set();
 async function bundle(file, define = {}) {
   const result = await build({ entryPoints: [path.join(repo, file)], bundle: true,
     write: false, format: 'esm', platform: 'neutral', define,
@@ -75,7 +78,20 @@ for (const [university, count] of Object.entries(expected)) {
       assert.ok(Number.isInteger(row.pdfPage) && row.pdfPage >= 1 && row.pdfPage <= Math.max(7, ...['batch15-provenance.json', 'batch16-provenance.json', 'batch17-provenance.json', 'batch18-provenance.json', 'batch21-provenance.json', 'batch22-provenance.json', 'batch23-provenance.json', 'batch24-provenance.json', 'batch27-provenance.json', 'batch28-provenance.json'].flatMap(file => JSON.parse(fs.readFileSync(path.join(repo, 'src/data/universityPapers', file), 'utf8')).papers).filter(p => p.sha256 === row.sourceSha256).flatMap(p => p.pagesVisuallyCompared)));
     }
     assert.ok(( {"ntruhs-c2a3ad3e2c6d-p16-q11": "Bias", "ntruhs-c2a3ad3e2c6d-p24-q7": "Cu-T", "ntruhs-c2a3ad3e2c6d-p24-q8": "WHO", "ntruhs-c2a3ad3e2c6d-p31-q12": "PERT"}[row.id] === row.question || {"ntruhs-3f2b9bfcccf8-p3-q5": "FNAC"}[row.id] === row.question || {"ntruhs-74fda53aef21-p12-q13": "Gait", "ntruhs-74fda53aef21-p18-q11": "PICA", "ntruhs-74fda53aef21-p23-q2": "APLA", "ntruhs-74fda53aef21-p46-q5": "Pica", "ntruhs-74fda53aef21-p50-q13": "ERCP", "ntruhs-74fda53aef21-p54-q7": "ARDS", "ntruhs-74fda53aef21-p55-q13": "Coma", "ntruhs-74fda53aef21-p56-q13": "CTEV", "ntruhs-74fda53aef21-p60-q6": "Pica", "ntruhs-c6860e5b0131-p7-q11": "PICA"}[row.id] === row.question || row.question.length > 4 || (row.university === 'wbuhs' && row.question === 'GLUT') || {"rguhs-529602a28734-p1-q17": "Pili", "rguhs-70d8a4e6839c-p1-q18": "PCR", "rguhs-70d8a4e6839c-p1-q23": "PCV"}[row.id] === row.question || (row.id === 'rguhs-3e762a08ccd4-p1-q4' && row.question === 'BMR') || {"ntruhs-2a174f5c1c88-p1-q9": "BERA", "ntruhs-45cc96809a77-p1-q11": "CTEV", "ntruhs-6b81306ad1a7-p1-q11": "ASHA"}[row.id] === row.question || (row.id === 'ntruhs-12f02835c36f-p1-q7' && row.question === 'Gout') || {"knruhs-6cde83218b53-p2-q12": "PKDL", "knruhs-ee244d19365e-p1-q11": "IgG", "knruhs-136b4dc127a6-p1-q2": "Bias", "knruhs-d5a145770a41-p1-q10": "CARE"}[row.id] === row.question || (row.id === 'knruhs-e8e59be64df3-p2-q17' && row.question === 'KFD') || (row.id === 'rguhs-942383725e34-p1-q6' && row.question === 'IgM.') || (row.id === 'rguhs-764314376aaf-p1-q17' && row.question === 'Hair') || (['rguhs-fc6c85e99007-p1-q5','rguhs-d3a0bc4dc8fb-p1-q12'].includes(row.id) && row.question === 'Gout') || (row.id === 'rguhs-8b7f4f6c8446-p1-q13' && row.question === 'GABA') || {"rguhs-76bb1d84f38e-p1-q6": "DOTS", "rguhs-9f14aa97a6c4-p1-q20": "SARS", "rguhs-9f14aa97a6c4-p1-q22": "ASHA", "rguhs-d300c4feb926-p1-q19": "GERD", "rguhs-2f82865ed3f8-p1-q21": "PICA", "rguhs-575d39f9e85b-p1-q9": "ICDS", "rguhs-e98cc077f8e5-p1-q4": "Gout", "rguhs-64a3a20f5587-p1-q19": "PICA"}[row.id] === row.question || {"rguhs-d32d85a05d39-p1-q14": "MRI", "rguhs-dc4ff0429bed-p1-q15": "Pica", "rguhs-9e9333c15584-p1-qa-5": "ANDI", "rguhs-147caf5e16cb-p1-q14": "PTC"}[row.id] === row.question) && row.question.length <= ({"wbuhs-2d48fd197637-p9-q1-ii": 1157, "wbuhs-2d48fd197637-p12-q1-ii": 1085}[row.id] ?? 1000));
-    assert.ok(row.examRefs.length > 0 && row.topicKey);
+    assert.ok(row.topicKey, `${row.id}: missing chapter key`);
+    assert.ok(Array.isArray(row.examRefs), `${row.id}: invalid exam references`);
+    if (row.examRefs.length === 0) {
+      const expected = undatedCompilations.get(row.id);
+      assert.ok(expected, `${row.id}: unreviewed missing exam references`);
+      assert.equal(row.university, 'wbuhs');
+      assert.equal(row.sourceSha256, expected.sourceSha256);
+      assert.equal(row.pdfPage, expected.pdfPage);
+      assert.equal(row.sourceQuestion, expected.sourceQuestion);
+      assert.equal(createHash('sha256').update(row.question).digest('hex'), expected.questionSha256);
+      undatedSeen.add(row.id);
+    } else {
+      assert.ok(row.examRefs.every(ref => typeof ref === 'string' && ref.trim()), `${row.id}: blank exam reference`);
+    }
     const raw = `PYQ[${row.id}] ${row.question}`;
     assert.equal(text.getCleanQuestionText(raw), row.question);
     assert.equal(text.noteQuestionText(raw), row.question);
@@ -93,6 +109,7 @@ for (const [university, count] of Object.entries(expected)) {
     assert.equal(restored.question, hit.question);
   }
 }
+assert.deepEqual([...undatedSeen].sort(), [...undatedCompilations.keys()].sort(), 'Undated compilation inventory changed');
 assert.equal(catalog.isUniversity('not-a-university'), false);
 assert.equal(catalog.isUniversity('wbuhs'), true);
 assert.ok(bank.allSearchHits('tnmgr').length > 5000);
