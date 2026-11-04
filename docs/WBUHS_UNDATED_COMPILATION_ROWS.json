@@ -1,0 +1,124 @@
+{
+  "policy": "These imported compilation rows have no recorded exam-reference label. Preserve empty examRefs; do not infer an examination date or appearance.",
+  "rows": [
+    {
+      "id": "wbuhs-passcomp-90f6ad70200a-p4-q1",
+      "sourceSha256": "90f6ad70200a66a3821acf1aa633943696d6244ed14366e7ad7e138b86c3d75b",
+      "pdfPage": 4,
+      "sourceQuestion": "Q1",
+      "questionSha256": "df3b7440626bf715001e9d7e803f4c45c755903e4d81b6dce20dac96dfc821f1"
+    },
+    {
+      "id": "wbuhs-passcomp-90f6ad70200a-p4-q6",
+      "sourceSha256": "90f6ad70200a66a3821acf1aa633943696d6244ed14366e7ad7e138b86c3d75b",
+      "pdfPage": 4,
+      "sourceQuestion": "Q6",
+      "questionSha256": "9b5d5bb4aece394b7a41d187e366a8d1e3eebddf6f42596a15b2cfa1508a88d3"
+    },
+    {
+      "id": "wbuhs-passcomp-90f6ad70200a-p4-q8",
+      "sourceSha256": "90f6ad70200a66a3821acf1aa633943696d6244ed14366e7ad7e138b86c3d75b",
+      "pdfPage": 4,
+      "sourceQuestion": "Q8",
+      "questionSha256": "4dc2e739d2f997e62174399a36ad0562177aa847fe21594bfce0750352c43b09"
+    },
+    {
+      "id": "wbuhs-passcomp-90f6ad70200a-p4-q9",
+      "sourceSha256": "90f6ad70200a66a3821acf1aa633943696d6244ed14366e7ad7e138b86c3d75b",
+      "pdfPage": 4,
+      "sourceQuestion": "Q9",
+      "questionSha256": "8c327cdc7f6b3f05f4a7735906bfb7098ac522dd8eb80d1cf19e577932725082"
+    },
+    {
+      "id": "wbuhs-passcomp-c7433419eb76-p4-q1",
+      "sourceSha256": "c7433419eb763154097d1b4a3cf8a74c4d1c109f07e55267357c2cf278767ebf",
+      "pdfPage": 4,
+      "sourceQuestion": "Q1",
+      "questionSha256": "0ecc59147fd879862732778a7f48f5581713761f7d4bad419817b32d9a120964"
+    },
+    {
+      "id": "wbuhs-passcomp-c7433419eb76-p4-q5",
+      "sourceSha256": "c7433419eb763154097d1b4a3cf8a74c4d1c109f07e55267357c2cf278767ebf",
+      "pdfPage": 4,
+      "sourceQuestion": "Q5",
+      "questionSha256": "2468af3b21c96682685a4e1bcb26d0ed7f46aabaa7b05902021ba383bfe57b90"
+    },
+    {
+      "id": "wbuhs-passcomp-2c6bbb15a999-p4-q4",
+      "sourceSha256": "2c6bbb15a9995d55a2baf1ef9c94d7033f648ef812333dd1e0e8701aef66bf6e",
+      "pdfPage": 4,
+      "sourceQuestion": "Q4",
+      "questionSha256": "c5002c52374418505a81c59b8b88a98988af16ece43038e0185719da4e3d6850"
+    },
+    {
+      "id": "wbuhs-passcomp-2c6bbb15a999-p4-q5",
+      "sourceSha256": "2c6bbb15a9995d55a2baf1ef9c94d7033f648ef812333dd1e0e8701aef66bf6e",
+      "pdfPage": 4,
+      "sourceQuestion": "Q5",
+      "questionSha256": "d01b85fdb9c7d0e428daa724d888e7cb574502d7cc87a3cfcdde4d6eb99a637b"
+    },
+    {
+      "id": "wbuhs-passcomp-60b4f9025b47-p4-q3",
+      "sourceSha256": "60b4f9025b47e4354154f37d75a0d339fe323dbb32f582ccc2f99fb357317e90",
+      "pdfPage": 4,
+      "sourceQuestion": "Q3",
+      "questionSha256": "e41ef1b220da4437a1b8f76cb787dcd2ecac0b4d0e6fd79d47e6e1445a752ddb"
+    },
+    {
+      "id": "wbuhs-passcomp-60b4f9025b47-p4-q4",
+      "sourceSha256": "60b4f9025b47e4354154f37d75a0d339fe323dbb32f582ccc2f99fb357317e90",
+      "pdfPage": 4,
+      "sourceQuestion": "Q4",
+      "questionSha256": "e77fa2f3a6e902ede131f2502ad1100b4a6359178e5e046a6913d7c991023c8c"
+    },
+    {
+      "id": "wbuhs-passcomp-60b4f9025b47-p4-q7",
+      "sourceSha256": "60b4f9025b47e4354154f37d75a0d339fe323dbb32f582ccc2f99fb357317e90",
+      "pdfPage": 4,
+      "sourceQuestion": "Q7",
+      "questionSha256": "9b9aa51850331d613c482ade31b937b66be193ee347beaecc2fd9a651afa83c3"
+    },
+    {
+      "id": "wbuhs-passcomp-60b4f9025b47-p4-q8",
+      "sourceSha256": "60b4f9025b47e4354154f37d75a0d339fe323dbb32f582ccc2f99fb357317e90",
+      "pdfPage": 4,
+      "sourceQuestion": "Q8",
+      "questionSha256": "dd23d0233d942f5989b533985524b5b10f46014fa9ec0641584a889041d1a303"
+    },
+    {
+      "id": "wbuhs-passcomp-60b4f9025b47-p4-q9",
+      "sourceSha256": "60b4f9025b47e4354154f37d75a0d339fe323dbb32f582ccc2f99fb357317e90",
+      "pdfPage": 4,
+      "sourceQuestion": "Q9",
+      "questionSha256": "a7fad6d81cdfdd906d8a9efbca3666334e877442b710403cd6c6d3849b6d3067"
+    },
+    {
+      "id": "wbuhs-passcomp-60b4f9025b47-p4-q10",
+      "sourceSha256": "60b4f9025b47e4354154f37d75a0d339fe323dbb32f582ccc2f99fb357317e90",
+      "pdfPage": 4,
+      "sourceQuestion": "Q10",
+      "questionSha256": "e5d0dc6c7d1ee4f745580f35a370207449713ec9d935499482110138d8a80662"
+    },
+    {
+      "id": "wbuhs-passcomp-ad9eceb955cf-p4-q7",
+      "sourceSha256": "ad9eceb955cfe6395a0a926a464f63c5b3044ab235bc0a1df1236332a73e12cd",
+      "pdfPage": 4,
+      "sourceQuestion": "Q7",
+      "questionSha256": "34aa69289ed016b58e0fc3e1c12cab5f1f8bba314214783d3afee60ade2e9e19"
+    },
+    {
+      "id": "wbuhs-passcomp-fa065c58106f-p4-q4",
+      "sourceSha256": "fa065c58106f2e03e8c49c930f8192052c0a5393fe8b60274fe7920ec7d857ce",
+      "pdfPage": 4,
+      "sourceQuestion": "Q4",
+      "questionSha256": "dbfb520131ac336f8f66ea2fc66e21b220ac2a1f559a4f8b9e1578131d7b701d"
+    },
+    {
+      "id": "wbuhs-passcomp-c1a2d5e344b6-p4-q1",
+      "sourceSha256": "c1a2d5e344b6bef69c8db3b589e3bc3667c625c7cfe4d4ff7ef20c83cc73a58a",
+      "pdfPage": 4,
+      "sourceQuestion": "Q1",
+      "questionSha256": "7c1697dc7c061c3547da3af4751ef50d527fd1a8dbb6b887da344e53fafc51c5"
+    }
+  ]
+}
