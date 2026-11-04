@@ -2975,3 +2975,12 @@ DONE: Added isolated iOS Xcode/CocoaPods project and macOS simulator CI on codex
 HALF-DONE: macOS job must establish Pods/Xcode result; custom Kotlin modules, OrbitSimulator, offline assets, OAuth and StoreKit need iOS work. No iPhone-installable IPA, feature parity or TestFlight claim.
 NEXT: Inspect exact-head iOS simulator Actions logs, resolve build errors, implement native iOS adapters and run device flows. Full scope in docs/IOS_PORT_20261104.md. Apple enrollment/identity/agreements and signing access require owner.
 DO NOT: Merge bootstrap as production-ready, turn on ads/sales in test builds, alter Android package/version, copy main web overrides into native, or infer runtime correctness from compilation.
+
+
+## 2026-11-04 — iOS first native build/launch and delivered rewards fix
+
+DONE: iOS source eeca1c3c passed cloud Mac build41748010655/artifact13286195070 after auth-state typing and targeted GoogleUtilities/RecaptchaInterop modular-header fixes. Launch41748812052 installed the exact artifact on iPhone17Pro/iOS26.2 and process survived12seconds. Screenshot inspected: real Welcome/Step1of3/Continue. Actual Podfile.lock and CocoaPods1.17.0 preserved.
+DONE: Rewards counts both XP and streak:29days/1XP gives3/11 and3/5 streak badges. TypeScript/quietlint/XP/streak/AndroidJS and actual29/30/100-day/reload browser regressions pass. Website PR176 merged0975d83 and cache PR178 merged7f708fdf. Both public domains served newcounter and assets-4c7d7a5ba28d943f worker; production dpl_GamDoLg8XxLxH8qy5HubJ5y9ewkR READY. Latest main0975d83 signed release-968 APK/AAB passed actual content checks and published; no Play upload.
+HALF-DONE: iOS draftPR175 is an initial port; only Welcome launch is proven. Custom native storage/files/Anki/notifications/sound/speech/screen/PG/radiology, OrbitSimulator, bundled assets, OAuth, StoreKit and real-device flows remain. No Apple account/signing credentials supplied.
+NEXT: Read docs/IOS_PORT_20261104.md. Selectively bring latest production shared source/bank into older native d4aa baseline, preserving newer MUHS/auth/payment work; implement iOS adapters and test full flows. Owner must enroll/accept agreements and provide signing access before TestFlight.
+DO NOT: Claim simulator Welcome proves feature parity or App Store readiness; merge unfinished iOS port into production; ship old baseline bank as latest; blindly redeploy old native backend files; use Android billing/updater or missing native views on iOS.
