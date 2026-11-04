@@ -2984,3 +2984,14 @@ DONE: Rewards counts both XP and streak:29days/1XP gives3/11 and3/5 streak badge
 HALF-DONE: iOS draftPR175 is an initial port; only Welcome launch is proven. Custom native storage/files/Anki/notifications/sound/speech/screen/PG/radiology, OrbitSimulator, bundled assets, OAuth, StoreKit and real-device flows remain. No Apple account/signing credentials supplied.
 NEXT: Read docs/IOS_PORT_20261104.md. Selectively bring latest production shared source/bank into older native d4aa baseline, preserving newer MUHS/auth/payment work; implement iOS adapters and test full flows. Owner must enroll/accept agreements and provide signing access before TestFlight.
 DO NOT: Claim simulator Welcome proves feature parity or App Store readiness; merge unfinished iOS port into production; ship old baseline bank as latest; blindly redeploy old native backend files; use Android billing/updater or missing native views on iOS.
+
+
+## 2026-11-04 — Native iOS offline practice adapter and new first-run flow
+
+**DONE:** Native run41797028753 / artifact13306433408 proved old app source dba321 onboarding/relaunch, progress/timer/attendance entry and bundled NEET question flow. Overall suite failed: streak storage fixture not found, Paper1 selector wrong, previous PG modal not closed before anatomy. OrbitSimulator and other iOS custom native implementations remain absent. Added platform-specific iOS compact reader using Metro local assets, SHA256 and zstd; Android implementation retained. Copied requested direct-to-Home FirstRun and restored practice UI. All21 packs /185636 records passed byte-exact UTF8/codec and failure-case tests; Android-reader regressions, native types, targeted lint, iOS production JS bundle and21 real copied zst assets passed. No clinical answer changes or live backend calls.
+
+**HALF-DONE:** New iOS simulator compile and actual iOS file-I/O/practice interaction still pending. Main PR180 removal of automatic onboarding paywall merged08a0ac26; its production website deployment is READY, latest Android build41799222509 running. Practice PR179 merged90adb6d. User wants all work continued and fully verified; never call this iOS port ready based on startup.
+
+**NEXT:** Inspect new simulator build, pin immutable source/run/artifact in native QA workflow, update flow01 for Start studying, add OS restart isolation, fix Paper1 accessibility target and support actual AsyncStorage schema/legacy manifest for reward fixture. Test practice on real iOS simulator. Keep PR175 draft; later selectively synchronize newer main university/pricing updates.
+
+**DO NOT:** Change production Android while developing platform adapters, overwrite newer MUHS/WBUHS data, invent missing explanations, silently replace supplied keys or label failed/blocked QA as passed. Real Google, StoreKit, push and TestFlight remain unverified.

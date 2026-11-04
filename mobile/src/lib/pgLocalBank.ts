@@ -1,5 +1,5 @@
 import type {PgQuestion} from './pgEntranceBank';
-import PgBank from '@/native/NativeOrbitPgBank';
+import PgBank from '@/lib/pgNativeBank';
 import {PG_COMPACT, PG_COMPACT_BYTES} from './pgCompact/manifest';
 export {PG_COMPACT, PG_COMPACT_BYTES};
 export type PgOfflinePack={id:string;exam:string;year:number|null;subject?:string;count:number;load?:()=>Promise<{default:PgQuestion[]}>};

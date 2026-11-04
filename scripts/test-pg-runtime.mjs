@@ -14,6 +14,7 @@ function load(file){
  const code=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
  new Function('require','module','exports',code)(id=>{
   if(id==='@/native/NativeOrbitPgBank')return{__esModule:true,default:{readPack:async(id,sha)=>{loads++;const packed=fs.readFileSync('public/pg/'+id+'-'+sha.slice(0,12)+'.zst');assert.equal(crypto.createHash('sha256').update(packed).digest('hex'),sha);return zlib.zstdDecompressSync(packed).toString('utf8');}}};
+  if(id.startsWith('@/'))return load(path.resolve('mobile/src',id.slice(2)));
   return load(path.resolve(path.dirname(file),id));
  },m,m.exports);return m.exports;
 }

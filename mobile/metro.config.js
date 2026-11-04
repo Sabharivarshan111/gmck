@@ -22,8 +22,9 @@ const sharedSimulator = path.resolve(__dirname, '..', 'src', 'simulator');
 const config = {
   // Metro refuses to resolve files outside the project root unless they are
   // explicitly watched.
-  watchFolders: [sharedData, sharedLib, sharedSimulator, path.resolve(__dirname, '..', 'public', 'clinical-reference')],
+  watchFolders: [sharedData, sharedLib, sharedSimulator, path.resolve(__dirname, '..', 'public', 'clinical-reference'), path.resolve(__dirname, '..', 'public', 'pg')],
   resolver: {
+    assetExts: [...getDefaultConfig(__dirname).resolver.assetExts, 'zst'],
     extraNodeModules: {
       '@data': sharedData,
       '@shared': sharedLib,
