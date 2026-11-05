@@ -591,6 +591,47 @@ export function AttendanceTab() {
           </View>
         ) : null}
 
+        {shown.length > 0 ? (
+          <View style={{ backgroundColor: colors.card, borderRadius: 16, padding: 14, gap: 10, borderWidth: 1, borderColor: colors.border }}>
+            <Text style={{ color: colors.text, fontSize: 17, fontWeight: '800' }}>Dated attendance register</Text>
+            <Text style={{ color: colors.textMuted, fontSize: 12 }}>Choose a date to mark or edit it; earlier totals are preserved.</Text>
+            <PostingDateField label="Attendance date" value={registerDate} onChange={setRegisterDate}/>
+            <Text style={{ color: colors.textMuted, fontSize: 11 }}>For a mixed day, choose how many sessions were held (one absent):</Text>
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              {[2, 3, 4].map(n => (
+                <Touchable key={n} onPress={() => setMixedClasses(n)} label={'Mixed day with ' + n + ' sessions'}
+                  style={{ minHeight: 38, borderRadius: 10, paddingHorizontal: 12, borderWidth: 1, borderColor: n === mixedClasses ? colors.accent : colors.border }}>
+                  <Text style={{ color: n === mixedClasses ? colors.accent : colors.textMuted }}>{n} sessions</Text>
+                </Touchable>
+              ))}
+            </View>
+            {shown.map(item => {
+              const day = item.daily?.[registerDate];
+              const status = !day ? 'unmarked' : day.off ? 'off' : day.held > 1 && day.attended > 0 && day.attended < day.held ? 'mixed' :
+                day.held > 0 && day.attended === day.held ? 'present' : day.held > 0 ? 'absent' : 'unmarked';
+              return <View key={item.id} style={{ borderTopWidth: 1, borderTopColor: colors.border, paddingTop: 10, gap: 7 }}>
+                <Text style={{ color: colors.text, fontWeight: '700' }}>{item.name}</Text>
+                <Text style={{ color: colors.textMuted, fontSize: 11 }}>
+                  {day ? day.off ? 'Off day' : day.attended + ' present / ' + day.held + ' held' : 'Not recorded on this date'}
+                </Text>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 5 }}>
+                  {(['present', 'absent', 'mixed', 'off', 'unmarked'] as const).map(action => (
+                    <Touchable key={action} label={action + ' for ' + item.name + ' on ' + registerDate}
+                      onPress={() => { tick(); void setAttendanceDay(item.id, registerDate, action, mixedClasses); }}
+                      style={{ minHeight: 38, borderRadius: 9, paddingHorizontal: 8, borderWidth: 1,
+                        borderColor: action === status ? colors.accent : colors.border,
+                        backgroundColor: action === status ? withAlpha(colors.accent, 0.13) : 'transparent' }}>
+                      <Text style={{ fontSize: 11, fontWeight: '700', color: action === status ? colors.accent : colors.textMuted }}>
+                        {action === 'unmarked' ? 'Clear' : action === 'present' ? 'Present' : action === 'absent' ? 'Absent' : action === 'mixed' ? 'Mixed' : 'Off'}
+                      </Text>
+                    </Touchable>
+                  ))}
+                </View>
+              </View>;
+            })}
+          </View>
+        ) : null}
+
         {shown.map(item => (
           <AttendanceCard
             key={item.id}
