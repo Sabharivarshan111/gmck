@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Text } from '@/components/Text';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Touchable } from '@/components/Touchable';
@@ -39,6 +40,7 @@ import type { University } from '@shared/university';
 import APP_ICON from '@/assets/app-icon.png';
 
 const YEARS: Year[] = ['first', 'second', 'third', 'final'];
+const DRAFT_KEY = '@orbit:first_run_draft_v2';
 
 /** First run: welcome/sign-in, then study setup and Home.
  * Existing profiles skip setup; profile persistence happens when study setup is submitted.
@@ -60,6 +62,7 @@ export function FirstRun() {
   const googleSignInInFlight = useRef(false);
   const [googleAuthenticated, setGoogleAuthenticated] = useState(!GOOGLE_SIGN_IN_ENABLED);
   const [checkingAccount, setCheckingAccount] = useState(GOOGLE_SIGN_IN_ENABLED);
+  const [draftHydrated, setDraftHydrated] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -74,6 +77,30 @@ export function FirstRun() {
     }
     return () => { active = false; };
   }, []);
+
+  // Drafts survive Google account chooser, cancellation and Android activity recreation.
+  useEffect(() => {
+    let active = true;
+    AsyncStorage.getItem(DRAFT_KEY)
+      .then(raw => {
+        if (!active || !raw) return;
+        try {
+          const draft = JSON.parse(raw);
+          if (typeof draft.name === 'string') setName(draft.name);
+          if (YEARS.includes(draft.year)) setYear(draft.year);
+          if (typeof draft.university === 'string') setUniversity(draft.university as University);
+          if (['university-pyqs', 'neet-pg', 'both'].includes(draft.goal)) setGoal(draft.goal);
+        } catch { /* Corrupt draft must never block setup. */ }
+      })
+      .catch(() => {})
+      .finally(() => { if (active) setDraftHydrated(true); });
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    if (!draftHydrated || !hydrated || local) return;
+    AsyncStorage.setItem(DRAFT_KEY, JSON.stringify({ name, year, university, goal })).catch(() => {});
+  }, [draftHydrated, hydrated, local, name, year, university, goal]);
 
   const needed = hydrated && !local;
 
@@ -109,7 +136,8 @@ export function FirstRun() {
     setSaving(true);
     setError(null);
     try {
-      await save({ display_name: name, year, university, preparationGoal: goal });
+      await save({ display_name: name.trim(), year, university, preparationGoal: goal });
+      AsyncStorage.removeItem(DRAFT_KEY).catch(() => {});
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not save your setup.');
     } finally {
@@ -118,7 +146,7 @@ export function FirstRun() {
   }, [googleAuthenticated, name, year, university, goal, save, saving]);
 
   /**
-   * Google fills the name in and unlocks onboarding.
+   * Google fills an empty name, never overwriting a name typed before sign-in.
    */
   const withGoogle = useCallback(async () => {
     if (googleSignInInFlight.current) return;
@@ -167,7 +195,7 @@ export function FirstRun() {
           {
             backgroundColor: colors.background,
             paddingTop: insets.top + 24,
-            paddingBottom: insets.bottom + 24,
+            paddingBottom: insets.bottom + 8,
           },
         ]}>
         <ScrollView
@@ -180,7 +208,7 @@ export function FirstRun() {
             Welcome to Orbit
           </Text>
           <Text style={[styles.subtitle, { color: colors.textMuted }]}>
-            Choose your name, university, year and preparation goal. Sign in with Google when you are ready.
+            Enter your details or sign in with Google first. Either order works.
           </Text>
 
           {/* v27 parity: account picker and study setup belong to this same screen.
@@ -189,7 +217,7 @@ export function FirstRun() {
             <Text style={[styles.footnote, { color: colors.textMuted, marginBottom: 4 }]}>
               {googleAuthenticated
                 ? 'Google account connected. Finish your study setup below.'
-                : 'Choose your study settings first, then tap Continue with Google below.'}
+                : 'You can fill out your study details before connecting Google.'}
             </Text>
           ) : null}
 
@@ -203,6 +231,7 @@ export function FirstRun() {
                 value={name}
                 onChangeText={setName}
                 editable={!saving}
+                testID="first-run-display-name"
                 placeholder="e.g. Phantom"
                 placeholderTextColor={colors.textMuted}
                 maxLength={40}
@@ -229,6 +258,7 @@ export function FirstRun() {
                   return (
                     <Touchable
                       key={option}
+                      testID={`first-run-year-${option}`}
                       onPress={() => { setYear(option); setError(null); }}
                       role="radio"
                       label={optionLabel}
@@ -261,6 +291,7 @@ export function FirstRun() {
                   const selected = goal === value;
                   return <Touchable
                     key={value}
+                    testID={`first-run-goal-${value}`}
                     label={label}
                     role="radio"
                     state={{ checked: selected }}
