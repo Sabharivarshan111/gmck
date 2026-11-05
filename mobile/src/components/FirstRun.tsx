@@ -11,11 +11,9 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Lock } from 'lucide-react-native';
 import { Text } from '@/components/Text';
 import { KeyboardSafe } from '@/components/KeyboardSafe';
 import { Touchable } from '@/components/Touchable';
-import { GradientFill } from '@/components/Gradient';
 import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
 import { type LocalProfile, type Year } from '@/lib/profile';
@@ -61,7 +59,6 @@ export function FirstRun() {
   const [googling, setGoogling] = useState(false);
   // Prevent duplicate native account-picker requests before React re-renders.
   const googleSignInInFlight = useRef(false);
-  const isNative = Platform.OS === 'android';
   const [googleAuthenticated, setGoogleAuthenticated] = useState(!GOOGLE_SIGN_IN_ENABLED);
   const [checkingAccount, setCheckingAccount] = useState(GOOGLE_SIGN_IN_ENABLED);
 
@@ -77,7 +74,7 @@ export function FirstRun() {
         .finally(() => { if (active) setCheckingAccount(false); });
     }
     return () => { active = false; };
-  }, [isNative]);
+  }, []);
 
   const needed = hydrated && !local;
 
@@ -96,8 +93,8 @@ export function FirstRun() {
 
   const start = useCallback(async () => {
     if (saving) return;
-    if (isNative && !googleAuthenticated) {
-      setError('Please tap Continue with Google below to safeguard your progress and unlock setup.');
+    if (GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated) {
+      setError('Continue with Google before entering Orbit. Your study choices stay saved on this screen.');
       return;
     }
     if (!year) {
@@ -119,7 +116,7 @@ export function FirstRun() {
     } finally {
       setSaving(false);
     }
-  }, [isNative, googleAuthenticated, name, year, university, goal, save, saving]);
+  }, [googleAuthenticated, name, year, university, goal, save, saving]);
 
   /**
    * Google fills the name in and unlocks onboarding.
@@ -184,7 +181,7 @@ export function FirstRun() {
             Welcome to Orbit
           </Text>
           <Text style={[styles.subtitle, { color: colors.textMuted }]}>
-            Sign in and set up your studies here. Choose your name, university, year and preparation goal.
+            Choose your name, university, year and preparation goal. Sign in with Google when you are ready.
           </Text>
 
           {/* v27 parity: account picker and study setup belong to this same screen.
@@ -193,21 +190,12 @@ export function FirstRun() {
             <Text style={[styles.footnote, { color: colors.textMuted, marginBottom: 4 }]}>
               {googleAuthenticated
                 ? 'Google account connected. Finish your study setup below.'
-                : 'Your setup stays on this screen. Tap Continue with Google below to unlock the fields.'}
+                : 'Choose your study settings first, then tap Continue with Google below.'}
             </Text>
           ) : null}
 
-            {/* Profile Setup: Display Name & Year (Gated on Google Sign-In for native) */}
-            <View style={!googleAuthenticated && isNative ? styles.lockedSection : undefined}
-              pointerEvents={!googleAuthenticated && isNative ? 'none' : 'auto'}>
-              {!googleAuthenticated && isNative ? (
-                <View style={styles.lockNoticeRow}>
-                  <Lock size={14} color={colors.accent} />
-                  <Text style={[styles.lockNoticeText, { color: colors.accent }]}>
-                    Use Continue with Google below to unlock profile setup
-                  </Text>
-                </View>
-              ) : null}
+            {/* Study choices are editable before Google sign-in, as in the original one-screen flow. */}
+            <View>
 
               <Text style={[styles.label, { color: colors.textMuted }]}>UNIVERSITY — PICK ONE</Text>
               <UniversityChoice value={university} onChange={setUniversity} />
@@ -215,7 +203,7 @@ export function FirstRun() {
               <TextInput
                 value={name}
                 onChangeText={setName}
-                editable={googleAuthenticated || !isNative}
+                editable={!saving}
                 placeholder="e.g. Phantom"
                 placeholderTextColor={colors.textMuted}
                 maxLength={40}
@@ -228,7 +216,6 @@ export function FirstRun() {
                     color: colors.text,
                     backgroundColor: colors.cardElevated,
                     borderColor: error ? colors.danger : colors.border,
-                    opacity: !googleAuthenticated && isNative ? 0.6 : 1,
                   },
                 ]}
               />
@@ -236,20 +223,14 @@ export function FirstRun() {
               <Text style={[styles.label, { color: colors.textMuted }]}>
                 {year ? 'YEAR' : 'YEAR — PICK ONE'}
               </Text>
-              <View style={[styles.grid, !googleAuthenticated && isNative && { opacity: 0.6 }]}>
+              <View style={styles.grid}>
                 {YEARS.map(option => {
                   const active = option === year;
                   const optionLabel = YEAR_LABEL[YEAR_TO_KEY[option]];
                   return (
                     <Touchable
                       key={option}
-                      onPress={() => {
-                        if (!googleAuthenticated && isNative) {
-                          setError('Please tap Continue with Google below first.');
-                          return;
-                        }
-                        setYear(option);
-                      }}
+                      onPress={() => { setYear(option); setError(null); }}
                       role="radio"
                       label={optionLabel}
                       state={{ checked: active }}
@@ -294,13 +275,12 @@ export function FirstRun() {
                   </Touchable>;
                 })}
               </View>
-              <Text style={[styles.footnote, { color: colors.textMuted }]}>Every choice takes you to your home screen. You can change it later.</Text>
+              <Text style={[styles.footnote, { color: colors.textMuted }]}>Your choices will be saved when you continue to Orbit. You can change them later.</Text>
             </View>
 
           </ScrollView>
 
-          {/* One-handed thumb zone: the primary action stays at the bottom.
-              After Google succeeds the *same* action region becomes Start studying. */}
+          {/* Thumb-friendly footer: visible on every screen size and on both sides of Google sign-in. */}
           <View style={[styles.actionBar, { borderTopColor: colors.border, backgroundColor: colors.background }]}>
             {error ? (
               <Text accessibilityRole="alert" accessibilityLiveRegion="polite"
@@ -316,9 +296,9 @@ export function FirstRun() {
                 disabled={googling}
                 scaleTo={0.98}
                 onPress={() => { void withGoogle(); }}
-                style={[styles.google, { borderColor: colors.accent, backgroundColor: colors.cardElevated }]}>
-                {googling ? <ActivityIndicator color={colors.accent} /> : (
-                  <Text style={[styles.googleText, { color: colors.text }]}>Continue with Google</Text>
+                style={[styles.google, { borderColor: colors.accent, backgroundColor: colors.accent }]}>
+                {googling ? <ActivityIndicator color={colors.onAccent} /> : (
+                  <Text style={[styles.googleText, { color: colors.onAccent }]}>Continue with Google</Text>
                 )}
               </Touchable>
             ) : (
@@ -327,11 +307,10 @@ export function FirstRun() {
                 testID="first-run-start-studying"
                 disabled={saving}
                 state={{ busy: saving }}
-                label={!year ? 'Choose your year first' : !university ? 'Choose your university first' : 'Start studying'}
-                style={[styles.startButton, (!year || !university) && styles.startPending]}>
-                <GradientFill from="#FFFFFF" to={colors.fuchsia} borderRadius={14} />
-                {saving ? <ActivityIndicator color="#1A0A1F" /> : (
-                  <Text style={styles.startText}>Start studying</Text>
+                label="Continue to Orbit"
+                style={[styles.startButton, { backgroundColor: colors.accent }]}>
+                {saving ? <ActivityIndicator color={colors.onAccent} /> : (
+                  <Text style={[styles.startText, { color: colors.onAccent }]}>Continue to Orbit</Text>
                 )}
               </Touchable>
             )}
@@ -358,7 +337,8 @@ const styles = StyleSheet.create({
   actionBar: {
     borderTopWidth: StyleSheet.hairlineWidth,
     paddingTop: 12,
-    paddingBottom: 4,
+    paddingBottom: 12,
+    flexShrink: 0,
   },
   splash: {
     flex: 1,
@@ -443,20 +423,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
-  lockedSection: {
-    position: 'relative',
-  },
-  lockNoticeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 14,
-    marginBottom: -8,
-  },
-  lockNoticeText: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
   optional: {
     ...typeScale.caption,
     marginTop: 8,
@@ -504,13 +470,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     overflow: 'hidden',
   },
-  startPending: {
-    opacity: 0.55,
-  },
   startText: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#1A0A1F',
   },
   footnote: {
     ...typeScale.caption,
