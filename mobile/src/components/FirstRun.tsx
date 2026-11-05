@@ -25,6 +25,7 @@ import { YEAR_LABEL } from '@/lib/questionBank';
 import { YEAR_TO_KEY } from '@/lib/profile';
 import {
   GoogleSignInCancelled,
+  configureGoogleSignIn,
   hasAuthenticatedGoogleOnce,
   signInWithGoogle,
 } from '@/lib/googleAuth';
@@ -63,6 +64,8 @@ export function FirstRun() {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [googling, setGoogling] = useState(false);
+  // Prevent duplicate native account-picker requests before React re-renders.
+  const googleSignInInFlight = useRef(false);
   const isNative = Platform.OS === 'android';
   const [googleAuthenticated, setGoogleAuthenticated] = useState(!GOOGLE_SIGN_IN_ENABLED);
   const [checkingAccount, setCheckingAccount] = useState(GOOGLE_SIGN_IN_ENABLED);
@@ -70,13 +73,16 @@ export function FirstRun() {
   useEffect(() => {
     let active = true;
     if (GOOGLE_SIGN_IN_ENABLED) {
+      // Configure the native Google client as the welcome screen mounts, not
+      // for the first time inside the tap handler.
+      if (isNative) configureGoogleSignIn();
       hasAuthenticatedGoogleOnce()
-        .then(ok => { if (active) setGoogleAuthenticated(ok); })
+        .then(ok => { if (active && !googleSignInInFlight.current) setGoogleAuthenticated(ok); })
         .catch(() => { /* Keep the sign-in action available after a network failure. */ })
         .finally(() => { if (active) setCheckingAccount(false); });
     }
     return () => { active = false; };
-  }, []);
+  }, [isNative]);
 
   const needed = hydrated && !local;
 
@@ -153,6 +159,8 @@ export function FirstRun() {
    * Google fills the name in and unlocks onboarding.
    */
   const withGoogle = useCallback(async () => {
+    if (googleSignInInFlight.current) return;
+    googleSignInInFlight.current = true;
     setGoogling(true);
     setError(null);
     try {
@@ -169,6 +177,7 @@ export function FirstRun() {
         setError(err instanceof Error ? err.message : 'Google sign-in did not complete.');
       }
     } finally {
+      googleSignInInFlight.current = false;
       setGoogling(false);
     }
   }, [name]);
@@ -227,11 +236,13 @@ export function FirstRun() {
               <Text style={[styles.madeSub, { color: colors.textMuted }]}>
                 Past papers, notes and clinical practice, together.
               </Text>
-              <Touchable disabled={googling || checkingAccount} label={checkingAccount ? 'Checking your account' : GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? 'Continue with Google' : 'Continue'}
+              <Touchable testID="first-run-google-sign-in" disabled={googling} state={{ busy: googling }}
+                label={GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? 'Continue with Google' : 'Continue'}
                 onPress={() => { if (GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated) void withGoogle(); else setStage('you'); }}
                 style={[styles.google, { borderColor: colors.accent, marginTop: 24 }]}>
-                {googling || checkingAccount ? <ActivityIndicator color={colors.accent} /> : <Text style={[styles.googleText, { color: colors.accent }]}>{GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? 'Continue with Google' : 'Continue'}</Text>}
+                {googling ? <ActivityIndicator color={colors.accent} /> : <Text style={[styles.googleText, { color: colors.accent }]}>{GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? 'Continue with Google' : 'Continue'}</Text>}
               </Touchable>
+              {googling ? <Text accessibilityRole="status" style={[styles.footnote, { color: colors.textMuted }]}>Opening Google account chooser…</Text> : checkingAccount ? <Text style={[styles.footnote, { color: colors.textMuted }]}>Checking saved account in the background. You can tap Continue now.</Text> : null}
               {!isNative && GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? <Touchable label="Continue on this device" onPress={() => setStage('you')} style={styles.google}><Text style={[styles.googleText, { color: colors.textMuted }]}>Continue on this device</Text></Touchable> : null}
               {error ? <Text accessibilityRole="alert" style={[styles.error, { color: colors.danger }]}>{error}</Text> : null}
             </Animated.View>
