@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { Check, ChevronDown } from 'lucide-react-native';
 import { Text } from '@/components/Text';
@@ -7,6 +7,7 @@ import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
 import { bankAvailable, KUHS_BANK_READY } from '@/lib/kuhsAvailability';
 import { COLLECTED_QUESTION_COUNTS } from '@data/universityPapers/questionBankData';
+import { supabase } from '@/lib/supabase';
 import { UNIVERSITIES, UNIVERSITY_LABEL, UNIVERSITY_SHORT_LABEL, type University } from '@shared/university';
 
 export function UniversityChoice({ value, onChange }: {
@@ -16,6 +17,19 @@ export function UniversityChoice({ value, onChange }: {
   const { colors } = useTheme();
   const { height } = useWindowDimensions();
   const [expanded, setExpanded] = useState(false);
+  const [muhsImportedCount, setMuhsImportedCount] = useState<number | null>(null);
+  useEffect(() => {
+    if (!expanded) return;
+    let live = true;
+    void Promise.all([
+      supabase.from('muhs_pre_final_questions').select('id', { count: 'exact', head: true }),
+      supabase.from('muhs_final_year_questions').select('id', { count: 'exact', head: true }),
+    ]).then(([early, finalYear]) => {
+      if (!live || early.error || finalYear.error) return;
+      if (early.count != null && finalYear.count != null) setMuhsImportedCount(early.count + finalYear.count);
+    }).catch(() => { /* Offline users retain the reviewed-bank count. */ });
+    return () => { live = false; };
+  }, [expanded]);
   return <View style={{ gap: 8 }}>
     <Touchable label={value ? `University: ${UNIVERSITY_SHORT_LABEL[value]}. Change university` : 'Choose your university'}
       state={{ expanded }} onPress={() => setExpanded(open => !open)}
@@ -43,7 +57,9 @@ export function UniversityChoice({ value, onChange }: {
             {UNIVERSITY_SHORT_LABEL[option]}
           </Text>
           <Text style={[styles.detail, { color: colors.textMuted }]}>
-            {option === 'other' ? 'A combined question bank for your studies' : count !== null
+            {option === 'other' ? 'A combined question bank for your studies' : option === 'muhs'
+              ? `${count ?? 0} reviewed offline · ${muhsImportedCount !== null ? `${muhsImportedCount.toLocaleString()} imported OCR records` : 'more imported questions online'}`
+              : count !== null
               ? (count > 0 ? `${count} questions · more papers being added` : 'Papers collected · question review in progress')
               : option === 'kuhs' && !KUHS_BANK_READY
               ? (unavailable ? 'Questions are being checked against the PDFs' : 'Review preview · coverage and references still being checked')
