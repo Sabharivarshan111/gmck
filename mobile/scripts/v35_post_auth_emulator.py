@@ -70,8 +70,22 @@ def snap(filename):
 # Debug APK intentionally bypasses Google; this is the same
 # authenticated -> Continue branch, while the separate signed
 # release smoke checks real Google-picker launch and app survival.
-btn=find('Continue to Orbit')
-assert btn is not None, 'POST-GOOGLE Continue CTA missing from Android accessibility tree'
+btn = None
+for attempt in range(25):
+    btn = find('Continue to Orbit')
+    if btn is not None and btn.attrib.get('clickable') == 'true':
+        break
+    # On a cold x86_64 emulator React Native's release bundle can need
+    # several extra seconds beyond Android's own boot_completed signal.
+    time.sleep(3)
+if btn is None or btn.attrib.get('clickable') != 'true':
+    snap('startup-not-ready.png')
+    root = xml()
+    visible = [label(n) for n in nodes(root) if label(n)]
+    (out/'startup-ui-labels.txt').write_text('\\n'.join(visible[:160]))
+    print('ONBOARDING SCREEN NOT READY. Visible UI labels:', visible[:70], flush=True)
+    print('Process:', adb('shell','pidof',pkg), flush=True)
+    raise AssertionError('POST-GOOGLE Continue CTA missing from Android accessibility tree after retry')
 assert btn.attrib.get('clickable') == 'true', 'POST-GOOGLE Continue is not tappable'
 assert btn.attrib.get('enabled') == 'true', 'POST-GOOGLE Continue unexpectedly disabled'
 im=snap('01-post-google-continue.png')
