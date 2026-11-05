@@ -230,6 +230,22 @@ jobs:
           python3 scripts/check-university-import-artifact.py 'mobile/android/app/build/outputs/apk/**/*.apk' 'mobile/android/app/build/outputs/bundle/**/*.aab'
           python3 scripts/check-university-offline-artifact.py 'mobile/android/app/build/outputs/apk/**/*.apk' 'mobile/android/app/build/outputs/bundle/**/*.aab'
 
+      # Preserve candidates for diagnosis even if the runtime gate fails.
+      - name: Upload AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: orbit-mbbs-aab
+          path: mobile/android/app/build/outputs/bundle/release/*.aab
+          if-no-files-found: error
+
+      - name: Upload APK
+        if: ${{ github.event_name == 'push' || inputs.build_apk }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: orbit-mbbs-apk
+          path: mobile/android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
+
       # This launch gate must run on the actual signed/minified release APK.
       # A successful Gradle build did NOT catch the v31 first-launch crash:
       # the Android emulator identified an unsupported accessibilityRole=status
@@ -251,25 +267,7 @@ jobs:
           emulator-boot-timeout: 360
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
-          script: |
-            set -eu
-            mkdir -p artifacts/android-release-native-startup
-            adb install -r mobile/android/app/build/outputs/apk/release/app-release.apk
-            adb shell am force-stop com.aistudio.mbbsqbank.aycxvd || true
-            adb logcat -c
-            adb shell am start -n com.aistudio.mbbsqbank.aycxvd/.MainActivity
-            sleep 18
-            adb exec-out screencap -p > artifacts/android-release-native-startup/after-launch.png || true
-            adb logcat -d -b crash -v time > artifacts/android-release-native-startup/crash-logcat.txt || true
-            adb logcat -d -v time -s AndroidRuntime:E ReactNativeJS:E > artifacts/android-release-native-startup/js-native-errors.txt || true
-            APP_PID="$(adb shell pidof com.aistudio.mbbsqbank.aycxvd | tr -d '\r')"
-            if [ -z "$APP_PID" ] || grep -q 'FATAL EXCEPTION' artifacts/android-release-native-startup/crash-logcat.txt; then
-              echo "ERROR: Signed release closed or crashed on first launch."
-              tail -n 100 artifacts/android-release-native-startup/crash-logcat.txt || true
-              tail -n 60 artifacts/android-release-native-startup/js-native-errors.txt || true
-              exit 1
-            fi
-            echo "Signed APK stays open after launch on Android API 35. Google account selection still requires device testing."
+          script: bash scripts/android-release-startup-smoke.sh
 
       - name: Save native startup screenshots and error logs
         if: always()
@@ -278,21 +276,6 @@ jobs:
           name: orbit-signed-release-native-startup
           path: artifacts/android-release-native-startup/
           if-no-files-found: warn
-
-      - name: Upload AAB
-        uses: actions/upload-artifact@v4
-        with:
-          name: orbit-mbbs-aab
-          path: mobile/android/app/build/outputs/bundle/release/*.aab
-          if-no-files-found: error
-
-      - name: Upload APK
-        if: ${{ github.event_name == 'push' || inputs.build_apk }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: orbit-mbbs-apk
-          path: mobile/android/app/build/outputs/apk/release/*.apk
-          if-no-files-found: error
 
       # The version the release NOTES claim has to be the version the AAB
       # carries, and it cannot be typed by hand. It was hardcoded to 14 and
