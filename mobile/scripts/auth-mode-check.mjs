@@ -35,6 +35,10 @@ assert.match(firstRun, /<ScrollView[\s\S]*<UniversityChoice[\s\S]*<\/ScrollView>
 assert.doesNotMatch(firstRun, /setStage\('you'\)|stage === 'splash'|STEP 1 OF 2|STEP 2 OF 2/,
   'Do not restore the separate Google-first screen; v27 used one combined setup screen');
 assert.match(firstRun, /minHeight: 56/, 'Primary one-handed Google button must have a generous 56dp target');
+assert.doesNotMatch(firstRun, /accessibilityRole=["']status["']/,
+  'RCTText must not receive unsupported Android accessibilityRole=status; it crashes the signed release at app launch');
+assert.match(firstRun, /accessibilityLiveRegion="polite"/,
+  'Onboarding status text must use Android-compatible live-region announcements');
 assert.equal((firstRun.match(/testID="first-run-google-sign-in"/g) ?? []).length, 1,
   'There must be only one Google sign-in button, pinned in the thumb zone');
 
