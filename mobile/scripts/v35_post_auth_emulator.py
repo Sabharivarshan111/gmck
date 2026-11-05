@@ -72,6 +72,20 @@ def snap(filename):
 # release smoke checks real Google-picker launch and app survival.
 btn = None
 for attempt in range(25):
+    # Only dismiss the system Pixel Launcher ANR observed on cold CI
+    # emulators. Never dismiss an Orbit or Google sign-in ANR.
+    root = xml()
+    titles = [n.attrib.get('text', '') for n in nodes(root)
+              if n.attrib.get('resource-id') == 'android:id/alertTitle']
+    if titles == ["Pixel Launcher isn't responding"]:
+        system_close = next(
+            (n for n in nodes(root)
+             if n.attrib.get('resource-id') == 'android:id/aerr_close'), None
+        )
+        if system_close is not None:
+            tap_node(system_close)
+            print('Dismissed Pixel Launcher system ANR; Orbit dialogs remain untouched', flush=True)
+            time.sleep(3)
     btn = find('Continue to Orbit')
     if btn is not None and btn.attrib.get('clickable') == 'true':
         break
