@@ -1,11 +1,11 @@
-name: Android v31 native crash smoke
+name: Android v32 native launch and Google tap
 
-# Run on the exact signed v31 APK already released as release-1028.
+# Run on the exact main-branch signed v32 APK from build 1032.
 # This tests actual Android launch and a Google sign-in button press, which
 # TypeScript, lint, and Gradle compilation cannot verify.
 on:
   push:
-    branches: [fix/vault-preview-anki-muhs-count-20261105]
+    branches: [fix/android-v32-native-smoke-20261105]
     paths: ['.github/workflows/android-v31-crash-smoke.yml']
   workflow_dispatch:
 
@@ -19,13 +19,13 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - name: Wait for corrected signed v31 release APK (build 1031)
+      - name: Wait for main-branch signed v32 release APK (build 1032)
         id: corrected_release
         uses: actions/github-script@v7
         with:
           script: |
-            const runId = 42016244722;
-            for (let attempt = 0; attempt < 150; attempt++) {
+            const runId = 42018368540;
+            for (let attempt = 0; attempt < 240; attempt++) {
               const { data: run } = await github.rest.actions.getWorkflowRun({
                 ...context.repo, run_id: runId,
               });
@@ -33,7 +33,7 @@ jobs:
                 if (run.conclusion !== 'success') {
                   throw new Error('Corrected v31 release build did not succeed: ' + run.conclusion);
                 }
-                if (run.head_sha !== '69caf8f9526013d018694a8c3917fdb20ce3ffaf') {
+                if (run.head_sha !== 'b4a498cc5b826b1d331c0f649b7f0444c925cbb7') {
                   throw new Error('APK source mismatch, refusing to test stale code: ' + run.head_sha);
                 }
                 core.setOutput('run_id', String(runId));
@@ -42,7 +42,7 @@ jobs:
               await new Promise(resolve => setTimeout(resolve, 10000));
             }
             throw new Error('Corrected Android build did not finish within workflow wait window');
-      - name: Download exact corrected v31 release APK
+      - name: Download exact main-branch v32 release APK
         uses: actions/download-artifact@v4
         with:
           name: orbit-mbbs-apk
@@ -73,7 +73,11 @@ jobs:
             adb logcat -c
             adb shell am start -n com.aistudio.mbbsqbank.aycxvd/.MainActivity
             sleep 15
-            # Original helper's first line names build 1028; replace the label only,\n            # so the artifact log identifies the corrected, SHA-matched APK.\n            sed -i 's/release-1028 SHA 6052733eefeb98d7de112939f9f2b9f4341c723e/release-1031 SHA 69caf8f9526013d018694a8c3917fdb20ce3ffaf/' mobile/scripts/android_v31_crash_smoke.py\n            python3 mobile/scripts/android_v31_crash_smoke.py
+            set -eu
+            # Label the actual SHA-matched APK, then execute the helper.
+            sed -i 's/release-1028 SHA 6052733eefeb98d7de112939f9f2b9f4341c723e/release-1032 SHA b4a498cc5b826b1d331c0f649b7f0444c925cbb7/' mobile/scripts/android_v31_crash_smoke.py
+            python3 mobile/scripts/android_v31_crash_smoke.py
+            grep -q 'Google CTA tap dispatched: True' artifacts/v31-crash-smoke/result.txt
       - name: Upload Android crash evidence and screenshots
         if: always()
         uses: actions/upload-artifact@v4
