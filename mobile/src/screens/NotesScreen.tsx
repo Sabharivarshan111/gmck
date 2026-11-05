@@ -114,6 +114,7 @@ export default function NotesScreen() {
   }, [navigation, simulatorOpen]);
   const [proformasOpen, setProformasOpen] = useState(false);
   const [pgEntranceOpen, setPgEntranceOpen] = useState(false);
+  const [pgInitialExam, setPgInitialExam] = useState<'neet-pg' | 'practice'>('neet-pg');
   const [datasetCasesOpen, setDatasetCasesOpen] = useState(false);
   const [caseLibraryOpen, setCaseLibraryOpen] = useState(false);
   const [activePdfFile, setActivePdfFile] = useState<NoteFile | null>(() => getPendingLaunchPdf());
@@ -229,7 +230,7 @@ export default function NotesScreen() {
       style={[styles.screen, { backgroundColor: colors.background }]}
       contentContainerStyle={[styles.content, { paddingTop: insets.top + 12 }]}
       showsVerticalScrollIndicator={false}>
-      {view.kind === 'vault' ? <VaultView onNotes={() => setView({ kind: 'years' })} onPgPractice={() => setPgEntranceOpen(true)} onFlashcards={() => setFlashcards(true)} onProformas={() => setProformasOpen(true)} onSimulator={() => openSimulator()} onClinicalSkill={id => openSimulator(id)} /> : null}
+      {view.kind === 'vault' ? <VaultView onNotes={() => setView({ kind: 'years' })} onPgPractice={() => {setPgInitialExam('neet-pg'); setPgEntranceOpen(true);}} onMedMcqa={() => {setPgInitialExam('practice'); setPgEntranceOpen(true);}} onFlashcards={() => setFlashcards(true)} onProformas={() => setProformasOpen(true)} onSimulator={() => openSimulator()} onClinicalSkill={id => openSimulator(id)} /> : null}
       {view.kind === 'years' ? (
         <YearsView
           currentYear={profileYear}
@@ -300,7 +301,7 @@ export default function NotesScreen() {
         onClose={() => setProformasOpen(false)}
       />
 
-      <PgEntranceBankModal visible={pgEntranceOpen} onClose={() => setPgEntranceOpen(false)} />
+      <PgEntranceBankModal visible={pgEntranceOpen} initialExam={pgInitialExam} onClose={() => setPgEntranceOpen(false)} />
 
       <ClinicalCaseLibraryModal
         visible={datasetCasesOpen}
@@ -341,18 +342,19 @@ function VaultCardIcon({title, emoji}: {title: string; emoji: string}) {
   return Icon ? <Icon size={44} color={colors.accent} accessible={false} /> : <Text accessible={false} style={styles.yearEmoji}>{emoji}</Text>;
 }
 
-function VaultView({ onNotes, onPgPractice, onSimulator, onClinicalSkill, onProformas, onFlashcards }: { onNotes: () => void; onPgPractice: () => void; onSimulator: () => void; onClinicalSkill: (id: string) => void; onProformas: () => void; onFlashcards: () => void }) {
+function VaultView({ onNotes, onPgPractice, onMedMcqa, onSimulator, onClinicalSkill, onProformas, onFlashcards }: { onNotes: () => void; onPgPractice: () => void; onMedMcqa: () => void; onSimulator: () => void; onClinicalSkill: (id: string) => void; onProformas: () => void; onFlashcards: () => void }) {
   const { colors } = useTheme();
   const textScale = useTextScale();
   const entries = [
     { title: 'Notes', hint: 'Years, subjects & handwritten notes', emoji: '📚', open: onNotes },
     { title: 'PG Practice', label: 'NEET-PG practice questions', hint: 'NEET-PG · AIIMS PG · INI-CET · Practice', emoji: '📝', open: onPgPractice },
-    { title: 'Simulator & Anatomy', hint: 'Explore anatomy & bedside skills', emoji: '🫀', open: onSimulator },
+    { title: 'Simulator & Anatomy', hint: 'Preview heart, lungs & brain · explore bedside skills', emoji: '🫀', open: onSimulator },
+    { title: 'Anki flashcards', hint: 'Decks & spaced repetition', emoji: '📇', open: onFlashcards },
+    { title: 'MedMCQA Practice', hint: '185,636 chapter-wise practice MCQs · offline', emoji: '🧠', open: onMedMcqa },
     { title: 'Case proformas', hint: 'History & examination guides', emoji: '📋', open: onProformas },
     ...NATIVE_CLINICAL_SKILLS
       .filter(skill => ['stethoscope', 'ecg12', 'ultrasound', 'radiology', 'pupil', 'piccled'].includes(skill.id))
       .map(skill => ({ title: skill.title, label: skill.title, hint: skill.hint, emoji: skill.emoji, open: () => onClinicalSkill(skill.id) })),
-    { title: 'Anki flashcards', hint: 'Decks & spaced repetition', emoji: '📇', open: onFlashcards },
   ];
   return <>
     <Text style={[styles.title, { color: colors.text }]}>Vault</Text>
