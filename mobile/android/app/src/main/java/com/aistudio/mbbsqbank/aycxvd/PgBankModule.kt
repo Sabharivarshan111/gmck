@@ -36,5 +36,28 @@ class PgBankModule(private val context: ReactApplicationContext) : NativeOrbitPg
       } catch (error: Exception) { promise.reject("PG_PACK_READ", error.message, error) }
     }
   }
+
+  override fun readUniversityPack(id: String, sha256: String, promise: Promise) {
+    worker.execute {
+      try {
+        require(id.matches(Regex("u[0-9]{2,3}")) && sha256.matches(Regex("[0-9a-f]{64}"))) { "Invalid university offline pack" }
+        val packed = context.assets.open("university/$id-${sha256.take(12)}.zst").use { it.readBytes() }
+        require(packed.size <= 10000000) { "Oversized university offline pack" }
+        val actual = MessageDigest.getInstance("SHA-256").digest(packed).joinToString("") { "%02x".format(it) }
+        require(actual == sha256) { "University pack checksum mismatch" }
+        val decoded = ByteArrayOutputStream()
+        ZstdInputStream(ByteArrayInputStream(packed)).use { input ->
+          val buffer = ByteArray(16384)
+          while (true) {
+            val count = input.read(buffer)
+            if (count < 0) break
+            require(decoded.size() + count <= 20000000) { "University pack exceeds decoded limit" }
+            decoded.write(buffer, 0, count)
+          }
+        }
+        promise.resolve(decoded.toString("UTF-8"))
+      } catch (error: Exception) { promise.reject("UNIVERSITY_PACK_READ", error.message, error) }
+    }
+  }
   override fun invalidate() { worker.shutdown(); super.invalidate() }
 }
