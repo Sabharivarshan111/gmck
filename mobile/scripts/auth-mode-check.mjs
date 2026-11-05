@@ -16,8 +16,8 @@ const firstRun = fs.readFileSync(new URL('../src/components/FirstRun.tsx', impor
 const vault = fs.readFileSync(new URL('../src/screens/NotesScreen.tsx', import.meta.url), 'utf8');
 assert.match(vault, /title: 'NEET PG Practice Questions'/, 'Vault should use user-facing NEET PG name');
 assert.doesNotMatch(vault, /title: 'MedMCQA Practice'/, 'Do not expose MedMCQA provider name on the Vault tile');
-assert.match(firstRun, /testID="first-run-google-sign-in"[\s\S]{0,500}disabled=\{googling\s*\|\|\s*googleAuthenticated\}/,
-  'Google sign-in must be enabled while the saved-account lookup runs, and stop after success');
+assert.match(firstRun, /testID="first-run-google-sign-in"[\s\S]{0,250}disabled=\{googling\}/,
+  'Google sign-in must respond to the first tap while the saved-account lookup runs');
 assert.match(firstRun, /<Touchable[\s\S]{0,100}testID="first-run-google-sign-in"/,
   'Restore v27 native sign-in Touchable used by the known-working one-tap flow');
 assert.doesNotMatch(firstRun, /disabled=\{googling\s*\|\|\s*checkingAccount\}/,
@@ -30,10 +30,13 @@ assert.doesNotMatch(firstRun, /if \(isNative\) configureGoogleSignIn\(\);/,
   'Never eagerly configure native Google SDK during onboarding mount; v27 did so on tap');
 assert.match(firstRun, /Opening Google account chooser/,
   'Show immediate progress so a delayed native account picker never looks unresponsive');
-assert.match(firstRun, /<ScrollView[\s\S]*testID="first-run-google-sign-in"[\s\S]*<UniversityChoice[\s\S]*testID="first-run-start-studying"[\s\S]*<\/ScrollView>/,
-  'Google, university, name and year must stay together on one scrollable setup screen');
+assert.match(firstRun, /<ScrollView[\s\S]*<UniversityChoice[\s\S]*<\/ScrollView>[\s\S]*styles\.actionBar[\s\S]*testID="first-run-google-sign-in"[\s\S]*testID="first-run-start-studying"/,
+  'Google and Start actions must be pinned below the single scrollable study-setup screen');
 assert.doesNotMatch(firstRun, /setStage\('you'\)|stage === 'splash'|STEP 1 OF 2|STEP 2 OF 2/,
   'Do not restore the separate Google-first screen; v27 used one combined setup screen');
+assert.match(firstRun, /minHeight: 56/, 'Primary one-handed Google button must have a generous 56dp target');
+assert.equal((firstRun.match(/testID="first-run-google-sign-in"/g) ?? []).length, 1,
+  'There must be only one Google sign-in button, pinned in the thumb zone');
 
 
 function evaluate(source, dev, modules = {}) {
