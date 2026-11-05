@@ -52,7 +52,6 @@ export default function OfflineUniversityBankScreen({university,initialYear,onSw
   const [noted,setNoted]=useState<OfflineUniversityQuestion|null>(null);
 
   const subjects=useMemo(()=>offlineUniversitySubjects(university,year),[university,year]);
-  const chosen=subjects.find(p=>p.subject===subject);
   useEffect(()=>{
     if(!subject){setRows([]);return;}
     let live=true;
