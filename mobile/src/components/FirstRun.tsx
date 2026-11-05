@@ -97,7 +97,7 @@ export function FirstRun() {
   const start = useCallback(async () => {
     if (saving) return;
     if (isNative && !googleAuthenticated) {
-      setError('Please sign in with Google above to safeguard your progress and unlock setup.');
+      setError('Please tap Continue with Google below to safeguard your progress and unlock setup.');
       return;
     }
     if (!year) {
@@ -187,54 +187,14 @@ export function FirstRun() {
             Sign in and set up your studies here. Choose your name, university, year and preparation goal.
           </Text>
 
-          {/* v27 parity: launch Google from the SAME screen as name/year/university.
-              No intermediate welcome-to-profile transition around the native account picker. */}
+          {/* v27 parity: account picker and study setup belong to this same screen.
+              The one-tap Google action is pinned in the thumb-friendly footer. */}
           {GOOGLE_SIGN_IN_ENABLED ? (
-            <>
-              <Touchable
-                testID="first-run-google-sign-in"
-                label={googleAuthenticated ? 'Signed in with Google' : 'Continue with Google'}
-                state={{ busy: googling }}
-                disabled={googling || googleAuthenticated}
-                scaleTo={0.98}
-                onPress={() => { void withGoogle(); }}
-                style={[styles.google, {
-                  borderColor: googleAuthenticated ? colors.green : colors.accent,
-                  backgroundColor: googleAuthenticated
-                    ? withAlpha(colors.green, 0.1)
-                    : colors.cardElevated,
-                  marginBottom: 8,
-                }]}>
-                {googling ? (
-                  <ActivityIndicator color={colors.accent} />
-                ) : (
-                  <Text style={[styles.googleText, {
-                    color: googleAuthenticated ? colors.green : colors.text,
-                  }]}>
-                    {googleAuthenticated ? 'Signed in with Google' : 'Continue with Google'}
-                  </Text>
-                )}
-              </Touchable>
-              {googling ? (
-                <Text accessibilityRole="status" style={[styles.footnote, { color: colors.textMuted }]}>
-                  Opening Google account chooser…
-                </Text>
-              ) : checkingAccount && !googleAuthenticated ? (
-                <Text style={[styles.footnote, { color: colors.textMuted }]}>
-                  Checking saved account. You can tap Continue with Google now.
-                </Text>
-              ) : null}
-              {!googleAuthenticated ? (
-                <Text style={[styles.footnote, { color: colors.textMuted }]}>
-                  One-time Google sign-in protects your study progress.
-                </Text>
-              ) : null}
-              {error && !googleAuthenticated ? (
-                <Text accessibilityRole="alert" style={[styles.error, { color: colors.danger }]}>
-                  {error}
-                </Text>
-              ) : null}
-            </>
+            <Text style={[styles.footnote, { color: colors.textMuted, marginBottom: 4 }]}>
+              {googleAuthenticated
+                ? 'Google account connected. Finish your study setup below.'
+                : 'Choose your year and university here, then tap Continue with Google below.'}
+            </Text>
           ) : null}
 
             {/* Profile Setup: Display Name & Year (Gated on Google Sign-In for native) */}
@@ -243,7 +203,7 @@ export function FirstRun() {
                 <View style={styles.lockNoticeRow}>
                   <Lock size={14} color={colors.accent} />
                   <Text style={[styles.lockNoticeText, { color: colors.accent }]}>
-                    Sign in with Google above to unlock profile setup
+                    Use Continue with Google below to unlock profile setup
                   </Text>
                 </View>
               ) : null}
@@ -284,7 +244,7 @@ export function FirstRun() {
                       key={option}
                       onPress={() => {
                         if (!googleAuthenticated && isNative) {
-                          setError('Please sign in with Google above first.');
+                          setError('Please tap Continue with Google below first.');
                           return;
                         }
                         setYear(option);
@@ -336,35 +296,54 @@ export function FirstRun() {
               <Text style={[styles.footnote, { color: colors.textMuted }]}>Every choice takes you to your home screen. You can change it later.</Text>
             </View>
 
-            {error && (googleAuthenticated || !GOOGLE_SIGN_IN_ENABLED) ? (
-              <Text
-                accessibilityLiveRegion="polite"
+          </ScrollView>
+
+          {/* One-handed thumb zone: the primary action stays at the bottom.
+              After Google succeeds the *same* action region becomes Start studying. */}
+          <View style={[styles.actionBar, { borderTopColor: colors.border, backgroundColor: colors.background }]}>
+            {error ? (
+              <Text accessibilityRole="alert" accessibilityLiveRegion="polite"
                 style={[styles.error, { color: colors.danger }]}>
                 {error}
               </Text>
             ) : null}
-
-            <Touchable
-              onPress={start}
-              testID="first-run-start-studying"
-              // Live with no year on purpose: a dead button explains nothing,
-              // and the reader who has not noticed the year row is exactly the
-              // one who would press this. It says what is missing instead.
-              disabled={saving}
-              state={{ busy: saving }}
-              label={!year ? 'Choose your year first' : !university ? 'Choose your university first' : 'Start studying'}
-              style={[styles.startButton, (!year || !university) && styles.startPending]}>
-              <GradientFill from="#FFFFFF" to={colors.fuchsia} borderRadius={14} />
-              {saving ? (
-                <ActivityIndicator color="#1A0A1F" />
-              ) : (
-                <Text style={styles.startText}>Start studying</Text>
-              )}
-            </Touchable>
-            <Text style={[styles.footnote, { color: colors.textMuted }]}>
-              You can change your year and university later in Settings.
+            {GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? (
+              <Touchable
+                testID="first-run-google-sign-in"
+                label="Continue with Google"
+                state={{ busy: googling }}
+                disabled={googling}
+                scaleTo={0.98}
+                onPress={() => { void withGoogle(); }}
+                style={[styles.google, { borderColor: colors.accent, backgroundColor: colors.cardElevated }]}>
+                {googling ? <ActivityIndicator color={colors.accent} /> : (
+                  <Text style={[styles.googleText, { color: colors.text }]}>Continue with Google</Text>
+                )}
+              </Touchable>
+            ) : (
+              <Touchable
+                onPress={start}
+                testID="first-run-start-studying"
+                disabled={saving}
+                state={{ busy: saving }}
+                label={!year ? 'Choose your year first' : !university ? 'Choose your university first' : 'Start studying'}
+                style={[styles.startButton, (!year || !university) && styles.startPending]}>
+                <GradientFill from="#FFFFFF" to={colors.fuchsia} borderRadius={14} />
+                {saving ? <ActivityIndicator color="#1A0A1F" /> : (
+                  <Text style={styles.startText}>Start studying</Text>
+                )}
+              </Touchable>
+            )}
+            <Text accessibilityRole="status" style={[styles.footnote, { color: colors.textMuted, marginTop: 6 }]}>
+              {googling
+                ? 'Opening Google account chooser…'
+                : checkingAccount && !googleAuthenticated
+                  ? 'Checking saved account. One tap will open Google.'
+                  : googleAuthenticated
+                    ? 'You can change your year and university later in Settings.'
+                    : 'One-time Google sign-in secures your study progress.'}
             </Text>
-          </ScrollView>
+          </View>
       </KeyboardSafe>
     </Modal>
   );
@@ -373,7 +352,12 @@ export function FirstRun() {
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    paddingHorizontal: 24,
+    paddingHorizontal: 20,
+  },
+  actionBar: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    paddingTop: 12,
+    paddingBottom: 4,
   },
   splash: {
     flex: 1,
@@ -409,7 +393,7 @@ const styles = StyleSheet.create({
     lineHeight: 19,
   },
   form: {
-    paddingBottom: 32,
+    paddingBottom: 16,
     justifyContent: 'center',
     flexGrow: 1,
   },
@@ -430,7 +414,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 48,
+    minHeight: 56,
   },
   googleText: {
     ...typeScale.bodyStrong,
