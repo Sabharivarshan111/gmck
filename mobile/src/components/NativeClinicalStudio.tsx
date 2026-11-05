@@ -111,6 +111,19 @@ export default function NativeClinicalStudio({ onExit, onOpen, scenarioId, onSce
           <ChevronRight color={c.accent} size={22} />
         </Pressable>
 
+        {/* Keep the same clearly labelled free preview entry as the web simulator. */}
+        <Pressable testID="studio-native-free-preview" accessibilityRole="button"
+          accessibilityLabel="Free anatomy preview, heart lungs and brain"
+          onPress={() => onOpen({ kind: 'anatomy' })}
+          style={[styles.preview, { backgroundColor: c.raised, borderColor: c.border }]}>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.previewKicker, { color: c.accent }]}>FREE PREVIEW</Text>
+            <Text style={{ color: c.ink, fontWeight: '700', fontSize: 15, marginTop: 5 }}>Heart, lungs & brain</Text>
+            <Text style={[styles.hint, { color: c.muted, marginTop: 3 }]}>Explore sample anatomy and normal clinical findings, as on the website.</Text>
+          </View>
+          <ChevronRight color={c.accent} size={22} />
+        </Pressable>
+
         <View style={[styles.segment, buttonStyle(16)]}>
           {(['skills','cases'] as const).map(k => (
             <Pressable key={k} testID={`studio-native-${k}`} accessibilityRole="button" onPress={() => { setSection(k); setQuery(''); }}
@@ -214,6 +227,8 @@ const styles = StyleSheet.create({
   anatomy: { paddingHorizontal: 18, paddingVertical: 22, flexDirection: 'row', alignItems: 'center', gap: 14 },
   anatomyTitle: { fontSize: 16, fontWeight: '700' },
   hint: { fontSize: 13, lineHeight: 19.5 },
+  preview: { flexDirection: 'row', alignItems: 'center', borderRadius: 18, borderWidth: 1, paddingHorizontal: 16, paddingVertical: 15, marginTop: 12, gap: 12 },
+  previewKicker: { fontSize: 10, fontWeight: '800', letterSpacing: 1.5 },
   segment: { padding: 4, flexDirection: 'row', gap: 4, marginTop: 24, marginBottom: 16 },
   segmentItem: { minHeight: 48, flex: 1, justifyContent: 'center', borderRadius: 12 },
   baseline: { padding: 16 },
