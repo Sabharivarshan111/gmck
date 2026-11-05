@@ -54,7 +54,27 @@ if original_pid:
     (OUT / "ui.xml").write_text(xml.stdout or "", encoding="utf-8")
     if xml.returncode == 0:
         try:
-            for node in ET.fromstring(xml.stdout).iter():
+            root = ET.fromstring(xml.stdout)
+            # A cold CI emulator may show its launcher's ANR over the app.
+            # Dismiss ONLY that observed system dialog; never dismiss an Orbit ANR.
+            titles = [n.attrib.get("text", "") for n in root.iter()
+                      if n.attrib.get("resource-id") == "android:id/alertTitle"]
+            if titles == ["Pixel Launcher isn't responding"]:
+                for control in root.iter():
+                    if control.attrib.get("resource-id") == "android:id/aerr_close":
+                        bounds = re.fullmatch(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]",
+                                              control.attrib.get("bounds", ""))
+                        if bounds:
+                            x1, y1, x2, y2 = map(int, bounds.groups())
+                            adb("shell", "input", "tap", str((x1 + x2) // 2), str((y1 + y2) // 2))
+                            report("Dismissed Pixel Launcher ANR; Orbit ANRs are never dismissed")
+                            time.sleep(2)
+                            adb("shell", "uiautomator", "dump", "/sdcard/orbit-ui.xml")
+                            xml = adb("exec-out", "cat", "/sdcard/orbit-ui.xml")
+                            (OUT / "ui.xml").write_text(xml.stdout or "", encoding="utf-8")
+                            root = ET.fromstring(xml.stdout)
+                        break
+            for node in root.iter():
                 label = (node.attrib.get("content-desc", "") + " " +
                          node.attrib.get("text", "")).lower()
                 # Match the actual enabled control, never explanatory text.
