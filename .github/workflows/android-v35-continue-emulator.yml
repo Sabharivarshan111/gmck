@@ -3,7 +3,9 @@ name: Android v35 post-Google Continue rendering and entry smoke
 on:
   push:
     branches: [qa/android-v35-continue-emulator-20261106]
-    paths: ['.github/workflows/android-v35-continue-emulator.yml']
+    paths:
+      - '.github/workflows/android-v35-continue-emulator.yml'
+      - 'mobile/scripts/v35_post_auth_emulator.py'
   workflow_dispatch:
 
 permissions:
