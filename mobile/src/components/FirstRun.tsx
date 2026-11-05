@@ -335,7 +335,7 @@ export function FirstRun() {
                 )}
               </Touchable>
             )}
-            <Text accessibilityRole="status" style={[styles.footnote, { color: colors.textMuted, marginTop: 6 }]}>
+            <Text accessibilityLiveRegion="polite" style={[styles.footnote, { color: colors.textMuted, marginTop: 6 }]}>
               {googling
                 ? 'Opening Google account chooser…'
                 : checkingAccount && !googleAuthenticated
