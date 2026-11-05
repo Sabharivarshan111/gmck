@@ -195,7 +195,7 @@ export function FirstRun() {
           {
             backgroundColor: colors.background,
             paddingTop: insets.top + 24,
-            paddingBottom: insets.bottom + 8,
+            paddingBottom: insets.bottom + 24,
           },
         ]}>
         <ScrollView
