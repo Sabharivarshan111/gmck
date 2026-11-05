@@ -53,5 +53,27 @@ for (const policy of ['manifest.optJSONObject(path)', 'MessageDigest.getInstance
 for (const symbol of ['SimulatorStudio','AnatomicalBody3D','DiagnosticTools','IcuMonitor','OrganDetailDrawer']) {
   assert.ok(web.includes(symbol), 'Vercel reference source missing: ' + symbol);
 }
+// Verified purchase must remove Preview on Android just as on the website.
+// The native and WebGL layers must both enforce sample restrictions.
+const nativeEntitlement = src('src/lib/simulatorEntitlement.ts');
+const premiumCache = src('src/lib/premium.ts');
+const websiteEntitlement = readFileSync(resolve(here, '../../src/lib/website-premium.ts'),'utf8');
+const sampleGate = readFileSync(resolve(here, '../../src/simulator/SimulatorAccess.tsx'),'utf8');
+assert.match(websiteEntitlement,/\.eq\('plan', 'adfree_monthly'\)/);
+assert.match(premiumCache,/\.eq\('plan', 'adfree_monthly'\)/,'Android must verify the same subscription as the website');
+assert.match(nativeEntitlement,/syncPremiumCache\(\)/,'Android access must come from server-backed account Premium');
+assert.match(nativeEntitlement,/setLoading\(true\)/,'Do not flash the free banner before verifying paid status');
+assert.match(studio,/\{!premiumActive \? \(/,'The free-preview card must be hidden for paid users');
+assert.match(studio,/testID="studio-native-free-preview"/);
+assert.match(entry,/useSimulatorEntitlement\(focused\)/);
+assert.match(entry,/if \(premiumLoading\) return wrap/,'Do not render Preview while a subscriber is loading');
+assert.match(entry,/destination.kind !== 'anatomy'/,'Guard native cases and advanced diagnostic tools');
+assert.match(entry,/premiumActive=\{premiumActive\}/,'Pass verified access to the native studio');
+assert.match(entry,/nativePremium=' \+ \(premiumActive \? '1' : '0'\)/,'Pass entitlement to WebGL');
+assert.match(renderer,/SimulatorAccessContext.Provider value=\{\{ active: premiumFromNative/,'Local WebGL must enforce canonical sample restrictions');
+assert.match(sampleGate,/if \(access.active\) return null/,'The preview banner must disappear after purchase');
+assert.match(view,/ORBIT_NATIVE_PREMIUM_REQUEST/,'Locked renderer actions must return to a native upgrade screen');
+console.log('PASS: unpaid Android shows sample preview; verified Premium hides it and unlocks both the native studio and bundled WebGL.');
+
 console.log('PASS: Android genuine native studio, cases, monitor and ECG are routed; outdated fake studio absent.');
 console.log('Canonical anatomy/diagnostic renderer is local, with pinned persistent model downloads. WIP: actual device appearance, gestures, sound and full Vault parity still need screenshot/functional proof.');
