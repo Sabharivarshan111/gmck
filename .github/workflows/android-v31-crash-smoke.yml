@@ -1,0 +1,107 @@
+name: Android v31 native crash smoke
+
+# Run on the exact signed v31 APK already released as release-1028.
+# This tests actual Android launch and a Google sign-in button press, which
+# TypeScript, lint, and Gradle compilation cannot verify.
+on:
+  push:
+    branches: [fix/vault-preview-anki-muhs-count-20261105]
+    paths: ['.github/workflows/android-v31-crash-smoke.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  native-crash-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact signed v31 release APK (build 1028)
+        uses: actions/download-artifact@v4
+        with:
+          name: orbit-mbbs-apk
+          path: downloaded-apk
+          run-id: 42001671985
+          github-token: ${{ github.token }}
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Launch production APK and attempt first Google tap on Android 15
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_7
+          emulator-boot-timeout: 360
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
+          script: |
+            set -euo pipefail
+            mkdir -p artifacts/v31-crash-smoke
+            echo "APK: GitHub release-1028, SHA 6052733eefeb98d7de112939f9f2b9f4341c723e" > artifacts/v31-crash-smoke/result.txt
+            adb shell wm size 1080x2400
+            adb shell wm density 440
+            adb install -r downloaded-apk/app-release.apk
+            adb shell am force-stop com.aistudio.mbbsqbank.aycxvd || true
+            adb logcat -c
+            adb shell am start -n com.aistudio.mbbsqbank.aycxvd/.MainActivity
+            sleep 15
+            adb exec-out screencap -p > artifacts/v31-crash-smoke/after-launch.png || true
+            adb shell uiautomator dump /sdcard/orbit-ui.xml >/dev/null 2>&1 || true
+            adb exec-out cat /sdcard/orbit-ui.xml > artifacts/v31-crash-smoke/ui.xml || true
+            python3 - <<'PY'
+            import re, subprocess, xml.etree.ElementTree as ET
+            path='artifacts/v31-crash-smoke/result.txt'
+            def pid():
+                return subprocess.run(['adb','shell','pidof','com.aistudio.mbbsqbank.aycxvd'], capture_output=True, text=True).stdout.strip()
+            before=pid()
+            with open(path,'a') as out: out.write(f'Process after first launch: {before or "NOT RUNNING"}\n')
+            if before:
+                try:
+                    root=ET.parse('artifacts/v31-crash-smoke/ui.xml').getroot()
+                    found=False
+                    for n in root.iter():
+                        label=(n.attrib.get('content-desc','')+' '+n.attrib.get('text','')).lower()
+                        if 'continue with google' not in label: continue
+                        bounds=n.attrib.get('bounds','')
+                        m=re.match(r'\[(\d+),(\d+)\]\[(\d+),(\d+)\]',bounds)
+                        if not m: continue
+                        x1,y1,x2,y2=map(int,m.groups())
+                        subprocess.run(['adb','shell','input','tap',str((x1+x2)//2),str((y1+y2)//2)],check=True)
+                        with open(path,'a') as out: out.write(f'Tapped native Google CTA at {((x1+x2)//2,(y1+y2)//2)}\n')
+                        found=True
+                        break
+                    if not found:
+                        with open(path,'a') as out: out.write('Google CTA not in accessibility dump; no sign-in claim made\n')
+                except Exception as e:
+                    with open(path,'a') as out: out.write(f'Could not drive CTA: {type(e).__name__}\n')
+            PY
+            sleep 12
+            adb exec-out screencap -p > artifacts/v31-crash-smoke/after-google-tap.png || true
+            adb logcat -d -v time -s AndroidRuntime:E ReactNativeJS:E > artifacts/v31-crash-smoke/errors.txt || true
+            adb shell pidof com.aistudio.mbbsqbank.aycxvd > artifacts/v31-crash-smoke/pid-after.txt || true
+            if ! grep -q '[0-9]' artifacts/v31-crash-smoke/pid-after.txt; then
+              echo 'FAIL: app process was not running after launch/tap' | tee -a artifacts/v31-crash-smoke/result.txt
+              tail -n 100 artifacts/v31-crash-smoke/errors.txt
+              exit 1
+            fi
+            if grep -q 'FATAL EXCEPTION' artifacts/v31-crash-smoke/errors.txt; then
+              echo 'FAIL: AndroidRuntime fatal exception recorded' | tee -a artifacts/v31-crash-smoke/result.txt
+              tail -n 100 artifacts/v31-crash-smoke/errors.txt
+              exit 1
+            fi
+            echo 'PASS: no fatal process exit observed on emulator; Google authentication success NOT tested' | tee -a artifacts/v31-crash-smoke/result.txt
+      - name: Upload Android crash evidence and screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: orbit-v31-android-native-crash-smoke
+          path: artifacts/v31-crash-smoke/
+          if-no-files-found: warn
+          retention-days: 7
