@@ -8,6 +8,25 @@ const modeSource = fs.readFileSync(new URL('../src/lib/authMode.ts', import.meta
 const authSource = fs.readFileSync(new URL('../src/lib/googleAuth.ts', import.meta.url), 'utf8');
 const debugApk = process.argv.includes('--debug-apk');
 
+// Regression: on a fresh installation the saved Supabase session may take
+// seconds to hydrate from Android secure storage. It must not eat the first
+// press of "Continue with Google". The button launches sign-in immediately,
+// while any account check completes independently.
+const firstRun = fs.readFileSync(new URL('../src/components/FirstRun.tsx', import.meta.url), 'utf8');
+assert.match(firstRun, /testID="first-run-google-sign-in" disabled=\{googling\}/,
+  'Continue with Google must be enabled while the saved-account lookup runs');
+assert.doesNotMatch(firstRun, /disabled=\{googling\s*\|\|\s*checkingAccount\}/,
+  'Background account hydration must not disable the Google button');
+assert.match(firstRun, /if \(googleSignInInFlight\.current\) return;/,
+  'Repeated taps during the same render must not launch competing Google pickers');
+assert.match(firstRun, /googleSignInInFlight\.current = true;/,
+  'The native account chooser needs a synchronous in-flight guard');
+assert.match(firstRun, /if \(isNative\) configureGoogleSignIn\(\);/,
+  'Configure the native Google client before the first user tap');
+assert.match(firstRun, /Opening Google account chooser/,
+  'Show immediate progress so a delayed native account picker never looks unresponsive');
+
+
 function evaluate(source, dev, modules = {}) {
   const exports = {};
   vm.runInNewContext(
