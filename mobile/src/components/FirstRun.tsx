@@ -2,7 +2,6 @@ import { GOOGLE_SIGN_IN_ENABLED } from '@/lib/authMode';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  Animated,
   Image,
   Modal,
   Platform,
@@ -19,7 +18,6 @@ import { Touchable } from '@/components/Touchable';
 import { GradientFill } from '@/components/Gradient';
 import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
-import { DURATION, EASE, SPRING, useReducedMotion } from '@/theme/motion';
 import { type LocalProfile, type Year } from '@/lib/profile';
 import { YEAR_LABEL } from '@/lib/questionBank';
 import { YEAR_TO_KEY } from '@/lib/profile';
@@ -53,9 +51,7 @@ export function FirstRun() {
   const { colors } = useTheme();
   const { local, hydrated, save } = useProfile();
   const insets = useSafeAreaInsets();
-  const reduced = useReducedMotion();
 
-  const [stage, setStage] = useState<'splash' | 'you'>('splash');
   const [goal, setGoal] = useState<LocalProfile['preparationGoal']>('university-pyqs');
   const [name, setName] = useState('');
   const [year, setYear] = useState<Year | null>(null);
@@ -98,35 +94,6 @@ export function FirstRun() {
     return () => setTourPaused(false);
   }, [needed]);
 
-  // ---- the welcome ---------------------------------------------------------
-  const rise = useRef(new Animated.Value(0)).current;
-  const icon = useRef(new Animated.Value(0.9)).current;
-
-  useEffect(() => {
-    if (!needed || stage !== 'splash') {
-      return;
-    }
-    if (reduced) {
-      rise.setValue(1);
-      icon.setValue(1);
-    } else {
-      Animated.parallel([
-        Animated.timing(rise, {
-          toValue: 1,
-          duration: DURATION.slow,
-          easing: EASE.out,
-          useNativeDriver: true,
-        }),
-        // From 0.9, never from 0: a mark that scales up out of nothing reads as
-        // materialising rather than arriving (CLAUDE.md, "Nothing scales from
-        // 0"). It is the app's own icon, and it should look like it was already
-        // there.
-        Animated.spring(icon, { toValue: 1, ...SPRING.default, useNativeDriver: true }),
-      ]).start();
-    }
-
-  }, [needed, stage, reduced, rise, icon]);
-
   const start = useCallback(async () => {
     if (saving) return;
     if (isNative && !googleAuthenticated) {
@@ -165,7 +132,6 @@ export function FirstRun() {
     try {
       const account = await signInWithGoogle();
       setGoogleAuthenticated(true);
-      setStage('you');
       if (account?.name && !name.trim()) {
         setName(account.name.split(' ')[0] ?? account.name);
       }
@@ -184,9 +150,6 @@ export function FirstRun() {
   if (!needed) {
     return null;
   }
-
-  const splash = stage === 'splash';
-
 
   return (
     <Modal visible transparent={false} animationType="fade" statusBarTranslucent>
@@ -211,65 +174,68 @@ export function FirstRun() {
             paddingBottom: insets.bottom + 24,
           },
         ]}>
-        {splash ? (
-          <View style={styles.splash}>
-            <Animated.View style={{ transform: [{ scale: icon }] }}>
-              <Image
-                source={APP_ICON}
-                style={styles.icon}
-                accessibilityLabel="Orbit"
-              />
-            </Animated.View>
-            <Animated.View
-              style={{
-                opacity: rise,
-                transform: reduced
-                  ? []
-                  : [{ translateY: rise.interpolate({ inputRange: [0, 1], outputRange: [16, 0] }) }],
-              }}>
-              <Text accessibilityRole="header" style={[styles.welcome, { color: colors.text }]}>
-                Welcome to Orbit
-              </Text>
-              <Text style={[styles.label, { color: colors.accent, textAlign: 'center' }]}>STEP 1 OF 2</Text>
-              <Text style={[styles.made, { color: colors.accent }]}>Made by the community</Text>
-              <Text style={[styles.madeSub, { color: colors.textMuted }]}>
-                Past papers, notes and clinical practice, together.
-              </Text>
-              {/* Reuse the exact v27 touch primitive for Google sign-in:
-                  same native activity launch timing and pointer dispatch.
-                  Never gate the button on the background account lookup. */}
+        <ScrollView
+          key="first-run-setup"
+          contentContainerStyle={styles.form}
+          keyboardShouldPersistTaps="always"
+          showsVerticalScrollIndicator={false}>
+          <Image source={APP_ICON} style={styles.iconSmall} accessibilityLabel="Orbit" />
+          <Text accessibilityRole="header" style={[styles.title, { color: colors.text }]}>
+            Welcome to Orbit
+          </Text>
+          <Text style={[styles.subtitle, { color: colors.textMuted }]}>
+            Sign in and set up your studies here. Choose your name, university, year and preparation goal.
+          </Text>
+
+          {/* v27 parity: launch Google from the SAME screen as name/year/university.
+              No intermediate welcome-to-profile transition around the native account picker. */}
+          {GOOGLE_SIGN_IN_ENABLED ? (
+            <>
               <Touchable
                 testID="first-run-google-sign-in"
-                label={GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? 'Continue with Google' : 'Continue'}
+                label={googleAuthenticated ? 'Signed in with Google' : 'Continue with Google'}
                 state={{ busy: googling }}
-                disabled={googling}
+                disabled={googling || googleAuthenticated}
                 scaleTo={0.98}
-                onPress={() => { if (GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated) void withGoogle(); else setStage('you'); }}
-                style={[styles.google, { borderColor: colors.accent, marginTop: 24 }]}>
-                {googling ? <ActivityIndicator color={colors.accent} /> : <Text style={[styles.googleText, { color: colors.accent }]}>{GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? 'Continue with Google' : 'Continue'}</Text>}
+                onPress={() => { void withGoogle(); }}
+                style={[styles.google, {
+                  borderColor: googleAuthenticated ? colors.green : colors.accent,
+                  backgroundColor: googleAuthenticated
+                    ? withAlpha(colors.green, 0.1)
+                    : colors.cardElevated,
+                  marginBottom: 8,
+                }]}>
+                {googling ? (
+                  <ActivityIndicator color={colors.accent} />
+                ) : (
+                  <Text style={[styles.googleText, {
+                    color: googleAuthenticated ? colors.green : colors.text,
+                  }]}>
+                    {googleAuthenticated ? 'Signed in with Google' : 'Continue with Google'}
+                  </Text>
+                )}
               </Touchable>
-              {googling ? <Text accessibilityRole="status" style={[styles.footnote, { color: colors.textMuted }]}>Opening Google account chooser…</Text> : checkingAccount ? <Text style={[styles.footnote, { color: colors.textMuted }]}>Checking saved account in the background. You can tap Continue now.</Text> : null}
-              {!isNative && GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? <Touchable label="Continue on this device" onPress={() => setStage('you')} style={styles.google}><Text style={[styles.googleText, { color: colors.textMuted }]}>Continue on this device</Text></Touchable> : null}
-              {error ? <Text accessibilityRole="alert" style={[styles.error, { color: colors.danger }]}>{error}</Text> : null}
-            </Animated.View>
-          </View>
-        ) : (
-          <ScrollView key="study-setup"
-            contentContainerStyle={styles.form}
-            keyboardShouldPersistTaps="always"
-            showsVerticalScrollIndicator={false}>
-            <Text style={[styles.label, { color: colors.accent }]}>STEP 2 OF 2</Text>
-            <Image
-              source={APP_ICON}
-              style={styles.iconSmall}
-              accessibilityLabel="Orbit"
-            />
-            <Text accessibilityRole="header" style={[styles.title, { color: colors.text }]}>
-              Make Orbit yours
-            </Text>
-            <Text style={[styles.subtitle, { color: colors.textMuted }]}>
-              Choose your year and university to get the right past papers.
-            </Text>
+              {googling ? (
+                <Text accessibilityRole="status" style={[styles.footnote, { color: colors.textMuted }]}>
+                  Opening Google account chooser…
+                </Text>
+              ) : checkingAccount && !googleAuthenticated ? (
+                <Text style={[styles.footnote, { color: colors.textMuted }]}>
+                  Checking saved account. You can tap Continue with Google now.
+                </Text>
+              ) : null}
+              {!googleAuthenticated ? (
+                <Text style={[styles.footnote, { color: colors.textMuted }]}>
+                  One-time Google sign-in protects your study progress.
+                </Text>
+              ) : null}
+              {error && !googleAuthenticated ? (
+                <Text accessibilityRole="alert" style={[styles.error, { color: colors.danger }]}>
+                  {error}
+                </Text>
+              ) : null}
+            </>
+          ) : null}
 
             {/* Profile Setup: Display Name & Year (Gated on Google Sign-In for native) */}
             <View style={!googleAuthenticated && isNative ? styles.lockedSection : undefined}>
@@ -370,7 +336,7 @@ export function FirstRun() {
               <Text style={[styles.footnote, { color: colors.textMuted }]}>Every choice takes you to your home screen. You can change it later.</Text>
             </View>
 
-            {error ? (
+            {error && (googleAuthenticated || !GOOGLE_SIGN_IN_ENABLED) ? (
               <Text
                 accessibilityLiveRegion="polite"
                 style={[styles.error, { color: colors.danger }]}>
@@ -399,7 +365,6 @@ export function FirstRun() {
               You can change your year and university later in Settings.
             </Text>
           </ScrollView>
-        )}
       </KeyboardSafe>
     </Modal>
   );
