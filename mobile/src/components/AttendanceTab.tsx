@@ -541,7 +541,7 @@ export function AttendanceTab() {
     <KeyboardSafe>
       <View style={styles.wrap}>
         <AttendanceOrganizer />
-        {storageError || formError ? <Text accessibilityRole="alert" style={{ color: colors.danger }}>{storageError || formError}</Text> : null}
+        {storageError || (!adding && formError) ? <Text accessibilityRole="alert" style={{ color: colors.danger }}>{storageError || formError}</Text> : null}
         <Text style={[styles.calendarSummary, { color: colors.textMuted }]}>{new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' })}</Text>
         {/* Theory, labs or clinical postings switcher */}
         <View style={[styles.switch, { backgroundColor: colors.cardElevated }]}>
