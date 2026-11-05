@@ -71,7 +71,7 @@ jobs:
             adb shell am start -n com.aistudio.mbbsqbank.aycxvd/.MainActivity
             sleep 15
             set -eu
-            # Use the current corrected helper against the SHA-verified APK.
+            # Use exact CTA targeting and recover only the CI Pixel Launcher overlay.
             sed -i 's/release-1028 SHA 6052733eefeb98d7de112939f9f2b9f4341c723e/repaired-v31-build-1031 SHA 69caf8f9526013d018694a8c3917fdb20ce3ffaf/' mobile/scripts/android_v31_crash_smoke.py
             python3 mobile/scripts/android_v31_crash_smoke.py
             grep -q 'Google CTA tap dispatched: True' artifacts/v31-crash-smoke/result.txt
