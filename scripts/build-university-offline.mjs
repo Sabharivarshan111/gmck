@@ -100,7 +100,7 @@ const merged=new Map();
 let removedDuplicates=0;
 for(const item of all){
   const key=item.university==='rguhs' ? 'rguhs|'+item.id :
-    [item.university,item.year,item.subject.toLowerCase(),normalizeText(item.question_text)].join('|');
+    [item.university,item.year,item.subject.toLowerCase(),item.question_type,normalizeText(item.question_text)].join('|');
   const previous=merged.get(key);
   if(previous){
     removedDuplicates++;
