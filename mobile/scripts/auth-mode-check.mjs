@@ -41,6 +41,29 @@ assert.match(firstRun, /accessibilityLiveRegion="polite"/,
   'Onboarding status text must use Android-compatible live-region announcements');
 assert.equal((firstRun.match(/testID="first-run-google-sign-in"/g) ?? []).length, 1,
   'There must be only one Google sign-in button, pinned in the thumb zone');
+ 
+// Regression for the Android November 5 onboarding dead end: users must be able
+// to edit study preferences BEFORE signing in. The footer must remain visible
+// and actionable AFTER Google returns, even if the SVG gradient renderer fails.
+assert.doesNotMatch(firstRun, /pointerEvents=\{!googleAuthenticated/,
+  'The onboarding form must never be touch-locked while waiting for Google.');
+assert.doesNotMatch(firstRun, /editable=\{googleAuthenticated/,
+  'The display-name input must work before sign-in.');
+assert.match(firstRun, /editable=\{!saving\}/,
+  'The display name is editable until the profile is being saved.');
+assert.match(firstRun, /onPress=\{\(\) => \{ setYear\(option\); setError\(null\); \}\}/,
+  'A year can be selected before Google authentication.');
+assert.match(firstRun, /if \(GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated\)/,
+  'Google identity is still required before entering the release app.');
+assert.match(firstRun, /testID="first-run-start-studying"[\s\S]{0,300}label="Continue to Orbit"[\s\S]{0,300}backgroundColor: colors.accent/,
+  'The authenticated footer always presents a visible solid Continue to Orbit action.');
+assert.match(firstRun, /<Text style=\{\[styles.startText, \{ color: colors.onAccent \}\]\}>Continue to Orbit<\/Text>/,
+  'Continue text must contrast with its accent background in every theme.');
+assert.doesNotMatch(firstRun, /<GradientFill/,
+  'An SVG-only button background can disappear on Android; primary CTA must use a solid view.');
+assert.match(firstRun, /paddingBottom: insets.bottom \+ 24/,
+  'Onboarding must respect the Android gesture bar safe area.');
+
 
 
 function evaluate(source, dev, modules = {}) {
