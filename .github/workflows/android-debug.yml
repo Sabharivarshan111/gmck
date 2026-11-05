@@ -55,6 +55,7 @@ on:
       # The paths filter below is what keeps this affordable — a commit that
       # only moves documentation still burns no runner.
       - main
+      - fix/vault-preview-anki-muhs-count-20261105
       - codex/v27-parity-repairs-20261016
       - codex/v27-brain-registration-20261016
       - codex/v27-context-camera-20261016
