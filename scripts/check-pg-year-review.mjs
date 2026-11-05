@@ -25,7 +25,9 @@ assert.ok(!/pgLocalBank|pgEntranceBank/.test(ui));
 const offlineUi=read('mobile/src/components/NeetPgOfflineModal.tsx');
 assert.match(offlineUi,/Answer: \{question.sourceAnswer\}/);
 assert.match(offlineUi,/question.explanation/);
-assert.ok(!ui.includes('MedMCQA'));
+// Keep sourced mock-practice data explicitly separate from historical exam recalls.
+assert.match(ui, /label: 'MedMCQA Practice'/);
+assert.match(ui, /exam === 'practice'.*MedMcqaPracticeModal/);
 const licenceModule={exports:{}};
 const licenceCode=ts.transpileModule(read('mobile/src/lib/thirdPartyLicences.ts'),{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText;
 vm.runInThisContext(`(function(module,exports){${licenceCode}\n})`)(licenceModule,licenceModule.exports);
