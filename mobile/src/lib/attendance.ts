@@ -29,7 +29,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const KEY = 'orbit:attendance-v1';
 
-export type AttendanceKind = 'theory' | 'posting';
+export type AttendanceKind = 'theory' | 'posting' | 'lab';
+export type AttendanceDayStatus = 'present' | 'absent' | 'mixed' | 'off' | 'unmarked';
+export type AttendanceDay = { held: number; attended: number; off?: boolean };
 
 export interface MonthlyAttendance {
   held: number;
@@ -95,6 +97,8 @@ export interface AttendanceItem {
   lastMarkedPresent?: boolean;
   /** Monthly attendance breakdown by 'YYYY-MM' */
   monthly?: Record<string, MonthlyAttendance>;
+  /** Dated history added without discarding existing overall and monthly totals. */
+  daily?: Record<string, AttendanceDay>;
 }
 
 export interface AttendanceState {
@@ -367,7 +371,7 @@ export function verdictFor(item: AttendanceItem): AttendanceVerdict {
    * diligently the card has been tapped.
    */
   const total =
-    item.kind === 'theory' && typeof item.totalClasses === 'number' && item.totalClasses > 0
+    item.kind !== 'posting' && typeof item.totalClasses === 'number' && item.totalClasses > 0
       ? item.totalClasses
       : workingDays(item);
   const remaining = total === null ? null : Math.max(0, total - item.held);
@@ -392,7 +396,7 @@ export function verdictFor(item: AttendanceItem): AttendanceVerdict {
  */
 export function bestPossible(item: AttendanceItem): number | null {
   const total =
-    item.kind === 'theory' && typeof item.totalClasses === 'number' && item.totalClasses > 0
+    item.kind !== 'posting' && typeof item.totalClasses === 'number' && item.totalClasses > 0
       ? item.totalClasses
       : workingDays(item);
   if (total === null) {
@@ -449,7 +453,7 @@ function sane(raw: unknown): AttendanceItem | null {
   return {
     id: item.id,
     name: item.name,
-    kind: item.kind === 'posting' ? 'posting' : 'theory',
+    kind: item.kind === 'posting' ? 'posting' : item.kind === 'lab' ? 'lab' : 'theory',
     target,
     held,
     attended,
@@ -475,6 +479,15 @@ function sane(raw: unknown): AttendanceItem | null {
     lastMarkedDate: typeof item.lastMarkedDate === 'string' ? item.lastMarkedDate : undefined,
     lastMarkedPresent:
       typeof item.lastMarkedPresent === 'boolean' ? item.lastMarkedPresent : undefined,
+    daily: typeof item.daily === 'object' && item.daily !== null && !Array.isArray(item.daily)
+      ? Object.fromEntries(Object.entries(item.daily as Record<string, unknown>)
+          .filter(([date, record]) => parseLocalIsoDate(date) && record && typeof record === 'object')
+          .map(([date, record]) => {
+            const rawDay = record as Record<string, unknown>;
+            const h = Math.min(24, Math.max(0, Math.round(Number(rawDay.held) || 0)));
+            const a = Math.min(h, Math.max(0, Math.round(Number(rawDay.attended) || 0)));
+            return [date, { held: h, attended: a, off: rawDay.off === true }];
+          })) : undefined,
     monthly:
       typeof item.monthly === 'object' && item.monthly !== null
         ? Object.fromEntries(
@@ -573,7 +586,7 @@ export async function updateAttendance(
       next.held = Math.max(0, Math.round(next.held));
       next.attended = Math.min(next.held, Math.max(0, Math.round(next.attended)));
       if (
-        next.kind === 'theory' &&
+        next.kind !== 'posting' &&
         typeof next.totalClasses === 'number' &&
         Number.isFinite(next.totalClasses)
       ) {
@@ -597,7 +610,7 @@ export async function setMonthlyTotalClasses(
   totalClasses?: number,
 ): Promise<void> {
   const item = state.items.find(entry => entry.id === id);
-  if (!item || item.kind !== 'theory') return;
+  if (!item || item.kind === 'posting') return;
   const current = getMonthlyAttendance(item, monthKey);
   const clean =
     typeof totalClasses === 'number' && Number.isFinite(totalClasses) && totalClasses > 0
@@ -642,12 +655,57 @@ export async function markAttendance(id: string, present: boolean): Promise<void
           : undefined,
     },
   };
+  const recorded = item.daily?.[today] ?? { held: 0, attended: 0 };
   await updateAttendance(id, {
     held: item.held + 1,
     attended: item.attended + (present ? 1 : 0),
+    daily: { ...item.daily, [today]: { held: recorded.held + 1, attended: recorded.attended + (present ? 1 : 0) } },
     lastMarkedDate: today,
     lastMarkedPresent: present,
     monthly: nextMonthly,
+  });
+}
+
+/** Edit a specific local calendar day without erasing older legacy attendance records. */
+export async function setAttendanceDay(
+  id: string,
+  date: string,
+  status: AttendanceDayStatus,
+  slots = 2,
+): Promise<void> {
+  if (!parseLocalIsoDate(date)) throw new Error('Choose a valid calendar date.');
+  const item = state.items.find(entry => entry.id === id);
+  if (!item) return;
+  const previous = item.daily?.[date] ?? { held: 0, attended: 0 };
+  const classes = Math.max(2, Math.min(12, Math.round(slots)));
+  const next: AttendanceDay | null =
+    status === 'present' ? { held: 1, attended: 1 } :
+    status === 'absent' ? { held: 1, attended: 0 } :
+    status === 'mixed' ? { held: classes, attended: Math.max(1, classes - 1) } :
+    status === 'off' ? { held: 0, attended: 0, off: true } : null;
+  const deltaHeld = (next?.held ?? 0) - previous.held;
+  const deltaAttended = (next?.attended ?? 0) - previous.attended;
+  const month = date.slice(0, 7);
+  const current = getMonthlyAttendance(item, month);
+  const daily = { ...(item.daily ?? {}) };
+  if (next) daily[date] = next;
+  else delete daily[date];
+  const monthlyHeld = Math.max(0, current.held + deltaHeld);
+  await updateAttendance(id, {
+    held: Math.max(0, item.held + deltaHeld),
+    attended: Math.max(0, item.attended + deltaAttended),
+    daily,
+    monthly: {
+      ...(item.monthly ?? {}),
+      [month]: {
+        ...current,
+        held: monthlyHeld,
+        attended: Math.min(monthlyHeld, Math.max(0, current.attended + deltaAttended)),
+        totalClasses: current.totalClasses == null ? undefined : Math.max(current.totalClasses, monthlyHeld),
+      },
+    },
+    lastMarkedDate: date,
+    lastMarkedPresent: status === 'present' ? true : status === 'absent' ? false : undefined,
   });
 }
 
@@ -664,7 +722,9 @@ export async function undoAttendance(id: string, wasPresent: boolean): Promise<v
   if (!item || item.held === 0) {
     return;
   }
-  const key = formatLocalIsoDate(new Date()).slice(0, 7);
+  const today = formatLocalIsoDate(new Date());
+  if (item.lastMarkedDate !== today) return; // Do not undo a historical/legacy total by mistake.
+  const key = today.slice(0, 7);
   const currentMonth = getMonthlyAttendance(item, key);
   const nextMonthly = {
     ...(item.monthly ?? {}),
@@ -674,9 +734,18 @@ export async function undoAttendance(id: string, wasPresent: boolean): Promise<v
       totalClasses: currentMonth.totalClasses,
     },
   };
+  const daily = { ...(item.daily ?? {}) };
+  const previous = daily[today];
+  if (previous) {
+    const held = Math.max(0, previous.held - 1);
+    const attended = Math.min(held, Math.max(0, previous.attended - (wasPresent ? 1 : 0)));
+    if (held === 0 && !previous.off) delete daily[today];
+    else daily[today] = { held, attended, off: previous.off };
+  }
   await updateAttendance(id, {
     held: item.held - 1,
     attended: Math.max(0, item.attended - (wasPresent ? 1 : 0)),
+    daily,
     lastMarkedDate: undefined,
     lastMarkedPresent: undefined,
     monthly: nextMonthly,
