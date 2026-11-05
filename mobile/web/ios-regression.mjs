@@ -70,9 +70,9 @@ await missingName.waitFor();
 assert(await missingName.isVisible(),'Name validation must be visible beside Add');
 await page.screenshot({path:'/tmp/orbit-ios-evidence/add-name-validation.png'});
 await label('Posting name').fill('Paediatrics');
-await tap('Add this posting');await tap('View Rotation Calendar and Holidays');
+await tap('Add this posting');await tap('Attendance details for Paediatrics');await tap('View Rotation Calendar and Holidays');
 const day=page.getByLabel('Sat, Oct 17 - Working day',{exact:true});await day.scrollIntoViewIfNeeded();await day.tap();await page.getByLabel('Sat, Oct 17 - Holiday',{exact:true}).waitFor();
-await page.reload();await tap('Attendance');await tap('Clinical postings');await tap('View Rotation Calendar and Holidays');await page.getByLabel('Sat, Oct 17 - Holiday',{exact:true}).waitFor();console.log('PASS calendar opens and holiday selection persists');
+await page.reload();await tap('Attendance');await tap('Clinical postings');await tap('Attendance details for Paediatrics');await tap('View Rotation Calendar and Holidays');await page.getByLabel('Sat, Oct 17 - Holiday',{exact:true}).waitFor();console.log('PASS calendar opens and holiday selection persists');
 await tap('Edit posting dates');await tap('Saved posting start date');await tap('6 October 2026');await tap('Save posting dates');await page.getByLabel('Tue, Oct 6 - Working day',{exact:true}).waitFor();console.log('PASS saved posting date edit uses nested picker');
 // Reopening with the same browser storage must retain study setup.
 const second=await context.newPage();await second.goto('http://127.0.0.1:5226');await second.getByLabel('Settings',{exact:true}).waitFor();assert.equal(await second.getByLabel('Display name',{exact:true}).count(),0);await second.close();
