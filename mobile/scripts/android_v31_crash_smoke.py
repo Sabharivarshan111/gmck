@@ -7,6 +7,7 @@ Google login is not evidence of an app crash.
 """
 from __future__ import annotations
 
+import os
 import re
 import subprocess
 import time
@@ -42,7 +43,7 @@ def report(line: str):
     with (OUT / "result.txt").open("a", encoding="utf-8") as fh:
         fh.write(line + "\n")
 
-report("APK provenance: release-1028 SHA 6052733eefeb98d7de112939f9f2b9f4341c723e")
+report("APK provenance: " + os.environ.get("APK_PROVENANCE", "not supplied"))
 original_pid = pid()
 report("Process after first launch: " + (original_pid or "NOT RUNNING"))
 capture("after-launch.png")
