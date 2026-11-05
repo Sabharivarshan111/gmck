@@ -1,6 +1,6 @@
 name: Android repaired v31 native runtime verification
 
-# Run on the exact main-branch signed v32 APK from build 1032.
+# Run the exact repaired v31 APK; build and payload checks passed, publication was denied.
 # This tests actual Android launch and a Google sign-in button press, which
 # TypeScript, lint, and Gradle compilation cannot verify.
 on:
@@ -19,8 +19,6 @@ jobs:
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: 69caf8f9526013d018694a8c3917fdb20ce3ffaf
       - name: Verify repaired APK source and successful build steps
         uses: actions/github-script@v7
         with:
@@ -73,7 +71,7 @@ jobs:
             adb shell am start -n com.aistudio.mbbsqbank.aycxvd/.MainActivity
             sleep 15
             set -eu
-            # Label the actual SHA-matched APK, then execute the helper.
+            # Use the current corrected helper against the SHA-verified APK.
             sed -i 's/release-1028 SHA 6052733eefeb98d7de112939f9f2b9f4341c723e/repaired-v31-build-1031 SHA 69caf8f9526013d018694a8c3917fdb20ce3ffaf/' mobile/scripts/android_v31_crash_smoke.py
             python3 mobile/scripts/android_v31_crash_smoke.py
             grep -q 'Google CTA tap dispatched: True' artifacts/v31-crash-smoke/result.txt
