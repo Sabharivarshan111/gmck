@@ -50,6 +50,8 @@
     "check:exam-signs": "node scripts/exam-signs-check.mjs",
     "check:proformas": "node scripts/proformas-check.mjs",
     "check:attendance": "node scripts/attendance-check.mjs",
+    "check:attendance-history": "node scripts/attendance-history-check.mjs",
+    "check:attendance-organizer": "node scripts/attendance-organizer-check.mjs",
     "check:admin": "node scripts/admin-check.mjs",
     "check:simulator": "node --experimental-strip-types scripts/simulator-navigation-check.mjs",
     "check:calendar-columns": "node --experimental-strip-types scripts/calendar-columns-check.mjs",
