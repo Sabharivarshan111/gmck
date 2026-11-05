@@ -108,9 +108,9 @@ android {
         applicationId "com.aistudio.mbbsqbank.aycxvd"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // Version 28 explicitly requested by the owner on 2026-10-20.
-        versionCode 31
-        versionName "0.0.0.31"
+        // Version 32 fixes a reproduced Android startup crash; must exceed installed v31.
+        versionCode 32
+        versionName "0.0.0.32"
 
         // Deep-link / OAuth callback scheme, consumed by the intent-filter in
         // AndroidManifest.xml. Added with an indexed put rather than assigning
