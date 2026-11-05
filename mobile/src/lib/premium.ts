@@ -148,28 +148,3 @@ export function usePremiumStatus(): string | null {
   }, []);
   return until;
 }
-
-/**
- * Simulator UI entitlement. A null access state means the account lookup is
- * still running; never flash a "Free preview" banner for an existing paying
- * user while secure storage / Supabase are being checked.
- */
-export function useSimulatorPremiumAccess(): { active: boolean; checking: boolean } {
-  const [status, setStatus] = useState<{ active: boolean; checking: boolean }>({
-    active: isPremiumCached(), checking: true,
-  });
-  useEffect(() => {
-    let live = true;
-    const refresh = async () => {
-      const until = await syncPremiumCache();
-      if (live) setStatus({ active: !!until, checking: false });
-    };
-    void refresh();
-    const { data } = supabase.auth.onAuthStateChange(() => { void refresh(); });
-    const sub = AppState.addEventListener('change', next => {
-      if (next === 'active') void refresh();
-    });
-    return () => { live = false; data.subscription.unsubscribe(); sub.remove(); };
-  }, []);
-  return status;
-}
