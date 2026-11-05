@@ -704,8 +704,11 @@ export async function setAttendanceDay(
         totalClasses: current.totalClasses == null ? undefined : Math.max(current.totalClasses, monthlyHeld),
       },
     },
-    lastMarkedDate: date,
-    lastMarkedPresent: status === 'present' ? true : status === 'absent' ? false : undefined,
+    // Editing last month's register must not look like marking today for reminders.
+    lastMarkedDate: date === formatLocalIsoDate(new Date())
+      ? (status === 'unmarked' ? undefined : date) : item.lastMarkedDate,
+    lastMarkedPresent: date === formatLocalIsoDate(new Date())
+      ? (status === 'present' ? true : status === 'absent' ? false : undefined) : item.lastMarkedPresent,
   });
 }
 
