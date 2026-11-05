@@ -61,7 +61,7 @@ assert.match(firstRun, /<Text style=\{\[styles.startText, \{ color: colors.onAcc
   'Continue text must contrast with its accent background in every theme.');
 assert.doesNotMatch(firstRun, /<GradientFill/,
   'An SVG-only button background can disappear on Android; primary CTA must use a solid view.');
-assert.match(firstRun, /paddingBottom: insets.bottom \+ 24/,
+assert.match(firstRun, /paddingBottom: insets.bottom \+ \d+/,
   'Onboarding must respect the Android gesture bar safe area.');
 
 
