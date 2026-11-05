@@ -193,12 +193,13 @@ export function FirstRun() {
             <Text style={[styles.footnote, { color: colors.textMuted, marginBottom: 4 }]}>
               {googleAuthenticated
                 ? 'Google account connected. Finish your study setup below.'
-                : 'Choose your year and university here, then tap Continue with Google below.'}
+                : 'Your setup stays on this screen. Tap Continue with Google below to unlock the fields.'}
             </Text>
           ) : null}
 
             {/* Profile Setup: Display Name & Year (Gated on Google Sign-In for native) */}
-            <View style={!googleAuthenticated && isNative ? styles.lockedSection : undefined}>
+            <View style={!googleAuthenticated && isNative ? styles.lockedSection : undefined}
+              pointerEvents={!googleAuthenticated && isNative ? 'none' : 'auto'}>
               {!googleAuthenticated && isNative ? (
                 <View style={styles.lockNoticeRow}>
                   <Lock size={14} color={colors.accent} />
@@ -498,9 +499,9 @@ const styles = StyleSheet.create({
   startButton: {
     borderRadius: 14,
     paddingVertical: 17,
+    minHeight: 56,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 22,
     overflow: 'hidden',
   },
   startPending: {
