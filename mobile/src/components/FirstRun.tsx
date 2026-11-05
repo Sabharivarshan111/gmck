@@ -4,7 +4,6 @@ import {
   ActivityIndicator,
   Image,
   Modal,
-  Platform,
   ScrollView,
   StyleSheet,
   TextInput,
