@@ -18,7 +18,7 @@ const EXAMS = [
   {id: 'neet-pg', label: 'NEET-PG'},
   {id: 'aiims-pg', label: 'AIIMS PG'},
   {id: 'ini-cet', label: 'INI-CET'},
-  {id: 'practice', label: 'MedMCQA Practice'},
+  {id: 'practice', label: 'NEET PG Practice Questions'},
 ] as const;
 
 export function PgEntranceBankModal({visible, onClose, initialQuestionId, initialExam = 'neet-pg'}: {visible: boolean; onClose: () => void; initialQuestionId?: string; initialExam?: 'neet-pg' | 'practice'}) {
