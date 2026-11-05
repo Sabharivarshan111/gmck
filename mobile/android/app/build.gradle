@@ -108,9 +108,10 @@ android {
         applicationId "com.aistudio.mbbsqbank.aycxvd"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // Version 32 fixes a reproduced Android startup crash; must exceed installed v31.
-        versionCode 32
-        versionName "0.0.0.32"
+        // Version 33 includes the repaired one-screen onboarding and visible Continue to Orbit CTA.
+        // Bumped from v32 after signed release + API 35 emulator startup checks.
+        versionCode 33
+        versionName "0.0.0.33"
 
         // Deep-link / OAuth callback scheme, consumed by the intent-filter in
         // AndroidManifest.xml. Added with an indexed put rather than assigning

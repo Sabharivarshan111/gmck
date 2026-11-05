@@ -47,11 +47,11 @@ if (gradleCode && tsCode) {
   );
 }
 /*
- * The owner requested the startup-crash repair release (version 32)
- * on 2026-11-05. Keep the Gradle version in sync.
+ * The owner requested v33 on 2026-11-05 to ship verified onboarding repairs.
+ * Keep the Gradle version and app constants in sync.
  * This pin verifies source version only; it does not imply Play publication.
  */
-const PINNED_VERSION_CODE = 32;
+const PINNED_VERSION_CODE = 33;
 if (gradleCode) {
   check(
     Number(gradleCode[1]) === PINNED_VERSION_CODE,
