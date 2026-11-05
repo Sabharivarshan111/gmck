@@ -584,8 +584,8 @@ export function AttendanceTab() {
               {kind === 'theory' ? 'No theory subjects yet' : kind === 'lab' ? 'No practical labs yet' : 'No clinical postings yet'}
             </Text>
             <Text style={[styles.emptyBody, { color: colors.textMuted }]}>
-              {kind === 'theory'
-                ? 'Add a subject below, then tap Present or Absent after class. Orbit calculates your safe bunks and exam eligibility.'
+              {kind !== 'posting'
+                ? 'Add a subject or practical below. Use the dated register to log Present, Absent, Mixed or Off days. Your existing totals stay intact.'
                 : 'Add a rotation with start and end dates. Orbit can exclude Sundays, optional Saturdays and Tamil Nadu government holidays, lets you mark college closures, and calculates safe bunks.'}
             </Text>
           </View>
@@ -617,7 +617,7 @@ export function AttendanceTab() {
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 5 }}>
                   {(['present', 'absent', 'mixed', 'off', 'unmarked'] as const).map(action => (
                     <Touchable key={action} label={action + ' for ' + item.name + ' on ' + registerDate}
-                      onPress={() => { tick(); void setAttendanceDay(item.id, registerDate, action, mixedClasses); }}
+                      onPress={() => { tick(); setLastMark(current => { const next = { ...current }; delete next[item.id]; return next; }); void setAttendanceDay(item.id, registerDate, action, mixedClasses); }}
                       style={{ minHeight: 38, borderRadius: 9, paddingHorizontal: 8, borderWidth: 1,
                         borderColor: action === status ? colors.accent : colors.border,
                         backgroundColor: action === status ? withAlpha(colors.accent, 0.13) : 'transparent' }}>
@@ -641,9 +641,12 @@ export function AttendanceTab() {
             onSetMonthlyTotalClasses={async (monthKey, next) =>
               setMonthlyTotalClasses(item.id, monthKey, next)
             }
+            canUndo={typeof lastMark[item.id] === 'boolean' && item.lastMarkedDate === formatLocalIsoDate(new Date())}
             onUndo={async () => {
               const was = lastMark[item.id];
-              await undoAttendance(item.id, was ?? true);
+              if (typeof was !== 'boolean') return;
+              await undoAttendance(item.id, was);
+              setLastMark(current => { const next = { ...current }; delete next[item.id]; return next; });
             }}
             onTarget={async next => updateAttendance(item.id, { target: next })}
             onRemove={async () => removeAttendance(item.id)}
@@ -944,6 +947,7 @@ function AttendanceCard({
   item,
   onMark,
   onUndo,
+  canUndo,
   onTarget,
   onRemove,
   onSetTotalClasses,
@@ -955,6 +959,7 @@ function AttendanceCard({
   item: AttendanceItem;
   onMark: (item: AttendanceItem, present: boolean) => void;
   onUndo: () => void;
+  canUndo: boolean;
   onTarget: (next: number) => void;
   onRemove: () => void;
   onSetTotalClasses: (count?: number) => void;
@@ -1129,9 +1134,9 @@ function AttendanceCard({
         <Touchable
           onPress={onUndo}
           label={`Undo the last mark for ${item.name}`}
-          disabled={item.held === 0}
+          disabled={!canUndo}
           hitSlop={8}
-          style={[styles.icon, { borderColor: colors.border, opacity: item.held === 0 ? 0.4 : 1 }]}>
+          style={[styles.icon, { borderColor: colors.border, opacity: !canUndo ? 0.4 : 1 }]}>
           <Undo2 size={15} color={colors.textMuted} />
         </Touchable>
       </View>
