@@ -11,6 +11,7 @@ import Leaderboard from "./Leaderboard";
 import RewardsShelf from "./RewardsShelf";
 import StreakTipsCard from "./StreakTipsCard";
 import ProgressCalendarTab from "./ProgressCalendarTab";
+import WebAttendanceCalendar from "./WebAttendanceCalendar";
 import ProgressNotesTab from "./ProgressNotesTab";
 import IdentityConflictDialog from "./IdentityConflictDialog";
 import ReviseDueCard from "./ReviseDueCard";
@@ -157,10 +158,11 @@ const ProgressDashboard = () => {
       )}
 
       <Tabs defaultValue="stats" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="stats">Stats</TabsTrigger>
-          <TabsTrigger value="calendar">Calendar</TabsTrigger>
-          <TabsTrigger value="notes">Notes</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="stats" className="text-xs sm:text-sm px-1 sm:px-3">Stats</TabsTrigger>
+          <TabsTrigger value="calendar" className="text-xs sm:text-sm px-1 sm:px-3">Calendar</TabsTrigger>
+          <TabsTrigger value="attendance" className="text-xs sm:text-sm px-1 sm:px-3">Attendance</TabsTrigger>
+          <TabsTrigger value="notes" className="text-xs sm:text-sm px-1 sm:px-3">Notes</TabsTrigger>
         </TabsList>
         <TabsContent value="stats" className="space-y-4 mt-4">
           <YearRingCard completed={completed} total={total} />
@@ -177,6 +179,9 @@ const ProgressDashboard = () => {
         </TabsContent>
         <TabsContent value="calendar" className="mt-4">
           <ProgressCalendarTab userId={userId} />
+        </TabsContent>
+        <TabsContent value="attendance" className="mt-4">
+          <WebAttendanceCalendar key={userId ?? "local"} userId={userId} />
         </TabsContent>
         <TabsContent value="notes" className="mt-4">
           <ProgressNotesTab userId={userId} />
