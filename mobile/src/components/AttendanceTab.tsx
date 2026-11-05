@@ -524,7 +524,31 @@ export function AttendanceTab() {
   return (
     <KeyboardSafe>
       <View style={styles.wrap}>
-        {/* Theory or clinical postings switcher */}
+        <View style={{ borderWidth: 1, borderColor: withAlpha(colors.accent, 0.5), borderRadius: 20, padding: 16, gap: 14, backgroundColor: colors.card }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <CalendarClock size={22} color={colors.accent} />
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 20, fontWeight: '800', color: colors.text }}>Attendance dashboard</Text>
+              <Text style={{ fontSize: 12, color: colors.textMuted }}>Theory · clinical postings · practical labs</Text>
+            </View>
+          </View>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 8 }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 21, fontWeight: '800', color: colors.accent }}>{summaryHeld ? Math.round(percentOf(summaryAttended, summaryHeld)) + '%' : '—'}</Text>
+              <Text style={{ fontSize: 11, color: colors.textMuted }}>Attendance</Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 21, fontWeight: '800', color: colors.text }}>{summaryAttended}/{summaryHeld}</Text>
+              <Text style={{ fontSize: 11, color: colors.textMuted }}>Present / held</Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 21, fontWeight: '800', color: atRisk ? colors.danger : colors.success }}>{atRisk}</Text>
+              <Text style={{ fontSize: 11, color: colors.textMuted }}>Below target</Text>
+            </View>
+          </View>
+          <Text style={{ fontSize: 11, color: colors.textMuted }}>Targets and safe-bunk allowances are specific to each subject or posting.</Text>
+        </View>
+        {/* Theory, labs, or clinical postings switcher */}
         <View style={[styles.switch, { backgroundColor: colors.cardElevated }]}>
           {(
             [
