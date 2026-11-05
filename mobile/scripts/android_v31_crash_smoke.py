@@ -57,7 +57,11 @@ if original_pid:
             for node in ET.fromstring(xml.stdout).iter():
                 label = (node.attrib.get("content-desc", "") + " " +
                          node.attrib.get("text", "")).lower()
-                if "continue with google" not in label:
+                # Match the actual enabled control, never explanatory text.
+                if node.attrib.get("clickable") != "true" or node.attrib.get("enabled") != "true":
+                    continue
+                if (node.attrib.get("resource-id") != "first-run-google-sign-in"
+                        and node.attrib.get("content-desc", "").strip().lower() != "continue with google"):
                     continue
                 match = re.fullmatch(
                     r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]",
@@ -73,10 +77,14 @@ if original_pid:
         except Exception as error:
             report(f"Could not parse accessibility dump: {type(error).__name__}")
     if not tapped:
-        report("Google CTA absent from UI dump; first-tap auth not verified")
+        report("FAIL: enabled Google CTA absent from UI dump")
+        raise SystemExit(1)
 
 time.sleep(8)
 capture("after-google-tap.png")
+adb("shell", "uiautomator", "dump", "/sdcard/orbit-after-tap-ui.xml")
+after_xml = adb("exec-out", "cat", "/sdcard/orbit-after-tap-ui.xml")
+(OUT / "after-google-tap-ui.xml").write_text(after_xml.stdout or "", encoding="utf-8")
 after_pid = pid()
 report("Process after optional tap: " + (after_pid or "NOT RUNNING"))
 
