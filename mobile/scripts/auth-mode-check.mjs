@@ -13,8 +13,10 @@ const debugApk = process.argv.includes('--debug-apk');
 // press of "Continue with Google". The button launches sign-in immediately,
 // while any account check completes independently.
 const firstRun = fs.readFileSync(new URL('../src/components/FirstRun.tsx', import.meta.url), 'utf8');
-assert.match(firstRun, /testID="first-run-google-sign-in" disabled=\{googling\}/,
+assert.match(firstRun, /testID="first-run-google-sign-in"[\s\S]{0,250}disabled=\{googling\}/,
   'Continue with Google must be enabled while the saved-account lookup runs');
+assert.match(firstRun, /<Pressable[\s\S]{0,100}testID="first-run-google-sign-in"/,
+  'First-run Google sign-in must use a direct native Pressable, not a gesture-decorated wrapper');
 assert.doesNotMatch(firstRun, /disabled=\{googling\s*\|\|\s*checkingAccount\}/,
   'Background account hydration must not disable the Google button');
 assert.match(firstRun, /if \(googleSignInInFlight\.current\) return;/,
