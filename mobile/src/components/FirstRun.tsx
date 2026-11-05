@@ -6,7 +6,6 @@ import {
   Image,
   Modal,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -26,7 +25,6 @@ import { YEAR_LABEL } from '@/lib/questionBank';
 import { YEAR_TO_KEY } from '@/lib/profile';
 import {
   GoogleSignInCancelled,
-  configureGoogleSignIn,
   hasAuthenticatedGoogleOnce,
   signInWithGoogle,
 } from '@/lib/googleAuth';
@@ -74,9 +72,9 @@ export function FirstRun() {
   useEffect(() => {
     let active = true;
     if (GOOGLE_SIGN_IN_ENABLED) {
-      // Configure the native Google client as the welcome screen mounts, not
-      // for the first time inside the tap handler.
-      if (isNative) configureGoogleSignIn();
+      // v27 initialized the Google SDK only on the user's tap. Restore that
+      // known-working ordering; an early native initialize in v30 preceded
+      // the reported fatal activity crash on Samsung Android.
       hasAuthenticatedGoogleOnce()
         .then(ok => { if (active && !googleSignInInFlight.current) setGoogleAuthenticated(ok); })
         .catch(() => { /* Keep the sign-in action available after a network failure. */ })
@@ -237,20 +235,19 @@ export function FirstRun() {
               <Text style={[styles.madeSub, { color: colors.textMuted }]}>
                 Past papers, notes and clinical practice, together.
               </Text>
-              {/* Use an ordinary native Pressable for the OS account chooser.
-                  Global animated/tour/reorder tap decorations must never swallow
-                  the first press of the required authentication action. */}
-              <Pressable
+              {/* Reuse the exact v27 touch primitive for Google sign-in:
+                  same native activity launch timing and pointer dispatch.
+                  Never gate the button on the background account lookup. */}
+              <Touchable
                 testID="first-run-google-sign-in"
-                accessibilityRole="button"
-                accessibilityLabel={GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? 'Continue with Google' : 'Continue'}
-                accessibilityState={{ disabled: googling, busy: googling }}
+                label={GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? 'Continue with Google' : 'Continue'}
+                state={{ busy: googling }}
                 disabled={googling}
-                hitSlop={8}
+                scaleTo={0.98}
                 onPress={() => { if (GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated) void withGoogle(); else setStage('you'); }}
                 style={[styles.google, { borderColor: colors.accent, marginTop: 24 }]}>
                 {googling ? <ActivityIndicator color={colors.accent} /> : <Text style={[styles.googleText, { color: colors.accent }]}>{GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? 'Continue with Google' : 'Continue'}</Text>}
-              </Pressable>
+              </Touchable>
               {googling ? <Text accessibilityRole="status" style={[styles.footnote, { color: colors.textMuted }]}>Opening Google account chooser…</Text> : checkingAccount ? <Text style={[styles.footnote, { color: colors.textMuted }]}>Checking saved account in the background. You can tap Continue now.</Text> : null}
               {!isNative && GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? <Touchable label="Continue on this device" onPress={() => setStage('you')} style={styles.google}><Text style={[styles.googleText, { color: colors.textMuted }]}>Continue on this device</Text></Touchable> : null}
               {error ? <Text accessibilityRole="alert" style={[styles.error, { color: colors.danger }]}>{error}</Text> : null}

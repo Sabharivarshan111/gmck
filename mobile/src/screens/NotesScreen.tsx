@@ -350,7 +350,7 @@ function VaultView({ onNotes, onPgPractice, onMedMcqa, onSimulator, onClinicalSk
     { title: 'PG Practice', label: 'NEET-PG practice questions', hint: 'NEET-PG · AIIMS PG · INI-CET · Practice', emoji: '📝', open: onPgPractice },
     { title: 'Simulator & Anatomy', hint: 'Preview heart, lungs & brain · explore bedside skills', emoji: '🫀', open: onSimulator },
     { title: 'Anki flashcards', hint: 'Decks & spaced repetition', emoji: '📇', open: onFlashcards },
-    { title: 'MedMCQA Practice', hint: '185,636 chapter-wise practice MCQs · offline', emoji: '🧠', open: onMedMcqa },
+    { title: 'NEET PG Practice Questions', hint: '185,636 chapter-wise practice MCQs · offline', emoji: '🧠', open: onMedMcqa },
     { title: 'Case proformas', hint: 'History & examination guides', emoji: '📋', open: onProformas },
     ...NATIVE_CLINICAL_SKILLS
       .filter(skill => ['stethoscope', 'ecg12', 'ultrasound', 'radiology', 'pupil', 'piccled'].includes(skill.id))

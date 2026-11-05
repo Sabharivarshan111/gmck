@@ -26,3 +26,11 @@
 # fails only in a minified build — which is the release one.
 -keep class com.github.luben.zstd.** { *; }
 -dontwarn com.github.luben.zstd.**
+
+# Keep the Android Google account-picker bridge and its credential providers
+# when R8 optimizes the signed release. These can be entered by Play Services
+# or Credential Manager at runtime rather than by statically visible calls.
+-keep class com.reactnativegooglesignin.** { *; }
+-keep class com.google.android.gms.auth.api.signin.** { *; }
+-keep class com.google.android.gms.auth.api.identity.** { *; }
+-keep class androidx.credentials.** { *; }

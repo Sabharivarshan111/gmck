@@ -188,7 +188,7 @@ export function MedMcqaPracticeModal({
           accessibilityRole="header"
           style={[typeScale.title2, { color: colors.text }]}
         >
-          Practice questions
+          NEET PG practice questions
         </Text>
         <Text style={[typeScale.footnote, { color: colors.textMuted }]}>
           {PG_COMPACT.total.toLocaleString()} questions · Subject and chapter
@@ -290,7 +290,7 @@ export function MedMcqaPracticeModal({
             </Text>
             <View style={styles.search}>
               <TextInput
-                accessibilityLabel="Search MedMCQA practice questions"
+                accessibilityLabel="Search NEET PG practice questions"
                 value={query}
                 onChangeText={setQuery}
                 onSubmitEditing={() => {

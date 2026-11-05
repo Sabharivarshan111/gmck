@@ -47,11 +47,11 @@ if (gradleCode && tsCode) {
   );
 }
 /*
- * The owner requested the next Android release candidate (version 30)
+ * The owner requested the next Android release candidate (version 31)
  * on 2026-11-05. Keep the Gradle version in sync.
  * This pin verifies source version only; it does not imply Play publication.
  */
-const PINNED_VERSION_CODE = 30;
+const PINNED_VERSION_CODE = 31;
 if (gradleCode) {
   check(
     Number(gradleCode[1]) === PINNED_VERSION_CODE,

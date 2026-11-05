@@ -13,18 +13,21 @@ const debugApk = process.argv.includes('--debug-apk');
 // press of "Continue with Google". The button launches sign-in immediately,
 // while any account check completes independently.
 const firstRun = fs.readFileSync(new URL('../src/components/FirstRun.tsx', import.meta.url), 'utf8');
+const vault = fs.readFileSync(new URL('../src/screens/NotesScreen.tsx', import.meta.url), 'utf8');
+assert.match(vault, /title: 'NEET PG Practice Questions'/, 'Vault should use user-facing NEET PG name');
+assert.doesNotMatch(vault, /title: 'MedMCQA Practice'/, 'Do not expose MedMCQA provider name on the Vault tile');
 assert.match(firstRun, /testID="first-run-google-sign-in"[\s\S]{0,500}disabled=\{googling\}/,
-  'Continue with Google must be enabled while the saved-account lookup runs');
-assert.match(firstRun, /<Pressable[\s\S]{0,100}testID="first-run-google-sign-in"/,
-  'First-run Google sign-in must use a direct native Pressable, not a gesture-decorated wrapper');
+  'Google sign-in must be enabled while the saved-account lookup runs');
+assert.match(firstRun, /<Touchable[\s\S]{0,100}testID="first-run-google-sign-in"/,
+  'Restore v27 native sign-in Touchable used by the known-working one-tap flow');
 assert.doesNotMatch(firstRun, /disabled=\{googling\s*\|\|\s*checkingAccount\}/,
   'Background account hydration must not disable the Google button');
 assert.match(firstRun, /if \(googleSignInInFlight\.current\) return;/,
   'Repeated taps during the same render must not launch competing Google pickers');
 assert.match(firstRun, /googleSignInInFlight\.current = true;/,
   'The native account chooser needs a synchronous in-flight guard');
-assert.match(firstRun, /if \(isNative\) configureGoogleSignIn\(\);/,
-  'Configure the native Google client before the first user tap');
+assert.doesNotMatch(firstRun, /if \(isNative\) configureGoogleSignIn\(\);/,
+  'Never eagerly configure native Google SDK during onboarding mount; v27 did so on tap');
 assert.match(firstRun, /Opening Google account chooser/,
   'Show immediate progress so a delayed native account picker never looks unresponsive');
 
