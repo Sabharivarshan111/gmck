@@ -1,12 +1,15 @@
-name: Android v32 native launch and Google tap
+name: Android v35 native launch and Google tap
 
 # Verify the exact signed APK built from the main head captured at job start.
 # Tests exact CTA and handles only the observed CI Pixel Launcher overlay;
 # TypeScript, lint, and Gradle compilation cannot verify.
 on:
   push:
-    branches: [main, fix/android-v32-native-smoke-20261105]
-    paths: ['.github/workflows/android-v31-crash-smoke.yml']
+    branches: [main]
+    paths:
+      - '.github/workflows/android-v31-crash-smoke.yml'
+      - 'mobile/src/components/FirstRun.tsx'
+      - 'mobile/android/app/build.gradle'
   workflow_dispatch:
 
 permissions:
@@ -40,7 +43,7 @@ jobs:
               await new Promise(resolve => setTimeout(resolve, 10000));
             }
             throw new Error('Signed main build did not finish within test wait window');
-      - name: Download exact main-branch v32 release APK
+      - name: Download exact main-branch v35 release APK
         uses: actions/download-artifact@v4
         with:
           name: orbit-mbbs-apk

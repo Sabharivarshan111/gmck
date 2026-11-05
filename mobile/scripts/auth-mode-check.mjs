@@ -55,10 +55,14 @@ assert.match(firstRun, /onPress=\{\(\) => \{ setYear\(option\); setError\(null\)
   'A year can be selected before Google authentication.');
 assert.match(firstRun, /if \(GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated\)/,
   'Google identity is still required before entering the release app.');
-assert.match(firstRun, /testID="first-run-start-studying"[\s\S]{0,300}label="Continue to Orbit"[\s\S]{0,300}backgroundColor: colors.accent/,
-  'The authenticated footer always presents a visible solid Continue to Orbit action.');
-assert.match(firstRun, /<Text style=\{\[styles.startText, \{ color: colors.onAccent \}\]\}>Continue to Orbit<\/Text>/,
-  'Continue text must contrast with its accent background in every theme.');
+assert.match(firstRun, /<Pressable[\s\S]{0,200}testID="first-run-start-studying"[\s\S]{0,380}accessibilityLabel="Continue to Orbit"[\s\S]{0,300}backgroundColor: colors.accent/,
+  'The authenticated footer must use a plain native Pressable, a visible solid background and an accessible label.');
+assert.match(firstRun, /<NativeText[\s\S]{0,200}style=\{\[styles.startText, \{ color: colors.onAccent \}\]\}>[\s\S]*Continue to Orbit[\s\S]*<\/NativeText>/,
+  'Continue text must be a native Android Text child with high-contrast label color.');
+assert.doesNotMatch(firstRun, /startButton:\s*\{[^}]*overflow:\s*['"]hidden['"]/,
+  'Do not clip the onboarding CTA; Android Fabric can hide text inside animated, clipped pressables.');
+assert.match(firstRun, /accessibilityState=\{\{ disabled: saving, busy: saving \}\}/,
+  'The CTA must remain accessible and have a meaningful saving state.');
 assert.doesNotMatch(firstRun, /<GradientFill/,
   'An SVG-only button background can disappear on Android; primary CTA must use a solid view.');
 assert.match(firstRun, /paddingBottom: insets.bottom \+ \d+/,

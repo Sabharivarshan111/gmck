@@ -4,7 +4,9 @@ import {
   ActivityIndicator,
   Image,
   Modal,
+  Pressable,
   ScrollView,
+  Text as NativeText,
   StyleSheet,
   TextInput,
   View,
@@ -332,17 +334,23 @@ export function FirstRun() {
                 )}
               </Touchable>
             ) : (
-              <Touchable
-                onPress={start}
+              <Pressable
+                onPress={() => { void start(); }}
                 testID="first-run-start-studying"
+                accessibilityRole="button"
+                accessibilityLabel="Continue to Orbit"
+                accessibilityState={{ disabled: saving, busy: saving }}
                 disabled={saving}
-                state={{ busy: saving }}
-                label="Continue to Orbit"
-                style={[styles.startButton, { backgroundColor: colors.accent }]}>
+                style={[styles.startButton, { backgroundColor: colors.accent, opacity: saving ? 0.72 : 1 }]}>
                 {saving ? <ActivityIndicator color={colors.onAccent} /> : (
-                  <Text style={[styles.startText, { color: colors.onAccent }]}>Continue to Orbit</Text>
+                  <NativeText
+                    allowFontScaling
+                    maxFontSizeMultiplier={1.35}
+                    style={[styles.startText, { color: colors.onAccent }]}>
+                    Continue to Orbit
+                  </NativeText>
                 )}
-              </Touchable>
+              </Pressable>
             )}
             <Text accessibilityLiveRegion="polite" style={[styles.footnote, { color: colors.textMuted, marginTop: 6 }]}>
               {googling
@@ -493,16 +501,23 @@ const styles = StyleSheet.create({
     marginTop: 14,
   },
   startButton: {
+    // A plain native Pressable avoids the Android Fabric AnimatedPressable
+    // clipping/rasterization path which can paint an empty accent rectangle.
+    // No overflow:hidden: its child label must never be clipped on OEM phones.
     borderRadius: 14,
-    paddingVertical: 17,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
     minHeight: 56,
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'hidden',
   },
   startText: {
+    fontFamily: 'Roboto',
     fontSize: 16,
-    fontWeight: '800',
+    lineHeight: 24,
+    fontWeight: '700',
+    textAlign: 'center',
+    includeFontPadding: true,
   },
   footnote: {
     ...typeScale.caption,

@@ -108,10 +108,10 @@ android {
         applicationId "com.aistudio.mbbsqbank.aycxvd"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // Version 33 includes the repaired one-screen onboarding and visible Continue to Orbit CTA.
-        // Bumped from v32 after signed release + API 35 emulator startup checks.
-        versionCode 33
-        versionName "0.0.0.33"
+        // Version 35: Android native Continue CTA rendering fix, independent of the animated Touchable.
+        // Version 34 is intentionally skipped per owner's requested v35.
+        versionCode 35
+        versionName "0.0.0.35"
 
         // Deep-link / OAuth callback scheme, consumed by the intent-filter in
         // AndroidManifest.xml. Added with an indexed put rather than assigning
