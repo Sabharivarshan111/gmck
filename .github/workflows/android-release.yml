@@ -42,6 +42,11 @@ on:
       - 'mobile/**'
       - 'src/**'
       - 'public/**'
+      # Release-content integrity checks must trigger a fresh signed artifact.
+      - 'scripts/check-neet-pg-artifact.py'
+      - 'scripts/check-university-import-artifact.py'
+      - 'scripts/build-pg-compact.mjs'
+      - 'scripts/check-pg-release-content.mjs'
       - '.github/workflows/android-release.yml'
 
 # One run per branch, and a new artifact-affecting push cancels the one it supersedes.
