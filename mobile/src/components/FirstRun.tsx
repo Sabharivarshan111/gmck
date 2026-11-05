@@ -6,6 +6,7 @@ import {
   Image,
   Modal,
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -236,12 +237,20 @@ export function FirstRun() {
               <Text style={[styles.madeSub, { color: colors.textMuted }]}>
                 Past papers, notes and clinical practice, together.
               </Text>
-              <Touchable testID="first-run-google-sign-in" disabled={googling} state={{ busy: googling }}
-                label={GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? 'Continue with Google' : 'Continue'}
+              {/* Use an ordinary native Pressable for the OS account chooser.
+                  Global animated/tour/reorder tap decorations must never swallow
+                  the first press of the required authentication action. */}
+              <Pressable
+                testID="first-run-google-sign-in"
+                accessibilityRole="button"
+                accessibilityLabel={GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? 'Continue with Google' : 'Continue'}
+                accessibilityState={{ disabled: googling, busy: googling }}
+                disabled={googling}
+                hitSlop={8}
                 onPress={() => { if (GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated) void withGoogle(); else setStage('you'); }}
                 style={[styles.google, { borderColor: colors.accent, marginTop: 24 }]}>
                 {googling ? <ActivityIndicator color={colors.accent} /> : <Text style={[styles.googleText, { color: colors.accent }]}>{GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? 'Continue with Google' : 'Continue'}</Text>}
-              </Touchable>
+              </Pressable>
               {googling ? <Text accessibilityRole="status" style={[styles.footnote, { color: colors.textMuted }]}>Opening Google account chooser…</Text> : checkingAccount ? <Text style={[styles.footnote, { color: colors.textMuted }]}>Checking saved account in the background. You can tap Continue now.</Text> : null}
               {!isNative && GOOGLE_SIGN_IN_ENABLED && !googleAuthenticated ? <Touchable label="Continue on this device" onPress={() => setStage('you')} style={styles.google}><Text style={[styles.googleText, { color: colors.textMuted }]}>Continue on this device</Text></Touchable> : null}
               {error ? <Text accessibilityRole="alert" style={[styles.error, { color: colors.danger }]}>{error}</Text> : null}
