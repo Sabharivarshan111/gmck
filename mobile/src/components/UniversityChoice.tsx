@@ -7,6 +7,7 @@ import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
 import { bankAvailable, KUHS_BANK_READY } from '@/lib/kuhsAvailability';
 import { COLLECTED_QUESTION_COUNTS } from '@data/universityPapers/questionBankData';
+import { UNIVERSITY_OFFLINE_MANIFEST } from '@/lib/universityOfflineBank';
 import { UNIVERSITIES, UNIVERSITY_LABEL, UNIVERSITY_SHORT_LABEL, type University } from '@shared/university';
 
 export function UniversityChoice({ value, onChange }: {
@@ -43,7 +44,10 @@ export function UniversityChoice({ value, onChange }: {
             {UNIVERSITY_SHORT_LABEL[option]}
           </Text>
           <Text style={[styles.detail, { color: colors.textMuted }]}>
-            {option === 'other' ? 'A combined question bank for your studies' : count !== null
+            {option === 'other' ? 'A combined question bank for your studies'
+              : (option === 'muhs' || option === 'rguhs') && UNIVERSITY_OFFLINE_MANIFEST.totals[option] > 0
+              ? `${UNIVERSITY_OFFLINE_MANIFEST.totals[option].toLocaleString()} imported offline · ${count ?? 0} reviewed bank entries`
+              : count !== null
               ? (count > 0 ? `${count} questions · more papers being added` : 'Papers collected · question review in progress')
               : option === 'kuhs' && !KUHS_BANK_READY
               ? (unavailable ? 'Questions are being checked against the PDFs' : 'Review preview · coverage and references still being checked')

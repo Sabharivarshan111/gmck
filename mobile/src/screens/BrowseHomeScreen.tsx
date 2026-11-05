@@ -1,5 +1,6 @@
 import { isUniversityMcq } from '@data/universityPapers/presentation';
 import MuhsImportedBank from '@/screens/MuhsImportedBank';
+import { UNIVERSITY_OFFLINE_MANIFEST } from '@/lib/universityOfflineBank';
 import WbuhsImportedBank from '@/screens/WbuhsImportedBank';
 import RguhsImportedBank from '@/screens/RguhsImportedBank';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -172,10 +173,10 @@ export default function BrowseHomeScreen() {
 
       {bankUniversity === 'rguhs' ? (
         <Touchable
-          label="Open all 10845 RGUHS questions across four MBBS years"
+          label="Open the fully offline RGUHS question bank"
           onPress={() => setShowRguhsOcr(true)}
           style={[styles.switchRow, { borderColor: colors.border }]}>
-          <Text style={{ color: colors.cyan, fontWeight: '700' }}>RGUHS: 1st–Final MBBS • 10,845 questions</Text>
+          <Text style={{ color: colors.cyan, fontWeight: '700' }}>RGUHS: 1st–Final MBBS • {UNIVERSITY_OFFLINE_MANIFEST.totals.rguhs.toLocaleString()} offline questions</Text>
           <ChevronRight size={16} color={colors.cyan} />
         </Touchable>
       ) : null}
@@ -192,10 +193,10 @@ export default function BrowseHomeScreen() {
 
       {bankUniversity === 'muhs' ? (
         <Touchable
-          label="Open MUHS OCR first through final year question bank"
+          label="Open the fully offline MUHS first through final year question bank"
           onPress={() => setShowMuhsOcr(true)}
           style={[styles.switchRow, { borderColor: colors.border }]}>
-          <Text style={{ color: colors.cyan, fontWeight: '700' }}>MUHS OCR: First / Second / Third / Final Year (4,347 stored questions)</Text>
+          <Text style={{ color: colors.cyan, fontWeight: '700' }}>MUHS: 1st–Final MBBS • {UNIVERSITY_OFFLINE_MANIFEST.totals.muhs.toLocaleString()} offline questions</Text>
           <ChevronRight size={16} color={colors.cyan} />
         </Touchable>
       ) : null}

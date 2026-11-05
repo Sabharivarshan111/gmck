@@ -27,6 +27,7 @@ on:
       # main included so a merge here cuts a release with no API access
       # needed — see the note in android-debug.yml.
       - main
+      - fix/vault-preview-anki-muhs-count-20261105
       - codex/v27-parity-repairs-20261016
       - codex/v27-brain-registration-20261016
       - codex/v27-context-camera-20261016
@@ -41,6 +42,13 @@ on:
       - 'mobile/**'
       - 'src/**'
       - 'public/**'
+      # Release-content integrity checks must trigger a fresh signed artifact.
+      - 'scripts/check-neet-pg-artifact.py'
+      - 'scripts/check-university-import-artifact.py'
+      - 'scripts/build-pg-compact.mjs'
+      - 'scripts/check-pg-release-content.mjs'
+      - 'scripts/build-university-offline.mjs'
+      - 'scripts/check-university-offline-artifact.py'
       - '.github/workflows/android-release.yml'
 
 # One run per branch, and a new artifact-affecting push cancels the one it supersedes.
@@ -102,6 +110,7 @@ jobs:
           npm ci --legacy-peer-deps --ignore-scripts
           node scripts/zanatomy-reference-registration-check.mjs
           node mobile/scripts/build-local-simulator.mjs
+          node scripts/build-university-offline.mjs
           node mobile/scripts/clinical-snapshot-check.mjs
 
       - name: Typecheck
@@ -219,6 +228,56 @@ jobs:
         run: |
           python3 scripts/check-neet-pg-artifact.py 'mobile/android/app/build/outputs/apk/**/*.apk' 'mobile/android/app/build/outputs/bundle/**/*.aab'
           python3 scripts/check-university-import-artifact.py 'mobile/android/app/build/outputs/apk/**/*.apk' 'mobile/android/app/build/outputs/bundle/**/*.aab'
+          python3 scripts/check-university-offline-artifact.py 'mobile/android/app/build/outputs/apk/**/*.apk' 'mobile/android/app/build/outputs/bundle/**/*.aab'
+
+      # This launch gate must run on the actual signed/minified release APK.
+      # A successful Gradle build did NOT catch the v31 first-launch crash:
+      # the Android emulator identified an unsupported accessibilityRole=status
+      # that threw JSApplicationIllegalArgumentException on the UI thread.
+      # Never publish an AAB/APK from this workflow without first booting it.
+      - name: Enable KVM for signed-release runtime test
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Boot exact signed release APK in Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_7
+          emulator-boot-timeout: 360
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
+          script: |
+            set -eu
+            mkdir -p artifacts/android-release-native-startup
+            adb install -r mobile/android/app/build/outputs/apk/release/app-release.apk
+            adb shell am force-stop com.aistudio.mbbsqbank.aycxvd || true
+            adb logcat -c
+            adb shell am start -n com.aistudio.mbbsqbank.aycxvd/.MainActivity
+            sleep 18
+            adb exec-out screencap -p > artifacts/android-release-native-startup/after-launch.png || true
+            adb logcat -d -b crash -v time > artifacts/android-release-native-startup/crash-logcat.txt || true
+            adb logcat -d -v time -s AndroidRuntime:E ReactNativeJS:E > artifacts/android-release-native-startup/js-native-errors.txt || true
+            APP_PID="$(adb shell pidof com.aistudio.mbbsqbank.aycxvd | tr -d '\r')"
+            if [ -z "$APP_PID" ] || grep -q 'FATAL EXCEPTION' artifacts/android-release-native-startup/crash-logcat.txt; then
+              echo "ERROR: Signed release closed or crashed on first launch."
+              tail -n 100 artifacts/android-release-native-startup/crash-logcat.txt || true
+              tail -n 60 artifacts/android-release-native-startup/js-native-errors.txt || true
+              exit 1
+            fi
+            echo "Signed APK stays open after launch on Android API 35. Google account selection still requires device testing."
+
+      - name: Save native startup screenshots and error logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: orbit-signed-release-native-startup
+          path: artifacts/android-release-native-startup/
+          if-no-files-found: warn
 
       - name: Upload AAB
         uses: actions/upload-artifact@v4

@@ -25,6 +25,8 @@ type Screen = { kind: 'anatomy' | 'monitor' } | { kind: 'tool'; id: string; scen
 interface Props {
   onExit: () => void;
   onOpen: (screen: Screen) => void;
+  premiumActive: boolean;
+  onUnlock: () => void;
   /** Preserve the same case selection across screens as the Vercel page. */
   scenarioId: string;
   onScenarioChange: (scenarioId: string) => void;
@@ -60,7 +62,7 @@ function AnatomyStudioIcon() {
   </Svg>;
 }
 
-export default function NativeClinicalStudio({ onExit, onOpen, scenarioId, onScenarioChange, theme, onToggleTheme }: Props) {
+export default function NativeClinicalStudio({ onExit, onOpen, premiumActive, onUnlock, scenarioId, onScenarioChange, theme, onToggleTheme }: Props) {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const [section, setSection] = useState<'skills' | 'cases'>('skills');
@@ -106,10 +108,25 @@ export default function NativeClinicalStudio({ onExit, onOpen, scenarioId, onSce
           <AnatomyStudioIcon />
           <View style={{ flex: 1 }}>
             <Text style={[styles.anatomyTitle, { color: c.ink }]}>Explore 3D anatomy</Text>
-            <Text style={[styles.hint, { color: c.muted, marginTop: 5 }]}>Bones, muscles, organs & nerves · no case needed</Text>
+            <Text style={[styles.hint, { color: c.muted, marginTop: 5 }]}>{premiumActive ? 'Bones, muscles, organs & nerves · all structures' : 'Free sample · heart, lungs & brain'}</Text>
           </View>
           <ChevronRight color={c.accent} size={22} />
         </Pressable>
+
+        {/* The website hides its sample banner for verified paid accounts. Android must match. */}
+        {!premiumActive ? (
+          <View style={[styles.preview, { backgroundColor: c.raised, borderColor: c.border }]}>
+            <View style={{ flex: 1 }}>
+              <Text testID="studio-native-free-preview" style={[styles.previewKicker, { color: c.accent }]}>FREE PREVIEW</Text>
+              <Text style={{ color: c.ink, fontWeight: '700', fontSize: 15, marginTop: 5 }}>Heart, lungs & brain</Text>
+              <Text style={[styles.hint, { color: c.muted, marginTop: 3 }]}>Normal findings and sample anatomy are free. Premium unlocks all organs, cases and tools.</Text>
+              <Pressable accessibilityRole="button" accessibilityLabel="View simulator Premium access" testID="studio-native-unlock" onPress={onUnlock}
+                style={{ minHeight: 44, justifyContent: 'center', marginTop: 8 }}>
+                <Text style={{ color: c.accent, fontWeight: '800' }}>Unlock all →</Text>
+              </Pressable>
+            </View>
+          </View>
+        ) : null}
 
         <View style={[styles.segment, buttonStyle(16)]}>
           {(['skills','cases'] as const).map(k => (
@@ -214,6 +231,8 @@ const styles = StyleSheet.create({
   anatomy: { paddingHorizontal: 18, paddingVertical: 22, flexDirection: 'row', alignItems: 'center', gap: 14 },
   anatomyTitle: { fontSize: 16, fontWeight: '700' },
   hint: { fontSize: 13, lineHeight: 19.5 },
+  preview: { flexDirection: 'row', alignItems: 'center', borderRadius: 18, borderWidth: 1, paddingHorizontal: 16, paddingVertical: 15, marginTop: 12, gap: 12 },
+  previewKicker: { fontSize: 10, fontWeight: '800', letterSpacing: 1.5 },
   segment: { padding: 4, flexDirection: 'row', gap: 4, marginTop: 24, marginBottom: 16 },
   segmentItem: { minHeight: 48, flex: 1, justifyContent: 'center', borderRadius: 12 },
   baseline: { padding: 16 },

@@ -71,6 +71,9 @@ class SimulatorViewManager : SimpleViewManager<WebView>() {
         }
         override fun onHideCustomView() { hideFullscreen(this@apply) }
         override fun onConsoleMessage(message: ConsoleMessage): Boolean {
+          if (message.message().startsWith("ORBIT_NATIVE_PREMIUM_REQUEST:") && Uri.parse(this@apply.url ?: "").host == HOST) {
+            status(this@apply, "upgrade")
+          }
           if (message.message().startsWith("ORBIT_NATIVE_TEACHING_CLOSED:") && Uri.parse(this@apply.url ?: "").host == HOST) {
             status(this@apply, "exit")
           }

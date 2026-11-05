@@ -47,11 +47,11 @@ if (gradleCode && tsCode) {
   );
 }
 /*
- * The owner requested the next official Android release (version 29)
- * on 2026-10-31. Keep the Gradle version in sync.
+ * The owner requested the startup-crash repair release (version 32)
+ * on 2026-11-05. Keep the Gradle version in sync.
  * This pin verifies source version only; it does not imply Play publication.
  */
-const PINNED_VERSION_CODE = 29;
+const PINNED_VERSION_CODE = 32;
 if (gradleCode) {
   check(
     Number(gradleCode[1]) === PINNED_VERSION_CODE,

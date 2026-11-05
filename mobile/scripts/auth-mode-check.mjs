@@ -8,6 +8,41 @@ const modeSource = fs.readFileSync(new URL('../src/lib/authMode.ts', import.meta
 const authSource = fs.readFileSync(new URL('../src/lib/googleAuth.ts', import.meta.url), 'utf8');
 const debugApk = process.argv.includes('--debug-apk');
 
+// Regression: on a fresh installation the saved Supabase session may take
+// seconds to hydrate from Android secure storage. It must not eat the first
+// press of "Continue with Google". The button launches sign-in immediately,
+// while any account check completes independently.
+const firstRun = fs.readFileSync(new URL('../src/components/FirstRun.tsx', import.meta.url), 'utf8');
+const vault = fs.readFileSync(new URL('../src/screens/NotesScreen.tsx', import.meta.url), 'utf8');
+assert.match(vault, /title: 'NEET PG Practice Questions'/, 'Vault should use user-facing NEET PG name');
+assert.doesNotMatch(vault, /title: 'MedMCQA Practice'/, 'Do not expose MedMCQA provider name on the Vault tile');
+assert.match(firstRun, /testID="first-run-google-sign-in"[\s\S]{0,250}disabled=\{googling\}/,
+  'Google sign-in must respond to the first tap while the saved-account lookup runs');
+assert.match(firstRun, /<Touchable[\s\S]{0,100}testID="first-run-google-sign-in"/,
+  'Restore v27 native sign-in Touchable used by the known-working one-tap flow');
+assert.doesNotMatch(firstRun, /disabled=\{googling\s*\|\|\s*checkingAccount\}/,
+  'Background account hydration must not disable the Google button');
+assert.match(firstRun, /if \(googleSignInInFlight\.current\) return;/,
+  'Repeated taps during the same render must not launch competing Google pickers');
+assert.match(firstRun, /googleSignInInFlight\.current = true;/,
+  'The native account chooser needs a synchronous in-flight guard');
+assert.doesNotMatch(firstRun, /if \(isNative\) configureGoogleSignIn\(\);/,
+  'Never eagerly configure native Google SDK during onboarding mount; v27 did so on tap');
+assert.match(firstRun, /Opening Google account chooser/,
+  'Show immediate progress so a delayed native account picker never looks unresponsive');
+assert.match(firstRun, /<ScrollView[\s\S]*<UniversityChoice[\s\S]*<\/ScrollView>[\s\S]*styles\.actionBar[\s\S]*testID="first-run-google-sign-in"[\s\S]*testID="first-run-start-studying"/,
+  'Google and Start actions must be pinned below the single scrollable study-setup screen');
+assert.doesNotMatch(firstRun, /setStage\('you'\)|stage === 'splash'|STEP 1 OF 2|STEP 2 OF 2/,
+  'Do not restore the separate Google-first screen; v27 used one combined setup screen');
+assert.match(firstRun, /minHeight: 56/, 'Primary one-handed Google button must have a generous 56dp target');
+assert.doesNotMatch(firstRun, /accessibilityRole=["']status["']/,
+  'RCTText must not receive unsupported Android accessibilityRole=status; it crashes the signed release at app launch');
+assert.match(firstRun, /accessibilityLiveRegion="polite"/,
+  'Onboarding status text must use Android-compatible live-region announcements');
+assert.equal((firstRun.match(/testID="first-run-google-sign-in"/g) ?? []).length, 1,
+  'There must be only one Google sign-in button, pinned in the thumb zone');
+
+
 function evaluate(source, dev, modules = {}) {
   const exports = {};
   vm.runInNewContext(

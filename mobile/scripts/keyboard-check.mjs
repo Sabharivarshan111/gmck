@@ -40,6 +40,8 @@ const LIFTED_BY_ANCESTOR = {
   'components/FilterField.tsx': 'rendered by BrowseNode/Flashcards screens, both KeyboardSafe',
   'components/NotesAiEditBox.tsx': 'NotesScreen wraps its ScrollView in KeyboardSafe',
   'components/PageRefSheet.tsx': 'Sheet wraps its body in KeyboardSafe',
+  'components/AttendanceHistoryPanel.tsx': 'AttendanceTab wraps its screen with KeyboardSafe; the History editor also opens in Sheet, whose content uses KeyboardSafe',
+  'components/AttendanceOrganizer.tsx': 'AttendanceTab wraps its screen with KeyboardSafe; the Organizer form also uses Sheet for its editable inputs',
 };
 
 async function* walk(dir) {

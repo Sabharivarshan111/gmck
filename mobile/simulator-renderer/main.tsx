@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Simulator } from '../../src/pages/Simulator';
+import { SimulatorAccessContext } from '../../src/simulator/SimulatorAccess';
 import { ThemeProvider } from '../../src/components/theme/ThemeProvider';
 import '../../src/index.css';
 import '../../src/simulator/mobile-touch-targets.css';
@@ -18,6 +19,14 @@ class RendererBoundary extends React.Component<{ children: React.ReactNode }, { 
 }
 window.addEventListener('error', event => console.error('ORBIT_NATIVE_RENDER_ERROR:' + event.message));
 window.addEventListener('unhandledrejection', event => console.error('ORBIT_NATIVE_RENDER_ERROR:' + String(event.reason)));
+
+// Android passes the account's verified Premium state as a native-renderer
+// route parameter. Keep the canonical sample restrictions in the bundled WebGL
+// renderer too; gating only the React Native cards would expose locked anatomy.
+const premiumFromNative = new URLSearchParams(location.search).get('nativePremium') === '1';
+const requestNativeUpgrade = (feature: string) => {
+  console.info('ORBIT_NATIVE_PREMIUM_REQUEST:' + feature.replace(/[\\r\\n]/g, ' '));
+};
 
 // The canonical teaching renderer runs locally. The Android host owns navigation
 // and delivers the exact, checksum-pinned source geometry from its persistent cache.
@@ -74,5 +83,5 @@ setInterval(() => {
   }
 }, 1000);
 createRoot(document.getElementById('root')!).render(
-  <RendererBoundary><ThemeProvider><BrowserRouter><Routes><Route path="*" element={<Simulator />} /></Routes></BrowserRouter></ThemeProvider></RendererBoundary>,
+  <RendererBoundary><ThemeProvider><SimulatorAccessContext.Provider value={{ active: premiumFromNative, requestPurchase: requestNativeUpgrade }}><BrowserRouter><Routes><Route path="*" element={<Simulator />} /></Routes></BrowserRouter></SimulatorAccessContext.Provider></ThemeProvider></RendererBoundary>,
 );

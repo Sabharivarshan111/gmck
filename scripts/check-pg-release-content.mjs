@@ -35,4 +35,17 @@ function visit(file) {
 for(const entry of ['mobile/index.js','mobile/App.tsx','mobile/preview/main.tsx'])visit(path.join(root,entry));
 assert.ok(seen.has(path.join(root,'mobile/src/lib/neetPgBundledBank.ts')));
 assert.ok(seen.has(path.join(root,'mobile/src/lib/pgLocalBank.ts')));
+// A populated manifest alone is not enough: the Android reader opens native
+// assets/pg/sXX-<hash>.zst, and these must survive AAPT packaging.
+const gradle=fs.readFileSync(path.join(root,'mobile/android/app/build.gradle'),'utf8');
+assert.ok(!/ignoreAssetsPattern\s*=\s*"[^"]*<dir>pg/.test(gradle),'Gradle is excluding native MedMCQA PG asset directory');
+const pgManifest=JSON.parse(fs.readFileSync(path.join(root,'public/pg/manifest.json'),'utf8'));
+const androidPg=path.join(root,'mobile/android/app/src/main/assets/pg');
+assert.ok(fs.existsSync(androidPg),'Generated Android MedMCQA asset directory missing');
+for(const pack of pgManifest.packs) {
+ const file=path.join(androidPg,pack.id+'-'+pack.sha256.slice(0,12)+'.zst');
+ assert.ok(fs.existsSync(file)&&fs.statSync(file).size>0,'Android MedMCQA pack absent: '+pack.id);
+}
+console.log('PASS: '+pgManifest.packs.length+' compressed MedMCQA packs are generated and not excluded by Android asset packaging.');
+
 console.log(`PG release import graph: ${seen.size} modules checked; compact practice and reviewed exam readers reachable; raw packs and unaudited recall catalogues excluded.`);
