@@ -26,6 +26,9 @@ const YEARS: {key: OfflineUniversityYear;label:string}[] = [
   {key:'first-year',label:'1st'}, {key:'second-year',label:'2nd'},
   {key:'third-year',label:'3rd'}, {key:'final-year',label:'Final'}
 ];
+const TAB_OPTIONS: {key:Kind;label:string}[] = [
+  {key:'essay',label:'Essay'},{key:'short-notes',label:'Short Notes'},{key:'unknown',label:'Other'}
+];
 const LABEL:Record<OfflineUniversityYear,string> = {
   'first-year':'1st Year','second-year':'2nd Year',
   'third-year':'3rd Year Part 1','final-year':'Final Year'
@@ -114,8 +117,7 @@ export default function OfflineUniversityBankScreen({university,initialYear,onSw
       </Text>:null}
       {chapter?<View style={{gap:10,marginTop:10,marginBottom:12}}>
         <SegmentedControl value={tab} onChange={(next:Kind)=>{setTab(next);setSearch('');}}
-          options={[{key:'essay',label:'Essay'},{key:'short-notes',label:'Short Notes'},
-            ...(university==='rguhs'?[{key:'unknown',label:'Other'}]:[])]}/>
+          options={university==='rguhs'?TAB_OPTIONS:TAB_OPTIONS.filter(option=>option.key!=='unknown')}/>
         <TextInput placeholder="Search this chapter" placeholderTextColor={colors.textMuted} value={search}
           onChangeText={setSearch} style={{paddingHorizontal:12,paddingVertical:10,color:colors.text,
             borderColor:colors.border,borderWidth:1,borderRadius:10,backgroundColor:colors.card}}/>
@@ -134,7 +136,8 @@ export default function OfflineUniversityBankScreen({university,initialYear,onSw
         renderItem={({item,index})=>{
           if(item.kind==='question')return <View style={{marginBottom:14}}>
             <QuestionRow question={item.row.question_text} index={index} onAskAi={askAi}
-              onNote={subject&&hasTextbook(key,subject)?()=>setNoted(item.row):undefined}/>
+              onNote={subject&&hasTextbook(key,subject)?()=>setNoted(item.row):undefined}
+              repeatCountOverride={item.row.quality_status==='verified'?item.row.exam_dates.length:0}/>
             <Text style={{color:colors.textMuted,fontSize:11,paddingLeft:10}}>
               {item.row.source_pdf?item.row.source_pdf+' · ':''}
               {item.row.source_page!=null?'PDF page '+item.row.source_page:'PDF reference'}
