@@ -18,13 +18,13 @@ const EXAMS = [
   {id: 'neet-pg', label: 'NEET-PG'},
   {id: 'aiims-pg', label: 'AIIMS PG'},
   {id: 'ini-cet', label: 'INI-CET'},
-  {id: 'practice', label: 'Practice questions'},
+  {id: 'practice', label: 'MedMCQA Practice'},
 ] as const;
 
-export function PgEntranceBankModal({visible, onClose, initialQuestionId}: {visible: boolean; onClose: () => void; initialQuestionId?: string}) {
+export function PgEntranceBankModal({visible, onClose, initialQuestionId, initialExam = 'neet-pg'}: {visible: boolean; onClose: () => void; initialQuestionId?: string; initialExam?: 'neet-pg' | 'practice'}) {
   const {colors} = useTheme();
   const insets = useSafeAreaInsets();
-  const [exam, setExam] = useState<Exam>('neet-pg');
+  const [exam, setExam] = useState<Exam>(initialExam);
   const [installed, setInstalled] = useState<InstalledReader | null>(null);
   const [checked, setChecked] = useState(false);
   const [loadedExam, setLoadedExam] = useState<Exam | null>(null);
@@ -32,7 +32,7 @@ export function PgEntranceBankModal({visible, onClose, initialQuestionId}: {visi
   const mounted = useRef(true);
   useEffect(() => {mounted.current = true; return () => {mounted.current = false;};}, []);
   // A question-of-the-day deep link always belongs to the existing NEET bank.
-  useEffect(() => {if (visible && initialQuestionId) setExam('neet-pg');}, [visible, initialQuestionId]);
+  useEffect(() => { if (visible) setExam(initialQuestionId ? 'neet-pg' : initialExam); }, [visible, initialQuestionId, initialExam]);
   useEffect(() => {
     if (!visible) return;
     let cancelled = false;
