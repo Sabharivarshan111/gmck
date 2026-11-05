@@ -1,0 +1,84 @@
+name: Android repaired v31 native runtime verification
+
+# Run the exact repaired v31 APK; build and payload checks passed, publication was denied.
+# This tests actual Android launch and a Google sign-in button press, which
+# TypeScript, lint, and Gradle compilation cannot verify.
+on:
+  push:
+    branches: [fix/android-v32-native-smoke-20261105]
+    paths: ['.github/workflows/android-v31-repair-runtime.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  native-crash-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify repaired APK source and successful build steps
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: run } = await github.rest.actions.getWorkflowRun({
+              ...context.repo, run_id: 42016244722,
+            });
+            if (run.head_sha !== '69caf8f9526013d018694a8c3917fdb20ce3ffaf' || run.status !== 'completed')
+              throw new Error('Unexpected build source or incomplete run');
+            const { data: jobs } = await github.rest.actions.listJobsForWorkflowRun({
+              ...context.repo, run_id: 42016244722,
+            });
+            const steps = jobs.jobs.find(job => job.name === 'build').steps;
+            for (const name of ['Typecheck', 'Lint', 'Checks', 'Build AAB (for Google Play)', 'Build APK (for direct install)', 'Verify the actual offline question-bank payload', 'Upload APK']) {
+              if (!steps.some(step => step.name === name && step.conclusion === 'success'))
+                throw new Error('Required APK build step failed: ' + name);
+            }
+            const failed = steps.filter(step => step.conclusion === 'failure');
+            if (failed.length !== 1 || failed[0].name !== 'Publish the AAB and APK where a phone can reach them')
+              throw new Error('Unexpected build failure; refusing artifact');
+      - name: Download exact repaired v31 release APK
+        uses: actions/download-artifact@v4
+        with:
+          name: orbit-mbbs-apk
+          path: downloaded-apk
+          run-id: 42016244722
+          github-token: ${{ github.token }}
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Launch production APK and attempt first Google tap on Android 15
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_7
+          emulator-boot-timeout: 360
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
+          script: |
+            mkdir -p artifacts/v31-crash-smoke
+            adb shell wm size 1080x2400
+            adb shell wm density 440
+            adb install -r downloaded-apk/app-release.apk
+            adb shell am force-stop com.aistudio.mbbsqbank.aycxvd
+            adb logcat -c
+            adb shell am start -n com.aistudio.mbbsqbank.aycxvd/.MainActivity
+            sleep 15
+            set -eu
+            # Use exact CTA targeting and recover only the CI Pixel Launcher overlay.
+            env APK_PROVENANCE="repaired-v31-build-1031 SHA 69caf8f9526013d018694a8c3917fdb20ce3ffaf" python3 mobile/scripts/android_v31_crash_smoke.py
+            grep -q 'Google CTA tap dispatched: True' artifacts/v31-crash-smoke/result.txt
+      - name: Upload Android crash evidence and screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: orbit-v31-android-native-crash-smoke
+          path: artifacts/v31-crash-smoke/
+          if-no-files-found: warn
+          retention-days: 7

@@ -1,11 +1,11 @@
-name: Android v31 native crash smoke
+name: Android v32 native launch and Google tap
 
-# Run on the exact signed v31 APK already released as release-1028.
-# This tests actual Android launch and a Google sign-in button press, which
+# Verify the exact signed APK built from the main head captured at job start.
+# Tests exact CTA and handles only the observed CI Pixel Launcher overlay;
 # TypeScript, lint, and Gradle compilation cannot verify.
 on:
   push:
-    branches: [fix/vault-preview-anki-muhs-count-20261105]
+    branches: [main, fix/android-v32-native-smoke-20261105]
     paths: ['.github/workflows/android-v31-crash-smoke.yml']
   workflow_dispatch:
 
@@ -16,33 +16,31 @@ permissions:
 jobs:
   native-crash-smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 65
     steps:
       - uses: actions/checkout@v4
-      - name: Wait for corrected signed v31 release APK (build 1031)
+      - name: Wait for the exact signed release APK from current main
         id: corrected_release
         uses: actions/github-script@v7
         with:
           script: |
-            const runId = 42016244722;
-            for (let attempt = 0; attempt < 150; attempt++) {
-              const { data: run } = await github.rest.actions.getWorkflowRun({
-                ...context.repo, run_id: runId,
+            const { data: branch } = await github.rest.repos.getBranch({...context.repo, branch: 'main'});
+            const expectedSha = branch.commit.sha;
+            for (let attempt = 0; attempt < 300; attempt++) {
+              const { data } = await github.rest.actions.listWorkflowRuns({
+                ...context.repo, workflow_id: 'android-release.yml', branch: 'main', per_page: 20,
               });
-              if (run.status === 'completed') {
-                if (run.conclusion !== 'success') {
-                  throw new Error('Corrected v31 release build did not succeed: ' + run.conclusion);
-                }
-                if (run.head_sha !== '69caf8f9526013d018694a8c3917fdb20ce3ffaf') {
-                  throw new Error('APK source mismatch, refusing to test stale code: ' + run.head_sha);
-                }
-                core.setOutput('run_id', String(runId));
+              const run = data.workflow_runs.find(run => run.head_sha === expectedSha);
+              if (run?.status === 'completed') {
+                if (run.conclusion !== 'success') throw new Error('Signed main release failed: ' + run.conclusion);
+                core.setOutput('run_id', String(run.id));
+                core.setOutput('sha', expectedSha);
                 return;
               }
               await new Promise(resolve => setTimeout(resolve, 10000));
             }
-            throw new Error('Corrected Android build did not finish within workflow wait window');
-      - name: Download exact corrected v31 release APK
+            throw new Error('Signed main build did not finish within test wait window');
+      - name: Download exact main-branch v32 release APK
         uses: actions/download-artifact@v4
         with:
           name: orbit-mbbs-apk
@@ -73,7 +71,10 @@ jobs:
             adb logcat -c
             adb shell am start -n com.aistudio.mbbsqbank.aycxvd/.MainActivity
             sleep 15
-            # Original helper's first line names build 1028; replace the label only,\n            # so the artifact log identifies the corrected, SHA-matched APK.\n            sed -i 's/release-1028 SHA 6052733eefeb98d7de112939f9f2b9f4341c723e/release-1031 SHA 69caf8f9526013d018694a8c3917fdb20ce3ffaf/' mobile/scripts/android_v31_crash_smoke.py\n            python3 mobile/scripts/android_v31_crash_smoke.py
+            set -eu
+            # Label the actual SHA-matched APK, then execute the helper.
+            env APK_PROVENANCE="main build ${{ steps.corrected_release.outputs.run_id }} SHA ${{ steps.corrected_release.outputs.sha }}" python3 mobile/scripts/android_v31_crash_smoke.py
+            grep -q 'Google CTA tap dispatched: True' artifacts/v31-crash-smoke/result.txt
       - name: Upload Android crash evidence and screenshots
         if: always()
         uses: actions/upload-artifact@v4

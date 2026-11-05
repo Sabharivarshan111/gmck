@@ -7,6 +7,7 @@ Google login is not evidence of an app crash.
 """
 from __future__ import annotations
 
+import os
 import re
 import subprocess
 import time
@@ -42,7 +43,7 @@ def report(line: str):
     with (OUT / "result.txt").open("a", encoding="utf-8") as fh:
         fh.write(line + "\n")
 
-report("APK provenance: release-1028 SHA 6052733eefeb98d7de112939f9f2b9f4341c723e")
+report("APK provenance: " + os.environ.get("APK_PROVENANCE", "not supplied"))
 original_pid = pid()
 report("Process after first launch: " + (original_pid or "NOT RUNNING"))
 capture("after-launch.png")
@@ -54,10 +55,34 @@ if original_pid:
     (OUT / "ui.xml").write_text(xml.stdout or "", encoding="utf-8")
     if xml.returncode == 0:
         try:
-            for node in ET.fromstring(xml.stdout).iter():
+            root = ET.fromstring(xml.stdout)
+            # A cold CI emulator may show its launcher's ANR over the app.
+            # Dismiss ONLY that observed system dialog; never dismiss an Orbit ANR.
+            titles = [n.attrib.get("text", "") for n in root.iter()
+                      if n.attrib.get("resource-id") == "android:id/alertTitle"]
+            if titles == ["Pixel Launcher isn't responding"]:
+                for control in root.iter():
+                    if control.attrib.get("resource-id") == "android:id/aerr_close":
+                        bounds = re.fullmatch(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]",
+                                              control.attrib.get("bounds", ""))
+                        if bounds:
+                            x1, y1, x2, y2 = map(int, bounds.groups())
+                            adb("shell", "input", "tap", str((x1 + x2) // 2), str((y1 + y2) // 2))
+                            report("Dismissed Pixel Launcher ANR; Orbit ANRs are never dismissed")
+                            time.sleep(2)
+                            adb("shell", "uiautomator", "dump", "/sdcard/orbit-ui.xml")
+                            xml = adb("exec-out", "cat", "/sdcard/orbit-ui.xml")
+                            (OUT / "ui.xml").write_text(xml.stdout or "", encoding="utf-8")
+                            root = ET.fromstring(xml.stdout)
+                        break
+            for node in root.iter():
                 label = (node.attrib.get("content-desc", "") + " " +
                          node.attrib.get("text", "")).lower()
-                if "continue with google" not in label:
+                # Match the actual enabled control, never explanatory text.
+                if node.attrib.get("clickable") != "true" or node.attrib.get("enabled") != "true":
+                    continue
+                if (node.attrib.get("resource-id") != "first-run-google-sign-in"
+                        and node.attrib.get("content-desc", "").strip().lower() != "continue with google"):
                     continue
                 match = re.fullmatch(
                     r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]",
@@ -73,10 +98,14 @@ if original_pid:
         except Exception as error:
             report(f"Could not parse accessibility dump: {type(error).__name__}")
     if not tapped:
-        report("Google CTA absent from UI dump; first-tap auth not verified")
+        report("FAIL: enabled Google CTA absent from UI dump")
+        raise SystemExit(1)
 
 time.sleep(8)
 capture("after-google-tap.png")
+adb("shell", "uiautomator", "dump", "/sdcard/orbit-after-tap-ui.xml")
+after_xml = adb("exec-out", "cat", "/sdcard/orbit-after-tap-ui.xml")
+(OUT / "after-google-tap-ui.xml").write_text(after_xml.stdout or "", encoding="utf-8")
 after_pid = pid()
 report("Process after optional tap: " + (after_pid or "NOT RUNNING"))
 
