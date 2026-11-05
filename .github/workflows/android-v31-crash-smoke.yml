@@ -1,7 +1,7 @@
 name: Android v32 native launch and Google tap
 
 # Run on the exact main-branch signed v32 APK from build 1032.
-# This tests launch and the exact enabled Google CTA, excluding helper text;
+# Tests exact CTA and handles only the observed CI Pixel Launcher overlay;
 # TypeScript, lint, and Gradle compilation cannot verify.
 on:
   push:
