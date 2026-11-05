@@ -33,6 +33,7 @@ import {
   getHolidayTitle,
   getMonthlyAttendance,
   markAttendance,
+  setAttendanceDay,
   parseLocalIsoDate,
   postingDurationDays,
   postingEndDate,
@@ -65,6 +66,7 @@ const THEORY_SUGGESTIONS = [
   'Biochemistry',
 ];
 
+const LAB_SUGGESTIONS = ['Anatomy dissection', 'Physiology practical', 'Biochemistry practical', 'Pathology lab', 'Microbiology lab'];
 const POSTING_SUGGESTIONS = [
   'Paediatrics',
   'General Medicine',
@@ -393,6 +395,8 @@ export function AttendanceTab() {
   const [formError,setFormError]=useState<string|null>(null);
   const [saving, setSaving] = useState(false);
   const [kind, setKind] = useState<AttendanceKind>('theory');
+  const [registerDate, setRegisterDate] = useState(() => formatLocalIsoDate(new Date()));
+  const [mixedClasses, setMixedClasses] = useState(2);
   const [adding, setAdding] = useState(false);
   const [name, setName] = useState('');
   const [totalClassesStr, setTotalClassesStr] = useState('');
@@ -411,6 +415,9 @@ export function AttendanceTab() {
   const [lastMark, setLastMark] = useState<Record<string, boolean>>({});
 
   const shown = items.filter(item => item.kind === kind);
+  const summaryHeld = shown.reduce((n, item) => n + item.held, 0);
+  const summaryAttended = shown.reduce((n, item) => n + item.attended, 0);
+  const atRisk = shown.filter(item => item.held > 0 && !verdictFor(item).safe).length;
 
   const toggleFormHoliday = useCallback((iso: string) => {
     setCustomHolidays(prev => (prev.includes(iso) ? prev.filter(x => x !== iso) : [...prev, iso]));
@@ -456,7 +463,7 @@ export function AttendanceTab() {
     const total = Number(days);
     const hasTotal = kind === 'posting' && Number.isFinite(total) && total > 0;
     const totalClassesNum =
-      kind === 'theory' && totalClassesStr.trim()
+      kind !== 'posting' && totalClassesStr.trim()
         ? Math.max(1, Math.round(Number(totalClassesStr) || 0))
         : undefined;
 
@@ -522,7 +529,8 @@ export function AttendanceTab() {
           {(
             [
               { key: 'theory' as const, label: 'Theory', Icon: GraduationCap },
-              { key: 'posting' as const, label: 'Clinical postings', Icon: Stethoscope },
+              { key: 'posting' as const, label: 'Postings', Icon: Stethoscope },
+              { key: 'lab' as const, label: 'Labs', Icon: BookOpen },
             ]
           ).map(option => {
             const active = option.key === kind;
@@ -549,7 +557,7 @@ export function AttendanceTab() {
         {shown.length === 0 && hydrated ? (
           <View style={[styles.empty, { borderColor: colors.border }]}>
             <Text style={[styles.emptyTitle, { color: colors.text }]}>
-              {kind === 'theory' ? 'No theory subjects yet' : 'No clinical postings yet'}
+              {kind === 'theory' ? 'No theory subjects yet' : kind === 'lab' ? 'No practical labs yet' : 'No clinical postings yet'}
             </Text>
             <Text style={[styles.emptyBody, { color: colors.textMuted }]}>
               {kind === 'theory'
@@ -590,7 +598,7 @@ export function AttendanceTab() {
             <View>
               <Text style={[styles.formLabel, { color: colors.textMuted }]}>QUICK SUGGESTIONS</Text>
               <View style={styles.suggestionRow}>
-                {(kind === 'theory' ? THEORY_SUGGESTIONS : POSTING_SUGGESTIONS).map(sug => (
+                {(kind === 'theory' ? THEORY_SUGGESTIONS : kind === 'lab' ? LAB_SUGGESTIONS : POSTING_SUGGESTIONS).map(sug => (
                   <Touchable
                     key={sug}
                     onPress={() => setName(sug)}
@@ -617,13 +625,13 @@ export function AttendanceTab() {
             <TextInput
               value={name}
               onChangeText={setName}
-              placeholder={kind === 'theory' ? 'Subject, e.g. Pathology' : 'Posting, e.g. Paediatrics'}
+              placeholder={kind === 'posting' ? 'Posting, e.g. Paediatrics' : kind === 'lab' ? 'Practical, e.g. Microbiology lab' : 'Subject, e.g. Pathology'}
               placeholderTextColor={colors.textMuted}
-              accessibilityLabel={kind === 'theory' ? 'Subject name' : 'Posting name'}
+              accessibilityLabel={kind === 'posting' ? 'Posting name' : kind === 'lab' ? 'Practical lab name' : 'Subject name'}
               style={[styles.input, { color: colors.text, borderColor: colors.border }]}
             />
 
-            {kind === 'theory' ? (
+            {kind !== 'posting' ? (
               <View style={styles.totalClassesSection}>
                 <Text style={[styles.formLabel, { color: colors.textMuted }]}>
                   TOTAL NUMBER OF CLASSES — ALL MONTHS (OPTIONAL)
@@ -842,7 +850,7 @@ export function AttendanceTab() {
               <Touchable
                 onPress={submit}
                 disabled={saving}
-                label={kind === 'theory' ? 'Add this subject' : 'Add this posting'}
+                label={kind === 'posting' ? 'Add this posting' : kind === 'lab' ? 'Add this practical lab' : 'Add this subject'}
                 style={[
                   styles.formButton,
                   { backgroundColor: colors.primary, borderColor: colors.primary },
@@ -854,7 +862,7 @@ export function AttendanceTab() {
         ) : (
           <Touchable
             onPress={() => { setFormError(null); setAdding(true); }}
-            label={kind === 'theory' ? 'Add a subject' : 'Add a posting'}
+            label={kind === 'posting' ? 'Add a posting' : kind === 'lab' ? 'Add a practical lab' : 'Add a subject'}
             style={[styles.add, { borderColor: colors.border }]}>
             <Plus size={16} color={colors.accent} />
             <Text style={[styles.addText, { color: colors.accent }]}>
@@ -951,9 +959,9 @@ function AttendanceCard({
             {item.name}
           </Text>
           <Text style={[styles.cardCount, { color: colors.textMuted }]}>
-            {item.kind === 'theory' ? 'Overall attendance: ' : ''}
+            {item.kind !== 'posting' ? 'Overall attendance: ' : ''}
             {item.attended} of {item.held} {item.kind === 'posting' ? 'days' : 'classes'}
-            {item.kind === 'theory' && item.totalClasses
+            {item.kind !== 'posting' && item.totalClasses
               ? ` · Total classes: ${item.totalClasses} · ${Math.max(0, item.totalClasses - item.held)} left`
               : verdict.remaining !== null
                 ? ` · ${verdict.remaining} left`
@@ -964,7 +972,7 @@ function AttendanceCard({
               {item.startDate} → {item.endDate ?? postingEndDate(item.startDate, item.totalDays ?? 0) ?? '—'}
             </Text>
           ) : null}
-          {item.kind === 'theory' ? (
+          {item.kind !== 'posting' ? (
             <Text style={[styles.cardCountSub, { color: colors.accent }]}>
               This Month ({monthName}): {thisMonth.attended} of {thisMonth.held} attended
               {thisMonth.totalClasses ? ` · ${thisMonth.totalClasses} total classes this month` : ''}
@@ -995,7 +1003,7 @@ function AttendanceCard({
               {item.held === 0 ? '—' : `${Math.round(verdict.percent)}%`}
             </Text>
           </View>
-          {item.kind === 'theory' ? (
+          {item.kind !== 'posting' ? (
             <View
               style={[
                 styles.dualPctBadge,
@@ -1064,7 +1072,7 @@ function AttendanceCard({
       </View>
 
       {/* Theory enhancement: Option to select / change total number of classes */}
-      {item.kind === 'theory' ? (
+      {item.kind !== 'posting' ? (
         <View style={styles.totalClassesSection}>
           <Text style={[styles.totalClassesLabel, { color: colors.textMuted }]}>
             Total number of classes (all months):
@@ -1101,7 +1109,7 @@ function AttendanceCard({
         </View>
       ) : null}
 
-      {item.kind === 'theory' ? (
+      {item.kind !== 'posting' ? (
         <View style={styles.totalClassesSection}>
           <Text style={[styles.totalClassesLabel, { color: colors.textMuted }]}>
             Classes per month
@@ -1210,7 +1218,7 @@ function AttendanceCard({
       ) : null}
 
       {/* Theory enhancement: Bunk & target simulation tool */}
-      {item.kind === 'theory' ? (
+      {item.kind !== 'posting' ? (
         <View style={styles.accordionWrap}>
           <Touchable
             onPress={() => setShowSimulator(v => !v)}
@@ -1260,7 +1268,7 @@ function AttendanceCard({
                 </Text>
               )}
               <View style={styles.simTable}>
-                {item.kind === 'theory' ? (
+                {item.kind !== 'posting' ? (
                   <View style={styles.simMonthlySummary}>
                     <Text style={[styles.simMonthlyText, { color: colors.text }]}>
                       📅 <Text style={styles.boldText}>This Month ({monthName}):</Text>{' '}
@@ -1272,7 +1280,7 @@ function AttendanceCard({
                     </Text>
                   </View>
                 ) : null}
-                <Text style={[styles.simHeader, { color: colors.textMuted, marginTop: item.kind === 'theory' ? 6 : 0 }]}>
+                <Text style={[styles.simHeader, { color: colors.textMuted, marginTop: item.kind !== 'posting' ? 6 : 0 }]}>
                   If you attend next:
                 </Text>
                 <View style={styles.simRow}>
