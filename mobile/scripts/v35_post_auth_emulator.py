@@ -57,7 +57,7 @@ def tap_node(node):
 def tap(term):
     for attempt in range(5):
         node=find(term)
-        if node:
+        if node is not None:
             tap_node(node)
             return
         adb('shell','input','swipe','525','1760','525','740','330')
@@ -89,7 +89,7 @@ print('PASS visible Continue CTA: dark foreground pixels',dark,flush=True)
 
 # Verify button fires handler instead of silently doing nothing.
 tap_node(btn)
-assert find('Choose your year') or find('Choose your university'), 'Continue tap did not expose required-field validation'
+assert (find('Choose your year') is not None or find('Choose your university') is not None), 'Continue tap did not expose required-field validation'
 snap('02-required-field-validation.png')
 print('PASS Continue tap invokes form validation', flush=True)
 # End-to-end setup on this exact native React Native view.
