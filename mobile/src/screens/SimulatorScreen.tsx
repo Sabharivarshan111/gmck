@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, AppState, BackHandler, StatusBar, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, AppState, BackHandler, Modal, StatusBar, StyleSheet, View } from 'react-native';
 import LocalSimulator from '@/native/LocalSimulator';
 import { useIsFocused } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -8,6 +8,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Touchable } from '@/components/Touchable';
 import { useTheme } from '@/theme';
 import NativeClinicalStudio from '@/components/NativeClinicalStudio';
+import { UnlockCard } from '@/components/UnlockCard';
+import { useSimulatorEntitlement } from '@/lib/simulatorEntitlement';
 import NativeIcuMonitor from '@/components/NativeIcuMonitor';
 import NativeEcgTwelveLead from '@/components/NativeEcgTwelveLead';
 import NativeClinicalCase from '@/components/NativeClinicalCase';
@@ -30,6 +32,8 @@ export default function SimulatorScreen({ onExit, initialTool }: { onExit: () =>
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const focused = useIsFocused();
+  const { loading: premiumLoading, active: premiumActive } = useSimulatorEntitlement(focused);
+  const [upgradeRequested, setUpgradeRequested] = useState(false);
   const caseEngine = useRef<PhysiologyKernel | null>(null);
   const [initialPatient, setInitialPatient] = useState<string | undefined>();
   const [url, setUrl] = useState<string | null>(null);
@@ -60,6 +64,7 @@ export default function SimulatorScreen({ onExit, initialTool }: { onExit: () =>
   }, []);
 
   const onStudioScenarioChange = (id: string) => {
+    if (!premiumActive && id !== 'normal') { setUpgradeRequested(true); return; }
     setStudioScenarioId(id);
     caseEngine.current = new PhysiologyKernel(id);
   };
@@ -95,6 +100,13 @@ export default function SimulatorScreen({ onExit, initialTool }: { onExit: () =>
   }, [focused, onExit, url, nativeMode, failed, initialTool]);
 
   const openDestination = useCallback((destination: NativeClinicalDestination) => {
+      // The web simulator allows free sample anatomy and normal auscultation only.
+      // Keep this guard at the route boundary, not merely on the Vault card.
+      if (!premiumActive && destination.kind !== 'anatomy' &&
+        !(destination.kind === 'tool' && destination.id === 'stethoscope' && destination.scenario === 'normal')) {
+        setUpgradeRequested(true);
+        return;
+      }
       if (destination.kind === 'monitor') {
         if (!caseEngine.current || caseEngine.current.currentScenario.id !== studioScenarioId) caseEngine.current = new PhysiologyKernel(studioScenarioId);
         setNativeMode({ kind: 'monitor', scenarioId: studioScenarioId });
@@ -128,13 +140,15 @@ export default function SimulatorScreen({ onExit, initialTool }: { onExit: () =>
       setLoading(true);
       setBackRequest(0);
       setUrl(nativeClinicalRoute(destination));
-  }, [studioScenarioId, studioTheme]);
+  }, [studioScenarioId, studioTheme, premiumActive]);
   const initialToolOpened = useRef(false);
   useEffect(() => {
     if (!initialTool || !studioThemeHydrated || initialToolOpened.current) return;
     initialToolOpened.current = true;
     openDestination({ kind: 'tool', id: initialTool, scenario: 'normal' });
   }, [initialTool, studioThemeHydrated, openDestination]);
+
+  if (premiumLoading) return wrap(<View style={[styles.message, { backgroundColor: colors.background }]}><ActivityIndicator color={colors.accent} /><Text style={{ color: colors.text }}>Checking your simulator access…</Text></View>);
 
   if (nativeMode?.kind === 'monitor') return wrap(<NativeIcuMonitor scenarioId={nativeMode.scenarioId} engine={caseEngine.current || undefined}
     theme={studioTheme} onToggleTheme={onToggleStudioTheme} onExit={onExit} onBack={returnToNativeStudio} onSkills={returnToNativeStudio}
@@ -163,7 +177,29 @@ export default function SimulatorScreen({ onExit, initialTool }: { onExit: () =>
   if (nativeMode?.kind === 'clubbing') return wrap(<NativeClubbingTrainer onBack={returnToNativeStudio} />);
 
   if (!url) {
-    return wrap(<NativeClinicalStudio onExit={onExit} scenarioId={studioScenarioId} onScenarioChange={onStudioScenarioChange} theme={studioTheme} onToggleTheme={onToggleStudioTheme} onOpen={openDestination} />);
+    return wrap(<>
+      <NativeClinicalStudio onExit={onExit} scenarioId={studioScenarioId}
+        onScenarioChange={onStudioScenarioChange} theme={studioTheme}
+        onToggleTheme={onToggleStudioTheme} onOpen={openDestination}
+        premiumActive={premiumActive} onUnlock={() => setUpgradeRequested(true)} />
+      <Modal visible={!premiumActive && upgradeRequested} transparent animationType="fade"
+        onRequestClose={() => setUpgradeRequested(false)}>
+        <View style={styles.upgradeBackdrop}>
+          <View style={[styles.upgradePanel, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={{ color: colors.text, fontWeight: '800', fontSize: 20 }}>Unlock Simulator & Anatomy</Text>
+            <Text style={{ color: colors.textMuted, marginTop: 8, marginBottom: 14 }}>
+              Keep exploring the free anatomy and normal sounds, or use an active ORBIT Premium subscription
+              for all organs, cases and bedside tools. Sign in with the account you subscribed with.
+            </Text>
+            <UnlockCard />
+            <Touchable label="Continue free simulator preview" onPress={() => setUpgradeRequested(false)}
+              style={[styles.retry, { borderWidth: 1, borderColor: colors.border, marginTop: 14 }]}>
+              <Text style={{ color: colors.text }}>Continue free preview</Text>
+            </Touchable>
+          </View>
+        </View>
+      </Modal>
+    </>);
   }
 
   return wrap(
@@ -172,13 +208,16 @@ export default function SimulatorScreen({ onExit, initialTool }: { onExit: () =>
         <View style={styles.screen}>
           <LocalSimulator
             testID="orbit-local-anatomy-renderer"
-            route={url.replace('https://orbitmbbs.vercel.app', '') + '&nativeTheme=' + rendererTheme}
+            route={url.replace('https://orbitmbbs.vercel.app', '') + '&nativeTheme=' + rendererTheme + '&nativePremium=' + (premiumActive ? '1' : '0')}
             initialPatient={initialPatient}
             active={focused && active}
             backRequest={backRequest}
             style={[styles.screen, { backgroundColor: colors.background }]}
             onStatus={({ nativeEvent }) => {
               if (nativeEvent.status === 'vault') onExit();
+              if (nativeEvent.status === 'upgrade') {
+                setUrl(null); setNativeMode(null); setLoading(false); setUpgradeRequested(true);
+              }
               if (nativeEvent.status === 'patient' && nativeEvent.patient) {
                 try {
                   const theme = JSON.parse(nativeEvent.patient).nativeTheme;
@@ -230,4 +269,6 @@ const styles = StyleSheet.create({
   loading: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, alignItems: 'center', justifyContent: 'center', gap: 12 },
   message: { flex: 1, justifyContent: 'center', padding: 24, gap: 16 },
   retry: { minHeight: 44, alignItems: 'center', borderRadius: 12, justifyContent: 'center', padding: 12 },
+  upgradeBackdrop: { flex: 1, justifyContent: 'center', backgroundColor: '#000a', paddingHorizontal: 18 },
+  upgradePanel: { padding: 20, borderRadius: 18, borderWidth: 1 },
 });
