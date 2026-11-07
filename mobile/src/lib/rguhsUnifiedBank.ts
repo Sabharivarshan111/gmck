@@ -79,11 +79,18 @@ export function mergeRguhsQuestions(
     // A repeated extraction is one question, but prefer a source-checked
     // occurrence or a previously completed one when selecting its identity.
     if (existing) {
-      if (existing.offline && (
-        (isRguhsSourceChecked(row) && !isRguhsSourceChecked(existing.offline)) ||
-        (isQuestionDone(row.question_text) && !isQuestionDone(existing.question))
-      )) {
-        map.set(id, { ...existing, question: row.question_text, offline: row });
+      // Verification and completion are independent. The best source record
+      // need not carry the same raw wording/ID as the completed question.
+      const betterSource = !!existing.offline &&
+        isRguhsSourceChecked(row) && !isRguhsSourceChecked(existing.offline);
+      const preserveCompletion =
+        isQuestionDone(row.question_text) && !isQuestionDone(existing.question);
+      if (betterSource || preserveCompletion) {
+        map.set(id, {
+          ...existing,
+          question: preserveCompletion ? row.question_text : existing.question,
+          offline: betterSource ? row : existing.offline,
+        });
       }
       continue;
     }
