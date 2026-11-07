@@ -1,8 +1,8 @@
 import React from 'react';
 import type { YearKey } from '@/lib/questionBank';
-import OfflineUniversityBankScreen from '@/screens/OfflineUniversityBankScreen';
+import { UnifiedImportedUniversityBank } from '@/screens/RguhsImportedBank';
 
-/** All imported MUHS questions now use checksum-verified APK assets, not Supabase at runtime. */
-export default function MuhsImportedBank({ initialYear, onSwitchBack }: {initialYear: YearKey;onSwitchBack:()=>void}) {
-  return <OfflineUniversityBankScreen university="muhs" initialYear={initialYear} onSwitchBack={onSwitchBack}/>;
+/** Same reviewed + checksum-pinned offline bank used for RGUHS, scoped to MUHS. */
+export default function MuhsImportedBank({ initialYear, onSwitchBack }: { initialYear: YearKey; onSwitchBack?: () => void }) {
+  return <UnifiedImportedUniversityBank university="muhs" initialYear={initialYear} onSwitchBack={onSwitchBack} />;
 }
