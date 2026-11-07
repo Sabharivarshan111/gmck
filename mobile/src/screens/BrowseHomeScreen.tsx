@@ -57,7 +57,6 @@ export default function BrowseHomeScreen() {
   const [year, setYear] = useState<YearKey>(route.params?.year ?? profileYear);
   const [showMuhsOcr, setShowMuhsOcr] = useState(true);
   const [showWbuhsOcr, setShowWbuhsOcr] = useState(true);
-  const [showRguhsOcr, setShowRguhsOcr] = useState(true);
   const [query, setQuery] = useState('');
   const [debounced, setDebounced] = useState('');
 
@@ -149,8 +148,8 @@ export default function BrowseHomeScreen() {
     [navigation],
   );
 
-  if (bankUniversity === 'rguhs' && showRguhsOcr) {
-    return <RguhsImportedBank initialYear={year} onSwitchBack={() => setShowRguhsOcr(false)} />;
+  if (bankUniversity === 'rguhs') {
+    return <RguhsImportedBank initialYear={year} onSwitchBack={() => navigation.goBack()} />;
   }
 
   if (bankUniversity === 'muhs' && showMuhsOcr) {
@@ -170,16 +169,6 @@ export default function BrowseHomeScreen() {
           {bankUniversity === 'other' ? 'Other university' : `${bankUniversity.toUpperCase()} Question Bank`}
         </Text>
       </View>
-
-      {bankUniversity === 'rguhs' ? (
-        <Touchable
-          label="Open the fully offline RGUHS question bank"
-          onPress={() => setShowRguhsOcr(true)}
-          style={[styles.switchRow, { borderColor: colors.border }]}>
-          <Text style={{ color: colors.cyan, fontWeight: '700' }}>RGUHS: 1st–Final MBBS • {UNIVERSITY_OFFLINE_MANIFEST.totals.rguhs.toLocaleString()} offline questions</Text>
-          <ChevronRight size={16} color={colors.cyan} />
-        </Touchable>
-      ) : null}
 
       {bankUniversity === 'wbuhs' ? (
         <Touchable
