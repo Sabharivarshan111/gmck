@@ -21,7 +21,6 @@ import { noteQuestionText, getCleanQuestionText } from '@/lib/questionText';
 import { hasTextbook } from '@/lib/textbooks';
 import { collectedRecordedExamCount } from '@data/universityPapers/presentation';
 import { loadUniversityOfflineSubject, offlineUniversitySubjects, UNIVERSITY_OFFLINE_MANIFEST } from '@/lib/universityOfflineBank';
-import type { OfflineUniversityQuestion } from '@/lib/universityOfflineTypes';
 import {
   isRguhsSourceChecked, mergeUniversityQuestions, rguhsSubjectIdentity,
   type RguhsKind, type RguhsRow, type UnifiedUniversity, type UniversityOcrQuestion,
@@ -139,7 +138,7 @@ export function UnifiedImportedUniversityBank({
     if (searchingAll) void Promise.all(YEAR_KEYS.map(value => loadYear(value)));
   }, [searchingAll, loadYear]);
 
-  const yearRows = years[year] ?? [];
+  const yearRows = useMemo(() => years[year] ?? [], [years, year]);
   const loadedYear = years[year] !== undefined;
   const subjectRows = useMemo(() =>
     subject ? yearRows.filter(row => rguhsSubjectIdentity(row.subjectName) === subject) : [],
