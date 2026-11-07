@@ -6,6 +6,7 @@
  * Fuzzy clinical matching can silently remove genuinely different questions.
  */
 import { allSearchHits, getSubjects, type YearKey } from './questionBank';
+import type { OfflineUniversity } from './universityOfflineTypes';
 import { getCleanQuestionText } from './questionText';
 import { isQuestionDone } from './progress';
 import { isUniversityMcq } from '@data/universityPapers/presentation';
@@ -62,16 +63,17 @@ function rowIdentity(year: YearKey, subject: string, kind: RguhsKind, question: 
  * from native assets only when needed. This also works when an APK pack is
  * missing: reviewed rows remain accessible and the screen reports the error.
  */
-export function mergeRguhsQuestions(
+export function mergeUniversityQuestions(
+  university: OfflineUniversity,
   year: YearKey,
   bundled: readonly OfflineUniversityQuestion[],
 ): RguhsRow[] {
   const map = new Map<string, RguhsRow>();
-  const subjects = getSubjects(year, 'rguhs');
+  const subjects = getSubjects(year, university);
   const subjectByName = new Map(subjects.map(subject =>
     [rguhsSubjectIdentity(subject.name), subject]));
   for (const row of bundled) {
-    if (row.university !== 'rguhs' || row.year !== year || !row.question_text.trim()) continue;
+    if (row.university !== university || row.year !== year || !row.question_text.trim()) continue;
     const match = subjectByName.get(rguhsSubjectIdentity(row.subject));
     const kind = offlineKind(row.question_type);
     const id = rowIdentity(year, row.subject, kind, row.question_text);
@@ -102,7 +104,7 @@ export function mergeRguhsQuestions(
     });
   }
 
-  for (const hit of allSearchHits('rguhs')) {
+  for (const hit of allSearchHits(university)) {
     if (hit.year !== year || !hit.question.trim()) continue;
     const kind: RguhsKind = isUniversityMcq(hit.question) ? 'mcq' : hit.type;
     const id = rowIdentity(year, hit.subjectName, kind, hit.question);
@@ -130,4 +132,9 @@ export function mergeRguhsQuestions(
     }
   }
   return [...map.values()];
+}
+
+/** Preserve the old RGUHS test/API while sharing the verified merger with MUHS. */
+export function mergeRguhsQuestions(year: YearKey, bundled: readonly OfflineUniversityQuestion[]): RguhsRow[] {
+  return mergeUniversityQuestions('rguhs', year, bundled);
 }
