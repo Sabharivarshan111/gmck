@@ -26,7 +26,7 @@ const subjects = [
 ];
 const fakeRequire = id => {
   if (id === './questionBank') {
-    return { allSearchHits: () => reviewed, getSubjects: () => subjects };
+    return { allSearchHits: university => reviewed.filter(hit => hit.university === university), getSubjects: () => subjects };
   }
   if (id === './questionText') {
     return { getCleanQuestionText: q => q.replace(/^PYQ\[[^\]]+\]\s*/, '').trim() };
@@ -63,6 +63,7 @@ const hit = (q, type = 'essay', extra = {}) => ({
   subjectName: 'Anatomy',
   topicName: 'Upper Limb',
   question: q,
+  university: 'rguhs',
   type,
   ...extra,
 });
@@ -112,7 +113,9 @@ assert.equal(rguhsQuestionIdentity('Define shock.'), rguhsQuestionIdentity('defi
   'Case and trailing punctuation must not inflate counts');
 
 reviewed = [
-  { ...hit('PYQ[muhs-1] Define shock.'), subjectName: 'Anatomy', subjectKey: 'anatomy' },
+  { ...hit('PYQ[muhs-1] Define shock.'), university: 'muhs', subjectName: 'Anatomy', subjectKey: 'anatomy' },
+  hit('PYQ[rguhs-exclusive] An RGUHS exclusive question.'),
+  { ...hit('PYQ[wbuhs-exclusive] A WBUHS exclusive question.'), university: 'wbuhs' },
 ];
 const muhs = context.exports.mergeUniversityQuestions('muhs', 'first-year', [
   mock({ university: 'muhs', id: 'muhs-ocr' }),
@@ -120,8 +123,14 @@ const muhs = context.exports.mergeUniversityQuestions('muhs', 'first-year', [
 ]);
 assert.equal(muhs.length, 1, 'MUHS should include reviewed + MUHS OCR only and deduplicate identical wording');
 assert.equal(muhs[0].offline?.university, 'muhs');
+assert.equal(muhs[0].university, 'muhs');
+assert.ok(!muhs.some(row => row.question.includes('exclusive')), 'MUHS must not expose RGUHS/WBUHS reviewed questions');
 
-reviewed = [hit('PYQ[wbuhs-1] Which nerve supplies the diaphragm?')];
+reviewed = [
+  { ...hit('PYQ[wbuhs-1] Which nerve supplies the diaphragm?'), university: 'wbuhs' },
+  hit('PYQ[rguhs-secret] Only for RGUHS.'),
+  { ...hit('PYQ[muhs-secret] Only for MUHS.'), university: 'muhs' },
+];
 const wbuhs = context.exports.mergeUniversityQuestions('wbuhs', 'first-year', [
   mock({
     id: 'wbuhs-ocr',
@@ -133,5 +142,21 @@ const wbuhs = context.exports.mergeUniversityQuestions('wbuhs', 'first-year', [
 assert.equal(wbuhs.length, 1, 'WBUHS reviewed + cached OCR overlap should be one question');
 assert.equal(wbuhs[0].offline?.quality_status, 'source_page_reviewed');
 assert.equal(wbuhs[0].reviewedQuestion, 'PYQ[wbuhs-1] Which nerve supplies the diaphragm?');
+assert.equal(wbuhs[0].university, 'wbuhs');
+assert.ok(!wbuhs.some(row => row.question.includes('secret')), 'WBUHS must not expose RGUHS/MUHS questions');
+
+// The BrowseHome search also has to use the persisted university from
+// onboarding and Settings. These are source-contract checks; the actual
+// native merger above verifies result isolation with mixed fixtures.
+const browseSource = readFileSync(join(root, 'src/screens/BrowseHomeScreen.tsx'), 'utf8');
+assert.match(browseSource, /availableBankUniversity\(university\)/);
+assert.match(browseSource, /searchQuestions\(debounced, searchYear \?\? undefined, 60, bankUniversity\)/);
+for (const bank of ['rguhs', 'muhs', 'wbuhs']) {
+  assert.ok(browseSource.includes(`bankUniversity === '${bank}'`),
+    `Selected ${bank.toUpperCase()} must route to its own question-bank screen`);
+}
+const unifiedSource = readFileSync(join(root, 'src/screens/RguhsImportedBank.tsx'), 'utf8');
+assert.ok(unifiedSource.includes('row.university === university'),
+  'Cross-year unified search must filter every hit by the selected university');
 
 console.log('RGUHS, MUHS and WBUHS unified merger: duplicate, university isolation and completion checks PASS');
