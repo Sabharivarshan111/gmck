@@ -1,6 +1,5 @@
 import { isUniversityMcq } from '@data/universityPapers/presentation';
 import MuhsImportedBank from '@/screens/MuhsImportedBank';
-import { UNIVERSITY_OFFLINE_MANIFEST } from '@/lib/universityOfflineBank';
 import WbuhsImportedBank from '@/screens/WbuhsImportedBank';
 import RguhsImportedBank from '@/screens/RguhsImportedBank';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -55,8 +54,6 @@ export default function BrowseHomeScreen() {
   const { yearKey: profileYear, setYear: setProfileYear, university } = useProfile();
   const bankUniversity = availableBankUniversity(university);
   const [year, setYear] = useState<YearKey>(route.params?.year ?? profileYear);
-  const [showMuhsOcr, setShowMuhsOcr] = useState(true);
-  const [showWbuhsOcr, setShowWbuhsOcr] = useState(true);
   const [query, setQuery] = useState('');
   const [debounced, setDebounced] = useState('');
 
@@ -152,12 +149,12 @@ export default function BrowseHomeScreen() {
     return <RguhsImportedBank initialYear={year} onSwitchBack={() => navigation.goBack()} />;
   }
 
-  if (bankUniversity === 'muhs' && showMuhsOcr) {
-    return <MuhsImportedBank initialYear={year} onSwitchBack={() => setShowMuhsOcr(false)} />;
+  if (bankUniversity === 'muhs') {
+    return <MuhsImportedBank initialYear={year} onSwitchBack={() => navigation.goBack()} />;
   }
 
-  if (bankUniversity === 'wbuhs' && showWbuhsOcr) {
-    return <WbuhsImportedBank initialYear={year} onSwitchBack={() => setShowWbuhsOcr(false)} />;
+  if (bankUniversity === 'wbuhs') {
+    return <WbuhsImportedBank initialYear={year} onSwitchBack={() => navigation.goBack()} />;
   }
 
   return (
@@ -169,26 +166,6 @@ export default function BrowseHomeScreen() {
           {bankUniversity === 'other' ? 'Other university' : `${bankUniversity.toUpperCase()} Question Bank`}
         </Text>
       </View>
-
-      {bankUniversity === 'wbuhs' ? (
-        <Touchable
-          label="Open WBUHS OCR second and third year question bank"
-          onPress={() => setShowWbuhsOcr(true)}
-          style={[styles.switchRow, { borderColor: colors.border }]}>
-          <Text style={{ color: colors.cyan, fontWeight: '700' }}>WBUHS OCR: Second / Third Year (1,294 questions; OCR quality shown)</Text>
-          <ChevronRight size={16} color={colors.cyan} />
-        </Touchable>
-      ) : null}
-
-      {bankUniversity === 'muhs' ? (
-        <Touchable
-          label="Open the fully offline MUHS first through final year question bank"
-          onPress={() => setShowMuhsOcr(true)}
-          style={[styles.switchRow, { borderColor: colors.border }]}>
-          <Text style={{ color: colors.cyan, fontWeight: '700' }}>MUHS: 1st–Final MBBS • {UNIVERSITY_OFFLINE_MANIFEST.totals.muhs.toLocaleString()} offline questions</Text>
-          <ChevronRight size={16} color={colors.cyan} />
-        </Touchable>
-      ) : null}
 
       <View
         style={[styles.searchBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
