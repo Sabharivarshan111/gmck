@@ -1,0 +1,111 @@
+name: Native RGUHS MUHS WBUHS question bank emulator
+
+# Installs real APK and checks university-specific native screens.
+# QA files are outside mobile/** and do not restart the app build.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'qa/native_university_bank_smoke.py'
+      - '.github/workflows/native-university-banks.yml'
+  workflow_run:
+    workflows: ['Android debug APK']
+    branches: [main]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: native-university-banks-main
+  cancel-in-progress: true
+
+jobs:
+  installed-question-banks:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Identify successful APK matching main's app source
+        id: matching_apk
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const allowed = new Set([
+              'qa/native_university_bank_smoke.py',
+              '.github/workflows/native-university-banks.yml',
+            ]);
+            for (let attempt = 0; attempt < 180; attempt++) {
+              const {data} = await github.rest.actions.listWorkflowRuns({
+                ...context.repo, workflow_id: 'android-debug.yml',
+                branch: 'main', per_page: 40,
+              });
+              for (const run of data.workflow_runs) {
+                if (run.status !== 'completed' || run.conclusion !== 'success') continue;
+                const {data: comparison} = await github.rest.repos.compareCommits({
+                  ...context.repo, base: run.head_sha, head: context.sha,
+                });
+                if (!['identical','ahead'].includes(comparison.status)) continue;
+                if ((comparison.files ?? []).some(file => !allowed.has(file.filename))) continue;
+                core.setOutput('run_id', String(run.id));
+                core.setOutput('apk_sha', run.head_sha);
+                core.setOutput('qa_sha', context.sha);
+                core.info('Matched debug APK run '+run.id+' SHA '+run.head_sha+' to QA '+context.sha);
+                return;
+              }
+              await new Promise(resolve => setTimeout(resolve, 15000));
+            }
+            throw new Error('No successful Android debug APK matches the current app source.');
+
+      - name: Download source-matched Android debug APK
+        uses: actions/download-artifact@v4
+        with:
+          name: orbit-debug-apk
+          path: downloaded-apk
+          run-id: ${{ steps.matching_apk.outputs.run_id }}
+          github-token: ${{ github.token }}
+
+      - name: Check candidate artifact
+        run: |
+          test -s downloaded-apk/app-preview.apk
+          sha256sum downloaded-apk/app-preview.apk
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Android emulator RGUHS MUHS WBUHS screens and search
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_7
+          emulator-boot-timeout: 360
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
+          script: |
+            set -euxo pipefail
+            mkdir -p artifacts/university-bank-native
+            adb shell wm size 1080x2400
+            adb shell wm density 440
+            adb install -r downloaded-apk/app-preview.apk
+            export ORBIT_PACKAGE=com.aistudio.mbbsqbank.aycxvd.debug
+            export ORBIT_SCREENSHOT_OUT=artifacts/university-bank-native
+            export ORBIT_APK_PROVENANCE="APK ${{ steps.matching_apk.outputs.apk_sha }}; QA ${{ steps.matching_apk.outputs.qa_sha }}; run ${{ steps.matching_apk.outputs.run_id }}"
+            python3 qa/native_university_bank_smoke.py
+
+      - name: Upload real native screenshots and crash evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: orbit-native-university-bank-evidence
+          path: artifacts/university-bank-native/
+          if-no-files-found: warn
+          retention-days: 14
