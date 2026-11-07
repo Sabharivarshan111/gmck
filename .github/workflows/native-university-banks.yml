@@ -29,37 +29,47 @@ jobs:
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 30
 
       - name: Identify successful APK matching main's app source
         id: matching_apk
         uses: actions/github-script@v7
         with:
           script: |
-            const allowed = new Set([
-              'qa/native_university_bank_smoke.py',
-              '.github/workflows/native-university-banks.yml',
-            ]);
+            // Find the last app-affecting source commit. QA-only commits do
+            // not change compiled APK bytes; the runner has 30 commits.
+            const {execFileSync} = require('child_process');
+            const expectedSha = execFileSync('git', [
+              'log', '-1', '--format=%H', '--',
+              'mobile/', 'src/', 'public/', 'scripts/',
+              '.github/workflows/android-debug.yml',
+            ], {encoding: 'utf8'}).trim();
+            core.info('Checking APK built from exact app source ' + expectedSha);
             for (let attempt = 0; attempt < 180; attempt++) {
-              const {data} = await github.rest.actions.listWorkflowRuns({
-                ...context.repo, workflow_id: 'android-debug.yml',
-                branch: 'main', per_page: 40,
-              });
-              for (const run of data.workflow_runs) {
-                if (run.status !== 'completed' || run.conclusion !== 'success') continue;
-                const {data: comparison} = await github.rest.repos.compareCommits({
-                  ...context.repo, base: run.head_sha, head: context.sha,
+              try {
+                const {data} = await github.rest.actions.listWorkflowRuns({
+                  ...context.repo, workflow_id: 'android-debug.yml',
+                  branch: 'main', per_page: 35,
                 });
-                if (!['identical','ahead'].includes(comparison.status)) continue;
-                if ((comparison.files ?? []).some(file => !allowed.has(file.filename))) continue;
-                core.setOutput('run_id', String(run.id));
-                core.setOutput('apk_sha', run.head_sha);
-                core.setOutput('qa_sha', context.sha);
-                core.info('Matched debug APK run '+run.id+' SHA '+run.head_sha+' to QA '+context.sha);
-                return;
+                const run = data.workflow_runs.find(r => r.head_sha === expectedSha);
+                if (run?.status === 'completed') {
+                  if (run.conclusion !== 'success') {
+                    throw new Error('Matching Android debug APK failed: ' + run.conclusion);
+                  }
+                  core.setOutput('run_id', String(run.id));
+                  core.setOutput('apk_sha', run.head_sha);
+                  core.setOutput('qa_sha', context.sha);
+                  core.info('Matched APK run ' + run.id + ' to ' + expectedSha);
+                  return;
+                }
+              } catch (e) {
+                if (String(e.message ?? e).includes('Matching Android debug APK failed')) throw e;
+                core.warning('GitHub Actions lookup temporarily unavailable: ' + String(e));
               }
-              await new Promise(resolve => setTimeout(resolve, 15000));
+              await new Promise(resolve => setTimeout(resolve, 10000));
             }
-            throw new Error('No successful Android debug APK matches the current app source.');
+            throw new Error('No successful Android debug APK matches the latest compiled app source.');
 
       - name: Download source-matched Android debug APK
         uses: actions/download-artifact@v4
