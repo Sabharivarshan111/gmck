@@ -87,6 +87,18 @@ assert.equal(rows.find(r => r.offline?.id === 'checked').offline.quality_status,
 assert.equal(isRguhsSourceChecked(mock()), false);
 assert.equal(isRguhsSourceChecked(checked), true);
 
+// A completed but unverified duplicate must not erase an independently
+// verified PDF reference for exactly the same underlying question.
+done.add('Define shock.');
+rows = mergeRguhsQuestions('first-year', [
+  mock({ id: 'verified-first', question_text: 'Define shock', quality_status: 'reviewed_against_pdf' }),
+  mock({ id: 'completed-second', question_text: 'Define shock.', quality_status: 'ocr_draft' }),
+]);
+const combined = rows.find(r => r.reviewedQuestion?.includes('[r1]'));
+assert.equal(combined.question, 'Define shock.', 'Keep old completion identity');
+assert.equal(combined.offline?.id, 'verified-first', 'Keep the best PDF verification record');
+done.clear();
+
 reviewed = [hit('MCQ_SOURCE: Which artery?', 'short-notes')];
 rows = mergeRguhsQuestions('first-year', [
   mock({ id: 'mcq', question_type: 'MCQ', question_text: 'MCQ_SOURCE: Which artery?' }),
