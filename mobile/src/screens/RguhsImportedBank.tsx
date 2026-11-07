@@ -257,7 +257,7 @@ export default function RguhsImportedBank({
         data={entries} keyboardShouldPersistTaps="handled"
         keyExtractor={item => item.kind === 'question' ? item.row.id : item.kind + ':' + item.name}
         contentContainerStyle={{ paddingBottom: insets.bottom + 65 }}
-        ListEmptyComponent={(!loadedYear || globalLoading) ? null :
+        ListEmptyComponent={(!loadedYear || globalLoading) ? undefined :
           <Text style={{ color: colors.textMuted, padding: 16 }}>
             {searchingAll ? 'No matching questions. Try fewer words.'
               : chapter !== null ? 'No questions in this section. Try another category.'
