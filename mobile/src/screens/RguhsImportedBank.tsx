@@ -275,7 +275,7 @@ export default function RguhsImportedBank({
               <Text style={{ color: colors.text, fontSize: 16, fontWeight: '800' }}>{item.name}</Text>
               <Text style={{ color: colors.textMuted, fontSize: 12 }}>{item.done} of {item.count} done</Text>
               <View style={{ height: 6, backgroundColor: colors.border, borderRadius: 99, overflow: 'hidden' }}>
-                <View style={{ width: item.count ? String(100 * item.done / item.count) + '%' : '0%',
+                <View style={{ width: ((item.count ? Math.round(100 * item.done / item.count) : 0) + '%') as `${number}%`,
                   height: 6, backgroundColor: colors.success }} />
               </View>
             </View>
