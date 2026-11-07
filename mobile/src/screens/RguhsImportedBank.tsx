@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { ChevronRight, Search } from 'lucide-react-native';
+import type { OfflineUniversity } from '@/lib/universityOfflineTypes';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { QuestionRow } from '@/components/QuestionRow';
@@ -22,7 +23,7 @@ import { collectedRecordedExamCount } from '@data/universityPapers/presentation'
 import { loadUniversityOfflineSubject, offlineUniversitySubjects, UNIVERSITY_OFFLINE_MANIFEST } from '@/lib/universityOfflineBank';
 import type { OfflineUniversityQuestion } from '@/lib/universityOfflineTypes';
 import {
-  isRguhsSourceChecked, mergeRguhsQuestions, rguhsSubjectIdentity,
+  isRguhsSourceChecked, mergeUniversityQuestions, rguhsSubjectIdentity,
   type RguhsKind, type RguhsRow,
 } from '@/lib/rguhsUnifiedBank';
 
@@ -42,9 +43,10 @@ const TABS: { key: RguhsKind; label: string }[] = [
 const YEARS = YEAR_KEYS.map(key => ({ key, label: YEAR_LABEL[key].replace(' Year', '') }));
 const RESULT_LIMIT = 120;
 
-export default function RguhsImportedBank({
-  initialYear, onSwitchBack,
+export function UnifiedImportedUniversityBank({
+  university, initialYear, onSwitchBack,
 }: {
+  university: OfflineUniversity;
   initialYear: YearKey;
   onSwitchBack?: () => void;
 }) {
@@ -70,16 +72,16 @@ export default function RguhsImportedBank({
     if (!force && cache.current[requestedYear]) return Promise.resolve();
     if (pending.current[requestedYear]) return pending.current[requestedYear]!;
     const job = (async () => {
-      const packs = offlineUniversitySubjects('rguhs', requestedYear);
+      const packs = offlineUniversitySubjects(university, requestedYear);
       const results = await Promise.allSettled(packs.map(pack =>
-        loadUniversityOfflineSubject('rguhs', requestedYear, pack.subject)));
+        loadUniversityOfflineSubject(university, requestedYear, pack.subject)));
       const bundled: OfflineUniversityQuestion[] = [];
       let failures = 0;
       results.forEach(result => {
         if (result.status === 'fulfilled') bundled.push(...result.value);
         else failures++;
       });
-      const merged = mergeRguhsQuestions(requestedYear, bundled);
+      const merged = mergeUniversityQuestions(university, requestedYear, bundled);
       cache.current[requestedYear] = merged;
       setYears(previous => ({ ...previous, [requestedYear]: merged }));
       setErrors(previous => ({
@@ -91,7 +93,7 @@ export default function RguhsImportedBank({
     })().finally(() => { delete pending.current[requestedYear]; });
     pending.current[requestedYear] = job;
     return job;
-  }, []);
+  }, [university]);
 
   useEffect(() => { void loadYear(year); }, [year, loadYear]);
   useEffect(() => {
@@ -186,8 +188,8 @@ export default function RguhsImportedBank({
       </Text>
     </View>;
   };
-  const currentSubjectName = subjectRows[0]?.subjectName ?? 'RGUHS';
-  const title = subject === null ? 'RGUHS Question Bank'
+  const currentSubjectName = subjectRows[0]?.subjectName ?? university.toUpperCase();
+  const title = subject === null ? university.toUpperCase() + ' Question Bank'
     : chapter === null ? currentSubjectName : chapter;
   const countText = loadedYear
     ? yearRows.length.toLocaleString() + ' unique questions in ' + YEAR_LABEL[year]
@@ -214,7 +216,7 @@ export default function RguhsImportedBank({
         borderColor: colors.border, padding: 12, marginBottom: 14 }}>
         <Text style={{ color: colors.text, fontWeight: '700' }}>{countText}</Text>
         <Text style={{ color: colors.textMuted, fontSize: 12, marginTop: 5 }}>
-          {UNIVERSITY_OFFLINE_MANIFEST.totals.rguhs.toLocaleString()} bundled OCR entries across all years, plus the reviewed bank. Overlapping questions are counted once per year and subject.
+          {UNIVERSITY_OFFLINE_MANIFEST.totals[university].toLocaleString()} bundled OCR entries across all years, plus the reviewed bank. Overlapping questions are counted once per year and subject.
         </Text>
       </View> : null}
 
@@ -230,7 +232,7 @@ export default function RguhsImportedBank({
         paddingHorizontal: 12, marginBottom: 12 }}>
         <Search size={18} color={colors.textMuted} />
         <TextInput
-          placeholder={subject === null ? 'Search every RGUHS question…' : 'Search this chapter…'}
+          placeholder={subject === null ? 'Search every ' + university.toUpperCase() + ' question…' : 'Search this chapter…'}
           placeholderTextColor={colors.textMuted} value={query} onChangeText={setQuery}
           autoCorrect={false} returnKeyType="search"
           style={{ color: colors.text, paddingVertical: 12, flex: 1 }} />
@@ -303,9 +305,14 @@ export default function RguhsImportedBank({
         rawQuestion={noted?.question ?? null}
         subjectKey={noted?.subjectKey ?? ''} subjectName={noted?.subjectName ?? ''}
         yearLabel={noted ? YEAR_LABEL[noted.year] : YEAR_LABEL[year]}
-        university="rguhs" onClose={() => setNoted(null)}
+        university={university} onClose={() => setNoted(null)}
       />
       <UniversityMcqAnswer question={mcqTarget} onClose={() => setMcqTarget(null)} />
     </View>
   </KeyboardSafe>;
+}
+
+/** RGUHS remains the same public screen; MUHS shares its verified UI. */
+export default function RguhsImportedBank(props: { initialYear: YearKey; onSwitchBack?: () => void }) {
+  return <UnifiedImportedUniversityBank university="rguhs" {...props} />;
 }
