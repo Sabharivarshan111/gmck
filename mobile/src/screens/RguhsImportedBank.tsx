@@ -241,6 +241,14 @@ export function UnifiedImportedUniversityBank({
         <SegmentedControl options={YEARS} value={year}
           onChange={(next: YearKey) => { setYear(next); setSubject(null); setChapter(null); setQuery(''); }} />
       </View> : null}
+      {university === 'wbuhs' && subject === null && !searchingAll
+        && (year === 'second-year' || year === 'third-year') ? (
+        <Touchable label="Refresh downloaded WBUHS PDF scans"
+          onPress={() => { void loadYear(year, true); }}
+          style={{ paddingVertical: 8, marginBottom: 8 }}>
+          <Text style={{ fontSize: 12, color: colors.cyan }}>Check for updated scanned questions</Text>
+        </Touchable>
+      ) : null}
       {chapter !== null ? <View style={{ marginBottom: 12 }}>
         <SegmentedControl options={TABS} value={tab} onChange={(next: RguhsKind) => { setTab(next); setQuery(''); }} />
       </View> : null}
