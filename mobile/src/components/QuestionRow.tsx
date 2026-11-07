@@ -175,7 +175,7 @@ function QuestionRowBase({
       return;
     }
     onAskAi(tripleTapPrompt(getCleanQuestionText(question)));
-  }, [onAskAi, onNote, onMcqAnswer, originalMcq, question]);
+  }, [onAskAi, onNote, onMcqAnswer, question]);
 
   const askMcq = useCallback(() => {
     const prompt = doubleTapPrompt(getCleanQuestionText(question));
