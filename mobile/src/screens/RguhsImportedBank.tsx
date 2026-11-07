@@ -66,6 +66,25 @@ export function UnifiedImportedUniversityBank({
   const [mcqTarget, setMcqTarget] = useState<string | null>(null);
   const cache = useRef<YearRows>({});
   const pending = useRef<Partial<Record<YearKey, Promise<void>>>>({});
+  // Keep the selected university from onboarding/Settings as the sole source
+  // of truth, including on transitions that preserve this component instance.
+  const previousUniversity = useRef(university);
+  if (previousUniversity.current !== university) {
+    previousUniversity.current = university;
+    cache.current = {};
+    pending.current = {};
+  }
+  useEffect(() => {
+    setYears({});
+    setErrors({});
+    setSubject(null);
+    setChapter(null);
+    setQuery('');
+    setDebounced('');
+    setNoted(null);
+    setMcqTarget(null);
+    setYear(initialYear);
+  }, [university, initialYear]);
 
   /** Read on-device checksum-pinned assets; never fetch university questions at runtime. */
   const loadYear = useCallback((requestedYear: YearKey, force = false): Promise<void> => {
@@ -151,11 +170,11 @@ export function UnifiedImportedUniversityBank({
   const globalMatches = useMemo(() => {
     if (!searchingAll) return [];
     const needle = debounced.toLowerCase();
-    return globalRows.filter(row =>
+    return globalRows.filter(row => row.university === university && (
       getCleanQuestionText(row.question).toLowerCase().includes(needle) ||
       row.chapter.toLowerCase().includes(needle) ||
-      row.subjectName.toLowerCase().includes(needle));
-  }, [searchingAll, globalRows, debounced]);
+      row.subjectName.toLowerCase().includes(needle)));
+  }, [searchingAll, globalRows, debounced, university]);
   const globalLoading = searchingAll && YEAR_KEYS.some(value => years[value] === undefined);
   const entries: ListItem[] = searchingAll
     ? globalMatches.slice(0, RESULT_LIMIT).map(row => ({ kind: 'question', row }))
