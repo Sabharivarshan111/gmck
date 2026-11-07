@@ -111,4 +111,27 @@ assert.equal(rows.filter(r => r.kind === 'mcq').length, 1);
 assert.equal(rguhsQuestionIdentity('Define shock.'), rguhsQuestionIdentity('define shock'),
   'Case and trailing punctuation must not inflate counts');
 
-console.log('RGUHS unified merger: source quality, dedup, progress, MCQs, and identity PASS');
+reviewed = [
+  { ...hit('PYQ[muhs-1] Define shock.'), subjectName: 'Anatomy', subjectKey: 'anatomy' },
+];
+const muhs = context.exports.mergeUniversityQuestions('muhs', 'first-year', [
+  mock({ university: 'muhs', id: 'muhs-ocr' }),
+  mock({ university: 'rguhs', id: 'rguhs-ocr' }),
+]);
+assert.equal(muhs.length, 1, 'MUHS should include reviewed + MUHS OCR only and deduplicate identical wording');
+assert.equal(muhs[0].offline?.university, 'muhs');
+
+reviewed = [hit('PYQ[wbuhs-1] Which nerve supplies the diaphragm?')];
+const wbuhs = context.exports.mergeUniversityQuestions('wbuhs', 'first-year', [
+  mock({
+    id: 'wbuhs-ocr',
+    university: 'wbuhs',
+    question_text: 'Which nerve supplies the diaphragm?',
+    quality_status: 'source_page_reviewed',
+  }),
+]);
+assert.equal(wbuhs.length, 1, 'WBUHS reviewed + cached OCR overlap should be one question');
+assert.equal(wbuhs[0].offline?.quality_status, 'source_page_reviewed');
+assert.equal(wbuhs[0].reviewedQuestion, 'PYQ[wbuhs-1] Which nerve supplies the diaphragm?');
+
+console.log('RGUHS, MUHS and WBUHS unified merger: duplicate, university isolation and completion checks PASS');
