@@ -7,6 +7,9 @@
  */
 import { allSearchHits, getSubjects, type YearKey } from './questionBank';
 import type { OfflineUniversity } from './universityOfflineTypes';
+
+export type UnifiedUniversity = OfflineUniversity | 'wbuhs';
+export type UniversityOcrQuestion = OfflineUniversityQuestion | (Omit<OfflineUniversityQuestion, 'university'> & {university: 'wbuhs'});
 import { getCleanQuestionText } from './questionText';
 import { isQuestionDone } from './progress';
 import { isUniversityMcq } from '@data/universityPapers/presentation';
@@ -23,7 +26,7 @@ export type RguhsRow = {
   kind: RguhsKind;
   /** Original source string: do not rewrite; progress, notes and metadata depend on it. */
   question: string;
-  offline?: OfflineUniversityQuestion;
+  offline?: UniversityOcrQuestion;
   reviewedQuestion?: string;
 };
 
@@ -40,7 +43,7 @@ export function rguhsQuestionIdentity(question: string): string {
     .replace(/[.!?;:]+$/, '').replace(/\s+/g, ' ').trim();
 }
 
-export function isRguhsSourceChecked(row: OfflineUniversityQuestion): boolean {
+export function isRguhsSourceChecked(row: UniversityOcrQuestion): boolean {
   return ['verified', 'source_page_reviewed', 'reviewed_against_pdf']
     .includes(row.quality_status);
 }
@@ -64,9 +67,9 @@ function rowIdentity(year: YearKey, subject: string, kind: RguhsKind, question: 
  * missing: reviewed rows remain accessible and the screen reports the error.
  */
 export function mergeUniversityQuestions(
-  university: OfflineUniversity,
+  university: UnifiedUniversity,
   year: YearKey,
-  bundled: readonly OfflineUniversityQuestion[],
+  bundled: readonly UniversityOcrQuestion[],
 ): RguhsRow[] {
   const map = new Map<string, RguhsRow>();
   const subjects = getSubjects(year, university);
