@@ -139,6 +139,7 @@ def start_onboarding():
     ui.adb("shell", "input", "keyevent", "4")
     time.sleep(1)
     if ui.visible("1st Year"):
+        ui.scroll_to_tappable("1st Year")
         ui.tap("1st Year")
     elif ui.visible("First Year"):
         ui.tap("First Year")
@@ -154,13 +155,9 @@ def start_onboarding():
 
 def open_bank(code: str):
     clear_tour()
-    if ui.tap("Question bank", required=False):
-        pass
-    elif ui.tap("Browse questions", required=False):
-        pass
-    else:
-        ui.tap("Menu")
-        ui.tap("Search the bank")
+    # The Home menu has a stable dedicated action across quick-action layouts.
+    ui.tap("Menu")
+    ui.tap("Search the bank")
     wait_text(code.upper() + " Question Bank", seconds=50)
     for other in ("rguhs", "muhs", "wbuhs"):
         if other != code and ui.visible(other.upper() + " Question Bank"):
