@@ -19,6 +19,7 @@ export type RguhsKind = 'essay' | 'short-notes' | 'mcq' | 'other';
 
 export type RguhsRow = {
   id: string;
+  university: UnifiedUniversity;
   year: YearKey;
   subjectName: string;
   subjectKey: string;
@@ -100,7 +101,7 @@ export function mergeUniversityQuestions(
       continue;
     }
     map.set(id, {
-      id, year, subjectName: match?.name ?? row.subject,
+      id, university, year, subjectName: match?.name ?? row.subject,
       subjectKey: match?.key ?? rguhsSubjectIdentity(row.subject).replace(/\s+/g, '-'),
       chapter: row.chapter?.trim() || 'Other', kind,
       question: row.question_text, offline: row,
@@ -128,13 +129,14 @@ export function mergeUniversityQuestions(
       });
     } else {
       map.set(id, {
-        id, year, subjectName: hit.subjectName, subjectKey: hit.subjectKey,
+        id, university, year, subjectName: hit.subjectName, subjectKey: hit.subjectKey,
         chapter: hit.topicName, kind, question: hit.question,
         reviewedQuestion: hit.question,
       });
     }
   }
-  return [...map.values()];
+  // A change in walkthrough/Settings must never expose another university.
+  return [...map.values()].filter(row => row.university === university);
 }
 
 /** Preserve the old RGUHS test/API while sharing the verified merger with MUHS. */
