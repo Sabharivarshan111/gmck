@@ -104,6 +104,15 @@ export default function BrowseHomeScreen() {
    * a lesser copy of it. The hit already carries everything the note needs.
    */
   const [noted, setNoted] = useState<SearchHit | null>(null);
+
+  // Walkthrough and Settings both update the one persisted university.
+  // A bank switch must clear any previous university search/selection.
+  useEffect(() => {
+    setQuery('');
+    setDebounced('');
+    setSearchYear(null);
+    setNoted(null);
+  }, [bankUniversity]);
   const results = useMemo(
     () => searchQuestions(debounced, searchYear ?? undefined, 60, bankUniversity),
     [debounced, searchYear, bankUniversity],
