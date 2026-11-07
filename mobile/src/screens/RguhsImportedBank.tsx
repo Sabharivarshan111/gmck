@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { ChevronRight, Search } from 'lucide-react-native';
-import type { OfflineUniversity } from '@/lib/universityOfflineTypes';
+import { loadWbuhsOcrYear } from '@/lib/wbuhsOcrBank';
 import { Text } from '@/components/Text';
 import { Touchable } from '@/components/Touchable';
 import { QuestionRow } from '@/components/QuestionRow';
@@ -24,7 +24,7 @@ import { loadUniversityOfflineSubject, offlineUniversitySubjects, UNIVERSITY_OFF
 import type { OfflineUniversityQuestion } from '@/lib/universityOfflineTypes';
 import {
   isRguhsSourceChecked, mergeUniversityQuestions, rguhsSubjectIdentity,
-  type RguhsKind, type RguhsRow,
+  type RguhsKind, type RguhsRow, type UnifiedUniversity, type UniversityOcrQuestion,
 } from '@/lib/rguhsUnifiedBank';
 
 type SubjectItem = { kind: 'subject'; name: string; identity: string; count: number; done: number; icon: string };
@@ -46,7 +46,7 @@ const RESULT_LIMIT = 120;
 export function UnifiedImportedUniversityBank({
   university, initialYear, onSwitchBack,
 }: {
-  university: OfflineUniversity;
+  university: UnifiedUniversity;
   initialYear: YearKey;
   onSwitchBack?: () => void;
 }) {
@@ -72,22 +72,37 @@ export function UnifiedImportedUniversityBank({
     if (!force && cache.current[requestedYear]) return Promise.resolve();
     if (pending.current[requestedYear]) return pending.current[requestedYear]!;
     const job = (async () => {
-      const packs = offlineUniversitySubjects(university, requestedYear);
-      const results = await Promise.allSettled(packs.map(pack =>
-        loadUniversityOfflineSubject(university, requestedYear, pack.subject)));
-      const bundled: OfflineUniversityQuestion[] = [];
+      // The reviewed bank is already bundled. Render it immediately even if
+      // WBUHS OCR has never been downloaded on this device.
+      if (university === 'wbuhs') {
+        const reviewed = mergeUniversityQuestions(university, requestedYear, []);
+        cache.current[requestedYear] = reviewed;
+        setYears(previous => ({ ...previous, [requestedYear]: reviewed }));
+      }
+      let bundled: UniversityOcrQuestion[] = [];
       let failures = 0;
-      results.forEach(result => {
-        if (result.status === 'fulfilled') bundled.push(...result.value);
-        else failures++;
-      });
+      if (university === 'wbuhs') {
+        const result = await loadWbuhsOcrYear(requestedYear, force);
+        bundled = result.rows;
+        failures = result.failures.length;
+      } else {
+        const packs = offlineUniversitySubjects(university, requestedYear);
+        const results = await Promise.allSettled(packs.map(pack =>
+          loadUniversityOfflineSubject(university, requestedYear, pack.subject)));
+        results.forEach(result => {
+          if (result.status === 'fulfilled') bundled.push(...result.value);
+          else failures++;
+        });
+      }
       const merged = mergeUniversityQuestions(university, requestedYear, bundled);
       cache.current[requestedYear] = merged;
       setYears(previous => ({ ...previous, [requestedYear]: merged }));
       setErrors(previous => ({
         ...previous,
         [requestedYear]: failures
-          ? String(failures) + ' offline subject pack(s) could not be read. Reviewed questions are still available.'
+          ? university === 'wbuhs'
+            ? String(failures) + ' scanned subject(s) unavailable. Reviewed questions remain accessible; downloaded scans are cached.'
+            : String(failures) + ' offline subject pack(s) could not be read. Reviewed questions are still available.'
           : '',
       }));
     })().finally(() => { delete pending.current[requestedYear]; });
@@ -216,7 +231,9 @@ export function UnifiedImportedUniversityBank({
         borderColor: colors.border, padding: 12, marginBottom: 14 }}>
         <Text style={{ color: colors.text, fontWeight: '700' }}>{countText}</Text>
         <Text style={{ color: colors.textMuted, fontSize: 12, marginTop: 5 }}>
-          {UNIVERSITY_OFFLINE_MANIFEST.totals[university].toLocaleString()} bundled OCR entries across all years, plus the reviewed bank. Overlapping questions are counted once per year and subject.
+          {university === 'wbuhs'
+            ? 'Page-reviewed questions are built in. Second/third-year PDF scans download once and then work offline; unavailable scans are never counted as verified.'
+            : UNIVERSITY_OFFLINE_MANIFEST.totals[university].toLocaleString() + ' bundled OCR entries across all years, plus the reviewed bank. Overlapping questions are counted once per year and subject.'}
         </Text>
       </View> : null}
 
@@ -238,7 +255,7 @@ export function UnifiedImportedUniversityBank({
           style={{ color: colors.text, paddingVertical: 12, flex: 1 }} />
       </View> : null}
 
-      {errors[year] ? <Touchable label="Retry loading missing RGUHS offline packs"
+      {errors[year] ? <Touchable label="Retry loading unavailable university question packs"
         onPress={() => { void loadYear(year, true); }}
         style={{ padding: 10, marginBottom: 10, borderWidth: 1, borderColor: colors.warning, borderRadius: 10 }}>
         <Text style={{ color: colors.warning, fontSize: 12 }}>
