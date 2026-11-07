@@ -159,7 +159,7 @@ function QuestionRowBase({
   // intent flags the edge function needs. Hand-writing the prose here is what
   // previously sent MCQ requests down the generic-chatbot path.
   const askAnswer = useCallback(() => {
-    if (originalMcq && onMcqAnswer) {
+    if (onMcqAnswer) {
       onMcqAnswer(question);
       return;
     }
@@ -232,7 +232,7 @@ function QuestionRowBase({
     <Touchable
       onPress={onRowTap}
       label={kuhsSource ? `${text}. Printed exam references: ${kuhsSource.examRefs.join(', ')}. ${stars > 0 ? `${stars} recorded exam references` : 'Exam count not specified'}.` : text}
-      hint={originalMcq ? 'Triple tap for this MCQ answer' : 'Double tap for practice MCQs, triple tap for a written answer'}
+      hint={originalMcq || onMcqAnswer ? 'Triple tap for this MCQ answer' : 'Double tap for practice MCQs, triple tap for a written answer'}
       // The gestures above are unreachable with a screen reader; these are.
       accessibilityActions={[
         { name: 'mcqs', label: 'Practice MCQs' },
@@ -295,7 +295,7 @@ function QuestionRowBase({
 
         <View style={styles.body}>
           <Text style={[styles.affordance, { color: colors.cyan }]}>
-            {originalMcq && onMcqAnswer ? 'Triple tap → MCQ answer' : onNote ? 'Triple tap → handwritten note' : 'Triple tap to ask AI'}
+            {onMcqAnswer ? 'Triple tap → MCQ answer' : onNote ? 'Triple tap → handwritten note' : 'Triple tap to ask AI'}
           </Text>
 
           <Text
