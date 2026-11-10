@@ -18,10 +18,10 @@ async function run(token, mode) {
   const res=await handler(new Request('https://fixture.invalid',{method:'POST',headers:{authorization:'Bearer '+token,'content-type':'application/json'},body:JSON.stringify(body)}));
   const result=await res.json();
   if(token==='invalid'){assert.equal(res.status,401);assert.equal(writes.length,0);return}
-  assert.equal(res.status,200);
+  if(token==='public-key' && mode==='read'){assert.equal(res.status,401);assert.equal(result.code,'SIGN_IN_REQUIRED');assert.equal(writes.length,0);return}\n  assert.equal(res.status,200);
   if(mode==='save') {
     if(token==='public-key'){assert.equal(writes.length,0);assert.equal(result.saved,false)}
     else {assert.equal(writes.length,1);assert.equal(writes[0].table,token==='server-key'?'handwritten_notes':'personal_handwritten_notes');if(token==='valid-user')assert.equal(writes[0].row.user_id,'user-a')}
   } else {assert.equal(result.cached,true);assert.equal(writes.length,0);assert.equal(reads[0],token==='valid-user'?'personal_handwritten_notes':'handwritten_notes')}
 }
-(async()=>{for(const token of ['valid-user','public-key','server-key','invalid'])for(const mode of ['save','read'])await run(token,mode);console.log('8 notes isolation cases passed: personal writes, visitor no-write, internal cache writes, and private-first reads.')})().catch(e=>{console.error(e);process.exitCode=1});
+(async()=>{for(const token of ['valid-user','public-key','server-key','invalid'])for(const mode of ['save','read'])await run(token,mode);console.log('8 notes isolation cases passed: personal writes, visitor no-write/sign-in-required shared preview, internal cache writes, and private-first reads.')})().catch(e=>{console.error(e);process.exitCode=1});
