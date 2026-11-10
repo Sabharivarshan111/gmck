@@ -38,11 +38,11 @@ export function UnlockCard() {
       ]}>
       <Lock size={14} color={colors.accent} />
       <View style={styles.body}>
-        <Text style={[styles.title, { color: colors.text }]}>Ad-free is on the website</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Unlock ORBIT Premium</Text>
         <Text style={[styles.note, { color: colors.textMuted }]}>
           {LINK_OUT
-            ? 'Unlock it there, then sign in here with the same Google account and the ads stop.'
-            : 'Unlock it at mbbsqbank-questor.lovable.app, then sign in here with the same Google account and the ads stop.'}
+            ? 'Get handwritten AI notes beyond your 2 free generations and all heart and lung sounds. Sign in here with the same Google account.'
+            : 'Subscribe at orbitmbbs.site/unlock, then sign in here with the same Google account.'}
         </Text>
         {LINK_OUT ? (
           <Touchable
@@ -75,3 +75,4 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingTop: 6 },
   link: { fontSize: 13, fontWeight: '700' },
 });
+

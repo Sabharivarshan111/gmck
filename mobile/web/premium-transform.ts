@@ -8,9 +8,8 @@ export function transformWebsitePremium(code: string, id: string, accessModule: 
     code = `import { useVaultAccess, VaultPaywall, FlashcardsPreview } from '${accessModule}';\n` + code;
     replace('export default function NotesScreen() {', 'export default function NotesScreen() {\n  const vaultAccess = useVaultAccess();');
     replace('  if (simulatorOpen) return', `  if (flashcards && !vaultAccess.active) return <FlashcardsPreview onBack={() => setFlashcards(false)} />;\n  if ((datasetCasesOpen || caseLibraryOpen) && !vaultAccess.active) return <VaultPaywall onBack={() => { setSimulatorOpen(false); setFlashcards(false); setProformasOpen(false); setPgEntranceOpen(false); setDatasetCasesOpen(false); setCaseLibraryOpen(false); }} />;\n  if (simulatorOpen) return`);
-    replace('  const textScale = useTextScale();\n  const entries = [', '  const textScale = useTextScale();\n  const vaultAccess = useVaultAccess();\n  const entries = [');
+    replace('  const previewTitles = [', '  const vaultAccess = useVaultAccess();\n  const previewTitles = [');
     replace('onPress={open} scaleTo={0.97}', `disabled={title !== 'Notes' && vaultAccess.loading} onPress={open} scaleTo={0.97}`);
-    replace('<ChevronRight size={18} color={colors.accent} />\n      </Touchable>)}', `{title !== 'Notes' && !vaultAccess.active ? <Text style={{ color: colors.accent, fontSize: 12 }}>{vaultAccess.loading ? 'Checking…' : 'Free preview'}</Text> : <ChevronRight size={18} color={colors.accent} />}\n      </Touchable>)}`);
   }
   if (id.endsWith('/mobile/src/components/PgEntranceBankModal.tsx')) {
     code = `import { useVaultAccess, VaultTrialBanner } from '${accessModule}';\nimport { samplePracticeBank } from '@shared/vault-samples';\n` + code;
@@ -41,3 +40,4 @@ export function transformWebsitePremium(code: string, id: string, accessModule: 
   }
   return code;
 }
+

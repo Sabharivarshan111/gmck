@@ -83,6 +83,13 @@ export async function syncPremiumCache(): Promise<string | null> {
       expiresAt = null;
       cachedOwner = userId;
     }
+    const { data: adminRole, error: adminError } = await supabase.rpc('is_admin');
+    if (!adminError && adminRole === true) {
+      if ((await supabase.auth.getSession()).data.session?.user.id !== userId) return null;
+      const adminUntil = '9999-12-31T23:59:59.000Z';
+      await cache(adminUntil, userId);
+      return adminUntil;
+    }
     const { data, error } = await supabase
       .from('premium_subscriptions')
       .select('expires_at')
@@ -148,3 +155,4 @@ export function usePremiumStatus(): string | null {
   }, []);
   return until;
 }
+

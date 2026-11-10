@@ -33,9 +33,14 @@ export function AuscultationTrainer({ theme, site, mode, volume, listening, over
     onSite(next);
   };
   const chooseSound = (next: HeartSoundPreset | null) => {
+    if (!access.active && next && next !== 'normal') { access.requestPurchase('Pro heart sounds & murmurs'); return; }
     const sound = SOUND_LIBRARY.find(s => s.id === next);
     if (sound) { setBack(false); onMode(sound.mode); }
     onSound(next);
+  };
+  const chooseLung = (next: LungSoundPreset | null) => {
+    if (!access.active && next && next !== 'vesicular') { access.requestPurchase('Pro lung sounds'); return; }
+    onLung(next);
   };
   const nextQuestion = () => {
     if (!access.active) { access.requestPurchase('auscultation training'); return; }
@@ -82,18 +87,18 @@ export function AuscultationTrainer({ theme, site, mode, volume, listening, over
     </div>}
     <button aria-pressed={motion} onClick={() => setMotion(!motion)}>{motion ? 'Pause organ movement' : 'Show organ movement'}</button>
     <p className="ausc-note">Heart contraction and lung expansion illustrate timing while listening; the movement is simplified.</p>
-    {!training && pulmonary ? <div className="ausc-library"><label htmlFor="ausc-lung-sound">Breath sound demonstration</label><select id="ausc-lung-sound" value={lungOverride || ''} onChange={e => onLung((e.target.value || null) as LungSoundPreset | null)}><option value="">Current patient case</option>{Object.keys(LUNG_SOUND_DESCRIPTIONS).map(id => <option key={id} value={id}>{id === 'silent' ? 'Absent breath sounds' : id === 'vesicular' ? 'Normal vesicular breath sounds' : id[0].toUpperCase()+id.slice(1)}</option>)}</select></div> : !training ? <div className="ausc-library">
+    {!training && pulmonary ? <div className="ausc-library"><label htmlFor="ausc-lung-sound">Breath sound demonstration</label><select id="ausc-lung-sound" value={lungOverride || ''} onChange={e => chooseLung((e.target.value || null) as LungSoundPreset | null)}><option value="">Current patient case</option>{Object.keys(LUNG_SOUND_DESCRIPTIONS).map(id => <option key={id} value={id}>{id === 'silent' ? 'Absent breath sounds' : id === 'vesicular' ? 'Normal vesicular breath sounds' : id[0].toUpperCase()+id.slice(1)}{!access.active && id !== 'vesicular' ? ' · Pro 🔒' : ''}</option>)}</select></div> : !training ? <div className="ausc-library">
       <label htmlFor="ausc-search">Heart sounds & murmur library · 9 murmur types</label>
       <input id="ausc-search" type="search" placeholder="Find a sound…" value={search} onChange={e => setSearch(e.target.value)} />
       <select aria-label="Sound demonstration" value={override || ''} onChange={e => chooseSound((e.target.value || null) as HeartSoundPreset | null)}>
         <option value="">Current patient case</option>
         {override && !filtered.some(s => s.id === override) && <option value={override}>{SOUND_LIBRARY.find(s => s.id === override)?.title || override}</option>}
-        {filtered.map(s => <option key={s.id} value={s.id}>{s.title}{!access.active && s.id !== 'normal' ? ' · Premium' : ''}</option>)}
+        {filtered.map(s => <option key={s.id} value={s.id}>{s.title}{!access.active && s.id !== 'normal' ? ' · Pro 🔒' : ''}</option>)}
       </select>
       {!filtered.length && <p className="ausc-note" role="status">No matching heart demonstration.</p>}
     </div> : <div className="ausc-library">
       <label htmlFor="ausc-answer">Listen, then identify the heart sound</label>
-      <select id="ausc-answer" value={answer} onChange={e => setAnswer(e.target.value)} disabled={revealed}><option value="">Choose your answer</option>{SOUND_LIBRARY.map(s => <option key={s.id} value={s.id}>{s.title}{!access.active && s.id !== 'normal' ? ' · Premium' : ''}</option>)}</select>
+      <select id="ausc-answer" value={answer} onChange={e => setAnswer(e.target.value)} disabled={revealed}><option value="">Choose your answer</option>{SOUND_LIBRARY.map(s => <option key={s.id} value={s.id}>{s.title}{!access.active && s.id !== 'normal' ? ' · Pro 🔒' : ''}</option>)}</select>
       <button disabled={!answer || revealed || pulmonary} onClick={() => setRevealed(true)}>Check answer</button>
       {pulmonary && <p className="ausc-note">Choose Heart to answer this heart-sound exercise.</p>}
       {revealed && <p role="status" className="ausc-point-label">{answer === override ? 'Correct.' : 'Listen again.'} {SOUND_LIBRARY.find(s => s.id === override)?.title}</p>}
@@ -114,3 +119,4 @@ export function AuscultationTrainer({ theme, site, mode, volume, listening, over
     <p className="ausc-note">Synthesized teaching sounds, not patient recordings. Adult male reference anatomy; listening points indicate approximate surface areas. Lung points share the case’s modeled finding; side-specific disease and murmur radiation are not simulated.</p>
   </section>;
 }
+

@@ -166,14 +166,20 @@ async function unwrapError(error: {
   return new Error(message);
 }
 
+export function newNotesGenerationId(): string {
+  return `notes-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
+}
+
 interface TopicRequest {
+  generationId?: string;
   topic: LeafTopic;
   yearLabel: string;
   subject: string;
 }
 
-function baseBody({ topic, yearLabel, subject }: TopicRequest) {
+function baseBody({ topic, yearLabel, subject, generationId }: TopicRequest) {
   return {
+    generationId,
     subtopicKey: topic.key,
     year: yearLabel,
     subject,
@@ -320,6 +326,7 @@ function singleNoteBody(request: SingleNoteRequest): Record<string, unknown> {
     subtopicName: clean.slice(0, 80),
     questions: clampQuestions([clean]),
     singleMode: true,
+    generationId: newNotesGenerationId(),
   };
 }
 
@@ -1281,3 +1288,4 @@ function hashKey(value: string): string {
   }
   return Math.abs(hash).toString(36);
 }
+

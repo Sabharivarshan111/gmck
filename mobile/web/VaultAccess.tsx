@@ -9,7 +9,7 @@ type Access = { active: boolean; loading: boolean; expiresAt: string | null; req
 const Context = createContext<Access>({ active: false, loading: true, expiresAt: null, requestPurchase() {} });
 export function useVaultAccess() { return useContext(Context); }
 export function VaultPaywall({ onBack }: { onBack?: () => void }) {
-  return <main className="orbit-checkout vault-paywall"><div className="checkout-shell"><h1>Unlock ORBIT Vault</h1><p>Get 3D Anatomy, Patient Simulator, Auscultation, PG Practice and more with Premium.</p><p>Notes remain free to read.</p><a className="vault-pay-button" href="/unlock">View Premium plans</a><button className="checkout-secondary" onClick={onBack ?? (() => location.assign('/notes'))}>Back to free Notes</button></div></main>;
+  return <main className="orbit-checkout vault-paywall"><div className="checkout-shell"><h1>Unlock ORBIT Vault</h1><p>Get handwritten AI notes, 3D Anatomy, Patient Simulator, all heart and lung sounds, PG Practice and more with Premium.</p><p>Notes remain free to read.</p><a className="vault-pay-button" href="/unlock">View Premium plans</a><button className="checkout-secondary" onClick={onBack ?? (() => location.assign('/notes'))}>Back to free Notes</button></div></main>;
 }
 export function VaultAccessProvider({ children }: { children: React.ReactNode }) {
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
@@ -37,7 +37,7 @@ export function VaultAccessProvider({ children }: { children: React.ReactNode })
   return <Context.Provider value={{ active, loading, expiresAt, requestPurchase }}>
     {children}
     <dialog ref={dialog} className="vault-purchase-dialog" aria-labelledby="vault-paywall-title" onCancel={() => setFeature(null)}>
-      <h2 id="vault-paywall-title">Unlock {feature ?? 'ORBIT Vault'}</h2><p>This feature is included with ORBIT Premium. Notes remain free.</p>
+      <h2 id="vault-paywall-title">Unlock {feature ?? 'ORBIT Vault'}</h2><p>This feature is included with ORBIT Premium. Saved notes remain free to read. Generate 2 handwritten AI notes free, then unlock Premium for more.</p>
       <a className="vault-pay-button" href="/unlock">View Premium plans</a><button className="checkout-secondary" onClick={() => setFeature(null)}>Not now</button>
     </dialog>
   </Context.Provider>;
@@ -48,3 +48,4 @@ export function VaultTrialBanner({ kind }: { kind: 'practice' | 'proforma' }) {
   if (access.active) return null;
   return <aside className="simulator-sample-banner"><span><strong>Free preview</strong> · {kind === 'practice' ? '10 questions per exam' : 'CVS master case proforma'}</span><button onClick={() => access.requestPurchase(kind === 'practice' ? 'all practice questions' : 'all case proformas')}>Unlock all →</button></aside>;
 }
+

@@ -110,8 +110,8 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         // Version 35: Android native Continue CTA rendering fix, independent of the animated Touchable.
         // Version 34 is intentionally skipped per owner's requested v35.
-        versionCode 35
-        versionName "0.0.0.35"
+        versionCode 37
+        versionName "0.0.0.37"
 
         // Deep-link / OAuth callback scheme, consumed by the intent-filter in
         // AndroidManifest.xml. Added with an indexed put rather than assigning
@@ -399,3 +399,4 @@ tasks.named("preBuild").configure {
         }
     }
 }
+

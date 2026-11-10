@@ -1,10 +1,7 @@
-import { secureEndpoint } from '../_shared/endpointSecurity.ts';
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { buildTextbookContext, buildPharmContext, pickBookKey, BOOK_LABELS } from "./textbook.ts";
-
-import { ensureLongEssay, essayExpansionPrompt, appendEssaySupplement, NotesDepthError } from "./notesDepth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -19,17 +16,17 @@ const corsHeaders = {
  * Gemini calls for one topic. With a free-tier Google AI Studio key, that can
  * hit `generate_content_free_tier_requests` and return 429. This function now
  * uses the user's direct GEMINI_API_KEY only (no Lovable AI Gateway) and targets
- * Gemini 3.1 Flash-Lite for lower latency/cost.
+ * Gemini 3.5 Flash-Lite for lower latency/cost.
  */
 const BodySchema = z.object({
   subtopicKey: z.string().min(1).max(300),
   year: z.string().min(1).max(40),
   subject: z.string().min(1).max(120),
   subtopicName: z.string().min(1).max(200),
-  questions: z.array(z.string().max(4000)).min(1).max(400),
-  questionKinds: z.array(z.enum(["essay", "short"])).max(400).optional(),
+  questions: z.array(z.string().max(1000)).min(1).max(400),
   batchIndex: z.number().int().min(0).max(200).optional(),
   batchSize: z.number().int().min(1).max(20).optional(),
+  generationId: z.string().min(1).max(160).optional(),
   regenerate: z.boolean().optional(),
   saveContent: z.boolean().optional(),
   content: z.any().optional(),
@@ -48,7 +45,7 @@ const EST_SECONDS_PER_BATCH = 25;
 const GEMINI_TIMEOUT_MS = 55_000;
 
 const SYSTEM_PROMPT = `You are an expert MBBS professor generating exam-ready HANDWRITTEN-STYLE study notes.
-Given a SUBTOPIC and its previous-year essay + short-note questions, produce COMPLETE structured study notes. A chapter may span many pages. Consolidate duplicate material without shortening distinct content. A long essay is not a one-page overview.
+Given a SUBTOPIC and its previous-year essay + short-note questions, synthesise ONE unified study page.
 
 Output MUST be VALID JSON only (no markdown fence, no prose) matching this exact schema:
 
@@ -290,9 +287,10 @@ function normalizeNotesContent(content: any): any {
 class UserQuotaError extends Error {}
 class QuotaUnavailableError extends Error {}
 
-serve(secureEndpoint(async (req) => {
+serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
+  const trialCleanup: { run: (() => Promise<void>) | null } = { run: null };
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -304,6 +302,7 @@ serve(secureEndpoint(async (req) => {
     });
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     let userId: string | null = null;
+    let anonymousUser = false;
     if (!internal && token !== anonKey) {
       const caller = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, { auth: { persistSession: false } });
       const { data: userData, error: userError } = await caller.auth.getUser(token);
@@ -311,6 +310,7 @@ serve(secureEndpoint(async (req) => {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
       userId = userData.user.id;
+      anonymousUser = userData.user.is_anonymous === true;
     }
     const hash = async (value: string) => Array.from(new Uint8Array(
       await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value))
@@ -357,10 +357,50 @@ serve(secureEndpoint(async (req) => {
       });
     }
     const {
-      subtopicKey, year, subject, subtopicName, questions, questionKinds,
+      subtopicKey, year, subject, subtopicName, questions,
       batchIndex, batchSize, regenerate, saveContent, content, editInstruction,
       singleMode, proposeOnly, useWeb,
     } = parsed.data;
+
+    // Fresh service-side entitlement; the client never supplies premium status.
+    const trialState: { current: { generation: string; lease: string; batch: number } | null } = { current: null };
+    const reserveTrial = async (batch: number, total: number): Promise<Response | null> => {
+      if (internal) return null;
+      if (!userId || anonymousUser) return new Response(JSON.stringify({ code: "SIGN_IN_REQUIRED", error: "Sign in with Google to use your 2 free handwritten AI note generations, or unlock Premium." }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+      const fingerprint = await hash(JSON.stringify({ subtopicKey, year, subject, subtopicName, questions, singleMode: !!singleMode,
+        batchSize: batchSize ?? DEFAULT_BATCH_SIZE, editInstruction: editInstruction ?? null, content: editInstruction ? content : null, proposeOnly: !!proposeOnly, useWeb: !!useWeb }));
+      // Legacy clients can finish their original topic batches. Explicit regenerations
+      // and edits are separate generations, never an unlimited retry entitlement.
+      const generation = parsed.data.generationId ?? (regenerate || editInstruction ? crypto.randomUUID() : "legacy:" + fingerprint);
+      const { data, error } = await admin.rpc("reserve_handwritten_note_trial", {
+        _user: userId, _generation: generation, _fingerprint: fingerprint, _batch: batch, _total: total,
+      });
+      if (error) throw new QuotaUnavailableError("Could not check your free notes allowance. Please retry.");
+      if (!data?.allowed) return new Response(JSON.stringify({ code: data?.code ?? "PREMIUM_REQUIRED", error: data?.code === "PREMIUM_REQUIRED"
+        ? "Your 2 free handwritten AI note generations are used. Unlock Premium to generate more. Your saved notes remain readable."
+        : "This generation is already running or its questions changed. Please retry." }), {
+        status: data?.code === "PREMIUM_REQUIRED" ? 402 : 409, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+      if (data.cached_response) return new Response(JSON.stringify(data.cached_response), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      if (data.lease) {
+        trialState.current = { generation, lease: data.lease, batch };
+        trialCleanup.run = async () => { await admin.rpc("finish_handwritten_note_trial", { _user: userId, _generation: generation, _lease: data.lease, _batch: batch, _result: null }); };
+      }
+      return null;
+    };
+    const noteResponse = async (result: Record<string, unknown>) => {
+      const trial = trialState.current;
+      if (trial) {
+        const { data: finished, error } = await admin.rpc("finish_handwritten_note_trial", {
+          _user: userId, _generation: trial.generation, _lease: trial.lease, _batch: trial.batch, _result: result,
+        });
+        if (error || !finished) throw new QuotaUnavailableError("Could not save generation progress. Please retry.");
+        trialCleanup.run = null;
+      }
+      return new Response(JSON.stringify(result), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    };
 
     // ---------- Mode 3: AI edit existing notes ----------
     if (editInstruction) {
@@ -369,6 +409,8 @@ serve(secureEndpoint(async (req) => {
           status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
+      const blocked = await reserveTrial(0, 1);
+      if (blocked) return blocked;
       const refText = useWeb ? "" : await buildTextbookContext(subject, subtopicName, questions, 12000);
 
       // ----- 3a: propose (chat workflow) — never persists, waits for Yes -----
@@ -402,13 +444,13 @@ Modify ONLY the relevant part(s) of the notes; preserve everything else verbatim
         if (!nextContent || !Array.isArray(nextContent.sections) || nextContent.sections.length === 0) {
           throw new UpstreamError(500, "Gemini returned an invalid proposal", "invalid");
         }
-        return new Response(JSON.stringify({
+        return await noteResponse({
           proposed: true,
           found: proposal?.found !== false,
           source: proposal?.source ?? (useWeb ? "web" : refText ? "textbook" : "knowledge"),
           summary: Array.isArray(proposal?.summary) ? proposal.summary.slice(0, 8) : [],
           content: nextContent,
-        }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        });
       }
 
       const editPrompt = `SUBJECT: ${subject}
@@ -425,7 +467,7 @@ Modify ONLY the relevant part(s) requested by the user. Preserve everything else
       await enforceQuota();
       const raw = await callModel(editPrompt, !!useWeb);
       const edited = normalizeNotesContent(parseJson(raw));
-      if (!edited || !Array.isArray(edited.sections)) {
+      if (!edited || !Array.isArray(edited.sections) || edited.sections.length === 0) {
         throw new UpstreamError(500, "Gemini returned an invalid edited notes structure", "invalid");
       }
       await saveNotes({
@@ -434,9 +476,7 @@ Modify ONLY the relevant part(s) requested by the user. Preserve everything else
         content: edited,
         updated_at: new Date().toISOString(),
       });
-      return new Response(JSON.stringify({ edited: true, content: edited }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return await noteResponse({ edited: true, content: edited });
     }
 
     // ---------- Mode 2: SAVE merged ----------
@@ -469,11 +509,13 @@ Modify ONLY the relevant part(s) requested by the user. Preserve everything else
     // explicitly asked to regenerate.
     if (idx === 0 && !regenerate) {
       let cached: { content: unknown } | null = null;
+      let personalCached = false;
       if (userId && !internal) {
         const { data, error } = await admin.from("personal_handwritten_notes")
           .select("content").eq("user_id", userId).eq("subtopic_key", subtopicKey).maybeSingle();
         if (error) throw new Error("Could not load your notes. Please retry.");
         cached = data;
+        personalCached = !!data?.content;
       }
       if (!cached?.content) {
         const { data, error } = await admin.from("handwritten_notes")
@@ -482,14 +524,23 @@ Modify ONLY the relevant part(s) requested by the user. Preserve everything else
         cached = data;
       }
       if (cached?.content) {
-        return new Response(JSON.stringify({
+        // A saved personal note remains readable. First access to a shared
+        // cached answer uses one preview too, otherwise the public cache would
+        // give every free account unlimited handwritten notes without AI calls.
+        if (!personalCached && !internal) {
+          const blocked = await reserveTrial(0, 1);
+          if (blocked) return blocked;
+          await saveNotes({ subtopic_key: subtopicKey, year, subject,
+            subtopic_name: subtopicName, content: cached.content, updated_at: new Date().toISOString() });
+        }
+        return await noteResponse({
           cached: true,
           content: cached.content,
           batchIndex: 0,
           totalBatches: 1,
           hasMore: false,
           estSecondsPerBatch: EST_SECONDS_PER_BATCH,
-        }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        });
       }
     }
 
@@ -499,8 +550,10 @@ Modify ONLY the relevant part(s) requested by the user. Preserve everything else
       });
     }
 
+    const blocked = await reserveTrial(idx, totalBatches);
+    if (blocked) return blocked;
     const batch = questions.slice(idx * size, idx * size + size);
-    const tagged = batch.map((q, i) => ({ q, kind: questionKinds?.[idx * size + i] ?? classifyQuestion(q) }));
+    const tagged = batch.map((q) => ({ q, kind: classifyQuestion(q) }));
     // In singleMode, force ESSAY depth unless the question is explicitly a "short note".
     const essayList = tagged.map((t, i) => {
       const kind = singleMode
@@ -557,20 +610,9 @@ Follow the DEPTH rules from the system prompt strictly. Essays get long multi-se
 
     await enforceQuota();
     const raw = await callModel(userPrompt);
-    let batchContent = normalizeNotesContent(parseJson(raw));
-    if (!batchContent || !Array.isArray(batchContent.sections)) {
+    const batchContent = normalizeNotesContent(parseJson(raw));
+    if (!batchContent || !Array.isArray(batchContent.sections) || batchContent.sections.length === 0) {
       throw new Error("Model returned invalid structure");
-    }
-
-    // A structurally valid JSON answer can still be an abbreviated overview.
-    // Reject that in long-essay single mode, preserving existing saved notes.
-    const requiresLongEssay = singleMode && tagged.some(t => t.kind !== "short");
-    if (requiresLongEssay) {
-      batchContent = await ensureLongEssay(batchContent, async words => {
-        await enforceQuota();
-        const expanded = await callModel(essayExpansionPrompt(batch.join("\n\n"), subject, refText, batchContent, words));
-        return appendEssaySupplement(batchContent, normalizeNotesContent(parseJson(expanded)));
-      });
     }
 
     // Persist single-question notes so every future tap on the same question is
@@ -589,19 +631,17 @@ Follow the DEPTH rules from the system prompt strictly. Essays get long multi-se
     }
 
     const hasMore = idx + 1 < totalBatches;
-    return new Response(JSON.stringify({
+    return await noteResponse({
       cached: false,
       content: batchContent,
       batchIndex: idx,
       totalBatches,
       hasMore,
       estSecondsPerBatch: EST_SECONDS_PER_BATCH,
-    }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    });
 
   } catch (err) {
-    if (err instanceof NotesDepthError) return new Response(JSON.stringify({ error: err.message }), {
-      status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    if (trialCleanup.run) await trialCleanup.run().catch(() => undefined);
     if (err instanceof QuotaUnavailableError) return new Response(JSON.stringify({ error: err.message }), {
       status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
@@ -611,9 +651,7 @@ Follow the DEPTH rules from the system prompt strictly. Essays get long multi-se
     const msg = (err as Error).message ?? "Unknown error";
     console.error("generate-handwritten-notes error:", err);
     const upstream = err instanceof UpstreamError ? err : null;
-    // Provider status is classified in callGeminiDirect. Substring matching
-    // misclassified "generated essay" as rate limiting and hid depth failures.
-    const isQuota = upstream?.kind === "quota";
+    const isQuota = upstream?.kind === "quota" || /429/.test(msg) || /quota/i.test(msg) || /rate/i.test(msg);
     const isAuth = upstream?.kind === "auth";
     const isTimeout = upstream?.kind === "timeout" || /timed out/i.test(msg);
     // Pull the retry-after hint (e.g. "retry_in=48s") from the upstream error so
@@ -635,10 +673,11 @@ Follow the DEPTH rules from the system prompt strictly. Essays get long multi-se
             ? "Gemini API key/model access issue. Please verify GEMINI_API_KEY and access to gemini-3.1-flash-lite."
             : isTimeout
               ? "Gemini took too long to generate this section. Please try again with fewer questions or retry later."
-              : 'Unable to generate notes. Please retry.',
+              : msg,
         retryAfterSeconds: retrySeconds || undefined,
       }),
       { status: isQuota ? 429 : isAuth ? 400 : isTimeout ? 504 : 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
-}, { maxBytes: 4 * 1024 * 1024 }));
+});
+

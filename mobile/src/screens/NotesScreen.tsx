@@ -1,3 +1,5 @@
+import { UnlockCard } from '@/components/UnlockCard';
+import { useSimulatorEntitlement } from '@/lib/simulatorEntitlement';
 import { NATIVE_CLINICAL_SKILLS } from '@/lib/nativeClinicalCatalog';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -70,6 +72,7 @@ import {
   flattenSubjectTopics,
   INTER_BATCH_DELAY_MS,
   mergeNotes,
+  newNotesGenerationId,
   saveMergedNotes,
   type LeafTopic,
   type NotesContent,
@@ -345,6 +348,8 @@ function VaultCardIcon({title, emoji}: {title: string; emoji: string}) {
 function VaultView({ onNotes, onPgPractice, onMedMcqa, onSimulator, onClinicalSkill, onProformas, onFlashcards }: { onNotes: () => void; onPgPractice: () => void; onMedMcqa: () => void; onSimulator: () => void; onClinicalSkill: (id: string) => void; onProformas: () => void; onFlashcards: () => void }) {
   const { colors } = useTheme();
   const textScale = useTextScale();
+  const { active: premiumActive } = useSimulatorEntitlement();
+  const previewTitles = ['PG Practice', 'Simulator & Anatomy', 'Anki flashcards', 'NEET PG Practice Questions', 'Case proformas', 'Auscultation'];
   const entries = [
     { title: 'Notes', hint: 'Years, subjects & handwritten notes', emoji: '📚', open: onNotes },
     { title: 'PG Practice', label: 'NEET-PG practice questions', hint: 'NEET-PG · AIIMS PG · INI-CET · Practice', emoji: '📝', open: onPgPractice },
@@ -364,7 +369,10 @@ function VaultView({ onNotes, onPgPractice, onMedMcqa, onSimulator, onClinicalSk
         <View style={{ height: 58 * textScale }}><VaultCardIcon title={title} emoji={emoji} /></View>
         <View style={{ height: 50 * textScale }}><Text numberOfLines={2} style={[styles.yearName, { lineHeight: 22, color: colors.text }]}>{title}</Text></View>
         <View style={{ flex: 1 }}><Text numberOfLines={3} style={[styles.yearHint, { lineHeight: 18, color: colors.textMuted }]}>{hint}</Text></View>
-        <ChevronRight size={18} color={colors.accent} />
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Text numberOfLines={2} style={{ flex: 1, flexShrink: 1, marginRight: 8, color: colors.accent, fontSize: 12, fontWeight: '700' }}>{premiumActive ? 'Premium' : title === 'Notes' ? '2 free AI generations total' : previewTitles.includes(title) ? 'Free preview' : 'Pro'}</Text>
+          <ChevronRight size={18} color={colors.accent} />
+        </View>
       </Touchable>)}
     </View>
   </>;
@@ -632,6 +640,7 @@ function NotesDetailView({
 
   const generate = useCallback(
     async (regenerate: boolean) => {
+      const generationRequest = { ...request, generationId: newNotesGenerationId() };
       setPhase('loading');
       setError(null);
       setContent(null);
@@ -666,7 +675,7 @@ function NotesDetailView({
         let index = 0;
         let more = true;
         while (more && !cancelled.current) {
-          const batch = await fetchNotesBatch(request, index, regenerate);
+          const batch = await fetchNotesBatch(generationRequest, index, regenerate);
           collected[index] = batch.content;
           setTotalBatches(batch.totalBatches);
           setCompletedBatches(index + 1);
@@ -815,6 +824,7 @@ function NotesDetailView({
         </Touchable>
       ) : null}
 
+      {error && /Premium|Sign in with Google/.test(error) ? <UnlockCard /> : null}
       {content ? <NotesContentView content={content} /> : null}
 
       {/*
@@ -1129,3 +1139,4 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
+

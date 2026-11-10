@@ -1,3 +1,4 @@
+import { UnlockCard } from '@/components/UnlockCard';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -209,6 +210,7 @@ export function SingleQuestionNote({
               <Text style={[typeScale.footnote, { color: colors.text }]}>
                 {error}
               </Text>
+              {/Premium|Sign in with Google/.test(error) ? <UnlockCard /> : null}
               <Touchable
                 label="Try again"
                 onPress={() => generate(false)}
@@ -341,3 +343,4 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
   },
 });
+

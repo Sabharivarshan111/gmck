@@ -11,6 +11,7 @@ export interface PremiumClient {
     getUser(): Promise<{ data: { user: { id: string; is_anonymous?: boolean } | null }; error: unknown }>;
     getSession(): Promise<{ data: { session: { user: { id: string } } | null } }>;
   };
+  rpc?(name: 'is_admin'): PromiseLike<{ data: unknown; error: unknown }>;
   from(table: 'premium_subscriptions'): { select(columns: string): PremiumQuery };
 }
 /** Never trust browser-editable cached flags for website feature access. */
@@ -18,6 +19,10 @@ export async function readWebsitePremium(client: PremiumClient): Promise<string 
   const { data, error } = await client.auth.getUser();
   const user = data.user;
   if (error || !user || user.is_anonymous) return null;
+  if (client.rpc) {
+    const role = await client.rpc('is_admin');
+    if (!role.error && role.data === true && (await client.auth.getSession()).data.session?.user.id === user.id) return '9999-12-31T23:59:59.000Z';
+  }
   const { data: row, error: queryError } = await client.from('premium_subscriptions')
     .select('expires_at').eq('user_id', user.id).eq('plan', 'adfree_monthly')
     .gt('expires_at', new Date().toISOString()).order('expires_at', { ascending: false }).limit(1).maybeSingle();
@@ -26,3 +31,4 @@ export async function readWebsitePremium(client: PremiumClient): Promise<string 
   if (queryError || current !== user.id || typeof expiry !== 'string' || !Number.isFinite(Date.parse(expiry)) || Date.parse(expiry) <= Date.now()) return null;
   return expiry;
 }
+
