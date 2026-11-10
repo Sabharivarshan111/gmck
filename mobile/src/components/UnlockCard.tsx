@@ -41,7 +41,7 @@ export function UnlockCard() {
         <Text style={[styles.title, { color: colors.text }]}>Unlock ORBIT Premium</Text>
         <Text style={[styles.note, { color: colors.textMuted }]}>
           {LINK_OUT
-            ? 'Generate handwritten AI notes for more than 2 questions per day and all heart and lung sounds. Sign in here with the same Google account.'
+            ? 'Subscribe on the website for more handwritten AI-note questions and all heart and lung sounds. The 2-question daily limit is for free users only. Sign in here with the same Google account.'
             : 'Subscribe at orbitmbbs.site/unlock, then sign in here with the same Google account.'}
         </Text>
         {LINK_OUT ? (
