@@ -35,11 +35,12 @@ async function scenario(width,signedIn=true,verificationFails=false,interrupted=
   const req=route.request(),url=new URL(req.url());
   const headers={'access-control-allow-origin':'*','access-control-allow-headers':'*','content-type':'application/json'};
   if(req.method()==='OPTIONS'){await route.fulfill({status:204,headers});return;}
+  if(url.pathname==='/rest/v1/rpc/is_admin'){await route.fulfill({headers,body:'false'});return;}
   if(url.pathname==='/auth/v1/user'){await route.fulfill({headers,body:JSON.stringify(user)});return;}
   if(url.pathname.includes('/rest/v1/premium_subscriptions')){await route.fulfill({headers,body:JSON.stringify(url.searchParams.get('plan')?.startsWith('in.') ? owned.map(plan=>({plan,expires_at:expiry})) : active?{expires_at:expiry}:null)});return;}
   if(url.pathname.includes('/functions/v1/')){
    const name=url.pathname.split('/').pop();const body=req.postDataJSON();calls.push({name,body});
-   if(name==='razorpay-create-order'){purchasedPlan=body.plan;await route.fulfill({headers,body:JSON.stringify({order_id:'order_fixture',amount:body.plan==='adfree_1y'?30000:15000,currency:'INR',key_id:'rzp_test_fixture',plan:body.plan,label:'ORBIT Premium'})});}
+   if(name==='razorpay-create-order'){purchasedPlan=body.plan;await route.fulfill({headers,body:JSON.stringify({order_id:'order_fixture',amount:({adfree_1m:19900,adfree_6m:29900,adfree_1y:39900,notes_fmspm:15000,notes_pharmac:15000})[body.plan],currency:'INR',key_id:'rzp_test_fixture',plan:body.plan,label:'ORBIT Premium'})});}
    else if(verificationFails&&name==='razorpay-verify-payment')await route.fulfill({status:503,headers,body:JSON.stringify({error:'Verification temporarily unavailable. Restore before paying again.'})});
    else {active=true;if(purchasedPlan?.startsWith('notes_'))owned.push(purchasedPlan);await route.fulfill({headers,body:JSON.stringify({success:true,restored:true,plan:purchasedPlan,adfree_until:expiry,expires_at:expiry,payment_id:'pay_fixture',order_id:'order_fixture'})});}
    return;
@@ -120,8 +121,9 @@ async function scenario(width,signedIn=true,verificationFails=false,interrupted=
  }
  await page.goto(origin+'/unlock');
  await page.getByRole('heading',{name:'Unlock Premium',exact:true}).waitFor();
- assert.equal(await page.locator('.checkout-plans button').count(),2);
- assert.equal(await page.getByText(/1 month/).count(),0);
+ assert.equal(await page.locator('.checkout-plans button').count(),3);
+ assert.equal(await page.getByText('Premium · 1 month',{exact:true}).count(),1);
+ for(const price of ['₹199','₹299','₹399'])assert.equal(await page.locator('.checkout-plans strong').filter({hasText:price}).count(),1);
  if(!signedIn){
   await page.getByRole('button',{name:'Continue with Google'}).waitFor();
   assert(await page.locator('.checkout-plans button').first().isDisabled());
@@ -141,7 +143,7 @@ async function scenario(width,signedIn=true,verificationFails=false,interrupted=
    assert.equal(calls.filter(x=>x.name==='razorpay-create-order').length,1);
   }else{
    await page.getByText('Payment confirmed.',{exact:false}).waitFor();
-   assert.deepEqual(calls[0],{name:'razorpay-create-order',body:{plan:notePlan??'adfree_6m',...(notePlan?{catalog_version:'2'}:{})}});
+   assert.deepEqual(calls[0],{name:'razorpay-create-order',body:{plan:notePlan??'adfree_1m',...(notePlan?{catalog_version:'2'}:{})}});
    assert.equal(calls[1].name,'razorpay-verify-payment');
    assert.equal(calls[1].body.razorpay_payment_id,'pay_fixture');
    assert(!('uid'in calls[0].body));assert(!('amount'in calls[0].body));

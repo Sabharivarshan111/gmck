@@ -1,3 +1,4 @@
+import { CHECKOUT_PLANS, PREMIUM_PLAN_CODES } from './plans';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
@@ -100,8 +101,7 @@ export default function CheckoutPage() {
       <section aria-label="Premium plans">
         <div className="checkout-offer"><strong>{offerOpen ? 'Limited-time launch offer' : 'Launch offer ended'}</strong><span>Ends 30 November 2026 · 11:59 PM IST</span></div>
         <div className="checkout-plans">
-          <button disabled={!user || !!busy || !offerOpen} onClick={() => purchase('adfree_6m')}><span>Premium · 6 months</span><strong>₹150 <em>₹25 / month</em></strong><small>180 days · Premium Vault + ad-free app</small><b>Choose 6 months →</b></button>
-          <button disabled={!user || !!busy || !offerOpen} onClick={() => purchase('adfree_1y')}><span>Premium · 1 year</span><strong>₹300 <em>₹25 / month</em></strong><small>365 days · Premium Vault + ad-free app</small><b>Choose 1 year →</b></button>
+          {PREMIUM_PLAN_CODES.map(plan => <button key={plan} disabled={!user || !!busy || !offerOpen} onClick={() => purchase(plan)}><span>Premium · {CHECKOUT_PLANS[plan].label}</span><strong>₹{CHECKOUT_PLANS[plan].amountPaise / 100}</strong><small>{CHECKOUT_PLANS[plan].days} days · AI handwritten notes + Premium Vault + ad-free app</small><b>Choose {CHECKOUT_PLANS[plan].label} →</b></button>)}
         </div>
         <p className="checkout-detail">One-time payment. No automatic renewal. Paid time is added to existing access. Free accounts get 2 successful handwritten AI note generations total. Premium unlocks further generations. Saved notes remain free to read. Normal heart and breath sounds are free previews. Premium also includes lifetime FM + SPM revision notes.</p>
       </section>

@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase';
 
-export type PlanCode = 'adfree_6m' | 'adfree_1y' | 'notes_fmspm' | 'notes_pharmac';
-const PLAN_PRICES: Record<PlanCode, number> = { adfree_6m: 15000, adfree_1y: 30000, notes_fmspm: 15000, notes_pharmac: 15000 };
+import { CHECKOUT_PLANS, type PlanCode } from './plans';
+export type { PlanCode } from './plans';
 export type PaymentReceipt = { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string };
 export type PaymentResult = { success?: boolean; plan?: PlanCode; error?: string; expires_at?: string; adfree_until?: string; restored?: boolean; payment_id?: string; order_id?: string };
 export type CheckoutOrder = { order_id: string; amount: number; currency: string; key_id: string; plan: PlanCode; label: string };
@@ -67,7 +67,7 @@ export async function pay(plan: PlanCode): Promise<PaymentResult> {
   if (old) return verifyReceipt(user.id, old);
   await loadRazorpay();
   const order = await invokePayment<CheckoutOrder>('razorpay-create-order', { plan, ...(plan.startsWith('notes_') ? { catalog_version: '2' } : {}) });
-  if (!/^order_[A-Za-z0-9]+$/.test(order.order_id) || !order.key_id || order.currency !== 'INR' || order.plan !== plan || order.amount !== PLAN_PRICES[plan]) throw new Error('The checkout order is invalid. No payment was started.');
+  if (!/^order_[A-Za-z0-9]+$/.test(order.order_id) || !order.key_id || order.currency !== 'INR' || order.plan !== plan || order.amount !== CHECKOUT_PLANS[plan].amountPaise) throw new Error('The checkout order is invalid. No payment was started.');
   try { localStorage.setItem(PENDING_ORDER, JSON.stringify({ userId: user.id, orderId: order.order_id })); } catch { /* Older payments remain recoverable via Restore. */ }
   return new Promise((resolve, reject) => {
     let verifying = false;
