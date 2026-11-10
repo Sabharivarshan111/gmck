@@ -18,7 +18,8 @@ async function run(token, mode) {
   const res=await handler(new Request('https://fixture.invalid',{method:'POST',headers:{authorization:'Bearer '+token,'content-type':'application/json'},body:JSON.stringify(body)}));
   const result=await res.json();
   if(token==='invalid'){assert.equal(res.status,401);assert.equal(writes.length,0);return}
-  if(token==='public-key' && mode==='read'){assert.equal(res.status,401);assert.equal(result.code,'SIGN_IN_REQUIRED');assert.equal(writes.length,0);return}\n  assert.equal(res.status,200);
+  if(token==='public-key' && mode==='read'){assert.equal(res.status,401);assert.equal(result.code,'SIGN_IN_REQUIRED');assert.equal(writes.length,0);return}
+  assert.equal(res.status,200);
   if(mode==='save') {
     if(token==='public-key'){assert.equal(writes.length,0);assert.equal(result.saved,false)}
     else {assert.equal(writes.length,1);assert.equal(writes[0].table,token==='server-key'?'handwritten_notes':'personal_handwritten_notes');if(token==='valid-user')assert.equal(writes[0].row.user_id,'user-a')}
