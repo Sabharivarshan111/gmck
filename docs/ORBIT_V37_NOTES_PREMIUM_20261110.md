@@ -1,22 +1,31 @@
-# ORBIT v37: handwritten notes trial and auscultation Premium
+# ORBIT v37 — daily handwritten notes and Premium sounds
 
-Prepared against gmck main 90b70e9cdfb1980fe8a16b599389d3fa482e5810 on 10 November 2026. Release must come from main, as explicitly requested by the owner.
+Implemented on main on 10 November 2026.
 
-- Two handwritten AI-note questions per signed-in free account per day, resetting at midnight IST. Triple-tapping essays and short notes shares this same allowance. Topic requests are charged by question count and cannot bypass the two-question cap. Shared-cache first access also uses one trial; personal saved notes remain readable. A topic's sequential batches reuse one reservation whose cost is its full question count. Regenerations and AI edits are separate generations. Failed or empty model output releases an unused reservation. Retries reuse bound results; a generation ID cannot authorize different questions.
-- Server-only reservation/completion RPCs serialize account access across devices. Table RLS is enabled and no anon/authenticated mutation or execution grants exist. Admin roles and active adfree_monthly subscriptions bypass the trial, preserving influencer grants. Existing daily/minute provider limits remain.
-- Android Vault now shows Free preview/Pro/2 free questions / day. Common labels survive the production web adapter. Pro heart/lung sound selection requests Premium; normal heart and vesicular breath sounds remain free.
-- Native and Vercel checkout explain notes Premium and preserve prices/payment verification. VersionCode and versionName are 37 / 0.0.0.37. Application ID and signing/ads/billing flags are unchanged.
+## Access policy
 
-The generator reconciles LIVE v77 and main's existing security wrapper, long-question/kind metadata, complete-essay prompt, expansion/422 guards and safe error classification. Deployed as v80 with verify_jwt=true. The live textbook.ts is preserved; do not deploy a stale generator. Source model remains gemini-3.1-flash-lite.
+- Signed-in free accounts get handwritten AI notes for **two questions per day**. Triple-tapped essays and short notes share the same allowance. The server resets it at midnight Asia/Kolkata.
+- Premium and verified admin accounts bypass this two-question cap. Five successive Premium questions and a 21-question topic were allowed by rollback-only live database tests without creating trial rows.
+- Topic requests cost their full question count. Shared-cache first access counts; personal saved notes remain readable. Failed, empty or too-brief output refunds an incomplete reservation. Request-bound retries and sequential topic batches reuse their reservation.
+- Service-only database functions serialize allowance checks across devices. RLS is enabled; anon/authenticated roles cannot modify trials or execute reservation functions.
+- Normal heart and vesicular lung sounds stay free. Pro heart/lung choices open the subscription flow. Vault shows Free preview, Pro, and 2 free questions / day.
+- Android and web use the same feature labels and entitlement checks. Lovable payment copy includes handwritten notes, daily free preview and full sound library. Pricing remains ₹199/month, ₹299/6 months, ₹399/year; notes packs remain ₹150.
 
-Validation so far: actual Edge-handler fixture tests pass for the two-note limit, third denial, cross-request binding, retry reuse, multiple batches, paid/admin access, saved/shared cache, guests, failed/empty output refund, edits and the real web Vault adapter. This is isolated handler testing, not live Gemini/payment/device proof. Full native/web types/build and signed-emulator smoke must pass the release workflow before release.
+## Deployment
 
-Deployment receipt in progress: Supabase migration 20261110104704 was applied after connector confirmation. Rollback-only live database assertions passed for free 1/2/third denial, refund, idempotent retries, request binding, topic continuation, expired subscriptions, paid subscriptions and admin access. RLS is enabled; anonymous/authenticated roles cannot execute the reservation functions or insert trials; service_role can. Fixtures rolled back. The advisor's no-policy notice is intentional for this service-only table.
+- Main application source: `cebf283547728cbf6b5768a83ec35a9910a5e8ef`.
+- Supabase migrations: `20261110104704_handwritten_note_two_free_generations` followed by `20261110110955_handwritten_notes_two_questions_daily_ist`. The second migration replaces lifetime accounting with the final daily, weighted question policy.
+- Handwritten notes Edge Function v81 is ACTIVE with JWT verification. Readback matches the committed daily handler. It preserves the secure endpoint wrapper, complete-essay expansion/422 guard, question-kind metadata and quota-only upstream error classifier from prior main.
+- Notes and flashcard textbook helpers are byte-identical. Restoring the combined helper retains the existing notes retrieval implementation and the isolated flashcard namespace exports.
+- Vercel production `dpl_C44VWFXsnBQ9FopiwQQeNiVmdvJV` is READY from the source commit above, serving orbitmbbs.site.
+- Lovable payment deployment `ceea637e-3f4d-49f6-ba9a-0c67e084034e` is published. orbitmbbs.site/unlock redirects to https://mbbsqbank-questor.lovable.app/unlock.
+- Android versionCode 37, versionName 0.0.0.37; application ID/signing/ads/billing configuration preserved.
 
-Live Chrome verified Vault free/Pro/two-note labels and both heart (aortic stenosis) and lung (wheeze) Pro paywalls, with normal vesicular preview accessible. Lovable payment project 89df4dbc-89e6-4e44-a7b1-76b9de94066e is published with handwritten-note benefits and existing ₹199/₹299/₹399 prices. orbitmbbs.site/unlock correctly redirects there. Vercel production eef167e is READY; its fallback checkout catalogue now matches the live payment server too.
+## Validation
 
-Native type/lint passed. The first release attempt caught a live-vs-main notes-source mismatch in the quota error classifier; the reconciled generator preserves all prior main protections and adds the quota. New handler tests also assert too-brief essays refund trials. The signed APK/AAB release and emulator proof are still pending; check the latest main release run before claiming them.
-
-Separate baseline failures: the legacy dossier build check already failed on parent 90b70e9 (digestive atlas coverage 92% vs 95%); security workflow passes the changed notes-isolation tests but later fails its unrelated flashcard fixture expecting an old unscoped cache key. No anatomy or flashcard production code was changed for this task.
-
-User clarification (10 November): the cap is DAILY and applies to triple-tapped ESSAY and SHORT-NOTE questions, sharing two questions/day, not two lifetime notes or two per question type. Applied migration 20261110110955 and live Edge v80 enforce server-clock IST days and weighted question counts. Handler tests simulate 23:59:59→00:00 IST; rollback-only live DB tests verify yesterday exclusion, essay/short third denial, two-question bulk cost, three-question rejection, refund and admin bypass. Updated website/native/payment labels are part of the next main release. Existing saved personal notes remain readable.
+- Actual Edge handler fixtures pass daily first/second/third-denial, IST midnight reset, weighted bulk cap, request binding, retry idempotency, multi-batch continuation, paid/admin access, personal/shared cache, guest auth, output-failure refunds, edits and the real web Vault adapter.
+- Rollback-only live database assertions pass free/paid/expired/admin checks, yesterday exclusion, two-question bulk cost, three-question rejection, retry binding and refunds. No test fixtures retained. Role grants checked.
+- Payment browser suite `42805574465` passes guest/purchase/reload, failed verification recovery, interrupted checkout restore, note packs, free and paid feature access. Tests use mocked payment verification, with no real charge.
+- Live Chrome verified daily Vault badges, normal lung preview, both Pro sound paywalls, Lovable daily copy and redirect. No real Google sign-in or physical-device claim.
+- Vercel-style web build `42807633844` passes. Latest Vercel production is READY. Separate pre-existing CI failures remain: legacy anatomy atlas digestive coverage 92% versus 95%; security flashcard fixture expects an old unscoped cache key. Changed notes-isolation checks pass. These failures are not hidden or weakened.
+- Android release run `42808834900` (1051) passes native types, lint, all feature/content/release checks, actual notes handler fixtures and website types. It is compiling signed artifacts; emulator publication proof is pending.
