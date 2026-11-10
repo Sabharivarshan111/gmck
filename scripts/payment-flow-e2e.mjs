@@ -54,7 +54,9 @@ async function scenario(width,signedIn=true,verificationFails=false,interrupted=
   await page.getByLabel('NEET-PG practice questions',{exact:true}).waitFor();
   if(featureMode==='free'){
    await page.getByText('Free preview',{exact:true}).first().waitFor();
-   assert.equal(await page.getByText('Free preview',{exact:true}).count(),10);
+   assert.equal(await page.getByText('Free preview',{exact:true}).count(),6);
+   assert.equal(await page.getByText('Pro',{exact:true}).count(),5);
+   await page.getByText('2 free AI generations total',{exact:true}).waitFor();
    for (const title of ['Auscultation','12-lead ECG','Ultrasound / POCUS','X-ray & MRI','Eyes & cranial nerves','General examination']) assert.equal(await page.getByLabel(title,{exact:true}).count(),1);
    await page.getByLabel('Anki flashcards',{exact:true}).click();
    await page.getByText('Flashcards preview',{exact:true}).waitFor();
@@ -87,7 +89,12 @@ async function scenario(width,signedIn=true,verificationFails=false,interrupted=
    await page.getByTestId('simulator-studio').waitFor();
    await page.getByRole('button',{name:'Auscultation',exact:false}).click();
    await page.getByLabel('Sound demonstration',{exact:true}).selectOption('mitral_stenosis');
-   await page.getByRole('heading',{name:'Unlock heart sounds & murmurs',exact:true}).waitFor();
+   await page.getByRole('heading',{name:'Unlock Pro heart sounds & murmurs',exact:true}).waitFor();
+   await page.getByRole('button',{name:'Continue free preview',exact:true}).click();
+   await page.getByRole('button',{name:'Normal breath sounds',exact:true}).click();
+   assert.equal(await page.getByLabel('Breath sound demonstration',{exact:true}).inputValue(),'vesicular');
+   await page.getByLabel('Breath sound demonstration',{exact:true}).selectOption('wheeze');
+   await page.getByRole('heading',{name:'Unlock Pro lung sounds',exact:true}).waitFor();
    await page.getByRole('button',{name:'Continue free preview',exact:true}).click();
    await page.goto(origin+'/simulator?organ=liver&mode=anatomy');
    await page.locator('[data-simulator-root]').waitFor();
