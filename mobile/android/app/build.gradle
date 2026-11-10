@@ -108,8 +108,8 @@ android {
         applicationId "com.aistudio.mbbsqbank.aycxvd"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // Version 35: Android native Continue CTA rendering fix, independent of the animated Touchable.
-        // Version 34 is intentionally skipped per owner's requested v35.
+        // Version 37: two daily free handwritten questions, Premium sounds and Vault previews.
+        // Requested by the owner on 2026-11-10; scripts/version-check.mjs pins the same code.
         versionCode 37
         versionName "0.0.0.37"
 
