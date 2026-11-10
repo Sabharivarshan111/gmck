@@ -56,7 +56,7 @@ async function scenario(width,signedIn=true,verificationFails=false,interrupted=
    await page.getByText('Free preview',{exact:true}).first().waitFor();
    assert.equal(await page.getByText('Free preview',{exact:true}).count(),6);
    assert.equal(await page.getByText('Pro',{exact:true}).count(),5);
-   await page.getByText('2 free AI generations total',{exact:true}).waitFor();
+   await page.getByText('2 free questions / day',{exact:true}).waitFor();
    for (const title of ['Auscultation','12-lead ECG','Ultrasound / POCUS','X-ray & MRI','Eyes & cranial nerves','General examination']) assert.equal(await page.getByLabel(title,{exact:true}).count(),1);
    await page.getByLabel('Anki flashcards',{exact:true}).click();
    await page.getByText('Flashcards preview',{exact:true}).waitFor();

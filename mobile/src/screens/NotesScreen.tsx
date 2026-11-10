@@ -351,7 +351,7 @@ function VaultView({ onNotes, onPgPractice, onMedMcqa, onSimulator, onClinicalSk
   const { active: premiumActive } = useSimulatorEntitlement();
   const previewTitles = ['PG Practice', 'Simulator & Anatomy', 'Anki flashcards', 'NEET PG Practice Questions', 'Case proformas', 'Auscultation'];
   const entries = [
-    { title: 'Notes', hint: 'Years, subjects & handwritten notes', emoji: '📚', open: onNotes },
+    { title: 'Notes', hint: 'Triple-tap essays & short notes', emoji: '📚', open: onNotes },
     { title: 'PG Practice', label: 'NEET-PG practice questions', hint: 'NEET-PG · AIIMS PG · INI-CET · Practice', emoji: '📝', open: onPgPractice },
     { title: 'Simulator & Anatomy', hint: 'Preview heart, lungs & brain · explore bedside skills', emoji: '🫀', open: onSimulator },
     { title: 'Anki flashcards', hint: 'Decks & spaced repetition', emoji: '📇', open: onFlashcards },
@@ -370,7 +370,7 @@ function VaultView({ onNotes, onPgPractice, onMedMcqa, onSimulator, onClinicalSk
         <View style={{ height: 50 * textScale }}><Text numberOfLines={2} style={[styles.yearName, { lineHeight: 22, color: colors.text }]}>{title}</Text></View>
         <View style={{ flex: 1 }}><Text numberOfLines={3} style={[styles.yearHint, { lineHeight: 18, color: colors.textMuted }]}>{hint}</Text></View>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Text numberOfLines={2} style={{ flex: 1, flexShrink: 1, marginRight: 8, color: colors.accent, fontSize: 12, fontWeight: '700' }}>{premiumActive ? 'Included' : title === 'Notes' ? '2 free AI generations total' : previewTitles.includes(title) ? 'Free preview' : 'Pro'}</Text>
+          <Text numberOfLines={2} style={{ flex: 1, flexShrink: 1, marginRight: 8, color: colors.accent, fontSize: 12, fontWeight: '700' }}>{premiumActive ? 'Included' : title === 'Notes' ? '2 free questions / day' : previewTitles.includes(title) ? 'Free preview' : 'Pro'}</Text>
           <ChevronRight size={18} color={colors.accent} />
         </View>
       </Touchable>)}

@@ -37,7 +37,7 @@ export function VaultAccessProvider({ children }: { children: React.ReactNode })
   return <Context.Provider value={{ active, loading, expiresAt, requestPurchase }}>
     {children}
     <dialog ref={dialog} className="vault-purchase-dialog" aria-labelledby="vault-paywall-title" onCancel={() => setFeature(null)}>
-      <h2 id="vault-paywall-title">Unlock {feature ?? 'ORBIT Vault'}</h2><p>This feature is included with ORBIT Premium. Saved notes remain free to read. Generate 2 handwritten AI notes free, then unlock Premium for more.</p>
+      <h2 id="vault-paywall-title">Unlock {feature ?? 'ORBIT Vault'}</h2><p>This feature is included with ORBIT Premium. Saved notes remain free to read. Generate handwritten AI notes for 2 questions per day free; resets at midnight IST. Unlock Premium for more.</p>
       <a className="vault-pay-button" href="/unlock">View Premium plans</a><button className="checkout-secondary" onClick={() => setFeature(null)}>Not now</button>
     </dialog>
   </Context.Provider>;

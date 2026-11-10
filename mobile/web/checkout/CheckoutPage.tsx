@@ -103,7 +103,7 @@ export default function CheckoutPage() {
         <div className="checkout-plans">
           {PREMIUM_PLAN_CODES.map(plan => <button key={plan} disabled={!user || !!busy || !offerOpen} onClick={() => purchase(plan)}><span>Premium · {CHECKOUT_PLANS[plan].label}</span><strong>₹{CHECKOUT_PLANS[plan].amountPaise / 100}</strong><small>{CHECKOUT_PLANS[plan].days} days · AI handwritten notes + Premium Vault + ad-free app</small><b>Choose {CHECKOUT_PLANS[plan].label} →</b></button>)}
         </div>
-        <p className="checkout-detail">One-time payment. No automatic renewal. Paid time is added to existing access. Free accounts get 2 successful handwritten AI note generations total. Premium unlocks further generations. Saved notes remain free to read. Normal heart and breath sounds are free previews. Premium also includes lifetime FM + SPM revision notes.</p>
+        <p className="checkout-detail">One-time payment. No automatic renewal. Paid time is added to existing access. Free accounts get handwritten AI notes for 2 questions per day. Triple-tapped essays and short notes share the allowance, resetting at midnight IST. Premium unlocks more. Saved notes remain free to read. Normal heart and breath sounds are free previews. Premium also includes lifetime FM + SPM revision notes.</p>
       </section>
       <section className="checkout-notes" aria-label="Revision notes">
         <div className="checkout-section-title"><span>STUDY COLLECTIONS</span><h2>Revision notes</h2><p>Separate one-time purchases. Yours to revisit.</p></div>

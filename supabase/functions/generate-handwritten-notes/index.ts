@@ -369,20 +369,24 @@ serve(secureEndpoint(async (req) => {
     const trialState: { current: { generation: string; lease: string; batch: number } | null } = { current: null };
     const reserveTrial = async (batch: number, total: number): Promise<Response | null> => {
       if (internal) return null;
-      if (!userId || anonymousUser) return new Response(JSON.stringify({ code: "SIGN_IN_REQUIRED", error: "Sign in with Google to use your 2 free handwritten AI note generations, or unlock Premium." }), {
+      if (!userId || anonymousUser) return new Response(JSON.stringify({ code: "SIGN_IN_REQUIRED", error: "Sign in with Google to generate handwritten AI notes for 2 questions per day (essays or short notes), or unlock Premium." }), {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
       const fingerprint = await hash(JSON.stringify({ subtopicKey, year, subject, subtopicName, questions, questionKinds: questionKinds ?? null, singleMode: !!singleMode,
         batchSize: batchSize ?? DEFAULT_BATCH_SIZE, editInstruction: editInstruction ?? null, content: editInstruction ? content : null, proposeOnly: !!proposeOnly, useWeb: !!useWeb }));
       // Legacy clients can finish their original topic batches. Explicit regenerations
       // and edits are separate generations, never an unlimited retry entitlement.
-      const generation = parsed.data.generationId ?? (regenerate || editInstruction ? crypto.randomUUID() : "legacy:" + fingerprint);
-      const { data, error } = await admin.rpc("reserve_handwritten_note_trial", {
-        _user: userId, _generation: generation, _fingerprint: fingerprint, _batch: batch, _total: total,
+      const usageDay = new Date(Date.now() + 330 * 60_000).toISOString().slice(0, 10);
+      const requestId = parsed.data.generationId ?? (regenerate || editInstruction ? crypto.randomUUID() : "legacy:" + fingerprint);
+      const generation = usageDay + ":" + await hash(requestId);
+      const { data, error } = await admin.rpc("reserve_daily_handwritten_note_trial", {
+        _user: userId, _generation: generation, _fingerprint: fingerprint, _batch: batch, _total: total, _cost: questions.length,
       });
       if (error) throw new QuotaUnavailableError("Could not check your free notes allowance. Please retry.");
       if (!data?.allowed) return new Response(JSON.stringify({ code: data?.code ?? "PREMIUM_REQUIRED", error: data?.code === "PREMIUM_REQUIRED"
-        ? "Your 2 free handwritten AI note generations are used. Unlock Premium to generate more. Your saved notes remain readable."
+        ? (data?.remaining === 0
+          ? "Your 2 free handwritten AI-note questions for today are used. Essays and short notes share this allowance. It resets at midnight IST. Unlock Premium for more; saved notes stay readable."
+          : "Free accounts can generate handwritten AI notes for 2 questions per day, shared by essays and short notes. Triple-tap a question or unlock Premium for full topics. The allowance resets at midnight IST.")
         : "This generation is already running or its questions changed. Please retry." }), {
         status: data?.code === "PREMIUM_REQUIRED" ? 402 : 409, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
