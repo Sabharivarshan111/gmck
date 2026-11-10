@@ -40,6 +40,9 @@ on:
     # native artifact (or this workflow itself) change.
     paths:
       - 'mobile/**'
+      - 'supabase/functions/generate-handwritten-notes/**'
+      - 'supabase/functions/_shared/endpointSecurity.ts'
+      - 'scripts/notes-trial-access-check.mjs'
       - 'src/**'
       - 'public/**'
       # Release-content integrity checks must trigger a fresh signed artifact.

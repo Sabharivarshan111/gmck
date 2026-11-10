@@ -5,7 +5,8 @@ import vm from 'node:vm';
 import assert from 'node:assert/strict';
 import {webcrypto} from 'node:crypto';
 const source = readFileSync(new URL('../supabase/functions/generate-handwritten-notes/index.ts',import.meta.url),'utf8').replace(/^import .*;\n/gm,'');
-const js=stripTypeScriptTypes(source,{mode:'transform'});
+const depthSource=readFileSync(new URL('../supabase/functions/generate-handwritten-notes/notesDepth.ts',import.meta.url),'utf8').replace(/^export /gm,'');
+const js=stripTypeScriptTypes(depthSource+'\n'+source,{mode:'transform'});
 const note={sections:[{type:'definition',title:'Fixture',payload:{text:'Fixture content'}}]};
 function harness({paid=false,admin=false,anonymous=false,cached=false,sharedCached=false,failModel=false,emptyModel=false}={}) {
  let handle, calls=0, released=0, reservations=0;
@@ -31,7 +32,7 @@ function harness({paid=false,admin=false,anonymous=false,cached=false,sharedCach
    throw Error(name);
  }};
  const schema=new Proxy(()=>{}, {get:(_t,k)=>k==='safeParse'?body=>({success:true,data:body}):()=>schema,apply:()=>schema});
- const context={console:{log(){},error(){}},TextEncoder,crypto:webcrypto,Response,Request,Date,setTimeout,clearTimeout,AbortController,fetch:()=>{throw Error('unexpected real network');},Deno:{env:{get:n=>n==='SUPABASE_SERVICE_ROLE_KEY'?'service':n==='SUPABASE_ANON_KEY'?'anon':'fixture'}},z:schema,serve:fn=>handle=fn,createClient:()=>client,buildTextbookContext:async()=>'',buildPharmContext:async()=>({}),pickBookKey:()=>null,BOOK_LABELS:{},modelFixture:async()=>{calls++;if(failModel)throw Error('provider unavailable');return JSON.stringify(emptyModel?{sections:[]}:note);}};
+ const context={console:{log(){},error(){}},TextEncoder,crypto:webcrypto,Response,Request,Date,setTimeout,clearTimeout,AbortController,fetch:()=>{throw Error('unexpected real network');},Deno:{env:{get:n=>n==='SUPABASE_SERVICE_ROLE_KEY'?'service':n==='SUPABASE_ANON_KEY'?'anon':'fixture'}},z:schema,secureEndpoint:fn=>fn,serve:fn=>handle=fn,createClient:()=>client,buildTextbookContext:async()=>'',buildPharmContext:async()=>({}),pickBookKey:()=>null,BOOK_LABELS:{},modelFixture:async()=>{calls++;if(failModel)throw Error('provider unavailable');return JSON.stringify(emptyModel?{sections:[]}:note);}};
  vm.runInNewContext(js+'\ncallModel = modelFixture;',context);
  const send=async body=>{const response=await handle(new Request('https://fixture.invalid',{method:'POST',headers:{authorization:'Bearer user','content-type':'application/json'},body:JSON.stringify({subtopicKey:'fixture-note',year:'Second year',subject:'Pathology',subtopicName:'Fixture',questions:['Fixture question'],...body})}));return {status:response.status,body:await response.json()};};
  return {send,stats:()=>({calls,released,reservations,trials:trials.size})};
@@ -52,6 +53,7 @@ const shared=harness({sharedCached:true});for(let i=0;i<2;i++)assert.equal((awai
 const anon=harness({anonymous:true});assert.equal((await anon.send({generationId:'guest'})).status,401);assert.equal(anon.stats().calls,0);
 const failed=harness({failModel:true});assert.equal((await failed.send({generationId:'fail'})).status,500);assert.equal(failed.stats().released,1);assert.equal(failed.stats().trials,0,'provider failure must refund reservation');
 const empty=harness({emptyModel:true});assert.equal((await empty.send({generationId:'empty'})).status,500);assert.equal(empty.stats().trials,0,'empty AI output must not consume allowance');
+const tooBrief=harness();assert.equal((await tooBrief.send({generationId:'too-brief',singleMode:true,questionKinds:['essay']})).status,422);assert.equal(tooBrief.stats().trials,0,'a rejected brief essay must refund the trial');
 const edit=harness();assert.equal((await edit.send({generationId:'edit',editInstruction:'Clarify',content:note})).status,200);assert.equal(edit.stats().trials,1,'AI editing also uses allowance');
 // Build adapter must still match the real Vault source after common badges move.
 const adapterSource=readFileSync(new URL('../mobile/web/premium-transform.ts',import.meta.url),'utf8');

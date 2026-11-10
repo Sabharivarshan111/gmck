@@ -1,3 +1,5 @@
+import { secureEndpoint } from '../_shared/endpointSecurity.ts';
+import { ensureLongEssay, essayExpansionPrompt, appendEssaySupplement, NotesDepthError } from './notesDepth.ts';
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
@@ -16,14 +18,15 @@ const corsHeaders = {
  * Gemini calls for one topic. With a free-tier Google AI Studio key, that can
  * hit `generate_content_free_tier_requests` and return 429. This function now
  * uses the user's direct GEMINI_API_KEY only (no Lovable AI Gateway) and targets
- * Gemini 3.5 Flash-Lite for lower latency/cost.
+ * Gemini 3.1 Flash-Lite for lower latency/cost.
  */
 const BodySchema = z.object({
   subtopicKey: z.string().min(1).max(300),
   year: z.string().min(1).max(40),
   subject: z.string().min(1).max(120),
   subtopicName: z.string().min(1).max(200),
-  questions: z.array(z.string().max(1000)).min(1).max(400),
+  questions: z.array(z.string().max(4000)).min(1).max(400),
+  questionKinds: z.array(z.enum(["essay", "short"])).max(400).optional(),
   batchIndex: z.number().int().min(0).max(200).optional(),
   batchSize: z.number().int().min(1).max(20).optional(),
   generationId: z.string().min(1).max(160).optional(),
@@ -45,7 +48,7 @@ const EST_SECONDS_PER_BATCH = 25;
 const GEMINI_TIMEOUT_MS = 55_000;
 
 const SYSTEM_PROMPT = `You are an expert MBBS professor generating exam-ready HANDWRITTEN-STYLE study notes.
-Given a SUBTOPIC and its previous-year essay + short-note questions, synthesise ONE unified study page.
+Given a SUBTOPIC and its previous-year essay + short-note questions, produce COMPLETE structured study notes. A chapter may span many pages. Consolidate duplicate material without shortening distinct content. A long essay is not a one-page overview.
 
 Output MUST be VALID JSON only (no markdown fence, no prose) matching this exact schema:
 
@@ -287,7 +290,7 @@ function normalizeNotesContent(content: any): any {
 class UserQuotaError extends Error {}
 class QuotaUnavailableError extends Error {}
 
-serve(async (req) => {
+serve(secureEndpoint(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   const trialCleanup: { run: (() => Promise<void>) | null } = { run: null };
@@ -357,7 +360,7 @@ serve(async (req) => {
       });
     }
     const {
-      subtopicKey, year, subject, subtopicName, questions,
+      subtopicKey, year, subject, subtopicName, questions, questionKinds,
       batchIndex, batchSize, regenerate, saveContent, content, editInstruction,
       singleMode, proposeOnly, useWeb,
     } = parsed.data;
@@ -369,7 +372,7 @@ serve(async (req) => {
       if (!userId || anonymousUser) return new Response(JSON.stringify({ code: "SIGN_IN_REQUIRED", error: "Sign in with Google to use your 2 free handwritten AI note generations, or unlock Premium." }), {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
-      const fingerprint = await hash(JSON.stringify({ subtopicKey, year, subject, subtopicName, questions, singleMode: !!singleMode,
+      const fingerprint = await hash(JSON.stringify({ subtopicKey, year, subject, subtopicName, questions, questionKinds: questionKinds ?? null, singleMode: !!singleMode,
         batchSize: batchSize ?? DEFAULT_BATCH_SIZE, editInstruction: editInstruction ?? null, content: editInstruction ? content : null, proposeOnly: !!proposeOnly, useWeb: !!useWeb }));
       // Legacy clients can finish their original topic batches. Explicit regenerations
       // and edits are separate generations, never an unlimited retry entitlement.
@@ -553,7 +556,7 @@ Modify ONLY the relevant part(s) requested by the user. Preserve everything else
     const blocked = await reserveTrial(idx, totalBatches);
     if (blocked) return blocked;
     const batch = questions.slice(idx * size, idx * size + size);
-    const tagged = batch.map((q) => ({ q, kind: classifyQuestion(q) }));
+    const tagged = batch.map((q, i) => ({ q, kind: questionKinds?.[idx * size + i] ?? classifyQuestion(q) }));
     // In singleMode, force ESSAY depth unless the question is explicitly a "short note".
     const essayList = tagged.map((t, i) => {
       const kind = singleMode
@@ -610,9 +613,20 @@ Follow the DEPTH rules from the system prompt strictly. Essays get long multi-se
 
     await enforceQuota();
     const raw = await callModel(userPrompt);
-    const batchContent = normalizeNotesContent(parseJson(raw));
+    let batchContent = normalizeNotesContent(parseJson(raw));
     if (!batchContent || !Array.isArray(batchContent.sections) || batchContent.sections.length === 0) {
       throw new Error("Model returned invalid structure");
+    }
+
+    // A structurally valid JSON answer can still be an abbreviated overview.
+    // Reject that in long-essay single mode, preserving existing saved notes.
+    const requiresLongEssay = singleMode && tagged.some(t => t.kind !== "short");
+    if (requiresLongEssay) {
+      batchContent = await ensureLongEssay(batchContent, async words => {
+        await enforceQuota();
+        const expanded = await callModel(essayExpansionPrompt(batch.join("\n\n"), subject, refText, batchContent, words));
+        return appendEssaySupplement(batchContent, normalizeNotesContent(parseJson(expanded)));
+      });
     }
 
     // Persist single-question notes so every future tap on the same question is
@@ -642,6 +656,9 @@ Follow the DEPTH rules from the system prompt strictly. Essays get long multi-se
 
   } catch (err) {
     if (trialCleanup.run) await trialCleanup.run().catch(() => undefined);
+    if (err instanceof NotesDepthError) return new Response(JSON.stringify({ error: err.message }), {
+      status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
     if (err instanceof QuotaUnavailableError) return new Response(JSON.stringify({ error: err.message }), {
       status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
@@ -651,7 +668,7 @@ Follow the DEPTH rules from the system prompt strictly. Essays get long multi-se
     const msg = (err as Error).message ?? "Unknown error";
     console.error("generate-handwritten-notes error:", err);
     const upstream = err instanceof UpstreamError ? err : null;
-    const isQuota = upstream?.kind === "quota" || /429/.test(msg) || /quota/i.test(msg) || /rate/i.test(msg);
+    const isQuota = upstream?.kind === "quota";
     const isAuth = upstream?.kind === "auth";
     const isTimeout = upstream?.kind === "timeout" || /timed out/i.test(msg);
     // Pull the retry-after hint (e.g. "retry_in=48s") from the upstream error so
@@ -673,11 +690,10 @@ Follow the DEPTH rules from the system prompt strictly. Essays get long multi-se
             ? "Gemini API key/model access issue. Please verify GEMINI_API_KEY and access to gemini-3.1-flash-lite."
             : isTimeout
               ? "Gemini took too long to generate this section. Please try again with fewer questions or retry later."
-              : msg,
+              : 'Unable to generate notes. Please retry.',
         retryAfterSeconds: retrySeconds || undefined,
       }),
       { status: isQuota ? 429 : isAuth ? 400 : isTimeout ? 504 : 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
-});
-
+}, { maxBytes: 4 * 1024 * 1024 }));
