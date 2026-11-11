@@ -34,7 +34,11 @@ Home menu → Delete account calls the dedicated lib/accountDeletion.ts helper, 
 - Live Chrome: anonymous page renders full instructions, CTA href correctly addressed, visible email fallback, privacy-page link navigates back to request page; final URL verified https://www.orbitmbbs.site/delete-account. Page screenshot visually checked. No email sent.
 - The app home is behind its normal first-run sign-in overlay; no Google sign-in bypassed or real account created. Native source checks and build receipts are recorded when complete.
 - Vercel-style build run42974195680 passed. Separate legacy dossier job still has the prior digestive atlas coverage failure; unrelated to this page.
-- Android attempt42974195657 (1052) passed native types/lint then hit the menu direct-Linking payment guard; no check weakened. Fixed by centralizing deletion navigation in its own helper. New signed release run42975227388 (1053), job130372644985: native types/lint/all release feature/content/payment guards passed; website types in progress before signed compilation. Do not claim the updated signed app published until the emulator gate and release step succeed.
+- Android attempt42974195657 (1052) passed native types/lint then hit the menu direct-Linking payment guard; no check weakened. Fixed by centralizing deletion navigation in its own helper.
+- Signed release run42975227388 (1053), job130372644985 completed SUCCESS: native types/lint, all release feature/content/payment guards, notes handler fixtures, website types, signed packaging and embedded-bank integrity passed. Exact signed APK stayed open on Android API35 (PID3138), startup screenshot/error-log evidence retained.
+- Published 2026-11-11T07:10:39Z: https://github.com/Sabharivarshan111/gmck/releases/tag/release-1053, non-draft/non-prerelease from main source ec5eac7c59113df12553524aa981783d2561cf32; versionCode37/versionName0.0.0.37. This is a GitHub signed release, not a claimed Google Play submission.
+- app-release.aab: 116480663 bytes; sha256:a182370cbe1f75c10fd483367c09148bfb100fb3afae070468450cfc5249fb16; https://github.com/Sabharivarshan111/gmck/releases/download/release-1053/app-release.aab
+- app-release.apk: 147535295 bytes; sha256:f14be91edef2b4edd27d477102502eac56a3ab523ebf34df945a8a81318b0135; https://github.com/Sabharivarshan111/gmck/releases/download/release-1053/app-release.apk
 
 ## Play Console
 

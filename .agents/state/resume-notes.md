@@ -2690,3 +2690,18 @@ Do not invent a mailbox or claim instant deletion. Never test by sending a real 
 ### 2026-11-11 — deletion page live; Android release checkpoint
 
 DONE: https://www.orbitmbbs.site/delete-account verified anonymously in Chrome, email CTA/fallback and complete instructions rendered, privacy page link clicked back to request page. Vercel dpl_DahZDWfVHRhXnPP4EC4cESeWJ2G5 READY at main ec5eac7c59113df12553524aa981783d2561cf32. Payment menu guard rejected direct Linking.openURL in HomeMenuSheet on run1052; fixed by dedicated lib/accountDeletion.ts helper with correct Alert fallback, no guard weakened. New run42975227388 (1053), job130372644985 passes native type/lint and all release feature/content checks; signed build/emulator publication pending. Full receipt and manual support handling instructions in docs/ACCOUNT_DELETION_REQUESTS.md. User can paste live URL now; owner must monitor support inbox and fulfill verified requests manually. No account deleted or request email sent. Google sign-in was not bypassed to test the app-menu UI.
+
+
+## 2026-11-11 — account-deletion page and updated v37 complete
+
+### DONE
+Public https://www.orbitmbbs.site/delete-account is live/anonymous and verified in Chrome, including correct mailto draft/fallback and privacy-page cross-link. Vercel dpl_DahZDWfVHRhXnPP4EC4cESeWJ2G5 READY from ec5eac7c59113df12553524aa981783d2561cf32. Shared app menu → Delete account uses lib/accountDeletion.ts; all native type/lint/release/payment guards and web types passed. Signed v37 run42975227388 (1053) completed SUCCESS, exact APK remained open on API35 (PID3138), offline content integrity passed. Published 2026-11-11T07:10:39Z at https://github.com/Sabharivarshan111/gmck/releases/tag/release-1053; both AAB/APK metadata verified. Full deployment/asset hashes and manual support workflow are in docs/ACCOUNT_DELETION_REQUESTS.md. No real user deletion or request email sent in testing.
+
+### HALF-DONE
+None for the requested page/build. Actual deletion requests are manually fulfilled by owner/support through the existing public support inbox. Play Console form was not accessed/submitted by this session.
+
+### NEXT
+Owner can paste the live URL into Delete account URL, select OAuth, and submit the Data safety form. Use release-1053's updated v37 AAB to include the in-app entry. Monitor Sabharivarshan111@gmail.com; verify ownership and delete associated personal data on actual requests. Separate data-only deletion remains No unless offered later.
+
+### DO NOT
+Do not claim automated deletion or a 90-day policy. Do not use old release-1051 to claim the new native menu is present; release-1053 includes it. Do not repeat the completed build unnecessarily. Google Play publication has not been claimed.
