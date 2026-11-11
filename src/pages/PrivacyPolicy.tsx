@@ -93,7 +93,19 @@ const PrivacyPolicy = () => {
           </section>
           
           <section>
-            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">8. Contact Us</h2>
+            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">8. Account Deletion</h2>
+            <p>
+              You can request deletion of your ORBIT account and associated personal data without
+              installing the app or signing in. Visit our{' '}
+              <a href="https://orbitmbbs.site/delete-account" className="text-primary hover:underline">
+                account deletion page
+              </a>{' '}
+              for the request method, ownership verification and data-retention information.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">9. Contact Us</h2>
             <p>
               If you have questions about this Privacy Policy, please contact us through our{' '}
               <a href="https://www.instagram.com/_varshann_s?igsh=MW9wdXozOW5yeDRydA==" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">

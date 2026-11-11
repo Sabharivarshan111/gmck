@@ -2670,3 +2670,18 @@ Android source versionCode 37/versionName0.0.0.37; owner-requested version pin a
 ### v37 release complete — 2026-11-10 11:56 UTC
 
 Run42808834900/job129804780125 completed SUCCESS. Exact signed APK booted on Android API35 and stayed open (PID2515), offline artifact integrity passed, version37 read back. Public non-prerelease GitHub release https://github.com/Sabharivarshan111/gmck/releases/tag/release-1051 published2026-11-10T11:56:24Z from main source cebf283547728cbf6b5768a83ec35a9910a5e8ef. Both app-release.apk and app-release.aab assets exist, exact digests/sizes recorded in docs/ORBIT_V37_NOTES_PREMIUM_20261110.md. Web/backend/Lovable deployed as above. Premium is EXEMPT from two questions/day, free essays+shorts share the daily cap. No Play upload claimed. All authorized v37 work completed; do not restart/rebuild unnecessarily.
+
+
+## 2026-11-11 — Public ORBIT account-deletion request page
+
+### DONE
+Prepared public/delete-account.html: accessible static page for ORBIT MBBS QBank WITH AI / Varshan Industries, no sign-in/install/JS required. Requests use mailto:Sabharivarshan111@gmail.com (verified against the public Google Play listing, app package com.aistudio.mbbsqbank.aycxvd). Button opens a prefilled draft; copy/email fallback is visible. Explicitly manual support request, ownership verification, completion confirmation, scope and legitimate-retention explanation; does not claim automatic deletion or a 90-day policy. No request sent and no user account deleted in testing. Added /delete-account and trailing-slash Vercel rewrites ahead of legacy catch-all; added Delete account to the shared native/web home menu with browser-error fallback and a link from the existing privacy page. Source stays on main per owner. Version remains owner-pinned37; native source change starts existing release workflow.
+
+### HALF-DONE
+Await Vercel production build and live browser check; await source types/lint/release checks for native menu wiring. A request page does not itself erase data: owner/support must monitor the published support inbox, verify ownership and fulfill account/data deletion requests.
+
+### NEXT
+Verify https://orbitmbbs.site/delete-account and its email CTA on mobile. Record deployment/test receipts. Play Console account method OAuth; paste the live deletion URL. Optional separate data-only deletion remains No unless actually offered. Do not mark Play form submitted or claim account deletion automation.
+
+### DO NOT
+Do not invent a mailbox or claim instant deletion. Never test by sending a real deletion email or deleting a real user. Do not mark arbitrary 90-day automatic retention. Google Play still requires the in-app route to be present in the installed release.

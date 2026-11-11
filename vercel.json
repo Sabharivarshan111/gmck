@@ -5,6 +5,14 @@
   "installCommand": "npm ci --legacy-peer-deps && npm --prefix mobile ci --legacy-peer-deps",
   "rewrites": [
     {
+      "source": "/delete-account",
+      "destination": "/delete-account.html"
+    },
+    {
+      "source": "/delete-account/",
+      "destination": "/delete-account.html"
+    },
+    {
       "source": "/",
       "destination": "/index.html"
     },
