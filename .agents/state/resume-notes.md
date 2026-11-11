@@ -2685,3 +2685,8 @@ Verify https://orbitmbbs.site/delete-account and its email CTA on mobile. Record
 
 ### DO NOT
 Do not invent a mailbox or claim instant deletion. Never test by sending a real deletion email or deleting a real user. Do not mark arbitrary 90-day automatic retention. Google Play still requires the in-app route to be present in the installed release.
+
+
+### 2026-11-11 — deletion page live; Android release checkpoint
+
+DONE: https://www.orbitmbbs.site/delete-account verified anonymously in Chrome, email CTA/fallback and complete instructions rendered, privacy page link clicked back to request page. Vercel dpl_DahZDWfVHRhXnPP4EC4cESeWJ2G5 READY at main ec5eac7c59113df12553524aa981783d2561cf32. Payment menu guard rejected direct Linking.openURL in HomeMenuSheet on run1052; fixed by dedicated lib/accountDeletion.ts helper with correct Alert fallback, no guard weakened. New run42975227388 (1053), job130372644985 passes native type/lint and all release feature/content checks; signed build/emulator publication pending. Full receipt and manual support handling instructions in docs/ACCOUNT_DELETION_REQUESTS.md. User can paste live URL now; owner must monitor support inbox and fulfill verified requests manually. No account deleted or request email sent. Google sign-in was not bypassed to test the app-menu UI.
