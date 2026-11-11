@@ -493,7 +493,7 @@ export default function BrowseNodeScreen() {
                     index={index}
                     onAskAi={askAi}
                     onNote={onNote}
-                    onMcqAnswer={setMcqTarget}
+                    onMcqAnswer={isUniversityMcq(question) ? setMcqTarget : undefined}
                   />
                 ))}
               </View>
@@ -691,7 +691,7 @@ export default function BrowseNodeScreen() {
             index={item.index}
             onAskAi={askAi}
             onNote={onNote}
-                    onMcqAnswer={setMcqTarget}
+            onMcqAnswer={isUniversityMcq(item.question) ? setMcqTarget : undefined}
             highlighted={flash === item.question}
             onPageRef={showPageRefs ? openPageRef : undefined}
             communityPage={
