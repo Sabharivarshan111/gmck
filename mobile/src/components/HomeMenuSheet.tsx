@@ -1,6 +1,7 @@
+import { openAccountDeletion } from '@/lib/accountDeletion';
 import { LINK_OUT, openUnlock } from '@/lib/unlock';
 import React from 'react';
-import { Alert, Linking, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import {
   BadgeCheck,
   BookOpen,
@@ -191,11 +192,7 @@ export function HomeMenuSheet({
             icon: <Shield size={18} color={colors.text} />,
             label: 'Delete account',
             hint: 'Request deletion of your ORBIT account and data',
-            onPress: run(() => {
-              Linking.openURL('https://orbitmbbs.site/delete-account').catch(() => {
-                Alert.alert('Account deletion', 'Open orbitmbbs.site/delete-account in your browser to request deletion.');
-              });
-            }),
+            onPress: run(openAccountDeletion),
           },
           ...(isAdmin
             ? [
