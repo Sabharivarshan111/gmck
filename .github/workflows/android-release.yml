@@ -131,6 +131,7 @@ jobs:
           npm run check:fanout
           npm run check:mcq
           npm run check:notes-limits
+          node scripts/question-note-routing-check.mjs
           npm run check:notes-schema
           npm run check:v25
           npm run check:kuhs-parity

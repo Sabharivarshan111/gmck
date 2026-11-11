@@ -47,11 +47,11 @@ if (gradleCode && tsCode) {
   );
 }
 /*
- * The owner requested v37 on 2026-11-10 for daily handwritten previews and Premium sounds.
+ * The owner requested v38 on 2026-11-11 to restore handwritten question notes.
  * Keep the Gradle version and app constants in sync.
  * This pin verifies source version only; it does not imply Play publication.
  */
-const PINNED_VERSION_CODE = 37;
+const PINNED_VERSION_CODE = 38;
 if (gradleCode) {
   check(
     Number(gradleCode[1]) === PINNED_VERSION_CODE,
