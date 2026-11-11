@@ -22,6 +22,7 @@ jobs:
         working-directory: mobile
       - run: node mobile/scripts/browser-auth-storage-check.mjs
       - run: node mobile/scripts/profile-persistence-check.mjs
+      - run: node mobile/scripts/question-note-routing-check.mjs
       - run: node scripts/test-ai-chat.mjs
       - run: npm run build:vercel
       - run: node node_modules/playwright-core/cli.js install --with-deps chromium webkit
