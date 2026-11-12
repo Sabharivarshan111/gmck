@@ -36,10 +36,12 @@ import OrbitUpdate, { type UpdateStatus } from '@/native/NativeOrbitUpdate';
 
 const SEEN_VERSION_KEY = 'orbit:last-run-version';
 const DISMISSED_KEY = 'orbit:update-dismissed';
-const LAST_CHECK_KEY = 'orbit:update-checked-at';
-
-/** Six hours. Play caches its own answer; this is politeness about asking. */
-const CHECK_EVERY_MS = 6 * 60 * 60 * 1000;
+/**
+ * A dismissal only postpones an offer briefly. A permanent, per-version
+ * dismissal caused students to lose the v38 prompt after tapping "Not now".
+ * Re-check on app foreground too (UpdateNotice), not just process startup.
+ */
+const POSTPONE_MS = 15 * 60 * 1000;
 
 /** Play's own threshold for "this has been available long enough to insist". */
 const HIGH_PRIORITY = 4;
@@ -153,16 +155,31 @@ export async function markVersionSeen(): Promise<void> {
   await AsyncStorage.setItem(SEEN_VERSION_KEY, String(APP_VERSION_CODE)).catch(() => {});
 }
 
-/** Postpone one specific version, so declining 16 does not decline 17. */
+/** Postpone only the offered version for 15 minutes, never permanently. */
 export async function dismissUpdate(versionCode: number): Promise<void> {
-  await AsyncStorage.setItem(DISMISSED_KEY, String(versionCode)).catch(() => {});
+  await AsyncStorage.setItem(
+    DISMISSED_KEY,
+    JSON.stringify({ versionCode, dismissedAt: Date.now() }),
+  ).catch(() => {});
 }
 
 async function dismissed(versionCode: number): Promise<boolean> {
   try {
     const raw = await AsyncStorage.getItem(DISMISSED_KEY);
-    return raw !== null && Number.parseInt(raw, 10) >= versionCode;
+    if (!raw) return false;
+    const record: unknown = JSON.parse(raw);
+    if (!record || typeof record !== 'object') return false;
+    const { versionCode: saved, dismissedAt } = record as {
+      versionCode?: unknown;
+      dismissedAt?: unknown;
+    };
+    return saved === versionCode &&
+      typeof dismissedAt === 'number' &&
+      dismissedAt <= Date.now() &&
+      Date.now() - dismissedAt < POSTPONE_MS;
   } catch {
+    // Old clients persisted a bare number (a permanent dismissal). Treat
+    // those entries as expired so people can see the update again.
     return false;
   }
 }
@@ -170,10 +187,9 @@ async function dismissed(versionCode: number): Promise<boolean> {
 /**
  * The update to offer right now, or null.
  *
- * Every "not now" rule lives here rather than in the component, so the card has
- * one input and cannot half-apply one. A high-priority release skips the
- * dismissal and the throttle — that is what the priority means, and it is why
- * nothing sets it by default.
+ * The old six-hour global throttle hid an available Play update after the first
+ * check. Always ask Play on app resume; only the short, per-version "Not now"
+ * postponement suppresses a non-urgent offer. Play decides availability.
  */
 export async function updateToOffer(): Promise<UpdateOffer | null> {
   const status = await playStatus();
@@ -182,19 +198,8 @@ export async function updateToOffer(): Promise<UpdateOffer | null> {
   }
   const urgent = status.priority >= HIGH_PRIORITY;
 
-  if (!urgent) {
-    if (await dismissed(status.versionCode)) {
-      return null;
-    }
-    try {
-      const last = Number.parseInt((await AsyncStorage.getItem(LAST_CHECK_KEY)) ?? '0', 10);
-      if (Number.isFinite(last) && Date.now() - last < CHECK_EVERY_MS) {
-        return null;
-      }
-      await AsyncStorage.setItem(LAST_CHECK_KEY, String(Date.now()));
-    } catch {
-      // Storage unavailable is not a reason to withhold an update.
-    }
+  if (!urgent && await dismissed(status.versionCode)) {
+    return null;
   }
 
   return { status, notes: await notesFor(status.versionCode), urgent };
