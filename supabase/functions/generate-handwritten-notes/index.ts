@@ -395,7 +395,7 @@ serve(secureEndpoint(async (req) => {
       if (!data?.allowed) return new Response(JSON.stringify({
         code: data?.code ?? "PREMIUM_REQUIRED",
         error: data?.code === "PREMIUM_REQUIRED"
-          ? "Free handwritten AI notes: 2 questions per day. This request exceeds your remaining free allowance. Subscribe to ORBIT Premium for unlimited generation. Resets at midnight IST; saved notes stay available. If you use ORBIT V37 or earlier, update to V38 on Google Play: https://play.google.com/store/apps/details?id=com.aistudio.mbbsqbank.aycxvd"
+          ? "Free handwritten notes: 2 questions per day, including saved answers. Your daily allowance is used. Subscribe to ORBIT Premium for unlimited access. Resets at midnight IST. You can reopen questions already unlocked today. If you use ORBIT V37 or earlier, update to V38 on Google Play: https://play.google.com/store/apps/details?id=com.aistudio.mbbsqbank.aycxvd"
           : "Your note generation is already running. Please retry shortly.",
       }), {
         status: data?.code === "PREMIUM_REQUIRED" ? 402 : 409,
@@ -527,20 +527,16 @@ Modify ONLY the relevant part(s) requested by the user. Preserve everything else
     const totalBatches = Math.max(1, Math.ceil(questions.length / size));
     const idx = batchIndex ?? 0;
 
-    // Cache hit on first batch. In singleMode we ALSO honour cache — this is the
-    // whole point of persisting single-question notes: the first tap pays the
-    // Gemini cost, every subsequent tap on the same question is instant and
-    // never hits the free-tier quota. Only skip the cache read when the caller
-    // explicitly asked to regenerate.
+    // Cached answers avoid Gemini calls but still use the daily question allowance.
+    // Gate both personal and shared notes before returning any saved content.
+    // Explicit regeneration bypasses this cache read.
     if (idx === 0 && !regenerate) {
       let cached: { content: unknown } | null = null;
-      let personalCached = false;
       if (userId && !internal) {
         const { data, error } = await admin.from("personal_handwritten_notes")
           .select("content").eq("user_id", userId).eq("subtopic_key", subtopicKey).maybeSingle();
         if (error) throw new Error("Could not load your notes. Please retry.");
         cached = data;
-        personalCached = !!data?.content;
       }
       if (!cached?.content) {
         const { data, error } = await admin.from("handwritten_notes")
@@ -549,15 +545,11 @@ Modify ONLY the relevant part(s) requested by the user. Preserve everything else
         cached = data;
       }
       if (cached?.content) {
-        // A saved personal note remains readable. First access to a shared
-        // cached answer uses one preview too, otherwise the public cache would
-        // give every free account unlimited handwritten notes without AI calls.
-        if (!personalCached && !internal) {
-          const blocked = await reserveTrial(0, 1);
-          if (blocked) return blocked;
-          await saveNotes({ subtopic_key: subtopicKey, year, subject,
-            subtopic_name: subtopicName, content: cached.content, updated_at: new Date().toISOString() });
-        }
+        // Every saved answer, including personal notes, uses today's allowance.
+        // Replayed reservations authorize reopening without another charge.
+        // Always serve the latest cache instead of the quota response snapshot.
+        const access = await reserveTrial(0, 1);
+        if (access && !access.ok) return access;
         return await noteResponse({
           cached: true,
           content: cached.content,
