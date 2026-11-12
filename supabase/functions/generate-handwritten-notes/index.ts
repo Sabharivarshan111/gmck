@@ -395,7 +395,7 @@ serve(secureEndpoint(async (req) => {
       if (!data?.allowed) return new Response(JSON.stringify({
         code: data?.code ?? "PREMIUM_REQUIRED",
         error: data?.code === "PREMIUM_REQUIRED"
-          ? "Your 2 free handwritten AI-note questions for today are used. Resets at midnight IST. Upgrade to Premium for unlimited notes. Previously saved notes stay available."
+          ? "You have used your 2 free handwritten AI-note questions today. For more notes, subscribe to ORBIT Premium for unlimited generation. Your free allowance resets at midnight IST; saved notes remain available. Please also update ORBIT to the latest version on Google Play: https://play.google.com/store/apps/details?id=com.aistudio.mbbsqbank.aycxvd"
           : "Your note generation is already running. Please retry shortly.",
       }), {
         status: data?.code === "PREMIUM_REQUIRED" ? 402 : 409,
