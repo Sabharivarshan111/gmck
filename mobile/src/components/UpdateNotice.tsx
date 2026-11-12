@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { AppState, Linking, StyleSheet, View } from 'react-native';
 import { Download, Rocket, Sparkles } from 'lucide-react-native';
 import { Dialog } from '@/components/Dialog';
 import { Text } from '@/components/Text';
 import { useTheme, withAlpha } from '@/theme';
 import { typeScale } from '@/theme/typography';
+import { PLAY_MARKET_URL, PLAY_WEB_URL } from '@/lib/appVersion';
 import {
   completeUpdate,
   dismissUpdate,
@@ -162,6 +163,64 @@ export function UpdateNotice() {
     };
   }, [stopPolling]);
 
+  /**
+   * React Native keeps the Shell mounted while the user switches apps.
+   * Re-checking only on mount leaves a stale update card for the rest of
+   * the day, even when Play already has the new version. Also resume a
+   * flexible download that finished while the app was in the background.
+   */
+  useEffect(() => {
+    let disposed = false;
+    let pending: ReturnType<typeof setTimeout> | null = null;
+    const recheck = () => {
+      if (pending) clearTimeout(pending);
+      pending = setTimeout(() => {
+        pending = null;
+        void (async () => {
+          const status = await playStatus();
+          if (disposed) return;
+          if (status?.installStatus === 'downloaded') {
+            stopPolling();
+            setMode('ready');
+            setVisible(true);
+            return;
+          }
+          if (status?.installStatus === 'downloading' || status?.installStatus === 'pending') {
+            watchDownload();
+            return;
+          }
+          const next = await updateToOffer();
+          if (disposed || !next) return;
+          setOffer(next);
+          setMode('update');
+          setVisible(true);
+        })();
+      }, SETTLE_MS);
+    };
+    const sub = AppState.addEventListener('change', state => {
+      if (state === 'active') recheck();
+    });
+    return () => {
+      disposed = true;
+      if (pending) clearTimeout(pending);
+      sub.remove();
+    };
+  }, [stopPolling, watchDownload]);
+
+  /** Play's sheet may be unavailable on a device; open the verified listing. */
+  const openPlayListing = useCallback(async () => {
+    try {
+      await Linking.openURL(PLAY_MARKET_URL);
+    } catch {
+      try {
+        await Linking.openURL(PLAY_WEB_URL);
+      } catch {
+        // The check will be repeated when internet connectivity returns and
+        // the student next resumes the app. Never crash on a missing Store.
+      }
+    }
+  }, []);
+
   const close = useCallback(() => {
     setVisible(false);
     if (mode === 'whatsnew') {
@@ -177,13 +236,19 @@ export function UpdateNotice() {
     setVisible(false);
     void (async () => {
       const outcome = await startUpdate(offer?.urgent ?? false);
-      // Play's own sheet has just been answered. Accepted means the download
-      // has begun; everything else is the reader's decision and says nothing.
       if (outcome === 'accepted') {
         watchDownload();
+      } else if (outcome === 'cancelled') {
+        // Explicitly declining Play's confirmation postpones the offer briefly.
+        // It is NOT a permanent opt-out from this version.
+        if (offer) await dismissUpdate(offer.status.versionCode);
+      } else {
+        // A Play-installed app may still get an unavailable/stale Play sheet.
+        // The official listing is a safe recovery path.
+        await openPlayListing();
       }
     })();
-  }, [offer, watchDownload]);
+  }, [offer, openPlayListing, watchDownload]);
 
   const install = useCallback(() => {
     setVisible(false);
