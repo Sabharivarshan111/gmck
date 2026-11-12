@@ -365,43 +365,61 @@ serve(secureEndpoint(async (req) => {
       singleMode, proposeOnly, useWeb,
     } = parsed.data;
 
-    // Fresh service-side entitlement; the client never supplies premium status.
-    const trialState: { current: { generation: string; lease: string; batch: number } | null } = { current: null };
-    const reserveTrial = async (batch: number, total: number): Promise<Response | null> => {
+    // Server-side allowance, independent of legacy native client reservations.
+    // The old app can reserve a handwritten_note_trials row before calling
+    // this endpoint, so reusing that table here would charge one question twice.
+    // Only service-role RPC can create server-side quota reservations.
+    const trialState: { current: { reservationId: string } | null } = { current: null };
+    const reserveTrial = async (_batch: number, _total: number): Promise<Response | null> => {
       if (internal) return null;
-      if (!userId || anonymousUser) return new Response(JSON.stringify({ code: "SIGN_IN_REQUIRED", error: "Sign in with Google to generate handwritten AI notes for 2 questions per day (essays or short notes), or unlock Premium." }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      if (!userId || anonymousUser) return new Response(JSON.stringify({
+        code: "SIGN_IN_REQUIRED",
+        error: "Sign in with Google to generate 2 free handwritten AI questions per day, or unlock Premium.",
+      }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+
+      const identity = JSON.stringify({
+        subtopicKey, year, subject, subtopicName, questions,
+        batchIndex: batchIndex ?? 0, batchSize: batchSize ?? DEFAULT_BATCH_SIZE,
+        questionKinds: questionKinds ?? null, singleMode: !!singleMode,
+        editInstruction: editInstruction ?? null,
+        content: editInstruction ? content : null,
+        proposeOnly: !!proposeOnly, useWeb: !!useWeb,
       });
-      const fingerprint = await hash(JSON.stringify({ subtopicKey, year, subject, subtopicName, questions, questionKinds: questionKinds ?? null, singleMode: !!singleMode,
-        batchSize: batchSize ?? DEFAULT_BATCH_SIZE, editInstruction: editInstruction ?? null, content: editInstruction ? content : null, proposeOnly: !!proposeOnly, useWeb: !!useWeb }));
-      // Legacy clients can finish their original topic batches. Explicit regenerations
-      // and edits are separate generations, never an unlimited retry entitlement.
-      const usageDay = new Date(Date.now() + 330 * 60_000).toISOString().slice(0, 10);
-      const requestId = parsed.data.generationId ?? (regenerate || editInstruction ? crypto.randomUUID() : "legacy:" + fingerprint);
-      const generation = usageDay + ":" + await hash(requestId);
-      const { data, error } = await admin.rpc("reserve_daily_handwritten_note_trial", {
-        _user: userId, _generation: generation, _fingerprint: fingerprint, _batch: batch, _total: total, _cost: questions.length,
+      // Regeneration and AI editing are new generation attempts; the server
+      // never trusts a client-supplied request ID to grant unlimited retries.
+      const fingerprint = await hash(identity + ((regenerate || editInstruction) ? crypto.randomUUID() : ""));
+      const { data, error } = await admin.rpc("reserve_server_handwritten_request", {
+        _user: userId, _key: fingerprint, _cost: questions.length,
       });
-      if (error) throw new QuotaUnavailableError("Could not check your free notes allowance. Please retry.");
-      if (!data?.allowed) return new Response(JSON.stringify({ code: data?.code ?? "PREMIUM_REQUIRED", error: data?.code === "PREMIUM_REQUIRED"
-        ? (data?.remaining === 0
-          ? "Your 2 free handwritten AI-note questions for today are used. Essays and short notes share this allowance. It resets at midnight IST. Unlock Premium for more; saved notes stay readable."
-          : "Free accounts can generate handwritten AI notes for 2 questions per day, shared by essays and short notes. Triple-tap a question or unlock Premium for full topics. The allowance resets at midnight IST.")
-        : "This generation is already running or its questions changed. Please retry." }), {
-        status: data?.code === "PREMIUM_REQUIRED" ? 402 : 409, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      if (error) throw new QuotaUnavailableError("Could not check your handwritten notes allowance. Please retry.");
+      if (!data?.allowed) return new Response(JSON.stringify({
+        code: data?.code ?? "PREMIUM_REQUIRED",
+        error: data?.code === "PREMIUM_REQUIRED"
+          ? "Your 2 free handwritten AI-note questions for today are used. Resets at midnight IST. Upgrade to Premium for unlimited notes. Previously saved notes stay available."
+          : "Your note generation is already running. Please retry shortly.",
+      }), {
+        status: data?.code === "PREMIUM_REQUIRED" ? 402 : 409,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
-      if (data.cached_response) return new Response(JSON.stringify(data.cached_response), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
-      if (data.lease) {
-        trialState.current = { generation, lease: data.lease, batch };
-        trialCleanup.run = async () => { await admin.rpc("finish_handwritten_note_trial", { _user: userId, _generation: generation, _lease: data.lease, _batch: batch, _result: null }); };
+      if (data.cached_response) return new Response(JSON.stringify(data.cached_response), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+      if (data.reservation_id) {
+        const reservationId = String(data.reservation_id);
+        trialState.current = { reservationId };
+        trialCleanup.run = async () => {
+          await admin.rpc("finish_server_handwritten_request", {
+            _user: userId, _reservation: reservationId, _response: null,
+          });
+        };
       }
       return null;
     };
     const noteResponse = async (result: Record<string, unknown>) => {
       const trial = trialState.current;
       if (trial) {
-        const { data: finished, error } = await admin.rpc("finish_handwritten_note_trial", {
-          _user: userId, _generation: trial.generation, _lease: trial.lease, _batch: trial.batch, _result: result,
+        const { data: finished, error } = await admin.rpc("finish_server_handwritten_request", {
+          _user: userId, _reservation: trial.reservationId, _response: result,
         });
         if (error || !finished) throw new QuotaUnavailableError("Could not save generation progress. Please retry.");
         trialCleanup.run = null;
