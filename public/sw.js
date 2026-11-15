@@ -8,8 +8,12 @@
 // the new HTML anyway — but one that ever fell back to the cached shell keeps
 // being served the asset hashes that shell names, and those ARE cached. Bumping
 // this is the one lever that empties the old cache for everybody.
-const SW_VERSION = 'v41-bandwidth-reuse-2026-11-15';
+const SW_VERSION = 'v42-site-data-saver-2026-11-15';
 const CACHE_NAME = `mbbs-qb-${SW_VERSION}`;
+const MODEL_CACHE_NAME = 'mbbs-qb-models-v1';
+// The website build fills these with hashes of the exact public file bytes.
+// Model URLs alone are not immutable: the files can change on a later deploy.
+const STATIC_REVISIONS = {};
 
 const PRECACHE_URLS = [
   '/',
@@ -44,7 +48,9 @@ self.addEventListener('install', (event) => {
                 if (previous?.ok) { await cache.put(url, previous); return; }
               }
             }
-            await cache.add(url);
+            // Timer growth stages and alternative pet skins are decorative.
+            // Keep any existing offline copy, but fetch new ones only on use.
+            if (!isDeferredDecoration(parsed)) await cache.add(url);
           }));
         }
       } catch { /* older deploys and local dev may have no manifest */ }
@@ -58,8 +64,16 @@ self.addEventListener('activate', (event) => {
     (async () => {
       const names = await caches.keys();
       await Promise.allSettled(
-        names.filter((n) => n.startsWith('mbbs-qb-') && n !== CACHE_NAME).map((n) => caches.delete(n)),
+        names.filter((n) => n.startsWith('mbbs-qb-') && n !== CACHE_NAME && n !== MODEL_CACHE_NAME).map((n) => caches.delete(n)),
       );
+      // Retain unchanged models across app updates, discard retired revisions.
+      const models = await caches.open(MODEL_CACHE_NAME);
+      for (const request of await models.keys()) {
+        const url = new URL(request.url);
+        if (STATIC_REVISIONS[url.pathname] !== url.searchParams.get('__orbit_asset')) {
+          await models.delete(request);
+        }
+      }
       await self.clients.claim();
     })(),
   );
@@ -84,8 +98,24 @@ function isHashedAsset(url) {
 function isImmutableAsset(url) {
   // Vite output uses an eight-character content hash before the extension.
   // Do not apply cache-first to mutable /pg files, HTML or unversioned images.
-  return /^\/assets\/[^/]+-[A-Za-z0-9_-]{8}\.[a-z0-9]+$/i.test(url.pathname)
+  return (/^\/assets\/[^/]+-[A-Za-z0-9_-]{8}\.[a-z0-9]+$/i.test(url.pathname)
+    || /^\/pg\/s\d{2}-[0-9a-f]{12}\.zst$/.test(url.pathname))
     && !url.search;
+}
+
+function isDeferredDecoration(url) {
+  return /^\/assets\/(?:stage\d+|(?:bear|cat|dog|fox|otter|panda|penguin|rabbit|squirrel)-(?:bold|classic|soft))-[A-Za-z0-9_-]{8}\.png$/.test(url.pathname);
+}
+
+async function cachedPublicModel(request, url) {
+  const cache = await caches.open(MODEL_CACHE_NAME);
+  const cacheUrl = new URL(url);
+  cacheUrl.searchParams.set('__orbit_asset', STATIC_REVISIONS[url.pathname]);
+  const cached = await cache.match(cacheUrl.href);
+  if (cached) return cached;
+  const response = await fetch(request);
+  if (response.ok && response.status !== 206) await cache.put(cacheUrl.href, response.clone());
+  return response;
 }
 
 async function cacheFirstImmutable(request) {
@@ -154,6 +184,13 @@ self.addEventListener('fetch', (event) => {
   if (url.pathname.startsWith('/~oauth')) return;
   // Let the browser/CDN handle byte-range requests for the installation video.
   if (url.pathname.startsWith('/installation/')) return;
+  // Byte-range media is handled by the browser; never store a partial model.
+  if (request.headers.has('range')) return;
+
+  if (Object.prototype.hasOwnProperty.call(STATIC_REVISIONS, url.pathname)) {
+    event.respondWith(cachedPublicModel(request, url));
+    return;
+  }
 
   if (url.pathname.startsWith('/_orbit/files/')) {
     event.respondWith(readPrivateFile(url, request));

@@ -23,9 +23,22 @@ const cacheRevision = createHash('sha256')
   .digest('hex').slice(0, 16);
 const workerPath = 'dist/sw.js';
 const worker = fs.readFileSync(workerPath, 'utf8');
+const staticRevisions = {};
+for (const directory of ['models', 'clinical-reference']) {
+  const base = path.join('dist', directory);
+  if (!fs.existsSync(base)) continue;
+  for (const relative of fs.readdirSync(base, { recursive: true }).sort()) {
+    const file = path.join(base, relative);
+    if (!fs.statSync(file).isFile()) continue;
+    staticRevisions['/' + directory + '/' + relative.split(path.sep).join('/')] =
+      createHash('sha256').update(fs.readFileSync(file)).digest('hex').slice(0, 20);
+  }
+}
+if (!worker.includes('const STATIC_REVISIONS = {};')) throw new Error('Missing public model cache revision marker');
 const version = worker.match(/const SW_VERSION = '([^']+)';/);
 if (!version) throw new Error('Cannot version the offline app worker');
-fs.writeFileSync(workerPath, worker.replace(version[0],
+fs.writeFileSync(workerPath, worker.replace('const STATIC_REVISIONS = {};',
+  `const STATIC_REVISIONS = ${JSON.stringify(staticRevisions)};`).replace(version[0],
   `const SW_VERSION = '${version[1]}-assets-${cacheRevision}';`));
 
 for (const directory of ['dist/assets','dist-native/assets']) {

@@ -18,3 +18,14 @@ Deployment dpl_7A6z2F74qxSueiahWjbg3iNHaTCH, commit d5c7fc0086c2ab6638c7db3f5689
 
 ## Migration compatibility finding
 Several shipped Android paths still use https://orbitmbbs.vercel.app/simulator (nativeSimulatorRouting.ts, SimulatorScreen.tsx, NotesScreen.tsx, simulatorNavigation.ts). Moving orbitmbbs.site alone will not replace those links on older installed APKs. Account access to a replacement host is not available; Cloudflare plugin search returned no results. No hosting move, DNS change or Pro cancellation performed. Plan old-version compatibility and a custom-domain routing update before cancellation.
+
+## Website-only second optimization pass
+Owner clarified that this request concerns only the Vercel site. No mobile/src, Android build, payment, Supabase or DNS changes.
+
+371 decorative tree-stage/pet-skin entries out of the live 471-entry offline manifest now load on demand; existing cached decorations are migrated. The other 100 manifest entries, including medical images/code and question packs, continue automatic offline preparation. This is an asset-count reduction, not a measured percentage of bytes saved.
+
+PG packs already have 12-character content hashes, but were mistakenly treated as mutable. They now migrate across updates and use cache-first plus a narrowly matched one-year browser header. PG manifests remain mutable.
+
+The website build now hashes each emitted models/ and clinical-reference/ file and injects a revision map into sw.js. Requested 3D/radiology assets use a separate persistent cache keyed by content revision, survive unrelated app updates, and are discarded/refetched when their bytes change. Models are never downloaded merely by visiting the homepage. Byte-range requests bypass this cache.
+
+Validation: node scripts/service-worker-bandwidth-check.mjs runs the real install/activate/fetch handlers and the build's revision injection against nested fixture files; node --check on worker/build script and git diff --check pass. Production deployment verification pending for this pass. Monthly bandwidth cannot be guaranteed from source-level savings; no monthly usage measurement is claimed.
