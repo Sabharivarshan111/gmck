@@ -8,7 +8,7 @@
 // the new HTML anyway — but one that ever fell back to the cached shell keeps
 // being served the asset hashes that shell names, and those ARE cached. Bumping
 // this is the one lever that empties the old cache for everybody.
-const SW_VERSION = 'v40-muhs-batch28-1307-2026-11-03';
+const SW_VERSION = 'v41-bandwidth-reuse-2026-11-15';
 const CACHE_NAME = `mbbs-qb-${SW_VERSION}`;
 
 const PRECACHE_URLS = [
@@ -32,7 +32,20 @@ self.addEventListener('install', (event) => {
       try {
         const urls = await (await fetch('/orbit-offline-assets.json')).json();
         for (let index = 0; index < urls.length; index += 20) {
-          await Promise.allSettled(urls.slice(index, index + 20).map(url => cache.add(url)));
+          await Promise.allSettled(urls.slice(index, index + 20).map(async (url) => {
+            // A content hash is an identity: reuse identical bytes from the
+            // previous release instead of downloading all offline art again.
+            // Shells and unversioned PG packs must still refresh on install.
+            const parsed = new URL(url, self.location.origin);
+            if (isImmutableAsset(parsed)) {
+              for (const name of await caches.keys()) {
+                if (!name.startsWith('mbbs-qb-')) continue;
+                const previous = await (await caches.open(name)).match(url);
+                if (previous?.ok) { await cache.put(url, previous); return; }
+              }
+            }
+            await cache.add(url);
+          }));
         }
       } catch { /* older deploys and local dev may have no manifest */ }
       await self.skipWaiting();
@@ -45,7 +58,7 @@ self.addEventListener('activate', (event) => {
     (async () => {
       const names = await caches.keys();
       await Promise.allSettled(
-        names.filter((n) => n !== CACHE_NAME).map((n) => caches.delete(n)),
+        names.filter((n) => n.startsWith('mbbs-qb-') && n !== CACHE_NAME).map((n) => caches.delete(n)),
       );
       await self.clients.claim();
     })(),
@@ -66,6 +79,22 @@ function isHashedAsset(url) {
     url.pathname.startsWith('/pg/') ||
     /\.(?:js|css|woff2?|ttf|otf|png|jpg|jpeg|gif|svg|webp|ico)$/i.test(url.pathname)
   );
+}
+
+function isImmutableAsset(url) {
+  // Vite output uses an eight-character content hash before the extension.
+  // Do not apply cache-first to mutable /pg files, HTML or unversioned images.
+  return /^\/assets\/[^/]+-[A-Za-z0-9_-]{8}\.[a-z0-9]+$/i.test(url.pathname)
+    && !url.search;
+}
+
+async function cacheFirstImmutable(request) {
+  const cache = await caches.open(CACHE_NAME);
+  const cached = await cache.match(request);
+  if (cached) return cached;
+  const response = await fetch(request);
+  if (response.ok) await cache.put(request, response.clone());
+  return response;
 }
 
 // Network-first: always try the network so new deploys land immediately.
@@ -90,7 +119,7 @@ async function networkFirst(request, fallbackUrl) {
 }
 
 // Stale-while-revalidate for content-hashed static assets.
-async function staleWhileRevalidate(request) {
+async function staleWhileRevalidate(request, event) {
   const cache = await caches.open(CACHE_NAME);
   const cached = await cache.match(request);
   const fetchAndUpdate = fetch(request)
@@ -101,7 +130,7 @@ async function staleWhileRevalidate(request) {
     .catch(() => null);
 
   if (cached) {
-    fetchAndUpdate;
+    event.waitUntil(fetchAndUpdate);
     return cached;
   }
   const fresh = await fetchAndUpdate;
@@ -140,7 +169,9 @@ self.addEventListener('fetch', (event) => {
   }
 
   if (isHashedAsset(url)) {
-    event.respondWith(staleWhileRevalidate(request));
+    event.respondWith(isImmutableAsset(url)
+      ? cacheFirstImmutable(request)
+      : staleWhileRevalidate(request, event));
     return;
   }
 
